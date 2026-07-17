@@ -1,0 +1,1 @@
+{"id":"int-31dd50e4","kind":"field_change","created_at":"2026-07-17T00:32:52.94747Z","actor":"Marcelo Serpa","issue_id":"wordpresshx-sdk-000","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Independent repository, policy, layout, CI, PRD authority, validation, and no-port-internals bootstrap acceptance criteria satisfied."}}
