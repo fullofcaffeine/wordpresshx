@@ -15,8 +15,12 @@
     "gitRemote": "origin",
     "gitAuthentication": "GitHub CLI HTTPS credential helper; no credential is stored in repository files",
     "beadsRemote": "origin",
-    "beadsUrl": "git+https://github.com/fullofcaffeine/wordpresshx.git",
-    "beadsRef": "refs/dolt/data"
+    "beadsUrl": "git+ssh://git@github.com/fullofcaffeine/wordpresshx.git",
+    "beadsRef": "refs/dolt/data",
+    "httpsAttempt": {
+      "outcome": "failed",
+      "reason": "The embedded Dolt Git client did not reuse the GitHub CLI HTTPS credential helper; no data ref was published by that attempt."
+    }
   },
   "prePublicationSecurity": {
     "bead": "wordpresshx-g0.1",
@@ -25,6 +29,14 @@
     "gitHistoryOutcome": "passed",
     "decodedBeadsOutcome": "passed",
     "machineLocalPathOutcome": "passed"
+  },
+  "remoteVerification": {
+    "gitCommit": "2ffb4e5646074cc11964e81e9db3f68e83b14f3a",
+    "doltRefCommit": "99af870696dfbd1b01dff7f3949aa6ac0fff9578",
+    "hostedCiRun": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29549193291",
+    "hostedCiOutcome": "passed",
+    "githubSecretScanning": "enabled",
+    "githubPushProtection": "enabled"
   },
   "claims": {
     "sourceRepositoryPublished": true,

@@ -173,9 +173,16 @@ assert repository_receipt["repository"]["defaultBranch"] == "main"
 assert sha1.fullmatch(repository_receipt["repository"]["initialPublishedCommit"])
 assert repository_receipt["transport"]["gitRemote"] == "origin"
 assert repository_receipt["transport"]["beadsRemote"] == "origin"
+assert repository_receipt["transport"]["beadsUrl"] == "git+ssh://git@github.com/fullofcaffeine/wordpresshx.git"
 assert repository_receipt["transport"]["beadsRef"] == "refs/dolt/data"
+assert repository_receipt["transport"]["httpsAttempt"]["outcome"] == "failed"
 assert repository_receipt["prePublicationSecurity"]["gitHistoryOutcome"] == "passed"
 assert repository_receipt["prePublicationSecurity"]["decodedBeadsOutcome"] == "passed"
+assert sha1.fullmatch(repository_receipt["remoteVerification"]["gitCommit"])
+assert sha1.fullmatch(repository_receipt["remoteVerification"]["doltRefCommit"])
+assert repository_receipt["remoteVerification"]["hostedCiOutcome"] == "passed"
+assert repository_receipt["remoteVerification"]["githubSecretScanning"] == "enabled"
+assert repository_receipt["remoteVerification"]["githubPushProtection"] == "enabled"
 assert repository_receipt["claims"]["packagePublicationAuthorized"] is False
 
 package_root = Path("compiler/reflaxe.php")
