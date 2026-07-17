@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-030-GENES-TS-V1.33.0",
+  "beadId": "wordpresshx-sdk-030",
+  "observedAt": "2026-07-17T00:51:22Z",
+  "subject": {
+    "repository": "https://github.com/fullofcaffeine/genes-ts",
+    "version": "1.33.0",
+    "releaseTag": "v1.33.0",
+    "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+    "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+    "releaseArtifact": {
+      "name": "submit.zip",
+      "sizeBytes": 207334,
+      "sha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145"
+    }
+  },
+  "sourceAudit": {
+    "authorityCheckout": "../genes",
+    "state": "dirty-user-owned-checkout-excluded",
+    "observedHead": "1e7e323fdbda4c5b93689355294bd978e9170725",
+    "observedTrackingState": "main was one commit behind origin/main",
+    "observedTrackedChanges": ".beads/issues.jsonl had staged and unstaged changes",
+    "observedUntrackedState": "audit bundles and snapshots were present",
+    "verificationCheckout": "clean detached worktree at the immutable release commit",
+    "verificationCheckoutTrackedState": "clean"
+  },
+  "releaseLineage": {
+    "testedParentCommit": "1e7e323fdbda4c5b93689355294bd978e9170725",
+    "releaseCommit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+    "releaseCommitDelta": [
+      "CHANGELOG.md",
+      "haxelib.json",
+      "package.json"
+    ],
+    "compilerSourceChangedByReleaseCommit": false,
+    "testsChangedByReleaseCommit": false
+  },
+  "toolchains": {
+    "haxe": "4.3.7",
+    "nodeLocalExact": "20.19.3",
+    "nodeUpstreamLanes": [
+      "20",
+      "22"
+    ],
+    "yarn": "1.22.22",
+    "typescript": {
+      "legacyFloor": "5.5.4",
+      "apiBridge": "6.0.2",
+      "programApiEngine": "6.0.3",
+      "current": "7.0.2"
+    },
+    "dts2hx": {
+      "version": "0.34.0",
+      "typescript": "5.9.3"
+    },
+    "playwright": "1.58.0"
+  },
+  "localVerification": {
+    "host": {
+      "os": "macOS 15.4 (24E248)",
+      "kernel": "Darwin 24.4.0",
+      "architecture": "arm64"
+    },
+    "bootstrap": {
+      "command": "corepack prepare yarn@1.22.22 --activate && yarn install --frozen-lockfile",
+      "outcome": "passed"
+    },
+    "browserBootstrap": {
+      "command": "npx playwright install chromium",
+      "outcome": "passed"
+    },
+    "releaseGate": {
+      "command": "yarn test:ci",
+      "environment": "PATH-pinned Node 20.19.3; Haxe 4.3.7 selected by the release manifest",
+      "outcome": "passed",
+      "durationSeconds": 388.22,
+      "selectedResults": {
+        "secretScan": "passed; one clean release commit scanned, no leaks",
+        "vulnerabilityScan": "passed; OSV scanned 614 packages from yarn.lock, no issues",
+        "versionConsistency": "package 1.33.0 and all declared compiler toolchains matched",
+        "compatibility": "8 evidence buckets, 21 fail-closed downstream runner contracts, 2 pinned downstream profiles",
+        "exportedSurface": "18 unsafe paths detected by negative policy fixtures",
+        "classicCompiler": "311 assertions passed; 0 failures; 0 errors",
+        "acceptanceClassicDifferential": "310 assertions passed; 0 failures; 0 errors",
+        "strictTypeScript": "generated output passed TypeScript 5.5.4, 6.0.2/engine 6.0.3, and 7.0.2 lanes",
+        "dualOutput": "strict TypeScript, classic Genes, standard Haxe, and pinned vanilla baseline passed",
+        "moduleAndOutputSafety": "package shapes, ordered side-effect imports, transactional output, stale ownership, internal type containment, and finally completion passed",
+        "playwright": "3 strict-TypeScript and 3 classic-profile todoapp tests passed",
+        "examples": "todoapp and typescript-target strict/classic build and runtime contracts passed",
+        "ts2hx": "27 documentation fixtures, 50 snapshots, 3 roundtrips, 18 exercised semantic contracts, 13 fail-closed contracts, 3 runtimes, and strict diagnostics passed"
+      }
+    },
+    "releaseArtifactVerification": {
+      "command": "gh release download v1.33.0 --pattern submit.zip; shasum -a 256 submit.zip",
+      "outcome": "passed",
+      "reportedDigestMatchedDownloadedBytes": true
+    },
+    "discardedAttempts": [
+      {
+        "command": "npm exec --package=node@20.19.3 --call 'yarn test:ci'",
+        "outcome": "invalid-harness",
+        "reason": "npm-exec wrapper state caused the nested Playwright npx invocation to exit with npm usage error after preceding compiler lanes passed; the clean PATH-pinned replay replaced this attempt"
+      }
+    ]
+  },
+  "hostedVerification": {
+    "compilerCi": {
+      "runId": 29530086981,
+      "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29530086981",
+      "commit": "1e7e323fdbda4c5b93689355294bd978e9170725",
+      "workflowConclusion": "success",
+      "blockingJobs": {
+        "Secrets (gitleaks)": "success",
+        "Vulnerabilities (OSV)": "success",
+        "Classic Genes (stable, ubuntu-latest)": "success",
+        "Classic Genes (nextLts, ubuntu-latest)": "success",
+        "genes-ts (TS output + todoapp E2E)": "success",
+        "genes-ts smoke (Node next LTS)": "success"
+      },
+      "advisoryJobs": {
+        "Classic Genes (stable, macos-latest)": "success",
+        "Haxe preview (non-blocking)": "failure",
+        "Dependency Review": "skipped on push event"
+      }
+    },
+    "codeql": {
+      "runId": 29530086248,
+      "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29530086248",
+      "commit": "1e7e323fdbda4c5b93689355294bd978e9170725",
+      "conclusion": "success"
+    },
+    "release": {
+      "runId": 29530878140,
+      "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29530878140",
+      "testedCommit": "1e7e323fdbda4c5b93689355294bd978e9170725",
+      "releaseGateConclusion": "success",
+      "semanticReleaseConclusion": "success",
+      "publishedTag": "v1.33.0",
+      "publishedReleaseUrl": "https://github.com/fullofcaffeine/genes-ts/releases/tag/v1.33.0"
+    }
+  },
+  "knownLimitations": [
+    {
+      "lane": "Haxe 5.0.0-preview.1",
+      "blocking": false,
+      "outcome": "failed before runtime tests",
+      "cause": "Preview macro/library API incompatibilities: ExprDef, tink.OutcomeTools, and ClassBuilder were unavailable.",
+      "claimEffect": "No Haxe 5 compatibility claim; supported Haxe 4.3.7 evidence remains green."
+    },
+    {
+      "lane": "Dependency Review",
+      "blocking": false,
+      "outcome": "skipped",
+      "cause": "The authoritative compiler workflow was a push event; this job is pull-request-only.",
+      "claimEffect": "OSV, gitleaks, and CodeQL results are recorded separately; no PR-only dependency-review result is claimed."
+    }
+  ],
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "upstreamPullRequest": null,
+    "reason": "The released generic compiler passed the complete supported release gate; no WordPress-specific or generic compiler fix was required."
+  }
+}

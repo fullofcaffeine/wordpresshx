@@ -4,6 +4,8 @@
 
 > **Status: bootstrap / pre-feasibility.** There is no released SDK, supported compatibility profile, installable package, or production-readiness claim yet. The feasibility gates in the product requirements document decide when any narrower claim becomes valid.
 
+Claim records use the evidence terms `inventoried`, `typed`, `generated`, `runtime-tested`, and `production-supported`; no earlier term implies a later one. Vanilla `wp70-release`, opt-in `gutenberg-forward-23.4`, and any future WordPressHx provider result remain separate fields. See [ADR-001](docs/adr/001-product-and-repository-boundary.md) for the exact qualification and correction rules.
+
 The intended build flow is:
 
 ```text
@@ -52,6 +54,8 @@ Compiler, profile, PHP, browser, WordPress, and package checks will be added by 
 
 - PHP: continue the custom Reflaxe PHP compiler originating in `wordpresshx-port`, while extracting and pinning it as a reusable generic compiler package. The SDK must not import the port's Core linker, original-path replacement machinery, or internal source paths.
 - Browser: use the sibling genes-ts project as the compiler authority. Any required change must be generalized in an isolated upstream worktree, protected by a non-WordPress regression fixture and the relevant full upstream suite, and submitted upstream before this repository pins it.
+
+The current browser-compiler baseline is the immutable genes-ts `v1.33.0` release. Its exact commit, tree, package digest, supported toolchains, upstream CI, and clean local replay are recorded in the [browser compiler pin](docs/architecture/browser-compiler.md); this is a compiler input pin, not yet a WordPress browser-support claim.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the working agreement and [docs/](docs/) for the documentation map.
 

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "lockStatus": "partial",
+  "authority": "wordpress-hx-sdk",
+  "entries": {
+    "genes-ts": {
+      "role": "generic-browser-compiler-authority",
+      "repository": "https://github.com/fullofcaffeine/genes-ts",
+      "packageIdentity": "haxelib:genes-ts@1.33.0",
+      "version": "1.33.0",
+      "releaseTag": "v1.33.0",
+      "tagObjectType": "commit",
+      "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+      "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+      "releaseArtifact": {
+        "name": "submit.zip",
+        "mediaType": "application/zip",
+        "sizeBytes": 207334,
+        "sha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145",
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.33.0/submit.zip"
+      },
+      "sourceManifestDigests": {
+        "package.json": "sha256:a8060089fdb79d1cdf6e17acc59d5aa7e117db6066aed913fba611d3cfc4d5a2",
+        "haxelib.json": "sha256:778e7689a0ed1bcfb11f662028dd07bc94b86d7156020536337fd30127f1a2d7",
+        "yarn.lock": "sha256:d60b87fa3d142fc5f6618c971eb7af7da731b5202914d308202a883afa702dcc",
+        "config/toolchains.json": "sha256:cd22b01857eebdacc666c85a521768ef285ef69ef3a51e65e6dc10ae5c57ecc3",
+        ".haxerc": "sha256:7451d3a6da2602210659a9fdba9e65a3597bf272440c88596be6087d5200fe83"
+      },
+      "compatibilityProfile": {
+        "id": "genes-ts-v1.33.0-supported",
+        "scope": "Generic upstream compiler contract; not a wp70-release support claim.",
+        "haxe": "4.3.7",
+        "node": [
+          "20",
+          "22"
+        ],
+        "yarn": "1.22.22",
+        "typescript": {
+          "legacyFloor": "5.5.4",
+          "apiBridge": "6.0.2",
+          "programApiEngine": "6.0.3",
+          "current": "7.0.2"
+        },
+        "dts2hx": "0.34.0"
+      },
+      "artifactManifestSchemaVersion": 1,
+      "testReceiptIds": [
+        "SDK-030-GENES-TS-V1.33.0"
+      ],
+      "dirtyStateObservation": {
+        "checkout": "../genes",
+        "observedHead": "1e7e323fdbda4c5b93689355294bd978e9170725",
+        "observedBranch": "main",
+        "trackingState": "behind origin/main by one release commit",
+        "trackedChanges": [
+          ".beads/issues.jsonl had staged and unstaged user-owned changes"
+        ],
+        "untrackedState": "User-owned audit bundles and snapshots were present.",
+        "excludedFromPin": true,
+        "verificationSource": "clean detached worktree at the release commit"
+      },
+      "upgradeOwner": "genes-ts maintainers",
+      "rollback": {
+        "version": "1.32.0",
+        "releaseTag": "v1.32.0",
+        "commit": "09a17f57ae5645d719d2edbb9c795b40abd8e4f1",
+        "tree": "06f5ced331180886047161d8dfaa850ccdc6984a",
+        "requiresFreshSdkReceipt": true
+      }
+    }
+  }
+}

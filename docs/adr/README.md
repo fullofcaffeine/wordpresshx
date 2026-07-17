@@ -31,3 +31,7 @@ When a decision is accepted, create a numbered immutable record in this director
 ```
 
 Decisions involving licensing, security, public support, or compatibility claims require appropriate qualified review. Prototypes and comments are supporting evidence, not acceptance by themselves.
+
+## Accepted records
+
+- [ADR-001: Product and repository boundary](001-product-and-repository-boundary.md)
