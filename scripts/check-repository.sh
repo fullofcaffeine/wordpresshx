@@ -389,6 +389,9 @@ assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
 )
 compile(verifier_path.read_text(encoding="utf-8"), verifier_path.as_posix(), "exec")
 assert wp_receipt["sourceVerification"]["wordpress"]["outcome"] == "passed"
+assert wp_receipt["sourceVerification"]["committerDateComparison"] == (
+    "parsed ISO-8601 instant normalized to UTC"
+)
 assert wp_receipt["sourceVerification"]["embeddedGutenberg"]["outcome"] == (
     "passed"
 )

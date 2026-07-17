@@ -13,6 +13,7 @@ import tarfile
 import tempfile
 import urllib.request
 import zipfile
+from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
 
@@ -34,6 +35,12 @@ def run(*args: str, cwd: Path | None = None) -> bytes:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def iso_instant(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(
+        timezone.utc
+    )
 
 
 def git_text(repository: Path, *args: str) -> str:
@@ -143,6 +150,9 @@ def verify_artifact(path: Path, artifact: dict[str, object]) -> None:
 
 
 def main() -> None:
+    assert iso_instant("2000-01-01T00:00:00Z") == iso_instant(
+        "2000-01-01T00:00:00+00:00"
+    )
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--artifact-dir",
@@ -167,7 +177,7 @@ def main() -> None:
             git_text(wordpress_repository, "rev-parse", "FETCH_HEAD^{tree}")
             == source["tree"]
         )
-        assert (
+        assert iso_instant(
             git_text(
                 wordpress_repository,
                 "show",
@@ -175,8 +185,7 @@ def main() -> None:
                 "--format=%cI",
                 "FETCH_HEAD",
             )
-            == source["committerDate"]
-        )
+        ) == iso_instant(source["committerDate"])
         assert (
             git_text(
                 wordpress_repository,
@@ -258,7 +267,7 @@ def main() -> None:
             git_text(gutenberg_repository, "rev-parse", "FETCH_HEAD^{tree}")
             == embedded["tree"]
         )
-        assert (
+        assert iso_instant(
             git_text(
                 gutenberg_repository,
                 "show",
@@ -266,8 +275,7 @@ def main() -> None:
                 "--format=%cI",
                 "FETCH_HEAD",
             )
-            == embedded["committerDate"]
-        )
+        ) == iso_instant(embedded["committerDate"])
 
         artifact_paths: dict[str, Path] = {}
         for artifact in distribution["artifacts"]:
