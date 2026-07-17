@@ -1558,6 +1558,13 @@ assert all(
 assert sdk003_receipt["releaseBoundary"]["actualReleasePerformed"] is False
 assert sdk003_receipt["releaseBoundary"]["registryCredentialsUsed"] is False
 assert sdk003_receipt["hostedWorkflow"]["job"] == "release-governance"
+assert sdk003_receipt["hostedWorkflow"]["runId"] == 29616315252
+assert sdk003_receipt["hostedWorkflow"]["jobId"] == 88002094120
+assert sdk003_receipt["hostedWorkflow"]["commit"] == (
+    "ee8a2991d6ea1ad49d46708ca26da4e7e09c8dd5"
+)
+assert sdk003_receipt["hostedWorkflow"]["status"] == "passed"
+assert sdk003_receipt["hostedWorkflow"]["fullMatrixStatus"] == "passed"
 assert sdk003_receipt["hostedWorkflow"]["required"] is True
 assert sdk003_receipt["claims"]["stableReleaseReadiness"] == "blocked"
 assert sdk003_receipt["claims"]["supportedVersions"] == "none"

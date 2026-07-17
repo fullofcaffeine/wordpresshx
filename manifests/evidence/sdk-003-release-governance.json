@@ -118,6 +118,11 @@
   "hostedWorkflow": {
     "path": ".github/workflows/repository.yml",
     "job": "release-governance",
+    "runId": 29616315252,
+    "jobId": 88002094120,
+    "commit": "ee8a2991d6ea1ad49d46708ca26da4e7e09c8dd5",
+    "status": "passed",
+    "fullMatrixStatus": "passed",
     "required": true
   },
   "claims": {
