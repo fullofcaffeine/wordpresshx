@@ -86,32 +86,47 @@ else
 fi
 
 browser_bytes="$(wc -c <"${build_root}/browser.js" | tr -d ' ')"
-server_bytes="$(find "${build_root}/server" -type f -exec wc -c {} + | awk '{total += $1} END {print total}')"
 browser_sha256="$(shasum -a 256 "${build_root}/browser.js" | awk '{print $1}')"
-server_tree_sha256="$(
-  cd "${build_root}/server"
-  find . -type f | LC_ALL=C sort | while IFS= read -r file; do
-    digest="$(shasum -a 256 "${file}" | awk '{print $1}')"
-    relative="${file#./}"
-    printf '%s  %s\n' "${digest}" "${relative}"
-  done | shasum -a 256 | awk '{print $1}'
-)"
+IFS=$'\t' read -r \
+  server_file_count \
+  server_bytes \
+  server_normalized_bytes \
+  server_stdlib_marker_count \
+  server_tree_sha256 \
+  < <(
+    python3 "${package_root}/scripts/hash-generated-php.py" \
+      --format tsv \
+      "${build_root}/server"
+  )
 if (( browser_bytes > 12000 )); then
   echo "SDK-080 browser evidence artifact exceeded 12000 bytes: ${browser_bytes}" >&2
   exit 1
 fi
-if (( server_bytes > 220000 )); then
-  echo "SDK-080 server evidence artifact exceeded 220000 bytes: ${server_bytes}" >&2
+if (( server_file_count != 16 )); then
+  echo "SDK-080 server evidence artifact file count changed: ${server_file_count}" >&2
+  exit 1
+fi
+if (( server_bytes > 120000 )); then
+  echo "SDK-080 server evidence artifact exceeded 120000 raw bytes: ${server_bytes}" >&2
+  exit 1
+fi
+if (( server_normalized_bytes != 90153 )); then
+  echo "SDK-080 normalized server artifact size changed: ${server_normalized_bytes}" >&2
+  exit 1
+fi
+if (( server_stdlib_marker_count != 503 )); then
+  echo "SDK-080 server stdlib source-marker count changed: ${server_stdlib_marker_count}" >&2
   exit 1
 fi
 if [[ "${browser_sha256}" != "8c2f91f485ff1aa5a237bb8aebf4b92c62d3976fd4016ada960cb383444e8123" ]]; then
   echo "SDK-080 browser artifact snapshot changed: ${browser_sha256}" >&2
   exit 1
 fi
-if [[ "${server_tree_sha256}" != "750c7072758d3b7ab65536debd32f76c964427453cbd1ea3ac4b0e4b094c4770" ]]; then
-  echo "SDK-080 server artifact tree snapshot changed: ${server_tree_sha256}" >&2
+if [[ "${server_tree_sha256}" != "a45feae15916d41161ca667a336954a196239445c88443282523c06f45173822" ]]; then
+  echo "SDK-080 normalized server artifact tree snapshot changed: ${server_tree_sha256}" >&2
   exit 1
 fi
+echo "SDK-080 normalized server PHP evidence passed: ${server_file_count} files, ${server_bytes} raw bytes, ${server_normalized_bytes} normalized bytes, ${server_stdlib_marker_count} stdlib markers, ${server_tree_sha256}"
 
 spread_override_output="$(mktemp "${TMPDIR:-/tmp}/wordpresshx-sdk080-override.XXXXXX")"
 (

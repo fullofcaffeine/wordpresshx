@@ -62,6 +62,7 @@ required_files=(
   packages/hxx/haxe_libraries/tink_hxx.hxml
   packages/hxx/haxe_libraries/tink_macro.hxml
   packages/hxx/haxe_libraries/tink_parse.hxml
+  packages/hxx/scripts/hash-generated-php.py
   packages/hxx/scripts/test.sh
   packages/hxx/scripts/verify-dependency-lock.py
   packages/hxx/scripts/verify-snapshots.py
@@ -569,7 +570,11 @@ for receipt_subject in (
     assert hashlib.sha256(subject_path.read_bytes()).hexdigest() == (
         receipt_subject["sha256"]
     )
-for verifier_name in ("dependencyVerifier", "snapshotVerifier"):
+for verifier_name in (
+    "dependencyVerifier",
+    "snapshotVerifier",
+    "generatedPhpHasher",
+):
     verifier = hxx_receipt["localVerification"][verifier_name]
     verifier_path = Path(verifier["path"])
     assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
@@ -580,6 +585,18 @@ for verifier_name in ("dependencyVerifier", "snapshotVerifier"):
         verifier_path.as_posix(),
         "exec",
     )
+server_artifact = hxx_receipt["localVerification"]["generatedArtifacts"]["server"]
+assert server_artifact["fileCount"] == 16
+assert server_artifact["rawSizeBytesLocalMacosArm64"] == 106249
+assert server_artifact["rawSizePolicyMaximumBytes"] == 120000
+assert server_artifact["normalizedSizeBytes"] == 90153
+assert server_artifact["normalizedStdlibSourceMarkerCount"] == 503
+assert server_artifact["normalizedContentTreeSha256"] == (
+    "a45feae15916d41161ca667a336954a196239445c88443282523c06f45173822"
+)
+assert hxx_receipt["localVerification"]["generatedPhpHasher"][
+    "otherAbsoluteSourceMarkers"
+] == "fail-closed"
 assert hxx_receipt["localVerification"]["gate"]["outcome"] == "passed"
 assert hxx_receipt["prototype"]["generatorApiUsed"] is False
 assert hxx_receipt["prototype"]["publicTinkTypesExposed"] is False

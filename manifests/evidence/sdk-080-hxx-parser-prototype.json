@@ -133,6 +133,9 @@
       },
       "formatter": "1.18.0",
       "php": "8.4.7",
+      "phpExtensions": [
+        "mbstring"
+      ],
       "node": "20.19.3",
       "git": "2.40.1"
     },
@@ -150,6 +153,13 @@
       "sha256": "fb57d53b095a0deba3863833fe6c55ca20de86701e2e81500dac29ab6fd63d5c",
       "serverBrowserParity": "passed"
     },
+    "generatedPhpHasher": {
+      "path": "packages/hxx/scripts/hash-generated-php.py",
+      "sha256": "d0aabe42e305986fa161899137017e4c82569d9359161c6fd0c6052f74e2212c",
+      "normalizationScope": "only absolute Lix Haxe 4.3.7 standard-library source-marker prefixes",
+      "otherAbsoluteSourceMarkers": "fail-closed",
+      "macosArm64LinuxAmd64NormalizedByteEquality": "passed"
+    },
     "generatedArtifacts": {
       "browser": {
         "target": "stock Haxe JavaScript used only as a no-runtime evidence carrier",
@@ -159,8 +169,12 @@
       "server": {
         "target": "stock Haxe PHP used only as a no-runtime evidence carrier",
         "fileCount": 16,
-        "sizeBytes": 212498,
-        "contentTreeSha256": "750c7072758d3b7ab65536debd32f76c964427453cbd1ea3ac4b0e4b094c4770"
+        "rawSizeBytesLocalMacosArm64": 106249,
+        "rawSizePolicyMaximumBytes": 120000,
+        "normalizedSizeBytes": 90153,
+        "normalizedStdlibSourceMarkerCount": 503,
+        "normalizedContentTreeSha256": "a45feae15916d41161ca667a336954a196239445c88443282523c06f45173822",
+        "normalizationReason": "stock Haxe PHP source comments embed the absolute installed standard-library root; semantic code and all other bytes match across the observed hosts"
       },
       "secondCleanCompileMatched": true,
       "parserCoconutVdomRegistryResolverLeakScan": "passed"
@@ -199,7 +213,7 @@
     "futureUse": "SDK-081 and SDK-083 may adapt their neutral segment vocabulary and WordPress theme/admin oracle cases with per-file provenance"
   },
   "hostedVerification": {
-    "status": "pending-first-main-run",
+    "status": "pending-successful-main-run",
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "discardedBootstrapAttempts": [
@@ -216,6 +230,13 @@
         "commit": "20f3baefd24a3b2f8cc38728c7d31dca840f1c2d",
         "outcome": "failed-during-hxx-gate",
         "reason": "the runner invoked setup-haxe directly after Lix downloaded the exact scoped closure; the gate now invokes the npm-installed Lix Haxe shim explicitly"
+      },
+      {
+        "runId": 29611900801,
+        "jobId": 87988258092,
+        "commit": "514835f25d146f3a8af12fc175486649658dc72b",
+        "outcome": "failed-after-semantic-hxx-gates",
+        "reason": "stock Haxe PHP source comments embed the host-specific absolute standard-library root; all 503 differences normalize to identical macOS arm64 and Linux amd64 bytes while other absolute source markers now fail closed"
       }
     ]
   },
@@ -236,6 +257,7 @@
     "Full HTML, SVG, ARIA, event/ref, output-context, trusted-fragment, and WordPress component contracts remain later beads.",
     "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings but compiles and passes all selected fixtures.",
     "The pinned npm package lix@15.12.4 reports CLI version 15.12.2; package and reported CLI identities are recorded separately.",
+    "Stock Haxe PHP evidence carriers retain the installed standard-library root in source comments; only that known prefix is normalized for the evidence digest, while any other absolute generated source marker fails the gate.",
     "No installed WordPress, theme rendering, Gutenberg React, package ZIP, or production-support claim is advanced."
   ],
   "claims": {
