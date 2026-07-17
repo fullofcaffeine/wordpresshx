@@ -25,6 +25,7 @@ required_files=(
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/architecture/browser-compiler.md
+  docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
   docs/architecture/repository-layout.md
   docs/product/README.md
