@@ -4,6 +4,8 @@
 
 It is the application/site-level alternative for teams that want a Haxe-first development experience without replacing WordPress Core. A project may begin with typed interfaces to existing WordPress, PHP, plugin, and browser code, then move only the bounded implementations it chooses into Haxe. A new site may instead use Haxe/HXX as its complete maintained code and configuration surface. Both paths emit ordinary native WordPress artifacts; handwritten PHP and JavaScript are optional interoperability tools, not required authoring layers.
 
+Haxe inline HXX is the primary UI surface: typed components, props, children, slots, WordPress helpers, design refs, and real Haxe expressions lower at compile time to proportionate native PHP/HTML or Genes TSX. The generic PHP compiler owns reusable typed markup lowering; the WordPress profile adds native hierarchy/helper ergonomics. No HXX parser, component registry, VDOM, or template runtime ships with a site. Existing templates and raw/native code remain explicit checked escape boundaries.
+
 Canonical source: [github.com/fullofcaffeine/wordpresshx](https://github.com/fullofcaffeine/wordpresshx).
 
 > **Status: bootstrap / pre-feasibility.** There is no released SDK, supported compatibility profile, installable package, or production-readiness claim yet. The feasibility gates in the product requirements document decide when any narrower claim becomes valid.

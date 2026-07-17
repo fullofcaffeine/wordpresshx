@@ -2148,7 +2148,7 @@ Diagnostics name the native concept and a concrete remediation; they should not 
 
 ## 18.1 Principle
 
-HXX is a typed authoring syntax and AST, not a runtime. It lowers at build time to one of:
+HXX and Haxe 4 inline markup are the primary high-density UI authoring surface for Haxe-owned sites, themes, blocks, plugins, and admin UI. HXX is a typed authoring syntax and AST, not a runtime. It lowers at build time to one of:
 
 - React TSX/JSX or typed React calls for Gutenberg/browser UI;
 - ordinary PHP/HTML template files or PHP expression trees for server/admin/theme rendering;
@@ -2156,9 +2156,11 @@ HXX is a typed authoring syntax and AST, not a runtime. It lowers at build time 
 
 No HXX parser, virtual DOM, component registry, or template resolver ships solely to render server templates at runtime.
 
+Canonical code uses inline markup with real Haxe expressions, not HTML strings wrapped in a macro. String-form HXX and external native templates are migration/interoperability surfaces. The enclosing typed return/entry contract selects server or browser lowering; ordinary authors do not choose an emitter at every markup expression.
+
 ## 18.2 Parser and typed resolution
 
-Use `tink_hxx` as a source/architecture reference and, if compatible, a pinned dependency for parsing and node concepts. WordPress-specific behavior belongs in SDK generators:
+ADR-011 selects Haxelib `tink_hxx` `0.25.1` as a pinned compile-time parser dependency. It is consumed behind an internal adapter for positioned syntax nodes and required parser helpers only. Its generic generator types do not become public SDK contracts, and its release artifact/transitive graph must be resolved by SDK-080 before implementation claims advance. WordPress-specific behavior belongs in SDK generators:
 
 - HTML tag prop/event types;
 - React/Gutenberg component resolution;
@@ -2168,7 +2170,13 @@ Use `tink_hxx` as a source/architecture reference and, if compatible, a pinned d
 - child/slot contracts;
 - source locations.
 
-Do not fork syntax casually. Any divergence needs an ADR and parser diagnostics/tests.
+Do not fork syntax casually. Generic parser defects are reduced to neutral upstream fixtures; a maintained fork or syntax divergence needs a superseding ADR, provenance, release authority, diagnostics, and regression tests.
+
+Parsing produces a positioned neutral syntax tree. The adapter then produces Haxe resolver expressions so the normal Haxe typer validates props, children, slots, generics, nullability, callbacks, and embedded expressions. Typed server/browser semantic plans are built only after that phase. No target-language expression parser is hidden in normal HXX.
+
+Shared syntax includes elements, components, fragments, typed expression children, conditionals, loops, switches, bindings, statically typed attribute spreads, child spreads, and named slots. Server and browser node/result types remain distinct; a component is target-specific unless both lowerers prove an explicit portable subset.
+
+High-density typed abstractions cover native HTML/SVG, WordPress navigation/template parts/post fields/loops/pagination/nonces/admin/forms/block wrappers/media/i18n, theme parts/patterns/design tokens, and Gutenberg components. They compile away to direct native structure and calls. Coconut UI and `tink_domspec` are ergonomics/type-catalog references only; no Coconut state, view, renderer, or VDOM dependency is introduced.
 
 ## 18.3 Browser HXX
 
@@ -2182,11 +2190,12 @@ Requirements:
 - spread values use closed structural types where possible;
 - generated TSX remains readable;
 - accessibility labels and relationships can use typed refs/message keys;
-- raw JSX strings are not an escape route.
+- raw JSX strings are not an escape route;
+- HXX adds no UI runtime beyond the already selected Gutenberg/React authority.
 
 ## 18.4 Server HXX
 
-Server HXX builds a typed HTML/PHP segment AST. Text and attributes carry output-context types. WordPress helpers are target-shaped components/functions, for example:
+Server HXX is part of the PHP compiler family. The generic `compiler/reflaxe.php` layer owns a reusable typed PHP-markup IR and deterministic native PHP/HTML lowering for positioned markup, dynamic segments, control flow, output contexts, source correlation, and density accounting. It contains no WordPress symbols or behavior. `compiler/wordpress` plus the SDK HXX/server adapters extend that generic layer with hierarchy, template scope, exact profiles, escaping policy, and WordPress-native helper components/functions, for example:
 
 - `WpLink` requiring `EscapedUrl` and text children;
 - `NonceField` requiring a typed nonce action;
@@ -2195,6 +2204,8 @@ Server HXX builds a typed HTML/PHP segment AST. Text and attributes carry output
 - `BlockMarkup` integrating server-rendered block wrapper attributes.
 
 The emitter may generate direct HTML with `<?php ... ?>` expressions or PHP string/echo statements depending on the file plan. The choice is deterministic and visible; it cannot change caller-scope behavior silently.
+
+This generic typed-markup layer replaces hand-authored mixed PHP markup for Haxe-owned templates. Static markup stays static; loops and branches become direct PHP control flow; typed helper components become recognizable WordPress calls or bounded native helpers. Runtime node traversal, reflection tables, generic component registries, and HXX support libraries are forbidden. Representative fixtures record source-to-output density and require justification for material support bytes or indirection.
 
 ## 18.5 Template ownership modes
 
@@ -2206,6 +2217,8 @@ The emitter may generate direct HTML with `<?php ... ?>` expressions or PHP stri
 | Raw target escape | Reviewed raw segment | Manifest waiver, source hash, removal gate |
 
 MVP should support Haxe-owned bounded templates and external references. Arbitrary partial conversion of legacy mixed PHP/HTML is not an MVP requirement.
+
+Escape hatches are tried in this order: typed facade/component; checked existing native template/component; typed external contract; policy-produced trusted fragment; waivered unsafe raw target segment. Their API names expose the boundary (`existing`, `external`, `trusted`, or `unsafe`). Missing files, path traversal, untyped locals, normal-HXX target expressions, and unrecorded raw segments fail closed. The greenfield Haxe-only happy path requires no escape.
 
 ## 18.6 WordPress template semantics
 
@@ -2242,7 +2255,9 @@ HXX becomes stable only after fixtures prove:
 - source maps through generated TSX;
 - manifest/provenance integration;
 - no shipped runtime template engine;
-- external-template coexistence and collision safety.
+- external-template coexistence and collision safety;
+- canonical inline-markup ergonomics and useful compile-time prop/child/slot diagnostics;
+- proportionate readable output with a density snapshot and no generic runtime indirection.
 
 ---
 

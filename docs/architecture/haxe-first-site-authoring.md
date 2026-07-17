@@ -120,7 +120,41 @@ class AcmeTheme {
 }
 ```
 
-The eventual HXX syntax is selected by ADR-011. Regardless of syntax, template expressions remain typed Haxe and the result carries an explicit output-safety type.
+ADR-011 selects Haxe 4 inline markup as the primary HXX surface. A typical component keeps typed data, control flow, and markup together without a string-template wrapper:
+
+```haxe
+typedef PostCardProps = {
+  final post:PostSummary;
+}
+
+class PostCard {
+  public static function render(props:PostCardProps):ServerNode {
+    return <article class={Styles.card}>
+      <h2><WpLink href={props.post.url}>{props.post.title}</WpLink></h2>
+      <PostExcerpt value={props.post.excerpt} />
+    </article>;
+  }
+}
+
+class FrontPage {
+  public static function render(model:FrontPageModel):ServerNode {
+    return <main class={Styles.page}>
+      <SiteHeader navigation={model.navigation} />
+      <section class={Styles.posts} aria-label={Messages.latestPosts}>
+        {for (post in model.posts)
+          <PostCard post={post} />
+        }
+      </section>
+    </main>;
+  }
+}
+```
+
+The exact API names remain illustrative. The contract is not: component props, children, named slots, attributes, refs, profile capabilities, and embedded expressions are compile-time checked; target-specific return types select server or browser lowering; generated output contains native structure and framework calls rather than a component registry or HXX runtime.
+
+High-density abstractions cover recurring WordPress concepts such as navigation, template parts, loops, pagination, post fields, nonces, admin notices, forms, block wrappers, media, translations, theme parts/patterns, design tokens, and Gutenberg components. Server abstractions extend the generic typed PHP-markup capability in `reflaxe.php`; the WordPress compiler profile maps them to native semantics. Each abstraction must compile to proportionate, recognizable PHP/HTML or Genes TSX. Concise Haxe is not successful if it produces opaque scaffolding.
+
+Escape hatches follow an explicit checked hierarchy: typed facade first, checked existing native template/component, typed external contract, policy-produced trusted fragment, then a waivered unsafe raw target segment. Escape API names reveal the boundary, and the complete Haxe/HXX happy path requires none of them.
 
 ## Build and development flow
 

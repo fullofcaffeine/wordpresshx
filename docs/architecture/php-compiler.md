@@ -36,6 +36,20 @@ The initial import contains typed statements and expressions for control flow, a
 
 The fixture is neutral: it compiles and prints a PHP program that sums a native array and emits JSON. It also snapshots representative closures, control flow, exceptions, arrays, names, and string escaping, plus negative injection-shaped inputs.
 
+## Planned typed-markup capability
+
+ADR-011 makes server HXX a first-class generic compiler capability. A future `reflaxe.php` slice owns a neutral, typed PHP-markup IR for positioned elements/text, typed dynamic segments, attributes, control flow, output contexts, source correlation, and deterministic mixed PHP/HTML rendering. This replaces handwritten mixed PHP markup for Haxe-owned templates; it does not introduce a runtime parser, VDOM, component registry, template resolver, or request dispatcher.
+
+The WordPress extension remains outside the generic package. `compiler/wordpress` plus the SDK HXX/server layer maps typed WordPress components—hierarchy/templates, loops/post fields, navigation, parts, nonces, admin/forms, blocks, media, i18n, and native helpers—onto the generic markup IR. Generic fixtures must remain neutral, and repository checks must reject WordPress symbols or profile branches in `compiler/reflaxe.php`.
+
+```text
+reflaxe.php typed markup IR/lowerer
+                <- compiler/wordpress adapters
+                <- SDK HXX/server abstractions
+```
+
+SDK-080 proves the pinned parser adapter. SDK-081 owns the generic markup and WordPress-extension implementation, independently gated, after SDK-052 establishes output-context security types. Browser HXX is not part of this lane; it continues through Genes.
+
 ## Evidence status
 
 The package test passed with Haxe 4.3.7 and formatter 1.18.0. The generated namespaced file passes lint and runtime execution on exact PHP 7.4.33 and PHP 8.4.7 container images with output `{"total":14,"count":4,"error":"RuntimeException","label":"generic"}`. The fixture exercises native indexed/associative arrays, callable class-method arrays, a typed static method, a by-reference parameter and local alias, and native exception/catch behavior.
@@ -65,6 +79,7 @@ The package does not yet claim:
 - Haxe runtime/stdlib ownership;
 - serialized source maps, trace CLI, or production diagnostics;
 - WordPress support, public ABI compatibility, or original-path emission;
+- typed HXX/PHP-markup IR or mixed PHP/HTML lowering;
 - publication eligibility.
 
 SDK-021 establishes the structural IR/printer foundation through neutral fixtures. SDK-025 owns serialized source correlation, and the WordPress profile begins separately under SDK-022 after the public/private emission decision.

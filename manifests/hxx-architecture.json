@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-011",
+  "status": "accepted-architecture",
+  "claim": "not-implemented",
+  "authoring": {
+    "primarySyntax": "haxe-4-inline-markup",
+    "embeddedExpressions": "normal-haxe-typed-expressions",
+    "stringTemplateStatus": "migration-or-interop-only",
+    "happyPathRequiresEscapeHatch": false
+  },
+  "parser": {
+    "policy": "pinned-public-compile-time-dependency",
+    "package": "tink_hxx",
+    "selectedVersion": "0.25.1",
+    "tag": "0.25.1",
+    "tagObjectType": "commit",
+    "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+    "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+    "usage": "parser-positioned-syntax-and-required-helpers-only",
+    "publicTinkTypesExposed": false,
+    "releaseArtifactAndTransitivesResolved": false,
+    "resolutionOwner": "wordpresshx-sdk-080",
+    "forkPolicy": "no-fork-without-superseding-adr"
+  },
+  "pipeline": [
+    "haxe-inline-markup",
+    "tink-hxx-parser-adapter",
+    "positioned-neutral-syntax-tree",
+    "haxe-resolver-expressions",
+    "normal-haxe-typing",
+    "typed-markup-contract",
+    "target-semantic-plan",
+    "native-target-lowering"
+  ],
+  "lowerers": [
+    {
+      "id": "server",
+      "output": "native-php-html-wordpress-calls-or-static-markup",
+      "runtimeAuthority": "wordpress-php",
+      "genericCompilerOwner": "compiler/reflaxe.php",
+      "genericCapability": "typed-php-markup-ir-and-lowering",
+      "wordpressExtensionOwner": "compiler/wordpress-and-sdk-server-hxx",
+      "nodeTypeSharedWithOtherTargets": false
+    },
+    {
+      "id": "browser",
+      "output": "strict-tsx-or-typed-element-calls-through-genes",
+      "runtimeAuthority": "gutenberg-react-browser",
+      "nodeTypeSharedWithOtherTargets": false
+    }
+  ],
+  "typedAbstractions": [
+    "html-and-svg-elements",
+    "typed-props-children-and-named-slots",
+    "statically-closed-attribute-and-child-spreads",
+    "wordpress-native-helper-components",
+    "theme-layout-part-pattern-and-block-composition",
+    "design-token-class-id-aria-url-message-hook-event-and-route-refs",
+    "pure-local-presentation-helpers"
+  ],
+  "phpMarkupOwnership": {
+    "genericOwner": "compiler/reflaxe.php",
+    "genericImportsWordpressSdk": false,
+    "wordpressExtensionOwner": "compiler/wordpress-and-sdk-server-hxx",
+    "browserCompilerOwner": "genes-ts",
+    "handwrittenMixedPhpMarkupRequiredOnHappyPath": false
+  },
+  "outputContexts": [
+    "text",
+    "attribute",
+    "url",
+    "css",
+    "html",
+    "json-script-data",
+    "browser-event-ref"
+  ],
+  "escapeHatchOrder": [
+    "typed-facade-or-component",
+    "checked-existing-native-template-or-component",
+    "typed-external-contract",
+    "policy-produced-trusted-fragment",
+    "waivered-unsafe-raw-target-segment"
+  ],
+  "densityPolicy": {
+    "staticMarkupStaysStatic": true,
+    "directNativeControlFlow": true,
+    "directNativeFrameworkCalls": true,
+    "unusedAbstractionsEmitted": false,
+    "materialSupportBytesRequireReceipt": true,
+    "snapshotOwner": "wordpresshx-sdk-080"
+  },
+  "prohibitedRuntime": [
+    "hxx-parser",
+    "tink-hxx-implementation",
+    "coconut-runtime",
+    "virtual-dom",
+    "generic-component-registry",
+    "template-resolver",
+    "wordpress-request-dispatcher"
+  ],
+  "referenceOnly": [
+    "coconut-ui",
+    "tink-domspec",
+    "phoenixhx-hxx-lowering",
+    "railshx-typed-views"
+  ]
+}

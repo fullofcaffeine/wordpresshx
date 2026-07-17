@@ -25,6 +25,7 @@ required_files=(
   docs/adr/003-package-topology-and-lockstep-versioning.md
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/008-profile-generation-and-api-classification.md
+  docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/architecture/browser-compiler.md
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
@@ -82,6 +83,7 @@ required_files=(
   docker/wordpress/health.php
   docker/wordpress/install.php
   manifests/README.md
+  manifests/hxx-architecture.json
   manifests/package-topology.json
   manifests/upstream.lock.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -256,6 +258,9 @@ image_lock = json.loads(
 package_topology = json.loads(
     Path("manifests/package-topology.json").read_text(encoding="utf-8")
 )
+hxx_architecture = json.loads(
+    Path("manifests/hxx-architecture.json").read_text(encoding="utf-8")
+)
 sdk090_receipt = json.loads(
     Path("manifests/evidence/sdk-090-wordpress-harness.json").read_text(
         encoding="utf-8"
@@ -372,6 +377,68 @@ assert len(independent_admission["criteria"]) == 6
 assert independent_admission[
     "widerFamilySharedContractRequiresTwoRealConsumers"
 ] is True
+
+assert hxx_architecture["schemaVersion"] == 1
+assert hxx_architecture["decision"] == "ADR-011"
+assert hxx_architecture["status"] == "accepted-architecture"
+assert hxx_architecture["claim"] == "not-implemented"
+assert hxx_architecture["authoring"]["primarySyntax"] == (
+    "haxe-4-inline-markup"
+)
+assert hxx_architecture["authoring"]["happyPathRequiresEscapeHatch"] is False
+hxx_parser = hxx_architecture["parser"]
+assert hxx_parser["policy"] == "pinned-public-compile-time-dependency"
+assert hxx_parser["package"] == "tink_hxx"
+assert hxx_parser["selectedVersion"] == hxx_parser["tag"] == "0.25.1"
+assert hxx_parser["tagObjectType"] == "commit"
+assert hxx_parser["commit"] == (
+    "75ef63c78851fcd7c1846d74959cbd4cea0b4ced"
+)
+assert hxx_parser["tree"] == (
+    "ef1ae3be1574e745c7877f5567d9b76ea36dca47"
+)
+assert sha1.fullmatch(hxx_parser["commit"])
+assert sha1.fullmatch(hxx_parser["tree"])
+assert hxx_parser["publicTinkTypesExposed"] is False
+assert hxx_parser["releaseArtifactAndTransitivesResolved"] is False
+assert hxx_parser["resolutionOwner"] == "wordpresshx-sdk-080"
+assert hxx_parser["forkPolicy"] == "no-fork-without-superseding-adr"
+assert [lowerer["id"] for lowerer in hxx_architecture["lowerers"]] == [
+    "server",
+    "browser",
+]
+assert all(
+    lowerer["nodeTypeSharedWithOtherTargets"] is False
+    for lowerer in hxx_architecture["lowerers"]
+)
+server_lowerer = hxx_architecture["lowerers"][0]
+assert server_lowerer["genericCompilerOwner"] == "compiler/reflaxe.php"
+assert server_lowerer["wordpressExtensionOwner"] == (
+    "compiler/wordpress-and-sdk-server-hxx"
+)
+php_markup = hxx_architecture["phpMarkupOwnership"]
+assert php_markup["genericOwner"] == "compiler/reflaxe.php"
+assert php_markup["genericImportsWordpressSdk"] is False
+assert php_markup["browserCompilerOwner"] == "genes-ts"
+assert php_markup["handwrittenMixedPhpMarkupRequiredOnHappyPath"] is False
+assert hxx_architecture["escapeHatchOrder"] == [
+    "typed-facade-or-component",
+    "checked-existing-native-template-or-component",
+    "typed-external-contract",
+    "policy-produced-trusted-fragment",
+    "waivered-unsafe-raw-target-segment",
+]
+assert hxx_architecture["densityPolicy"]["staticMarkupStaysStatic"] is True
+assert hxx_architecture["densityPolicy"]["unusedAbstractionsEmitted"] is False
+assert set(hxx_architecture["prohibitedRuntime"]) == {
+    "hxx-parser",
+    "tink-hxx-implementation",
+    "coconut-runtime",
+    "virtual-dom",
+    "generic-component-registry",
+    "template-resolver",
+    "wordpress-request-dispatcher",
+}
 
 assert lock["schemaVersion"] == 1
 assert lock["lockStatus"] == "partial"
