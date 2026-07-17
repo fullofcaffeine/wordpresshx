@@ -111,6 +111,8 @@ Server HXX is a first-class capability of the co-located generic PHP compiler, n
 
 This generic layer replaces handwritten mixed PHP markup for Haxe-owned templates with a typed compiler surface. It does not replace the PHP runtime, own WordPress routing, or become an HTML framework runtime.
 
+The intended public ergonomics are direct markup returns from typed render/template methods, for example `return <main>...</main>`. The method result type or an HXX-enabled component/template contract supplies the target context and triggers compile-time lowering. Parser macro wrappers used by bounded prototypes remain internal or explicit advanced boundaries; they must not become ceremony required at every render site. Automatic lowering is admitted only inside declared HXX contexts, never as an unscoped rewrite of arbitrary Haxe syntax.
+
 `compiler/wordpress` and the SDK server/HXX modules extend the generic markup lowering through registered, typed profile adapters. They own WordPress hierarchy identities, template globals/locals, loop/post semantics, navigation, template parts, nonces, admin UI, forms, blocks, media, translations, profile capability checks, native helper calls, and WordPress-specific escaping policy.
 
 The dependency remains one-way:

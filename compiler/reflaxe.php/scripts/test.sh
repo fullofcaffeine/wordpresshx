@@ -22,9 +22,21 @@ if [[ "${actual_output}" != "${expected_output}" ]]; then
   exit 1
 fi
 
-if rg -n -i 'wordpress|gutenberg|wphx|@:wp\.|wordpresshx-port|compiler/wordpress|packages/' src test test.hxml; then
+if isolation_scan_output="$(
+  grep -R -n -i -E \
+    'wordpress|gutenberg|wphx|@:wp\.|wordpresshx-port|compiler/wordpress|packages/' \
+    src test test.hxml 2>&1
+)"; then
+  printf '%s\n' "${isolation_scan_output}"
   echo "WordPress or SDK coupling detected in the generic compiler package" >&2
   exit 1
+else
+  isolation_scan_status=$?
+  if (( isolation_scan_status != 1 )); then
+    printf '%s\n' "${isolation_scan_output}" >&2
+    echo "generic compiler isolation scan failed" >&2
+    exit 1
+  fi
 fi
 
 echo "reflaxe.php PHP runtime fixture passed"

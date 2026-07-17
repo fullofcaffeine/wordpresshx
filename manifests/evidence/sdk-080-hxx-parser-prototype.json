@@ -202,13 +202,22 @@
     "status": "pending-first-main-run",
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "discardedBootstrapAttempt": {
-      "runId": 29610841831,
-      "jobId": 87984877911,
-      "commit": "b6a8e10315923fd2a9a0c1468380a096d12e06e9",
-      "outcome": "failed-before-hxx-gate",
-      "reason": "the workflow requested unpublished npm package lix@15.12.2; the published lix@15.12.4 package reports CLI version 15.12.2"
-    }
+    "discardedBootstrapAttempts": [
+      {
+        "runId": 29610841831,
+        "jobId": 87984877911,
+        "commit": "b6a8e10315923fd2a9a0c1468380a096d12e06e9",
+        "outcome": "failed-before-hxx-gate",
+        "reason": "the workflow requested unpublished npm package lix@15.12.2; the published lix@15.12.4 package reports CLI version 15.12.2"
+      },
+      {
+        "runId": 29611349810,
+        "jobId": 87986520058,
+        "commit": "20f3baefd24a3b2f8cc38728c7d31dca840f1c2d",
+        "outcome": "failed-during-hxx-gate",
+        "reason": "the runner invoked setup-haxe directly after Lix downloaded the exact scoped closure; the gate now invokes the npm-installed Lix Haxe shim explicitly"
+      }
+    ]
   },
   "changeDecision": {
     "tinkHxxSourceChanged": false,
@@ -220,6 +229,7 @@
   },
   "knownLimitations": [
     "The serialized semantic snapshot is evidence-only; it is not a runtime node model or supported public renderer.",
+    "The evidence corpus uses the explicit ServerHxx.render macro boundary; direct markup returns from typed render/template methods remain required SDK-081 public ergonomics.",
     "Native PHP/HTML lowering through reflaxe.php remains SDK-081.",
     "Genes TSX/element lowering remains SDK-032; the browser artifact here only proves macro erasure and target-plan parity.",
     "for, switch, let, and nested inline markup inside expressions fail explicitly in this bounded prototype.",

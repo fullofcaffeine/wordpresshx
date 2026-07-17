@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "receiptId": "SDK-021-PHP-IR-PRINTER",
-  "observedAt": "2026-07-17T01:01:28-06:00",
+  "observedAt": "2026-07-17T20:34:16Z",
   "bead": "wordpresshx-sdk-021",
   "subject": {
     "package": "reflaxe.php",
     "path": "compiler/reflaxe.php",
     "version": "0.0.0",
     "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
-    "packageContentSha256": "a459c51c8a8200add95630d59994fd1318963f368424c5563035acef1f1482cd"
+    "packageContentSha256": "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6"
   },
   "toolchain": {
     "haxe": "4.3.7",
@@ -73,6 +73,7 @@
         "defensive-copy regression",
         "source/generated range preservation",
         "unsafe name/operator/path rejection",
+        "portable fail-closed generic isolation scan",
         "local PHP lint and runtime"
       ]
     },

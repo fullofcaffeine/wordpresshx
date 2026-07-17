@@ -4,19 +4,23 @@ set -euo pipefail
 package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 repository_root="$(git -C "${package_root}" rev-parse --show-toplevel)"
 
-if [[ "$(cd "${package_root}" && haxe --version)" != "4.3.7" ]]; then
-  echo "SDK-080 HXX gate requires Haxe 4.3.7" >&2
-  exit 1
-fi
-if ! command -v lix >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+if ! command -v lix >/dev/null 2>&1 \
+  || ! command -v npm >/dev/null 2>&1 \
+  || ! command -v node >/dev/null 2>&1; then
   echo "SDK-080 HXX gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
   exit 1
 fi
 lix_package_path="$(npm root --global)/lix/package.json"
+lix_haxe="$(npm prefix --global)/bin/haxe"
 if [[ ! -f "${lix_package_path}" ]] \
+  || [[ ! -x "${lix_haxe}" ]] \
   || [[ "$(node -p 'require(process.argv[1]).version' "${lix_package_path}")" != "15.12.4" ]] \
   || [[ "$(lix --version)" != "15.12.2" ]]; then
   echo "SDK-080 HXX gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
+  exit 1
+fi
+if [[ "$(cd "${package_root}" && "${lix_haxe}" --version)" != "4.3.7" ]]; then
+  echo "SDK-080 HXX gate requires Lix-scoped Haxe 4.3.7" >&2
   exit 1
 fi
 
@@ -40,14 +44,14 @@ trap 'rm -rf "${build_root}"' EXIT
 
 (
   cd "${package_root}"
-  haxe \
+  "${lix_haxe}" \
     -lib tink_hxx \
     -cp src \
     -cp test-positive/server \
     -main Main \
     -dce full \
     -php "${build_root}/server"
-  haxe \
+  "${lix_haxe}" \
     -lib tink_hxx \
     -cp src \
     -cp test-positive/browser \
@@ -64,11 +68,21 @@ python3 "${package_root}/scripts/verify-snapshots.py" \
   "${build_root}/server.json" \
   "${build_root}/browser.json"
 
-if rg -n -i \
-  'tink[._/]hxx|coconut|virtual.?dom|component.?registry|template.?resolver' \
-  "${build_root}/server" "${build_root}/browser.js"; then
+if leak_scan_output="$(
+  grep -R -n -i -E \
+    'tink[._/]hxx|coconut|virtual.?dom|component.?registry|template.?resolver' \
+    "${build_root}/server" "${build_root}/browser.js" 2>&1
+)"; then
+  printf '%s\n' "${leak_scan_output}"
   echo "compile-time HXX/parser or prohibited UI runtime leaked into output" >&2
   exit 1
+else
+  leak_scan_status=$?
+  if (( leak_scan_status != 1 )); then
+    printf '%s\n' "${leak_scan_output}" >&2
+    echo "compile-time HXX/parser runtime-leak scan failed" >&2
+    exit 1
+  fi
 fi
 
 browser_bytes="$(wc -c <"${build_root}/browser.js" | tr -d ' ')"
@@ -102,7 +116,7 @@ fi
 spread_override_output="$(mktemp "${TMPDIR:-/tmp}/wordpresshx-sdk080-override.XXXXXX")"
 (
   cd "${package_root}"
-  haxe \
+  "${lix_haxe}" \
     -lib tink_hxx \
     -cp src \
     -cp test-positive/spread_override \
@@ -125,7 +139,12 @@ expect_compile_failure() {
   output="$(mktemp "${TMPDIR:-/tmp}/wordpresshx-sdk080-negative.XXXXXX")"
   if (
     cd "${package_root}"
-    haxe -lib tink_hxx -cp src -cp "test-negative/${fixture}" -main Main --interp
+    "${lix_haxe}" \
+      -lib tink_hxx \
+      -cp src \
+      -cp "test-negative/${fixture}" \
+      -main Main \
+      --interp
   ) >"${output}" 2>&1; then
     echo "negative HXX fixture unexpectedly compiled: ${label}" >&2
     rm -f "${output}"

@@ -217,6 +217,8 @@ The generated files must remain recognizable to a WordPress developer. Public PH
 
 Server HXX is a compile-time typed AST and lowerer, not a runtime templating system.
 
+The default public authoring form is a typed render/template method that returns inline markup directly (`return <main>...</main>`). Its declared server-markup result type or enclosing HXX-enabled component/template contract selects server lowering at compile time. Explicit calls such as the SDK-080 prototype's `ServerHxx.render(...)` are internal macro boundaries or advanced escape hatches, not the normal site-authoring API. Implicit lowering is scoped to declared HXX contexts so unrelated Haxe expressions are never reinterpreted.
+
 - Template identities map to real WordPress hierarchy paths.
 - Locals, loop items, component props, children, helpers, and partial refs are typed.
 - Text, attribute, URL, JavaScript, JSON, and raw-HTML contexts are distinct.
