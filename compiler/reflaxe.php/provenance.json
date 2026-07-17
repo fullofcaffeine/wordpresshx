@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "component": "reflaxe.php",
+  "status": "internal-pre-release",
+  "origin": {
+    "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
+    "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+    "tree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+    "license": "GPL-2.0-or-later",
+    "sources": [
+      {
+        "path": "src/wphx/compiler/php/WphxPhpCompiler.hx",
+        "blob": "b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c",
+        "sha256": "f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182",
+        "importedSymbols": [
+          "PhpCoreStmt",
+          "PhpCoreExpr",
+          "PhpCoreArrayEntry",
+          "emitPhpCoreStatements",
+          "emitPhpCoreStatement",
+          "emitPhpCoreExpr",
+          "emitPhpCoreLongArray",
+          "quote",
+          "indentation helpers"
+        ]
+      },
+      {
+        "path": "src/wphx/compiler/php/WphxPhpWordPressAdapters.hx",
+        "blob": "d32636d61fccca8634a224ff37ea30981f98b13c",
+        "sha256": "3507856113016d936ae40607cb89d58e4125835b5c7deb18770b39db04c590c8",
+        "importedSymbols": [],
+        "classification": "excluded-wordpress-profile-reference"
+      }
+    ],
+    "historyRoot": {
+      "commit": "ca1db2b24e834d68fbed96854c14f0edaae87c9c",
+      "subject": "Start in-repo WPHX PHP emitter"
+    }
+  },
+  "destination": {
+    "path": "compiler/reflaxe.php",
+    "namespace": "reflaxe.php",
+    "version": "0.0.0",
+    "releaseEligible": false,
+    "releaseBlockers": [
+      "wordpresshx-adr-020",
+      "wordpresshx-sdk-002"
+    ]
+  },
+  "transformations": [
+    "Moved the generic IR and printer from the mixed compiler class into independent modules.",
+    "Renamed PhpCoreExpr, PhpCoreStmt, and PhpCoreArrayEntry to PhpExpr, PhpStmt, and PhpArrayEntry while retaining constructor names for migration clarity.",
+    "Removed the raw PHP block statement from the generic IR.",
+    "Added fail-closed validation for identifiers, qualified names, magic constants, and binary operators.",
+    "Made deterministic printer entry points explicit public package APIs.",
+    "Replaced WPHX and WordPress fixture names with neutral compiler fixtures."
+  ],
+  "excludedResponsibilities": [
+    "WordPress adapter registry and adapter bodies",
+    "@:wp.* metadata interpretation",
+    "WordPress original-path file planning",
+    "full-port Haxe bootstrap and Core linker assumptions",
+    "WordPress template and direct-script segment plans",
+    "full-port emission manifest and ownership records",
+    "unproven Reflaxe driver and Haxe runtime/stdlib ownership"
+  ],
+  "review": {
+    "architecture": "wordpresshx-adr-004",
+    "implementation": "wordpresshx-sdk-020",
+    "licensing": "pending-wordpresshx-adr-020",
+    "publicationAuthorized": false
+  }
+}

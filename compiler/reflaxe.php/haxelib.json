@@ -1,0 +1,19 @@
+{
+  "name": "reflaxe.php",
+  "url": "",
+  "license": "GPL",
+  "tags": [
+    "compiler",
+    "haxe",
+    "php",
+    "reflaxe"
+  ],
+  "description": "Private pre-release workspace for a generic Reflaxe-based PHP compiler.",
+  "version": "0.0.0",
+  "classPath": "src",
+  "releasenote": "Internal feasibility package; publication is not authorized.",
+  "contributors": [
+    "fullofcaffeine"
+  ],
+  "dependencies": {}
+}

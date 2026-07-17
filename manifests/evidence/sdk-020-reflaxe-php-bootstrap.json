@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-020-REFLAXE-PHP-BOOTSTRAP",
+  "observedAt": "2026-07-16T19:24:43-06:00",
+  "bead": "wordpresshx-sdk-020",
+  "subject": {
+    "package": "reflaxe.php",
+    "path": "compiler/reflaxe.php",
+    "version": "0.0.0",
+    "canonicalRepositoryUrl": null,
+    "repositoryUrlFollowup": "wordpresshx-sdk-004",
+    "originRepository": "https://github.com/fullofcaffeine/wordpresshx-port",
+    "originCommit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+    "originTree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+    "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
+    "packageContentSha256": "4d29c245f9470772dbef55b839f22e86f03bc92223ed530e13ab479cf2d6c4c6"
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "formatter": "1.18.0",
+    "php84": "8.4.7",
+    "nodeForSourceAudit": "23.9.0",
+    "sourcePackageInstall": "npm ci --ignore-scripts; 5 packages audited, 0 vulnerabilities"
+  },
+  "localVerification": {
+    "packageTest": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed",
+      "coverage": [
+        "exact Haxe 4.3.7 and PHP floor preflight",
+        "Haxe formatter check",
+        "Haxe compile/interpreter assertions",
+        "deterministic PHP snapshot",
+        "invalid identifier/operator/magic-constant rejection",
+        "generic source coupling scan",
+        "PHP lint and runtime"
+      ]
+    },
+    "php84": {
+      "lintCommand": "php -l compiler/reflaxe.php/build/generic-printer-fixture.php",
+      "runtimeCommand": "php compiler/reflaxe.php/build/generic-printer-fixture.php",
+      "lintOutcome": "passed",
+      "runtimeOutcome": "passed",
+      "runtimeOutput": "{\"total\":6,\"label\":\"generic\"}"
+    },
+    "php74": {
+      "outcome": "not-tested",
+      "attemptedBinary": "/opt/homebrew/opt/php@7.4/bin/php",
+      "attemptedVersion": "7.4.33_9 installation",
+      "reason": "Binary cannot load missing /opt/homebrew/opt/aspell/lib/libaspell.15.dylib; Docker daemon is not running.",
+      "followup": "wordpresshx-sdk-021"
+    }
+  },
+  "sourceBaseline": {
+    "worktree": "clean detached worktree at origin commit; disposable and excluded from SDK inputs",
+    "cleanAggregateCheck": {
+      "command": "npm run wphx:php:adoption-ci:check",
+      "outcome": "failed",
+      "classification": "pre-existing-upstream-evidence-drift",
+      "reason": "Committed profile-core promotion manifest hashes an older WphxPhpCompiler.hx than the source at the same commit."
+    },
+    "cleanRelevantChecks": {
+      "outcome": "failed",
+      "classification": "pre-existing-upstream-evidence-drift",
+      "lanes": [
+        "wphx:php:core-lowering-pilot:check",
+        "wphx:php:native-array-mutation-core:check",
+        "wphx:php:callable-closure-core:check",
+        "wphx:php:static-dynamic-member-core:check",
+        "wphx:php:private-emitter-pilot:check"
+      ],
+      "reason": "Each committed manifest contains the prior compiler source hash."
+    },
+    "refreshedDisposableDiagnostic": {
+      "outcome": "passed",
+      "procedure": "Run each of the five relevant lanes without --check in the disposable worktree, then rerun all five with --check.",
+      "limitations": [
+        "Refreshed evidence was not committed and is not a clean-source check result.",
+        "The aggregate adoption gate remained unclaimed because additional committed rollup inputs are stale.",
+        "The source port repository was not modified or pushed."
+      ]
+    }
+  },
+  "boundary": {
+    "wordpressAdapterSourceImported": false,
+    "portRuntimeDependency": false,
+    "coreLinkerImported": false,
+    "rawPhpBlockNodeImported": false,
+    "wordpressIdentifiersInGenericHaxe": false,
+    "publicationAuthorized": false
+  },
+  "claims": {
+    "genericIrPrinter": "runtime-tested",
+    "php84": "runtime-tested",
+    "php74": "not-tested",
+    "reflaxeDriver": "not-tested",
+    "arbitraryHaxeBackend": "unsupported",
+    "wordpressSupport": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

@@ -7,7 +7,8 @@ The bootstrap reserves these concerns without declaring their package APIs:
 | Path | Intended concern | Decision/evidence gate |
 |---|---|---|
 | `packages/` | Candidate Haxe authoring and build packages | ADR-003; SDK-012/040 and later APIs |
-| `compiler/` | SDK WordPress profile over a released generic PHP compiler | ADR-004/005; G1 |
+| `compiler/reflaxe.php/` | Private 0.x generic PHP compiler package, independently extractable | ADR-004; SDK-020/021/027 |
+| `compiler/wordpress/` | SDK-owned WordPress PHP profile consuming the generic compiler API | ADR-004/005; SDK-022 |
 | `profiles/` | Exact WordPress/Gutenberg catalogs and manifests | ADR-002/008; G0 |
 | `schemas/` | Versioned project/profile/plan/ownership/evidence schemas | ADR-006/007/009/016 |
 | `tools/` | Profile/adoption/package/source-map tooling | Corresponding implementation beads |
@@ -27,4 +28,4 @@ profiles ----^             ^
 build/macros inspect these layers but do not ship as runtime dependencies
 ```
 
-The SDK may pin released generic compiler packages and public schemas. It may not import full-port implementation paths, Core linker machinery, or runtime state.
+The SDK may consume the private `compiler/reflaxe.php` workspace package during 0.x and may later pin its extracted releases. It may not import full-port implementation paths, Core linker machinery, runtime state, or a mutable sibling compiler checkout.

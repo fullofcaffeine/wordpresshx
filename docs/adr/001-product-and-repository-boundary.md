@@ -7,6 +7,7 @@
 - Profiles/layers: repository-wide; all SDK profiles, generic compiler boundaries, and provider claims
 - Supersedes: none; formalizes the provisional PRD recommendation
 - Superseded by: none
+- Amended by: ADR-004 permits a separately structured generic PHP compiler package inside this monorepo during 0.x
 
 ## Context
 
@@ -28,12 +29,14 @@ The full port remains the sole authority for whole-WordPress implementation owne
 
 The projects may share only boundaries that remain intelligible to an independent consumer:
 
-- released generic compiler packages or immutable compiler commits with hashes and test receipts;
+- released generic compiler packages, immutable compiler commits, or the private co-located PHP compiler package authorized by ADR-004, all with hashes and test receipts;
 - versioned public SDK packages, schemas, profile manifests, and documented command/ABI contracts;
 - independently materialized upstream WordPress/Gutenberg source and artifact snapshots with provenance;
 - minimized, license-compatible fixtures with explicit source and ownership;
 - unchanged final SDK package bytes submitted to another provider, with a provider qualification receipt;
 - architecture knowledge expressed as a new neutral contract, never as an import of private implementation state.
+
+ADR-004 refines the PHP compiler case: before an independent compiler release is justified, the generic PHP compiler may live in this repository as a private 0.x package with its own namespace, metadata, tests, provenance, and dependency gate. Co-location does not make WordPress SDK code part of the compiler. The package must remain mechanically extractable and may not consume port internals or mutable sibling paths.
 
 Contributor sibling checkouts may accelerate local diagnosis, but they are not release dependencies. A release must resolve every cross-project input to an immutable version/commit, tree/package digest, compatibility profile, evidence receipt, upgrade owner, and rollback identity.
 
@@ -49,7 +52,7 @@ The SDK must not import, copy as an undeclared fork, or execute against:
 
 The full port must not import unpublished SDK internals or treat an SDK scaffold/type catalog as implementation ownership. It may consume released public SDK contracts and report its own compatibility result for unchanged artifact bytes.
 
-Generic compiler repositories must not acquire WordPress hook names, package handles, plugin classes, SDK imports, or `if wordpress` lowering branches. A defect that can be stated without WordPress semantics is fixed generically; a WordPress-specific mapping or policy is implemented in this SDK.
+Generic compiler packages or repositories must not acquire WordPress hook names, package handles, plugin classes, SDK imports, or `if wordpress` lowering branches. A defect that can be stated without WordPress semantics is fixed generically; a WordPress-specific mapping or policy is implemented in this SDK.
 
 ### Dependency direction
 

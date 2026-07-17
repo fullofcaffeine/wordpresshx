@@ -52,7 +52,7 @@ Compiler, profile, PHP, browser, WordPress, and package checks will be added by 
 
 ## Compiler direction
 
-- PHP: continue the custom Reflaxe PHP compiler originating in `wordpresshx-port`, while extracting and pinning it as a reusable generic compiler package. The SDK must not import the port's Core linker, original-path replacement machinery, or internal source paths.
+- PHP: continue the custom Reflaxe PHP compiler originating in `wordpresshx-port` as an independently structured generic package under `compiler/reflaxe.php` in this monorepo during 0.x. The SDK must not import the port's Core linker, original-path replacement machinery, or internal source paths. [ADR-004](docs/adr/004-generic-php-compiler-home.md) defines the boundary and later extraction triggers.
 - Browser: use the sibling genes-ts project as the compiler authority. Any required change must be generalized in an isolated upstream worktree, protected by a non-WordPress regression fixture and the relevant full upstream suite, and submitted upstream before this repository pins it.
 
 The current browser-compiler baseline is the immutable genes-ts `v1.33.0` release. Its exact commit, tree, package digest, supported toolchains, upstream CI, and clean local replay are recorded in the [browser compiler pin](docs/architecture/browser-compiler.md); this is a compiler input pin, not yet a WordPress browser-support claim.
