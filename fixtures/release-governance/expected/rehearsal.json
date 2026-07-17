@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "reportKind": "wordpresshx-release-governance-rehearsal",
+  "reportDigestAlgorithm": "sha256-canonical-json-v1",
+  "reportDigest": "162f35982c0478c1c986c4ee0903e440f191dc2e84dbf5ea3acc7bb32add3c79",
+  "policyId": "wordpresshx-release-support-v1",
+  "scenarioSet": "sdk003-governance-rehearsal-v1",
+  "simulationOnly": true,
+  "resultCount": 4,
+  "results": [
+    {
+      "id": "immutable-rollback",
+      "kind": "immutable-rollback",
+      "outcome": "passed",
+      "owner": "Marcelo Serpa",
+      "decision": "reject-overwrite-publish-new-replacement-version",
+      "nextAction": "Restore the last known-good identity, rerun state/installation checks, and publish the replacement version.",
+      "evidence": "{\"badArtifactSha256\":\"78067bddab050aa4b3936314eb374c380afc361e89b15c40ccffdc0c57cdc4a2\",\"lastKnownGoodArtifactSha256\":\"1613df688602397ba0f12df2745aa6ed90afd037a6e05ed4ae4904933822a7f9\",\"replacementVersion\":\"1.0.2\"}"
+    },
+    {
+      "id": "private-security-intake-disabled",
+      "kind": "private-security-intake",
+      "outcome": "passed",
+      "owner": "Marcelo Serpa",
+      "decision": "blocked-request-secure-channel-before-details",
+      "nextAction": "Enable and test private vulnerability reporting; send no exploit details publicly.",
+      "evidence": "private-channel-enabled=false;public-details-allowed=false"
+    },
+    {
+      "id": "public-issue-triage",
+      "kind": "public-issue-triage",
+      "outcome": "passed",
+      "owner": "Marcelo Serpa",
+      "decision": "accepted-public-triage",
+      "nextAction": "Create or route a Bead with exact scope, evidence, severity, and no sensitive data.",
+      "evidence": "channel=github-issues;sensitive=false"
+    },
+    {
+      "id": "stable-release-attempt",
+      "kind": "stable-release-attempt",
+      "outcome": "passed",
+      "owner": "Marcelo Serpa",
+      "decision": "blocked-stable-publication",
+      "nextAction": "Resolve every recorded stable blocker; keep the candidate development-only.",
+      "evidence": "{\"blockers\":[\"backup-release-security-owner\",\"final-package-consumer-matrix\",\"g8-production-evidence\",\"licensing-and-output-review\",\"private-vulnerability-reporting\",\"production-release-rollback-rehearsal\"],\"candidateCommit\":\"3f0eced6a354f69704aa9e1385dd7d6611082060\",\"catalogDigest\":\"28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf\",\"profileId\":\"wp70-release\"}"
+    }
+  ],
+  "claims": {
+    "governanceDryRun": "passed",
+    "privateSecurityChannel": "blocked-disabled",
+    "stableReleaseReadiness": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

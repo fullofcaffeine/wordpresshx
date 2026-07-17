@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "policyId": "wordpresshx-release-support-v1",
+  "decision": "ADR-021",
+  "status": "accepted-policy-not-release-ready",
+  "currentState": {
+    "phase": "0.x-development",
+    "supportedVersions": [],
+    "publicationAllowed": false,
+    "stableReleaseAllowed": false,
+    "blockingConditions": [
+      "backup-release-security-owner",
+      "final-package-consumer-matrix",
+      "g8-production-evidence",
+      "licensing-and-output-review",
+      "private-vulnerability-reporting",
+      "production-release-rollback-rehearsal"
+    ]
+  },
+  "channels": [
+    {
+      "channel": "development",
+      "minimumIdentity": "exact-git-commit-and-receipts",
+      "support": "none-not-a-release",
+      "productionClaimAllowed": false
+    },
+    {
+      "channel": "nightly",
+      "minimumIdentity": "exact-git-commit-and-artifact-digest",
+      "support": "unsupported-no-retention-or-compatibility-promise",
+      "productionClaimAllowed": false
+    },
+    {
+      "channel": "preview",
+      "minimumIdentity": "exact-semver-prerelease-profile-manifest-and-checksums",
+      "support": "best-effort-triage-no-patch-or-backport-promise",
+      "productionClaimAllowed": false
+    },
+    {
+      "channel": "stable",
+      "minimumIdentity": "semver-1.0-or-later-exact-production-release-manifest",
+      "support": "finite-manifest-listed-term",
+      "productionClaimAllowed": true
+    },
+    {
+      "channel": "security-patch",
+      "minimumIdentity": "new-patch-version-advisory-and-replacement-hashes",
+      "support": "remaining-term-of-affected-active-stable-line",
+      "productionClaimAllowed": true
+    }
+  ],
+  "supportTerm": {
+    "defaultDays": 180,
+    "startAuthority": "immutable-release-publication-timestamp",
+    "exactUtcEndRequired": true,
+    "publishedEndMayMoveEarlier": false,
+    "successorEndsPriorTerm": false,
+    "olderPatchMaintenance": "superseded-by-latest-patch-on-active-minor",
+    "endOfSupportEffect": "artifacts-and-receipts-remain-no-fix-promise"
+  },
+  "profilePolicy": {
+    "authority": "exact-profile-catalog-digest-membership",
+    "firstStableCandidate": "wp70-release",
+    "forwardProfile": "gutenberg-forward-23.4-preview-only",
+    "versionRangeInferenceAllowed": false,
+    "unlistedRuntimeInferenceAllowed": false,
+    "supportCannotExceedSdkTerm": true
+  },
+  "matrixPolicy": {
+    "authority": "closed-exact-release-manifest",
+    "dimensions": [
+      "browser-engines",
+      "database-images",
+      "genes-and-browser-build",
+      "haxe-and-package-tools",
+      "operating-system-and-architecture",
+      "php-floor-and-runtime-lanes",
+      "profile-and-catalog",
+      "reflaxe-php-and-hxx-parser",
+      "wordpress-and-gutenberg"
+    ],
+    "rangeInferenceAllowed": false,
+    "newPatchAdmission": "new-sdk-patch-after-applicable-exact-matrix"
+  },
+  "deprecationPolicy": {
+    "minimumSubsequentStableMinors": 1,
+    "minimumDays": 180,
+    "normalRemovalRelease": "major",
+    "migrationRequired": true,
+    "machineClassificationRequired": true,
+    "securityWithdrawalMayBypassWindow": true,
+    "securityWithdrawalMode": "additive-claim-correction-with-advisory"
+  },
+  "securityPolicy": {
+    "privateIntake": {
+      "provider": "github-private-vulnerability-reporting",
+      "repository": "fullofcaffeine/wordpresshx",
+      "enabled": false,
+      "observedAt": "2026-07-17",
+      "observationCommand": "gh api repos/fullofcaffeine/wordpresshx/private-vulnerability-reporting"
+    },
+    "numericResponseSlaPromised": false,
+    "publicExploitDetailsAllowed": false,
+    "backportsLimitedToActiveStableTerms": true,
+    "activeStableDependencyReviewCadenceDays": 30,
+    "exactMatrixRerunRequired": true,
+    "artifactOverwriteAllowed": false
+  },
+  "owners": [
+    {
+      "responsibility": "backup-release-security-recovery",
+      "primary": "unassigned",
+      "backup": "unassigned",
+      "readiness": "stable-blocker"
+    },
+    {
+      "responsibility": "compatibility-profile-and-backport-scope",
+      "primary": "Marcelo Serpa",
+      "backup": "unassigned",
+      "readiness": "development-ready-stable-term-capacity-required"
+    },
+    {
+      "responsibility": "private-security-intake-and-coordination",
+      "primary": "Marcelo Serpa",
+      "backup": "unassigned",
+      "readiness": "blocked-private-channel-disabled"
+    },
+    {
+      "responsibility": "product-scope-and-claim-matrix",
+      "primary": "Marcelo Serpa",
+      "backup": "unassigned",
+      "readiness": "development-ready-stable-backup-required"
+    },
+    {
+      "responsibility": "release-publish-and-download-verification",
+      "primary": "Marcelo Serpa",
+      "backup": "unassigned",
+      "readiness": "blocked-until-protected-credential-rehearsal"
+    },
+    {
+      "responsibility": "rollback-revocation-and-claim-correction",
+      "primary": "Marcelo Serpa",
+      "backup": "unassigned",
+      "readiness": "blocked-until-final-artifact-rehearsal"
+    }
+  ],
+  "contributionPolicy": {
+    "routineMaintainerFlow": "direct-main-after-bead-scope-hooks-and-proportionate-gates",
+    "pullRequestRole": "coordination-for-external-or-hard-cross-repository-work-not-routine-local-gate",
+    "genesCompilerChange": "isolated-upstream-worktree-full-regression-then-pr",
+    "beadsRequired": true,
+    "hookBypassAllowed": false,
+    "automatedAgentIsAccountableOwner": false
+  },
+  "releasePolicy": {
+    "cleanCanonicalWorkflowOnly": true,
+    "doubleBuildRequired": true,
+    "downloadedByteVerificationRequired": true,
+    "apiProfileClaimDiffRequired": true,
+    "licenseSbomProvenanceRequired": true,
+    "unsafeInventoryRequired": true,
+    "upgradeRollbackExerciseRequired": true,
+    "localDirtyReleaseAllowed": false
+  },
+  "rollbackPolicy": {
+    "tagOrArtifactOverwriteAllowed": false,
+    "lastKnownGoodImmutableIdentityRequired": true,
+    "newReplacementVersionRequired": true,
+    "claimCorrectionAdditive": true,
+    "databaseRollbackRequiresProvenReversibleMigration": true,
+    "forwardRepairWhenStateRollbackUnsafe": true,
+    "downloadedReplacementVerificationRequired": true
+  },
+  "claims": {
+    "releasePolicy": "accepted",
+    "stableReleaseReadiness": "blocked",
+    "supportedVersions": "none",
+    "securityResponseSla": "not-promised",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

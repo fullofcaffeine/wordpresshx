@@ -33,6 +33,8 @@ required_files=(
   docs/architecture/repository-layout.md
   docs/product/README.md
   docs/release/README.md
+  docs/release/release-checklist.md
+  docs/release/rollback-checklist.md
   packages/README.md
   packages/core/README.md
   packages/core/test.hxml
@@ -116,6 +118,9 @@ required_files=(
   fixtures/profile-diffs/expected/correction.txt
   fixtures/profile-diffs/expected/upstream.json
   fixtures/profile-diffs/expected/upstream.txt
+  fixtures/release-governance/README.md
+  fixtures/release-governance/scenarios.json
+  fixtures/release-governance/expected/rehearsal.json
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -125,7 +130,9 @@ required_files=(
   manifests/README.md
   manifests/hxx-architecture.json
   manifests/package-topology.json
+  manifests/release-support-policy.json
   manifests/upstream.lock.json
+  manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
@@ -183,6 +190,7 @@ required_files=(
   scripts/profiles/test-profile-diff.py
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
+  scripts/release/test-governance.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
@@ -302,6 +310,15 @@ sdk013_receipt = json.loads(
 )
 sdk014_receipt = json.loads(
     Path("manifests/evidence/sdk-014-profile-diff.json").read_text(
+        encoding="utf-8"
+    )
+)
+release_policy_path = Path("manifests/release-support-policy.json")
+release_policy = json.loads(
+    release_policy_path.read_text(encoding="utf-8")
+)
+sdk003_receipt = json.loads(
+    Path("manifests/evidence/sdk-003-release-governance.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1492,6 +1509,60 @@ for unproven_claim in (
 ):
     assert sdk014_receipt["claims"][unproven_claim] == "not-tested"
 
+assert release_policy["schemaVersion"] == 1
+assert release_policy["policyId"] == "wordpresshx-release-support-v1"
+assert release_policy["decision"] == "ADR-021"
+assert release_policy["status"] == "accepted-policy-not-release-ready"
+assert release_policy["currentState"]["supportedVersions"] == []
+assert release_policy["currentState"]["publicationAllowed"] is False
+assert release_policy["currentState"]["stableReleaseAllowed"] is False
+assert release_policy["supportTerm"]["defaultDays"] == 180
+assert release_policy["securityPolicy"]["numericResponseSlaPromised"] is False
+assert release_policy["rollbackPolicy"]["tagOrArtifactOverwriteAllowed"] is False
+
+assert sdk003_receipt["schemaVersion"] == 1
+assert sdk003_receipt["receiptId"] == "SDK-003-RELEASE-GOVERNANCE"
+assert sdk003_receipt["bead"] == "wordpresshx-sdk-003"
+for evidence_subject in sdk003_receipt["subject"].values():
+    evidence_path = Path(evidence_subject["path"])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        evidence_subject["sha256"]
+    )
+assert sdk003_receipt["subject"]["policy"]["path"] == (
+    release_policy_path.as_posix()
+)
+sdk003_report = json.loads(
+    Path(sdk003_receipt["subject"]["expectedReport"]["path"]).read_text(
+        encoding="utf-8"
+    )
+)
+assert sdk003_report["reportDigest"] == sdk003_receipt["rehearsal"][
+    "reportDigest"
+]
+assert sdk003_report["simulationOnly"] is True
+assert sdk003_receipt["implementation"]["supportedVersionCount"] == 0
+assert sdk003_receipt["implementation"]["publicationAllowed"] is False
+assert sdk003_receipt["implementation"]["defaultStableSupportDays"] == 180
+assert sdk003_receipt["implementation"]["versionRangeInferenceAllowed"] is False
+assert sdk003_receipt["implementation"]["numericResponseSlaPromised"] is False
+assert sdk003_receipt["ownership"]["primary"] == "Marcelo Serpa"
+assert sdk003_receipt["ownership"]["backupReleaseSecurity"] == "unassigned"
+assert sdk003_receipt["ownership"]["automatedAgentAccountable"] is False
+assert sdk003_receipt["securityObservation"]["privateReportingEnabled"] is False
+assert sdk003_receipt["rehearsal"]["scenarioCount"] == 4
+assert sdk003_receipt["rehearsal"]["simulationOnly"] is True
+assert all(
+    scenario["outcome"] == "passed"
+    for scenario in sdk003_receipt["rehearsal"]["scenarios"]
+)
+assert sdk003_receipt["releaseBoundary"]["actualReleasePerformed"] is False
+assert sdk003_receipt["releaseBoundary"]["registryCredentialsUsed"] is False
+assert sdk003_receipt["hostedWorkflow"]["job"] == "release-governance"
+assert sdk003_receipt["hostedWorkflow"]["required"] is True
+assert sdk003_receipt["claims"]["stableReleaseReadiness"] == "blocked"
+assert sdk003_receipt["claims"]["supportedVersions"] == "none"
+assert sdk003_receipt["claims"]["productionSupport"] == "not-tested"
+
 assert image_lock["schemaVersion"] == 1
 assert set(image_lock["images"]) == {
     "mariadb",
@@ -1610,6 +1681,7 @@ python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/check-generated-catalogs.py
 python3 scripts/profiles/test-profile-diff.py
+python3 scripts/release/test-governance.py
 python3 scripts/docker/check-image-lock.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'

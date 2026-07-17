@@ -9,6 +9,8 @@ All notable project changes will be recorded here once versioning policy is acce
 - Independent SDK repository bootstrap and policy skeleton.
 - PRD-derived beads roadmap with gate, ADR, evidence, dependency, risk, and stop-condition metadata.
 - Repository layout and bootstrap validation check.
+- Exact-profile diff and upgrade diagnostics with correction-aware migration output.
+- Accepted finite release/support policy and machine-checked governance rehearsal; no release or support claim is made.
 
 ### Release status
 

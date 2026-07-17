@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "scenarioSet": "sdk003-governance-rehearsal-v1",
+  "policyId": "wordpresshx-release-support-v1",
+  "simulationOnly": true,
+  "sourceCommit": "3f0eced6a354f69704aa9e1385dd7d6611082060",
+  "scenarios": [
+    {
+      "id": "immutable-rollback",
+      "kind": "immutable-rollback",
+      "actor": "Marcelo Serpa",
+      "badVersion": "1.0.1",
+      "badArtifactSha256": "78067bddab050aa4b3936314eb374c380afc361e89b15c40ccffdc0c57cdc4a2",
+      "lastKnownGoodVersion": "1.0.0",
+      "lastKnownGoodArtifactSha256": "1613df688602397ba0f12df2745aa6ed90afd037a6e05ed4ae4904933822a7f9",
+      "overwriteRequested": true,
+      "replacementVersion": "1.0.2",
+      "expectedDecision": "reject-overwrite-publish-new-replacement-version"
+    },
+    {
+      "id": "private-security-intake-disabled",
+      "kind": "private-security-intake",
+      "actor": "Marcelo Serpa",
+      "sensitive": true,
+      "privateChannelEnabled": false,
+      "publicDetailsAllowed": false,
+      "expectedDecision": "blocked-request-secure-channel-before-details"
+    },
+    {
+      "id": "public-issue-triage",
+      "kind": "public-issue-triage",
+      "actor": "Marcelo Serpa",
+      "sensitive": false,
+      "channel": "github-issues",
+      "expectedDecision": "accepted-public-triage"
+    },
+    {
+      "id": "stable-release-attempt",
+      "kind": "stable-release-attempt",
+      "actor": "Marcelo Serpa",
+      "candidateVersion": "1.0.0",
+      "candidateCommit": "3f0eced6a354f69704aa9e1385dd7d6611082060",
+      "profileId": "wp70-release",
+      "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "publicationRequested": true,
+      "expectedBlockers": [
+        "backup-release-security-owner",
+        "final-package-consumer-matrix",
+        "g8-production-evidence",
+        "licensing-and-output-review",
+        "private-vulnerability-reporting",
+        "production-release-rollback-rehearsal"
+      ],
+      "expectedDecision": "blocked-stable-publication"
+    }
+  ]
+}

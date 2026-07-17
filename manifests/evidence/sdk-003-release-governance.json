@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-003-RELEASE-GOVERNANCE",
+  "bead": "wordpresshx-sdk-003",
+  "observedAt": "2026-07-17T15:53:52-06:00",
+  "subject": {
+    "policy": {
+      "path": "manifests/release-support-policy.json",
+      "sha256": "c9d96cad1be1c77cb1741da77b8f957a6be496f7a35e9726a8cbb35c43812f87"
+    },
+    "validator": {
+      "path": "scripts/release/test-governance.py",
+      "sha256": "0ae351e87a81d7806abf08dcfc1fccd960b508d67fbc1121cded0d2820aebb7e"
+    },
+    "scenarios": {
+      "path": "fixtures/release-governance/scenarios.json",
+      "sha256": "346a635536290bb567ae41ac1ca33f76ef8807cc5eb7579e3980a4a9a9d2b2a8"
+    },
+    "expectedReport": {
+      "path": "fixtures/release-governance/expected/rehearsal.json",
+      "sha256": "c8996e779b2777f0ce4af5ffc95bc15e37b83dab886601cd09e8b6e3e8eb8da1"
+    },
+    "releaseChecklist": {
+      "path": "docs/release/release-checklist.md",
+      "sha256": "eed279d8e197e6a3ed4cca0995c87b99708a280601196b378ac6ea963a418d41"
+    },
+    "rollbackChecklist": {
+      "path": "docs/release/rollback-checklist.md",
+      "sha256": "ca88702592565debcb0c06c60570a71e0b9ae74631681f73770be0956f113944"
+    }
+  },
+  "implementation": {
+    "decision": "ADR-021",
+    "policyStatus": "accepted-policy-not-release-ready",
+    "supportedVersionCount": 0,
+    "publicationAllowed": false,
+    "stableReleaseAllowed": false,
+    "defaultStableSupportDays": 180,
+    "versionRangeInferenceAllowed": false,
+    "numericResponseSlaPromised": false,
+    "routineMaintainerFlow": "direct-main-after-bead-scope-hooks-and-proportionate-gates",
+    "pullRequestRole": "coordination-not-routine-local-gate",
+    "immutableArtifactOverwriteAllowed": false
+  },
+  "ownership": {
+    "primary": "Marcelo Serpa",
+    "primaryResponsibilities": [
+      "compatibility-profile-and-backport-scope",
+      "private-security-intake-and-coordination",
+      "product-scope-and-claim-matrix",
+      "release-publish-and-download-verification",
+      "rollback-revocation-and-claim-correction"
+    ],
+    "backupReleaseSecurity": "unassigned",
+    "automatedAgentAccountable": false
+  },
+  "securityObservation": {
+    "provider": "github-private-vulnerability-reporting",
+    "repository": "fullofcaffeine/wordpresshx",
+    "command": "gh api repos/fullofcaffeine/wordpresshx/private-vulnerability-reporting",
+    "observedAt": "2026-07-17T15:53:52-06:00",
+    "response": {
+      "enabled": false
+    },
+    "privateReportingEnabled": false,
+    "sensitivePublicReportAllowed": false,
+    "numericResponseSlaPromised": false
+  },
+  "rehearsal": {
+    "command": "python3 scripts/release/test-governance.py",
+    "scenarioCount": 4,
+    "simulationOnly": true,
+    "reportDigestAlgorithm": "sha256-canonical-json-v1",
+    "reportDigest": "162f35982c0478c1c986c4ee0903e440f191dc2e84dbf5ea3acc7bb32add3c79",
+    "goldenByteEquality": "passed",
+    "scenarios": [
+      {
+        "id": "immutable-rollback",
+        "owner": "Marcelo Serpa",
+        "decision": "reject-overwrite-publish-new-replacement-version",
+        "outcome": "passed"
+      },
+      {
+        "id": "private-security-intake-disabled",
+        "owner": "Marcelo Serpa",
+        "decision": "blocked-request-secure-channel-before-details",
+        "outcome": "passed"
+      },
+      {
+        "id": "public-issue-triage",
+        "owner": "Marcelo Serpa",
+        "decision": "accepted-public-triage",
+        "outcome": "passed"
+      },
+      {
+        "id": "stable-release-attempt",
+        "owner": "Marcelo Serpa",
+        "decision": "blocked-stable-publication",
+        "outcome": "passed"
+      }
+    ]
+  },
+  "releaseBoundary": {
+    "stableBlockers": [
+      "backup-release-security-owner",
+      "final-package-consumer-matrix",
+      "g8-production-evidence",
+      "licensing-and-output-review",
+      "private-vulnerability-reporting",
+      "production-release-rollback-rehearsal"
+    ],
+    "actualReleasePerformed": false,
+    "registryCredentialsUsed": false,
+    "realVulnerabilityReceived": false,
+    "finalPackageRollbackExercised": false,
+    "productionReadinessAdvanced": false
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "release-governance",
+    "required": true
+  },
+  "claims": {
+    "releaseGovernanceContract": "generated",
+    "deterministicPolicyRehearsal": "runtime-tested",
+    "privateSecurityIntake": "failed",
+    "stableReleaseReadiness": "blocked",
+    "supportedVersions": "none",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "packageReleaseCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

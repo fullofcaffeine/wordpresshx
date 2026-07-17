@@ -4,6 +4,7 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 
 - `package-topology.json` is the accepted ADR-003 public-artifact, source-module, dependency-direction, and independent-versioning map. Its `not-published` claim and `publicationAuthorized: false` are deliberate; topology acceptance is not a registry release.
 - `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
+- `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
@@ -19,6 +20,8 @@ Receipt `SDK-012-PROFILE-SCHEMA` records the closed profile schema, exact minima
 Receipt `SDK-013-PROFILE-GENERATOR` records the exact-object, read-only catalog generator, its reviewed selection contract, committed catalog/omission/report hashes, double-run equality, known-entry checks, and failed-publication negative. The 33 emitted capabilities are lexical inventories only. Four ambiguous or private candidates are explicit omissions; no typed, runtime, browser, package, or production claim advances.
 
 Receipt `SDK-014-PROFILE-DIFF` records the read-only exact-catalog comparison tool, its closed content-digested JSON report, human migration diagnostics, reviewed contract payload rules, upstream-versus-correction authority checks, and golden/negative fixtures. Its synthetic target profile is not compatibility evidence; the tool infers no range, rewrites no source, and auto-accepts no breaking change.
+
+Receipt `SDK-003-RELEASE-GOVERNANCE` records the closed policy validator and deterministic issue/security/release/rollback rehearsal. The rehearsal is synthetic: private reporting remains disabled, the backup role remains unassigned, stable publication remains blocked, no registry credential or package is exercised, and no SLA or production-support claim is created.
 
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 

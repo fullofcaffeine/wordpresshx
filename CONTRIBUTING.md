@@ -15,6 +15,21 @@ bd update <id> --claim
 
 Use beads for all task tracking. Do not create parallel Markdown task lists. New work must include the scope/authority/artifact/evidence/risk/acceptance/stop-condition fields required by the PRD. Preserve the stable `SDK-*`, `ADR-*`, and gate references when refining existing work.
 
+## Landing changes
+
+Routine maintainer changes may land directly on `main` after the Bead is claimed, scope is reviewable, tracked hooks pass, and proportionate layer gates are green. Pull requests are a coordination tool for external contributions, hard cross-repository changes, or cases where branch review materially reduces risk; they are not required for routine repository work.
+
+External contributors should open a pull request linked to a Bead unless a maintainer has arranged another reviewed workflow. Do not bypass hooks, force-push over published evidence, or combine unrelated issue scopes. Release publication is performed only by the canonical protected workflow even if the source commit reached `main` directly.
+
+## Severity and triage
+
+- P0: active security/supply-chain compromise, destructive ownership failure, corrupted immutable release, or materially overstated public claim. Stop affected publication and correct claims.
+- P1: blocking compiler/profile/runtime/package correctness on the critical path, or a regression in an accepted contract.
+- P2: bounded non-critical capability, tooling, documentation, or maintainability work.
+- P3/P4: low-urgency exploration, polish, or deferred breadth without a current product gate.
+
+Severity is not a response-time SLA. Reports must still name exact scope and evidence; sensitive security details never enter public Beads or pull requests. The responsible layer owner may reclassify or route an issue with a recorded reason.
+
 ## Architectural working agreement
 
 - Vanilla WordPress is the blocking runtime authority for the primary SDK profile.

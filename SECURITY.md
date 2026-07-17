@@ -4,15 +4,25 @@
 
 There are no published or supported versions of `wordpress-hx-sdk` yet. The repository is in bootstrap/pre-feasibility state. No generated authentication, authorization, HTML, SQL, install/update, or package path is approved for production use.
 
-A supported-version table, patch/backport window, response owners, and disclosure timeline must be accepted before a stable release.
+ADR-021 now defines the future finite window, but no release has earned it. A supported-version table, exact manifest, tested private intake, primary and backup access, final-artifact patch/rollback rehearsal, and active maintainer capacity must all exist before stable.
 
 ## Reporting a vulnerability
 
 Do not include exploit details, secrets, personal data, or a working proof of concept in a public issue.
 
-When the repository is hosted on GitHub with private vulnerability reporting enabled, use the repository's **Security → Report a vulnerability** flow. If that private flow is unavailable, contact a repository maintainer through an already established private channel and ask for a secure reporting path before sending sensitive details.
+GitHub private vulnerability reporting is currently disabled (verified 2026-07-17). Do not send exploit details through a public issue, discussion, pull request, commit, log, or Bead. Contact Marcelo Serpa without sensitive details and request a secure channel; if no authenticated private channel is available, retain the details until one is established.
 
-No dedicated public security address has been established during bootstrap. Establishing and testing that channel is a release blocker tracked by the security/support governance work; this document does not invent an unmonitored address.
+No dedicated security address has been established. Enabling and testing private reporting, assigning a qualified backup with access, and rehearsing intake are a stable-release blocker. This document does not invent an unmonitored address or imply that a public contact is a secure disclosure channel.
+
+No numeric response-time or resolution SLA is promised. Preview reports are triaged best effort. Only a future active stable term carries a patch/backport commitment, and any timeline must be stated in the private case/advisory according to its actual scope rather than pre-promised here.
+
+## Triage and patch flow
+
+The coordinator records the affected exact SDK/profile/provider/toolchain/artifact tuple and assigns release-blocking severity when the report plausibly enables authorization bypass, code execution, secret exposure, unsafe output, arbitrary overwrite/deletion, dependency compromise, or a false production claim. Sensitive evidence stays outside public task records.
+
+A stable security fix is a new immutable patch version. It is built from the affected line, reruns every invalidated source/compiler/generated/native/package/rollback gate, verifies downloaded replacement bytes, and publishes an advisory with affected/fixed hashes and mitigation. Tags, package versions, receipts, and ZIP bytes are never overwritten. Backports are limited to active stable terms; previews and ended terms have no fix promise.
+
+Every active stable line requires dependency/advisory review at least once per 30 consecutive days and before release. If that capacity or channel cannot be maintained, no new stable version is authorized.
 
 ## Leak prevention
 
