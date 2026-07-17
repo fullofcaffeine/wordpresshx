@@ -149,7 +149,7 @@
       },
       "dependencyLock": {
         "path": "packages/hxx/dependency-lock.json",
-        "sha256": "6e0dcfaf656b4fcb81ba9f809c6c6169ce3dd3181d42b9cdc03e0dd2262f4c50",
+        "sha256": "a26d44e9296a4bd0ac8373e9b0456d10dc1f32d2c187728ee3ac9a3690d378b7",
         "resolvedTransitiveCount": 5
       },
       "usage": "internal-parser-and-positioned-syntax-types-only",

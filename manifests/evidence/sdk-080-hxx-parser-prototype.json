@@ -8,7 +8,7 @@
     "sourceModule": "packages/hxx",
     "dependencyLock": {
       "path": "packages/hxx/dependency-lock.json",
-      "sha256": "6e0dcfaf656b4fcb81ba9f809c6c6169ce3dd3181d42b9cdc03e0dd2262f4c50"
+      "sha256": "a26d44e9296a4bd0ac8373e9b0456d10dc1f32d2c187728ee3ac9a3690d378b7"
     },
     "adapter": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
@@ -60,7 +60,11 @@
     },
     "scopedResolution": {
       "haxe": "4.3.7",
-      "lix": "15.12.2",
+      "lix": {
+        "version": "15.12.4",
+        "reportedCliVersion": "15.12.2",
+        "registryArtifactSha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa"
+      },
       "floatingVersions": false,
       "haxelibDev": false,
       "siblingPaths": false,
@@ -123,7 +127,10 @@
     },
     "toolchains": {
       "haxe": "4.3.7",
-      "lix": "15.12.2",
+      "lix": {
+        "npmPackage": "15.12.4",
+        "reportedCliVersion": "15.12.2"
+      },
       "formatter": "1.18.0",
       "php": "8.4.7",
       "node": "20.19.3",
@@ -135,7 +142,7 @@
     },
     "dependencyVerifier": {
       "path": "packages/hxx/scripts/verify-dependency-lock.py",
-      "sha256": "8240b64fd009697e13ac86fc73115b05bb568b1ceeac555245ba2acd417b80a5",
+      "sha256": "46f4a4c9334d0805189c7626ddd542e069aa2e0dc66b12630c32f3c9e51629bc",
       "networkMaterialization": "passed"
     },
     "snapshotVerifier": {
@@ -194,7 +201,14 @@
   "hostedVerification": {
     "status": "pending-first-main-run",
     "workflow": "Repository bootstrap",
-    "job": "haxe"
+    "job": "haxe",
+    "discardedBootstrapAttempt": {
+      "runId": 29610841831,
+      "jobId": 87984877911,
+      "commit": "b6a8e10315923fd2a9a0c1468380a096d12e06e9",
+      "outcome": "failed-before-hxx-gate",
+      "reason": "the workflow requested unpublished npm package lix@15.12.2; the published lix@15.12.4 package reports CLI version 15.12.2"
+    }
   },
   "changeDecision": {
     "tinkHxxSourceChanged": false,
@@ -211,6 +225,7 @@
     "for, switch, let, and nested inline markup inside expressions fail explicitly in this bounded prototype.",
     "Full HTML, SVG, ARIA, event/ref, output-context, trusted-fragment, and WordPress component contracts remain later beads.",
     "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings but compiles and passes all selected fixtures.",
+    "The pinned npm package lix@15.12.4 reports CLI version 15.12.2; package and reported CLI identities are recorded separately.",
     "No installed WordPress, theme rendering, Gutenberg React, package ZIP, or production-support claim is advanced."
   ],
   "claims": {

@@ -8,8 +8,15 @@ if [[ "$(cd "${package_root}" && haxe --version)" != "4.3.7" ]]; then
   echo "SDK-080 HXX gate requires Haxe 4.3.7" >&2
   exit 1
 fi
-if ! command -v lix >/dev/null 2>&1 || [[ "$(lix --version)" != "15.12.2" ]]; then
-  echo "SDK-080 HXX gate requires Lix 15.12.2" >&2
+if ! command -v lix >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+  echo "SDK-080 HXX gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
+  exit 1
+fi
+lix_package_path="$(npm root --global)/lix/package.json"
+if [[ ! -f "${lix_package_path}" ]] \
+  || [[ "$(node -p 'require(process.argv[1]).version' "${lix_package_path}")" != "15.12.4" ]] \
+  || [[ "$(lix --version)" != "15.12.2" ]]; then
+  echo "SDK-080 HXX gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
   exit 1
 fi
 

@@ -506,10 +506,12 @@ assert prototype_evidence["nativeLoweringImplemented"] is False
 
 assert hxx_dependency_lock["schemaVersion"] == 1
 assert hxx_dependency_lock["status"] == "resolved-sdk-080"
-assert hxx_dependency_lock["toolchain"] == {
-    "haxe": "4.3.7",
-    "lix": "15.12.2",
-}
+assert hxx_dependency_lock["toolchain"]["haxe"] == "4.3.7"
+assert hxx_dependency_lock["toolchain"]["lix"]["version"] == "15.12.4"
+assert hxx_dependency_lock["toolchain"]["lix"]["reportedCliVersion"] == "15.12.2"
+assert sha256.fullmatch(
+    hxx_dependency_lock["toolchain"]["lix"]["artifact"]["sha256"]
+)
 assert hxx_dependency_lock["parser"]["name"] == "tink_hxx"
 assert hxx_dependency_lock["parser"]["version"] == "0.25.1"
 assert hxx_dependency_lock["parser"]["commit"] == hxx_parser["commit"]

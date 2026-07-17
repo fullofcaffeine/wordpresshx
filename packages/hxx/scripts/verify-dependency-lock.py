@@ -32,7 +32,14 @@ def assert_hex(value: str, length: int, label: str) -> None:
 def verify_metadata(lock: dict) -> None:
     assert lock["schemaVersion"] == 1
     assert lock["status"] == "resolved-sdk-080"
-    assert lock["toolchain"] == {"haxe": "4.3.7", "lix": "15.12.2"}
+    assert lock["toolchain"]["haxe"] == "4.3.7"
+    assert lock["toolchain"]["lix"]["version"] == "15.12.4"
+    assert lock["toolchain"]["lix"]["reportedCliVersion"] == "15.12.2"
+    assert_hex(
+        lock["toolchain"]["lix"]["artifact"]["sha256"],
+        64,
+        "Lix artifact",
+    )
     assert lock["parser"]["name"] == "tink_hxx"
     assert lock["parser"]["version"] == "0.25.1"
     assert lock["parser"]["tag"] == "0.25.1"
@@ -100,15 +107,16 @@ def download(url: str) -> bytes:
         return response.read()
 
 
+def verify_artifact(name: str, artifact: dict) -> bytes:
+    data = download(artifact["url"])
+    assert len(data) == artifact["sizeBytes"], f"{name} artifact size mismatch"
+    assert sha256(data) == artifact["sha256"], f"{name} artifact digest mismatch"
+    return data
+
+
 def verify_haxelib(entry: dict) -> None:
     artifact = entry.get("artifact", entry)
-    data = download(artifact["url"])
-    assert len(data) == artifact["sizeBytes"], (
-        f"{entry['name']} artifact size mismatch"
-    )
-    assert sha256(data) == artifact["sha256"], (
-        f"{entry['name']} artifact digest mismatch"
-    )
+    data = verify_artifact(entry["name"], artifact)
     with tempfile.NamedTemporaryFile(suffix=".zip") as archive_file:
         archive_file.write(data)
         archive_file.flush()
@@ -190,6 +198,7 @@ def main() -> None:
     lock = json.loads(LOCK_PATH.read_text(encoding="utf-8"))
     verify_metadata(lock)
     if not arguments.metadata_only:
+        verify_artifact("lix", lock["toolchain"]["lix"]["artifact"])
         verify_haxelib(lock["parser"])
         verify_git(lock["parser"], lock["dependencies"])
         for dependency in lock["dependencies"]:

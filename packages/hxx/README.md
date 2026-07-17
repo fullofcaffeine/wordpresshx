@@ -14,4 +14,4 @@ Run the complete gate with:
 bash packages/hxx/scripts/test.sh
 ```
 
-The gate requires Haxe 4.3.7, Lix 15.12.2, PHP, Node, Git, network access for clean dependency materialization, and formatter 1.18.0. `for`, `switch`, `let`, nested markup inside expressions, native output lowering, full HTML/ARIA typing, and output-context escaping remain intentionally outside this parser-decision prototype and fail explicitly or remain owned by later beads.
+The gate requires Haxe 4.3.7, npm package Lix 15.12.4 (whose CLI reports 15.12.2), PHP, Node, Git, network access for clean dependency materialization, and formatter 1.18.0. `for`, `switch`, `let`, nested markup inside expressions, native output lowering, full HTML/ARIA typing, and output-context escaping remain intentionally outside this parser-decision prototype and fail explicitly or remain owned by later beads.

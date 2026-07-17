@@ -3,7 +3,16 @@
   "status": "resolved-sdk-080",
   "toolchain": {
     "haxe": "4.3.7",
-    "lix": "15.12.2"
+    "lix": {
+      "version": "15.12.4",
+      "reportedCliVersion": "15.12.2",
+      "artifact": {
+        "url": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz",
+        "sizeBytes": 266103,
+        "sha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa",
+        "npmIntegrity": "sha512-xfwGQrXXNba9BM7VcP2u9WvElBYgGJW+1gviaFqJH5OUFPAhwv8TZNk5f+Yew4pyKOmMqshdUYgk9+d3U6P6kw=="
+      }
+    }
   },
   "parser": {
     "name": "tink_hxx",
