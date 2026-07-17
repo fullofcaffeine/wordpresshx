@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-002",
+  "status": "accepted-architecture",
+  "claim": "not-tested",
+  "catalogContractStatus": "identity-frozen-schema-pending",
+  "profiles": {
+    "wp70-release": {
+      "role": "mvp-vanilla",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "wordpress": {
+        "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+        "releaseIdentities": [
+          "7.0.0",
+          "7.0-src"
+        ],
+        "distributionClaim": "wordpress-7.0-compatible",
+        "recordedMinimums": {
+          "php": "7.4",
+          "mysql": "5.5.5"
+        }
+      },
+      "embeddedGutenberg": {
+        "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd"
+      },
+      "forwardGutenbergInventory": "forbidden",
+      "verificationOwner": "wordpresshx-sdk-010"
+    },
+    "gutenberg-forward-23.4": {
+      "role": "opt-in-forward-experiment",
+      "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+      "gutenberg": {
+        "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+        "tag": "v23.4.0"
+      },
+      "distributionClaim": null,
+      "wordpress70CompatibilityClaim": "forbidden",
+      "releaseChannel": "preview-or-experimental",
+      "verificationOwner": "wordpresshx-sdk-011"
+    }
+  },
+  "selectionPolicy": {
+    "profilesArePeers": true,
+    "profileInheritance": false,
+    "exactlyOneCompatibilityTargetPerArtifact": true,
+    "combinedTargetAllowedDuringMvp": false,
+    "ciRequiresExplicitSelection": true,
+    "localScaffoldDefault": "wp70-release",
+    "generatedProjectPersistsSelection": true,
+    "separatePackageGraphs": true,
+    "separateArtifactRoots": true,
+    "runtimeDetectionSatisfiesCompileTimeRequirements": false
+  },
+  "requiredArtifactProvenance": [
+    "profileId",
+    "catalogRevision",
+    "catalogDigest",
+    "upstreamCommits",
+    "upstreamArtifactDigests",
+    "generatorIdentity",
+    "toolchainIdentity",
+    "requiredCapabilities",
+    "evidenceReceiptIds"
+  ],
+  "futureRangeAdmission": [
+    "exact-profile-for-every-establishing-release",
+    "generated-api-and-export-diffs",
+    "real-tests-on-every-endpoint-and-justified-intermediate-samples",
+    "explicit-deprecation-and-removal-policy",
+    "proof-against-newest-profile-leakage",
+    "published-support-and-security-maintenance-commitment"
+  ]
+}
