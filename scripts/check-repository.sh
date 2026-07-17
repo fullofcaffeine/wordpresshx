@@ -26,6 +26,7 @@ required_files=(
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
+  docs/adr/021-release-and-support-policy.md
   docs/architecture/browser-compiler.md
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
