@@ -4,7 +4,7 @@
   "status": "accepted-architecture",
   "claim": "not-tested",
   "schemaImplementationStatus": "implemented-sdk-012",
-  "generatorImplementationStatus": "pending-sdk-013",
+  "generatorImplementationStatus": "implemented-sdk-013",
   "machineVocabulary": {
     "apiClassifications": {
       "public": {

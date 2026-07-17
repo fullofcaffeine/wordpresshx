@@ -1,0 +1,114 @@
+{
+  "catalogRevision": "wp70-release/catalog-v1",
+  "claims": {
+    "catalogEvidenceStatus": "inventoried",
+    "productionSupport": "not-tested",
+    "runtimeCompatibility": "not-tested",
+    "typedContracts": "not-tested",
+    "upstreamCodeExecuted": false
+  },
+  "effectiveInputs": [
+    {
+      "sourceDigest": "aa685725ecddb4a60903eeddb5cd5e7a8988261b528ac206a498c86d3eebcf6a",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/blocks/package.json"
+    },
+    {
+      "sourceDigest": "f51a56b5d6836ba715c62da01f6b8fa535d1004f141afdd8e8a3f13b302762c0",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/blocks/src/api/index.js"
+    },
+    {
+      "sourceDigest": "602487e26f0146cb0f28089500bc67233246b33a5ddaa6bc5d0d4602a566afb1",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/components/package.json"
+    },
+    {
+      "sourceDigest": "ee82b7fca901d27270be7262954be019982311f151857bd1385575329f987c6a",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/data/package.json"
+    },
+    {
+      "sourceDigest": "51d94ba04d64fb12892d60e34a6cfdc1b46f77cd6be14a3694ebe87e293b4229",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/element/package.json"
+    },
+    {
+      "sourceDigest": "47847dd136a2ee54883ba089a4e77d2b87b74e36add6e5d67e778b22823658bf",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "packages/i18n/package.json"
+    },
+    {
+      "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+    },
+    {
+      "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/blocks.php"
+    },
+    {
+      "sourceDigest": "7f1c8945f97711927196d6e01216443b43b70bd1530c5013d53f20238757cad4",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/functions.wp-scripts.php"
+    },
+    {
+      "sourceDigest": "2e06902ae7d65d7dad37cbafd8e8feff83e4aeeff3a7839885ce7fe4f0c94d68",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/plugin.php"
+    },
+    {
+      "sourceDigest": "2e6ac612f82a1aeb04e1e1de0c7e2a186e5f997f67e942026bfe9b211108811c",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/post.php"
+    },
+    {
+      "sourceDigest": "4c66d2adbc3086fd3f950d407f6a721460db3e55d2c2ebd440f75d1552dbed37",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/rest-api.php"
+    },
+    {
+      "sourceDigest": "e56fb879616515a04ead712bd6c72026c2177ff09bae14efa60d0046e6bb7861",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-settings.php"
+    }
+  ],
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "inputFingerprint": "9a493d3abd6b9d23e64b89b70c27a12bcc5d1bb589da2e8c93a75cf0eafa4ca7",
+  "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
+  "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
+  "outputs": {
+    "catalog": {
+      "capabilityCount": 28,
+      "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "path": "catalog.json",
+      "sha256": "f349ef5d9ca5000d723b1c3d67c2f31a85b7eae9d46c30b7d0fbd581e96eb65a"
+    },
+    "omissions": {
+      "omissionCount": 2,
+      "omissionsDigest": "f2eee9810d32bc19da6d04616892db20d37ef66c8b39dd11925432ba467bc234",
+      "path": "omissions.json",
+      "sha256": "792f5f9110cf251a6c87554e5b1859c684fb9b92a81f1434a380d457243c6953"
+    }
+  },
+  "profileId": "wp70-release",
+  "profileSchema": {
+    "path": "schemas/profile.schema.json",
+    "sha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e"
+  },
+  "schemaVersion": 1,
+  "selection": {
+    "path": "profiles/catalog-selection.json",
+    "sha256": "3b98ba912eeb56378336335f0483c84d540b8ebc463e605c1a6599bda75423bc"
+  },
+  "sourceLock": {
+    "path": "profiles/wp70-release/source.lock.json",
+    "sha256": "002699113d01c0e19f0153ac8461c26f1d39394e56849b18baa1f632c1b3aa64"
+  }
+}

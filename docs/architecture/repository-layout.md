@@ -10,6 +10,7 @@ The bootstrap reserves these concerns without declaring their package APIs:
 | `compiler/reflaxe.php/` | Private 0.x generic PHP compiler package, independently extractable | ADR-004; SDK-020/021/027 |
 | `compiler/wordpress/` | SDK-owned WordPress PHP profile consuming the generic compiler API | ADR-004/005; SDK-022 |
 | `profiles/` | Exact WordPress/Gutenberg catalogs and manifests | ADR-002/008; G0 |
+| `generated/` | Committed, content-addressed exact-profile inventory outputs | SDK-013; regenerated only from pinned inputs |
 | `schemas/` | Versioned project/profile/plan/ownership/evidence schemas | ADR-006/007/009/016 |
 | `tools/` | Profile/adoption/package/source-map tooling | Corresponding implementation beads |
 | `examples/` | Consumer-facing, package-tested examples | G4–G8 |

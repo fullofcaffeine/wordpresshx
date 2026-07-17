@@ -1,0 +1,213 @@
+{
+  "catalog": {
+    "capabilities": [
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/content-types.PostTypeEdit",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:PostTypeEdit",
+            "sourceDigest": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb",
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/src/index.ts"
+          }
+        ],
+        "providerIdentity": "gutenberg:23.4.0",
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/content-types.PostTypesList",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:PostTypesList",
+            "sourceDigest": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb",
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/src/index.ts"
+          }
+        ],
+        "providerIdentity": "gutenberg:23.4.0",
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/content-types.TaxonomiesList",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:TaxonomiesList",
+            "sourceDigest": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb",
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/src/index.ts"
+          }
+        ],
+        "providerIdentity": "gutenberg:23.4.0",
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/content-types.TaxonomyEdit",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:TaxonomyEdit",
+            "sourceDigest": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb",
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/src/index.ts"
+          }
+        ],
+        "providerIdentity": "gutenberg:23.4.0",
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/content-types",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/content-types",
+            "sourceDigest": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4",
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:23.4.0",
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      }
+    ],
+    "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+    "correctionAncestry": [],
+    "profileId": "gutenberg-forward-23.4",
+    "upstreamInputs": [
+      {
+        "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+        "inputId": "gutenberg-source",
+        "kind": "git-source",
+        "providerIdentity": "gutenberg:23.4.0-source",
+        "repository": "https://github.com/WordPress/gutenberg.git",
+        "tag": "v23.4.0",
+        "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f"
+      },
+      {
+        "contentTreeSha256": "58ba04bdb69b91c42a67f2bdeefbf4e85f2312ee534355b978adcb2017a5791d",
+        "inputId": "gutenberg-release-zip",
+        "kind": "release-artifact",
+        "providerIdentity": "gutenberg:23.4.0-release",
+        "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a",
+        "sizeBytes": 39579401,
+        "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip"
+      }
+    ]
+  },
+  "catalogDigest": "66bcac1aba265913c0a541c5f1ab7c58c5431404b3274e43fa415d1e137d0404",
+  "catalogDigestAlgorithm": "sha256-canonical-json-v1",
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "schemaVersion": 1
+}

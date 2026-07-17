@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-013-PROFILE-GENERATOR",
+  "bead": "wordpresshx-sdk-013",
+  "observedAt": "2026-07-17T10:40:00-06:00",
+  "subject": {
+    "generatorPath": "scripts/profiles/generate-catalogs.py",
+    "generatorSha256": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "checkerPath": "scripts/profiles/check-generated-catalogs.py",
+    "checkerSha256": "e7fe77c686cb770de98e4d552642bef47d1965009881647ee2142e8b55e84b44",
+    "testPath": "scripts/profiles/test-catalog-generator.sh",
+    "testSha256": "254c1f847032976a13dbb15f1e7c171110d452ebc139dbc7fb2df9199949ad4f",
+    "selectionPath": "profiles/catalog-selection.json",
+    "selectionSha256": "3b98ba912eeb56378336335f0483c84d540b8ebc463e605c1a6599bda75423bc",
+    "profileSchemaPath": "schemas/profile.schema.json",
+    "profileSchemaSha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
+    "generatorIdentity": "wordpresshx-exact-profile-generator",
+    "generatorVersion": "1",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1"
+  },
+  "localEnvironment": {
+    "python": "3.14.5",
+    "git": "2.40.1",
+    "bash": "3.2.57(1)-release",
+    "platform": "arm64-apple-darwin24"
+  },
+  "generation": {
+    "command": "bash scripts/profiles/test-catalog-generator.sh",
+    "sourceReadMode": "git-show-exact-commit-and-path",
+    "upstreamWorktreeRead": false,
+    "upstreamApplicationCodeExecuted": false,
+    "selectionMode": "reviewed-minimal-vertical-inventory",
+    "doubleRunByteEquality": "passed",
+    "committedTreeEquality": "passed",
+    "cleanSourceFetch": "passed",
+    "absolutePathLeakScan": "passed",
+    "failedGenerationPublishesNothing": true,
+    "outcome": "passed"
+  },
+  "profiles": [
+    {
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "sourceCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "embeddedGutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+      "inputFingerprint": "9a493d3abd6b9d23e64b89b70c27a12bcc5d1bb589da2e8c93a75cf0eafa4ca7",
+      "effectiveInputCount": 13,
+      "catalog": {
+        "path": "generated/wp70-release/catalog-v1/catalog.json",
+        "fileSha256": "f349ef5d9ca5000d723b1c3d67c2f31a85b7eae9d46c30b7d0fbd581e96eb65a",
+        "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+        "capabilityCount": 28,
+        "evidenceStatus": "inventoried"
+      },
+      "omissions": {
+        "path": "generated/wp70-release/catalog-v1/omissions.json",
+        "fileSha256": "792f5f9110cf251a6c87554e5b1859c684fb9b92a81f1434a380d457243c6953",
+        "omissionsDigest": "f2eee9810d32bc19da6d04616892db20d37ef66c8b39dd11925432ba467bc234",
+        "omissionCount": 2
+      },
+      "generationReport": {
+        "path": "generated/wp70-release/catalog-v1/generation-report.json",
+        "fileSha256": "deb36a0b0faff005aca803468ceefad17c38f3141838a51124b17387220abe61"
+      }
+    },
+    {
+      "profileId": "gutenberg-forward-23.4",
+      "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+      "sourceCommit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+      "wordpress70Compatibility": "forbidden",
+      "inputFingerprint": "0d169b174564b227ff8458ed7a9be11f2ba2d9ee88a718926db4f7bd2ce73602",
+      "effectiveInputCount": 3,
+      "catalog": {
+        "path": "generated/gutenberg-forward-23.4/catalog-v1/catalog.json",
+        "fileSha256": "3ef5bde500bd730914e40f6b5e408813e7310a8d7f2c1abf15e40cfe9484eea9",
+        "catalogDigest": "66bcac1aba265913c0a541c5f1ab7c58c5431404b3274e43fa415d1e137d0404",
+        "capabilityCount": 5,
+        "evidenceStatus": "inventoried"
+      },
+      "omissions": {
+        "path": "generated/gutenberg-forward-23.4/catalog-v1/omissions.json",
+        "fileSha256": "519c4b35d4eeb27dc665ebdb7d40d7f52f417e89f86bcfb9d4703718ee00e986",
+        "omissionsDigest": "5168de1b39c6b972ed0a455aaf271b4ce754e1e5f6e9f4984ebac67aa49793b7",
+        "omissionCount": 2
+      },
+      "generationReport": {
+        "path": "generated/gutenberg-forward-23.4/catalog-v1/generation-report.json",
+        "fileSha256": "4775c5367d451d8e18735f6b0ce773e039db1add322172c5342e66dccef8797e"
+      }
+    }
+  ],
+  "knownEvidence": {
+    "wp70Entries": [
+      "wordpress.php.function.add_action",
+      "wordpress.php.function.register_rest_route",
+      "wordpress.hook.init",
+      "gutenberg.export.@wordpress/blocks.registerBlockType",
+      "wordpress.script-handle.wp-blocks",
+      "wordpress.block-metadata-key.apiVersion"
+    ],
+    "forwardEntries": [
+      "gutenberg.package.@wordpress/content-types",
+      "gutenberg.export.@wordpress/content-types.PostTypeEdit"
+    ],
+    "omissions": [
+      "wordpress.dynamic-hook.save_post_post_type",
+      "wordpress.signature.register_block_type",
+      "gutenberg.content-types.private-api-lock",
+      "gutenberg.content-types.export-signatures"
+    ]
+  },
+  "negativeEvidence": {
+    "wrongRepositoryMissingExactCommit": "rejected",
+    "partialOutputAfterFailure": "absent",
+    "dynamicHookGuessed": false,
+    "privateApiPublished": false,
+    "contentTypesLeakedIntoWp70": false,
+    "inventoryPromotedToTypedOrSupported": false
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "profile-generator",
+    "required": true
+  },
+  "claims": {
+    "generatorImplementation": "generated",
+    "wp70CapabilityCatalog": "inventoried",
+    "forwardCapabilityCatalog": "inventoried",
+    "typedContracts": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "packageCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

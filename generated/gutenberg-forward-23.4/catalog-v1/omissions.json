@@ -1,0 +1,43 @@
+{
+  "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "omissions": [
+    {
+      "kind": "gutenberg-export",
+      "locator": "js-named-export:PostTypesList",
+      "omissionId": "gutenberg.content-types.export-signatures",
+      "reason": "Export names are inventoried, but their TypeScript and runtime contracts remain unreviewed and unsupported.",
+      "reasonCode": "signature-needs-curation",
+      "receiptIds": [
+        "SDK-011-GUTENBERG-FORWARD-23.4",
+        "SDK-013-PROFILE-GENERATOR"
+      ],
+      "sourceDigest": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb",
+      "sourceInputId": "gutenberg-source",
+      "sourcePath": "packages/content-types/src/index.ts"
+    },
+    {
+      "kind": "gutenberg-export",
+      "locator": "text-literal:__dangerousOptInToUnstableAPIsOnlyForCoreModules",
+      "omissionId": "gutenberg.content-types.private-api-lock",
+      "reason": "The upstream source explicitly limits this bridge to Core modules, so it is absent from the consumer catalog.",
+      "reasonCode": "private-api-forbidden",
+      "receiptIds": [
+        "SDK-011-GUTENBERG-FORWARD-23.4",
+        "SDK-013-PROFILE-GENERATOR"
+      ],
+      "sourceDigest": "00f603bc2bde06c3466d0887819dcc35f739f9157d3b35d99afba07aa8ea187a",
+      "sourceInputId": "gutenberg-source",
+      "sourcePath": "packages/content-types/src/lock-unlock.ts"
+    }
+  ],
+  "omissionsDigest": "5168de1b39c6b972ed0a455aaf271b4ce754e1e5f6e9f4984ebac67aa49793b7",
+  "omissionsDigestAlgorithm": "sha256-canonical-json-v1",
+  "profileId": "gutenberg-forward-23.4",
+  "schemaVersion": 1
+}

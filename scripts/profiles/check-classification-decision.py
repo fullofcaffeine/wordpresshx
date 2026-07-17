@@ -198,7 +198,7 @@ def main() -> None:
     assert policy["status"] == "accepted-architecture"
     assert policy["claim"] == "not-tested"
     assert policy["schemaImplementationStatus"] == "implemented-sdk-012"
-    assert policy["generatorImplementationStatus"] == "pending-sdk-013"
+    assert policy["generatorImplementationStatus"] == "implemented-sdk-013"
     assert set(classifications) == {
         "public",
         "experimental",

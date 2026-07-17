@@ -1,0 +1,585 @@
+{
+  "schemaVersion": 1,
+  "generatorIdentity": "wordpresshx-exact-profile-generator",
+  "generatorVersion": "1",
+  "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
+  "profiles": [
+    {
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "sourceLockPath": "profiles/wp70-release/source.lock.json",
+      "targetPath": "wp70-release/catalog-v1",
+      "sourceReceiptIds": [
+        "SDK-010-WP70-RELEASE-SOURCE"
+      ],
+      "inputs": [
+        {
+          "inputId": "wordpress-source",
+          "kind": "git-source",
+          "providerIdentity": "wordpress:7.0-source",
+          "repositoryArgument": "wordpress",
+          "pointers": {
+            "repository": "/wordpressSource/repository",
+            "commit": "/wordpressSource/commit",
+            "tree": "/wordpressSource/tree",
+            "tag": "/wordpressSource/tag"
+          }
+        },
+        {
+          "inputId": "embedded-gutenberg-source",
+          "kind": "git-source",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded-source",
+          "repositoryArgument": "embedded-gutenberg",
+          "pointers": {
+            "repository": "/embeddedGutenberg/repository",
+            "commit": "/embeddedGutenberg/commit",
+            "tree": "/embeddedGutenberg/tree"
+          }
+        },
+        {
+          "inputId": "wordpress-release-zip",
+          "kind": "release-artifact",
+          "providerIdentity": "wordpress:7.0-release",
+          "pointers": {
+            "url": "/distribution/artifacts/1/url",
+            "sizeBytes": "/distribution/artifacts/1/sizeBytes",
+            "sha256": "/distribution/artifacts/1/sha256",
+            "contentTreeSha256": "/distribution/contentTreeSha256"
+          }
+        }
+      ],
+      "capabilities": [
+        {
+          "capabilityId": "wordpress.php.function.add_action",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/plugin.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "add_action",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.add_filter",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/plugin.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "add_filter",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.register_block_type",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "register_block_type",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.register_post_type",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/post.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "register_post_type",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.register_rest_route",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/rest-api.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "register_rest_route",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.wp_enqueue_script",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/functions.wp-scripts.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "wp_enqueue_script",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.wp_register_script",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/functions.wp-scripts.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "wp_register_script",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.php.function.wp_set_script_translations",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "php-function",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/functions.wp-scripts.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "wp_set_script_translations",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.hook.init",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "hook",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-settings.php",
+          "locator": {
+            "kind": "php-call-literal",
+            "call": "do_action",
+            "value": "init",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.hook.rest_api_init",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "hook",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/rest-api.php",
+          "locator": {
+            "kind": "php-call-literal",
+            "call": "do_action",
+            "value": "rest_api_init",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.package.@wordpress/blocks",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-package",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/blocks/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/blocks",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.package.@wordpress/components",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-package",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/components/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/components",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.package.@wordpress/data",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-package",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/data/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/data",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.package.@wordpress/element",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-package",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/element/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/element",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.package.@wordpress/i18n",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-package",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/i18n/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/i18n",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/blocks.getBlockType",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-export",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/blocks/src/api/index.js",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "getBlockType",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/blocks.registerBlockType",
+          "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+          "kind": "gutenberg-export",
+          "classification": "public",
+          "sourceInputId": "embedded-gutenberg-source",
+          "sourcePath": "packages/blocks/src/api/index.js",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "registerBlockType",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.wp-blocks",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/assets/script-loader-packages.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "blocks.js",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.wp-components",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/assets/script-loader-packages.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "components.js",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.wp-data",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/assets/script-loader-packages.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "data.js",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.wp-element",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/assets/script-loader-packages.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "element.js",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.wp-i18n",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/assets/script-loader-packages.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "i18n.js",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.apiVersion",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "apiVersion",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.attributes",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "attributes",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.category",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "category",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.name",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "name",
+            "expectedCount": 2
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.supports",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "supports",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "wordpress.block-metadata-key.title",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "block-metadata-key",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "title",
+            "expectedCount": 1
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "omissionId": "wordpress.dynamic-hook.save_post_post_type",
+          "kind": "hook",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/post.php",
+          "locator": {
+            "kind": "php-interpolated-call-prefix",
+            "call": "do_action",
+            "value": "save_post_",
+            "expectedCount": 2
+          },
+          "reasonCode": "dynamic-name-needs-curated-pattern",
+          "reason": "The hook suffix is runtime data; SDK-013 does not guess its pattern contract or callback semantics."
+        },
+        {
+          "omissionId": "wordpress.signature.register_block_type",
+          "kind": "php-function",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/blocks.php",
+          "locator": {
+            "kind": "php-function-declaration",
+            "value": "register_block_type",
+            "expectedCount": 1
+          },
+          "reasonCode": "signature-needs-curation",
+          "reason": "Declaration presence is inventoried, but union shapes and runtime behavior require a reviewed typed contract."
+        }
+      ]
+    },
+    {
+      "profileId": "gutenberg-forward-23.4",
+      "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+      "sourceLockPath": "profiles/gutenberg-forward-23.4/source.lock.json",
+      "targetPath": "gutenberg-forward-23.4/catalog-v1",
+      "sourceReceiptIds": [
+        "SDK-011-GUTENBERG-FORWARD-23.4"
+      ],
+      "inputs": [
+        {
+          "inputId": "gutenberg-source",
+          "kind": "git-source",
+          "providerIdentity": "gutenberg:23.4.0-source",
+          "repositoryArgument": "forward-gutenberg",
+          "pointers": {
+            "repository": "/gutenbergSource/repository",
+            "commit": "/gutenbergSource/commit",
+            "tree": "/gutenbergSource/tree",
+            "tag": "/gutenbergSource/tag"
+          }
+        },
+        {
+          "inputId": "gutenberg-release-zip",
+          "kind": "release-artifact",
+          "providerIdentity": "gutenberg:23.4.0-release",
+          "pointers": {
+            "url": "/releaseDistribution/artifact/url",
+            "sizeBytes": "/releaseDistribution/artifact/sizeBytes",
+            "sha256": "/releaseDistribution/artifact/sha256",
+            "contentTreeSha256": "/releaseDistribution/contentTreeSha256"
+          }
+        }
+      ],
+      "capabilities": [
+        {
+          "capabilityId": "gutenberg.package.@wordpress/content-types",
+          "providerIdentity": "gutenberg:23.4.0",
+          "kind": "gutenberg-package",
+          "classification": "experimental",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/package.json",
+          "locator": {
+            "kind": "json-pointer-equals",
+            "pointer": "/name",
+            "value": "@wordpress/content-types",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/content-types.PostTypeEdit",
+          "providerIdentity": "gutenberg:23.4.0",
+          "kind": "gutenberg-export",
+          "classification": "experimental",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/index.ts",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "PostTypeEdit",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/content-types.PostTypesList",
+          "providerIdentity": "gutenberg:23.4.0",
+          "kind": "gutenberg-export",
+          "classification": "experimental",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/index.ts",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "PostTypesList",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/content-types.TaxonomiesList",
+          "providerIdentity": "gutenberg:23.4.0",
+          "kind": "gutenberg-export",
+          "classification": "experimental",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/index.ts",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "TaxonomiesList",
+            "expectedCount": 1
+          }
+        },
+        {
+          "capabilityId": "gutenberg.export.@wordpress/content-types.TaxonomyEdit",
+          "providerIdentity": "gutenberg:23.4.0",
+          "kind": "gutenberg-export",
+          "classification": "experimental",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/index.ts",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "TaxonomyEdit",
+            "expectedCount": 1
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "omissionId": "gutenberg.content-types.private-api-lock",
+          "kind": "gutenberg-export",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/lock-unlock.ts",
+          "locator": {
+            "kind": "text-literal",
+            "value": "__dangerousOptInToUnstableAPIsOnlyForCoreModules",
+            "expectedCount": 2
+          },
+          "reasonCode": "private-api-forbidden",
+          "reason": "The upstream source explicitly limits this bridge to Core modules, so it is absent from the consumer catalog."
+        },
+        {
+          "omissionId": "gutenberg.content-types.export-signatures",
+          "kind": "gutenberg-export",
+          "sourceInputId": "gutenberg-source",
+          "sourcePath": "packages/content-types/src/index.ts",
+          "locator": {
+            "kind": "js-named-export",
+            "value": "PostTypesList",
+            "expectedCount": 1
+          },
+          "reasonCode": "signature-needs-curation",
+          "reason": "Export names are inventoried, but their TypeScript and runtime contracts remain unreviewed and unsupported."
+        }
+      ]
+    }
+  ]
+}

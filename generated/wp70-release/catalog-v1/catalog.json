@@ -1,0 +1,1026 @@
+{
+  "catalog": {
+    "capabilities": [
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/blocks.getBlockType",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:getBlockType",
+            "sourceDigest": "f51a56b5d6836ba715c62da01f6b8fa535d1004f141afdd8e8a3f13b302762c0",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/blocks/src/api/index.js"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.export.@wordpress/blocks.registerBlockType",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-export",
+        "provenance": [
+          {
+            "locator": "js-named-export:registerBlockType",
+            "sourceDigest": "f51a56b5d6836ba715c62da01f6b8fa535d1004f141afdd8e8a3f13b302762c0",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/blocks/src/api/index.js"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/blocks",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/blocks",
+            "sourceDigest": "aa685725ecddb4a60903eeddb5cd5e7a8988261b528ac206a498c86d3eebcf6a",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/blocks/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/components",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/components",
+            "sourceDigest": "602487e26f0146cb0f28089500bc67233246b33a5ddaa6bc5d0d4602a566afb1",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/components/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/data",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/data",
+            "sourceDigest": "ee82b7fca901d27270be7262954be019982311f151857bd1385575329f987c6a",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/data/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/element",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/element",
+            "sourceDigest": "51d94ba04d64fb12892d60e34a6cfdc1b46f77cd6be14a3694ebe87e293b4229",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/element/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "gutenberg.package.@wordpress/i18n",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "gutenberg-package",
+        "provenance": [
+          {
+            "locator": "json-pointer-equals:/name=@wordpress/i18n",
+            "sourceDigest": "47847dd136a2ee54883ba089a4e77d2b87b74e36add6e5d67e778b22823658bf",
+            "sourceInputId": "embedded-gutenberg-source",
+            "sourcePath": "packages/i18n/package.json"
+          }
+        ],
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.apiVersion",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:apiVersion",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.attributes",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:attributes",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.category",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:category",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.name",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:name",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.supports",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:supports",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.block-metadata-key.title",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "block-metadata-key",
+        "provenance": [
+          {
+            "locator": "php-array-key:title",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.hook.init",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "hook",
+        "provenance": [
+          {
+            "locator": "php-call-literal:do_action:init",
+            "sourceDigest": "e56fb879616515a04ead712bd6c72026c2177ff09bae14efa60d0046e6bb7861",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-settings.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.hook.rest_api_init",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "hook",
+        "provenance": [
+          {
+            "locator": "php-call-literal:do_action:rest_api_init",
+            "sourceDigest": "4c66d2adbc3086fd3f950d407f6a721460db3e55d2c2ebd440f75d1552dbed37",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/rest-api.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.add_action",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:add_action",
+            "sourceDigest": "2e06902ae7d65d7dad37cbafd8e8feff83e4aeeff3a7839885ce7fe4f0c94d68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/plugin.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.add_filter",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:add_filter",
+            "sourceDigest": "2e06902ae7d65d7dad37cbafd8e8feff83e4aeeff3a7839885ce7fe4f0c94d68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/plugin.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.register_block_type",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:register_block_type",
+            "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/blocks.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.register_post_type",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:register_post_type",
+            "sourceDigest": "2e6ac612f82a1aeb04e1e1de0c7e2a186e5f997f67e942026bfe9b211108811c",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/post.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.register_rest_route",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:register_rest_route",
+            "sourceDigest": "4c66d2adbc3086fd3f950d407f6a721460db3e55d2c2ebd440f75d1552dbed37",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/rest-api.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.wp_enqueue_script",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:wp_enqueue_script",
+            "sourceDigest": "7f1c8945f97711927196d6e01216443b43b70bd1530c5013d53f20238757cad4",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/functions.wp-scripts.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.wp_register_script",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:wp_register_script",
+            "sourceDigest": "7f1c8945f97711927196d6e01216443b43b70bd1530c5013d53f20238757cad4",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/functions.wp-scripts.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.php.function.wp_set_script_translations",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "php-function",
+        "provenance": [
+          {
+            "locator": "php-function-declaration:wp_set_script_translations",
+            "sourceDigest": "7f1c8945f97711927196d6e01216443b43b70bd1530c5013d53f20238757cad4",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/functions.wp-scripts.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.wp-blocks",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:blocks.js",
+            "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.wp-components",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:components.js",
+            "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.wp-data",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:data.js",
+            "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.wp-element",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:element.js",
+            "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.wp-i18n",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:i18n.js",
+            "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/assets/script-loader-packages.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      }
+    ],
+    "catalogRevision": "wp70-release/catalog-v1",
+    "correctionAncestry": [],
+    "profileId": "wp70-release",
+    "upstreamInputs": [
+      {
+        "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+        "inputId": "wordpress-source",
+        "kind": "git-source",
+        "providerIdentity": "wordpress:7.0-source",
+        "repository": "https://github.com/WordPress/wordpress-develop.git",
+        "tag": "7.0.0",
+        "tree": "f3ad96f2357d2309f64a8d42a5808be502639c70"
+      },
+      {
+        "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+        "inputId": "embedded-gutenberg-source",
+        "kind": "git-source",
+        "providerIdentity": "gutenberg:wordpress-7.0-embedded-source",
+        "repository": "https://github.com/WordPress/gutenberg.git",
+        "tree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+      },
+      {
+        "contentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+        "inputId": "wordpress-release-zip",
+        "kind": "release-artifact",
+        "providerIdentity": "wordpress:7.0-release",
+        "sha256": "b2b6827eb7b2b51f4610893e1a6ad02466e76fe0a307bd40ca2a8ba821c40d0b",
+        "sizeBytes": 31549246,
+        "url": "https://wordpress.org/wordpress-7.0.zip"
+      }
+    ]
+  },
+  "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+  "catalogDigestAlgorithm": "sha256-canonical-json-v1",
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "schemaVersion": 1
+}

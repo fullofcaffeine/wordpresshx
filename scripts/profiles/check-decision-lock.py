@@ -55,7 +55,7 @@ def main() -> None:
     assert policy["status"] == "accepted-architecture"
     assert policy["claim"] == "not-tested"
     assert policy["catalogContractStatus"] == (
-        "schema-v1-implemented-catalog-generation-pending"
+        "schema-v1-generated-catalog-v1-sdk-013"
     )
 
     assert set(profiles) == {"wp70-release", "gutenberg-forward-23.4"}

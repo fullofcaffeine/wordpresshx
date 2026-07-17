@@ -52,12 +52,19 @@ required_files=(
   packages/core/test-positive/profile_gate/Main.hx
   compiler/README.md
   profiles/README.md
+  profiles/catalog-selection.json
   profiles/classification-decision-lock.json
   profiles/decision-lock.json
   profiles/gutenberg-forward-23.4/README.md
   profiles/gutenberg-forward-23.4/source.lock.json
   profiles/wp70-release/README.md
   profiles/wp70-release/source.lock.json
+  generated/gutenberg-forward-23.4/catalog-v1/catalog.json
+  generated/gutenberg-forward-23.4/catalog-v1/generation-report.json
+  generated/gutenberg-forward-23.4/catalog-v1/omissions.json
+  generated/wp70-release/catalog-v1/catalog.json
+  generated/wp70-release/catalog-v1/generation-report.json
+  generated/wp70-release/catalog-v1/omissions.json
   schemas/README.md
   schemas/profile.schema.json
   tools/README.md
@@ -74,6 +81,7 @@ required_files=(
   manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
   manifests/evidence/sdk-012-profile-schema.json
+  manifests/evidence/sdk-013-profile-generator.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -115,6 +123,9 @@ required_files=(
   scripts/profiles/check-decision-lock.py
   scripts/profiles/check-classification-decision.py
   scripts/profiles/check-profile-isolation.py
+  scripts/profiles/check-generated-catalogs.py
+  scripts/profiles/generate-catalogs.py
+  scripts/profiles/test-catalog-generator.sh
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
@@ -218,6 +229,11 @@ profile_schema_path = Path("schemas/profile.schema.json")
 profile_schema = json.loads(profile_schema_path.read_text(encoding="utf-8"))
 sdk012_receipt = json.loads(
     Path("manifests/evidence/sdk-012-profile-schema.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk013_receipt = json.loads(
+    Path("manifests/evidence/sdk-013-profile-generator.json").read_text(
         encoding="utf-8"
     )
 )
@@ -365,7 +381,7 @@ assert profile_lock["decision"] == "ADR-002"
 assert profile_lock["status"] == "accepted-architecture"
 assert profile_lock["claim"] == "not-tested"
 assert profile_lock["catalogContractStatus"] == (
-    "schema-v1-implemented-catalog-generation-pending"
+    "schema-v1-generated-catalog-v1-sdk-013"
 )
 assert set(profile_lock["profiles"]) == {
     "wp70-release",
@@ -412,7 +428,7 @@ assert classification_lock["schemaImplementationStatus"] == (
     "implemented-sdk-012"
 )
 assert classification_lock["generatorImplementationStatus"] == (
-    "pending-sdk-013"
+    "implemented-sdk-013"
 )
 classification_vocabulary = classification_lock["machineVocabulary"]
 assert set(classification_vocabulary["apiClassifications"]) == {
@@ -817,12 +833,86 @@ for unproven_claim in (
     "productionSupport",
 ):
     assert sdk012_receipt["claims"][unproven_claim] == "not-tested"
+
+assert sdk013_receipt["schemaVersion"] == 1
+assert sdk013_receipt["receiptId"] == "SDK-013-PROFILE-GENERATOR"
+assert sdk013_receipt["bead"] == "wordpresshx-sdk-013"
+sdk013_subject = sdk013_receipt["subject"]
+for path_field, digest_field in (
+    ("generatorPath", "generatorSha256"),
+    ("checkerPath", "checkerSha256"),
+    ("testPath", "testSha256"),
+    ("selectionPath", "selectionSha256"),
+    ("profileSchemaPath", "profileSchemaSha256"),
+):
+    evidence_path = Path(sdk013_subject[path_field])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        sdk013_subject[digest_field]
+    )
+assert sdk013_subject["generatorIdentity"] == (
+    "wordpresshx-exact-profile-generator"
+)
+assert sdk013_subject["generatorVersion"] == "1"
+assert sdk013_receipt["generation"]["sourceReadMode"] == (
+    "git-show-exact-commit-and-path"
+)
+assert sdk013_receipt["generation"]["upstreamApplicationCodeExecuted"] is False
+assert sdk013_receipt["generation"]["doubleRunByteEquality"] == "passed"
+assert sdk013_receipt["generation"]["committedTreeEquality"] == "passed"
+assert sdk013_receipt["generation"]["failedGenerationPublishesNothing"] is True
+assert sdk013_receipt["generation"]["outcome"] == "passed"
+sdk013_profiles = {
+    profile["profileId"]: profile for profile in sdk013_receipt["profiles"]
+}
+assert set(sdk013_profiles) == {
+    "wp70-release",
+    "gutenberg-forward-23.4",
+}
+assert sdk013_profiles["wp70-release"]["catalog"]["capabilityCount"] == 28
+assert sdk013_profiles["gutenberg-forward-23.4"]["catalog"][
+    "capabilityCount"
+] == 5
+assert sdk013_profiles["gutenberg-forward-23.4"][
+    "wordpress70Compatibility"
+] == "forbidden"
+for profile in sdk013_profiles.values():
+    for section_name in ("catalog", "omissions", "generationReport"):
+        section = profile[section_name]
+        path = Path(section["path"])
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == section[
+            "fileSha256"
+        ]
+    assert profile["catalog"]["evidenceStatus"] == "inventoried"
+    assert profile["omissions"]["omissionCount"] == 2
+assert sdk013_receipt["negativeEvidence"]["wrongRepositoryMissingExactCommit"] == (
+    "rejected"
+)
+assert sdk013_receipt["negativeEvidence"]["partialOutputAfterFailure"] == (
+    "absent"
+)
+assert sdk013_receipt["negativeEvidence"]["dynamicHookGuessed"] is False
+assert sdk013_receipt["negativeEvidence"]["privateApiPublished"] is False
+assert sdk013_receipt["negativeEvidence"]["contentTypesLeakedIntoWp70"] is False
+assert sdk013_receipt["hostedWorkflow"]["job"] == "profile-generator"
+assert sdk013_receipt["hostedWorkflow"]["required"] is True
+assert sdk013_receipt["claims"]["generatorImplementation"] == "generated"
+assert sdk013_receipt["claims"]["wp70CapabilityCatalog"] == "inventoried"
+assert sdk013_receipt["claims"]["forwardCapabilityCatalog"] == "inventoried"
+for unproven_claim in (
+    "typedContracts",
+    "wordpressRuntimeCompatibility",
+    "browserCompatibility",
+    "packageCompatibility",
+    "productionSupport",
+):
+    assert sdk013_receipt["claims"][unproven_claim] == "not-tested"
 PY
 
 python3 scripts/profiles/check-decision-lock.py
 python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
+python3 scripts/profiles/check-generated-catalogs.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

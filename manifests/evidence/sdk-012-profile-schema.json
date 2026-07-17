@@ -8,9 +8,9 @@
     "profileSchemaVersion": 1,
     "profileSchemaSha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
     "classificationDecisionLockPath": "profiles/classification-decision-lock.json",
-    "classificationDecisionLockSha256": "bddfba686623889420d16556a853f5d214a33b29877ae932da067f769baf25f0",
+    "classificationDecisionLockSha256": "058775561acdb94aecb78eac81b6a0ee3d3816d27c773a8e9b0fad6c102c1554",
     "profileDecisionLockPath": "profiles/decision-lock.json",
-    "profileDecisionLockSha256": "3bf323e894aeec1ed151ed06e199779012315a89d76d7ddba340c1a5044ce418",
+    "profileDecisionLockSha256": "ceccd792dd83fa8048ed70fe060dff037aba7d2801ca6e7a5f9e903c1ee7da60",
     "haxeContractRoot": "packages/core",
     "haxeContractFileCount": 20,
     "haxeContractContentSha256": "9cf382a6a905579d39497aedd9d6bb9ead7d05e1f03538487a54e88cb3abdc61"

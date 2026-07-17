@@ -3,7 +3,7 @@
   "decision": "ADR-002",
   "status": "accepted-architecture",
   "claim": "not-tested",
-  "catalogContractStatus": "schema-v1-implemented-catalog-generation-pending",
+  "catalogContractStatus": "schema-v1-generated-catalog-v1-sdk-013",
   "profiles": {
     "wp70-release": {
       "role": "mvp-vanilla",

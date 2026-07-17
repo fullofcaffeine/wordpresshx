@@ -1,0 +1,43 @@
+{
+  "catalogRevision": "wp70-release/catalog-v1",
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "omissions": [
+    {
+      "kind": "hook",
+      "locator": "php-interpolated-call-prefix:do_action:save_post_",
+      "omissionId": "wordpress.dynamic-hook.save_post_post_type",
+      "reason": "The hook suffix is runtime data; SDK-013 does not guess its pattern contract or callback semantics.",
+      "reasonCode": "dynamic-name-needs-curated-pattern",
+      "receiptIds": [
+        "SDK-010-WP70-RELEASE-SOURCE",
+        "SDK-013-PROFILE-GENERATOR"
+      ],
+      "sourceDigest": "2e6ac612f82a1aeb04e1e1de0c7e2a186e5f997f67e942026bfe9b211108811c",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/post.php"
+    },
+    {
+      "kind": "php-function",
+      "locator": "php-function-declaration:register_block_type",
+      "omissionId": "wordpress.signature.register_block_type",
+      "reason": "Declaration presence is inventoried, but union shapes and runtime behavior require a reviewed typed contract.",
+      "reasonCode": "signature-needs-curation",
+      "receiptIds": [
+        "SDK-010-WP70-RELEASE-SOURCE",
+        "SDK-013-PROFILE-GENERATOR"
+      ],
+      "sourceDigest": "b8b44cb18d6ae7526a36fd3a5fd08c411f3af6c07aba85b3feb34563ed0ad321",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/blocks.php"
+    }
+  ],
+  "omissionsDigest": "f2eee9810d32bc19da6d04616892db20d37ef66c8b39dd11925432ba467bc234",
+  "omissionsDigestAlgorithm": "sha256-canonical-json-v1",
+  "profileId": "wp70-release",
+  "schemaVersion": 1
+}
