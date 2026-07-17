@@ -60,6 +60,8 @@ Existing proven work should be moved, not rewritten without reason. Every import
 
 The source authority for the first import is the clean `wordpresshx-port` commit `7fdda0aa5ea66900819842aefeac6747421e9130` and tree `a5cc51c68ca443108b5b133612c2f389ebf31364`. The source code is GPL-2.0-or-later. Importing it does not decide the final SDK/compiler/generated-output license; ADR-020 remains mandatory before publication.
 
+That first-import revision later proved to contain stale committed adoption receipts. `wordpresshx-g1.1` preserved the failure, repaired the complete source evidence graph through reviewed source-port PRs, and replayed the aggregate gate from a clean detached checkout. The current evidence authority is merge commit `20b9c974f141375b6cf191db6f25b115812e282c`, tree `1de1d4869f8cea49ebebc9e54295057c62dee011`. The imported compiler blob and the excluded WordPress-adapter blob are unchanged, so this advances verification provenance without silently changing the admitted source slice.
+
 ### Reflaxe and stock PHP authority
 
 Reflaxe is compiler infrastructure, not PHP semantic authority. Exact Reflaxe inputs will be locked when the driver begins consuming them. Haxe 4.3.7's stock PHP target and `std/php` remain the behavior/reference source for Haxe runtime, boot, standard-library, exception, iterator, closure, string, and target-intrinsic behavior until a later ADR accepts broader ownership.

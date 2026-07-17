@@ -4,8 +4,8 @@
   "status": "internal-pre-release",
   "origin": {
     "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
-    "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
-    "tree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+    "commit": "20b9c974f141375b6cf191db6f25b115812e282c",
+    "tree": "1de1d4869f8cea49ebebc9e54295057c62dee011",
     "license": "GPL-2.0-or-later",
     "sources": [
       {
@@ -32,6 +32,22 @@
         "classification": "excluded-wordpress-profile-reference"
       }
     ],
+    "initialImport": {
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "tree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+      "compilerSourceIdentityPreserved": true
+    },
+    "adoptionEvidence": {
+      "sdkBead": "wordpresshx-g1.1",
+      "sourceBead": "wordpresshx-424l",
+      "repairPullRequest": "https://github.com/fullofcaffeine/wordpresshx-port/pull/1",
+      "closurePullRequest": "https://github.com/fullofcaffeine/wordpresshx-port/pull/2",
+      "cleanAggregateCheck": "passed",
+      "requiredCheckCount": 29,
+      "includedManifestCount": 28,
+      "excludedManifestCount": 0,
+      "closedTaskReceiptLinks": 493
+    },
     "historyRoot": {
       "commit": "ca1db2b24e834d68fbed96854c14f0edaae87c9c",
       "subject": "Start in-repo WPHX PHP emitter"
