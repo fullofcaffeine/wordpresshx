@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-008",
+  "status": "accepted-architecture",
+  "claim": "not-tested",
+  "schemaImplementationStatus": "pending-sdk-012",
+  "generatorImplementationStatus": "pending-sdk-013",
+  "machineVocabulary": {
+    "apiClassifications": {
+      "public": {
+        "logicalSurface": "stable-public",
+        "explicitOptIn": false,
+        "consumerImportAllowed": true,
+        "minimumPublishEvidence": "runtime-tested",
+        "productionSupportEligible": true
+      },
+      "experimental": {
+        "logicalSurface": "experimental",
+        "explicitOptIn": true,
+        "consumerImportAllowed": true,
+        "minimumPublishEvidence": "typed",
+        "productionSupportEligible": false
+      },
+      "private": {
+        "logicalSurface": "private",
+        "explicitOptIn": false,
+        "consumerImportAllowed": false,
+        "minimumPublishEvidence": null,
+        "productionSupportEligible": false
+      },
+      "unsafe": {
+        "logicalSurface": "unsafe",
+        "explicitOptIn": true,
+        "consumerImportAllowed": true,
+        "minimumPublishEvidence": "typed",
+        "productionSupportEligible": false,
+        "requiredMetadata": [
+          "waiverReceiptId",
+          "securityReviewReceiptId",
+          "removalOwner"
+        ]
+      },
+      "deprecated": {
+        "logicalSurface": "deprecated",
+        "explicitOptIn": false,
+        "consumerImportAllowed": true,
+        "minimumPublishEvidence": "runtime-tested",
+        "productionSupportEligible": true,
+        "requiredMetadata": [
+          "deprecatedSince",
+          "replacementOrReason",
+          "earliestRemoval"
+        ],
+        "namePolicy": "retain-last-public-name-during-window"
+      }
+    },
+    "serializedClassificationAliases": [],
+    "evidenceStates": [
+      "inventoried",
+      "typed",
+      "generated",
+      "runtime-tested",
+      "production-supported"
+    ],
+    "serializedEvidenceAliases": [],
+    "administrativeResults": [
+      "not-tested",
+      "failed",
+      "not-applicable",
+      "unsupported",
+      "withdrawn"
+    ]
+  },
+  "promotionPolicy": {
+    "contiguous": true,
+    "attainedHistoryImmutable": true,
+    "blockingAdministrativeResultStopsPromotion": true,
+    "blankImpliesPass": false,
+    "requiredEvidence": {
+      "inventoried": [
+        "exactUpstreamInputs",
+        "entryProvenance",
+        "catalogDigest",
+        "receiptId"
+      ],
+      "typed": [
+        "contractReviewReceiptId",
+        "exactProfileId",
+        "capabilityId",
+        "catalogDigest"
+      ],
+      "generated": [
+        "artifactDigest",
+        "generatorIdentity",
+        "staticCheckReceiptId",
+        "determinismReceiptId"
+      ],
+      "runtime-tested": [
+        "artifactDigest",
+        "realRuntime",
+        "providerIdentity",
+        "environmentIdentity",
+        "runtimeReceiptId"
+      ],
+      "production-supported": [
+        "productionReadinessReceiptId",
+        "supportWindow",
+        "maintenanceOwner",
+        "noBlockingResult"
+      ]
+    }
+  },
+  "evidenceAuthority": {
+    "precedenceModel": "question-scoped-not-global",
+    "shippedAvailability": [
+      "exact-official-distribution-or-package",
+      "exact-export-map-or-asset-metadata",
+      "exact-source-workspace",
+      "versioned-official-documentation",
+      "heuristic-scan"
+    ],
+    "signatureShape": [
+      "provider-versioned-stub-export-map-or-schema",
+      "unambiguous-exact-source-declaration",
+      "curated-reviewed-contract-with-exact-citations",
+      "versioned-documentation-or-phpdoc",
+      "heuristic-inference"
+    ],
+    "runtimeBehavior": [
+      "exact-final-sdk-artifact-on-exact-real-provider",
+      "focused-upstream-fixture-on-exact-release-bytes",
+      "upstream-test-or-source-reasoning",
+      "documentation"
+    ],
+    "productionSupport": [
+      "complete-readiness-ledger-and-current-support-window",
+      "exact-real-runtime-evidence",
+      "all-other-inputs"
+    ],
+    "equalAuthorityConflict": "fail-and-require-curated-adjudication",
+    "ambiguousContract": "omit-and-report",
+    "broadDynamicFallbackAllowed": false,
+    "curationCanManufactureRuntimePass": false
+  },
+  "surfacePolicy": {
+    "stablePackageMayDependOn": [
+      "public",
+      "deprecated"
+    ],
+    "experimentalRequiresExplicitNamespaceOrDefine": true,
+    "privateAppearsInConsumerPackageGraph": false,
+    "unsafeRecordedInFinalArtifactManifest": true,
+    "classificationAndEvidenceDisplayedSeparately": true,
+    "reclassificationRequiresReceiptAndMigrationAnalysis": true
+  },
+  "capabilityTokenPolicy": {
+    "compileTimeAvailability": {
+      "authority": "exact-selected-profile-catalog",
+      "serializable": true,
+      "deterministicBuildInput": true
+    },
+    "runtimeCapabilityResult": {
+      "authority": "current-request-native-provider-check",
+      "requestScoped": true,
+      "serializableAsBuildAuthority": false,
+      "mayChangeSelectedProfile": false,
+      "mayAdmitUnavailableImport": false
+    }
+  },
+  "correctionPolicy": {
+    "releasedBytesImmutable": true,
+    "releasedReceiptsImmutable": true,
+    "replacementRequiresNewCatalogDigest": true,
+    "replacementRequiresNewSdkOrArtifactIdentity": true,
+    "correctionOfRequired": true,
+    "preservePriorEvidence": true,
+    "publicOverclaimUsesAdr001P0Workflow": true,
+    "consumerContractImpactRecorded": true,
+    "schemaInterpretationBreakIncrementsCatalogRevision": true,
+    "invalidatedDownstreamEvidenceMayBeCopied": false,
+    "mutableLatestIsAuthority": false
+  },
+  "requiredLedgerKeys": [
+    "profileId",
+    "catalogRevision",
+    "catalogDigest",
+    "capabilityId",
+    "providerIdentity",
+    "upstreamDigests",
+    "entryProvenance",
+    "classification",
+    "evidenceStatus",
+    "receiptIds",
+    "administrativeResults",
+    "correctionAncestry"
+  ],
+  "knownInventoryFixture": {
+    "capabilityId": "gutenberg.package.@wordpress/content-types",
+    "availableIn": [
+      "gutenberg-forward-23.4"
+    ],
+    "classification": "experimental",
+    "evidenceStatus": "inventoried",
+    "sourceReceiptId": "SDK-011-GUTENBERG-FORWARD-23.4",
+    "runtimeClaim": "not-tested",
+    "productionClaim": "not-tested"
+  }
+}

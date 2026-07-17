@@ -23,6 +23,7 @@ required_files=(
   docs/adr/001-product-and-repository-boundary.md
   docs/adr/002-exact-compatibility-profiles.md
   docs/adr/004-generic-php-compiler-home.md
+  docs/adr/008-profile-generation-and-api-classification.md
   docs/architecture/browser-compiler.md
   docs/architecture/php-compiler.md
   docs/architecture/repository-layout.md
@@ -31,6 +32,7 @@ required_files=(
   packages/README.md
   compiler/README.md
   profiles/README.md
+  profiles/classification-decision-lock.json
   profiles/decision-lock.json
   profiles/gutenberg-forward-23.4/README.md
   profiles/gutenberg-forward-23.4/source.lock.json
@@ -86,6 +88,7 @@ required_files=(
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
   scripts/profiles/check-decision-lock.py
+  scripts/profiles/check-classification-decision.py
   scripts/profiles/check-profile-isolation.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
@@ -156,8 +159,15 @@ adr = Path("docs/adr/001-product-and-repository-boundary.md").read_text(
 profile_adr = Path("docs/adr/002-exact-compatibility-profiles.md").read_text(
     encoding="utf-8"
 )
+classification_adr = Path(
+    "docs/adr/008-profile-generation-and-api-classification.md"
+).read_text(encoding="utf-8")
 profile_lock = json.loads(
     Path("profiles/decision-lock.json").read_text(encoding="utf-8")
+)
+classification_lock_path = Path("profiles/classification-decision-lock.json")
+classification_lock = json.loads(
+    classification_lock_path.read_text(encoding="utf-8")
 )
 wp_source_lock_path = Path("profiles/wp70-release/source.lock.json")
 wp_source_lock = json.loads(wp_source_lock_path.read_text(encoding="utf-8"))
@@ -358,6 +368,99 @@ for exact_identity in (
 ):
     assert exact_identity in profile_adr
 
+assert classification_lock["schemaVersion"] == 1
+assert classification_lock["decision"] == "ADR-008"
+assert classification_lock["status"] == "accepted-architecture"
+assert classification_lock["claim"] == "not-tested"
+assert classification_lock["schemaImplementationStatus"] == (
+    "pending-sdk-012"
+)
+assert classification_lock["generatorImplementationStatus"] == (
+    "pending-sdk-013"
+)
+classification_vocabulary = classification_lock["machineVocabulary"]
+assert set(classification_vocabulary["apiClassifications"]) == {
+    "public",
+    "experimental",
+    "private",
+    "unsafe",
+    "deprecated",
+}
+assert classification_vocabulary["serializedClassificationAliases"] == []
+assert classification_vocabulary["evidenceStates"] == [
+    "inventoried",
+    "typed",
+    "generated",
+    "runtime-tested",
+    "production-supported",
+]
+assert classification_vocabulary["serializedEvidenceAliases"] == []
+assert set(classification_vocabulary["administrativeResults"]) == {
+    "not-tested",
+    "failed",
+    "not-applicable",
+    "unsupported",
+    "withdrawn",
+}
+assert classification_lock["promotionPolicy"]["contiguous"] is True
+assert classification_lock["promotionPolicy"][
+    "attainedHistoryImmutable"
+] is True
+assert classification_lock["evidenceAuthority"]["precedenceModel"] == (
+    "question-scoped-not-global"
+)
+assert classification_lock["evidenceAuthority"]["ambiguousContract"] == (
+    "omit-and-report"
+)
+assert classification_lock["evidenceAuthority"][
+    "broadDynamicFallbackAllowed"
+] is False
+assert classification_lock["capabilityTokenPolicy"][
+    "compileTimeAvailability"
+]["serializable"] is True
+assert classification_lock["capabilityTokenPolicy"][
+    "runtimeCapabilityResult"
+]["serializableAsBuildAuthority"] is False
+assert classification_lock["capabilityTokenPolicy"][
+    "runtimeCapabilityResult"
+]["mayChangeSelectedProfile"] is False
+assert classification_lock["correctionPolicy"][
+    "replacementRequiresNewCatalogDigest"
+] is True
+assert classification_lock["correctionPolicy"][
+    "invalidatedDownstreamEvidenceMayBeCopied"
+] is False
+assert classification_lock["correctionPolicy"][
+    "mutableLatestIsAuthority"
+] is False
+known_classification_fixture = classification_lock["knownInventoryFixture"]
+assert known_classification_fixture["capabilityId"] == (
+    "gutenberg.package.@wordpress/content-types"
+)
+assert known_classification_fixture["availableIn"] == [
+    "gutenberg-forward-23.4"
+]
+assert known_classification_fixture["classification"] == "experimental"
+assert known_classification_fixture["evidenceStatus"] == "inventoried"
+assert known_classification_fixture["runtimeClaim"] == "not-tested"
+assert known_classification_fixture["productionClaim"] == "not-tested"
+for term in (
+    "question-specific",
+    "precise-or-omitted",
+    "compile-time capability token",
+    "request-scoped",
+    "correctionOf",
+):
+    assert term in classification_adr
+classification_checker_path = Path(
+    "scripts/profiles/check-classification-decision.py"
+)
+compile(
+    classification_checker_path.read_text(encoding="utf-8"),
+    classification_checker_path.as_posix(),
+    "exec",
+)
+
 wp_entry = lock["entries"]["wp70-release"]
 wp_profile = profile_lock["profiles"]["wp70-release"]
 assert wp_source_lock["schemaVersion"] == 1
@@ -549,6 +652,7 @@ for unproven_claim in (
 PY
 
 python3 scripts/profiles/check-decision-lock.py
+python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
