@@ -30,6 +30,8 @@ Generated projections are manifest-owned, deterministic, staged atomically, and 
 
 Existing projects use the same architecture incrementally. They may keep native implementations authoritative behind typed contracts, introduce one Haxe-owned module, or progress to the complete Haxe-only authoring surface without adopting the full port.
 
+The full-port repository remains useful as bounded prior evidence, not as an SDK dependency. Its typed admin/theme markup pilots already demonstrate typed domain inputs, explicit escaped-value ownership, deterministic WordPress-compatible bytes, file-segment manifests, caller-scope boundaries, and narrow oracle claims. WordPressHx may adapt those concepts and later oracle fixtures with exact per-file provenance. It does not copy the port's Core linker or replacement model, inherit its parity claims, or treat its hand-built markup AST as the SDK's inline-HXX implementation. Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the first such review.
+
 ## Conventional project tree
 
 The exact package and API names remain subject to ADR-003 and ADR-016. The intended user-facing shape is:
@@ -275,7 +277,7 @@ Cross-project integration requires a public versioned package, schema, or CLI co
 ## Implementation and evidence sequence
 
 - `SDK-045` proves the Site.hx-centered scaffold and generated ownership boundaries.
-- `ADR-011` and `SDK-080` select the HXX parser and lowering architecture.
+- `ADR-011` and `SDK-080` select and prototype the exact compile-time HXX parser boundary; native lowering remains later work.
 - `SDK-081` implements typed server HXX and contextual output lowering.
 - `SDK-083` proves a Haxe-authored native theme and hierarchy path before the MVP release gate.
 - `SDK-084` expands theme metadata, design tokens, patterns, parts, and generated styling.

@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "target": "server",
+  "semanticDigest": "83bdbb80492a9da751a051ac84148fd62ea6bf1e37faa3b450cf3046636388ff",
+  "rootSpan": {
+    "start": 0,
+    "end": 396
+  },
+  "entryCount": 18,
+  "entries": [
+    {
+      "kind": "element",
+      "name": "main",
+      "context": "root",
+      "type": "",
+      "span": {
+        "start": 1,
+        "end": 396
+      }
+    },
+    {
+      "kind": "attribute",
+      "name": "class",
+      "context": "main",
+      "type": "String",
+      "span": {
+        "start": 13,
+        "end": 22
+      }
+    },
+    {
+      "kind": "component",
+      "name": "Panel",
+      "context": "root/element:main",
+      "type": "",
+      "span": {
+        "start": 34,
+        "end": 292
+      }
+    },
+    {
+      "kind": "attribute",
+      "name": "title",
+      "context": "Panel",
+      "type": "String",
+      "span": {
+        "start": 47,
+        "end": 52
+      }
+    },
+    {
+      "kind": "attribute",
+      "name": "count",
+      "context": "Panel",
+      "type": "Int",
+      "span": {
+        "start": 61,
+        "end": 66
+      }
+    },
+    {
+      "kind": "attribute-spread",
+      "name": "e212f09de1b79efb",
+      "context": "Panel",
+      "type": "{ highlighted : Bool }",
+      "span": {
+        "start": 72,
+        "end": 85
+      }
+    },
+    {
+      "kind": "slot",
+      "name": "header",
+      "context": "Panel",
+      "type": "",
+      "span": {
+        "start": 99,
+        "end": 155
+      }
+    },
+    {
+      "kind": "element",
+      "name": "h1",
+      "context": "root/element:main/component:Panel/slot:header",
+      "type": "",
+      "span": {
+        "start": 120,
+        "end": 135
+      }
+    },
+    {
+      "kind": "expression",
+      "name": "aaf2320646108059",
+      "context": "root/element:main/component:Panel/slot:header/element:h1",
+      "type": "String",
+      "span": {
+        "start": 124,
+        "end": 129
+      }
+    },
+    {
+      "kind": "slot",
+      "name": "body",
+      "context": "Panel",
+      "type": "",
+      "span": {
+        "start": 167,
+        "end": 275
+      }
+    },
+    {
+      "kind": "fragment",
+      "name": "fragment",
+      "context": "root/element:main/component:Panel/slot:body",
+      "type": "",
+      "span": {
+        "start": 186,
+        "end": 257
+      }
+    },
+    {
+      "kind": "element",
+      "name": "p",
+      "context": "root/element:main/component:Panel/slot:body/fragment",
+      "type": "",
+      "span": {
+        "start": 203,
+        "end": 216
+      }
+    },
+    {
+      "kind": "expression",
+      "name": "aaf2320646108059",
+      "context": "root/element:main/component:Panel/slot:body/fragment/element:p",
+      "type": "String",
+      "span": {
+        "start": 206,
+        "end": 211
+      }
+    },
+    {
+      "kind": "child-spread",
+      "name": "5ea44c3961f16643",
+      "context": "root/element:main/component:Panel/slot:body/fragment",
+      "type": "Array<String>",
+      "span": {
+        "start": 235,
+        "end": 240
+      }
+    },
+    {
+      "kind": "if",
+      "name": "286e5558c4ab6d41",
+      "context": "root/element:main",
+      "type": "Bool",
+      "span": {
+        "start": 304,
+        "end": 382
+      }
+    },
+    {
+      "kind": "component",
+      "name": "Inline",
+      "context": "root/element:main/if:then",
+      "type": "",
+      "span": {
+        "start": 331,
+        "end": 368
+      }
+    },
+    {
+      "kind": "attribute",
+      "name": "label",
+      "context": "Inline",
+      "type": "String",
+      "span": {
+        "start": 345,
+        "end": 350
+      }
+    },
+    {
+      "kind": "expression",
+      "name": "6c35493a2b937829",
+      "context": "root/element:main/if:then/component:Inline",
+      "type": "Int",
+      "span": {
+        "start": 353,
+        "end": 358
+      }
+    }
+  ]
+}

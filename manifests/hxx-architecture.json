@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "decision": "ADR-011",
   "status": "accepted-architecture",
-  "claim": "not-implemented",
+  "claim": "parser-adapter-prototype-tested",
   "authoring": {
     "primarySyntax": "haxe-4-inline-markup",
     "embeddedExpressions": "normal-haxe-typed-expressions",
@@ -19,8 +19,16 @@
     "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
     "usage": "parser-positioned-syntax-and-required-helpers-only",
     "publicTinkTypesExposed": false,
-    "releaseArtifactAndTransitivesResolved": false,
+    "releaseArtifactAndTransitivesResolved": true,
     "resolutionOwner": "wordpresshx-sdk-080",
+    "dependencyLock": "packages/hxx/dependency-lock.json",
+    "releaseArtifact": {
+      "url": "https://lib.haxe.org/files/3.0/tink_hxx-0,25,1.zip",
+      "sizeBytes": 81868,
+      "sha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e"
+    },
+    "resolvedTransitiveCount": 5,
+    "resolutionPolicy": "exact-scoped-lix-inputs-plus-haxelib-sha256-and-git-commit-tree",
     "forkPolicy": "no-fork-without-superseding-adr"
   },
   "pipeline": [
@@ -90,6 +98,20 @@
     "materialSupportBytesRequireReceipt": true,
     "snapshotOwner": "wordpresshx-sdk-080"
   },
+  "prototypeEvidence": {
+    "receiptId": "SDK-080-HXX-PARSER-PROTOTYPE",
+    "dependencyLock": "packages/hxx/dependency-lock.json",
+    "adapter": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
+    "serverResultType": "wordpress.hx.hxx.prototype.ServerSnapshot",
+    "browserResultType": "wordpress.hx.hxx.prototype.BrowserSnapshot",
+    "sharedSemanticDigest": "83bdbb80492a9da751a051ac84148fd62ea6bf1e37faa3b450cf3046636388ff",
+    "relativeSourceSpansTested": true,
+    "normalHaxeExpressionTypingTested": true,
+    "propsChildrenSlotsAndClosedSpreadsTested": true,
+    "targetLeakageNegativeTested": true,
+    "prohibitedRuntimeLeakScanPassed": true,
+    "nativeLoweringImplemented": false
+  },
   "prohibitedRuntime": [
     "hxx-parser",
     "tink-hxx-implementation",
@@ -103,6 +125,7 @@
     "coconut-ui",
     "tink-domspec",
     "phoenixhx-hxx-lowering",
-    "railshx-typed-views"
+    "railshx-typed-views",
+    "wordpresshx-port-typed-hxx-pilots"
   ]
 }

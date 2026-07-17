@@ -5,3 +5,5 @@ These directories are Haxe authoring/build source modules assembled into the sin
 The separately distributed `@wordpress-hx/cli` is the exactly version-matched host/build executable. Internal interop, compiler-profile, and tool modules may be bundled as implementation but are not supported APIs. The private generic `compiler/reflaxe.php` workspace has its own ADR-004 extraction boundary and never receives the SDK version merely because it is co-located.
 
 SDK-012 establishes the [`core`](core/README.md) profile-contract source tree. It is compiled directly in CI and deliberately has no per-module package metadata. Publication of the assembled SDK remains prohibited until ADR-020, SDK-002, and release evidence authorize it.
+
+SDK-080 establishes the [`hxx`](hxx/README.md) parser-adapter prototype. Its package-local scoped Lix closure is exact and compile-time-only; server and browser evidence fixtures prove shared inline syntax, normal Haxe typing, useful source spans, distinct result contracts, and no parser/UI-runtime leakage. The serialized snapshots are evidence artifacts, not the supported native renderer.

@@ -130,6 +130,41 @@
         "tree": "06f5ced331180886047161d8dfaa850ccdc6984a",
         "requiresFreshSdkReceipt": true
       }
+    },
+    "tink-hxx-parser": {
+      "role": "compile-time-hxx-parser-authority",
+      "packageIdentity": "haxelib:tink_hxx@0.25.1",
+      "repository": "https://github.com/haxetink/tink_hxx.git",
+      "version": "0.25.1",
+      "releaseTag": "0.25.1",
+      "tagObjectType": "commit",
+      "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+      "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+      "releaseArtifact": {
+        "name": "tink_hxx-0,25,1.zip",
+        "mediaType": "application/zip",
+        "sizeBytes": 81868,
+        "sha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e",
+        "url": "https://lib.haxe.org/files/3.0/tink_hxx-0,25,1.zip"
+      },
+      "dependencyLock": {
+        "path": "packages/hxx/dependency-lock.json",
+        "sha256": "6e0dcfaf656b4fcb81ba9f809c6c6169ce3dd3181d42b9cdc03e0dd2262f4c50",
+        "resolvedTransitiveCount": 5
+      },
+      "usage": "internal-parser-and-positioned-syntax-types-only",
+      "compileTimeOnly": true,
+      "publicTinkTypesExposed": false,
+      "runtimeDistributionAllowed": false,
+      "testReceiptIds": [
+        "SDK-080-HXX-PARSER-PROTOTYPE"
+      ],
+      "upgradeOwner": "wordpress-hx-sdk HXX maintainers",
+      "rollback": {
+        "policy": "retain-current-pin-or-supersede-adr",
+        "forkAllowed": false,
+        "requiresFreshSdkReceipt": true
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
 This directory contains immutable toolchain/upstream locks, architecture locks, evidence receipts, and future release manifests. No placeholder hash may be interpreted as a pin; exact identities are added by the corresponding gate bead.
 
 - `package-topology.json` is the accepted ADR-003 public-artifact, source-module, dependency-direction, and independent-versioning map. Its `not-published` claim and `publicationAuthorized: false` are deliberate; topology acceptance is not a registry release.
-- `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. Its parser artifact/transitive resolution and all implementation claims remain owned by SDK-080 and later evidence beads.
+- `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
@@ -19,3 +19,5 @@ Receipt `SDK-012-PROFILE-SCHEMA` records the closed profile schema, exact minima
 Receipt `SDK-013-PROFILE-GENERATOR` records the exact-object, read-only catalog generator, its reviewed selection contract, committed catalog/omission/report hashes, double-run equality, known-entry checks, and failed-publication negative. The 33 emitted capabilities are lexical inventories only. Four ambiguous or private candidates are explicit omissions; no typed, runtime, browser, package, or production claim advances.
 
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
+
+Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

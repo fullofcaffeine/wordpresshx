@@ -53,6 +53,38 @@ required_files=(
   packages/core/test-negative/runtime_as_compile_time/Main.hx
   packages/core/test-negative/unknown_classification/Main.hx
   packages/core/test-positive/profile_gate/Main.hx
+  packages/hxx/.haxerc
+  packages/hxx/README.md
+  packages/hxx/dependency-lock.json
+  packages/hxx/haxe_libraries/html-entities.hxml
+  packages/hxx/haxe_libraries/tink_anon.hxml
+  packages/hxx/haxe_libraries/tink_core.hxml
+  packages/hxx/haxe_libraries/tink_hxx.hxml
+  packages/hxx/haxe_libraries/tink_macro.hxml
+  packages/hxx/haxe_libraries/tink_parse.hxml
+  packages/hxx/scripts/test.sh
+  packages/hxx/scripts/verify-dependency-lock.py
+  packages/hxx/scripts/verify-snapshots.py
+  packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx
+  packages/hxx/src/wordpress/hx/hxx/prototype/BrowserHxx.hx
+  packages/hxx/src/wordpress/hx/hxx/prototype/BrowserSnapshot.hx
+  packages/hxx/src/wordpress/hx/hxx/prototype/ServerHxx.hx
+  packages/hxx/src/wordpress/hx/hxx/prototype/ServerSnapshot.hx
+  packages/hxx/test/expected/browser.json
+  packages/hxx/test/expected/server.json
+  packages/hxx/test-negative/malformed_markup/Main.hx
+  packages/hxx/test-negative/duplicate_slot/Main.hx
+  packages/hxx/test-negative/missing_prop/Main.hx
+  packages/hxx/test-negative/missing_slot/Main.hx
+  packages/hxx/test-negative/open_spread/Main.hx
+  packages/hxx/test-negative/optional_spread_missing_prop/Main.hx
+  packages/hxx/test-negative/target_mismatch/Main.hx
+  packages/hxx/test-negative/unknown_prop/Main.hx
+  packages/hxx/test-negative/wrong_child_spread/Main.hx
+  packages/hxx/test-negative/wrong_prop_type/Main.hx
+  packages/hxx/test-positive/browser/Main.hx
+  packages/hxx/test-positive/server/Main.hx
+  packages/hxx/test-positive/spread_override/Main.hx
   compiler/README.md
   profiles/README.md
   profiles/catalog-selection.json
@@ -95,6 +127,7 @@ required_files=(
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
+  manifests/evidence/sdk-080-hxx-parser-prototype.json
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx
@@ -261,6 +294,15 @@ package_topology = json.loads(
 hxx_architecture = json.loads(
     Path("manifests/hxx-architecture.json").read_text(encoding="utf-8")
 )
+hxx_dependency_lock_path = Path("packages/hxx/dependency-lock.json")
+hxx_dependency_lock = json.loads(
+    hxx_dependency_lock_path.read_text(encoding="utf-8")
+)
+hxx_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-080-hxx-parser-prototype.json"
+    ).read_text(encoding="utf-8")
+)
 sdk090_receipt = json.loads(
     Path("manifests/evidence/sdk-090-wordpress-harness.json").read_text(
         encoding="utf-8"
@@ -381,7 +423,7 @@ assert independent_admission[
 assert hxx_architecture["schemaVersion"] == 1
 assert hxx_architecture["decision"] == "ADR-011"
 assert hxx_architecture["status"] == "accepted-architecture"
-assert hxx_architecture["claim"] == "not-implemented"
+assert hxx_architecture["claim"] == "parser-adapter-prototype-tested"
 assert hxx_architecture["authoring"]["primarySyntax"] == (
     "haxe-4-inline-markup"
 )
@@ -400,8 +442,14 @@ assert hxx_parser["tree"] == (
 assert sha1.fullmatch(hxx_parser["commit"])
 assert sha1.fullmatch(hxx_parser["tree"])
 assert hxx_parser["publicTinkTypesExposed"] is False
-assert hxx_parser["releaseArtifactAndTransitivesResolved"] is False
+assert hxx_parser["releaseArtifactAndTransitivesResolved"] is True
 assert hxx_parser["resolutionOwner"] == "wordpresshx-sdk-080"
+assert hxx_parser["dependencyLock"] == hxx_dependency_lock_path.as_posix()
+assert hxx_parser["releaseArtifact"]["sha256"] == (
+    "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e"
+)
+assert sha256.fullmatch(hxx_parser["releaseArtifact"]["sha256"])
+assert hxx_parser["resolvedTransitiveCount"] == 5
 assert hxx_parser["forkPolicy"] == "no-fork-without-superseding-adr"
 assert [lowerer["id"] for lowerer in hxx_architecture["lowerers"]] == [
     "server",
@@ -439,6 +487,158 @@ assert set(hxx_architecture["prohibitedRuntime"]) == {
     "template-resolver",
     "wordpress-request-dispatcher",
 }
+prototype_evidence = hxx_architecture["prototypeEvidence"]
+assert prototype_evidence["receiptId"] == hxx_receipt["receiptId"]
+assert prototype_evidence["dependencyLock"] == (
+    hxx_dependency_lock_path.as_posix()
+)
+assert prototype_evidence["serverResultType"] != prototype_evidence[
+    "browserResultType"
+]
+assert prototype_evidence["relativeSourceSpansTested"] is True
+assert prototype_evidence["normalHaxeExpressionTypingTested"] is True
+assert prototype_evidence[
+    "propsChildrenSlotsAndClosedSpreadsTested"
+] is True
+assert prototype_evidence["targetLeakageNegativeTested"] is True
+assert prototype_evidence["prohibitedRuntimeLeakScanPassed"] is True
+assert prototype_evidence["nativeLoweringImplemented"] is False
+
+assert hxx_dependency_lock["schemaVersion"] == 1
+assert hxx_dependency_lock["status"] == "resolved-sdk-080"
+assert hxx_dependency_lock["toolchain"] == {
+    "haxe": "4.3.7",
+    "lix": "15.12.2",
+}
+assert hxx_dependency_lock["parser"]["name"] == "tink_hxx"
+assert hxx_dependency_lock["parser"]["version"] == "0.25.1"
+assert hxx_dependency_lock["parser"]["commit"] == hxx_parser["commit"]
+assert hxx_dependency_lock["parser"]["tree"] == hxx_parser["tree"]
+assert hxx_dependency_lock["parser"]["artifact"]["sha256"] == (
+    hxx_parser["releaseArtifact"]["sha256"]
+)
+assert len(hxx_dependency_lock["dependencies"]) == 5
+assert [
+    dependency["name"] for dependency in hxx_dependency_lock["dependencies"]
+] == sorted(
+    dependency["name"] for dependency in hxx_dependency_lock["dependencies"]
+)
+assert all(
+    dependency["sourceKind"] in {"haxelib", "git"}
+    for dependency in hxx_dependency_lock["dependencies"]
+)
+assert hxx_dependency_lock["policy"] == {
+    "compileTimeOnly": True,
+    "floatingVersionsAllowed": False,
+    "haxelibDevAllowed": False,
+    "repositoryRelativeDependencyAllowed": False,
+}
+
+hxx_entry = lock["entries"]["tink-hxx-parser"]
+assert hxx_entry["packageIdentity"] == "haxelib:tink_hxx@0.25.1"
+assert hxx_entry["commit"] == hxx_parser["commit"]
+assert hxx_entry["tree"] == hxx_parser["tree"]
+assert hxx_entry["releaseArtifact"]["sha256"] == (
+    hxx_parser["releaseArtifact"]["sha256"]
+)
+assert hxx_entry["dependencyLock"]["path"] == (
+    hxx_dependency_lock_path.as_posix()
+)
+assert hxx_entry["dependencyLock"]["sha256"] == hashlib.sha256(
+    hxx_dependency_lock_path.read_bytes()
+).hexdigest()
+assert hxx_entry["compileTimeOnly"] is True
+assert hxx_entry["publicTinkTypesExposed"] is False
+assert hxx_entry["runtimeDistributionAllowed"] is False
+
+assert hxx_receipt["schemaVersion"] == 1
+assert hxx_receipt["receiptId"] == "SDK-080-HXX-PARSER-PROTOTYPE"
+assert hxx_receipt["receiptId"] in hxx_entry["testReceiptIds"]
+assert hxx_receipt["bead"] == "wordpresshx-sdk-080"
+assert hxx_receipt["subject"]["dependencyLock"]["sha256"] == (
+    hxx_entry["dependencyLock"]["sha256"]
+)
+for receipt_subject in (
+    hxx_receipt["subject"]["adapter"],
+    hxx_receipt["subject"]["expectedSnapshots"]["server"],
+    hxx_receipt["subject"]["expectedSnapshots"]["browser"],
+):
+    subject_path = Path(receipt_subject["path"])
+    assert hashlib.sha256(subject_path.read_bytes()).hexdigest() == (
+        receipt_subject["sha256"]
+    )
+for verifier_name in ("dependencyVerifier", "snapshotVerifier"):
+    verifier = hxx_receipt["localVerification"][verifier_name]
+    verifier_path = Path(verifier["path"])
+    assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
+        verifier["sha256"]
+    )
+    compile(
+        verifier_path.read_text(encoding="utf-8"),
+        verifier_path.as_posix(),
+        "exec",
+    )
+assert hxx_receipt["localVerification"]["gate"]["outcome"] == "passed"
+assert hxx_receipt["prototype"]["generatorApiUsed"] is False
+assert hxx_receipt["prototype"]["publicTinkTypesExposed"] is False
+assert hxx_receipt["prototype"]["runtimeParserUsed"] is False
+assert hxx_receipt["prototype"]["sourceCorrelation"]["outcome"] == (
+    "passed"
+)
+assert hxx_receipt["prototype"]["targetResults"][
+    "sharedRuntimeNodeType"
+] is False
+assert hxx_receipt["localVerification"]["generatedArtifacts"][
+    "parserCoconutVdomRegistryResolverLeakScan"
+] == "passed"
+assert hxx_receipt["localVerification"]["compileFailureDiagnostics"][
+    "fixtureCount"
+] == 10
+assert hxx_receipt["localVerification"]["compileFailureDiagnostics"][
+    "positiveWarningFixtureCount"
+] == 1
+assert hxx_receipt["fullPortReferenceReview"][
+    "codeOrFixtureBytesCopied"
+] is False
+assert hxx_receipt["changeDecision"]["tinkHxxSourceChanged"] is False
+assert hxx_receipt["changeDecision"]["tinkHxxForkCreated"] is False
+assert hxx_receipt["changeDecision"]["genesSourceChanged"] is False
+assert hxx_receipt["claims"]["nativePhpMarkupLowering"] == "not-tested"
+assert hxx_receipt["claims"]["genesBrowserLowering"] == "not-tested"
+
+server_snapshot = json.loads(
+    Path("packages/hxx/test/expected/server.json").read_text(encoding="utf-8")
+)
+browser_snapshot = json.loads(
+    Path("packages/hxx/test/expected/browser.json").read_text(encoding="utf-8")
+)
+assert server_snapshot["target"] == "server"
+assert browser_snapshot["target"] == "browser"
+assert server_snapshot["semanticDigest"] == browser_snapshot[
+    "semanticDigest"
+] == prototype_evidence["sharedSemanticDigest"]
+assert server_snapshot["rootSpan"] == browser_snapshot["rootSpan"]
+assert server_snapshot["entries"] == browser_snapshot["entries"]
+assert all(
+    0
+    <= entry["span"]["start"]
+    < entry["span"]["end"]
+    <= server_snapshot["rootSpan"]["end"]
+    for entry in server_snapshot["entries"]
+)
+
+hxx_adapter = Path(prototype_evidence["adapter"]).read_text(encoding="utf-8")
+assert "tink.hxx.Parser" in hxx_adapter
+assert "tink.hxx.Generator" not in hxx_adapter
+assert "coconut" not in hxx_adapter.lower()
+for public_hxx_source in Path("packages/hxx/src/wordpress/hx/hxx/prototype").glob(
+    "*.hx"
+):
+    assert "tink.hxx" not in public_hxx_source.read_text(encoding="utf-8")
+for scoped_hxml in Path("packages/hxx/haxe_libraries").glob("*.hxml"):
+    scoped_content = scoped_hxml.read_text(encoding="utf-8")
+    assert "=dev" not in scoped_content
+    assert "../" not in scoped_content
 
 assert lock["schemaVersion"] == 1
 assert lock["lockStatus"] == "partial"

@@ -77,7 +77,7 @@ jobs:
 
   haxe:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -95,3 +95,10 @@ jobs:
         run: bash compiler/reflaxe.php/scripts/test.sh
       - name: Test exact PHP 7.4 and 8.4 runtime matrix
         run: bash compiler/reflaxe.php/scripts/test-php-matrix.sh
+      - name: Install exact scoped HXX toolchain
+        run: |
+          npm install --global lix@15.12.2
+          lix install haxe 4.3.7
+          haxelib install formatter 1.18.0 --quiet
+      - name: Test typed compile-time HXX parser prototype
+        run: bash packages/hxx/scripts/test.sh

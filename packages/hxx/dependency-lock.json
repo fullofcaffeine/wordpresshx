@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "status": "resolved-sdk-080",
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lix": "15.12.2"
+  },
+  "parser": {
+    "name": "tink_hxx",
+    "version": "0.25.1",
+    "repository": "https://github.com/haxetink/tink_hxx.git",
+    "tag": "0.25.1",
+    "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+    "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+    "artifact": {
+      "url": "https://lib.haxe.org/files/3.0/tink_hxx-0,25,1.zip",
+      "sizeBytes": 81868,
+      "sha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e"
+    }
+  },
+  "dependencies": [
+    {
+      "name": "html-entities",
+      "version": "1.0.0",
+      "sourceKind": "haxelib",
+      "url": "https://lib.haxe.org/files/3.0/html-entities-1,0,0.zip",
+      "sizeBytes": 55129,
+      "sha256": "1b2596357dd035cdc6648544b7e36de15a93c2716ee484c05d6e2f03ad82614c"
+    },
+    {
+      "name": "tink_anon",
+      "version": "0.7.0",
+      "sourceKind": "git",
+      "repository": "https://github.com/haxetink/tink_anon.git",
+      "commit": "ef441a73a41f9ae4ca0f060035ff2c188618df4c",
+      "tree": "3cb3e9d878355e22b8ab7d5ac89595f5aeb02f66"
+    },
+    {
+      "name": "tink_core",
+      "version": "2.1.1",
+      "sourceKind": "haxelib",
+      "url": "https://lib.haxe.org/files/3.0/tink_core-2,1,1.zip",
+      "sizeBytes": 79878,
+      "sha256": "c64ef5d0055ad861c4dd44a4f633bbaafd41dea6d0f70cb61e4a81652835e22d"
+    },
+    {
+      "name": "tink_macro",
+      "version": "0.23.0",
+      "sourceKind": "git",
+      "repository": "https://github.com/haxetink/tink_macro.git",
+      "commit": "40d7c2fbde362ed8273698626a31cfe35c001101",
+      "tree": "8c5951c9b4e6228d2e9344c4abf777d30704e03c"
+    },
+    {
+      "name": "tink_parse",
+      "version": "0.4.1",
+      "sourceKind": "git",
+      "repository": "https://github.com/haxetink/tink_parse.git",
+      "commit": "d32c955ec5e51978cb9fa31b3fe568f94e1c62c9",
+      "tree": "8eb6ca4877f103da920d898d1faa768dbb251091"
+    }
+  ],
+  "selectionOrigin": {
+    "repository": "https://github.com/haxetink/tink_hxx.git",
+    "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+    "paths": [
+      "haxe_libraries/html-entities.hxml",
+      "haxe_libraries/tink_anon.hxml",
+      "haxe_libraries/tink_core.hxml",
+      "haxe_libraries/tink_macro.hxml",
+      "haxe_libraries/tink_parse.hxml"
+    ]
+  },
+  "policy": {
+    "compileTimeOnly": true,
+    "floatingVersionsAllowed": false,
+    "haxelibDevAllowed": false,
+    "repositoryRelativeDependencyAllowed": false
+  }
+}

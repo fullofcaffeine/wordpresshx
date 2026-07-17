@@ -53,7 +53,7 @@ String-form `hxx("...")`, external `.hxx`, and raw native templates may exist fo
 
 ### Parser dependency and ownership
 
-Use public Haxelib `tink_hxx` version `0.25.1` as a compile-time parser dependency. SDK-080 must resolve and record the immutable release artifact and every transitive dependency before implementation evidence is promoted. Floating Haxelib ranges, `haxelib dev`, and repository-relative paths are forbidden release inputs.
+Use public Haxelib `tink_hxx` version `0.25.1` as a compile-time parser dependency. SDK-080 resolved the immutable release artifact and all five selected transitives in `packages/hxx/dependency-lock.json`: Haxelib inputs have exact byte sizes and SHA-256 digests, Git inputs have commit/tree identities, and the package-local Lix scope contains no floating version, `haxelib dev`, or repository-relative input.
 
 The SDK consumes only the parser, positioned syntax-node concepts, and narrowly required parsing helpers behind an internal adapter. No `tink.hxx.*` type appears in the public WordPressHx API, semantic plan, evidence schema, or generated output. This protects the public contract from parser-library changes and allows a later compatible parser without rewriting application code.
 
@@ -250,7 +250,7 @@ Costs and constraints:
 - generic markup IR and WordPress profile adapters require independent boundary fixtures;
 - output-context types and native semantic parity gate otherwise attractive syntax sugar.
 
-This ADR advances architecture only. It does not claim the parser adapter, lowerers, components, output safety, source maps, WordPress runtime behavior, or browser behavior are implemented or tested.
+This ADR is still the architecture authority rather than a runtime-support claim. SDK-080 separately proves a bounded parser adapter, neutral component/prop/slot/spread typing, relative source spans, target admission, and compile-time dependency erasure. It does not prove either native lowerer, production components, output safety, source maps, WordPress runtime behavior, or Gutenberg browser behavior.
 
 ## Evidence and commands
 
@@ -263,19 +263,20 @@ Reviewed exact references:
 - `tink_domspec` commit `cfc8efdea3952e5fe3d5c75d9e4fefdd47890b5d`: target-neutral typed HTML/attribute catalog precedent;
 - PRD §§18 and 29.1, ADR-003's module direction, ADR-004's generic/profile separation, and the Haxe-first site-authoring architecture.
 
-`manifests/hxx-architecture.json` is the machine-checked decision lock. It marks the exact parser selection as awaiting SDK-080 packed dependency resolution and all behavior claims as `not-implemented`.
+`manifests/hxx-architecture.json` is the machine-checked decision lock. It links the resolved dependency closure and receipt `SDK-080-HXX-PARSER-PROTOTYPE`, while keeping native lowering explicitly unimplemented.
 
 Acceptance commands:
 
 ```bash
 bash scripts/check-repository.sh
+bash packages/hxx/scripts/test.sh
 bash scripts/hooks/test.sh
 bd lint
 bd dep cycles
 git diff --check
 ```
 
-SDK-080 must add parser positive/negative/source-span prototypes and an immutable dependency receipt before implementation begins. SDK-081/032 own native-output evidence.
+SDK-080 supplies the parser positive/negative/source-span prototypes and immutable dependency receipt. SDK-081/032 own native-output evidence.
 
 ## Migration, rollback, and supersession
 

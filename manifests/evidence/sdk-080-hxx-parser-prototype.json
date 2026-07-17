@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-080-HXX-PARSER-PROTOTYPE",
+  "bead": "wordpresshx-sdk-080",
+  "observedAt": "2026-07-17T20:10:35Z",
+  "subject": {
+    "decision": "ADR-011",
+    "sourceModule": "packages/hxx",
+    "dependencyLock": {
+      "path": "packages/hxx/dependency-lock.json",
+      "sha256": "6e0dcfaf656b4fcb81ba9f809c6c6169ce3dd3181d42b9cdc03e0dd2262f4c50"
+    },
+    "adapter": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
+      "sha256": "b60eee3148c37f0abab0411bffd1e870b6a9231c3781f393d6d882bd27f8db07"
+    },
+    "expectedSnapshots": {
+      "server": {
+        "path": "packages/hxx/test/expected/server.json",
+        "sha256": "fb7328eecf5018a41c73caa16b5b2a1bd1d7a474dfe14173d39bf7e3f9104109"
+      },
+      "browser": {
+        "path": "packages/hxx/test/expected/browser.json",
+        "sha256": "89eae1240ad3bfc860840953280418c8cdf23f7b94f9ce1209fce7ede417d2ad"
+      }
+    }
+  },
+  "dependencyResolution": {
+    "parser": {
+      "package": "tink_hxx",
+      "version": "0.25.1",
+      "tag": "0.25.1",
+      "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+      "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+      "releaseArtifactSha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e",
+      "license": "MIT"
+    },
+    "transitiveCount": 5,
+    "selectionAuthority": "the exact scoped Lix files committed at tink_hxx tag 0.25.1",
+    "haxelibArtifacts": {
+      "count": 3,
+      "identityChecks": [
+        "artifact byte size",
+        "SHA-256",
+        "embedded haxelib name",
+        "embedded haxelib version"
+      ],
+      "outcome": "passed"
+    },
+    "gitSources": {
+      "count": 4,
+      "identityChecks": [
+        "fresh depth-one commit fetch",
+        "FETCH_HEAD commit",
+        "FETCH_HEAD tree",
+        "parser tag resolves directly to the pinned commit",
+        "parser-tag scoped Lix files select the recorded transitive closure"
+      ],
+      "outcome": "passed"
+    },
+    "scopedResolution": {
+      "haxe": "4.3.7",
+      "lix": "15.12.2",
+      "floatingVersions": false,
+      "haxelibDev": false,
+      "siblingPaths": false,
+      "outcome": "passed"
+    }
+  },
+  "prototype": {
+    "authoringSyntax": "Haxe 4 inline markup",
+    "parserApi": "tink.hxx.Parser.parseRoot",
+    "generatorApiUsed": false,
+    "publicTinkTypesExposed": false,
+    "runtimeParserUsed": false,
+    "typedContracts": [
+      "normal Haxe String, Int, and Bool expressions",
+      "required and optional props",
+      "ordinary children and scalar child expressions",
+      "required and optional named slots",
+      "closed structural attribute spreads",
+      "explicit attributes overriding closed spread fields with diagnostics",
+      "optional spread fields not satisfying required props",
+      "typed Array child spreads",
+      "fragments",
+      "conditional predicates",
+      "server-only and browser-only component admission"
+    ],
+    "targetResults": {
+      "server": "wordpress.hx.hxx.prototype.ServerSnapshot",
+      "browser": "wordpress.hx.hxx.prototype.BrowserSnapshot",
+      "sharedRuntimeNodeType": false,
+      "sharedSemanticDigest": "83bdbb80492a9da751a051ac84148fd62ea6bf1e37faa3b450cf3046636388ff"
+    },
+    "sourceCorrelation": {
+      "model": "relative byte spans retained from parser positions while diagnostics use original Haxe positions",
+      "rootSpan": {
+        "start": 0,
+        "end": 396
+      },
+      "positionedEntries": 18,
+      "serverBrowserEntryEquality": true,
+      "diagnosticExample": "test-negative/wrong_prop_type/Main.hx:5: characters 34-36",
+      "outcome": "passed"
+    },
+    "negativeFixtures": [
+      "wrong prop type",
+      "missing required prop",
+      "unknown prop",
+      "Dynamic/open attribute spread",
+      "optional spread field used as a required prop",
+      "missing required slot",
+      "duplicate named slot",
+      "wrong child-spread element type",
+      "server component in browser target",
+      "malformed closing tag"
+    ]
+  },
+  "localVerification": {
+    "host": {
+      "os": "macOS 15.4",
+      "architecture": "arm64"
+    },
+    "toolchains": {
+      "haxe": "4.3.7",
+      "lix": "15.12.2",
+      "formatter": "1.18.0",
+      "php": "8.4.7",
+      "node": "20.19.3",
+      "git": "2.40.1"
+    },
+    "gate": {
+      "command": "bash packages/hxx/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "dependencyVerifier": {
+      "path": "packages/hxx/scripts/verify-dependency-lock.py",
+      "sha256": "8240b64fd009697e13ac86fc73115b05bb568b1ceeac555245ba2acd417b80a5",
+      "networkMaterialization": "passed"
+    },
+    "snapshotVerifier": {
+      "path": "packages/hxx/scripts/verify-snapshots.py",
+      "sha256": "fb57d53b095a0deba3863833fe6c55ca20de86701e2e81500dac29ab6fd63d5c",
+      "serverBrowserParity": "passed"
+    },
+    "generatedArtifacts": {
+      "browser": {
+        "target": "stock Haxe JavaScript used only as a no-runtime evidence carrier",
+        "sizeBytes": 3424,
+        "sha256": "8c2f91f485ff1aa5a237bb8aebf4b92c62d3976fd4016ada960cb383444e8123"
+      },
+      "server": {
+        "target": "stock Haxe PHP used only as a no-runtime evidence carrier",
+        "fileCount": 16,
+        "sizeBytes": 212498,
+        "contentTreeSha256": "750c7072758d3b7ab65536debd32f76c964427453cbd1ea3ac4b0e4b094c4770"
+      },
+      "secondCleanCompileMatched": true,
+      "parserCoconutVdomRegistryResolverLeakScan": "passed"
+    },
+    "compileFailureDiagnostics": {
+      "fixtureCount": 10,
+      "positiveWarningFixtureCount": 1,
+      "stableDiagnosticCodes": true,
+      "originalSourcePathsAndRanges": true,
+      "outcome": "passed"
+    }
+  },
+  "fullPortReferenceReview": {
+    "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
+    "observedCommit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+    "observedTree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+    "checkoutState": "user-owned Beads exports modified; local main seven commits behind its origin/main; all working-tree state excluded from copied inputs",
+    "reviewedBlobs": {
+      "docs/operations/hhx-template-policy.md": "95c4c561ade932c589e1594c1cc8d7de944be25b",
+      "docs/adr/ADR-005-php-file-segment-template-model.md": "e7b528148588380d1c2bc254e5ca2af9483e144d",
+      "src/wphx/wp/themes/ThemeHxxMarkupPilot.hx": "e727b5cea46caea6e6b692b898966835b67f39e0",
+      "src/wphx/wp/admin/AdminHxxMarkupPilot.hx": "f38774a94d2d2802e283553e928458ecdfe756d6",
+      "manifests/wp-core/wphx-320-02-theme-hxx-markup-pilot.v1.json": "1834da994b43803bf290a3a81bbecc1c071df6c1",
+      "manifests/wp-core/wphx-315-08-admin-hxx-markup-pilot.v1.json": "510df78a803c27d696bd1698bd0dd7985e38104f"
+    },
+    "usefulProvenConcepts": [
+      "typed theme and admin markup inputs",
+      "explicit text versus escaped-value ownership",
+      "deterministic ordinary WordPress-compatible output bytes",
+      "haxe_owned_template_unit adoption mode",
+      "file-segment and caller-scope evidence before existing-template ownership",
+      "oracle/candidate comparison and narrow non-claims"
+    ],
+    "codeOrFixtureBytesCopied": false,
+    "reason": "the port pilots use hand-built typed AST helpers and do not contain the parser-backed inline-HXX adapter needed by SDK-080",
+    "futureUse": "SDK-081 and SDK-083 may adapt their neutral segment vocabulary and WordPress theme/admin oracle cases with per-file provenance"
+  },
+  "hostedVerification": {
+    "status": "pending-first-main-run",
+    "workflow": "Repository bootstrap",
+    "job": "haxe"
+  },
+  "changeDecision": {
+    "tinkHxxSourceChanged": false,
+    "tinkHxxForkCreated": false,
+    "tinkHxxUpstreamPullRequest": null,
+    "genesSourceChanged": false,
+    "genesUpstreamPullRequest": null,
+    "reason": "the exact public parser supports the neutral syntax and position requirements; target semantics remain internal SDK work"
+  },
+  "knownLimitations": [
+    "The serialized semantic snapshot is evidence-only; it is not a runtime node model or supported public renderer.",
+    "Native PHP/HTML lowering through reflaxe.php remains SDK-081.",
+    "Genes TSX/element lowering remains SDK-032; the browser artifact here only proves macro erasure and target-plan parity.",
+    "for, switch, let, and nested inline markup inside expressions fail explicitly in this bounded prototype.",
+    "Full HTML, SVG, ARIA, event/ref, output-context, trusted-fragment, and WordPress component contracts remain later beads.",
+    "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings but compiles and passes all selected fixtures.",
+    "No installed WordPress, theme rendering, Gutenberg React, package ZIP, or production-support claim is advanced."
+  ],
+  "claims": {
+    "parserAndDependencyIdentity": "inventoried",
+    "inlineMarkupParserAdapter": "typed",
+    "serverSemanticPlanPrototype": "typed",
+    "browserSemanticPlanPrototype": "typed",
+    "sourceSpanCorrelation": "typed",
+    "nativePhpMarkupLowering": "not-tested",
+    "genesBrowserLowering": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
