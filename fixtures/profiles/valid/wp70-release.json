@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "catalogDigestAlgorithm": "sha256-canonical-json-v1",
+  "catalogDigest": "4294c7ae89a00038946f0a2a282264b18cfbfd959bde77dff0a322c064a63282",
+  "generator": {
+    "identity": "sdk012-profile-schema-fixture",
+    "version": "1",
+    "sourceDigest": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
+    "toolchainIdentity": "python-stdlib-json+haxe-4.3.7"
+  },
+  "catalog": {
+    "profileId": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "upstreamInputs": [
+      {
+        "inputId": "wordpress-source",
+        "kind": "git-source",
+        "providerIdentity": "wordpress:7.0-source",
+        "repository": "https://github.com/WordPress/wordpress-develop.git",
+        "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+        "tree": "f3ad96f2357d2309f64a8d42a5808be502639c70",
+        "tag": "7.0.0"
+      },
+      {
+        "inputId": "wordpress-release-zip",
+        "kind": "release-artifact",
+        "providerIdentity": "wordpress:7.0-release",
+        "url": "https://wordpress.org/wordpress-7.0.zip",
+        "sizeBytes": 31549246,
+        "sha256": "b2b6827eb7b2b51f4610893e1a6ad02466e76fe0a307bd40ca2a8ba821c40d0b",
+        "contentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857"
+      }
+    ],
+    "capabilities": [
+      {
+        "capabilityId": "wordpress.version.7.0",
+        "providerIdentity": "wordpress:7.0",
+        "kind": "feature",
+        "classification": "private",
+        "classificationMetadata": {},
+        "evidenceStatus": "inventoried",
+        "availableIn": [
+          "wp70-release"
+        ],
+        "provenance": [
+          {
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/version.php",
+            "sourceDigest": "c7e0bcb05891745bd764158490e5b9d7140bdb3955298b69944d03687f3b8110",
+            "locator": "$wp_version"
+          }
+        ],
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-010-WP70-RELEASE-SOURCE"
+          }
+        },
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE"
+        ],
+        "administrativeResults": [
+          {
+            "result": "not-tested",
+            "reason": "SDK-012 does not establish runtime or production behavior.",
+            "receiptId": "SDK-010-WP70-RELEASE-SOURCE"
+          }
+        ]
+      }
+    ],
+    "correctionAncestry": []
+  }
+}

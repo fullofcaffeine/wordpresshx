@@ -69,6 +69,8 @@ jobs:
         run: haxelib install formatter 1.18.0 --quiet
       - name: Check Haxe formatting
         run: bash scripts/lint/hx-format-guard.sh
+      - name: Test exact profile Haxe contracts and compile failures
+        run: bash scripts/profiles/test-profile-haxe.sh
       - name: Test generic PHP compiler package
         run: bash compiler/reflaxe.php/scripts/test.sh
       - name: Test exact PHP 7.4 and 8.4 runtime matrix
