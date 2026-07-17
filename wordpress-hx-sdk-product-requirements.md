@@ -754,7 +754,7 @@ A capability may be useful and still remain out of the MVP if it does not streng
 
 Use a monorepo because the first stable product contract spans Haxe APIs, profile data, macros, a PHP profile, genes-ts integration, CLI behavior, ownership manifests, examples, and real WordPress tests. Splitting these before the cross-package contracts stabilize would create release and compatibility work without producing user value.
 
-Packages should be **separately publishable but lockstep-versioned** through at least `1.0`. A release train publishes the same SDK version for every public package that changed or is required by the distribution manifest. Independent SemVer is a post-`1.0` decision contingent on evidence that packages can evolve independently without matrix explosion.
+ADR-003 refines the initial separate-publication recommendation: the proposed component directories remain real source/namespace boundaries, but through `1.x` they are assembled into one public `wordpress-hx` Haxelib. The separately distributed `@wordpress-hx/cli` npm artifact uses the exact same SDK version. This avoids fake package independence and a component compatibility matrix without weakening internal dependency direction. Independent component SemVer remains a post-`1.0` decision contingent on a real independent consumer, clean packed-artifact evidence, bounded compatibility tests, separate maintenance authority, and a superseding ADR.
 
 ## 11.2 Proposed repository tree
 
@@ -865,9 +865,11 @@ wordpress-hx-sdk/
 └── .github/workflows/
 ```
 
-## 11.3 Public package responsibilities
+## 11.3 Public module responsibilities
 
-| Package | Responsibility | Runtime presence |
+The Haxe entries below are supported modules inside the `wordpress-hx` distribution, not separate registry packages through `1.x`. Their names remain useful logical identities and future extraction candidates. The CLI is the only separate public package and stays lockstep-versioned.
+
+| Logical module/artifact | Responsibility | Runtime presence |
 |---|---|---|
 | `wordpress-hx-core` | Branded identifiers, result/error types, capability tokens, profile selection, shared annotations, diagnostics primitives | Compile time and generated value shapes only |
 | `wordpress-hx-profiles` | Exact generated API/package/hook catalogs and classification metadata | Compile time only |
@@ -879,14 +881,14 @@ wordpress-hx-sdk/
 | `wordpress-hx-testing` | Fixtures, typed test helpers, WordPress install harness adapters, generated contract assertions | Dev/test only |
 | `@wordpress-hx/cli` | Scaffolding, build orchestration, watch, check, inspect, package, adoption, doctor, compatibility diagnostics | Dev/build only |
 
-`wordpress-hx-interop-php` and `wordpress-hx-interop-js` may begin as internal modules of `build`/`cli`. Promote them to public packages only when third-party consumers need their contract formats independently.
+`wordpress-hx-interop-php` and `wordpress-hx-interop-js` begin as internal modules of `build`/`cli`. A post-`1.0` superseding ADR may promote either only after it satisfies every independent-versioning criterion in ADR-003; interest alone is insufficient.
 
 ## 11.4 External compiler dependencies
 
 ```text
-reflaxe.php-native (generic, separate project)
+reflaxe.php (generic, private monorepo workspace during 0.x)
           ▲
-          │ pinned public compiler API
+          │ stable compiler API + exact content hash
 compiler/wordpress-php-profile
           ▲
           │
@@ -901,7 +903,7 @@ reflaxe + Haxe 4.3.7
           └── wordpress-hx-hxx adapters and WordPress-specific typed tags
 ```
 
-The SDK must not fork generic compiler logic into WordPress namespaces merely to move faster. A short-lived prototype may live under `fixtures/` or an explicitly temporary compiler experiment, but release code must depend on a versioned generic compiler surface.
+The SDK must not fork generic compiler logic into WordPress namespaces merely to move faster. A short-lived prototype may live under `fixtures/` or an explicitly temporary compiler experiment. During co-location, release code uses the stable generic workspace surface plus an exact content hash; after ADR-004's extraction triggers, it uses an immutable public compiler release.
 
 ## 11.5 User project topology
 
@@ -968,9 +970,9 @@ profiles feed compile-time validation but never import application code.
 - `core` → Haxe standard library only.
 - `profiles` → `core` data types and generated immutable data.
 - `contracts` → `core`; no WordPress/Gutenberg runtime dependency for pure schemas.
-- `server` → `core`, `profiles`, `contracts`, native PHP/WordPress externs.
-- `gutenberg` → `core`, `profiles`, `contracts`, genes-ts-compatible JS/React externs.
-- `hxx` → `core`, typed markup parser dependencies, optional server/browser tag packages.
+- `hxx` → `core` and typed markup parser dependencies; it owns neutral resolver interfaces and never imports a platform adapter.
+- `server` → `core`, `profiles`, `contracts`, `hxx`, native PHP/WordPress externs; it owns server HXX adapters.
+- `gutenberg` → `core`, `profiles`, `contracts`, `hxx`, genes-ts-compatible JS/React externs; it owns browser HXX adapters.
 - `build` → all authoring packages for compile-time inspection; external generic compiler APIs.
 - `testing` → public packages plus test harnesses.
 - `cli` → schemas, build tools, package manager interfaces; it must invoke compilers as pinned tools rather than importing project source through undocumented paths.
@@ -2904,15 +2906,13 @@ Recommended development installation:
 ```bash
 # Project-local Haxe dependency management.
 npx lix scope create
-npx lix install haxelib:wordpress-hx-core@<exact-version>
-npx lix install haxelib:wordpress-hx-server@<exact-version>
-npx lix install haxelib:wordpress-hx-gutenberg@<exact-version>
+npx lix install haxelib:wordpress-hx@<exact-version>
 
 # Project-local CLI/build orchestration.
 npm install --save-dev @wordpress-hx/cli@<exact-version>
 ```
 
-A generated project pins Haxe, SDK packages, genes-ts, generic PHP compiler, Node package manager, WordPress profile, and build tooling. Global `haxelib dev` or floating sibling paths are contributor conveniences only and cause `doctor`/release checks to fail.
+A generated project pins Haxe, the SDK/CLI release pair, genes-ts, generic PHP compiler, Node package manager, WordPress profile, and build tooling. Global `haxelib dev` or floating sibling paths are contributor conveniences only and cause `doctor`/release checks to fail.
 
 ## 21.2 CLI surface
 
@@ -3667,9 +3667,9 @@ Green CI without an owner and response policy is not a stable product promise.
 
 | Artifact | Channel | Contents |
 |---|---|---|
-| Haxe authoring packages | Haxelib and lix scopes | Source APIs, macros, profile types, HXX/testing packages |
+| Haxe SDK distribution | Haxelib and lix scopes | One `wordpress-hx` archive containing supported source APIs, macros, profiles, HXX, and testing modules |
 | CLI/build tooling | npm | Node orchestration, generators, package/build tools |
-| Generic PHP compiler | Its own Haxelib/repository release | Reflaxe PHP core, runtime/std support, compiler tests |
+| Generic PHP compiler | Private content-hashed workspace during `0.x`; its own Haxelib/repository release after ADR-004 extraction | Reflaxe PHP core, runtime/std support, compiler tests |
 | Profile data | Bundled with SDK release and checksummed standalone JSON | Exact API/package/hook/handle inventories |
 | Consumer PHP dependencies | Composer as project choice | Third-party packages and analysis stubs; bundled into ZIP where required |
 | Deployable extensions | WordPress ZIP artifacts | Native PHP/JS/CSS/JSON/assets/autoload and license metadata |
@@ -3685,7 +3685,7 @@ Green CI without an owner and response policy is not a stable product promise.
 - Minor: additive stable APIs, new exact profiles, deprecated APIs, new generator capabilities.
 - Major: breaking public APIs, project/manifest schema changes without transparent migration, generated public ABI break, or removal outside deprecation policy.
 
-All public packages stay on one version train through `1.0`. Package manifests list exact compatible sibling versions.
+The public `wordpress-hx` Haxelib and `@wordpress-hx/cli` npm artifact use one exact SDK version through `1.x`. The release manifest records exact external compiler/toolchain versions and hashes. No mixed SDK/CLI version is supported.
 
 ### Profile versions
 
@@ -4082,7 +4082,7 @@ Milestones are gates, not calendar promises. A gate closes only with executable 
 **Acceptance criteria:**
 
 - G0–G7 closed for the documented MVP scope;
-- clean external consumer installs SDK packages and builds the reference plugin from source;
+- clean external consumer installs the exact SDK/CLI release pair and builds the reference plugin from source;
 - exact final ZIP passes vanilla WordPress 7.0 install, activation, integration, editor, frontend, package, update, accessibility, security, source-map, determinism, and performance gates;
 - public API/diagnostic/manifest/ABI inventories reviewed;
 - no open P0/P1 in supported scope;

@@ -1,5 +1,7 @@
 # Packages
 
-Reserved for candidate Haxe authoring/build packages. Public versus internal boundaries and lockstep versioning are not final until ADR-003 is accepted. Do not create a published package solely to mirror the PRD tree.
+These directories are Haxe authoring/build source modules assembled into the single public `wordpress-hx` Haxelib distribution. ADR-003 classifies their supported namespaces and dependency direction. They are not separately published packages through `1.x`; do not create package metadata solely to mirror the directory tree.
 
-SDK-012 establishes the internal [`core`](core/README.md) profile-contract source tree. It is compiled directly in CI and deliberately has no publishable package metadata while ADR-003, ADR-020, and SDK-002 remain open.
+The separately distributed `@wordpress-hx/cli` is the exactly version-matched host/build executable. Internal interop, compiler-profile, and tool modules may be bundled as implementation but are not supported APIs. The private generic `compiler/reflaxe.php` workspace has its own ADR-004 extraction boundary and never receives the SDK version merely because it is co-located.
+
+SDK-012 establishes the [`core`](core/README.md) profile-contract source tree. It is compiled directly in CI and deliberately has no per-module package metadata. Publication of the assembled SDK remains prohibited until ADR-020, SDK-002, and release evidence authorize it.

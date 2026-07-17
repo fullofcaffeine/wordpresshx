@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-003",
+  "status": "accepted-architecture",
+  "claim": "not-published",
+  "publicationAuthorized": false,
+  "repositoryModel": "monorepo",
+  "releaseUnit": {
+    "versionPolicy": "one-lockstep-sdk-version-through-1.x",
+    "tagPattern": "v<semver>",
+    "mixedPublicArtifactVersionsSupported": false,
+    "publicArtifacts": [
+      {
+        "id": "wordpress-hx",
+        "ecosystem": "haxelib",
+        "kind": "complete-sdk-distribution",
+        "runtimePresence": "development-and-build-input-only"
+      },
+      {
+        "id": "@wordpress-hx/cli",
+        "ecosystem": "npm",
+        "kind": "host-build-cli",
+        "runtimePresence": "development-and-build-input-only"
+      }
+    ]
+  },
+  "sourceModules": [
+    {
+      "id": "core",
+      "path": "packages/core",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": []
+    },
+    {
+      "id": "profiles",
+      "path": "packages/profiles",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core"
+      ]
+    },
+    {
+      "id": "contracts",
+      "path": "packages/contracts",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core"
+      ]
+    },
+    {
+      "id": "hxx",
+      "path": "packages/hxx",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core"
+      ]
+    },
+    {
+      "id": "server",
+      "path": "packages/server",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts",
+        "hxx"
+      ]
+    },
+    {
+      "id": "gutenberg",
+      "path": "packages/gutenberg",
+      "exposure": "public-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts",
+        "hxx"
+      ]
+    },
+    {
+      "id": "build",
+      "path": "packages/build",
+      "exposure": "public-entrypoints-in-wordpress-hx-internal-implementation",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts",
+        "hxx",
+        "server",
+        "gutenberg"
+      ]
+    },
+    {
+      "id": "testing",
+      "path": "packages/testing",
+      "exposure": "public-dev-namespace-in-wordpress-hx",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts",
+        "hxx",
+        "server",
+        "gutenberg",
+        "build"
+      ]
+    },
+    {
+      "id": "interop-php",
+      "path": "packages/interop-php",
+      "exposure": "internal",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts"
+      ]
+    },
+    {
+      "id": "interop-js",
+      "path": "packages/interop-js",
+      "exposure": "internal",
+      "directPublication": false,
+      "dependsOn": [
+        "core",
+        "profiles",
+        "contracts"
+      ]
+    },
+    {
+      "id": "cli",
+      "path": "packages/cli",
+      "exposure": "internal-source-of-npm-cli",
+      "directPublication": true,
+      "publicationArtifact": "@wordpress-hx/cli",
+      "dependsOn": []
+    }
+  ],
+  "workspaceComponents": [
+    {
+      "id": "reflaxe.php",
+      "path": "compiler/reflaxe.php",
+      "classification": "private-generic-compiler",
+      "sdkVersioned": false,
+      "releaseIdentity": "content-hash-until-independent-release"
+    },
+    {
+      "id": "wordpress-compiler-profile",
+      "path": "compiler/wordpress",
+      "classification": "internal-sdk-profile",
+      "sdkVersioned": true,
+      "releaseIdentity": "bundled-implementation"
+    },
+    {
+      "id": "tools",
+      "path": "tools",
+      "classification": "internal-build-tools",
+      "sdkVersioned": true,
+      "releaseIdentity": "bundled-implementation"
+    },
+    {
+      "id": "schemas",
+      "path": "schemas",
+      "classification": "versioned-contracts-bundled-with-public-artifacts",
+      "sdkVersioned": true,
+      "releaseIdentity": "not-standalone"
+    }
+  ],
+  "externalInputs": [
+    {
+      "id": "genes-ts",
+      "authority": "external-public-release",
+      "dependencyForm": "immutable-version-commit-and-content-hash",
+      "repositoryRelativePathAllowedInRelease": false
+    }
+  ],
+  "independentVersioningAdmission": {
+    "earliestReview": "post-1.0",
+    "requiresSupersedingAdr": true,
+    "criteria": [
+      "real-independent-consumer-or-measured-independent-cadence",
+      "clean-build-test-pack-install-and-rollback",
+      "acyclic-public-api-only-dependency-boundary",
+      "finite-tested-compatibility-matrix",
+      "independent-maintenance-security-support-and-registry-authority",
+      "consumer-migration-preserving-wordpress-hx-facade-and-exact-locks"
+    ],
+    "widerFamilySharedContractRequiresTwoRealConsumers": true
+  }
+}

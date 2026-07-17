@@ -22,6 +22,7 @@ required_files=(
   docs/adr/README.md
   docs/adr/001-product-and-repository-boundary.md
   docs/adr/002-exact-compatibility-profiles.md
+  docs/adr/003-package-topology-and-lockstep-versioning.md
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/architecture/browser-compiler.md
@@ -81,6 +82,7 @@ required_files=(
   docker/wordpress/health.php
   docker/wordpress/install.php
   manifests/README.md
+  manifests/package-topology.json
   manifests/upstream.lock.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -251,6 +253,9 @@ sdk013_receipt = json.loads(
 image_lock = json.loads(
     Path("docker/images.lock.json").read_text(encoding="utf-8")
 )
+package_topology = json.loads(
+    Path("manifests/package-topology.json").read_text(encoding="utf-8")
+)
 sdk090_receipt = json.loads(
     Path("manifests/evidence/sdk-090-wordpress-harness.json").read_text(
         encoding="utf-8"
@@ -262,6 +267,111 @@ entry = lock["entries"]["genes-ts"]
 subject = receipt["subject"]
 sha1 = re.compile(r"[0-9a-f]{40}\Z")
 sha256 = re.compile(r"[0-9a-f]{64}\Z")
+
+assert package_topology["schemaVersion"] == 1
+assert package_topology["decision"] == "ADR-003"
+assert package_topology["status"] == "accepted-architecture"
+assert package_topology["claim"] == "not-published"
+assert package_topology["publicationAuthorized"] is False
+assert package_topology["repositoryModel"] == "monorepo"
+release_unit = package_topology["releaseUnit"]
+assert release_unit["versionPolicy"] == (
+    "one-lockstep-sdk-version-through-1.x"
+)
+assert release_unit["mixedPublicArtifactVersionsSupported"] is False
+assert {
+    (artifact["id"], artifact["ecosystem"])
+    for artifact in release_unit["publicArtifacts"]
+} == {
+    ("wordpress-hx", "haxelib"),
+    ("@wordpress-hx/cli", "npm"),
+}
+
+source_modules = {
+    module["id"]: module for module in package_topology["sourceModules"]
+}
+assert set(source_modules) == {
+    "core",
+    "profiles",
+    "contracts",
+    "hxx",
+    "server",
+    "gutenberg",
+    "build",
+    "testing",
+    "interop-php",
+    "interop-js",
+    "cli",
+}
+assert all(
+    module["directPublication"] is False
+    for module_id, module in source_modules.items()
+    if module_id != "cli"
+)
+assert source_modules["cli"]["publicationArtifact"] == "@wordpress-hx/cli"
+assert source_modules["core"]["dependsOn"] == []
+assert set(source_modules["server"]["dependsOn"]) == {
+    "core",
+    "profiles",
+    "contracts",
+    "hxx",
+}
+assert set(source_modules["gutenberg"]["dependsOn"]) == {
+    "core",
+    "profiles",
+    "contracts",
+    "hxx",
+}
+assert "build" not in source_modules["server"]["dependsOn"]
+assert "build" not in source_modules["gutenberg"]["dependsOn"]
+assert "testing" not in {
+    dependency
+    for module_id, module in source_modules.items()
+    if module_id != "testing"
+    for dependency in module["dependsOn"]
+}
+
+visiting = set()
+visited = set()
+
+
+def visit_source_module(module_id):
+    assert module_id in source_modules
+    assert module_id not in visiting, f"package topology cycle at {module_id}"
+    if module_id in visited:
+        return
+    visiting.add(module_id)
+    for dependency in source_modules[module_id]["dependsOn"]:
+        visit_source_module(dependency)
+    visiting.remove(module_id)
+    visited.add(module_id)
+
+
+for source_module_id in source_modules:
+    visit_source_module(source_module_id)
+
+workspace_components = {
+    component["id"]: component
+    for component in package_topology["workspaceComponents"]
+}
+assert workspace_components["reflaxe.php"]["sdkVersioned"] is False
+assert workspace_components["reflaxe.php"]["classification"] == (
+    "private-generic-compiler"
+)
+genes_input = next(
+    item
+    for item in package_topology["externalInputs"]
+    if item["id"] == "genes-ts"
+)
+assert genes_input["authority"] == "external-public-release"
+assert genes_input["repositoryRelativePathAllowedInRelease"] is False
+independent_admission = package_topology["independentVersioningAdmission"]
+assert independent_admission["earliestReview"] == "post-1.0"
+assert independent_admission["requiresSupersedingAdr"] is True
+assert len(independent_admission["criteria"]) == 6
+assert independent_admission[
+    "widerFamilySharedContractRequiresTwoRealConsumers"
+] is True
 
 assert lock["schemaVersion"] == 1
 assert lock["lockStatus"] == "partial"
