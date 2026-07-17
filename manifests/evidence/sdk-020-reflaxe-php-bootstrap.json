@@ -7,13 +7,13 @@
     "package": "reflaxe.php",
     "path": "compiler/reflaxe.php",
     "version": "0.0.0",
-    "canonicalRepositoryUrl": null,
-    "repositoryUrlFollowup": "wordpresshx-sdk-004",
+    "canonicalRepositoryUrl": "https://github.com/fullofcaffeine/wordpresshx",
+    "repositoryUrlFollowup": null,
     "originRepository": "https://github.com/fullofcaffeine/wordpresshx-port",
     "originCommit": "7fdda0aa5ea66900819842aefeac6747421e9130",
     "originTree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
     "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
-    "packageContentSha256": "4d29c245f9470772dbef55b839f22e86f03bc92223ed530e13ab479cf2d6c4c6"
+    "packageContentSha256": "202ea03169752258c02877a1905d85b6749db5ad8105214ddcded4f0cb33e848"
   },
   "toolchain": {
     "haxe": "4.3.7",

@@ -38,6 +38,7 @@ required_files=(
   docker/README.md
   manifests/README.md
   manifests/upstream.lock.json
+  manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   compiler/reflaxe.php/haxelib.json
@@ -98,6 +99,11 @@ receipt = json.loads(
         encoding="utf-8"
     )
 )
+repository_receipt = json.loads(
+    Path("manifests/evidence/sdk-004-canonical-repository.json").read_text(
+        encoding="utf-8"
+    )
+)
 php_provenance = json.loads(
     Path("compiler/reflaxe.php/provenance.json").read_text(encoding="utf-8")
 )
@@ -140,21 +146,37 @@ assert php_provenance["component"] == "reflaxe.php"
 assert sha1.fullmatch(php_provenance["origin"]["commit"])
 assert sha1.fullmatch(php_provenance["origin"]["tree"])
 assert php_provenance["destination"]["releaseEligible"] is False
+assert php_provenance["destination"]["repository"] == repository_receipt["repository"]["url"]
 assert php_provenance["review"]["publicationAuthorized"] is False
 assert haxelib["name"] == "reflaxe.php"
 assert haxelib["version"] == "0.0.0"
 assert haxelib["license"] == "GPL"
-assert haxelib["url"] == ""
+assert haxelib["url"] == "https://github.com/fullofcaffeine/wordpresshx"
 assert php_receipt["schemaVersion"] == 1
 assert php_receipt["receiptId"] == "SDK-020-REFLAXE-PHP-BOOTSTRAP"
-assert php_receipt["subject"]["canonicalRepositoryUrl"] is None
-assert php_receipt["subject"]["repositoryUrlFollowup"] == "wordpresshx-sdk-004"
+assert php_receipt["subject"]["canonicalRepositoryUrl"] == haxelib["url"]
+assert php_receipt["subject"]["repositoryUrlFollowup"] is None
 assert php_receipt["subject"]["originCommit"] == php_provenance["origin"]["commit"]
 assert php_receipt["subject"]["originTree"] == php_provenance["origin"]["tree"]
 assert php_receipt["localVerification"]["packageTest"]["outcome"] == "passed"
 assert php_receipt["localVerification"]["php84"]["runtimeOutcome"] == "passed"
 assert php_receipt["localVerification"]["php74"]["outcome"] == "not-tested"
 assert php_receipt["claims"]["wordpressSupport"] == "not-tested"
+
+assert repository_receipt["schemaVersion"] == 1
+assert repository_receipt["receiptId"] == "SDK-004-CANONICAL-REPOSITORY"
+assert repository_receipt["bead"] == "wordpresshx-sdk-004"
+assert repository_receipt["repository"]["nameWithOwner"] == "fullofcaffeine/wordpresshx"
+assert repository_receipt["repository"]["url"] == haxelib["url"]
+assert repository_receipt["repository"]["visibility"] == "public"
+assert repository_receipt["repository"]["defaultBranch"] == "main"
+assert sha1.fullmatch(repository_receipt["repository"]["initialPublishedCommit"])
+assert repository_receipt["transport"]["gitRemote"] == "origin"
+assert repository_receipt["transport"]["beadsRemote"] == "origin"
+assert repository_receipt["transport"]["beadsRef"] == "refs/dolt/data"
+assert repository_receipt["prePublicationSecurity"]["gitHistoryOutcome"] == "passed"
+assert repository_receipt["prePublicationSecurity"]["decodedBeadsOutcome"] == "passed"
+assert repository_receipt["claims"]["packagePublicationAuthorized"] is False
 
 package_root = Path("compiler/reflaxe.php")
 package_files = sorted(

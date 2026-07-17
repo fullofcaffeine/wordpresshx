@@ -2,6 +2,8 @@
 
 `wordpress-hx-sdk` is a typed Haxe SDK and build toolchain for authoring ordinary WordPress plugins, themes, blocks, editor extensions, REST APIs, and related native artifacts.
 
+Canonical source: [github.com/fullofcaffeine/wordpresshx](https://github.com/fullofcaffeine/wordpresshx).
+
 > **Status: bootstrap / pre-feasibility.** There is no released SDK, supported compatibility profile, installable package, or production-readiness claim yet. The feasibility gates in the product requirements document decide when any narrower claim becomes valid.
 
 Claim records use the evidence terms `inventoried`, `typed`, `generated`, `runtime-tested`, and `production-supported`; no earlier term implies a later one. Vanilla `wp70-release`, opt-in `gutenberg-forward-23.4`, and any future WordPressHx provider result remain separate fields. See [ADR-001](docs/adr/001-product-and-repository-boundary.md) for the exact qualification and correction rules.

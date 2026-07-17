@@ -39,6 +39,7 @@
   },
   "destination": {
     "path": "compiler/reflaxe.php",
+    "repository": "https://github.com/fullofcaffeine/wordpresshx",
     "namespace": "reflaxe.php",
     "version": "0.0.0",
     "releaseEligible": false,

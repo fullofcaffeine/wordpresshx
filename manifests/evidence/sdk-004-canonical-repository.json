@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-004-CANONICAL-REPOSITORY",
+  "observedAt": "2026-07-16T20:06:11-06:00",
+  "bead": "wordpresshx-sdk-004",
+  "repository": {
+    "nameWithOwner": "fullofcaffeine/wordpresshx",
+    "url": "https://github.com/fullofcaffeine/wordpresshx",
+    "gitUrl": "https://github.com/fullofcaffeine/wordpresshx.git",
+    "visibility": "public",
+    "defaultBranch": "main",
+    "initialPublishedCommit": "f8556af69e5b12ad34093fbed63a8e71acd72865"
+  },
+  "transport": {
+    "gitRemote": "origin",
+    "gitAuthentication": "GitHub CLI HTTPS credential helper; no credential is stored in repository files",
+    "beadsRemote": "origin",
+    "beadsUrl": "git+https://github.com/fullofcaffeine/wordpresshx.git",
+    "beadsRef": "refs/dolt/data"
+  },
+  "prePublicationSecurity": {
+    "bead": "wordpresshx-g0.1",
+    "formatter": "1.18.0",
+    "gitleaks": "8.30.0",
+    "gitHistoryOutcome": "passed",
+    "decodedBeadsOutcome": "passed",
+    "machineLocalPathOutcome": "passed"
+  },
+  "claims": {
+    "sourceRepositoryPublished": true,
+    "packagePublicationAuthorized": false,
+    "productionSupport": "not-tested"
+  }
+}
