@@ -14,6 +14,12 @@ When the repository is hosted on GitHub with private vulnerability reporting ena
 
 No dedicated public security address has been established during bootstrap. Establishing and testing that channel is a release blocker tracked by the security/support governance work; this document does not invent an unmonitored address.
 
+## Leak prevention
+
+Every clone must install the tracked hooks with `bash scripts/hooks/install.sh`. Commits are guarded by exact Haxe formatting, machine-local path rejection, whitespace checks, and staged Gitleaks scanning. Pushes scan all reachable Git history, and public CI repeats the full-history checks with a checksum-pinned Gitleaks binary and commit-pinned actions.
+
+Beads records live in decoded Dolt state as well as the passive JSONL export. Publish them only through `bash scripts/beads/push-safe.sh`, which scans current records and every issue-history revision before invoking the Dolt push. Never put real credentials, exploit material, or sensitive personal data into a canary or allowlist.
+
 A useful private report includes:
 
 - affected commit, package, profile, and generated artifact hash;

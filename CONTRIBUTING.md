@@ -47,6 +47,19 @@ Do not add `if wordpress` branches, SDK package imports, or a floating sibling p
 
 ## Quality and evidence
 
+Install the tracked Git hooks once in each clone or worktree:
+
+```bash
+bash scripts/hooks/install.sh
+bash scripts/hooks/test.sh
+```
+
+The pre-commit path formats staged Haxe with Formatter 1.18.0, rejects machine-local paths and whitespace errors, and scans staged bytes with Gitleaks 8.30.0. The pre-push path scans every reachable Git revision. Do not bypass these hooks. Use the decoded-state guard for Beads synchronization because the Dolt ref is separate from ordinary Git branches:
+
+```bash
+bash scripts/beads/push-safe.sh
+```
+
 Run checks in proportion to the changed layer and record exact commands and versions on the bead. The bootstrap checks are:
 
 ```bash
@@ -57,4 +70,4 @@ bd dep cycles
 
 Later beads add strict Haxe, PHP floor/runtime/static analysis, strict TypeScript, real WordPress, editor/browser, security, accessibility, determinism, and packaging gates. A snapshot or mock is not a substitute for a required native-runtime check.
 
-Before ending a work session, follow the repository's `bd prime` close protocol: create follow-up beads, run quality gates, update/close issues, commit intentionally, pull/rebase and push when a remote exists, verify status, and provide a handoff. If infrastructure such as a remote is absent, report that concrete blocker rather than claiming a successful push.
+Before ending a work session, follow the repository's `bd prime` close protocol: create follow-up beads, run quality gates, update/close issues, commit intentionally, pull/rebase and push, run the safe Beads push, verify status, and provide a handoff.

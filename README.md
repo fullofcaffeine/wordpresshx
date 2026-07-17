@@ -50,6 +50,17 @@ bd dep cycles
 
 Compiler, profile, PHP, browser, WordPress, and package checks will be added by their dependency-gated beads; this bootstrap does not pretend those toolchains already exist.
 
+## Local safety hooks
+
+Install and verify the tracked hooks in every clone or worktree:
+
+```bash
+bash scripts/hooks/install.sh
+bash scripts/hooks/test.sh
+```
+
+They pin Haxe Formatter 1.18.0 and Gitleaks 8.30.0, format staged Haxe, reject machine-local paths, scan staged changes, and scan complete reachable history before push. Synchronize Beads through `bash scripts/beads/push-safe.sh` so decoded issue state and history are scanned before the separate Dolt ref is published.
+
 ## Compiler direction
 
 - PHP: continue the custom Reflaxe PHP compiler originating in `wordpresshx-port` as an independently structured generic package under `compiler/reflaxe.php` in this monorepo during 0.x. The SDK must not import the port's Core linker, original-path replacement machinery, or internal source paths. [ADR-004](docs/adr/004-generic-php-compiler-home.md) defines the boundary and later extraction triggers.

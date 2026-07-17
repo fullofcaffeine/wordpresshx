@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${BD_GIT_HOOK:-}" == "1" ]]; then
+  exit 0
+fi
+
+repository_root="$(git rev-parse --show-toplevel)"
+cd "${repository_root}"
+
+if [[ -d "${repository_root}/.beads" ]] && command -v bd >/dev/null 2>&1; then
+  if bd -C "${repository_root}" context >/dev/null 2>&1; then
+    echo "[pre-commit] Exporting Beads issues to JSONL..."
+    export_file="$(mktemp "${TMPDIR:-/tmp}/wordpresshx-beads-export.XXXXXX")"
+    normalized_file="$(mktemp "${TMPDIR:-/tmp}/wordpresshx-beads-normalized.XXXXXX")"
+    trap 'rm -f "${export_file}" "${normalized_file}"' EXIT
+    bd -C "${repository_root}" export > "${export_file}"
+    awk 'NF { print }' "${export_file}" > "${normalized_file}"
+    mv -f "${normalized_file}" "${repository_root}/.beads/issues.jsonl"
+    git -C "${repository_root}" add .beads/issues.jsonl
+    rm -f "${export_file}"
+    trap - EXIT
+  else
+    echo "[pre-commit] WARN: Beads database is unavailable; skipping export."
+  fi
+fi
+
+staged_haxe_files=()
+while IFS= read -r staged_file; do
+  if [[ -n "${staged_file}" && -f "${repository_root}/${staged_file}" ]]; then
+    staged_haxe_files+=("${staged_file}")
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.hx')
+
+if [[ "${#staged_haxe_files[@]}" -gt 0 ]]; then
+  bash "${repository_root}/scripts/lint/hx-format-guard.sh" --tool-only
+  echo "[pre-commit] Formatting staged Haxe files..."
+  format_args=()
+  for haxe_file in "${staged_haxe_files[@]}"; do
+    format_args+=("-s" "${repository_root}/${haxe_file}")
+  done
+  haxelib run formatter "${format_args[@]}"
+  git add -- "${staged_haxe_files[@]}"
+fi
+
+echo "[pre-commit] Rejecting machine-local paths..."
+bash "${repository_root}/scripts/lint/local-path-guard-staged.sh"
+
+echo "[pre-commit] Checking staged whitespace..."
+bash "${repository_root}/scripts/lint/whitespace-guard.sh" --staged
+
+echo "[pre-commit] Scanning staged content for secrets..."
+bash "${repository_root}/scripts/security/run-gitleaks.sh" --staged
+
+echo "[pre-commit] Validating pinned security tooling..."
+bash "${repository_root}/scripts/ci/check-security-tooling.sh"
+
+echo "[pre-commit] Validating repository invariants..."
+bash "${repository_root}/scripts/check-repository.sh"
+
+echo "[pre-commit] OK"

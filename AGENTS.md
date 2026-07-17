@@ -20,7 +20,7 @@ bd ready              # Find available work
 bd show <id>          # View issue details
 bd update <id> --claim  # Claim work atomically
 bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
+bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads data
 ```
 
 ## Non-Interactive Shell Commands
@@ -84,6 +84,7 @@ bd close <id>         # Complete work
    git push
    git status  # MUST show "up to date with origin"
    ```
+   Publish Beads state with `bash scripts/beads/push-safe.sh`; do not invoke the underlying Dolt push directly.
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed
 7. **Hand off** - Provide context for next session

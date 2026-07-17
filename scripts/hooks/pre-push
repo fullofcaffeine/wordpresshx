@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${BD_GIT_HOOK:-}" == "1" ]]; then
+  exit 0
+fi
+
+repository_root="$(git rev-parse --show-toplevel)"
+
+echo "[pre-push] Scanning every reachable Git revision for secrets..."
+bash "${repository_root}/scripts/security/run-gitleaks.sh"
+
+echo "[pre-push] Rejecting machine-local paths in reachable history..."
+bash "${repository_root}/scripts/security/run-local-path-audit.sh"
+
+echo "[pre-push] Validating pinned security tooling..."
+bash "${repository_root}/scripts/ci/check-security-tooling.sh"
+
+echo "[pre-push] Validating repository invariants..."
+bash "${repository_root}/scripts/check-repository.sh"
+
+echo "[pre-push] OK"

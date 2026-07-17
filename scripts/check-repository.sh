@@ -5,6 +5,10 @@ repository_root="$(git rev-parse --show-toplevel)"
 cd "${repository_root}"
 
 required_files=(
+  .gitleaks.toml
+  .github/workflows/repository.yml
+  .beads/hooks/pre-commit
+  .beads/hooks/pre-push
   AGENTS.md
   README.md
   GOVERNANCE.md
@@ -44,6 +48,19 @@ required_files=(
   compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx
   compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx
   compiler/reflaxe.php/scripts/test.sh
+  scripts/beads/push-safe.sh
+  scripts/ci/check-security-tooling.sh
+  scripts/ci/install-gitleaks.sh
+  scripts/hooks/install.sh
+  scripts/hooks/pre-commit
+  scripts/hooks/pre-push
+  scripts/hooks/test.sh
+  scripts/lint/hx-format-guard.sh
+  scripts/lint/local-path-guard-staged.sh
+  scripts/lint/whitespace-guard.sh
+  scripts/security/run-beads-gitleaks.sh
+  scripts/security/run-gitleaks.sh
+  scripts/security/run-local-path-audit.sh
 )
 
 missing=0
@@ -225,5 +242,7 @@ if git grep -nE "${floating_reflaxe_dependency_pattern}" -- \
 fi
 
 git diff --check HEAD
+
+bash scripts/ci/check-security-tooling.sh
 
 echo "repository bootstrap checks passed"
