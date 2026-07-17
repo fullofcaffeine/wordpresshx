@@ -1,8 +1,19 @@
 package reflaxe.php.print;
 
 import reflaxe.php.ir.PhpArrayEntry;
+import reflaxe.php.ir.PhpClass;
+import reflaxe.php.ir.PhpClassKind;
+import reflaxe.php.ir.PhpClosureCapture;
+import reflaxe.php.ir.PhpDeclaration;
 import reflaxe.php.ir.PhpExpr;
+import reflaxe.php.ir.PhpFile;
+import reflaxe.php.ir.PhpFunction;
+import reflaxe.php.ir.PhpMethod;
+import reflaxe.php.ir.PhpParameter;
+import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpStmt;
+import reflaxe.php.ir.PhpType;
+import reflaxe.php.ir.PhpVisibility;
 
 using StringTools;
 
@@ -11,6 +22,56 @@ class PhpPrinter {
 	static final IDENTIFIER = ~/^[A-Za-z_][A-Za-z0-9_]*$/;
 
 	public function new() {}
+
+	public function printFile(file:PhpFile):PhpRenderedFile {
+		if (file == null) {
+			throw "PHP printer requires a file";
+		}
+		final lines = ["<?php"];
+		if (file.strictTypes) {
+			lines.push("");
+			lines.push("declare(strict_types=1);");
+		}
+		if (file.namespace != null) {
+			lines.push("");
+			lines.push("namespace " + file.namespace.toString() + ";");
+		}
+
+		final declarations = file.declarations.copy();
+		declarations.sort((left, right) -> Reflect.compare(stableDeclarationName(file, left), stableDeclarationName(file, right)));
+		final renderedDeclarations = [];
+		final declaredSymbols:Map<String, String> = [];
+		for (declaration in declarations) {
+			final stableName = stableDeclarationName(file, declaration);
+			final symbolIdentity = declarationSymbolIdentity(file, declaration);
+			if (declaredSymbols.exists(symbolIdentity)) {
+				throw "Duplicate PHP declaration: " + declaredSymbols.get(symbolIdentity) + " and " + stableName;
+			}
+			declaredSymbols.set(symbolIdentity, stableName);
+			lines.push("");
+			final startLine = lines.length + 1;
+			final rendered = printDeclaration(declaration);
+			for (line in rendered.split("\n")) {
+				lines.push(line);
+			}
+			renderedDeclarations.push(new PhpRenderedDeclaration(stableName, declarationSource(declaration), startLine, lines.length));
+		}
+
+		if (file.statements.length > 0) {
+			lines.push("");
+			for (line in printStatements(file.statements).split("\n")) {
+				lines.push(line);
+			}
+		}
+		return new PhpRenderedFile(file.path, lines.join("\n") + "\n", renderedDeclarations);
+	}
+
+	public function printDeclaration(declaration:PhpDeclaration):String {
+		return switch (declaration) {
+			case PhpFunctionDeclaration(value): printFunction(value);
+			case PhpClassDeclaration(value): printClass(value);
+		}
+	}
 
 	public function printStatements(statements:Array<PhpStmt>, depth:Int = 0):String {
 		return statements.map(statement -> printStatement(statement, depth)).join("\n");
@@ -49,6 +110,15 @@ class PhpPrinter {
 				+ printExpr(condition, depth)
 				+ "; "
 				+ printExpr(update, depth)
+				+ " ) {\n"
+				+ printStatements(body, depth + 1)
+				+ "\n"
+				+ prefix
+				+ "}";
+			case PhpWhile(condition, body):
+				prefix
+				+ "while ( "
+				+ printExpr(condition, depth)
 				+ " ) {\n"
 				+ printStatements(body, depth + 1)
 				+ "\n"
@@ -160,6 +230,10 @@ class PhpPrinter {
 				printDynamicObjectProperty(target, property, depth);
 			case PhpFunctionCall(name, args):
 				qualifiedName(name, "function") + printCallArgs(args, depth);
+			case PhpInvoke(callable, args):
+				printExpr(callable, depth) + printCallArgs(args, depth);
+			case PhpCallableArray(target, method):
+				"array( " + printExpr(target, depth) + ", " + quote(method.value) + " )";
 			case PhpBinop(op, left, right):
 				printExpr(left, depth) + " " + binaryOperator(op) + " " + printExpr(right, depth);
 			case PhpInstanceOf(value, className):
@@ -176,6 +250,8 @@ class PhpPrinter {
 				printExpr(target, depth) + " = " + printExpr(value, depth);
 			case PhpPostDecrement(target): printExpr(target, depth) + "--";
 			case PhpStaticClosure(parameters, body): printStaticClosure(parameters, body, depth);
+			case PhpClosure(parameters, captures, body, isStatic, returnType):
+				printClosure(parameters, captures, body, isStatic, returnType, depth);
 			case PhpReference(inner): "&" + printExpr(inner, depth);
 			case PhpNot(inner): "! " + printExpr(inner, depth);
 			case PhpCastArray(inner): "(array) " + printExpr(inner, depth);
@@ -185,10 +261,191 @@ class PhpPrinter {
 		}
 	}
 
+	function printFunction(declaration:PhpFunction):String {
+		return "function "
+			+ (declaration.returnsByReference ? "&" : "")
+			+ declaration.name.value
+			+ "("
+			+ declaration.parameters.map(parameter -> printParameter(parameter, 0)).join(", ")
+			+ ")"
+			+ printReturnType(declaration.returnType)
+			+ " {\n"
+			+ printStatements(declaration.body, 1)
+			+ "\n}";
+	}
+
+	function printClass(declaration:PhpClass):String {
+		var header = switch (declaration.kind) {
+			case PhpClassKindClass: "class ";
+			case PhpClassKindInterface: "interface ";
+			case PhpClassKindTrait: "trait ";
+		}
+		header += declaration.name.value;
+		switch (declaration.kind) {
+			case PhpClassKindClass:
+				if (declaration.extendsName != null) {
+					header += " extends " + declaration.extendsName.toString();
+				}
+				if (declaration.implementsNames.length > 0) {
+					header += " implements " + declaration.implementsNames.map(name -> name.toString()).join(", ");
+				}
+			case PhpClassKindInterface:
+				final parents = declaration.implementsNames.copy();
+				if (declaration.extendsName != null) {
+					parents.unshift(declaration.extendsName);
+				}
+				if (parents.length > 0) {
+					header += " extends " + parents.map(name -> name.toString()).join(", ");
+				}
+			case PhpClassKindTrait:
+		}
+
+		final members = [];
+		for (property in declaration.properties) {
+			members.push(printProperty(property, 1));
+		}
+		for (method in declaration.methods) {
+			members.push(printMethod(method, 1));
+		}
+		return header + " {\n" + members.join("\n\n") + "\n}";
+	}
+
+	function printProperty(property:PhpProperty, depth:Int):String {
+		return tabs(depth)
+			+ printVisibility(property.visibility)
+			+ (property.isStatic ? " static" : "")
+			+ " $"
+			+ property.name.value
+			+ (property.defaultValue == null ? "" : " = " + printExpr(property.defaultValue, depth))
+			+ ";";
+	}
+
+	function printMethod(method:PhpMethod, depth:Int):String {
+		final prefix = tabs(depth);
+		final signature = prefix
+			+ printVisibility(method.visibility)
+			+ (method.isStatic ? " static" : "")
+			+ " function "
+			+ (method.returnsByReference ? "&" : "")
+			+ method.name.value
+			+ "("
+			+ method.parameters.map(parameter -> printParameter(parameter, depth)).join(", ")
+			+ ")"
+			+ printReturnType(method.returnType);
+		if (method.body == null) {
+			return signature + ";";
+		}
+		return signature + " {\n" + printStatements(method.body, depth + 1) + "\n" + prefix + "}";
+	}
+
+	function printParameter(parameter:PhpParameter, depth:Int):String {
+		if (parameter == null) {
+			throw "PHP parameter cannot be null";
+		}
+		return (parameter.type == null ? "" : printType(parameter.type) + " ")
+			+ (parameter.byReference ? "&" : "")
+			+ (parameter.variadic ? "..." : "")
+			+ "$"
+			+ parameter.name.value
+			+ (parameter.defaultValue == null ? "" : " = " + printExpr(parameter.defaultValue, depth));
+	}
+
+	function printReturnType(type:Null<PhpType>):String {
+		return type == null ? "" : ": " + printType(type);
+	}
+
+	function printType(type:PhpType):String {
+		return switch (type) {
+			case PhpNamedType(name): name.toString();
+			case PhpArrayType: "array";
+			case PhpBoolType: "bool";
+			case PhpCallableType: "callable";
+			case PhpFloatType: "float";
+			case PhpIntType: "int";
+			case PhpIterableType: "iterable";
+			case PhpObjectType: "object";
+			case PhpStringType: "string";
+			case PhpVoidType: "void";
+			case PhpNullableType(inner):
+				switch (inner) {
+					case PhpVoidType | PhpNullableType(_): throw "Invalid nullable PHP type";
+					case _: "?" + printType(inner);
+				}
+		}
+	}
+
+	function printVisibility(value:PhpVisibility):String {
+		return switch (value) {
+			case PhpPublic: "public";
+			case PhpProtected: "protected";
+			case PhpPrivate: "private";
+		}
+	}
+
+	function stableDeclarationName(file:PhpFile, declaration:PhpDeclaration):String {
+		final prefix = file.namespace == null ? "" : file.namespace.toString() + "\\";
+		return switch (declaration) {
+			case PhpFunctionDeclaration(value): "function:" + prefix + value.name.value;
+			case PhpClassDeclaration(value):
+				switch (value.kind) {
+					case PhpClassKindClass: "class:" + prefix + value.name.value;
+					case PhpClassKindInterface: "interface:" + prefix + value.name.value;
+					case PhpClassKindTrait: "trait:" + prefix + value.name.value;
+				}
+		}
+	}
+
+	function declarationSymbolIdentity(file:PhpFile, declaration:PhpDeclaration):String {
+		final namespace = file.namespace == null ? "" : file.namespace.toString() + "\\";
+		return switch (declaration) {
+			case PhpFunctionDeclaration(value): "function:" + (namespace + value.name.value).toLowerCase();
+			case PhpClassDeclaration(value): "class-like:" + (namespace + value.name.value).toLowerCase();
+		}
+	}
+
+	function declarationSource(declaration:PhpDeclaration) {
+		return switch (declaration) {
+			case PhpFunctionDeclaration(value): value.source;
+			case PhpClassDeclaration(value): value.source;
+		}
+	}
+
 	function printStaticClosure(parameters:Array<String>, body:Array<PhpStmt>, depth:Int):String {
 		return "static function ("
 			+ parameters.map(parameter -> "$" + identifier(parameter)).join(", ")
 			+ ") {\n"
+			+ printStatements(body, depth + 1)
+			+ "\n"
+			+ tabs(depth)
+			+ "}";
+	}
+
+	function printClosure(parameters:Array<PhpParameter>, captures:Array<PhpClosureCapture>, body:Array<PhpStmt>, isStatic:Bool, returnType:Null<PhpType>,
+			depth:Int):String {
+		if (parameters == null || captures == null || body == null) {
+			throw "PHP closure fields cannot be null";
+		}
+		final validatedParameters = PhpParameter.validatedCopy(parameters);
+		final captureNames:Map<String, Bool> = [];
+		for (capture in captures) {
+			if (capture == null) {
+				throw "PHP closure captures cannot contain null";
+			}
+			if (captureNames.exists(capture.name.value)) {
+				throw "Duplicate PHP closure capture: " + capture.name.value;
+			}
+			captureNames.set(capture.name.value, true);
+		}
+		final useClause = captures.length == 0 ? "" : " use ("
+			+ captures.map(capture -> (capture.byReference ? "&" : "") + "$" + capture.name.value).join(", ")
+			+ ")";
+		return (isStatic ? "static " : "")
+			+ "function ("
+			+ validatedParameters.map(parameter -> printParameter(parameter, depth)).join(", ")
+			+ ")"
+			+ useClause
+			+ printReturnType(returnType)
+			+ " {\n"
 			+ printStatements(body, depth + 1)
 			+ "\n"
 			+ tabs(depth)

@@ -72,6 +72,33 @@
     "Made deterministic printer entry points explicit public package APIs.",
     "Replaced WPHX and WordPress fixture names with neutral compiler fixtures."
   ],
+  "continuations": [
+    {
+      "bead": "wordpresshx-sdk-021",
+      "classification": "new-generalized-implementation",
+      "architectureReferences": [
+        "haxe.elixir.codex",
+        "haxe.ruby",
+        "haxe.go",
+        "haxe.rust",
+        "haxe.ocaml",
+        "genes"
+      ],
+      "features": [
+        "validated structural PHP identifiers, qualified names, signature types, and relative paths",
+        "file, namespace, function, class, interface, trait, property, and method IR",
+        "typed parameters, by-reference boundaries, callable arrays, closures, and while control flow",
+        "deterministic declaration ordering with defensive IR array copies",
+        "immutable Haxe source ranges paired with generated declaration line ranges",
+        "exact PHP 7.4.33 and PHP 8.4.7 lint/runtime matrix"
+      ],
+      "excluded": [
+        "Reflaxe driver registration and typed-Haxe AST lowering",
+        "serialized PHP source maps and trace CLI",
+        "WordPress public-file profile and adapters"
+      ]
+    }
+  ],
   "excludedResponsibilities": [
     "WordPress adapter registry and adapter bodies",
     "@:wp.* metadata interpretation",

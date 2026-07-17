@@ -25,20 +25,22 @@ For future registration, AST/lowering, printer, diagnostics, runtime, output-mod
 
 ## First admitted slice
 
-The initial package contains typed statements and expressions for control flow, arrays, calls, construction, properties, closures, references, casts, and common statements. The printer retains output-compatible formatting from the proven source where practical, with four general boundary improvements:
+The initial import contains typed statements and expressions for control flow, arrays, calls, construction, properties, closures, references, casts, and common statements. SDK-021 extends that foundation with structural files, namespaces, functions, classes/interfaces/traits, properties, methods, PHP 7.4-compatible signature types, typed parameters, callable arrays, immutable relative source ranges, and deterministic rendered declaration ranges. The printer retains output-compatible formatting from the proven source where practical, with general boundary improvements:
 
 - raw PHP blocks are not part of the generic IR;
 - identifiers and qualified names fail closed;
 - magic constants and binary operators use allowlists;
-- dollar signs are escaped when a PHP string requires double-quoted newline/tab rendering.
+- dollar signs are escaped when a PHP string requires double-quoted newline/tab rendering;
+- caller-owned arrays cannot mutate validated declarations after construction;
+- declaration ordering and stable names do not depend on traversal order.
 
 The fixture is neutral: it compiles and prints a PHP program that sums a native array and emits JSON. It also snapshots representative closures, control flow, exceptions, arrays, names, and string escaping, plus negative injection-shaped inputs.
 
 ## Evidence status
 
-The package test passed with Haxe 4.3.7 and formatter 1.18.0. The generated program passed PHP 8.4.7 lint and runtime execution with output `{"total":6,"label":"generic"}`.
+The package test passed with Haxe 4.3.7 and formatter 1.18.0. The generated namespaced file passes lint and runtime execution on exact PHP 7.4.33 and PHP 8.4.7 container images with output `{"total":14,"count":4,"error":"RuntimeException","label":"generic"}`. The fixture exercises native indexed/associative arrays, callable class-method arrays, a typed static method, a by-reference parameter and local alias, and native exception/catch behavior.
 
-PHP 7.4 is `not-tested`, not passed. The installed Homebrew PHP 7.4.33 binary cannot start because its `libaspell.15.dylib` dependency is absent; the containerized PHP 7.4 matrix remains a scoped SDK-021 requirement rather than part of this provenance-only reconciliation.
+The official PHP images are pinned by multi-platform index digest, and runtime containers execute with networking disabled. Declaration records preserve validated repository-relative Haxe ranges and exact generated start/end lines. SDK-025 owns serialization, content binding, nested expression/statement mappings, and the offline trace CLI; SDK-021 does not overstate these declaration records as a completed PHP source-map system.
 
 The original source audit correctly found stale committed evidence rather than claiming a disposable regeneration as a clean pass. `wordpresshx-g1.1` reconciled the source-port evidence through reviewed [PR #1](https://github.com/fullofcaffeine/wordpresshx-port/pull/1) and added the missing closure receipt through [PR #2](https://github.com/fullofcaffeine/wordpresshx-port/pull/2). From a fresh detached checkout of the current authority, `npm ci --ignore-scripts`, `wphx:php:adoption-ci:check`, and `receipts:validate` pass without regeneration: 29 required checks, 28 included WPHX manifests, zero exclusions, and 493 closed tasks linked to 493 receipts.
 
@@ -52,7 +54,7 @@ The aggregate gate covers the five compiler areas that were directly stale in th
 
 The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
-The exact outcomes and package content digest are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json).
+The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The current IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json).
 
 ## Current non-claims
 
@@ -61,9 +63,8 @@ The package does not yet claim:
 - a Reflaxe compiler driver or arbitrary-Haxe compilation;
 - complete typed-AST lowering;
 - Haxe runtime/stdlib ownership;
-- source maps or production diagnostics;
-- PHP 7.4 evidence;
+- serialized source maps, trace CLI, or production diagnostics;
 - WordPress support, public ABI compatibility, or original-path emission;
 - publication eligibility.
 
-SDK-021 grows the generic IR/driver only through neutral fixtures. The WordPress profile begins separately under SDK-022 after the public/private emission decision.
+SDK-021 establishes the structural IR/printer foundation through neutral fixtures. SDK-025 owns serialized source correlation, and the WordPress profile begins separately under SDK-022 after the public/private emission decision.

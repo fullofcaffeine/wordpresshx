@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-021-PHP-IR-PRINTER",
+  "observedAt": "2026-07-17T01:01:28-06:00",
+  "bead": "wordpresshx-sdk-021",
+  "subject": {
+    "package": "reflaxe.php",
+    "path": "compiler/reflaxe.php",
+    "version": "0.0.0",
+    "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
+    "packageContentSha256": "a459c51c8a8200add95630d59994fd1318963f368424c5563035acef1f1482cd"
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "formatter": "1.18.0",
+    "localPhp": "8.4.7",
+    "localDockerClient": "28.3.2",
+    "localDockerServer": "28.3.2",
+    "php74": {
+      "repository": "docker.io/library/php",
+      "version": "7.4.33",
+      "indexDigest": "sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5"
+    },
+    "php84": {
+      "repository": "docker.io/library/php",
+      "version": "8.4.7",
+      "indexDigest": "sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367"
+    }
+  },
+  "implementation": {
+    "haxeSourceAndTestFileCount": 21,
+    "architectureReferences": [
+      "haxe.elixir.codex",
+      "haxe.ruby",
+      "haxe.go",
+      "haxe.rust",
+      "haxe.ocaml",
+      "genes"
+    ],
+    "structuralIr": [
+      "validated identifiers and relative/root-qualified names",
+      "PHP 7.4-compatible native signature types",
+      "relative PHP files and namespaces",
+      "functions, classes, interfaces, traits, properties, and methods",
+      "typed parameters, return types, by-reference parameters/returns, and closure captures",
+      "native arrays, callable arrays, closure invocation, exceptions, and while control flow",
+      "explicit top-level statements"
+    ],
+    "determinism": {
+      "declarationOrder": "stable declaration kind plus fully qualified name",
+      "callerOwnedArraysDefensivelyCopied": true,
+      "printerOwnsPunctuation": true,
+      "rawPhpNodeAvailable": false,
+      "repeatedReverseOrderSnapshot": "byte-identical"
+    },
+    "sourceCorrelationFoundation": {
+      "sourcePathsRelativeAndValidated": true,
+      "sourceRangesImmutable": true,
+      "sourceCoordinates": "one-based inclusive line/column range",
+      "renderedDeclarationRanges": "one-based inclusive generated line range",
+      "stableNamesPreserved": true,
+      "serializedMapDeferredTo": "wordpresshx-sdk-025"
+    }
+  },
+  "verification": {
+    "packageTest": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed",
+      "coverage": [
+        "Haxe formatter check",
+        "Haxe interpreter assertions",
+        "deterministic declaration snapshots",
+        "defensive-copy regression",
+        "source/generated range preservation",
+        "unsafe name/operator/path rejection",
+        "local PHP lint and runtime"
+      ]
+    },
+    "exactPhpMatrix": {
+      "command": "bash compiler/reflaxe.php/scripts/test-php-matrix.sh",
+      "networkDuringExecution": "disabled",
+      "php74Lint": "passed",
+      "php74Runtime": "passed",
+      "php84Lint": "passed",
+      "php84Runtime": "passed",
+      "runtimeOutput": "{\"total\":14,\"count\":4,\"error\":\"RuntimeException\",\"label\":\"generic\"}"
+    },
+    "generatedFixture": {
+      "path": "compiler/reflaxe.php/build/generic-printer-fixture.php",
+      "tracked": false,
+      "bytes": 752,
+      "sha256": "617b4c3510fded73b31c3f0b0d476a2dddc3cc0c1f61e8d826868706ee9e6577"
+    },
+    "hostedWorkflow": {
+      "path": ".github/workflows/repository.yml",
+      "job": "haxe",
+      "exactPhpMatrixRequired": true
+    }
+  },
+  "boundary": {
+    "wordpressIdentifiersInGenericHaxe": false,
+    "wordpressProfileImported": false,
+    "sourcePortRuntimeDependency": false,
+    "reflaxeDriverImplemented": false,
+    "typedHaxeAstLoweringImplemented": false,
+    "serializedSourceMapImplemented": false,
+    "publicationAuthorized": false
+  },
+  "claims": {
+    "typedPhpIrPrinterFoundation": "runtime-tested",
+    "php74": "runtime-tested",
+    "php84": "runtime-tested",
+    "declarationSourceRanges": "snapshot-tested",
+    "arbitraryHaxeBackend": "unsupported",
+    "wordpressSupport": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
