@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "profileId": "gutenberg-forward-23.4",
+  "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+  "packageIdentity": "wordpress-hx-profile:gutenberg-forward-23.4/catalog-v1",
+  "generatedNamespace": "wordpress.profiles.gutenberg_forward_23_4",
+  "generatedArtifactRoot": "generated/gutenberg-forward-23.4/catalog-v1",
+  "sourceVerificationStatus": "passed",
+  "capabilityEvidenceStatus": "inventoried",
+  "runtimeCompatibilityStatus": "not-tested",
+  "wordpress70CompatibilityStatus": "forbidden",
+  "productionSupportStatus": "not-tested",
+  "supportStatus": "experimental",
+  "releaseChannel": "preview-or-experimental",
+  "gutenbergSource": {
+    "repository": "https://github.com/WordPress/gutenberg.git",
+    "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+    "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f",
+    "parent": "7f3cace18990722ab2ded0dafe76741339d54d6b",
+    "tag": "v23.4.0",
+    "tagKind": "lightweight",
+    "tagObjectType": "commit",
+    "committerDate": "2026-06-17T05:07:56+00:00",
+    "subject": "Bump plugin version to 23.4.0",
+    "sourceEvidence": {
+      "package.json": {
+        "blob": "e267cc0ecb436a4a9e69259c9d4cb150ae0a705e",
+        "sha256": "6b123339dba60ffbd04e69043d44db13efd4c728c77e72006dea32c9a02b059f",
+        "name": "gutenberg",
+        "version": "23.4.0",
+        "private": true,
+        "node": ">=20.19.0",
+        "npm": ">=10.2.3",
+        "experimentalPageJsonPointer": "/wpPlugin/pages/id=content-types/experimental",
+        "experimentalPage": true
+      },
+      "gutenberg.php": {
+        "blob": "15883444d379021ea1227c96e860e9c2d5aeaece",
+        "sha256": "50b90a93eb2b21786a6556db9d6bc050b442b7ded8e50ddec7f97477559f2e10",
+        "pluginVersion": "23.4.0",
+        "minimumWordPress": "6.8",
+        "minimumPhp": "7.4"
+      },
+      "packages/content-types/package.json": {
+        "blob": "d11df127a20d1a3d7aaaefc6bc03d6f5eb6c2712",
+        "sha256": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4",
+        "name": "@wordpress/content-types",
+        "version": "1.0.0",
+        "private": true
+      }
+    }
+  },
+  "releaseDistribution": {
+    "releasePage": "https://github.com/WordPress/gutenberg/releases/tag/v23.4.0",
+    "archiveRoot": "",
+    "contentFileCount": 2205,
+    "contentTreeDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces>./<archive-root-relative-path><newline>",
+    "contentTreeSha256": "58ba04bdb69b91c42a67f2bdeefbf4e85f2312ee534355b978adcb2017a5791d",
+    "artifact": {
+      "name": "gutenberg.zip",
+      "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip",
+      "mediaType": "application/zip",
+      "sizeBytes": 39579401,
+      "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a"
+    },
+    "pluginEvidence": {
+      "path": "gutenberg.php",
+      "sha256": "50b90a93eb2b21786a6556db9d6bc050b442b7ded8e50ddec7f97477559f2e10",
+      "pluginVersion": "23.4.0",
+      "minimumWordPress": "6.8",
+      "minimumPhp": "7.4"
+    },
+    "forwardInventoryMarkers": [
+      "lib/experimental/content-types/index.php",
+      "build/modules/content-types/index.js",
+      "build/pages/content-types/page.php",
+      "build/routes/content-types/route.js"
+    ]
+  },
+  "prohibitions": {
+    "distributionClaim": null,
+    "wordpress70CompatibilityClaim": "forbidden",
+    "mixedProfileImports": "forbidden",
+    "wp70ArtifactLeakage": "forbidden"
+  },
+  "verification": {
+    "command": "python3 scripts/profiles/verify-gutenberg-forward-23-4.py",
+    "isolationCommand": "python3 scripts/profiles/check-profile-isolation.py",
+    "networkSources": [
+      "https://github.com/WordPress/gutenberg.git",
+      "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip"
+    ],
+    "receiptId": "SDK-011-GUTENBERG-FORWARD-23.4"
+  }
+}

@@ -31,6 +31,41 @@
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",
       "rollback": null
     },
+    "gutenberg-forward-23.4": {
+      "role": "exact-forward-gutenberg-profile-authority",
+      "profileId": "gutenberg-forward-23.4",
+      "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+      "packageIdentity": "wordpress-hx-profile:gutenberg-forward-23.4/catalog-v1",
+      "generatedNamespace": "wordpress.profiles.gutenberg_forward_23_4",
+      "generatedArtifactRoot": "generated/gutenberg-forward-23.4/catalog-v1",
+      "sourceLock": {
+        "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+        "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+      },
+      "gutenbergSource": {
+        "repository": "https://github.com/WordPress/gutenberg.git",
+        "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+        "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f",
+        "tag": "v23.4.0"
+      },
+      "releaseArtifact": {
+        "name": "gutenberg.zip",
+        "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip",
+        "sizeBytes": 39579401,
+        "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a"
+      },
+      "distributionContentTreeSha256": "58ba04bdb69b91c42a67f2bdeefbf4e85f2312ee534355b978adcb2017a5791d",
+      "capabilityEvidenceStatus": "inventoried",
+      "runtimeCompatibilityStatus": "not-tested",
+      "wordpress70CompatibilityStatus": "forbidden",
+      "supportStatus": "experimental",
+      "releaseChannel": "preview-or-experimental",
+      "testReceiptIds": [
+        "SDK-011-GUTENBERG-FORWARD-23.4"
+      ],
+      "upgradeOwner": "wordpress-hx-sdk profile maintainers",
+      "rollback": null
+    },
     "genes-ts": {
       "role": "generic-browser-compiler-authority",
       "repository": "https://github.com/fullofcaffeine/genes-ts",
