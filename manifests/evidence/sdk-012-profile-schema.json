@@ -92,7 +92,7 @@
   "haxeValidation": {
     "command": "bash scripts/profiles/test-profile-haxe.sh",
     "scriptPath": "scripts/profiles/test-profile-haxe.sh",
-    "scriptSha256": "9ab39b0f865a0d06bf7a9dfe1d9a4154c66ae425db848fc2f3e28498b9fdd033",
+    "scriptSha256": "9d008db424cb6f40e65bf383a5755512a54ccaef8067d42c8bfc0fcbc9c4e732",
     "haxeVersion": "4.3.7",
     "formattedHaxeFileCount": 18,
     "positiveContractTests": "passed",

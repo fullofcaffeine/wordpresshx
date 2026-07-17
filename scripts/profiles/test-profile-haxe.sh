@@ -38,7 +38,7 @@ expect_compile_failure() {
     rm -f "${output}"
     exit 1
   fi
-  if ! rg -F "${expected}" "${output}" >/dev/null; then
+  if ! grep -F -- "${expected}" "${output}" >/dev/null; then
     echo "negative Haxe fixture failed for the wrong reason: ${label}" >&2
     sed -n '1,100p' "${output}" >&2
     rm -f "${output}"

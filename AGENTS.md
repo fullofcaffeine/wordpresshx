@@ -23,6 +23,13 @@ bd close <id>         # Complete work
 bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads data
 ```
 
+## Direct-to-Main Delivery
+
+- Commit and push ordinary WordPressHx repository work directly to `main` after all relevant quality gates pass.
+- Do not create pull requests for routine SDK, documentation, test, compiler, or Beads changes in this repository.
+- Use a pull request only when the user explicitly requests one or for unusually hard, isolated upstream work in another project (for example, a generalized change to `../genes`). Follow that project's contribution workflow.
+- If a pull request is created, do not leave it closed without merging: make its gates pass and merge it unless the user explicitly directs otherwise.
+
 ## Non-Interactive Shell Commands
 
 **ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
