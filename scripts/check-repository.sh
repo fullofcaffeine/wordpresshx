@@ -21,6 +21,7 @@ required_files=(
   docs/README.md
   docs/adr/README.md
   docs/adr/001-product-and-repository-boundary.md
+  docs/adr/002-exact-compatibility-profiles.md
   docs/adr/004-generic-php-compiler-home.md
   docs/architecture/browser-compiler.md
   docs/architecture/php-compiler.md
@@ -30,6 +31,7 @@ required_files=(
   packages/README.md
   compiler/README.md
   profiles/README.md
+  profiles/decision-lock.json
   schemas/README.md
   tools/README.md
   examples/README.md
@@ -77,6 +79,7 @@ required_files=(
   scripts/lint/hx-format-guard.sh
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
+  scripts/profiles/check-decision-lock.py
   scripts/security/run-beads-gitleaks.sh
   scripts/security/run-gitleaks.sh
   scripts/security/run-local-path-audit.sh
@@ -140,6 +143,12 @@ haxelib = json.loads(
 )
 adr = Path("docs/adr/001-product-and-repository-boundary.md").read_text(
     encoding="utf-8"
+)
+profile_adr = Path("docs/adr/002-exact-compatibility-profiles.md").read_text(
+    encoding="utf-8"
+)
+profile_lock = json.loads(
+    Path("profiles/decision-lock.json").read_text(encoding="utf-8")
 )
 readme = Path("README.md").read_text(encoding="utf-8")
 
@@ -279,7 +288,51 @@ for status in (
 for claim_field in ("wp70-release", "gutenberg-forward-23.4", "WordPressHx"):
     assert claim_field in adr
     assert claim_field in readme
+
+assert profile_lock["schemaVersion"] == 1
+assert profile_lock["decision"] == "ADR-002"
+assert profile_lock["status"] == "accepted-architecture"
+assert profile_lock["claim"] == "not-tested"
+assert profile_lock["catalogContractStatus"] == "identity-frozen-schema-pending"
+assert set(profile_lock["profiles"]) == {
+    "wp70-release",
+    "gutenberg-forward-23.4",
+}
+assert profile_lock["profiles"]["wp70-release"]["catalogRevision"] == (
+    "wp70-release/catalog-v1"
+)
+assert profile_lock["profiles"]["wp70-release"]["wordpress"]["commit"] == (
+    "26b68024931348d267b70e2a29910e1320d0094f"
+)
+assert profile_lock["profiles"]["wp70-release"]["embeddedGutenberg"][
+    "commit"
+] == "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd"
+assert profile_lock["profiles"]["gutenberg-forward-23.4"]["catalogRevision"] == (
+    "gutenberg-forward-23.4/catalog-v1"
+)
+assert profile_lock["profiles"]["gutenberg-forward-23.4"]["gutenberg"][
+    "commit"
+] == "98a796c8780c480ef7bcfe03c42302d9564d785c"
+assert profile_lock["selectionPolicy"]["profilesArePeers"] is True
+assert profile_lock["selectionPolicy"]["profileInheritance"] is False
+assert profile_lock["selectionPolicy"][
+    "exactlyOneCompatibilityTargetPerArtifact"
+] is True
+assert profile_lock["selectionPolicy"]["combinedTargetAllowedDuringMvp"] is False
+assert profile_lock["selectionPolicy"]["ciRequiresExplicitSelection"] is True
+assert profile_lock["selectionPolicy"][
+    "runtimeDetectionSatisfiesCompileTimeRequirements"
+] is False
+for exact_identity in (
+    "wp70-release",
+    "wp70-release/catalog-v1",
+    "gutenberg-forward-23.4",
+    "gutenberg-forward-23.4/catalog-v1",
+):
+    assert exact_identity in profile_adr
 PY
+
+python3 scripts/profiles/check-decision-lock.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

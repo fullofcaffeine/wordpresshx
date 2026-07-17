@@ -35,4 +35,5 @@ Decisions involving licensing, security, public support, or compatibility claims
 ## Accepted records
 
 - [ADR-001: Product and repository boundary](001-product-and-repository-boundary.md)
+- [ADR-002: Exact compatibility profiles](002-exact-compatibility-profiles.md)
 - [ADR-004: Generic PHP compiler home and extraction boundary](004-generic-php-compiler-home.md)
