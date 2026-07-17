@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "receiptId": "SDK-020-REFLAXE-PHP-BOOTSTRAP",
-  "observedAt": "2026-07-16T19:24:43-06:00",
+  "observedAt": "2026-07-17T00:41:50-06:00",
   "bead": "wordpresshx-sdk-020",
   "subject": {
     "package": "reflaxe.php",
@@ -10,16 +10,17 @@
     "canonicalRepositoryUrl": "https://github.com/fullofcaffeine/wordpresshx",
     "repositoryUrlFollowup": null,
     "originRepository": "https://github.com/fullofcaffeine/wordpresshx-port",
-    "originCommit": "7fdda0aa5ea66900819842aefeac6747421e9130",
-    "originTree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+    "originCommit": "20b9c974f141375b6cf191db6f25b115812e282c",
+    "originTree": "1de1d4869f8cea49ebebc9e54295057c62dee011",
     "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
-    "packageContentSha256": "202ea03169752258c02877a1905d85b6749db5ad8105214ddcded4f0cb33e848"
+    "packageContentSha256": "37b5e368258437fada835e428b57847434e7fdf48aa8a2ed2c7a7ee46a1f1c75"
   },
   "toolchain": {
     "haxe": "4.3.7",
     "formatter": "1.18.0",
     "php84": "8.4.7",
     "nodeForSourceAudit": "23.9.0",
+    "nodeForSourceCi": "20.x",
     "sourcePackageInstall": "npm ci --ignore-scripts; 5 packages audited, 0 vulnerabilities"
   },
   "localVerification": {
@@ -47,7 +48,7 @@
       "outcome": "not-tested",
       "attemptedBinary": "/opt/homebrew/opt/php@7.4/bin/php",
       "attemptedVersion": "7.4.33_9 installation",
-      "reason": "Binary cannot load missing /opt/homebrew/opt/aspell/lib/libaspell.15.dylib; Docker daemon is not running.",
+      "reason": "The installed Homebrew binary cannot load missing /opt/homebrew/opt/aspell/lib/libaspell.15.dylib; the PHP 7.4 container matrix remains an explicit SDK-021 follow-up and was not broadened into this provenance reconciliation.",
       "followup": "wordpresshx-sdk-021"
     }
   },
@@ -55,31 +56,50 @@
     "worktree": "clean detached worktree at origin commit; disposable and excluded from SDK inputs",
     "cleanAggregateCheck": {
       "command": "npm run wphx:php:adoption-ci:check",
-      "outcome": "failed",
-      "classification": "pre-existing-upstream-evidence-drift",
-      "reason": "Committed profile-core promotion manifest hashes an older WphxPhpCompiler.hx than the source at the same commit."
+      "outcome": "passed",
+      "requiredCheckCount": 29,
+      "includedWphxManifestCount": 28,
+      "excludedWphxManifestCount": 0,
+      "parallelCorePortWorkUnblocked": true
     },
     "cleanRelevantChecks": {
-      "outcome": "failed",
-      "classification": "pre-existing-upstream-evidence-drift",
+      "outcome": "passed",
+      "verification": "covered by the aggregate adoption gate and the reviewed source repair",
       "lanes": [
         "wphx:php:core-lowering-pilot:check",
         "wphx:php:native-array-mutation-core:check",
         "wphx:php:callable-closure-core:check",
         "wphx:php:static-dynamic-member-core:check",
         "wphx:php:private-emitter-pilot:check"
-      ],
-      "reason": "Each committed manifest contains the prior compiler source hash."
-    },
-    "refreshedDisposableDiagnostic": {
-      "outcome": "passed",
-      "procedure": "Run each of the five relevant lanes without --check in the disposable worktree, then rerun all five with --check.",
-      "limitations": [
-        "Refreshed evidence was not committed and is not a clean-source check result.",
-        "The aggregate adoption gate remained unclaimed because additional committed rollup inputs are stale.",
-        "The source port repository was not modified or pushed."
       ]
+    },
+    "receiptLinks": {
+      "command": "npm run receipts:validate",
+      "outcome": "passed",
+      "closedTaskCount": 493,
+      "linkedTaskCount": 493
+    },
+    "historicalFailure": {
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "classification": "reconciled-upstream-evidence-drift",
+      "reason": "The first import commit contained manifests with the prior compiler source hash; wordpresshx-g1.1 preserved and repaired that failure rather than treating disposable regeneration as a clean pass."
     }
+  },
+  "upstreamReconciliation": {
+    "sdkBead": "wordpresshx-g1.1",
+    "sourceBead": "wordpresshx-424l",
+    "repairPullRequest": "https://github.com/fullofcaffeine/wordpresshx-port/pull/1",
+    "repairMergeCommit": "427b06193be5ce80fa6ea72e9435d19c169b5021",
+    "repairCiRun": "https://github.com/fullofcaffeine/wordpresshx-port/actions/runs/29558825073",
+    "closurePullRequest": "https://github.com/fullofcaffeine/wordpresshx-port/pull/2",
+    "closureMergeCommit": "20b9c974f141375b6cf191db6f25b115812e282c",
+    "closureCiRun": "https://github.com/fullofcaffeine/wordpresshx-port/actions/runs/29560038108",
+    "githubActionsJobCount": 6,
+    "githubActionsOutcome": "passed",
+    "compilerSourceChanged": false,
+    "semanticEvidenceChanged": false,
+    "identityOnlyEvidenceLeafChanges": 159,
+    "machineLocalPathHits": 0
   },
   "boundary": {
     "wordpressAdapterSourceImported": false,

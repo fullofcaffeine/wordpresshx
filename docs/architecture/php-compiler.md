@@ -4,7 +4,7 @@ ADR-004 places the generic PHP compiler in [`compiler/reflaxe.php`](../../compil
 
 ## Origin inventory
 
-The source audit used clean `wordpresshx-port` commit `7fdda0aa5ea66900819842aefeac6747421e9130`, tree `a5cc51c68ca443108b5b133612c2f389ebf31364`.
+The first import used `wordpresshx-port` commit `7fdda0aa5ea66900819842aefeac6747421e9130`, tree `a5cc51c68ca443108b5b133612c2f389ebf31364`. The current clean source-evidence authority is reviewed merge commit `20b9c974f141375b6cf191db6f25b115812e282c`, tree `1de1d4869f8cea49ebebc9e54295057c62dee011`; the imported compiler and excluded adapter blobs are unchanged between those revisions.
 
 | Origin surface | Classification | SDK disposition |
 |---|---|---|
@@ -38,9 +38,11 @@ The fixture is neutral: it compiles and prints a PHP program that sums a native 
 
 The package test passed with Haxe 4.3.7 and formatter 1.18.0. The generated program passed PHP 8.4.7 lint and runtime execution with output `{"total":6,"label":"generic"}`.
 
-PHP 7.4 is `not-tested`, not passed. The installed Homebrew PHP 7.4.33 binary cannot start because its `libaspell.15.dylib` dependency is absent, and the configured Docker daemon is not running. SDK-021 retains the PHP 7.4/8.4 matrix requirement.
+PHP 7.4 is `not-tested`, not passed. The installed Homebrew PHP 7.4.33 binary cannot start because its `libaspell.15.dylib` dependency is absent; the containerized PHP 7.4 matrix remains a scoped SDK-021 requirement rather than part of this provenance-only reconciliation.
 
-At the exact source-port commit, the clean `wphx:php:adoption-ci:check` and five directly relevant `:check` lanes fail because committed manifests contain the prior compiler source hash. In the disposable audit worktree, regenerating only the evidence made these five semantic lanes and their subsequent checks pass:
+The original source audit correctly found stale committed evidence rather than claiming a disposable regeneration as a clean pass. `wordpresshx-g1.1` reconciled the source-port evidence through reviewed [PR #1](https://github.com/fullofcaffeine/wordpresshx-port/pull/1) and added the missing closure receipt through [PR #2](https://github.com/fullofcaffeine/wordpresshx-port/pull/2). From a fresh detached checkout of the current authority, `npm ci --ignore-scripts`, `wphx:php:adoption-ci:check`, and `receipts:validate` pass without regeneration: 29 required checks, 28 included WPHX manifests, zero exclusions, and 493 closed tasks linked to 493 receipts.
+
+The aggregate gate covers the five compiler areas that were directly stale in the first audit:
 
 - core statement lowering;
 - native array mutation;
@@ -48,7 +50,7 @@ At the exact source-port commit, the clean `wphx:php:adoption-ci:check` and five
 - static and dynamic members;
 - private emitter pilot, with its already-recorded exception-class gap.
 
-This is recorded as upstream evidence drift, not a green clean-check claim. The port checkout and its repository were not changed.
+The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
 The exact outcomes and package content digest are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json).
 
