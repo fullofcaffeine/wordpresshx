@@ -32,6 +32,8 @@ required_files=(
   compiler/README.md
   profiles/README.md
   profiles/decision-lock.json
+  profiles/wp70-release/README.md
+  profiles/wp70-release/source.lock.json
   schemas/README.md
   tools/README.md
   examples/README.md
@@ -41,6 +43,7 @@ required_files=(
   manifests/README.md
   manifests/upstream.lock.json
   manifests/evidence/sdk-004-canonical-repository.json
+  manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -80,6 +83,7 @@ required_files=(
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
   scripts/profiles/check-decision-lock.py
+  scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
   scripts/security/run-gitleaks.sh
   scripts/security/run-local-path-audit.sh
@@ -149,6 +153,13 @@ profile_adr = Path("docs/adr/002-exact-compatibility-profiles.md").read_text(
 )
 profile_lock = json.loads(
     Path("profiles/decision-lock.json").read_text(encoding="utf-8")
+)
+wp_source_lock_path = Path("profiles/wp70-release/source.lock.json")
+wp_source_lock = json.loads(wp_source_lock_path.read_text(encoding="utf-8"))
+wp_receipt = json.loads(
+    Path("manifests/evidence/sdk-010-wp70-release.json").read_text(
+        encoding="utf-8"
+    )
 )
 readme = Path("README.md").read_text(encoding="utf-8")
 
@@ -330,6 +341,77 @@ for exact_identity in (
     "gutenberg-forward-23.4/catalog-v1",
 ):
     assert exact_identity in profile_adr
+
+wp_entry = lock["entries"]["wp70-release"]
+wp_profile = profile_lock["profiles"]["wp70-release"]
+assert wp_source_lock["schemaVersion"] == 1
+assert wp_source_lock["profileId"] == wp_entry["profileId"] == "wp70-release"
+assert wp_source_lock["catalogRevision"] == wp_entry["catalogRevision"] == (
+    wp_profile["catalogRevision"]
+)
+assert wp_source_lock["sourceVerificationStatus"] == "passed"
+assert wp_source_lock["capabilityEvidenceStatus"] == "inventoried"
+assert wp_source_lock["runtimeCompatibilityStatus"] == "not-tested"
+assert wp_source_lock["productionSupportStatus"] == "not-tested"
+assert wp_entry["sourceLock"]["path"] == wp_source_lock_path.as_posix()
+assert hashlib.sha256(wp_source_lock_path.read_bytes()).hexdigest() == (
+    wp_entry["sourceLock"]["sha256"]
+)
+assert (
+    wp_source_lock["wordpressSource"]["commit"]
+    == wp_entry["wordpressSource"]["commit"]
+    == wp_profile["wordpress"]["commit"]
+)
+assert wp_source_lock["wordpressSource"]["tree"] == (
+    wp_entry["wordpressSource"]["tree"]
+)
+assert (
+    wp_source_lock["embeddedGutenberg"]["commit"]
+    == wp_entry["embeddedGutenberg"]["commit"]
+    == wp_profile["embeddedGutenberg"]["commit"]
+)
+assert wp_source_lock["embeddedGutenberg"]["tree"] == (
+    wp_entry["embeddedGutenberg"]["tree"]
+)
+assert wp_source_lock["distribution"]["contentTreeSha256"] == (
+    wp_entry["distributionContentTreeSha256"]
+)
+assert wp_receipt["schemaVersion"] == 1
+assert wp_receipt["receiptId"] == "SDK-010-WP70-RELEASE-SOURCE"
+assert wp_receipt["receiptId"] in wp_entry["testReceiptIds"]
+assert wp_receipt["bead"] == "wordpresshx-sdk-010"
+assert wp_receipt["subject"]["sourceLockSha256"] == (
+    wp_entry["sourceLock"]["sha256"]
+)
+verifier_path = Path(wp_receipt["subject"]["verifierPath"])
+assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
+    wp_receipt["subject"]["verifierSha256"]
+)
+compile(verifier_path.read_text(encoding="utf-8"), verifier_path.as_posix(), "exec")
+assert wp_receipt["sourceVerification"]["wordpress"]["outcome"] == "passed"
+assert wp_receipt["sourceVerification"]["embeddedGutenberg"]["outcome"] == (
+    "passed"
+)
+assert wp_receipt["distributionVerification"]["outcome"] == "passed"
+assert wp_receipt["distributionVerification"][
+    "tarZipFileTreesByteIdentical"
+] is True
+assert wp_receipt["distributionVerification"]["contentTreeSha256"] == (
+    wp_source_lock["distribution"]["contentTreeSha256"]
+)
+assert wp_receipt["hostedWorkflow"]["job"] == "wp70-source"
+assert wp_receipt["hostedWorkflow"]["freshSourceFetch"] is True
+assert wp_receipt["hostedWorkflow"]["freshArtifactDownload"] is True
+assert wp_receipt["hostedWorkflow"]["required"] is True
+assert wp_receipt["claims"]["sourceAndDistributionIdentity"] == "inventoried"
+for unproven_claim in (
+    "capabilityCatalog",
+    "wordpressInstallation",
+    "wordpressRuntimeCompatibility",
+    "browserCompatibility",
+    "productionSupport",
+):
+    assert wp_receipt["claims"][unproven_claim] == "not-tested"
 PY
 
 python3 scripts/profiles/check-decision-lock.py

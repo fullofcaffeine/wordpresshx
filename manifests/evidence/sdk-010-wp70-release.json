@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-010-WP70-RELEASE-SOURCE",
+  "bead": "wordpresshx-sdk-010",
+  "observedAt": "2026-07-17T01:55:59-06:00",
+  "subject": {
+    "profileId": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "sourceLockPath": "profiles/wp70-release/source.lock.json",
+    "sourceLockSha256": "002699113d01c0e19f0153ac8461c26f1d39394e56849b18baa1f632c1b3aa64",
+    "verifierPath": "scripts/profiles/verify-wp70-release.py",
+    "verifierSha256": "eafe766d8111714e7e0b9fd026b88e81bf473d62f5e5020c8f3bab4a8de60d83"
+  },
+  "sourceVerification": {
+    "command": "python3 scripts/profiles/verify-wp70-release.py",
+    "workspace": "fresh temporary Git repositories and artifact directory",
+    "siblingCheckoutUsed": false,
+    "wordpress": {
+      "repository": "https://github.com/WordPress/wordpress-develop.git",
+      "tagRef": "refs/tags/7.0.0",
+      "tagObjectType": "commit",
+      "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "tree": "f3ad96f2357d2309f64a8d42a5808be502639c70",
+      "packageJsonSha256": "055d9e283704afdb5bbc2d88be5524481807933c9f011ae730f59a968f3b5774",
+      "sourceVersionPhpSha256": "c7e0bcb05891745bd764158490e5b9d7140bdb3955298b69944d03687f3b8110",
+      "outcome": "passed"
+    },
+    "embeddedGutenberg": {
+      "repository": "https://github.com/WordPress/gutenberg.git",
+      "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+      "tree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+      "wordpressLinkEvidence": "package.json#/gutenberg/sha",
+      "outcome": "passed"
+    }
+  },
+  "distributionVerification": {
+    "artifacts": [
+      {
+        "name": "wordpress-7.0.tar.gz",
+        "url": "https://wordpress.org/wordpress-7.0.tar.gz",
+        "sizeBytes": 29663483,
+        "sha256": "530c8fdeb16fb0affdb53eb727b6a04bb8d166621c20029e389cabb01a0fa921",
+        "outcome": "passed"
+      },
+      {
+        "name": "wordpress-7.0.zip",
+        "url": "https://wordpress.org/wordpress-7.0.zip",
+        "sizeBytes": 31549246,
+        "sha256": "b2b6827eb7b2b51f4610893e1a6ad02466e76fe0a307bd40ca2a8ba821c40d0b",
+        "outcome": "passed"
+      }
+    ],
+    "unsafeArchivePathCheck": "passed",
+    "tarZipFileTreesByteIdentical": true,
+    "contentFileCount": 3951,
+    "contentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+    "distributionVersionPhpSha256": "77ec8308a6c2055c4582d1392951afd53083be81994934fe760ba589fe8df19c",
+    "wordpressVersion": "7.0",
+    "databaseRevision": 61833,
+    "minimumPhp": "7.4",
+    "minimumMysql": "5.5.5",
+    "outcome": "passed"
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "wp70-source",
+    "freshSourceFetch": true,
+    "freshArtifactDownload": true,
+    "required": true
+  },
+  "claims": {
+    "sourceAndDistributionIdentity": "inventoried",
+    "embeddedGutenbergIdentity": "inventoried",
+    "capabilityCatalog": "not-tested",
+    "wordpressInstallation": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
