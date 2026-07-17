@@ -3,6 +3,34 @@
   "lockStatus": "partial",
   "authority": "wordpress-hx-sdk",
   "entries": {
+    "wp70-release": {
+      "role": "exact-vanilla-wordpress-profile-authority",
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "sourceLock": {
+        "path": "profiles/wp70-release/source.lock.json",
+        "sha256": "002699113d01c0e19f0153ac8461c26f1d39394e56849b18baa1f632c1b3aa64"
+      },
+      "wordpressSource": {
+        "repository": "https://github.com/WordPress/wordpress-develop.git",
+        "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+        "tree": "f3ad96f2357d2309f64a8d42a5808be502639c70",
+        "tag": "7.0.0"
+      },
+      "embeddedGutenberg": {
+        "repository": "https://github.com/WordPress/gutenberg.git",
+        "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+        "tree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+      },
+      "distributionContentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+      "capabilityEvidenceStatus": "inventoried",
+      "runtimeCompatibilityStatus": "not-tested",
+      "testReceiptIds": [
+        "SDK-010-WP70-RELEASE-SOURCE"
+      ],
+      "upgradeOwner": "wordpress-hx-sdk profile maintainers",
+      "rollback": null
+    },
     "genes-ts": {
       "role": "generic-browser-compiler-authority",
       "repository": "https://github.com/fullofcaffeine/genes-ts",
