@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-080-HXX-PARSER-PROTOTYPE",
   "bead": "wordpresshx-sdk-080",
-  "observedAt": "2026-07-17T20:10:35Z",
+  "observedAt": "2026-07-17T20:54:33Z",
   "subject": {
     "decision": "ADR-011",
     "sourceModule": "packages/hxx",
@@ -213,9 +213,21 @@
     "futureUse": "SDK-081 and SDK-083 may adapt their neutral segment vocabulary and WordPress theme/admin oracle cases with per-file provenance"
   },
   "hostedVerification": {
-    "status": "pending-successful-main-run",
+    "status": "passed",
     "workflow": "Repository bootstrap",
     "job": "haxe",
+    "runId": 29612843555,
+    "jobId": 87991247932,
+    "commit": "a979dcd60de9b5cdd355fd810192d6abf30c15f3",
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29612843555",
+    "required": true,
+    "serverEvidence": {
+      "fileCount": 16,
+      "rawSizeBytes": 101722,
+      "normalizedSizeBytes": 90153,
+      "normalizedStdlibSourceMarkerCount": 503,
+      "normalizedContentTreeSha256": "a45feae15916d41161ca667a336954a196239445c88443282523c06f45173822"
+    },
     "discardedBootstrapAttempts": [
       {
         "runId": 29610841831,

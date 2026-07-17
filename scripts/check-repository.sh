@@ -597,6 +597,22 @@ assert server_artifact["normalizedContentTreeSha256"] == (
 assert hxx_receipt["localVerification"]["generatedPhpHasher"][
     "otherAbsoluteSourceMarkers"
 ] == "fail-closed"
+assert hxx_receipt["hostedVerification"]["status"] == "passed"
+assert hxx_receipt["hostedVerification"]["runId"] == 29612843555
+assert hxx_receipt["hostedVerification"]["jobId"] == 87991247932
+assert hxx_receipt["hostedVerification"]["commit"] == (
+    "a979dcd60de9b5cdd355fd810192d6abf30c15f3"
+)
+assert hxx_receipt["hostedVerification"]["required"] is True
+assert hxx_receipt["hostedVerification"]["serverEvidence"] == {
+    "fileCount": 16,
+    "rawSizeBytes": 101722,
+    "normalizedSizeBytes": 90153,
+    "normalizedStdlibSourceMarkerCount": 503,
+    "normalizedContentTreeSha256": (
+        "a45feae15916d41161ca667a336954a196239445c88443282523c06f45173822"
+    ),
+}
 assert hxx_receipt["localVerification"]["gate"]["outcome"] == "passed"
 assert hxx_receipt["prototype"]["generatorApiUsed"] is False
 assert hxx_receipt["prototype"]["publicTinkTypesExposed"] is False
