@@ -98,7 +98,12 @@
   "hostedWorkflow": {
     "path": ".github/workflows/repository.yml",
     "job": "wordpress-runtime",
-    "status": "configured-awaiting-first-main-run",
+    "runId": 29605790579,
+    "jobId": 87968572776,
+    "commit": "ea82d94e17fef93f23bfe831c7fa97ba5dbc511e",
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29605790579",
+    "runner": "ubuntu-24.04-linux-amd64",
+    "status": "passed",
     "required": true
   },
   "claims": {

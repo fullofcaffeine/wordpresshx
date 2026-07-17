@@ -1016,10 +1016,10 @@ assert sdk090_receipt["matrixBoundaries"]["node22170"] == "inventoried"
 assert sdk090_receipt["matrixBoundaries"]["playwright1580"] == "inventoried"
 assert sdk090_receipt["matrixBoundaries"]["sdkPluginOrThemeInstalled"] is False
 assert sdk090_receipt["hostedWorkflow"]["job"] == "wordpress-runtime"
-assert sdk090_receipt["hostedWorkflow"]["status"] in {
-    "configured-awaiting-first-main-run",
-    "passed",
-}
+assert sdk090_receipt["hostedWorkflow"]["runId"] == 29605790579
+assert sdk090_receipt["hostedWorkflow"]["jobId"] == 87968572776
+assert sha1.fullmatch(sdk090_receipt["hostedWorkflow"]["commit"])
+assert sdk090_receipt["hostedWorkflow"]["status"] == "passed"
 assert sdk090_receipt["hostedWorkflow"]["required"] is True
 for claim in (
     "exactWordPressImageDistribution",
