@@ -32,6 +32,8 @@ required_files=(
   compiler/README.md
   profiles/README.md
   profiles/decision-lock.json
+  profiles/gutenberg-forward-23.4/README.md
+  profiles/gutenberg-forward-23.4/source.lock.json
   profiles/wp70-release/README.md
   profiles/wp70-release/source.lock.json
   schemas/README.md
@@ -44,6 +46,7 @@ required_files=(
   manifests/upstream.lock.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
+  manifests/evidence/sdk-011-gutenberg-forward-23.4.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -83,6 +86,8 @@ required_files=(
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
   scripts/profiles/check-decision-lock.py
+  scripts/profiles/check-profile-isolation.py
+  scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
   scripts/security/run-gitleaks.sh
@@ -160,6 +165,17 @@ wp_receipt = json.loads(
     Path("manifests/evidence/sdk-010-wp70-release.json").read_text(
         encoding="utf-8"
     )
+)
+forward_source_lock_path = Path(
+    "profiles/gutenberg-forward-23.4/source.lock.json"
+)
+forward_source_lock = json.loads(
+    forward_source_lock_path.read_text(encoding="utf-8")
+)
+forward_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-011-gutenberg-forward-23.4.json"
+    ).read_text(encoding="utf-8")
 )
 readme = Path("README.md").read_text(encoding="utf-8")
 
@@ -415,9 +431,125 @@ for unproven_claim in (
     "productionSupport",
 ):
     assert wp_receipt["claims"][unproven_claim] == "not-tested"
+
+forward_entry = lock["entries"]["gutenberg-forward-23.4"]
+forward_profile = profile_lock["profiles"]["gutenberg-forward-23.4"]
+assert forward_source_lock["schemaVersion"] == 1
+assert forward_source_lock["profileId"] == forward_entry["profileId"] == (
+    "gutenberg-forward-23.4"
+)
+assert forward_source_lock["catalogRevision"] == forward_entry[
+    "catalogRevision"
+] == forward_profile["catalogRevision"]
+for identity_field in (
+    "packageIdentity",
+    "generatedNamespace",
+    "generatedArtifactRoot",
+):
+    assert forward_source_lock[identity_field] == forward_entry[identity_field]
+assert forward_source_lock["sourceVerificationStatus"] == "passed"
+assert forward_source_lock["capabilityEvidenceStatus"] == "inventoried"
+assert forward_source_lock["runtimeCompatibilityStatus"] == "not-tested"
+assert forward_source_lock["wordpress70CompatibilityStatus"] == "forbidden"
+assert forward_source_lock["productionSupportStatus"] == "not-tested"
+assert forward_source_lock["supportStatus"] == "experimental"
+assert forward_source_lock["releaseChannel"] == "preview-or-experimental"
+assert forward_source_lock["prohibitions"]["distributionClaim"] is None
+assert forward_source_lock["prohibitions"][
+    "wordpress70CompatibilityClaim"
+] == "forbidden"
+assert forward_source_lock["prohibitions"]["mixedProfileImports"] == (
+    "forbidden"
+)
+assert forward_source_lock["prohibitions"]["wp70ArtifactLeakage"] == (
+    "forbidden"
+)
+assert forward_entry["sourceLock"]["path"] == (
+    forward_source_lock_path.as_posix()
+)
+assert hashlib.sha256(forward_source_lock_path.read_bytes()).hexdigest() == (
+    forward_entry["sourceLock"]["sha256"]
+)
+assert forward_source_lock["gutenbergSource"]["commit"] == forward_entry[
+    "gutenbergSource"
+]["commit"] == forward_profile["gutenberg"]["commit"]
+assert forward_source_lock["gutenbergSource"]["tree"] == forward_entry[
+    "gutenbergSource"
+]["tree"]
+assert forward_source_lock["gutenbergSource"]["tag"] == forward_entry[
+    "gutenbergSource"
+]["tag"] == forward_profile["gutenberg"]["tag"]
+assert forward_source_lock["gutenbergSource"]["tagKind"] == "lightweight"
+assert forward_source_lock["gutenbergSource"]["tagObjectType"] == "commit"
+assert forward_source_lock["releaseDistribution"]["artifact"]["sha256"] == (
+    forward_entry["releaseArtifact"]["sha256"]
+)
+assert forward_source_lock["releaseDistribution"][
+    "contentTreeSha256"
+] == forward_entry["distributionContentTreeSha256"]
+assert forward_receipt["schemaVersion"] == 1
+assert forward_receipt["receiptId"] == (
+    "SDK-011-GUTENBERG-FORWARD-23.4"
+)
+assert forward_receipt["receiptId"] in forward_entry["testReceiptIds"]
+assert forward_receipt["bead"] == "wordpresshx-sdk-011"
+assert forward_receipt["subject"]["sourceLockSha256"] == forward_entry[
+    "sourceLock"
+]["sha256"]
+for receipt_path_field, receipt_sha_field in (
+    ("verifierPath", "verifierSha256"),
+    ("isolationVerifierPath", "isolationVerifierSha256"),
+):
+    receipt_path = Path(forward_receipt["subject"][receipt_path_field])
+    assert hashlib.sha256(receipt_path.read_bytes()).hexdigest() == (
+        forward_receipt["subject"][receipt_sha_field]
+    )
+    compile(
+        receipt_path.read_text(encoding="utf-8"),
+        receipt_path.as_posix(),
+        "exec",
+    )
+assert forward_receipt["sourceVerification"]["gutenberg"]["outcome"] == (
+    "passed"
+)
+assert forward_receipt["sourceVerification"][
+    "committerDateComparison"
+] == "parsed ISO-8601 instant normalized to UTC"
+assert forward_receipt["releaseVerification"]["outcome"] == "passed"
+assert forward_receipt["releaseVerification"]["contentTreeSha256"] == (
+    forward_source_lock["releaseDistribution"]["contentTreeSha256"]
+)
+assert forward_receipt["isolationVerification"]["outcome"] == "passed"
+assert forward_receipt["hostedWorkflow"]["job"] == (
+    "gutenberg-forward-source"
+)
+assert forward_receipt["hostedWorkflow"]["freshSourceFetch"] is True
+assert forward_receipt["hostedWorkflow"]["freshArtifactDownload"] is True
+assert forward_receipt["hostedWorkflow"]["required"] is True
+assert forward_receipt["claims"]["sourceAndReleaseIdentity"] == (
+    "inventoried"
+)
+assert forward_receipt["claims"]["forwardCapabilityInventory"] == (
+    "inventoried"
+)
+assert forward_receipt["claims"]["forwardSupport"] == "experimental"
+assert forward_receipt["claims"]["releaseChannel"] == (
+    "preview-or-experimental"
+)
+assert forward_receipt["claims"]["wordpress70Compatibility"] == (
+    "forbidden"
+)
+for unproven_claim in (
+    "wordpressInstallation",
+    "wordpressRuntimeCompatibility",
+    "browserCompatibility",
+    "productionSupport",
+):
+    assert forward_receipt["claims"][unproven_claim] == "not-tested"
 PY
 
 python3 scripts/profiles/check-decision-lock.py
+python3 scripts/profiles/check-profile-isolation.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

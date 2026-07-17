@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-011-GUTENBERG-FORWARD-23.4",
+  "bead": "wordpresshx-sdk-011",
+  "observedAt": "2026-07-17T02:15:18-06:00",
+  "subject": {
+    "profileId": "gutenberg-forward-23.4",
+    "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+    "packageIdentity": "wordpress-hx-profile:gutenberg-forward-23.4/catalog-v1",
+    "generatedNamespace": "wordpress.profiles.gutenberg_forward_23_4",
+    "generatedArtifactRoot": "generated/gutenberg-forward-23.4/catalog-v1",
+    "sourceLockPath": "profiles/gutenberg-forward-23.4/source.lock.json",
+    "sourceLockSha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109",
+    "verifierPath": "scripts/profiles/verify-gutenberg-forward-23-4.py",
+    "verifierSha256": "47185c55ee4a2341f60f32f38c5cf11b37e8eb3efca9e78a2463947af9b7ae8c",
+    "isolationVerifierPath": "scripts/profiles/check-profile-isolation.py",
+    "isolationVerifierSha256": "14082417117890cf76344f61b718230f792cec9cb1e3d388a2f29e81c2187446"
+  },
+  "sourceVerification": {
+    "command": "python3 scripts/profiles/verify-gutenberg-forward-23-4.py",
+    "workspace": "fresh temporary Git repository and artifact directory",
+    "siblingCheckoutUsed": false,
+    "committerDateComparison": "parsed ISO-8601 instant normalized to UTC",
+    "gutenberg": {
+      "repository": "https://github.com/WordPress/gutenberg.git",
+      "tagRef": "refs/tags/v23.4.0",
+      "tagKind": "lightweight",
+      "tagObjectType": "commit",
+      "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+      "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f",
+      "parent": "7f3cace18990722ab2ded0dafe76741339d54d6b",
+      "packageJsonSha256": "6b123339dba60ffbd04e69043d44db13efd4c728c77e72006dea32c9a02b059f",
+      "pluginPhpSha256": "50b90a93eb2b21786a6556db9d6bc050b442b7ded8e50ddec7f97477559f2e10",
+      "contentTypesPackageJsonSha256": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4",
+      "contentTypesMarkedExperimental": true,
+      "outcome": "passed"
+    }
+  },
+  "releaseVerification": {
+    "artifact": {
+      "name": "gutenberg.zip",
+      "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip",
+      "sizeBytes": 39579401,
+      "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a",
+      "outcome": "passed"
+    },
+    "unsafeArchivePathCheck": "passed",
+    "duplicateArchivePathCheck": "passed",
+    "symlinkRejectionCheck": "passed",
+    "contentFileCount": 2205,
+    "contentTreeSha256": "58ba04bdb69b91c42a67f2bdeefbf4e85f2312ee534355b978adcb2017a5791d",
+    "releasePluginPhpSha256": "50b90a93eb2b21786a6556db9d6bc050b442b7ded8e50ddec7f97477559f2e10",
+    "pluginVersion": "23.4.0",
+    "minimumWordPress": "6.8",
+    "minimumPhp": "7.4",
+    "forwardInventoryMarkersPresent": true,
+    "outcome": "passed"
+  },
+  "isolationVerification": {
+    "command": "python3 scripts/profiles/check-profile-isolation.py",
+    "compileAdmission": {
+      "exactlyOneProfile": "passed",
+      "unknownOrFloatingProfileRejected": "passed",
+      "mixedImportsUnderWp70Rejected": "passed",
+      "mixedImportsUnderForwardRejected": "passed"
+    },
+    "artifactIdentity": {
+      "separatePackageIdentity": "passed",
+      "separateGeneratedNamespace": "passed",
+      "separateGeneratedArtifactRoot": "passed",
+      "exactManifestIdentity": "passed"
+    },
+    "finalArtifactScan": {
+      "forwardMarkersInWp70Rejected": "passed",
+      "wp70MarkersInForwardRejected": "passed",
+      "artifactRootDriftRejected": "passed"
+    },
+    "outcome": "passed"
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "gutenberg-forward-source",
+    "freshSourceFetch": true,
+    "freshArtifactDownload": true,
+    "required": true
+  },
+  "claims": {
+    "sourceAndReleaseIdentity": "inventoried",
+    "forwardCapabilityInventory": "inventoried",
+    "forwardSupport": "experimental",
+    "releaseChannel": "preview-or-experimental",
+    "wordpress70Compatibility": "forbidden",
+    "wordpressInstallation": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
