@@ -1,0 +1,80 @@
+name: wordpresshx-sdk090
+
+x-wordpress-environment: &wordpress-environment
+  WORDPRESS_DB_NAME: wordpresshx
+  WORDPRESS_DB_USER: wordpresshx
+  WORDPRESS_DB_PASSWORD: wordpresshx-test-only
+  WORDPRESS_DEBUG: "1"
+
+x-database-environment: &database-environment
+  MYSQL_DATABASE: wordpresshx
+  MYSQL_USER: wordpresshx
+  MYSQL_PASSWORD: wordpresshx-test-only
+  MYSQL_ROOT_PASSWORD: wordpresshx-root-test-only
+  MARIADB_DATABASE: wordpresshx
+  MARIADB_USER: wordpresshx
+  MARIADB_PASSWORD: wordpresshx-test-only
+  MARIADB_ROOT_PASSWORD: wordpresshx-root-test-only
+
+services:
+  mysql:
+    profiles: [mysql]
+    image: docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d
+    environment: *database-environment
+    healthcheck:
+      test: [CMD-SHELL, "mysqladmin ping --silent -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  wordpress-mysql:
+    profiles: [mysql]
+    image: docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      <<: *wordpress-environment
+      WORDPRESS_DB_HOST: mysql:3306
+    ports:
+      - "127.0.0.1::80"
+    volumes:
+      - wordpress-mysql-data:/var/www/html
+      - ./install.php:/opt/wordpresshx/install.php:ro
+      - ./health.php:/opt/wordpresshx/health.php:ro
+
+  mariadb:
+    profiles: [mariadb]
+    image: docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b
+    environment: *database-environment
+    healthcheck:
+      test: [CMD-SHELL, "healthcheck.sh --connect --innodb_initialized"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  wordpress-mariadb:
+    profiles: [mariadb]
+    image: docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      <<: *wordpress-environment
+      WORDPRESS_DB_HOST: mariadb:3306
+    ports:
+      - "127.0.0.1::80"
+    volumes:
+      - wordpress-mariadb-data:/var/www/html
+      - ./install.php:/opt/wordpresshx/install.php:ro
+      - ./health.php:/opt/wordpresshx/health.php:ro
+
+volumes:
+  mysql-data:
+  mariadb-data:
+  wordpress-mysql-data:
+  wordpress-mariadb-data:

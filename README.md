@@ -2,6 +2,8 @@
 
 `wordpress-hx-sdk` is a typed Haxe SDK and build toolchain for authoring ordinary WordPress plugins, themes, blocks, editor extensions, REST APIs, and related native artifacts.
 
+It is the application/site-level alternative for teams that want a Haxe-first development experience without replacing WordPress Core. A project may begin with typed interfaces to existing WordPress, PHP, plugin, and browser code, then move only the bounded implementations it chooses into Haxe. A new site may instead use Haxe/HXX as its complete maintained code and configuration surface. Both paths emit ordinary native WordPress artifacts; handwritten PHP and JavaScript are optional interoperability tools, not required authoring layers.
+
 Canonical source: [github.com/fullofcaffeine/wordpresshx](https://github.com/fullofcaffeine/wordpresshx).
 
 > **Status: bootstrap / pre-feasibility.** There is no released SDK, supported compatibility profile, installable package, or production-readiness claim yet. The feasibility gates in the product requirements document decide when any narrower claim becomes valid.
@@ -25,6 +27,8 @@ unmodified vanilla WordPress and Gutenberg
 ```
 
 The product is not a WordPress fork, a replacement runtime, a generic CMS abstraction, or a proprietary site builder. The SDK and the separate full `wordpress-hx` port may share released generic compiler packages and public contracts, but neither project may import the other's unpublished implementation internals or merge its compatibility claims.
+
+The longer-term architecture should compose with the maintainer's broader Haxe compiler and framework family through portable Haxe contracts, versioned semantic-plan/artifact schemas, immutable compiler packages, and independent evidence receipts. It must not acquire floating dependencies on sibling repositories merely to simulate that future integration.
 
 ## Product authority
 

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "resolvedAt": "2026-07-17T10:55:00-06:00",
+  "images": {
+    "mariadb": {
+      "tag": "docker.io/library/mariadb:11.4.5",
+      "reference": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
+      "indexDigest": "sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "real WordPress MariaDB lane",
+      "evidenceStatus": "runtime-tested"
+    },
+    "mysql": {
+      "tag": "docker.io/library/mysql:8.4.10",
+      "reference": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+      "indexDigest": "sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "real WordPress MySQL lane",
+      "evidenceStatus": "runtime-tested"
+    },
+    "node": {
+      "tag": "docker.io/library/node:22.17.0-bookworm-slim",
+      "reference": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+      "indexDigest": "sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "future SDK browser build lane",
+      "evidenceStatus": "inventoried"
+    },
+    "php74Floor": {
+      "tag": "docker.io/library/php:7.4.33-cli-bullseye",
+      "reference": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+      "indexDigest": "sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "blocking generated-PHP syntax and runtime floor",
+      "evidenceStatus": "runtime-tested"
+    },
+    "php84Cli": {
+      "tag": "docker.io/library/php:8.4.7-cli-bookworm",
+      "reference": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+      "indexDigest": "sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "primary generated-PHP CLI lane",
+      "evidenceStatus": "runtime-tested"
+    },
+    "playwright": {
+      "tag": "mcr.microsoft.com/playwright:v1.58.0-noble",
+      "reference": "mcr.microsoft.com/playwright@sha256:35c7d48b4ccaf3aca5018f5f1bf7f50c7da7d61d176c530741f4f2e9ca336c34",
+      "indexDigest": "sha256:35c7d48b4ccaf3aca5018f5f1bf7f50c7da7d61d176c530741f4f2e9ca336c34",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "purpose": "future exact Chromium/Firefox/WebKit harness",
+      "evidenceStatus": "inventoried"
+    },
+    "wordpress70Php84": {
+      "tag": "docker.io/library/wordpress:7.0.0-php8.4-apache",
+      "reference": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+      "indexDigest": "sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+      "requiredPlatforms": [
+        "linux/amd64",
+        "linux/arm64/v8"
+      ],
+      "purpose": "exact installed wp70-release Apache/PHP lane",
+      "evidenceStatus": "runtime-tested",
+      "expectedWordPressVersion": "7.0",
+      "observedPhpVersion": "8.4.23",
+      "distribution": {
+        "contentFileCount": 3951,
+        "contentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+        "allowedImageExtras": [
+          {
+            "path": ".htaccess",
+            "sha256": "25254afc484e77c65a89ebfac471bc3b667d85f86d050496174f558849df2b28"
+          },
+          {
+            "path": "wp-config-docker.php",
+            "sha256": "1513f88b7252f29790f0acad201b1ef0d442f0d80e88c33e4a6d473615084162"
+          }
+        ]
+      }
+    }
+  }
+}

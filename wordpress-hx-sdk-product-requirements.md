@@ -13,6 +13,8 @@
 
 > **Decision summary:** Create `wordpress-hx-sdk` as a separate open-source monorepo and product. Target one exact vanilla WordPress baseline first: `wp70-release`. Treat `gutenberg-forward-23.4` as an opt-in, separately generated capability profile. Use Haxe as the source of truth, but emit ordinary WordPress PHP, TypeScript/TSX/JavaScript, metadata, templates, and packages. Use a small typed native-PHP artifact emitter for public WordPress files and stock Haxe PHP only behind private implementation boundaries. Use genes-ts for strict browser output. Do not create a parallel WordPress runtime, a proprietary site builder, or a universal CMS abstraction.
 
+> **Product-positioning clarification:** This SDK is the application/site-level alternative for developers who want the same or similar Haxe-first experience as the full port without replacing WordPress Core. It supports interface-first gradual ownership: type and call existing native code, port only the bounded implementation that benefits from Haxe, or author a greenfield site with Haxe/HXX as the complete maintained code/configuration surface. The intended maintainability gain is one typed source graph over owned behavior and boundaries, not ownership of the entire WordPress distribution.
+
 ---
 
 ## Table of contents
@@ -86,6 +88,8 @@ Haxe source + typed project declarations
 
 There is **no SDK runtime equivalent of WordPress, Gutenberg, React, a template engine, a router, or a data layer**. Generated code calls those native runtimes.
 
+The greenfield happy path may be entirely Haxe-authored: HXX supplies server/browser markup, typed declarations supply theme/plugin/block metadata and generated styling, and CLI-owned projections feed native build tools. PHP, JS/TS, WordPress JSON, and CSS remain inspectable outputs or optional escape hatches rather than mandatory maintained inputs.
+
 ## 2.2 Hard decisions
 
 | Decision | Recommendation | Why |
@@ -138,6 +142,8 @@ A developer can author, typecheck, build, inspect, install, test, and package a 
 ## 3.1 Product definition
 
 `wordpress-hx-sdk` is a typed Haxe SDK and build toolchain for authoring WordPress plugins, mu-plugins, themes, blocks, editor extensions, REST APIs, admin surfaces, browser behavior, and complete solutions that execute on the **native WordPress and Gutenberg runtimes**.
+
+It is designed for both gradual and Haxe-first ownership. Existing PHP/JavaScript code may remain authoritative behind precise generated or reviewed Haxe contracts. A project may then port only selected implementations as needed. A greenfield site may keep its entire maintained application surface in Haxe/HXX while generated native artifacts remain the deployment and debugging surface.
 
 It consists of:
 
@@ -311,6 +317,8 @@ The SDK documentation must say so plainly. A one-file PHP plugin with no browser
 ## 6.1 Product boundary
 
 The full `wordpress-hx` project is attempting to replace WordPress and Gutenberg runtime implementation with Haxe-authored implementations while preserving compatibility. `wordpress-hx-sdk` instead authors extensions and solutions that consume the existing runtime.
+
+The SDK is therefore an alternative route to a Haxe-first development experience, not a smaller whole-Core port. It aims for similar day-to-day authoring and refactoring benefits at the application/site layer while avoiding the maintenance burden of replacing code a project does not own. Precise interfaces come first; implementation ownership expands only where a concrete project needs it.
 
 | Concern | `wordpress-hx-sdk` | Full `wordpress-hx` port |
 |---|---|---|

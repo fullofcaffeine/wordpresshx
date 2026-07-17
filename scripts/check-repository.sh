@@ -75,6 +75,10 @@ required_files=(
   fixtures/profiles/valid/wp70-release.json
   test/README.md
   docker/README.md
+  docker/images.lock.json
+  docker/wordpress/compose.yml
+  docker/wordpress/health.php
+  docker/wordpress/install.php
   manifests/README.md
   manifests/upstream.lock.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -82,6 +86,7 @@ required_files=(
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
   manifests/evidence/sdk-012-profile-schema.json
   manifests/evidence/sdk-013-profile-generator.json
+  manifests/evidence/sdk-090-wordpress-harness.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -113,6 +118,7 @@ required_files=(
   scripts/beads/push-safe.sh
   scripts/ci/check-security-tooling.sh
   scripts/ci/install-gitleaks.sh
+  scripts/docker/check-image-lock.py
   scripts/hooks/install.sh
   scripts/hooks/pre-commit
   scripts/hooks/pre-push
@@ -133,6 +139,10 @@ required_files=(
   scripts/security/run-beads-gitleaks.sh
   scripts/security/run-gitleaks.sh
   scripts/security/run-local-path-audit.sh
+  scripts/wordpress/reset-harness.sh
+  scripts/wordpress/run-harness.sh
+  scripts/wordpress/test-harness.sh
+  scripts/wordpress/verify-distribution.py
 )
 
 missing=0
@@ -234,6 +244,14 @@ sdk012_receipt = json.loads(
 )
 sdk013_receipt = json.loads(
     Path("manifests/evidence/sdk-013-profile-generator.json").read_text(
+        encoding="utf-8"
+    )
+)
+image_lock = json.loads(
+    Path("docker/images.lock.json").read_text(encoding="utf-8")
+)
+sdk090_receipt = json.loads(
+    Path("manifests/evidence/sdk-090-wordpress-harness.json").read_text(
         encoding="utf-8"
     )
 )
@@ -906,6 +924,117 @@ for unproven_claim in (
     "productionSupport",
 ):
     assert sdk013_receipt["claims"][unproven_claim] == "not-tested"
+
+assert image_lock["schemaVersion"] == 1
+assert set(image_lock["images"]) == {
+    "mariadb",
+    "mysql",
+    "node",
+    "php74Floor",
+    "php84Cli",
+    "playwright",
+    "wordpress70Php84",
+}
+for image_key in (
+    "mariadb",
+    "mysql",
+    "php74Floor",
+    "php84Cli",
+    "wordpress70Php84",
+):
+    assert image_lock["images"][image_key]["evidenceStatus"] == (
+        "runtime-tested"
+    )
+for image_key in ("node", "playwright"):
+    assert image_lock["images"][image_key]["evidenceStatus"] == (
+        "inventoried"
+    )
+
+assert sdk090_receipt["schemaVersion"] == 1
+assert sdk090_receipt["receiptId"] == "SDK-090-WORDPRESS-HARNESS"
+assert sdk090_receipt["bead"] == "wordpresshx-sdk-090"
+sdk090_subject = sdk090_receipt["subject"]
+for path_field, digest_field in (
+    ("imageLockPath", "imageLockSha256"),
+    ("composePath", "composeSha256"),
+    ("installPath", "installSha256"),
+    ("healthPath", "healthSha256"),
+    ("lockCheckerPath", "lockCheckerSha256"),
+    ("distributionVerifierPath", "distributionVerifierSha256"),
+    ("resetPath", "resetSha256"),
+    ("runnerPath", "runnerSha256"),
+    ("matrixPath", "matrixSha256"),
+):
+    evidence_path = Path(sdk090_subject[path_field])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        sdk090_subject[digest_field]
+    )
+
+wordpress_image = image_lock["images"]["wordpress70Php84"]
+distribution_evidence = sdk090_receipt["wordpressDistribution"]
+assert distribution_evidence["imageReference"] == wordpress_image["reference"]
+assert distribution_evidence["wordpressVersion"] == "7.0"
+assert distribution_evidence["phpVersion"] == "8.4.23"
+assert distribution_evidence["officialFileCount"] == (
+    wp_source_lock["distribution"]["contentFileCount"]
+)
+assert distribution_evidence["officialTreeSha256"] == (
+    wp_source_lock["distribution"]["contentTreeSha256"]
+)
+assert distribution_evidence["allowedImageExtras"] == (
+    wordpress_image["distribution"]["allowedImageExtras"]
+)
+assert distribution_evidence["containerNetwork"] == "none"
+assert distribution_evidence["outcome"] == "passed"
+
+runtime_evidence = sdk090_receipt["runtimeMatrix"]
+assert runtime_evidence["wordpressImageReference"] == wordpress_image[
+    "reference"
+]
+assert runtime_evidence["sdkSourceMounted"] is False
+assert runtime_evidence["outcome"] == "passed"
+runtime_lanes = {lane["database"]: lane for lane in runtime_evidence["lanes"]}
+assert set(runtime_lanes) == {"mysql", "mariadb"}
+for lane_name, expected_version in (
+    ("mysql", "8.4.10"),
+    ("mariadb", "11.4.5-MariaDB-ubu2404"),
+):
+    lane = runtime_lanes[lane_name]
+    assert lane["imageReference"] == image_lock["images"][lane_name][
+        "reference"
+    ]
+    assert lane["serverVersion"] == expected_version
+    for check in (
+        "freshInstall",
+        "databaseQuery",
+        "httpFrontend",
+        "volumeResetBeforeAndAfter",
+    ):
+        assert lane[check] == "passed"
+
+assert sdk090_receipt["matrixBoundaries"]["node22170"] == "inventoried"
+assert sdk090_receipt["matrixBoundaries"]["playwright1580"] == "inventoried"
+assert sdk090_receipt["matrixBoundaries"]["sdkPluginOrThemeInstalled"] is False
+assert sdk090_receipt["hostedWorkflow"]["job"] == "wordpress-runtime"
+assert sdk090_receipt["hostedWorkflow"]["status"] in {
+    "configured-awaiting-first-main-run",
+    "passed",
+}
+assert sdk090_receipt["hostedWorkflow"]["required"] is True
+for claim in (
+    "exactWordPressImageDistribution",
+    "vanillaWordPressInstallation",
+    "mysqlLane",
+    "mariadbLane",
+):
+    assert sdk090_receipt["claims"][claim] == "runtime-tested"
+for claim in (
+    "sdkRuntimeCompatibility",
+    "browserCompatibility",
+    "pluginOrThemePackageCompatibility",
+    "productionSupport",
+):
+    assert sdk090_receipt["claims"][claim] == "not-tested"
 PY
 
 python3 scripts/profiles/check-decision-lock.py
@@ -913,6 +1042,7 @@ python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/check-generated-catalogs.py
+python3 scripts/docker/check-image-lock.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

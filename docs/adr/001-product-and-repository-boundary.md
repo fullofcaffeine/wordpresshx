@@ -8,6 +8,7 @@
 - Supersedes: none; formalizes the provisional PRD recommendation
 - Superseded by: none
 - Amended by: ADR-004 permits a separately structured generic PHP compiler package inside this monorepo during 0.x
+- Clarified: 2026-07-17 product-owner direction defines the SDK as the application/site-level Haxe-first alternative to a full Core port, using interface-first gradual ownership
 
 ## Context
 
@@ -17,6 +18,8 @@ Putting durable SDK code inside the port would make vanilla SDK releases depend 
 
 The PRD therefore recommends a separate SDK repository, shared generic compilers, exact cross-project pins, and provider-specific receipts. The project owner additionally confirmed that browser work uses the generic genes-ts repository and that the custom Reflaxe PHP work originating in `wordpresshx-port` must be extracted as a generalized compiler rather than consumed through port internals.
 
+The product owner further clarified the purpose of that separation: the SDK should offer the same or similar Haxe-first developer experience for owned application and site code without requiring a full WordPress port. Existing WordPress, PHP, plugin, and JavaScript implementations should first be exposed through precise Haxe contracts and native-shaped facades. A project ports only the bounded implementation it actually needs when type safety, shared logic, or maintenance justifies ownership. A Haxe-first greenfield site may keep all maintained behavior, templates, and WordPress metadata in Haxe/HXX while still deploying normal native artifacts.
+
 ## Decision
 
 ### Independent product authority
@@ -24,6 +27,15 @@ The PRD therefore recommends a separate SDK repository, shared generic compilers
 This repository is the sole authority for the `wordpress-hx-sdk` product: its roadmap, issues, public packages, profiles, schemas, generated-artifact contracts, examples, releases, and SDK claim language. Its beads database is not a mirror of the full port's tracker.
 
 The full port remains the sole authority for whole-WordPress implementation ownership, original-path replacement, Core linking/load behavior, distribution assembly, and full-port parity claims. Neither repository may close, relabel, or broaden the other product's claim by implication.
+
+### Interface-first incremental ownership
+
+The SDK's primary migration unit is an application boundary, not a Core file. It MUST support both directions:
+
+- generate or review a typed Haxe contract for existing native code and keep that implementation native;
+- author a replacement for a specifically owned module in Haxe and expose ordinary PHP/JavaScript/WordPress entrypoints to its native callers.
+
+Neither direction requires adopting the full port. Greenfield projects MAY choose a Haxe-only maintained authoring surface, but the generated target remains debuggable native code and native WordPress knowledge remains relevant. This is a developer-experience and maintainability strategy, not a claim that WordPress Core has been ported.
 
 ### Allowed sharing
 
@@ -111,6 +123,8 @@ Immutable tags and receipts are not silently edited. A compromised artifact foll
 ## Rationale
 
 A separate repository gives vanilla WordPress users a comprehensible dependency and release boundary. Neutral compiler ownership lets both products improve Haxe target quality without either inheriting the other's application semantics. Immutable pins and one-way consumption make failures attributable. Keyed, provider-specific claim terms prevent a type catalog, generated file, or port scaffold from being mistaken for installed-runtime support.
+
+The separate SDK also makes gradual ownership economically useful: teams can gain a unified typed Haxe graph over the code they change most while leaving mature native implementations in place behind checked interfaces. They can approach the Haxe-first authoring experience of the full port without inheriting whole-distribution maintenance, and can port another boundary only when its ongoing maintenance benefit exceeds the interop cost.
 
 The coordination cost is real, but it is bounded and visible: package extraction, pin upgrades, and receipts. Circular code and merged claims would create hidden costs at every release and make rollback or support ownership ambiguous.
 

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-090-WORDPRESS-HARNESS",
+  "bead": "wordpresshx-sdk-090",
+  "observedAt": "2026-07-17T11:40:00-06:00",
+  "subject": {
+    "imageLockPath": "docker/images.lock.json",
+    "imageLockSha256": "a3236e2342b82766945471c858505e44b211763529e0493d139cfb0613461ffb",
+    "composePath": "docker/wordpress/compose.yml",
+    "composeSha256": "df4cbc9c4f89f67addfd0efdbf2875e52580a3f434cb7f85a3d3e28057b08896",
+    "installPath": "docker/wordpress/install.php",
+    "installSha256": "eb3db9e394a52d020d574d0f7c35cdd0414704756be8723795d2b6c61bd5d6c8",
+    "healthPath": "docker/wordpress/health.php",
+    "healthSha256": "8ad0d2eafcd80c77221531d76a88fb8b2fd1527884df882732eabbf69f76f8fb",
+    "lockCheckerPath": "scripts/docker/check-image-lock.py",
+    "lockCheckerSha256": "dd7f9ce68ff6d83c6e9aafcd470a9113cf695e336f820270addc0ed0d4b0397d",
+    "distributionVerifierPath": "scripts/wordpress/verify-distribution.py",
+    "distributionVerifierSha256": "22963ec0abe225a2808448cb39fb6442c575b5a58b6468e7bb13a4fb81953341",
+    "resetPath": "scripts/wordpress/reset-harness.sh",
+    "resetSha256": "9c02827d997204fac27c0bd7bbd06b2d4e74f134b94a25249b28252986bae496",
+    "runnerPath": "scripts/wordpress/run-harness.sh",
+    "runnerSha256": "7e764339bd155dc3299aeb1cf868757d370bf8c750c0beb1b02bd8ad29854255",
+    "matrixPath": "scripts/wordpress/test-harness.sh",
+    "matrixSha256": "0c9936eee4887af3201f69d570d5abd1741461022b0649daac5f0de7d9a4c739"
+  },
+  "localEnvironment": {
+    "architecture": "arm64",
+    "dockerEngine": "28.3.2",
+    "dockerCompose": "2.38.2-desktop.1",
+    "operatingSystem": "macOS 15.4",
+    "python": "3.14.5"
+  },
+  "registryResolution": {
+    "command": "python3 scripts/docker/check-image-lock.py --resolve",
+    "imageIndexCount": 7,
+    "requiredArchitectures": [
+      "linux/amd64",
+      "linux/arm64"
+    ],
+    "outcome": "passed"
+  },
+  "wordpressDistribution": {
+    "command": "python3 scripts/wordpress/verify-distribution.py",
+    "imageReference": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "wordpressVersion": "7.0",
+    "phpVersion": "8.4.23",
+    "officialFileCount": 3951,
+    "officialTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+    "allowedImageExtras": [
+      {
+        "path": ".htaccess",
+        "sha256": "25254afc484e77c65a89ebfac471bc3b667d85f86d050496174f558849df2b28"
+      },
+      {
+        "path": "wp-config-docker.php",
+        "sha256": "1513f88b7252f29790f0acad201b1ef0d442f0d80e88c33e4a6d473615084162"
+      }
+    ],
+    "containerNetwork": "none",
+    "outcome": "passed"
+  },
+  "runtimeMatrix": {
+    "command": "bash scripts/wordpress/test-harness.sh",
+    "wordpressImageReference": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "lanes": [
+      {
+        "database": "mysql",
+        "imageReference": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+        "serverVersion": "8.4.10",
+        "freshInstall": "passed",
+        "databaseQuery": "passed",
+        "httpFrontend": "passed",
+        "volumeResetBeforeAndAfter": "passed"
+      },
+      {
+        "database": "mariadb",
+        "imageReference": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
+        "serverVersion": "11.4.5-MariaDB-ubu2404",
+        "freshInstall": "passed",
+        "databaseQuery": "passed",
+        "httpFrontend": "passed",
+        "volumeResetBeforeAndAfter": "passed"
+      }
+    ],
+    "sdkSourceMounted": false,
+    "seed": "sdk-090",
+    "outcome": "passed"
+  },
+  "matrixBoundaries": {
+    "php74CliSyntaxAndRuntimeFloor": "runtime-tested-by-sdk-021",
+    "wordpress70OnPhp74": "not-tested-no-official-wordpress-7.0-php7.4-image",
+    "node22170": "inventoried",
+    "playwright1580": "inventoried",
+    "sdkPluginOrThemeInstalled": false,
+    "browserExecuted": false,
+    "productionConfigurationClaimed": false
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "wordpress-runtime",
+    "status": "configured-awaiting-first-main-run",
+    "required": true
+  },
+  "claims": {
+    "exactWordPressImageDistribution": "runtime-tested",
+    "vanillaWordPressInstallation": "runtime-tested",
+    "mysqlLane": "runtime-tested",
+    "mariadbLane": "runtime-tested",
+    "sdkRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "pluginOrThemePackageCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
