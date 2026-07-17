@@ -80,7 +80,7 @@
     "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
     "version": "1"
   },
-  "inputFingerprint": "9a493d3abd6b9d23e64b89b70c27a12bcc5d1bb589da2e8c93a75cf0eafa4ca7",
+  "inputFingerprint": "288938a08b722d77c8c63810d9640f32d3edc4a8e296591565d58076028f531d",
   "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
   "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
   "outputs": {
@@ -100,7 +100,7 @@
   "profileId": "wp70-release",
   "profileSchema": {
     "path": "schemas/profile.schema.json",
-    "sha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e"
+    "sha256": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52"
   },
   "schemaVersion": 1,
   "selection": {

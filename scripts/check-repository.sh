@@ -103,12 +103,18 @@ required_files=(
   generated/wp70-release/catalog-v1/omissions.json
   schemas/README.md
   schemas/profile.schema.json
+  schemas/profile-diff.schema.json
   tools/README.md
   examples/README.md
   fixtures/README.md
   fixtures/profiles/README.md
   fixtures/profiles/valid/gutenberg-forward-23.4.json
   fixtures/profiles/valid/wp70-release.json
+  fixtures/profile-diffs/README.md
+  fixtures/profile-diffs/expected/correction.json
+  fixtures/profile-diffs/expected/correction.txt
+  fixtures/profile-diffs/expected/upstream.json
+  fixtures/profile-diffs/expected/upstream.txt
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -124,6 +130,7 @@ required_files=(
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
   manifests/evidence/sdk-012-profile-schema.json
   manifests/evidence/sdk-013-profile-generator.json
+  manifests/evidence/sdk-014-profile-diff.json
   manifests/evidence/sdk-090-wordpress-harness.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
@@ -169,8 +176,10 @@ required_files=(
   scripts/profiles/check-classification-decision.py
   scripts/profiles/check-profile-isolation.py
   scripts/profiles/check-generated-catalogs.py
+  scripts/profiles/diff-catalogs.py
   scripts/profiles/generate-catalogs.py
   scripts/profiles/test-catalog-generator.sh
+  scripts/profiles/test-profile-diff.py
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
@@ -276,6 +285,10 @@ forward_receipt = json.loads(
 )
 profile_schema_path = Path("schemas/profile.schema.json")
 profile_schema = json.loads(profile_schema_path.read_text(encoding="utf-8"))
+profile_diff_schema_path = Path("schemas/profile-diff.schema.json")
+profile_diff_schema = json.loads(
+    profile_diff_schema_path.read_text(encoding="utf-8")
+)
 sdk012_receipt = json.loads(
     Path("manifests/evidence/sdk-012-profile-schema.json").read_text(
         encoding="utf-8"
@@ -283,6 +296,11 @@ sdk012_receipt = json.loads(
 )
 sdk013_receipt = json.loads(
     Path("manifests/evidence/sdk-013-profile-generator.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk014_receipt = json.loads(
+    Path("manifests/evidence/sdk-014-profile-diff.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1234,8 +1252,13 @@ for profile_id, receipt_fixture in fixture_by_profile.items():
     assert receipt_fixture["outcome"] == "passed"
 
 assert sdk012_receipt["schemaValidation"]["validFixtureCount"] == 2
-assert sdk012_receipt["schemaValidation"]["negativeFixtureCount"] == 9
+assert sdk012_receipt["schemaValidation"]["negativeFixtureCount"] == 14
 assert sdk012_receipt["schemaValidation"]["outcome"] == "passed"
+schema_contract = sdk012_receipt["schemaImplementation"]
+assert schema_contract["reviewedContractPayloadAllowedAtInventoried"] is False
+assert schema_contract["reviewedContractPayloadRequiredFromTyped"] is True
+assert schema_contract["heuristicSignaturePublicationAllowed"] is False
+assert schema_contract["canonicalContractMetadataRequired"] is True
 assert sdk012_receipt["haxeValidation"]["haxeVersion"] == "4.3.7"
 assert sdk012_receipt["haxeValidation"]["formattedHaxeFileCount"] == 18
 assert sdk012_receipt["haxeValidation"]["outcome"] == "passed"
@@ -1337,6 +1360,132 @@ for unproven_claim in (
     "productionSupport",
 ):
     assert sdk013_receipt["claims"][unproven_claim] == "not-tested"
+
+assert profile_diff_schema["properties"]["schemaVersion"]["const"] == 1
+assert profile_diff_schema["properties"]["reportKind"]["const"] == (
+    "wordpresshx-exact-profile-diff"
+)
+assert sdk014_receipt["schemaVersion"] == 1
+assert sdk014_receipt["receiptId"] == "SDK-014-PROFILE-DIFF"
+assert sdk014_receipt["bead"] == "wordpresshx-sdk-014"
+sdk014_subject = sdk014_receipt["subject"]
+for path_field, digest_field in (
+    ("diffPath", "diffSha256"),
+    ("testPath", "testSha256"),
+    ("profileSchemaPath", "profileSchemaSha256"),
+    ("profileValidatorPath", "profileValidatorSha256"),
+    ("diffSchemaPath", "diffSchemaSha256"),
+):
+    evidence_path = Path(sdk014_subject[path_field])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        sdk014_subject[digest_field]
+    )
+assert sdk014_subject["profileSchemaPath"] == profile_schema_path.as_posix()
+assert sdk014_subject["diffSchemaPath"] == profile_diff_schema_path.as_posix()
+
+sdk014_implementation = sdk014_receipt["implementation"]
+assert sdk014_implementation["inputMode"] == (
+    "read-only-exact-validated-catalogs"
+)
+assert sdk014_implementation["outputModes"] == [
+    "actionable-human",
+    "deterministic-json",
+]
+assert sdk014_implementation["comparisonAuthorities"] == [
+    "identical",
+    "upstream-profile-change",
+    "sdk-catalog-correction",
+]
+assert sdk014_implementation["sameUpstreamUnrecordedDrift"] == "rejected"
+assert sdk014_implementation["mixedCorrectionAndUpstreamAuthority"] == (
+    "rejected"
+)
+assert sdk014_implementation["sourceRewritePerformed"] is False
+assert sdk014_implementation["rangeSupportInferred"] is False
+assert sdk014_implementation["breakingChangeAutoAccepted"] is False
+
+contract_extension = sdk014_receipt["profileContractExtension"]
+assert contract_extension["minimumEvidenceForContract"] == "typed"
+assert contract_extension["inventoryContractPublication"] == "rejected"
+assert contract_extension["heuristicSignaturePublication"] == "rejected"
+assert contract_extension["signatureReceiptMustMatchTypedReview"] is True
+assert contract_extension["metadataValueEncoding"] == "canonical-json-string"
+
+sdk014_goldens = {
+    golden["comparison"]: golden for golden in sdk014_receipt["goldens"]
+}
+assert set(sdk014_goldens) == {
+    "upstream-profile-change",
+    "sdk-catalog-correction",
+}
+for comparison, golden in sdk014_goldens.items():
+    for path_field, digest_field in (
+        ("jsonPath", "jsonSha256"),
+        ("humanPath", "humanSha256"),
+    ):
+        golden_path = Path(golden[path_field])
+        assert hashlib.sha256(golden_path.read_bytes()).hexdigest() == golden[
+            digest_field
+        ]
+    report = json.loads(Path(golden["jsonPath"]).read_text(encoding="utf-8"))
+    assert report["comparison"]["authority"] == comparison
+    assert report["reportDigest"] == golden["reportDigest"]
+    report_material = {
+        key: value
+        for key, value in report.items()
+        if key not in {"reportDigestAlgorithm", "reportDigest"}
+    }
+    serialized_report = json.dumps(
+        report_material,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+    assert hashlib.sha256(serialized_report).hexdigest() == report[
+        "reportDigest"
+    ]
+    assert report["policy"] == {
+        "scope": "exact-validated-catalogs-only",
+        "rangeSupport": "not-inferred",
+        "sourceRewrite": "not-performed",
+        "decision": "advisory-review-required",
+    }
+    assert golden["outcome"] == "passed"
+assert sdk014_goldens["sdk-catalog-correction"][
+    "consumerContractImpact"
+] == "breaking"
+
+sdk014_tests = sdk014_receipt["testEvidence"]
+assert sdk014_tests["command"] == (
+    "python3 scripts/profiles/test-profile-diff.py"
+)
+assert sdk014_tests["exactComparisonPairCount"] == 2
+assert sdk014_tests["jsonGoldenCount"] == 2
+assert sdk014_tests["humanGoldenCount"] == 2
+assert sdk014_tests["negativeFixtureCount"] == 4
+assert set(sdk014_tests["reportedFacets"]) == {
+    "addition",
+    "removal",
+    "signature",
+    "classification",
+    "handle",
+    "metadata",
+    "dependencies",
+}
+assert sdk014_tests["jsonSchemaValidation"] == "passed"
+assert sdk014_tests["doubleRunByteEquality"] == "passed"
+assert sdk014_tests["syntheticTargetProfileIsCompatibilityEvidence"] is False
+assert sdk014_tests["outcome"] == "passed"
+assert sdk014_receipt["hostedWorkflow"]["job"] == "profile-diff"
+assert sdk014_receipt["hostedWorkflow"]["required"] is True
+assert sdk014_receipt["claims"]["profileDiffImplementation"] == "generated"
+assert sdk014_receipt["claims"]["versionRangeSupport"] == "unsupported"
+for unproven_claim in (
+    "wordpressRuntimeCompatibility",
+    "browserCompatibility",
+    "productionSupport",
+):
+    assert sdk014_receipt["claims"][unproven_claim] == "not-tested"
 
 assert image_lock["schemaVersion"] == 1
 assert set(image_lock["images"]) == {
@@ -1455,6 +1604,7 @@ python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/check-generated-catalogs.py
+python3 scripts/profiles/test-profile-diff.py
 python3 scripts/docker/check-image-lock.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'

@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-014-PROFILE-DIFF",
+  "bead": "wordpresshx-sdk-014",
+  "observedAt": "2026-07-17T15:30:00-06:00",
+  "subject": {
+    "diffPath": "scripts/profiles/diff-catalogs.py",
+    "diffSha256": "363450550709b53a8b4c1bffefbff69da317b09d79018f331c301ce46ce3f257",
+    "testPath": "scripts/profiles/test-profile-diff.py",
+    "testSha256": "87fe414b8ce3e7c9685ed161327053807f3bd58cdf2d98411c7b01bdd2747c45",
+    "profileSchemaPath": "schemas/profile.schema.json",
+    "profileSchemaSha256": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52",
+    "profileValidatorPath": "scripts/profiles/validate-profile-schema.py",
+    "profileValidatorSha256": "49b0acefbe3b192ea47010fff020b52a8d1125f96ee0698ada3df3f085fa5b31",
+    "diffSchemaPath": "schemas/profile-diff.schema.json",
+    "diffSchemaSha256": "a112d2d5e2617874a398cce3446bf3f5eb0579803662fd081be5ba2f036a9efc"
+  },
+  "implementation": {
+    "inputMode": "read-only-exact-validated-catalogs",
+    "outputModes": [
+      "actionable-human",
+      "deterministic-json"
+    ],
+    "comparisonAuthorities": [
+      "identical",
+      "upstream-profile-change",
+      "sdk-catalog-correction"
+    ],
+    "sameUpstreamUnrecordedDrift": "rejected",
+    "mixedCorrectionAndUpstreamAuthority": "rejected",
+    "reportDigestAlgorithm": "sha256-canonical-json-v1",
+    "sourceRewritePerformed": false,
+    "rangeSupportInferred": false,
+    "breakingChangeAutoAccepted": false
+  },
+  "profileContractExtension": {
+    "minimumEvidenceForContract": "typed",
+    "inventoryContractPublication": "rejected",
+    "signatureAuthorities": [
+      "provider-versioned-stub-export-map-or-schema",
+      "unambiguous-exact-source-declaration",
+      "curated-reviewed-contract-with-exact-citations",
+      "versioned-documentation-or-phpdoc"
+    ],
+    "heuristicSignaturePublication": "rejected",
+    "signatureReceiptMustMatchTypedReview": true,
+    "metadataValueEncoding": "canonical-json-string",
+    "metadataAndDependenciesDeterministicallySorted": true
+  },
+  "goldens": [
+    {
+      "comparison": "upstream-profile-change",
+      "jsonPath": "fixtures/profile-diffs/expected/upstream.json",
+      "jsonSha256": "e8d299de06c1349caa70391633c5aa9c854912d8d6fd21730ad276a484dd8bd8",
+      "humanPath": "fixtures/profile-diffs/expected/upstream.txt",
+      "humanSha256": "fa96c8e55c29a6aee05250a25ffc8eca14c80efa8dd8e3d6cce80fbcdadaccf5",
+      "reportDigest": "cd9103d5120a8b1e2650d3681953fc9df06d4367dc79a31b1a9f6d6d8596a713",
+      "outcome": "passed"
+    },
+    {
+      "comparison": "sdk-catalog-correction",
+      "jsonPath": "fixtures/profile-diffs/expected/correction.json",
+      "jsonSha256": "ba3192f8db234d71025e3817ba6e551353549c9f3050a370723ea7d38a6b8ec4",
+      "humanPath": "fixtures/profile-diffs/expected/correction.txt",
+      "humanSha256": "66686cabd0467b60615ec56cbc0bd9f9cebc54f3cf18ffab901bed6b29c9488c",
+      "reportDigest": "33574c17ab56f1325b843bafea60dabec8d9179c2af050474e0f0043b99d0dfa",
+      "consumerContractImpact": "breaking",
+      "outcome": "passed"
+    }
+  ],
+  "testEvidence": {
+    "command": "python3 scripts/profiles/test-profile-diff.py",
+    "exactComparisonPairCount": 2,
+    "jsonGoldenCount": 2,
+    "humanGoldenCount": 2,
+    "negativeFixtureCount": 4,
+    "reportedFacets": [
+      "addition",
+      "removal",
+      "signature",
+      "classification",
+      "handle",
+      "metadata",
+      "dependencies"
+    ],
+    "jsonSchemaValidation": "passed",
+    "doubleRunByteEquality": "passed",
+    "actionableMigrationOutput": "passed",
+    "syntheticTargetProfileIsCompatibilityEvidence": false,
+    "outcome": "passed"
+  },
+  "localEnvironment": {
+    "python": "3.14.5",
+    "platform": "arm64-apple-darwin24"
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "job": "profile-diff",
+    "required": true
+  },
+  "claims": {
+    "profileDiffImplementation": "generated",
+    "jsonReportContract": "generated",
+    "humanUpgradeDiagnostics": "generated",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "versionRangeSupport": "unsupported",
+    "productionSupport": "not-tested"
+  }
+}

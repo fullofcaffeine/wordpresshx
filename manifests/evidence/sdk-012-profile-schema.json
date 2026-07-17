@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "receiptId": "SDK-012-PROFILE-SCHEMA",
   "bead": "wordpresshx-sdk-012",
-  "observedAt": "2026-07-17T02:53:30-06:00",
+  "observedAt": "2026-07-17T15:30:00-06:00",
   "subject": {
     "profileSchemaPath": "schemas/profile.schema.json",
     "profileSchemaVersion": 1,
-    "profileSchemaSha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
+    "profileSchemaSha256": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52",
     "classificationDecisionLockPath": "profiles/classification-decision-lock.json",
     "classificationDecisionLockSha256": "058775561acdb94aecb78eac81b6a0ee3d3816d27c773a8e9b0fad6c102c1554",
     "profileDecisionLockPath": "profiles/decision-lock.json",
@@ -46,24 +46,28 @@
     "exactReleaseArtifactPinsRequired": true,
     "entryProvenanceRequired": true,
     "continuousEvidencePrefixRequired": true,
-    "additiveCorrectionAncestryRequired": true
+    "additiveCorrectionAncestryRequired": true,
+    "reviewedContractPayloadAllowedAtInventoried": false,
+    "reviewedContractPayloadRequiredFromTyped": true,
+    "heuristicSignaturePublicationAllowed": false,
+    "canonicalContractMetadataRequired": true
   },
   "exactFixtures": [
     {
       "path": "fixtures/profiles/valid/wp70-release.json",
-      "fileSha256": "1c12672627b08607234e071730699470656d1442e75542604a2e8e3abd845738",
+      "fileSha256": "38c51866b900bd60e5be2105c538122928b376d8c582dc4679f9722d88fa0a5d",
       "profileId": "wp70-release",
       "catalogRevision": "wp70-release/catalog-v1",
-      "catalogDigest": "4294c7ae89a00038946f0a2a282264b18cfbfd959bde77dff0a322c064a63282",
+      "catalogDigest": "aea4340dbe9071b2f1a70dd18d4650c9089cfb63a86ba2fa865bba8f14ac5fb7",
       "capabilityEvidence": "inventoried",
       "outcome": "passed"
     },
     {
       "path": "fixtures/profiles/valid/gutenberg-forward-23.4.json",
-      "fileSha256": "60ecd28a0ce65429877d9f05015a193ce2fc74630c9e26662e40f97357a0b17a",
+      "fileSha256": "70ecb1d58bc51e0689054b54582dc898ca8e4f35116b5bdbd0422e6fd07b12ce",
       "profileId": "gutenberg-forward-23.4",
       "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
-      "catalogDigest": "46ffecfeaaec66fd2b377e04bd9941cce0882e056c497d485c2dcdf1a16f7b8c",
+      "catalogDigest": "220c0f48da5c258a6127c52279a9917de6ecb1c2ff1ffc3105e8073ac50401b0",
       "capabilityId": "gutenberg.package.@wordpress/content-types",
       "classification": "experimental",
       "capabilityEvidence": "inventoried",
@@ -73,9 +77,9 @@
   "schemaValidation": {
     "command": "python3 scripts/profiles/validate-profile-schema.py",
     "validatorPath": "scripts/profiles/validate-profile-schema.py",
-    "validatorSha256": "5035e87ec7f2acfb29422ab032ff352558e85a00a0ce550e542ee55832ddc5ba",
+    "validatorSha256": "49b0acefbe3b192ea47010fff020b52a8d1125f96ee0698ada3df3f085fa5b31",
     "validFixtureCount": 2,
-    "negativeFixtureCount": 9,
+    "negativeFixtureCount": 14,
     "negativeRules": [
       "unknown-field",
       "unknown-classification-alias",
@@ -84,6 +88,11 @@
       "skipped-evidence-stages",
       "unsafe-without-required-metadata",
       "selected-profile-absent-from-availability",
+      "inventory-cannot-publish-reviewed-contract",
+      "typed-evidence-requires-contract-payload",
+      "heuristic-signature-publication-forbidden",
+      "signature-review-receipt-must-match",
+      "contract-metadata-must-be-sorted",
       "correction-without-ancestry",
       "catalog-digest-mismatch"
     ],

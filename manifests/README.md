@@ -18,6 +18,8 @@ Receipt `SDK-012-PROFILE-SCHEMA` records the closed profile schema, exact minima
 
 Receipt `SDK-013-PROFILE-GENERATOR` records the exact-object, read-only catalog generator, its reviewed selection contract, committed catalog/omission/report hashes, double-run equality, known-entry checks, and failed-publication negative. The 33 emitted capabilities are lexical inventories only. Four ambiguous or private candidates are explicit omissions; no typed, runtime, browser, package, or production claim advances.
 
+Receipt `SDK-014-PROFILE-DIFF` records the read-only exact-catalog comparison tool, its closed content-digested JSON report, human migration diagnostics, reviewed contract payload rules, upstream-versus-correction authority checks, and golden/negative fixtures. Its synthetic target profile is not compatibility evidence; the tool infers no range, rewrites no source, and auto-accepts no breaking change.
+
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

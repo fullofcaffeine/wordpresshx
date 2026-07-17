@@ -1,0 +1,33 @@
+WordPress Hx exact profile diff
+From: wp70-release/catalog-v1 (73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a)
+To:   wp70-release/catalog-v2 (d7fe868c8047eb492861d0562c1a1797b4531ed71f0239561fbc02633c70e165)
+Authority: sdk-catalog-correction
+Policy: exact validated catalogs only; this report does not infer range support and rewrites no source.
+Report digest: 33574c17ab56f1325b843bafea60dabec8d9179c2af050474e0f0043b99d0dfa
+
+Summary:
+  0 additions, 0 removals, 1 signature, 0 classification, 0 handle, 0 metadata, and 0 dependency changes
+  2 breaking, 1 review-required, 0 additive, and 0 informational changes
+
+Catalog changes:
+  [REVIEW-REQUIRED] catalog / catalog-revision
+    before: "wp70-release/catalog-v1"
+    after:  "wp70-release/catalog-v2"
+    action: Review the catalog-schema migration before selecting the new revision.
+  [BREAKING] catalog / correction
+    before: <absent>
+    after:  {"consumerContractImpact":"breaking","correctionOfCatalogDigest":"73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a","migration":"Pass a typed class-string value and rerun the widget registration integration fixture.","priorSdkArtifactIdentity":"wordpress-hx-sdk@0.1.0","reason":"The prior curated contract accepted arbitrary strings instead of class-string values.","receiptId":"SDK-014-BREAKING-CORRECTION","schemaInterpretationImpact":"unchanged"}
+    action: Pass a typed class-string value and rerun the widget registration integration fixture.
+
+Capability changes:
+  [BREAKING] wordpress.php.function.register_widget / signature
+    before: {"authority":"curated-reviewed-contract-with-exact-citations","shape":"register_widget(className: string): void"}
+    after:  {"authority":"curated-reviewed-contract-with-exact-citations","shape":"register_widget(className: class-string): void"}
+    action: Update typed calls or callbacks to the reviewed target signature and rerun native integration tests.
+
+Migration actions:
+  - catalog / catalog-revision: Review the catalog-schema migration before selecting the new revision.
+  - catalog / correction: Pass a typed class-string value and rerun the widget registration integration fixture.
+  - wordpress.php.function.register_widget / signature: Update typed calls or callbacks to the reviewed target signature and rerun native integration tests.
+
+Decision: advisory review required; no breaking change was accepted automatically.

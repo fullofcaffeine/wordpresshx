@@ -21,4 +21,7 @@ The Python validator is the version-1 executable authority for this algorithm.
 
 Negative fixtures are deterministic in-memory mutations of these checked-in
 valid documents. This keeps every failure focused on one schema or semantic
-rule while avoiding stale duplicate JSON snapshots.
+rule while avoiding stale duplicate JSON snapshots. SDK-014 adds the optional
+reviewed `contract` payload without promoting these inventory-only fixtures:
+typed capabilities must carry a non-heuristic, receipt-linked contract, while
+inventory-only capabilities must not publish one.

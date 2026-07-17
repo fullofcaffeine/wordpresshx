@@ -11,3 +11,23 @@ No profile is supported yet. SDK-010 and SDK-011 independently materialize and v
 SDK-010 has now locked and independently materialized the [`wp70-release` source authority](wp70-release/README.md). SDK-011 has separately locked the [`gutenberg-forward-23.4` source authority](gutenberg-forward-23.4/README.md), including compile-admission and final-artifact leak fixtures. Those gates advance only the exact source/release identities and capability inventories to `inventoried`; they do not advance any API or runtime-support claim. WordPress 7.0 compatibility for the forward profile remains forbidden.
 
 [`catalog-selection.json`](catalog-selection.json) is the reviewed input contract for the minimal vertical-slice inventory. Regenerate into a fresh tree with `scripts/profiles/generate-catalogs.py`; validate committed bytes, double-run equality, exact source objects, known entries, omissions, and failed-publication rollback with `scripts/profiles/test-catalog-generator.sh`. Broad catalog scraping is intentionally outside SDK-013.
+
+SDK-014 compares any two closed, digest-valid catalogs without writing them:
+
+```bash
+python3 scripts/profiles/diff-catalogs.py \
+  --from generated/wp70-release/catalog-v1/catalog.json \
+  --to path/to/another/exact/catalog.json
+
+python3 scripts/profiles/diff-catalogs.py \
+  --from generated/wp70-release/catalog-v1/catalog.json \
+  --to path/to/another/exact/catalog.json \
+  --json
+```
+
+The default output is an actionable human review; `--json` emits the closed,
+content-digested `profile-diff.schema.json` contract. Different exact upstream
+inputs are labeled `upstream-profile-change`. Same-profile, same-upstream bytes
+must either be identical or link directly to the prior digest as an
+`sdk-catalog-correction`; silent drift fails. Neither output establishes a
+version range, accepts a breaking change, or rewrites consumer source.

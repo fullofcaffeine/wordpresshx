@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "reportKind": "wordpresshx-exact-profile-diff",
+  "reportDigestAlgorithm": "sha256-canonical-json-v1",
+  "reportDigest": "33574c17ab56f1325b843bafea60dabec8d9179c2af050474e0f0043b99d0dfa",
+  "comparison": {
+    "authority": "sdk-catalog-correction",
+    "from": {
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "catalogDigest": "73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a",
+      "upstreamInputsDigest": "553cf6163db10af31b170c69757be78cdbac2fad995a9e53d50604323310eaa7",
+      "generatorIdentity": "sdk012-profile-schema-fixture",
+      "generatorVersion": "1",
+      "generatorSourceDigest": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52",
+      "toolchainIdentity": "python-stdlib-json+haxe-4.3.7"
+    },
+    "to": {
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v2",
+      "catalogDigest": "d7fe868c8047eb492861d0562c1a1797b4531ed71f0239561fbc02633c70e165",
+      "upstreamInputsDigest": "553cf6163db10af31b170c69757be78cdbac2fad995a9e53d50604323310eaa7",
+      "generatorIdentity": "sdk012-profile-schema-fixture",
+      "generatorVersion": "1",
+      "generatorSourceDigest": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52",
+      "toolchainIdentity": "python-stdlib-json+haxe-4.3.7"
+    },
+    "correction": {
+      "correctionOfCatalogDigest": "73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a",
+      "priorSdkArtifactIdentity": "wordpress-hx-sdk@0.1.0",
+      "reason": "The prior curated contract accepted arbitrary strings instead of class-string values.",
+      "consumerContractImpact": "breaking",
+      "schemaInterpretationImpact": "unchanged",
+      "migration": "Pass a typed class-string value and rerun the widget registration integration fixture.",
+      "receiptId": "SDK-014-BREAKING-CORRECTION"
+    }
+  },
+  "policy": {
+    "scope": "exact-validated-catalogs-only",
+    "rangeSupport": "not-inferred",
+    "sourceRewrite": "not-performed",
+    "decision": "advisory-review-required"
+  },
+  "summary": {
+    "catalogChangeCount": 2,
+    "capabilityAdditionCount": 0,
+    "capabilityRemovalCount": 0,
+    "signatureChangeCount": 1,
+    "classificationChangeCount": 0,
+    "handleChangeCount": 0,
+    "metadataChangeCount": 0,
+    "dependencyChangeCount": 0,
+    "otherCapabilityChangeCount": 0,
+    "breakingChangeCount": 2,
+    "reviewRequiredChangeCount": 1,
+    "additiveChangeCount": 0,
+    "informationalChangeCount": 0,
+    "migrationActionCount": 3
+  },
+  "catalogChanges": [
+    {
+      "subject": "catalog",
+      "facet": "catalog-revision",
+      "impact": "review-required",
+      "before": {
+        "state": "present",
+        "canonicalJson": "\"wp70-release/catalog-v1\""
+      },
+      "after": {
+        "state": "present",
+        "canonicalJson": "\"wp70-release/catalog-v2\""
+      },
+      "action": "Review the catalog-schema migration before selecting the new revision."
+    },
+    {
+      "subject": "catalog",
+      "facet": "correction",
+      "impact": "breaking",
+      "before": {
+        "state": "absent"
+      },
+      "after": {
+        "state": "present",
+        "canonicalJson": "{\"consumerContractImpact\":\"breaking\",\"correctionOfCatalogDigest\":\"73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a\",\"migration\":\"Pass a typed class-string value and rerun the widget registration integration fixture.\",\"priorSdkArtifactIdentity\":\"wordpress-hx-sdk@0.1.0\",\"reason\":\"The prior curated contract accepted arbitrary strings instead of class-string values.\",\"receiptId\":\"SDK-014-BREAKING-CORRECTION\",\"schemaInterpretationImpact\":\"unchanged\"}"
+      },
+      "action": "Pass a typed class-string value and rerun the widget registration integration fixture."
+    }
+  ],
+  "capabilityChanges": [
+    {
+      "subject": "wordpress.php.function.register_widget",
+      "facet": "signature",
+      "impact": "breaking",
+      "before": {
+        "state": "present",
+        "canonicalJson": "{\"authority\":\"curated-reviewed-contract-with-exact-citations\",\"shape\":\"register_widget(className: string): void\"}"
+      },
+      "after": {
+        "state": "present",
+        "canonicalJson": "{\"authority\":\"curated-reviewed-contract-with-exact-citations\",\"shape\":\"register_widget(className: class-string): void\"}"
+      },
+      "action": "Update typed calls or callbacks to the reviewed target signature and rerun native integration tests."
+    }
+  ],
+  "migrationActions": [
+    {
+      "subject": "catalog",
+      "facet": "catalog-revision",
+      "action": "Review the catalog-schema migration before selecting the new revision."
+    },
+    {
+      "subject": "catalog",
+      "facet": "correction",
+      "action": "Pass a typed class-string value and rerun the widget registration integration fixture."
+    },
+    {
+      "subject": "wordpress.php.function.register_widget",
+      "facet": "signature",
+      "action": "Update typed calls or callbacks to the reviewed target signature and rerun native integration tests."
+    }
+  ]
+}

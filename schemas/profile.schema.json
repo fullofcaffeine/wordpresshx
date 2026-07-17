@@ -250,6 +250,9 @@
         "classificationMetadata": {
           "$ref": "#/$defs/classificationMetadata"
         },
+        "contract": {
+          "$ref": "#/$defs/capabilityContract"
+        },
         "evidenceStatus": {
           "enum": [
             "inventoried",
@@ -313,6 +316,75 @@
           "$ref": "#/$defs/nonEmptyString"
         },
         "earliestRemoval": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "capabilityContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nativeIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "signature": {
+          "$ref": "#/$defs/signatureContract"
+        },
+        "metadata": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/contractMetadataFact"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "signatureContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shape",
+        "authority",
+        "receiptId"
+      ],
+      "properties": {
+        "shape": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "authority": {
+          "enum": [
+            "provider-versioned-stub-export-map-or-schema",
+            "unambiguous-exact-source-declaration",
+            "curated-reviewed-contract-with-exact-citations",
+            "versioned-documentation-or-phpdoc"
+          ]
+        },
+        "receiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "contractMetadataFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "value"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "value": {
           "$ref": "#/$defs/nonEmptyString"
         }
       }

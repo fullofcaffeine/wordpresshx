@@ -200,6 +200,31 @@ def reject_placeholder_digests(value: object, path: str = "$") -> None:
             )
 
 
+def require_canonical_json(value: str, path: str) -> None:
+    def reject_non_finite(constant: str) -> object:
+        raise ValueError(f"non-finite JSON value {constant}")
+
+    try:
+        decoded = json.loads(
+            value,
+            parse_constant=reject_non_finite,
+        )
+    except (json.JSONDecodeError, ValueError) as error:
+        raise ProfileValidationError(
+            f"{path}: metadata value is not strict JSON"
+        ) from error
+    canonical = json.dumps(
+        decoded,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    if canonical != value:
+        raise ProfileValidationError(
+            f"{path}: metadata value is not canonical JSON"
+        )
+
+
 def validate_semantics(document: dict[str, object]) -> None:
     reject_placeholder_digests(document)
     if canonical_catalog_digest(document) != document["catalogDigest"]:
@@ -276,6 +301,81 @@ def validate_semantics(document: dict[str, object]) -> None:
             raise ProfileValidationError(
                 f"{path}.receiptIds: evidence receipt is not indexed"
             )
+
+        contract = capability.get("contract")
+        if status_index == 0 and contract is not None:
+            raise ProfileValidationError(
+                f"{path}.contract: inventoried evidence cannot publish a reviewed contract"
+            )
+        if status_index > 0 and contract is None:
+            raise ProfileValidationError(
+                f"{path}.contract: typed evidence requires a reviewed contract payload"
+            )
+        if contract is not None:
+            if not contract:
+                raise ProfileValidationError(
+                    f"{path}.contract: contract payload must not be empty"
+                )
+            signature = contract.get("signature")
+            if signature is not None:
+                typed_receipt = capability["evidence"]["typed"][
+                    "contractReviewReceiptId"
+                ]
+                if signature["receiptId"] != typed_receipt:
+                    raise ProfileValidationError(
+                        f"{path}.contract.signature.receiptId: signature must use the typed contract review receipt"
+                    )
+                if signature["receiptId"] not in receipt_ids:
+                    raise ProfileValidationError(
+                        f"{path}.contract.signature.receiptId: signature receipt is not indexed"
+                    )
+
+            signature_kinds = {
+                "php-function",
+                "php-class",
+                "hook",
+                "gutenberg-export",
+            }
+            if capability["kind"] in signature_kinds and signature is None:
+                raise ProfileValidationError(
+                    f"{path}.contract.signature: {capability['kind']} requires an exact signature"
+                )
+            if (
+                capability["kind"] == "script-handle"
+                and "nativeIdentity" not in contract
+            ):
+                raise ProfileValidationError(
+                    f"{path}.contract.nativeIdentity: script-handle requires an exact native identity"
+                )
+            if (
+                capability["kind"] == "block-metadata-key"
+                and "metadata" not in contract
+            ):
+                raise ProfileValidationError(
+                    f"{path}.contract.metadata: block-metadata-key requires exact metadata facts"
+                )
+
+            metadata = contract.get("metadata", [])
+            metadata_paths = [fact["path"] for fact in metadata]
+            if metadata_paths != sorted(metadata_paths):
+                raise ProfileValidationError(
+                    f"{path}.contract.metadata: facts must be sorted by path"
+                )
+            if len(metadata_paths) != len(set(metadata_paths)):
+                raise ProfileValidationError(
+                    f"{path}.contract.metadata: duplicate metadata path"
+                )
+            for fact_index, fact in enumerate(metadata):
+                require_canonical_json(
+                    fact["value"],
+                    f"{path}.contract.metadata[{fact_index}].value",
+                )
+
+            dependencies = contract.get("dependencies", [])
+            if dependencies != sorted(dependencies):
+                raise ProfileValidationError(
+                    f"{path}.contract.dependencies: identities must be sorted"
+                )
 
         classification = capability["classification"]
         metadata = capability["classificationMetadata"]
@@ -420,6 +520,9 @@ def main() -> None:
     administrative_results = schema["$defs"]["administrativeResult"][
         "properties"
     ]["result"]["enum"]
+    signature_authorities = schema["$defs"]["signatureContract"][
+        "properties"
+    ]["authority"]["enum"]
     assert classifications == list(
         decision["machineVocabulary"]["apiClassifications"]
     )
@@ -427,6 +530,12 @@ def main() -> None:
     assert administrative_results == decision["machineVocabulary"][
         "administrativeResults"
     ]
+    assert signature_authorities == decision["evidenceAuthority"][
+        "signatureShape"
+    ][:-1]
+    assert decision["evidenceAuthority"]["signatureShape"][-1] == (
+        "heuristic-inference"
+    )
 
     fixtures = {
         path.stem: json.loads(path.read_text(encoding="utf-8"))
@@ -501,6 +610,90 @@ def main() -> None:
         "selected profile is absent",
     )
 
+    expect_invalid(
+        validator,
+        forward,
+        "reviewed contract attached to inventory-only evidence",
+        lambda document: document["catalog"]["capabilities"][0].update(
+            {"contract": {"nativeIdentity": "@wordpress/content-types"}}
+        ),
+        "inventoried evidence cannot publish",
+    )
+
+    def promote_without_contract(document: dict[str, object]) -> None:
+        capability = document["catalog"]["capabilities"][0]
+        capability["evidenceStatus"] = "typed"
+        capability["evidence"]["typed"] = {
+            "contractReviewReceiptId": "CONTRACT-REVIEW-001"
+        }
+        capability["receiptIds"].append("CONTRACT-REVIEW-001")
+
+    expect_invalid(
+        validator,
+        forward,
+        "typed evidence without diffable contract",
+        promote_without_contract,
+        "typed evidence requires a reviewed contract payload",
+    )
+
+    def add_heuristic_signature(document: dict[str, object]) -> None:
+        promote_without_contract(document)
+        capability = document["catalog"]["capabilities"][0]
+        capability["kind"] = "gutenberg-export"
+        capability["contract"] = {
+            "signature": {
+                "shape": "register(value: unknown): void",
+                "authority": "heuristic-inference",
+                "receiptId": "CONTRACT-REVIEW-001",
+            }
+        }
+
+    expect_invalid(
+        validator,
+        forward,
+        "heuristically inferred signature",
+        add_heuristic_signature,
+        "is not one of",
+    )
+
+    def add_mismatched_signature_receipt(document: dict[str, object]) -> None:
+        promote_without_contract(document)
+        capability = document["catalog"]["capabilities"][0]
+        capability["kind"] = "gutenberg-export"
+        capability["receiptIds"].append("CONTRACT-REVIEW-002")
+        capability["contract"] = {
+            "signature": {
+                "shape": "register(value: string): void",
+                "authority": "curated-reviewed-contract-with-exact-citations",
+                "receiptId": "CONTRACT-REVIEW-002",
+            }
+        }
+
+    expect_invalid(
+        validator,
+        forward,
+        "signature detached from typed review receipt",
+        add_mismatched_signature_receipt,
+        "signature must use the typed contract review receipt",
+    )
+
+    def add_unsorted_contract_facts(document: dict[str, object]) -> None:
+        promote_without_contract(document)
+        document["catalog"]["capabilities"][0]["contract"] = {
+            "metadata": [
+                {"path": "zeta", "value": "true"},
+                {"path": "alpha", "value": "1"},
+            ]
+        }
+
+    expect_invalid(
+        validator,
+        forward,
+        "unsorted contract metadata",
+        add_unsorted_contract_facts,
+        "facts must be sorted by path",
+    )
+
     def add_bad_correction(document: dict[str, object]) -> None:
         document["catalog"]["correction"] = {
             "correctionOfCatalogDigest": hashlib.sha256(b"prior").hexdigest(),
@@ -530,7 +723,7 @@ def main() -> None:
         raise AssertionError("catalog digest mismatch did not fail")
 
     print(
-        "profile schema validation passed: 2 exact fixtures, 9 negative fixtures"
+        "profile schema validation passed: 2 exact fixtures, 14 negative fixtures"
     )
 
 

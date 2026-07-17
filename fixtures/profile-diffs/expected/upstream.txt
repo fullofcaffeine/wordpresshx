@@ -1,0 +1,72 @@
+WordPress Hx exact profile diff
+From: wp70-release/catalog-v1 (73c189801de042fe9594a361be09e4dc8823ff61657cdfb4b0f91b90585b329a)
+To:   wp71-release/catalog-v1 (5f4b459c097620572add1526b136972f0967c7dfb2334cc8a82e00e2adfa32fd)
+Authority: upstream-profile-change
+Policy: exact validated catalogs only; this report does not infer range support and rewrites no source.
+Report digest: cd9103d5120a8b1e2650d3681953fc9df06d4367dc79a31b1a9f6d6d8596a713
+
+Summary:
+  1 additions, 1 removals, 1 signature, 1 classification, 1 handle, 1 metadata, and 1 dependency changes
+  4 breaking, 6 review-required, 1 additive, and 0 informational changes
+
+Catalog changes:
+  [REVIEW-REQUIRED] catalog / catalog-revision
+    before: "wp70-release/catalog-v1"
+    after:  "wp71-release/catalog-v1"
+    action: Review the catalog-schema migration before selecting the new revision.
+  [REVIEW-REQUIRED] catalog / profile-id
+    before: "wp70-release"
+    after:  "wp71-release"
+    action: Build and test a separate artifact for the target exact profile.
+  [REVIEW-REQUIRED] catalog / upstream-inputs
+    before: wordpress-source@26b68024931348d267b70e2a29910e1320d0094f, wordpress-release-zip@b2b6827eb7b2b51f4610893e1a6ad02466e76fe0a307bd40ca2a8ba821c40d0b
+    after:  wordpress-source@86e81b6fe6d3dc0ff71583bac4280aef3ae88701, wordpress-release-zip@b6f843f2b4aeca8bf1bb0e68391910e4291ed0142614d628724ced64b6734e70
+    action: Run the complete target-profile test matrix against the new exact inputs.
+
+Capability changes:
+  [ADDITIVE] gutenberg.export.@wordpress/widgets.registerWidget / addition
+    before: <absent>
+    after:  gutenberg-export/public/typed
+    action: Review classification and evidence before adopting this exact-profile capability.
+  [REVIEW-REQUIRED] gutenberg.package.@wordpress/widgets / dependencies
+    before: ["@wordpress/data","@wordpress/element"]
+    after:  ["@wordpress/data","@wordpress/element","@wordpress/hooks"]
+    action: Regenerate dependency metadata and verify package or handle resolution.
+  [BREAKING] wordpress.block-metadata-key.apiVersion / metadata
+    before: [{"path":"allowedValues","value":"[1,2,3]"},{"path":"required","value":"true"}]
+    after:  [{"path":"allowedValues","value":"[2,3]"},{"path":"required","value":"true"}]
+    action: Review generated metadata and compatibility or serialization impact before upgrading.
+  [REVIEW-REQUIRED] wordpress.hook.widgets_init / classification
+    before: "public"
+    after:  "deprecated"
+    action: Review import exposure, release notes, and migration policy for the new classification.
+  [REVIEW-REQUIRED] wordpress.hook.widgets_init / classification-metadata
+    before: {}
+    after:  {"deprecatedSince":"wp71-release","earliestRemoval":"wp73-release","replacementOrReason":"Use wordpress.hook.block_widgets_init."}
+    action: Review waiver, deprecation, and removal metadata before upgrading.
+  [BREAKING] wordpress.php.function.register_widget / signature
+    before: {"authority":"curated-reviewed-contract-with-exact-citations","shape":"register_widget(className: string): void"}
+    after:  {"authority":"curated-reviewed-contract-with-exact-citations","shape":"register_widget(className: string, options: array): void"}
+    action: Update typed calls or callbacks to the reviewed target signature and rerun native integration tests.
+  [BREAKING] wordpress.php.function.removed_api / removal
+    before: php-function/public/typed
+    after:  <absent>
+    action: Remove or replace uses of this capability and rerun the target-profile test matrix.
+  [BREAKING] wordpress.script-handle.wp-widgets / handle
+    before: "wp-widgets"
+    after:  "wp-widgets-v2"
+    action: Regenerate asset dependencies and replace the changed WordPress script handle.
+
+Migration actions:
+  - catalog / catalog-revision: Review the catalog-schema migration before selecting the new revision.
+  - catalog / profile-id: Build and test a separate artifact for the target exact profile.
+  - catalog / upstream-inputs: Run the complete target-profile test matrix against the new exact inputs.
+  - gutenberg.package.@wordpress/widgets / dependencies: Regenerate dependency metadata and verify package or handle resolution.
+  - wordpress.block-metadata-key.apiVersion / metadata: Review generated metadata and compatibility or serialization impact before upgrading.
+  - wordpress.hook.widgets_init / classification: Review import exposure, release notes, and migration policy for the new classification.
+  - wordpress.hook.widgets_init / classification-metadata: Review waiver, deprecation, and removal metadata before upgrading.
+  - wordpress.php.function.register_widget / signature: Update typed calls or callbacks to the reviewed target signature and rerun native integration tests.
+  - wordpress.php.function.removed_api / removal: Remove or replace uses of this capability and rerun the target-profile test matrix.
+  - wordpress.script-handle.wp-widgets / handle: Regenerate asset dependencies and replace the changed WordPress script handle.
+
+Decision: advisory review required; no breaking change was accepted automatically.

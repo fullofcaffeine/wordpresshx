@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/profile-diff.schema.json",
+  "title": "WordPress Hx exact profile diff report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reportKind",
+    "reportDigestAlgorithm",
+    "reportDigest",
+    "comparison",
+    "policy",
+    "summary",
+    "catalogChanges",
+    "capabilityChanges",
+    "migrationActions"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "reportKind": {
+      "const": "wordpresshx-exact-profile-diff"
+    },
+    "reportDigestAlgorithm": {
+      "const": "sha256-canonical-json-v1"
+    },
+    "reportDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "comparison": {
+      "$ref": "#/$defs/comparison"
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "catalogChanges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/change"
+      }
+    },
+    "capabilityChanges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/change"
+      }
+    },
+    "migrationActions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/migrationAction"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profileId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "receiptId": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._-]*$"
+    },
+    "catalogRevision": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*/catalog-v[1-9][0-9]*$"
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "authority": {
+          "enum": [
+            "identical",
+            "upstream-profile-change",
+            "sdk-catalog-correction"
+          ]
+        },
+        "from": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "to": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "correction": {
+          "$ref": "#/$defs/correction"
+        }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "catalogRevision",
+        "catalogDigest",
+        "upstreamInputsDigest",
+        "generatorIdentity",
+        "generatorVersion",
+        "generatorSourceDigest",
+        "toolchainIdentity"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/profileId"
+        },
+        "catalogRevision": {
+          "$ref": "#/$defs/catalogRevision"
+        },
+        "catalogDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "upstreamInputsDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "generatorIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "generatorVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "generatorSourceDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "toolchainIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "correction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctionOfCatalogDigest",
+        "priorSdkArtifactIdentity",
+        "reason",
+        "consumerContractImpact",
+        "schemaInterpretationImpact",
+        "migration",
+        "receiptId"
+      ],
+      "properties": {
+        "correctionOfCatalogDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "priorSdkArtifactIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "reason": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "consumerContractImpact": {
+          "enum": [
+            "none",
+            "additive",
+            "breaking"
+          ]
+        },
+        "schemaInterpretationImpact": {
+          "enum": [
+            "unchanged",
+            "breaking"
+          ]
+        },
+        "migration": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "receiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "rangeSupport",
+        "sourceRewrite",
+        "decision"
+      ],
+      "properties": {
+        "scope": {
+          "const": "exact-validated-catalogs-only"
+        },
+        "rangeSupport": {
+          "const": "not-inferred"
+        },
+        "sourceRewrite": {
+          "const": "not-performed"
+        },
+        "decision": {
+          "const": "advisory-review-required"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalogChangeCount",
+        "capabilityAdditionCount",
+        "capabilityRemovalCount",
+        "signatureChangeCount",
+        "classificationChangeCount",
+        "handleChangeCount",
+        "metadataChangeCount",
+        "dependencyChangeCount",
+        "otherCapabilityChangeCount",
+        "breakingChangeCount",
+        "reviewRequiredChangeCount",
+        "additiveChangeCount",
+        "informationalChangeCount",
+        "migrationActionCount"
+      ],
+      "properties": {
+        "catalogChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "capabilityAdditionCount": {
+          "$ref": "#/$defs/count"
+        },
+        "capabilityRemovalCount": {
+          "$ref": "#/$defs/count"
+        },
+        "signatureChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "classificationChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "handleChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "metadataChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "dependencyChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "otherCapabilityChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "breakingChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "reviewRequiredChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "additiveChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "informationalChangeCount": {
+          "$ref": "#/$defs/count"
+        },
+        "migrationActionCount": {
+          "$ref": "#/$defs/count"
+        }
+      }
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "facet",
+        "impact",
+        "before",
+        "after",
+        "action"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "facet": {
+          "enum": [
+            "profile-id",
+            "catalog-revision",
+            "upstream-inputs",
+            "generator-identity",
+            "generator-version",
+            "generator-source",
+            "toolchain",
+            "correction",
+            "addition",
+            "removal",
+            "provider-identity",
+            "kind",
+            "classification",
+            "classification-metadata",
+            "evidence-status",
+            "availability",
+            "signature",
+            "handle",
+            "native-identity",
+            "metadata",
+            "dependencies",
+            "provenance",
+            "evidence",
+            "receipt-ids",
+            "administrative-results"
+          ]
+        },
+        "impact": {
+          "enum": [
+            "breaking",
+            "review-required",
+            "additive",
+            "informational"
+          ]
+        },
+        "before": {
+          "$ref": "#/$defs/changeValue"
+        },
+        "after": {
+          "$ref": "#/$defs/changeValue"
+        },
+        "action": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "changeValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "absent"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "canonicalJson"
+          ],
+          "properties": {
+            "state": {
+              "const": "present"
+            },
+            "canonicalJson": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        }
+      ]
+    },
+    "migrationAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "facet",
+        "action"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "facet": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "action": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    }
+  }
+}
