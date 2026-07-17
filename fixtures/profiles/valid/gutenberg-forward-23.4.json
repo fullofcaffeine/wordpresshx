@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "catalogDigestAlgorithm": "sha256-canonical-json-v1",
+  "catalogDigest": "46ffecfeaaec66fd2b377e04bd9941cce0882e056c497d485c2dcdf1a16f7b8c",
+  "generator": {
+    "identity": "sdk012-profile-schema-fixture",
+    "version": "1",
+    "sourceDigest": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
+    "toolchainIdentity": "python-stdlib-json+haxe-4.3.7"
+  },
+  "catalog": {
+    "profileId": "gutenberg-forward-23.4",
+    "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+    "upstreamInputs": [
+      {
+        "inputId": "gutenberg-source",
+        "kind": "git-source",
+        "providerIdentity": "gutenberg:23.4.0-source",
+        "repository": "https://github.com/WordPress/gutenberg.git",
+        "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+        "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f",
+        "tag": "v23.4.0"
+      },
+      {
+        "inputId": "gutenberg-release-zip",
+        "kind": "release-artifact",
+        "providerIdentity": "gutenberg:23.4.0-release",
+        "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip",
+        "sizeBytes": 39579401,
+        "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a",
+        "contentTreeSha256": "58ba04bdb69b91c42a67f2bdeefbf4e85f2312ee534355b978adcb2017a5791d"
+      }
+    ],
+    "capabilities": [
+      {
+        "capabilityId": "gutenberg.package.@wordpress/content-types",
+        "providerIdentity": "gutenberg:23.4.0",
+        "kind": "gutenberg-package",
+        "classification": "experimental",
+        "classificationMetadata": {},
+        "evidenceStatus": "inventoried",
+        "availableIn": [
+          "gutenberg-forward-23.4"
+        ],
+        "provenance": [
+          {
+            "sourceInputId": "gutenberg-source",
+            "sourcePath": "packages/content-types/package.json",
+            "sourceDigest": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4",
+            "locator": "name=@wordpress/content-types"
+          }
+        ],
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-011-GUTENBERG-FORWARD-23.4"
+          }
+        },
+        "receiptIds": [
+          "SDK-011-GUTENBERG-FORWARD-23.4"
+        ],
+        "administrativeResults": [
+          {
+            "result": "not-tested",
+            "reason": "SDK-012 does not establish runtime or production behavior.",
+            "receiptId": "SDK-011-GUTENBERG-FORWARD-23.4"
+          }
+        ]
+      }
+    ],
+    "correctionAncestry": []
+  }
+}

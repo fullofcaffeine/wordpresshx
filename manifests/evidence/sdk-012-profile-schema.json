@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-012-PROFILE-SCHEMA",
+  "bead": "wordpresshx-sdk-012",
+  "observedAt": "2026-07-17T02:53:30-06:00",
+  "subject": {
+    "profileSchemaPath": "schemas/profile.schema.json",
+    "profileSchemaVersion": 1,
+    "profileSchemaSha256": "bd87e81a254910da53b359f3dc3abb93c8b515fb36ab12b7fdb5cb9e4ac3439e",
+    "classificationDecisionLockPath": "profiles/classification-decision-lock.json",
+    "classificationDecisionLockSha256": "bddfba686623889420d16556a853f5d214a33b29877ae932da067f769baf25f0",
+    "profileDecisionLockPath": "profiles/decision-lock.json",
+    "profileDecisionLockSha256": "3bf323e894aeec1ed151ed06e199779012315a89d76d7ddba340c1a5044ce418",
+    "haxeContractRoot": "packages/core",
+    "haxeContractFileCount": 20,
+    "haxeContractContentSha256": "9cf382a6a905579d39497aedd9d6bb9ead7d05e1f03538487a54e88cb3abdc61"
+  },
+  "schemaImplementation": {
+    "draft": "https://json-schema.org/draft/2020-12/schema",
+    "unknownFields": "rejected-at-every-object",
+    "schemaAndCatalogRevisionIndependent": true,
+    "upstreamIdentityIndependent": true,
+    "catalogDigestAlgorithm": "sha256-canonical-json-v1",
+    "classificationEnum": [
+      "public",
+      "experimental",
+      "private",
+      "unsafe",
+      "deprecated"
+    ],
+    "evidenceStatusEnum": [
+      "inventoried",
+      "typed",
+      "generated",
+      "runtime-tested",
+      "production-supported"
+    ],
+    "administrativeResultEnum": [
+      "not-tested",
+      "failed",
+      "not-applicable",
+      "unsupported",
+      "withdrawn"
+    ],
+    "exactGitPinsRequired": true,
+    "exactReleaseArtifactPinsRequired": true,
+    "entryProvenanceRequired": true,
+    "continuousEvidencePrefixRequired": true,
+    "additiveCorrectionAncestryRequired": true
+  },
+  "exactFixtures": [
+    {
+      "path": "fixtures/profiles/valid/wp70-release.json",
+      "fileSha256": "1c12672627b08607234e071730699470656d1442e75542604a2e8e3abd845738",
+      "profileId": "wp70-release",
+      "catalogRevision": "wp70-release/catalog-v1",
+      "catalogDigest": "4294c7ae89a00038946f0a2a282264b18cfbfd959bde77dff0a322c064a63282",
+      "capabilityEvidence": "inventoried",
+      "outcome": "passed"
+    },
+    {
+      "path": "fixtures/profiles/valid/gutenberg-forward-23.4.json",
+      "fileSha256": "60ecd28a0ce65429877d9f05015a193ce2fc74630c9e26662e40f97357a0b17a",
+      "profileId": "gutenberg-forward-23.4",
+      "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+      "catalogDigest": "46ffecfeaaec66fd2b377e04bd9941cce0882e056c497d485c2dcdf1a16f7b8c",
+      "capabilityId": "gutenberg.package.@wordpress/content-types",
+      "classification": "experimental",
+      "capabilityEvidence": "inventoried",
+      "outcome": "passed"
+    }
+  ],
+  "schemaValidation": {
+    "command": "python3 scripts/profiles/validate-profile-schema.py",
+    "validatorPath": "scripts/profiles/validate-profile-schema.py",
+    "validatorSha256": "5035e87ec7f2acfb29422ab032ff352558e85a00a0ce550e542ee55832ddc5ba",
+    "validFixtureCount": 2,
+    "negativeFixtureCount": 9,
+    "negativeRules": [
+      "unknown-field",
+      "unknown-classification-alias",
+      "floating-upstream-source",
+      "placeholder-upstream-pin",
+      "skipped-evidence-stages",
+      "unsafe-without-required-metadata",
+      "selected-profile-absent-from-availability",
+      "correction-without-ancestry",
+      "catalog-digest-mismatch"
+    ],
+    "outcome": "passed"
+  },
+  "haxeValidation": {
+    "command": "bash scripts/profiles/test-profile-haxe.sh",
+    "scriptPath": "scripts/profiles/test-profile-haxe.sh",
+    "scriptSha256": "9ab39b0f865a0d06bf7a9dfe1d9a4154c66ae425db848fc2f3e28498b9fdd033",
+    "haxeVersion": "4.3.7",
+    "formattedHaxeFileCount": 18,
+    "positiveContractTests": "passed",
+    "forwardProfileCompile": "passed",
+    "compileFailures": {
+      "forwardCapabilityUnderWp70": "passed",
+      "implicitProfileSelection": "passed",
+      "runtimeResultAsCompileTimeAuthority": "passed",
+      "unknownClassificationAlias": "passed"
+    },
+    "outcome": "passed"
+  },
+  "capabilityAuthority": {
+    "compileTimeAvailability": {
+      "source": "exact selected catalog",
+      "serializableManifestValue": true,
+      "sourceLocatedMacroFailure": true
+    },
+    "runtimeCapability": {
+      "source": "current native request check",
+      "requestScoped": true,
+      "crossRequestUseRejected": true,
+      "closedScopeUseRejected": true,
+      "assignableToCompileTimeAuthority": false,
+      "presentInProfileJsonSchema": false
+    }
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "schemaJob": "repository",
+    "haxeJob": "haxe",
+    "required": true
+  },
+  "boundary": {
+    "haxelibPublicationAuthorized": false,
+    "packageTopologyDecision": "pending-ADR-003",
+    "licensingDecision": "pending-ADR-020-and-SDK-002",
+    "catalogGeneratorImplemented": false
+  },
+  "claims": {
+    "profileSchema": "generated",
+    "haxeProfileContract": "runtime-tested",
+    "wp70CapabilityCatalog": "inventoried",
+    "forwardCapabilityCatalog": "inventoried",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "browserCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

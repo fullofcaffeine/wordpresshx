@@ -30,6 +30,26 @@ required_files=(
   docs/product/README.md
   docs/release/README.md
   packages/README.md
+  packages/core/README.md
+  packages/core/test.hxml
+  packages/core/src/wordpress/hx/core/profile/AdministrativeResult.hx
+  packages/core/src/wordpress/hx/core/profile/ApiClassification.hx
+  packages/core/src/wordpress/hx/core/profile/CapabilityId.hx
+  packages/core/src/wordpress/hx/core/profile/CatalogDigest.hx
+  packages/core/src/wordpress/hx/core/profile/CatalogRevision.hx
+  packages/core/src/wordpress/hx/core/profile/CompileTimeCapability.hx
+  packages/core/src/wordpress/hx/core/profile/EvidenceStatus.hx
+  packages/core/src/wordpress/hx/core/profile/ProfileContractError.hx
+  packages/core/src/wordpress/hx/core/profile/ProfileGate.hx
+  packages/core/src/wordpress/hx/core/profile/ProfileId.hx
+  packages/core/src/wordpress/hx/core/profile/RuntimeCapability.hx
+  packages/core/src/wordpress/hx/core/profile/RuntimeRequestScope.hx
+  packages/core/test/wordpress/hx/core/profile/tests/ProfileContractTest.hx
+  packages/core/test-negative/profile_gate_implicit/Main.hx
+  packages/core/test-negative/profile_gate_wp70/Main.hx
+  packages/core/test-negative/runtime_as_compile_time/Main.hx
+  packages/core/test-negative/unknown_classification/Main.hx
+  packages/core/test-positive/profile_gate/Main.hx
   compiler/README.md
   profiles/README.md
   profiles/classification-decision-lock.json
@@ -39,9 +59,13 @@ required_files=(
   profiles/wp70-release/README.md
   profiles/wp70-release/source.lock.json
   schemas/README.md
+  schemas/profile.schema.json
   tools/README.md
   examples/README.md
   fixtures/README.md
+  fixtures/profiles/README.md
+  fixtures/profiles/valid/gutenberg-forward-23.4.json
+  fixtures/profiles/valid/wp70-release.json
   test/README.md
   docker/README.md
   manifests/README.md
@@ -49,6 +73,7 @@ required_files=(
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
+  manifests/evidence/sdk-012-profile-schema.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -90,6 +115,8 @@ required_files=(
   scripts/profiles/check-decision-lock.py
   scripts/profiles/check-classification-decision.py
   scripts/profiles/check-profile-isolation.py
+  scripts/profiles/test-profile-haxe.sh
+  scripts/profiles/validate-profile-schema.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
@@ -186,6 +213,13 @@ forward_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-011-gutenberg-forward-23.4.json"
     ).read_text(encoding="utf-8")
+)
+profile_schema_path = Path("schemas/profile.schema.json")
+profile_schema = json.loads(profile_schema_path.read_text(encoding="utf-8"))
+sdk012_receipt = json.loads(
+    Path("manifests/evidence/sdk-012-profile-schema.json").read_text(
+        encoding="utf-8"
+    )
 )
 readme = Path("README.md").read_text(encoding="utf-8")
 
@@ -330,7 +364,9 @@ assert profile_lock["schemaVersion"] == 1
 assert profile_lock["decision"] == "ADR-002"
 assert profile_lock["status"] == "accepted-architecture"
 assert profile_lock["claim"] == "not-tested"
-assert profile_lock["catalogContractStatus"] == "identity-frozen-schema-pending"
+assert profile_lock["catalogContractStatus"] == (
+    "schema-v1-implemented-catalog-generation-pending"
+)
 assert set(profile_lock["profiles"]) == {
     "wp70-release",
     "gutenberg-forward-23.4",
@@ -373,7 +409,7 @@ assert classification_lock["decision"] == "ADR-008"
 assert classification_lock["status"] == "accepted-architecture"
 assert classification_lock["claim"] == "not-tested"
 assert classification_lock["schemaImplementationStatus"] == (
-    "pending-sdk-012"
+    "implemented-sdk-012"
 )
 assert classification_lock["generatorImplementationStatus"] == (
     "pending-sdk-013"
@@ -649,11 +685,144 @@ for unproven_claim in (
     "productionSupport",
 ):
     assert forward_receipt["claims"][unproven_claim] == "not-tested"
+
+assert profile_schema["$schema"] == (
+    "https://json-schema.org/draft/2020-12/schema"
+)
+assert profile_schema["properties"]["schemaVersion"]["const"] == 1
+schema_classifications = profile_schema["$defs"]["capability"][
+    "properties"
+]["classification"]["enum"]
+schema_evidence_states = profile_schema["$defs"]["capability"][
+    "properties"
+]["evidenceStatus"]["enum"]
+schema_administrative_results = profile_schema["$defs"][
+    "administrativeResult"
+]["properties"]["result"]["enum"]
+assert schema_classifications == list(
+    classification_lock["machineVocabulary"]["apiClassifications"]
+)
+assert schema_evidence_states == classification_lock["machineVocabulary"][
+    "evidenceStates"
+]
+assert schema_administrative_results == classification_lock[
+    "machineVocabulary"
+]["administrativeResults"]
+
+assert sdk012_receipt["schemaVersion"] == 1
+assert sdk012_receipt["receiptId"] == "SDK-012-PROFILE-SCHEMA"
+assert sdk012_receipt["bead"] == "wordpresshx-sdk-012"
+sdk012_subject = sdk012_receipt["subject"]
+assert sdk012_subject["profileSchemaPath"] == profile_schema_path.as_posix()
+assert sdk012_subject["profileSchemaVersion"] == 1
+assert hashlib.sha256(profile_schema_path.read_bytes()).hexdigest() == (
+    sdk012_subject["profileSchemaSha256"]
+)
+assert hashlib.sha256(classification_lock_path.read_bytes()).hexdigest() == (
+    sdk012_subject["classificationDecisionLockSha256"]
+)
+profile_lock_path = Path("profiles/decision-lock.json")
+assert hashlib.sha256(profile_lock_path.read_bytes()).hexdigest() == (
+    sdk012_subject["profileDecisionLockSha256"]
+)
+for path_field, digest_field in (
+    ("validatorPath", "validatorSha256"),
+    ("scriptPath", "scriptSha256"),
+):
+    section = (
+        sdk012_receipt["schemaValidation"]
+        if path_field == "validatorPath"
+        else sdk012_receipt["haxeValidation"]
+    )
+    evidence_path = Path(section[path_field])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == section[
+        digest_field
+    ]
+    if evidence_path.suffix == ".py":
+        compile(
+            evidence_path.read_text(encoding="utf-8"),
+            evidence_path.as_posix(),
+            "exec",
+        )
+
+core_root = Path(sdk012_subject["haxeContractRoot"])
+core_files = sorted(
+    (path for path in core_root.rglob("*") if path.is_file()),
+    key=lambda path: path.as_posix(),
+)
+core_digest_input = bytearray()
+for path in core_files:
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    core_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
+assert len(core_files) == sdk012_subject["haxeContractFileCount"] == 20
+assert hashlib.sha256(core_digest_input).hexdigest() == sdk012_subject[
+    "haxeContractContentSha256"
+]
+assert not (core_root / "haxelib.json").exists()
+
+fixture_by_profile = {
+    fixture["profileId"]: fixture
+    for fixture in sdk012_receipt["exactFixtures"]
+}
+assert set(fixture_by_profile) == {
+    "wp70-release",
+    "gutenberg-forward-23.4",
+}
+for profile_id, receipt_fixture in fixture_by_profile.items():
+    fixture_path = Path(receipt_fixture["path"])
+    fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+    assert hashlib.sha256(fixture_path.read_bytes()).hexdigest() == (
+        receipt_fixture["fileSha256"]
+    )
+    assert fixture["schemaVersion"] == 1
+    assert fixture["catalog"]["profileId"] == profile_id
+    assert fixture["catalog"]["catalogRevision"] == receipt_fixture[
+        "catalogRevision"
+    ]
+    assert fixture["catalogDigest"] == receipt_fixture["catalogDigest"]
+    assert fixture["generator"]["sourceDigest"] == sdk012_subject[
+        "profileSchemaSha256"
+    ]
+    assert receipt_fixture["capabilityEvidence"] == "inventoried"
+    assert receipt_fixture["outcome"] == "passed"
+
+assert sdk012_receipt["schemaValidation"]["validFixtureCount"] == 2
+assert sdk012_receipt["schemaValidation"]["negativeFixtureCount"] == 9
+assert sdk012_receipt["schemaValidation"]["outcome"] == "passed"
+assert sdk012_receipt["haxeValidation"]["haxeVersion"] == "4.3.7"
+assert sdk012_receipt["haxeValidation"]["formattedHaxeFileCount"] == 18
+assert sdk012_receipt["haxeValidation"]["outcome"] == "passed"
+assert sdk012_receipt["capabilityAuthority"]["compileTimeAvailability"][
+    "serializableManifestValue"
+] is True
+runtime_authority = sdk012_receipt["capabilityAuthority"][
+    "runtimeCapability"
+]
+assert runtime_authority["requestScoped"] is True
+assert runtime_authority["assignableToCompileTimeAuthority"] is False
+assert runtime_authority["presentInProfileJsonSchema"] is False
+assert sdk012_receipt["boundary"]["haxelibPublicationAuthorized"] is False
+assert sdk012_receipt["boundary"]["catalogGeneratorImplemented"] is False
+assert sdk012_receipt["claims"]["profileSchema"] == "generated"
+assert sdk012_receipt["claims"]["haxeProfileContract"] == (
+    "runtime-tested"
+)
+assert sdk012_receipt["claims"]["wp70CapabilityCatalog"] == "inventoried"
+assert sdk012_receipt["claims"]["forwardCapabilityCatalog"] == (
+    "inventoried"
+)
+for unproven_claim in (
+    "wordpressRuntimeCompatibility",
+    "browserCompatibility",
+    "productionSupport",
+):
+    assert sdk012_receipt["claims"][unproven_claim] == "not-tested"
 PY
 
 python3 scripts/profiles/check-decision-lock.py
 python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
+python3 scripts/profiles/validate-profile-schema.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

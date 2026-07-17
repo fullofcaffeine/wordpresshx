@@ -1,0 +1,530 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/profile.schema.json",
+  "title": "WordPress Hx exact profile catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "catalogDigestAlgorithm",
+    "catalogDigest",
+    "generator",
+    "catalog"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "catalogDigestAlgorithm": {
+      "const": "sha256-canonical-json-v1"
+    },
+    "catalogDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "generator": {
+      "$ref": "#/$defs/generator"
+    },
+    "catalog": {
+      "$ref": "#/$defs/catalog"
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profileId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "catalogRevision": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*/catalog-v[1-9][0-9]*$"
+    },
+    "capabilityId": {
+      "type": "string",
+      "pattern": "^[a-z][A-Za-z0-9._@/-]*[A-Za-z0-9]$"
+    },
+    "receiptId": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._-]*$"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "version",
+        "sourceDigest",
+        "toolchainIdentity"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourceDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "toolchainIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "catalogRevision",
+        "upstreamInputs",
+        "capabilities",
+        "correctionAncestry"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/profileId"
+        },
+        "catalogRevision": {
+          "$ref": "#/$defs/catalogRevision"
+        },
+        "upstreamInputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/gitSourceInput"
+              },
+              {
+                "$ref": "#/$defs/releaseArtifactInput"
+              }
+            ]
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        },
+        "correctionAncestry": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "correction": {
+          "$ref": "#/$defs/correction"
+        }
+      }
+    },
+    "gitSourceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputId",
+        "kind",
+        "providerIdentity",
+        "repository",
+        "commit",
+        "tree"
+      ],
+      "properties": {
+        "inputId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "const": "git-source"
+        },
+        "providerIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "repository": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "commit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "tree": {
+          "$ref": "#/$defs/sha1"
+        },
+        "tag": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "releaseArtifactInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputId",
+        "kind",
+        "providerIdentity",
+        "url",
+        "sizeBytes",
+        "sha256"
+      ],
+      "properties": {
+        "inputId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "const": "release-artifact"
+        },
+        "providerIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "url": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "contentTreeSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capabilityId",
+        "providerIdentity",
+        "kind",
+        "classification",
+        "classificationMetadata",
+        "evidenceStatus",
+        "availableIn",
+        "provenance",
+        "evidence",
+        "receiptIds",
+        "administrativeResults"
+      ],
+      "properties": {
+        "capabilityId": {
+          "$ref": "#/$defs/capabilityId"
+        },
+        "providerIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "kind": {
+          "enum": [
+            "php-function",
+            "php-class",
+            "php-constant",
+            "hook",
+            "gutenberg-package",
+            "gutenberg-export",
+            "script-handle",
+            "block-metadata-key",
+            "browser-global",
+            "feature"
+          ]
+        },
+        "classification": {
+          "enum": [
+            "public",
+            "experimental",
+            "private",
+            "unsafe",
+            "deprecated"
+          ]
+        },
+        "classificationMetadata": {
+          "$ref": "#/$defs/classificationMetadata"
+        },
+        "evidenceStatus": {
+          "enum": [
+            "inventoried",
+            "typed",
+            "generated",
+            "runtime-tested",
+            "production-supported"
+          ]
+        },
+        "availableIn": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/profileId"
+          }
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/entryProvenance"
+          }
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        },
+        "receiptIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/receiptId"
+          }
+        },
+        "administrativeResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/administrativeResult"
+          }
+        }
+      }
+    },
+    "classificationMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "waiverReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        },
+        "securityReviewReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        },
+        "removalOwner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "deprecatedSince": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "replacementOrReason": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "earliestRemoval": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "entryProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceInputId",
+        "sourcePath",
+        "sourceDigest",
+        "locator"
+      ],
+      "properties": {
+        "sourceInputId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourcePath": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourceDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "locator": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inventory"
+      ],
+      "properties": {
+        "inventory": {
+          "$ref": "#/$defs/inventoryEvidence"
+        },
+        "typed": {
+          "$ref": "#/$defs/typedEvidence"
+        },
+        "generated": {
+          "$ref": "#/$defs/generatedEvidence"
+        },
+        "runtimeTested": {
+          "$ref": "#/$defs/runtimeEvidence"
+        },
+        "productionSupported": {
+          "$ref": "#/$defs/productionEvidence"
+        }
+      }
+    },
+    "inventoryEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receiptId"
+      ],
+      "properties": {
+        "receiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "typedEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractReviewReceiptId"
+      ],
+      "properties": {
+        "contractReviewReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "generatedEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactDigest",
+        "generatorIdentity",
+        "staticCheckReceiptId",
+        "determinismReceiptId"
+      ],
+      "properties": {
+        "artifactDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "generatorIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "staticCheckReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        },
+        "determinismReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "runtimeEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactDigest",
+        "providerIdentity",
+        "environmentIdentity",
+        "runtimeReceiptId"
+      ],
+      "properties": {
+        "artifactDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "providerIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "environmentIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "runtimeReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "productionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productionReadinessReceiptId",
+        "supportWindow",
+        "maintenanceOwner"
+      ],
+      "properties": {
+        "productionReadinessReceiptId": {
+          "$ref": "#/$defs/receiptId"
+        },
+        "supportWindow": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "maintenanceOwner": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "administrativeResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result",
+        "reason",
+        "receiptId"
+      ],
+      "properties": {
+        "result": {
+          "enum": [
+            "not-tested",
+            "failed",
+            "not-applicable",
+            "unsupported",
+            "withdrawn"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "receiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    },
+    "correction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctionOfCatalogDigest",
+        "priorSdkArtifactIdentity",
+        "reason",
+        "consumerContractImpact",
+        "schemaInterpretationImpact",
+        "migration",
+        "receiptId"
+      ],
+      "properties": {
+        "correctionOfCatalogDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "priorSdkArtifactIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "reason": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "consumerContractImpact": {
+          "enum": [
+            "none",
+            "additive",
+            "breaking"
+          ]
+        },
+        "schemaInterpretationImpact": {
+          "enum": [
+            "unchanged",
+            "breaking"
+          ]
+        },
+        "migration": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "receiptId": {
+          "$ref": "#/$defs/receiptId"
+        }
+      }
+    }
+  }
+}
