@@ -26,6 +26,8 @@ enum PhpExpr {
 	PhpObjectProperty(target:PhpExpr, property:String);
 	PhpDynamicObjectProperty(target:PhpExpr, property:PhpExpr);
 	PhpFunctionCall(name:String, args:Array<PhpExpr>);
+	PhpInvoke(callable:PhpExpr, args:Array<PhpExpr>);
+	PhpCallableArray(target:PhpExpr, method:PhpIdentifier);
 	PhpBinop(op:String, left:PhpExpr, right:PhpExpr);
 	PhpInstanceOf(value:PhpExpr, className:String);
 	PhpNullCoalesce(left:PhpExpr, right:PhpExpr);
@@ -33,6 +35,7 @@ enum PhpExpr {
 	PhpAssignExpr(target:PhpExpr, value:PhpExpr);
 	PhpPostDecrement(target:PhpExpr);
 	PhpStaticClosure(parameters:Array<String>, body:Array<PhpStmt>);
+	PhpClosure(parameters:Array<PhpParameter>, captures:Array<PhpClosureCapture>, body:Array<PhpStmt>, isStatic:Bool, returnType:Null<PhpType>);
 	PhpReference(expr:PhpExpr);
 	PhpNot(expr:PhpExpr);
 	PhpCastArray(expr:PhpExpr);

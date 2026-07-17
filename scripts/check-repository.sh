@@ -41,13 +41,31 @@ required_files=(
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
+  manifests/evidence/sdk-021-php-ir-printer.json
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpClass.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpClassKind.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpClosureCapture.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpDeclaration.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpFile.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpFunction.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpIdentifier.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethod.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpParameter.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpProperty.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpQualifiedName.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceRange.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpStmt.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpType.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpVisibility.hx
   compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx
+  compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedDeclaration.hx
+  compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedFile.hx
   compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx
+  compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
   scripts/beads/push-safe.sh
   scripts/ci/check-security-tooling.sh
@@ -112,6 +130,11 @@ php_receipt = json.loads(
         encoding="utf-8"
     )
 )
+php_ir_receipt = json.loads(
+    Path("manifests/evidence/sdk-021-php-ir-printer.json").read_text(
+        encoding="utf-8"
+    )
+)
 haxelib = json.loads(
     Path("compiler/reflaxe.php/haxelib.json").read_text(encoding="utf-8")
 )
@@ -162,6 +185,26 @@ assert php_receipt["localVerification"]["packageTest"]["outcome"] == "passed"
 assert php_receipt["localVerification"]["php84"]["runtimeOutcome"] == "passed"
 assert php_receipt["localVerification"]["php74"]["outcome"] == "not-tested"
 assert php_receipt["claims"]["wordpressSupport"] == "not-tested"
+assert php_ir_receipt["schemaVersion"] == 1
+assert php_ir_receipt["receiptId"] == "SDK-021-PHP-IR-PRINTER"
+assert php_ir_receipt["bead"] == "wordpresshx-sdk-021"
+assert php_ir_receipt["subject"]["package"] == haxelib["name"]
+assert php_ir_receipt["subject"]["version"] == haxelib["version"]
+assert php_ir_receipt["verification"]["packageTest"]["outcome"] == "passed"
+assert php_ir_receipt["verification"]["exactPhpMatrix"]["php74Lint"] == "passed"
+assert php_ir_receipt["verification"]["exactPhpMatrix"]["php74Runtime"] == "passed"
+assert php_ir_receipt["verification"]["exactPhpMatrix"]["php84Lint"] == "passed"
+assert php_ir_receipt["verification"]["exactPhpMatrix"]["php84Runtime"] == "passed"
+assert php_ir_receipt["implementation"]["determinism"]["rawPhpNodeAvailable"] is False
+assert php_ir_receipt["implementation"]["sourceCorrelationFoundation"]["sourceRangesImmutable"] is True
+assert php_ir_receipt["boundary"]["wordpressProfileImported"] is False
+assert php_ir_receipt["boundary"]["reflaxeDriverImplemented"] is False
+assert php_ir_receipt["claims"]["php74"] == "runtime-tested"
+assert php_ir_receipt["claims"]["php84"] == "runtime-tested"
+assert any(
+    continuation.get("bead") == "wordpresshx-sdk-021"
+    for continuation in php_provenance["continuations"]
+)
 
 assert repository_receipt["schemaVersion"] == 1
 assert repository_receipt["receiptId"] == "SDK-004-CANONICAL-REPOSITORY"
@@ -199,7 +242,7 @@ for path in package_files:
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     package_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
 package_digest = hashlib.sha256(package_digest_input).hexdigest()
-assert package_digest == php_receipt["subject"]["packageContentSha256"]
+assert package_digest == php_ir_receipt["subject"]["packageContentSha256"]
 
 generic_haxe_files = list((package_root / "src").rglob("*.hx")) + list(
     (package_root / "test").rglob("*.hx")

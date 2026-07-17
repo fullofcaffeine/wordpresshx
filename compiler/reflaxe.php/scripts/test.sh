@@ -16,7 +16,7 @@ haxe test.hxml
 php -l build/generic-printer-fixture.php
 
 actual_output="$(php build/generic-printer-fixture.php)"
-expected_output='{"total":6,"label":"generic"}'
+expected_output='{"total":14,"count":4,"error":"RuntimeException","label":"generic"}'
 if [[ "${actual_output}" != "${expected_output}" ]]; then
   echo "unexpected PHP runtime output: ${actual_output}" >&2
   exit 1
