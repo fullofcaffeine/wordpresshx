@@ -1477,6 +1477,10 @@ assert sdk014_tests["doubleRunByteEquality"] == "passed"
 assert sdk014_tests["syntheticTargetProfileIsCompatibilityEvidence"] is False
 assert sdk014_tests["outcome"] == "passed"
 assert sdk014_receipt["hostedWorkflow"]["job"] == "profile-diff"
+assert sdk014_receipt["hostedWorkflow"]["runId"] == 29615026581
+assert sdk014_receipt["hostedWorkflow"]["jobId"] == 87998119640
+assert sha1.fullmatch(sdk014_receipt["hostedWorkflow"]["commit"])
+assert sdk014_receipt["hostedWorkflow"]["status"] == "passed"
 assert sdk014_receipt["hostedWorkflow"]["required"] is True
 assert sdk014_receipt["claims"]["profileDiffImplementation"] == "generated"
 assert sdk014_receipt["claims"]["versionRangeSupport"] == "unsupported"

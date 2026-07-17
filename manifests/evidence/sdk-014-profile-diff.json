@@ -96,6 +96,10 @@
   "hostedWorkflow": {
     "path": ".github/workflows/repository.yml",
     "job": "profile-diff",
+    "runId": 29615026581,
+    "jobId": 87998119640,
+    "commit": "6557019b044aba1036837dce0073db1116ee79f0",
+    "status": "passed",
     "required": true
   },
   "claims": {
