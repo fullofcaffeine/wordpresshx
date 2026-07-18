@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
   "bead": "wordpresshx-sdk-033",
-  "status": "verified",
-  "observedAt": "2026-07-18T03:54:30-06:00",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T15:44:30Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -24,11 +24,11 @@
     },
     "webpackAdapter": {
       "path": "packages/gutenberg/build-tooling/webpack.config.cjs",
-      "sha256": "fb14754f0811d95f3fac9888c79ac285a88133fe77512b57c05b5f75dfa5745a"
+      "sha256": "6b5cacecf2e308a884cc86cb7e05e9ffc45d10232cac046cb5d05725ce43ca74"
     },
     "haxeProfile": {
       "path": "packages/gutenberg/profiles/assets-strict.hxml",
-      "sha256": "bbadb0e1727d7de25e9044f81cad3c41d490d747fff0845a7b5e2e96202c3b22"
+      "sha256": "5bae14fa9d25e86737159fd27c02958093feb4253f94ed9739ecd9e974ad820e"
     },
     "i18nBoundary": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx",
@@ -36,11 +36,11 @@
     },
     "haxeFixture": {
       "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",
-      "sha256": "1527b560567c67ef18276c37551bd93a7ddf444293ece6d7c4789e8553925663"
+      "sha256": "be11b83d92463aa6892a80cca5abad09d5fbd162c2a7b9bbd9896456305464a5"
     },
     "nativeEntryFixture": {
       "path": "packages/gutenberg/test/assets-runtime/editor-entry.tsx",
-      "sha256": "44ce89ef2fc698500ae0da7e15b11324e25f21bb9dda40d19875ac6355f5e8f5"
+      "sha256": "84921425b94fb4bab1f79cfd5aa055279ce4ff0a4a7bdeb12b01a0b8d35f4f70"
     },
     "profileVerifier": {
       "path": "packages/gutenberg/scripts/verify-assets-profile.py",
@@ -48,7 +48,7 @@
     },
     "artifactVerifier": {
       "path": "packages/gutenberg/scripts/verify-assets.mjs",
-      "sha256": "dc43cf668c878507b2c2ef56a70faa5781b5a2593f528c8d4777fb30136c4462"
+      "sha256": "fe7e285f37b7abef8667e72466f1a35447ebab5f028f986a8a25592dd064d820"
     },
     "nativeEmitter": {
       "path": "packages/gutenberg/scripts/emit-assets-plugin.py",
@@ -56,7 +56,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-assets.sh",
-      "sha256": "863a4d85df70d728e9b8d2d5b8d7cce8b9af20b92dd3e1c45844520e767ceba9"
+      "sha256": "7092ce25428112f502cd4665f9662aa0b35ff18e10e6dcab5735a7e486622d17"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-assets-lane.sh",
@@ -131,7 +131,7 @@
     "compilerProfile": "strict-typescript-source",
     "browserExportId": "wordpresshx.sdk033.editor-panel",
     "generatedModule": "sdk033/fixture/EditorPanel",
-    "generatedTreeSha256": "3792559c66050767a95639271b0d631fd1fff003a8ea31909d1880ba8d60a54e",
+    "generatedTreeSha256": "b7ef331e91ed97b7577d139a37bc61aa110d54e2e79dccb9d0bcc02e6412a097",
     "sourceImports": [
       "@wordpress/components",
       "@wordpress/element",
@@ -151,6 +151,13 @@
     "replacementOptionDelta": {
       "externalizedReport": true
     },
+    "sourceMapAdaptation": {
+      "genesMapEmission": "js-source-map",
+      "webpackDevtool": "hidden-source-map",
+      "officialSourceMapLoaderRetained": true,
+      "productionPluginIncludesMaps": false,
+      "receiptId": "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
+    },
     "officialBabelLoaderMatchCount": 1,
     "typescriptCompatibility": {
       "plugin": "@babel/plugin-transform-typescript",
@@ -166,18 +173,19 @@
     "development": {
       "command": "wp-scripts start src/editor.tsx --no-watch --config webpack.config.cjs --output-path build/development",
       "bundlePath": "editor.js",
-      "bundleSha256": "7225eab5d553ab8e08015acb7479e6a28df165fa2c5b63df110c444356a45f69",
-      "sourceMapSha256": "bba015f4b3eb931cdbca70a20765440398f0682e9ac7c6597db77ff4eb2d7215",
-      "assetPhpSha256": "dd98f3a41e34cb7387f506e3731f7f4a662eefbd114cf46ee7e1aa15ee400eec",
-      "version": "953de22dcd4c1eaeeec1",
+      "bundleSha256": "8df0b34f4548c5842422ab779736cf877810716113b5df02cc4186ba08d4a0ea",
+      "sourceMapSha256": "0be0e02e87f3807768e3e9b6b6925de29b1f5022b1a0876e9f2e93011cdc466e",
+      "assetPhpSha256": "3dfd9f3d291988c0e2db6e4d7c9462fdcb157bd9c030ed7c467eac454bed8815",
+      "version": "c741be6ca63d810b3503",
       "outcome": "passed"
     },
     "production": {
       "command": "wp-scripts build src/editor.tsx --config webpack.config.cjs --output-path build/production",
       "bundlePath": "editor.js",
-      "bundleSha256": "4dc231f4abe8ca8c95eb087a064059d75283ba076122a0f24f1177b37389bf1b",
-      "assetPhpSha256": "1ebc50afcfa707cedc77bbe65b517a9e434f7589a581425a6a9697e4455afbe4",
-      "version": "12677fc28b825e84abda",
+      "bundleSha256": "7c673d9302d661a745f3130a0741abec0eb0e3778bba044ca76672e576db1dec",
+      "sourceMapSha256": "11822259c164fbdbc4b6adf18e4876282ebf8dd369ecc88451ba9b30343992fa",
+      "assetPhpSha256": "7c43ce56f99d14e85fd3ef750184987361936b57b6e3b849939bd8fa3be0f9f7",
+      "version": "1c795843ae343856bc13",
       "outcome": "passed"
     },
     "externalizedReportSha256": "4b7f8e017b2c027d52dc6809d7744984e29d9e7d9871c5fa3dbcc0d75964498c",
@@ -203,6 +211,7 @@
     "manualAssetPhpEditingAllowed": false,
     "pluginPhpGenerated": true,
     "translationJsonGenerated": true,
+    "hiddenSourceMapsExcludedFromPlugin": true,
     "php74Syntax": "passed",
     "php84Syntax": "passed",
     "doubleRunByteEquality": "passed"
@@ -292,16 +301,18 @@
     "productionBundleDoubleRunByteEquality": "passed",
     "assetPlanDoubleRunByteEquality": "passed",
     "nativePluginDoubleRunByteEquality": "passed",
+    "sourceCorrelationPackageDoubleRunByteEquality": "passed",
     "machineLocalPathScan": "passed"
   },
   "changeDecision": {
     "genesSourceChanged": false,
     "genesPullRequest": null,
-    "reason": "The build adapter accepts standards-valid Genes TypeScript declare fields through Babel's general TypeScript option; no compiler defect or WordPress-specific Genes behavior was required."
+    "reason": "The build adapter accepts standards-valid Genes TypeScript and Source Map v3 output through the official Babel and source-map loaders; no compiler defect or WordPress-specific Genes behavior was required."
   },
   "localVerification": {
     "commands": [
       "bash packages/gutenberg/scripts/test-assets.sh",
+      "bash packages/gutenberg/scripts/test-assets.sh --skip-wordpress",
       "bash scripts/profiles/test-catalog-generator.sh",
       "python3 scripts/gates/check-g0-baseline.py",
       "python3 scripts/release/test-governance.py"
@@ -309,35 +320,42 @@
     "outcome": "passed"
   },
   "implementation": {
-    "baseCommit": "838e15db8826feac5c7033cbcc4532d7c80cf3ef",
-    "commit": "23696ca999a419d64181c44018e193c94a5569f3"
+    "baseCommit": "23696ca999a419d64181c44018e193c94a5569f3",
+    "commit": null
   },
   "hostedVerification": {
     "workflow": "repository.yml",
     "job": "wordpress-runtime",
+    "runId": null,
+    "url": null,
+    "attempt": null,
+    "jobId": null,
+    "jobUrl": null,
+    "commit": null,
+    "status": "pending-main-push",
+    "sdk033Step": "pending",
+    "generatedTreeSha256": null,
+    "productionBundleSha256": null,
+    "hostedArtifactHashesMatched": false,
+    "jobCount": null,
+    "allJobsPassed": false,
+    "fullMatrixStatus": "pending",
+    "completedAt": null,
+    "required": true
+  },
+  "priorHostedVerification": {
     "runId": 29640752835,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29640752835",
-    "attempt": 1,
     "jobId": 88070758398,
-    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29640752835/job/88070758398",
     "commit": "23696ca999a419d64181c44018e193c94a5569f3",
     "status": "passed",
-    "sdk033Step": "passed",
-    "generatedTreeSha256": "3792559c66050767a95639271b0d631fd1fff003a8ea31909d1880ba8d60a54e",
-    "productionBundleSha256": "4dc231f4abe8ca8c95eb087a064059d75283ba076122a0f24f1177b37389bf1b",
-    "hostedArtifactHashesMatched": true,
-    "jobCount": 10,
-    "allJobsPassed": true,
-    "fullMatrixStatus": "passed",
-    "completedAt": "2026-07-18T10:25:42Z",
-    "required": true
+    "completedAt": "2026-07-18T10:25:42Z"
   },
   "knownLimitations": [
     "This receipt proves classic WordPress scripts; the Script Modules API remains a separate profile and evidence lane.",
     "The SDK-owned TSX mount entry and JSON fixture plan are build-boundary proof inputs; later scaffolding must generate them from typed Haxe declarations before claiming a complete Haxe-only project surface.",
     "SDK-055 owns typed message keys, plural/context contracts, extraction, and production translation catalogs.",
     "The exact provider build graph has known non-critical development-tool advisories tracked by wordpresshx-g2.3; no advisory-free or general untrusted-input build claim is made.",
-    "Source-map policy and correlation remain SDK-034 even though the bounded development map is deterministic and path-clean here.",
+    "Official source correlation is bounded to this exact entry and both named modes by G2.4; unrelated entries, adapters, and general production support remain untested.",
     "Public package publication and production support remain blocked."
   ],
   "claims": {

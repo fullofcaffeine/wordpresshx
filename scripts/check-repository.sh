@@ -298,6 +298,7 @@ required_files=(
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
   manifests/evidence/sdk-034-browser-source-correlation.json
+  manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
@@ -499,6 +500,11 @@ sdk025_receipt = json.loads(
 sdk034_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-034-browser-source-correlation.json"
+    ).read_text(encoding="utf-8")
+)
+g24_receipt = json.loads(
+    Path(
+        "manifests/evidence/g2.4-wordpress-scripts-source-correlation.json"
     ).read_text(encoding="utf-8")
 )
 haxelib = json.loads(
@@ -1100,7 +1106,7 @@ assert source_correlation_architecture["status"] == "accepted-architecture"
 assert source_correlation_architecture["acceptedAt"] == "2026-07-18"
 assert source_correlation_architecture["claim"] == (
     "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-"
-    "official-wordpress-adapter-pending"
+    "official-wordpress-adapter-source-correlation-implemented-hosted-pending"
 )
 source_contract = source_correlation_architecture["publicContract"]
 assert source_contract["phpMapFormat"] == (
@@ -1290,16 +1296,26 @@ assert source_evidence["browser"]["traceCli"] == (
     "implemented-offline-stable-text-and-canonical-json"
 )
 assert source_evidence["browser"]["productionPackageRetention"] == (
-    "runtime-js-only-map-index-and-source-content-absent"
+    "esbuild-runtime-js-only-and-wordpress-installable-plugin-map-index-"
+    "source-content-absent"
 )
 assert source_evidence["browser"]["officialWordpressScriptsLaneReceiptId"] == (
     sdk033_receipt["receiptId"]
 )
-assert source_evidence["browser"]["officialWordpressScriptsCorrelation"] == (
-    "not-tested-follow-up-wordpresshx-g2.4"
+assert source_evidence["browser"][
+    "officialWordpressScriptsCorrelationReceiptId"
+] == g24_receipt["receiptId"]
+expected_official_correlation_evidence = (
+    "exact-entry-development-and-production-composed-local-verified-"
+    "hosted-pending"
+    if g24_receipt["status"] == "implemented-hosted-pending"
+    else "exact-entry-development-and-production-composed-hosted-verified"
 )
+assert source_evidence["browser"][
+    "officialWordpressScriptsCorrelation"
+] == expected_official_correlation_evidence
 assert source_evidence["browser"]["deliberateDevelopmentAndProductionThrows"] == (
-    "passed-for-exact-sdk-034-esbuild-fixture"
+    "passed-for-exact-sdk-034-esbuild-and-g2.4-wordpress-scripts-fixtures"
 )
 assert source_evidence["productionSupport"] == "not-tested"
 assert source_evidence["boundedProductionPackageEvidence"] == (
@@ -1804,6 +1820,235 @@ assert sdk034_receipt["claims"]["multiArchitectureBrowserRuntime"] == (
 )
 assert sdk034_receipt["claims"]["productionSupport"] == "not-tested"
 assert sdk034_receipt["claims"]["publicPackagePublication"] == "blocked"
+
+assert g24_receipt["schemaVersion"] == 1
+assert g24_receipt["receiptId"] == (
+    "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
+)
+assert g24_receipt["bead"] == "wordpresshx-g2.4"
+assert g24_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+g24_subject = g24_receipt["subject"]
+assert g24_subject["package"] == "packages/gutenberg"
+assert g24_subject["profileId"] == "wp70-release"
+assert g24_subject["adapter"] == "@wordpress/scripts@31.5.0"
+assert g24_subject["bundler"] == "webpack@5.108.4"
+assert g24_subject["entry"] == "src/editor.tsx"
+assert g24_subject["modes"] == ["development", "production"]
+g24_scope = g24_receipt["scope"]
+assert g24_scope["genesLayerValidatedIndependently"] is True
+assert g24_scope["finalWebpackLayersValidatedIndependently"] is True
+assert g24_scope["strategy"] == "browser-composed-v3"
+assert g24_scope["twoStageFallbackRequired"] is False
+assert g24_scope["generalProductionSupport"] is False
+assert g24_scope["publicationAuthorized"] is False
+
+g24_toolchain = g24_receipt["toolchain"]
+assert g24_toolchain["haxe"] == cli_dependency_lock["haxe"]["version"]
+assert g24_toolchain["genes"]["version"] == (
+    gutenberg_dependency_lock["compiler"]["version"]
+)
+assert g24_toolchain["genes"]["commit"] == (
+    gutenberg_dependency_lock["compiler"]["commit"]
+)
+assert g24_toolchain["genes"]["tree"] == (
+    gutenberg_dependency_lock["compiler"]["tree"]
+)
+assert g24_toolchain["nodeBuild"]["image"] == (
+    image_lock["images"]["node"]["reference"]
+)
+assert g24_toolchain["browser"]["image"] == (
+    image_lock["images"]["playwright"]["reference"]
+)
+assert g24_toolchain["browser"]["platforms"] == (
+    toolchain_lock["runtimeImages"]["playwright"]["platforms"]
+)
+assert sorted(g24_toolchain["browser"]["platforms"]) == image_lock[
+    "images"
+]["playwright"]["requiredPlatforms"]
+assert g24_toolchain["integrityLockedNpmPackageCount"] == (
+    len(json.loads(sdk033_tooling_lock_path.read_text(encoding="utf-8"))["packages"])
+    - 1
+)
+
+g24_inputs = g24_receipt["authenticatedInputs"]
+assert len({record["path"] for record in g24_inputs}) == len(g24_inputs)
+for record in g24_inputs:
+    assert sha256.fullmatch(record["sha256"])
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+g24_layers = g24_receipt["layerEvidence"]
+assert g24_layers["genes"]["rawSourceCount"] == 6
+assert g24_layers["genes"]["haxeSourceCount"] == 6
+assert g24_layers["genes"]["sourcesContentPresent"] is False
+assert g24_layers["genes"]["validatedBeforeWebpack"] is True
+assert g24_layers["development"]["rawSourceCount"] == 19
+assert g24_layers["development"]["haxeSourceCount"] == 7
+assert g24_layers["development"][
+    "embeddedHaxeSourceContentVerified"
+] == 9
+assert g24_layers["production"]["rawSourceCount"] == 10
+assert g24_layers["production"]["haxeSourceCount"] == 5
+for layer in (
+    g24_layers["genes"],
+    g24_layers["development"],
+    g24_layers["production"],
+):
+    assert sha256.fullmatch(layer["rawSha256"])
+    assert sha256.fullmatch(layer["normalizedSha256"])
+assert g24_layers["development"]["sourcesContentRemoved"] is True
+assert g24_layers["production"]["sourcesContentRemoved"] is True
+assert g24_layers["compositionDecision"] == {
+    "fullCompositionProvenForExactEntryAndModes": True,
+    "twoStageFallbackRetainedByCli": True,
+    "twoStageFallbackUsedForThisReceipt": False,
+    "unmappedVirtualSegmentsNeverGuessed": True,
+}
+
+g24_fixture = g24_receipt["fixtureEvidence"]
+assert g24_fixture["expectedSource"] == {
+    "rootId": "project",
+    "path": (
+        "packages/gutenberg/test/assets-fixture/src/"
+        "sdk033/fixture/EditorPanel.hx"
+    ),
+    "line": 12,
+    "column": 8,
+}
+assert g24_fixture["indexedFileCount"] == 15
+assert sha256.fullmatch(g24_fixture["sourceIndexSha256"])
+assert sha256.fullmatch(g24_fixture["artifactSetSha256"])
+assert set(g24_fixture["modes"]) == {"development", "production"}
+for mode in g24_fixture["modes"].values():
+    assert mode["status"] == "mapped-composed"
+    assert sha256.fullmatch(mode["stackSha256"])
+    assert sha256.fullmatch(mode["traceJsonSha256"])
+    assert sha256.fullmatch(mode["traceTextSha256"])
+assert g24_fixture["realChromiumFailureRuns"] == 4
+assert g24_fixture["browserFailuresReplayStable"] is True
+assert g24_fixture["nativeFramesPreserved"] is True
+assert g24_fixture["canonicalJsonReplay"] is True
+
+g24_assets = g24_receipt["assetPreservation"]
+assert g24_assets["dependencies"] == [
+    "react-jsx-runtime",
+    "wp-components",
+    "wp-element",
+    "wp-i18n",
+]
+assert g24_assets["developmentProductionDependencyParity"] is True
+assert g24_assets["officialAssetPhpCopiedUnchanged"] is True
+assert g24_assets["translationsPreserved"] is True
+assert g24_assets["publicExportPreserved"] is True
+for key, value in g24_assets.items():
+    if key.endswith("Sha256"):
+        assert sha256.fullmatch(value)
+
+g24_packaging = g24_receipt["packaging"]
+assert g24_packaging["productionZip"]["entries"] == [
+    "wordpresshx-sdk033-assets/build/editor.asset.php",
+    "wordpresshx-sdk033-assets/build/editor.js",
+    "wordpresshx-sdk033-assets/generation-manifest.json",
+    (
+        "wordpresshx-sdk033-assets/languages/"
+        "wordpresshx-sdk033-en_US-wordpresshx-sdk033-editor.json"
+    ),
+    "wordpresshx-sdk033-assets/wordpresshx-sdk033-assets.php",
+]
+assert g24_packaging["debugCompanionZip"]["entries"] == [
+    "generated/sdk033/fixture/EditorPanel.tsx",
+    "maps/genes-editor-panel.tsx.map",
+    "maps/wordpress-scripts-development.js.map",
+    "maps/wordpress-scripts-production.js.map",
+    "runtime/development/editor.js",
+    "source-index.json",
+]
+for forbidden_g24_retention in (
+    "mapsInProduction",
+    "sourceIndexInProduction",
+    "haxeSourceIncluded",
+    "sourceContentIncluded",
+    "inlineSourceMapCommentInRuntime",
+):
+    assert g24_packaging[forbidden_g24_retention] is False
+assert g24_packaging["deterministicReplay"] == "passed"
+assert sha256.fullmatch(g24_packaging["packageManifestSha256"])
+assert sha256.fullmatch(g24_packaging["productionTreeSha256"])
+assert sha256.fullmatch(g24_packaging["productionZip"]["sha256"])
+assert sha256.fullmatch(g24_packaging["debugCompanionZip"]["sha256"])
+
+g24_negatives = g24_receipt["verification"]["negativeCases"]
+assert g24_receipt["verification"]["commands"][0] == (
+    "bash packages/gutenberg/scripts/test-assets.sh"
+)
+assert g24_receipt["verification"]["wordpress70MysqlRuntime"] == (
+    "passed-via-sdk-033"
+)
+assert len(g24_negatives["integrityOrSchemaExit3"]) == 9
+assert g24_negatives["ambiguousContractExit4"] == [
+    "ambiguous-correlation"
+]
+assert len(g24_negatives["usageOrInputExit2"]) == 2
+assert len(g24_negatives["unmappedWithoutGuessing"]) == 3
+assert g24_negatives["packageRejected"] == [
+    "secret-shaped-content",
+    "machine-path-content",
+]
+assert g24_receipt["security"]["machinePathLeakCount"] == 0
+assert g24_receipt["security"]["secretShapedLeakCount"] == 0
+assert g24_receipt["changeDecision"]["genesSourceChanged"] is False
+assert g24_receipt["changeDecision"]["genesPullRequest"] is None
+
+g24_hosted = g24_receipt["hostedVerification"]
+assert g24_hosted["workflow"] == "repository.yml"
+assert g24_hosted["job"] == "wordpress-runtime"
+if g24_receipt["status"] == "verified":
+    assert sha1.fullmatch(g24_receipt["implementation"]["commit"])
+    assert g24_hosted["status"] == "passed"
+    assert g24_hosted["commit"] == g24_receipt["implementation"]["commit"]
+    assert isinstance(g24_hosted["runId"], int)
+    assert isinstance(g24_hosted["jobId"], int)
+    assert g24_hosted["jobCount"] == 10
+    assert g24_hosted["fullMatrixStatus"] == "passed"
+    assert g24_hosted["g24Step"] == "passed"
+    assert set(g24_fixture["browserReceiptSha256ByPlatform"]) == {
+        "linux/amd64",
+        "linux/arm64",
+    }
+else:
+    assert g24_receipt["implementation"]["commit"] is None
+    assert g24_hosted["status"] == "pending-main-push"
+    assert g24_hosted["commit"] is None
+    assert g24_hosted["runId"] is None
+    assert g24_hosted["jobId"] is None
+    assert g24_hosted["fullMatrixStatus"] == "pending"
+    assert g24_hosted["g24Step"] == "pending"
+    assert set(g24_fixture["browserReceiptSha256ByPlatform"]) == {
+        "linux/arm64"
+    }
+assert all(
+    sha256.fullmatch(value)
+    for value in g24_fixture["browserReceiptSha256ByPlatform"].values()
+)
+assert g24_receipt["claims"]["generalProductionSupport"] == "not-tested"
+assert g24_receipt["claims"]["publicPackagePublication"] == "blocked"
+assert g24_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+assert browser_architecture["evidence"]["sourceMaps"] in {
+    (
+        "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-"
+        "development-production-composition-implemented-hosted-pending"
+    ),
+    (
+        "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-"
+        "development-production-composition-verified"
+    ),
+}
 
 reference_review = source_correlation_architecture["referenceReview"]
 assert {reference["repository"] for reference in reference_review} == {
@@ -2540,6 +2785,10 @@ assert set(sdk033_graph["directPackages"]) == {
 }
 assert sdk033_graph["lifecycleScriptsAllowed"] is False
 assert sdk033_graph["advisoryFollowUp"] == "wordpresshx-g2.3"
+assert sdk033_graph["browserRuntimeImage"] == (
+    image_lock["images"]["playwright"]["reference"]
+)
+assert sdk033_graph["sourceCorrelationReceiptId"] == g24_receipt["receiptId"]
 assert sdk033_receipt["receiptId"] in lock["entries"]["wp70-release"][
     "testReceiptIds"
 ]
@@ -2572,6 +2821,13 @@ assert sdk033_adapter["officialDependencyPluginReplacementCount"] == 1
 assert sdk033_adapter["replacementOptionDelta"] == {
     "externalizedReport": True
 }
+assert sdk033_adapter["sourceMapAdaptation"] == {
+    "genesMapEmission": "js-source-map",
+    "webpackDevtool": "hidden-source-map",
+    "officialSourceMapLoaderRetained": True,
+    "productionPluginIncludesMaps": False,
+    "receiptId": g24_receipt["receiptId"],
+}
 assert sdk033_adapter["officialBabelLoaderMatchCount"] == 1
 assert sdk033_adapter["genesSourceChanged"] is False
 assert sdk033_adapter["manualMappingDuplicated"] is False
@@ -2593,11 +2849,17 @@ assert sdk033_builds["assetVersionDerivedFromFinalBundleBytes"] is True
 for sdk033_lane in ("development", "production"):
     assert sdk033_builds[sdk033_lane]["outcome"] == "passed"
     assert sha256.fullmatch(sdk033_builds[sdk033_lane]["bundleSha256"])
+    assert sha256.fullmatch(
+        sdk033_builds[sdk033_lane]["sourceMapSha256"]
+    )
     assert re.fullmatch(
         r"[0-9a-f]{20}", sdk033_builds[sdk033_lane]["version"]
     )
 assert sdk033_receipt["nativeEmission"]["officialAssetPhpCopiedUnchanged"] is True
 assert sdk033_receipt["nativeEmission"]["manualAssetPhpEditingAllowed"] is False
+assert sdk033_receipt["nativeEmission"][
+    "hiddenSourceMapsExcludedFromPlugin"
+] is True
 assert sdk033_receipt["nativeEmission"]["php74Syntax"] == "passed"
 assert sdk033_receipt["nativeEmission"]["php84Syntax"] == "passed"
 sdk033_runtime = sdk033_receipt["wordpressRuntime"]
@@ -2640,9 +2902,21 @@ assert sdk033_hosted["job"] == "wordpress-runtime"
 assert sdk033_hosted["required"] is True
 if sdk033_receipt["status"] == "implemented-hosted-pending":
     assert sdk033_receipt["implementation"]["commit"] is None
-    assert sdk033_hosted["status"] == "pending-first-push"
+    assert sdk033_hosted["status"] == "pending-main-push"
+    assert sdk033_hosted["commit"] is None
+    assert sdk033_hosted["runId"] is None
+    assert sdk033_hosted["url"] is None
+    assert sdk033_hosted["attempt"] is None
+    assert sdk033_hosted["jobId"] is None
+    assert sdk033_hosted["jobUrl"] is None
     assert sdk033_hosted["sdk033Step"] == "pending"
+    assert sdk033_hosted["generatedTreeSha256"] is None
+    assert sdk033_hosted["productionBundleSha256"] is None
+    assert sdk033_hosted["hostedArtifactHashesMatched"] is False
+    assert sdk033_hosted["jobCount"] is None
+    assert sdk033_hosted["allJobsPassed"] is False
     assert sdk033_hosted["fullMatrixStatus"] == "pending"
+    assert sdk033_hosted["completedAt"] is None
 else:
     assert sdk033_receipt["status"] == "verified"
     assert sha1.fullmatch(sdk033_receipt["implementation"]["commit"])
@@ -2669,6 +2943,14 @@ else:
     assert sdk033_hosted["jobCount"] == 10
     assert sdk033_hosted["allJobsPassed"] is True
     assert sdk033_hosted["fullMatrixStatus"] == "passed"
+sdk033_prior_hosted = sdk033_receipt["priorHostedVerification"]
+assert sdk033_prior_hosted == {
+    "runId": 29640752835,
+    "jobId": 88070758398,
+    "commit": "23696ca999a419d64181c44018e193c94a5569f3",
+    "status": "passed",
+    "completedAt": "2026-07-18T10:25:42Z",
+}
 assert browser_architecture["evidence"]["wordpressBundleAndAssetParity"] == (
     "verified-by-sdk-033-wordpress-asset-metadata"
 )

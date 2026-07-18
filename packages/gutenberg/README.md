@@ -131,9 +131,13 @@ Node image with lifecycle scripts disabled, and builds both one-shot
 development and minified production lanes with `@wordpress/scripts` 31.5.0.
 It compares source imports, the official externalized report, final bundles,
 unchanged official asset PHP, exact profile mappings, and a semantic native
-enqueue plan. It then emits an inspectable plugin, checks PHP 7.4 and 8.4
-syntax, and runs that plugin on WordPress 7.0/MySQL to prove dependency order,
-the final content version, and translation attachment.
+enqueue plan. It also validates the Genes and Webpack Source Map v3 layers
+independently, then throws deliberately in real Chromium from both official
+bundles and resolves each frame to the same exact Haxe token. No filename,
+basename, or nearest-line guessing is allowed. Finally, it emits an inspectable
+plugin, checks PHP 7.4 and 8.4 syntax, and runs that plugin on WordPress
+7.0/MySQL to prove dependency order, the final content version, and translation
+attachment.
 
 For a build-only replay, omit the database lane:
 
@@ -142,6 +146,12 @@ bash packages/gutenberg/scripts/test-assets.sh --skip-wordpress
 ~~~
 
 Set `SDK033_ASSET_OUTPUT` to retain the semantic plan and generated native
-plugin for inspection. The emitted PHP/JS/JSON are build artifacts; the Haxe
-fixture remains the application authoring surface. Script Modules are not
-claimed by SDK-033 and require a separate profile and parity proof.
+plugin for inspection. Set `G24_SOURCE_CORRELATION_OUTPUT` to an empty directory
+to retain the production ZIP, separate debug companion, source index, normalized
+maps, real Chromium stacks, and canonical trace output. The installable ZIP
+contains no maps, source index, Haxe/TSX source, source content, or inline map
+directive; operators keep the content-bound debug companion separately and
+provide source roots only during offline diagnosis. The emitted PHP/JS/JSON are
+build artifacts; the Haxe fixture remains the application authoring surface.
+Script Modules and unrelated entries or adapters are not claimed and require
+their own exact-profile parity proof.

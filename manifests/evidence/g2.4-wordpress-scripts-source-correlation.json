@@ -1,0 +1,339 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
+  "bead": "wordpresshx-g2.4",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T15:44:30Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profileId": "wp70-release",
+    "adapter": "@wordpress/scripts@31.5.0",
+    "bundler": "webpack@5.108.4",
+    "entry": "src/editor.tsx",
+    "modes": [
+      "development",
+      "production"
+    ],
+    "productionArtifact": "installable ordinary WordPress plugin ZIP",
+    "debugArtifact": "separate authenticated source-correlation companion ZIP"
+  },
+  "scope": {
+    "admitted": "exact SDK-033 wp70-release adapter, entry, development command, and production command only",
+    "genesLayerValidatedIndependently": true,
+    "finalWebpackLayersValidatedIndependently": true,
+    "strategy": "browser-composed-v3",
+    "twoStageFallbackRequired": false,
+    "unrelatedEntriesOrAdapters": "not-tested",
+    "nextJsCorrelation": "not-tested-owned-by-sdk-113",
+    "generalProductionSupport": false,
+    "publicationAuthorized": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "nodeBuild": {
+      "version": "22.17.0",
+      "npm": "10.9.2",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "wordpressScripts": "31.5.0",
+    "webpack": "5.108.4",
+    "typescript": "5.9.3",
+    "babelTypeScriptTransform": "7.29.7",
+    "dependencyExtractionPlugin": "6.40.0",
+    "integrityLockedNpmPackageCount": 1657,
+    "browser": {
+      "driver": "@playwright/test@1.58.2",
+      "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+      "node": "24.13.0",
+      "npm": "11.6.2",
+      "platforms": {
+        "linux/amd64": {
+          "manifestDigest": "sha256:65cefd09a5e943921ecd3a6e5414c603db2eb161e9eb48f2e2ccc63486dc7dc0",
+          "browserVersion": "145.0.7632.6"
+        },
+        "linux/arm64": {
+          "manifestDigest": "sha256:68f1c3dca663d0e8331e8af4681b0b315eca7de1bd7fa934aac0accbeb9f8323",
+          "browserVersion": "145.0.7632.0"
+        }
+      }
+    }
+  },
+  "authenticatedInputs": [
+    {
+      "path": "packages/gutenberg/build-tooling/webpack.config.cjs",
+      "sha256": "6b5cacecf2e308a884cc86cb7e05e9ffc45d10232cac046cb5d05725ce43ca74"
+    },
+    {
+      "path": "packages/gutenberg/profiles/assets-strict.hxml",
+      "sha256": "5bae14fa9d25e86737159fd27c02958093feb4253f94ed9739ecd9e974ad820e"
+    },
+    {
+      "path": "packages/gutenberg/scripts/create-source-correlation-mutations.py",
+      "sha256": "04f4e636df692935f5ce1dfc2d9eb7b26eac226a53d45b98b8cb5870f2169482"
+    },
+    {
+      "path": "packages/gutenberg/scripts/package-source-correlation.py",
+      "sha256": "db45387310377e9361d711380cee41c6445b9e526b01d0397dd7d8ba9686ece5"
+    },
+    {
+      "path": "packages/gutenberg/scripts/run-source-correlation-browser.mjs",
+      "sha256": "8a01154af6e44dee3cd345641c19993f874ac6865e2c8de989b92e1561667481"
+    },
+    {
+      "path": "packages/gutenberg/scripts/test-assets.sh",
+      "sha256": "7092ce25428112f502cd4665f9662aa0b35ff18e10e6dcab5735a7e486622d17"
+    },
+    {
+      "path": "packages/gutenberg/scripts/verify-source-correlation.py",
+      "sha256": "9333389198a2c7b495ad345a5659d2814aec20da4681af80d19ddb3f46c2d35a"
+    },
+    {
+      "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",
+      "sha256": "be11b83d92463aa6892a80cca5abad09d5fbd162c2a7b9bbd9896456305464a5"
+    },
+    {
+      "path": "packages/gutenberg/test/assets-runtime/editor-entry.tsx",
+      "sha256": "84921425b94fb4bab1f79cfd5aa055279ce4ff0a4a7bdeb12b01a0b8d35f4f70"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+      "sha256": "b5f958e8df3cd6d8c9bb0a24666ab13b3cfddc3c6828e2d12c578ce67dcce987"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+      "sha256": "fc3022e6ae3c47bacc89067950549e9ade2d5bc8c48e81051bb4b87c67bd5d7e"
+    },
+    {
+      "path": "schemas/source-correlation-index.schema.json",
+      "sha256": "90b30232f638d3ec999aaab45a007c8a63a48d6cfba7425f2f6fea2060290b3d"
+    },
+    {
+      "path": "scripts/source-correlation/source_map_v3.py",
+      "sha256": "dd930c6ddfc403ab1092511291a7c311e26b52016654c937da5e2ab88b5a6010"
+    }
+  ],
+  "layerEvidence": {
+    "genes": {
+      "format": "regular Source Map v3",
+      "rawSha256": "3bf6d109b2291adc137b0bdf5b7cc9f73914407f13278489c08e4f3a021a4fe3",
+      "normalizedSha256": "f5804ec436edbee44613626ff34c878c6ac2e48c3e1bb228c41862ead2e7c98d",
+      "rawSourceCount": 6,
+      "haxeSourceCount": 6,
+      "sourcesContentPresent": false,
+      "validatedBeforeWebpack": true
+    },
+    "development": {
+      "rawSha256": "0be0e02e87f3807768e3e9b6b6925de29b1f5022b1a0876e9f2e93011cdc466e",
+      "normalizedSha256": "209fca178a4cbccc36b22118b4dea7420bdc6aa30634357dd122451692f3433f",
+      "rawSourceCount": 19,
+      "haxeSourceCount": 7,
+      "embeddedHaxeSourceContentVerified": 9,
+      "webpackVirtualSegmentsProjectedToUnmapped": true,
+      "sourcesContentRemoved": true
+    },
+    "production": {
+      "rawSha256": "11822259c164fbdbc4b6adf18e4876282ebf8dd369ecc88451ba9b30343992fa",
+      "normalizedSha256": "136ba177c19f6fb7cd971d2575a26f10359eebe7905bddd5d8657a4bf18b7d3e",
+      "rawSourceCount": 10,
+      "haxeSourceCount": 5,
+      "embeddedHaxeSourceContentVerified": 0,
+      "webpackVirtualSegmentsProjectedToUnmapped": true,
+      "sourcesContentRemoved": true
+    },
+    "compositionDecision": {
+      "fullCompositionProvenForExactEntryAndModes": true,
+      "twoStageFallbackRetainedByCli": true,
+      "twoStageFallbackUsedForThisReceipt": false,
+      "unmappedVirtualSegmentsNeverGuessed": true
+    }
+  },
+  "fixtureEvidence": {
+    "failureToken": "G24_WORDPRESS_SCRIPTS_SOURCE_CORRELATION_FAILURE",
+    "expectedSource": {
+      "rootId": "project",
+      "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",
+      "line": 12,
+      "column": 8
+    },
+    "sourceIndexSha256": "60e12b174469a8b4e3acd8cb2054825db047bfcddd9c3b63f1d284d50c55f2c8",
+    "artifactSetSha256": "b1b173ac6f4257da7173c587744034276a7c889dfff282a80a1f3c4314d3dea5",
+    "indexedFileCount": 15,
+    "browserReceiptSha256ByPlatform": {
+      "linux/arm64": "c3abb9e78b51fda16a14d2397d413c36ae6c0aebab7f5ef09a076518b297927b"
+    },
+    "modes": {
+      "development": {
+        "nativeFrame": {
+          "path": "runtime/development/editor.js",
+          "line": 421,
+          "column": 11
+        },
+        "status": "mapped-composed",
+        "stackSha256": "81abf6db7da9cf8b1c40a7fef38f5affaffebafcb05b715e619e65ddabbc6a6a",
+        "traceJsonSha256": "fbd186723fff822b68320456d9fa9d71fb578957b163c7ebcd9d819bc1586c99",
+        "traceTextSha256": "197a806770a88ea4c0cb47c00bce1996caab40c44ca1fe9babd1884e7cbf2dc2"
+      },
+      "production": {
+        "nativeFrame": {
+          "path": "wordpresshx-sdk033-assets/build/editor.js",
+          "line": 1,
+          "column": 3000
+        },
+        "status": "mapped-composed",
+        "stackSha256": "0b16b4cbd66bf6052a7f43a90e4f429b8d0b1f1c0c1087632589e2335b9c121f",
+        "traceJsonSha256": "acccb4d0a5a2e67a0f4aec9a25af5b84f6f650b43472874e0a2e9cb791282814",
+        "traceTextSha256": "269f11ee4d02818e52b418f121fbe7da77b6fe460abf610627a6d540a723357f"
+      }
+    },
+    "realChromiumFailureRuns": 4,
+    "browserFailuresReplayStable": true,
+    "nativeFramesPreserved": true,
+    "canonicalJsonReplay": true
+  },
+  "assetPreservation": {
+    "assetPlanSha256": "cdd41ea62537ddd1b03a11b329f773ad6db61c6f477e7a6970e08d18e1e8a1ab",
+    "generatedTreeSha256": "b7ef331e91ed97b7577d139a37bc61aa110d54e2e79dccb9d0bcc02e6412a097",
+    "developmentBundleSha256": "8df0b34f4548c5842422ab779736cf877810716113b5df02cc4186ba08d4a0ea",
+    "developmentVersion": "c741be6ca63d810b3503",
+    "productionBundleSha256": "7c673d9302d661a745f3130a0741abec0eb0e3778bba044ca76672e576db1dec",
+    "productionVersion": "1c795843ae343856bc13",
+    "assetPhpSha256": "7c43ce56f99d14e85fd3ef750184987361936b57b6e3b849939bd8fa3be0f9f7",
+    "externalizedReportSha256": "4b7f8e017b2c027d52dc6809d7744984e29d9e7d9871c5fa3dbcc0d75964498c",
+    "dependencies": [
+      "react-jsx-runtime",
+      "wp-components",
+      "wp-element",
+      "wp-i18n"
+    ],
+    "developmentProductionDependencyParity": true,
+    "officialAssetPhpCopiedUnchanged": true,
+    "translationsPreserved": true,
+    "publicExportPreserved": true
+  },
+  "packaging": {
+    "packageManifestSha256": "b703bcc99a439774cc34cc5820962afa1c097150c488b484acabe33143de7438",
+    "productionZip": {
+      "sha256": "671682a94305bfae221367197d2947733672ef60fd9bb1b7613fd8f63dfd5072",
+      "byteLength": 7174,
+      "entries": [
+        "wordpresshx-sdk033-assets/build/editor.asset.php",
+        "wordpresshx-sdk033-assets/build/editor.js",
+        "wordpresshx-sdk033-assets/generation-manifest.json",
+        "wordpresshx-sdk033-assets/languages/wordpresshx-sdk033-en_US-wordpresshx-sdk033-editor.json",
+        "wordpresshx-sdk033-assets/wordpresshx-sdk033-assets.php"
+      ]
+    },
+    "debugCompanionZip": {
+      "sha256": "bec2b6d58c8dcc35eda1fcd39327f406e9d5bd77928306f52b25b829beeb9869",
+      "byteLength": 40739,
+      "entries": [
+        "generated/sdk033/fixture/EditorPanel.tsx",
+        "maps/genes-editor-panel.tsx.map",
+        "maps/wordpress-scripts-development.js.map",
+        "maps/wordpress-scripts-production.js.map",
+        "runtime/development/editor.js",
+        "source-index.json"
+      ]
+    },
+    "productionTreeSha256": "c6a0ae260c4267712909bd523f01051e7e7b0cad8db71ff87ca233020a4aef91",
+    "mapsInProduction": false,
+    "sourceIndexInProduction": false,
+    "haxeSourceIncluded": false,
+    "sourceContentIncluded": false,
+    "inlineSourceMapCommentInRuntime": false,
+    "deterministicReplay": "passed"
+  },
+  "verification": {
+    "commands": [
+      "bash packages/gutenberg/scripts/test-assets.sh",
+      "python3 packages/gutenberg/scripts/verify-source-correlation.py <package-root> <combined-evidence> <browser-output> <asset-plan>",
+      "node packages/gutenberg/scripts/run-source-correlation-browser.mjs <combined-evidence> <browser-output>",
+      "node packages/cli/build/index.js trace browser <stack> --index <source-index> --source-root project=<repo> --source-root genes=<genes> --source-root haxe-stdlib=<stdlib> --format json"
+    ],
+    "cleanGeneratedTreeReplay": "passed",
+    "cleanDevelopmentBundleReplay": "passed",
+    "cleanProductionBundleReplay": "passed",
+    "cleanPluginReplay": "passed",
+    "cleanCorrelationPackageReplay": "passed",
+    "php74Syntax": "passed",
+    "php84Syntax": "passed",
+    "wordpress70MysqlRuntime": "passed-via-sdk-033",
+    "negativeCases": {
+      "integrityOrSchemaExit3": [
+        "stale-runtime",
+        "stale-map",
+        "absolute-map-source",
+        "sources-content",
+        "wrong-map-file",
+        "unknown-map-field",
+        "unknown-index-field",
+        "absolute-index-path",
+        "stale-source"
+      ],
+      "ambiguousContractExit4": [
+        "ambiguous-correlation"
+      ],
+      "usageOrInputExit2": [
+        "out-of-range-frame",
+        "empty-stack"
+      ],
+      "unmappedWithoutGuessing": [
+        "basename-only",
+        "unknown-path",
+        "missing-column"
+      ],
+      "packageRejected": [
+        "secret-shaped-content",
+        "machine-path-content"
+      ]
+    }
+  },
+  "security": {
+    "productionZipMapCount": 0,
+    "productionZipHaxeSourceCount": 0,
+    "productionZipSourceIndexCount": 0,
+    "machinePathLeakCount": 0,
+    "secretShapedLeakCount": 0,
+    "npmLifecycleScriptsAllowed": false,
+    "nodeModulesShipped": false,
+    "debugCompanionRequiredForCorrelation": true,
+    "defaultProductionBehaviorChangedByProbe": false
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "reason": "The exact Genes maps are standards-valid and the official WordPress source-map loader composes them correctly when its authenticated Haxe source root is mounted; the SDK adapter only enables hidden maps and projects non-Haxe Webpack virtual segments to unmapped positions."
+  },
+  "implementation": {
+    "baseCommit": "24fb649dc216662d53627732c0272635a3f5ccef",
+    "commit": null
+  },
+  "hostedVerification": {
+    "workflow": "repository.yml",
+    "job": "wordpress-runtime",
+    "status": "pending-main-push",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "jobCount": null,
+    "fullMatrixStatus": "pending",
+    "g24Step": "pending"
+  },
+  "claims": {
+    "officialWordpressScriptsCorrelation": "implemented-local-verified-hosted-pending",
+    "sourceMapComposition": "exact-entry-development-and-production-only",
+    "productionArtifactPrivacy": "passed",
+    "nextJsCorrelation": "not-tested-sdk-113",
+    "unrelatedWordpressEntries": "not-tested",
+    "generalProductionSupport": "not-tested",
+    "publicPackagePublication": "blocked"
+  }
+}

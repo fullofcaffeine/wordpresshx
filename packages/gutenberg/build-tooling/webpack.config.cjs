@@ -109,6 +109,7 @@ function enableExternalizedReport(configuration) {
   const state = { babelLoaders: 0 };
   const adapted = {
     ...configuration,
+    devtool: "hidden-source-map",
     entry: normalizeEntryNames(configuration.entry),
     module: {
       ...configuration.module,

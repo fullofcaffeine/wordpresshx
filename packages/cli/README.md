@@ -72,10 +72,14 @@ unmapped segments retain their exact native frame without basename, suffix, or
 nearest-line guessing. URL origins are transport details; the complete decoded
 pathname is the file identity.
 
-The current receipt admits only the exact Genes 1.36.3/esbuild 0.27.2 fixture
-entry in development, minified production, and two-stage modes. Correlation
-through the official `@wordpress/scripts` bundle is tracked separately by
-`wordpresshx-g2.4`; future NextJsHx adapters must be proven per entry and mode.
+SDK-034 admits the exact Genes 1.36.3/esbuild 0.27.2 fixture entry in
+development, minified production, and two-stage modes. G2.4 separately projects
+the same strict lookup contract through the exact SDK-033
+`@wordpress/scripts` 31.5.0 entry in development and minified production. Its
+real Chromium frames resolve through one authenticated composed layer to the
+same Haxe token while preserving native frames and honest unmapped results.
+This remains a bounded entry-and-mode claim; future entries and NextJsHx
+adapters must be proven independently.
 
 ## Development and packaging
 
@@ -98,3 +102,5 @@ The bounded implementation and non-claims are recorded by
 [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json)
 and
 [`SDK-034-BROWSER-SOURCE-CORRELATION`](../../manifests/evidence/sdk-034-browser-source-correlation.json).
+The official WordPress adapter proof is recorded by
+[`G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION`](../../manifests/evidence/g2.4-wordpress-scripts-source-correlation.json).

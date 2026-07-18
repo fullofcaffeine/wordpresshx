@@ -19,8 +19,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   PHP range-map, package source-index, browser composition/two-stage fallback,
   offline trace, logical-path, and debug-retention lock. SDK-025 implements the
   native PHP path and SDK-034 implements the exact esbuild/real-Chromium browser
-  path. Official WordPress build correlation remains the separately bounded
-  `wordpresshx-g2.4` follow-up; neither receipt is general production support.
+  path. Receipt `G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION` projects the same
+  contract through the exact SDK-033 entry and official development/production
+  commands into a private debug companion; none of these bounded receipts is
+  general production support.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.

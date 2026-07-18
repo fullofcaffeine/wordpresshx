@@ -511,9 +511,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             "lockSha256",
             "directPackages",
             "runtimeImage",
+            "browserRuntimeImage",
             "lifecycleScriptsAllowed",
             "buildInputOnly",
             "advisoryFollowUp",
+            "sourceCorrelationReceiptId",
             "receiptId",
         },
         "SDK-033 npm graph",
@@ -582,6 +584,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         "SDK-033 npm runtime image differs from the Node lock",
     )
     audit.check(
+        sdk033_graph.get("browserRuntimeImage")
+        == playwright.get("reference"),
+        "SDK-033 browser runtime image differs from the Playwright lock",
+    )
+    audit.check(
         sdk033_graph.get("lifecycleScriptsAllowed") is False,
         "SDK-033 npm lifecycle scripts must remain disabled",
     )
@@ -592,6 +599,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(
         sdk033_graph.get("advisoryFollowUp") == "wordpresshx-g2.3",
         "SDK-033 advisory follow-up changed",
+    )
+    audit.check(
+        sdk033_graph.get("sourceCorrelationReceiptId")
+        == "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
+        "SDK-033 source-correlation receipt changed",
     )
     audit.check(
         sdk033_graph.get("receiptId")
@@ -881,6 +893,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             "SDK-032-REACT-GUTENBERG-HXX",
             "SDK-033-WORDPRESS-ASSET-METADATA",
             "SDK-034-BROWSER-SOURCE-CORRELATION",
+            "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
         ],
         "wp70 upstream/source receipt link changed",
     )

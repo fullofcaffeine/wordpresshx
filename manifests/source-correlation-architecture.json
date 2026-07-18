@@ -3,7 +3,7 @@
   "decision": "ADR-014",
   "status": "accepted-architecture",
   "acceptedAt": "2026-07-18",
-  "claim": "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-official-wordpress-adapter-pending",
+  "claim": "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-official-wordpress-adapter-source-correlation-implemented-hosted-pending",
   "publicContract": {
     "phpMapFormat": "wordpresshx.php-haxe-range-map.v1",
     "phpMapSchema": "schemas/php-haxe-map.schema.json",
@@ -231,10 +231,11 @@
       "boundedEsbuildComposition": "map-token-correlation-passed-not-deliberate-stack-throw",
       "exactEsbuildTraceGate": "development-and-minified-composition-plus-two-stage-fallback-runtime-passed",
       "traceCli": "implemented-offline-stable-text-and-canonical-json",
-      "productionPackageRetention": "runtime-js-only-map-index-and-source-content-absent",
+      "productionPackageRetention": "esbuild-runtime-js-only-and-wordpress-installable-plugin-map-index-source-content-absent",
       "officialWordpressScriptsLaneReceiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
-      "officialWordpressScriptsCorrelation": "not-tested-follow-up-wordpresshx-g2.4",
-      "deliberateDevelopmentAndProductionThrows": "passed-for-exact-sdk-034-esbuild-fixture"
+      "officialWordpressScriptsCorrelationReceiptId": "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
+      "officialWordpressScriptsCorrelation": "exact-entry-development-and-production-composed-local-verified-hosted-pending",
+      "deliberateDevelopmentAndProductionThrows": "passed-for-exact-sdk-034-esbuild-and-g2.4-wordpress-scripts-fixtures"
     },
     "productionSupport": "not-tested",
     "boundedProductionPackageEvidence": "passed-not-a-production-support-claim",

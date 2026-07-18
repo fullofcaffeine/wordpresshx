@@ -202,9 +202,11 @@
             "webpack@5.108.4"
           ],
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "browserRuntimeImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
           "lifecycleScriptsAllowed": false,
           "buildInputOnly": true,
           "advisoryFollowUp": "wordpresshx-g2.3",
+          "sourceCorrelationReceiptId": "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
           "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA"
         },
         {
@@ -279,7 +281,7 @@
   "profileInputs": {
       "upstreamLock": {
         "path": "manifests/upstream.lock.json",
-        "sha256": "ae86a271256f6c61dc9f0099399223708e30776e856867e0b8c7ba1ceed7fa32"
+        "sha256": "cce266ad96540a574bfc900bf16f5f818af608c66ddfc6ea303028cd71c84b7a"
       },
     "profiles": [
       "wp70-release",

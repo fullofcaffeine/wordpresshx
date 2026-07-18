@@ -360,7 +360,12 @@ function laneEvidence(root, lane) {
           "editor.js.map",
           "externalized-dependencies.json",
         ]
-      : ["editor.asset.php", "editor.js", "externalized-dependencies.json"];
+      : [
+          "editor.asset.php",
+          "editor.js",
+          "editor.js.map",
+          "externalized-dependencies.json",
+        ];
   assert.deepEqual(
     fs.readdirSync(outputRoot).sort(),
     expectedFiles,

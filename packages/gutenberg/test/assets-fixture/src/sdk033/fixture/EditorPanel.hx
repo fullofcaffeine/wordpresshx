@@ -8,6 +8,10 @@ import wordpress.hx.gutenberg.i18n.I18n.__;
 @:build(wordpress.hx.gutenberg.browser.BrowserExport.build("wordpresshx.sdk033.editor-panel",
 	["gutenberg.package.@wordpress/components", "gutenberg.package.@wordpress/i18n"]))
 class EditorPanel {
+	public static function sourceCorrelationProbe():Void {
+		throw new js.lib.Error("G24_WORDPRESS_SCRIPTS_SOURCE_CORRELATION_FAILURE");
+	}
+
 	public static function App():BrowserNode {
 		return <section class="sdk033-proof" aria-labelledby="sdk033-proof-title">
 			<p class="sdk033-proof__eyebrow">WORDPRESSHX / FINAL ASSET PROOF</p>
