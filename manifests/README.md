@@ -40,8 +40,8 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   authority, portable path confinement, complete-stage, manifest-last journal,
   recovery, clean, and adoption lock. Its temporary-filesystem harness validates
   the historical contract. `ownership-implementation.json` records the SDK-041
-  Haxe/Genes implementation, its exact runtime profile, and its bounded local
-  filesystem evidence; target emitters and the final CLI remain later work.
+  Haxe/Genes implementation, its exact runtime profile, and its bounded locked
+  Linux filesystem evidence; target emitters and the final CLI remain later work.
 - `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
   effective-input, `wphx` command/stage/event, isolated compiler-server, and
   one-command development-loop lock. Its synthetic transcript proves dry-run,
