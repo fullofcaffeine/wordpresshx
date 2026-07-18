@@ -1,7 +1,7 @@
 # Generated artifact ownership fixtures
 
-This directory is the executable ADR-007 filesystem contract, not the production
-SDK-041 artifact owner.
+This directory supplies the canonical ADR-007 contract vectors and the real
+SDK-041 Haxe artifact-owner corpus.
 
 `valid/current.generated-files.json` owns the initial plugin and stale support
 files. `valid/next.generated-files.json` replaces the plugin, removes the stale
@@ -19,14 +19,20 @@ Run:
 bash scripts/ownership/test.sh
 ```
 
-The harness creates isolated temporary project roots and exercises success,
-caught failure, abrupt interruption, recovery, clean, relinquishment, idempotent
-rebuild, link/path/collision/edit failures, and malformed state. Refreshing
-canonical fixtures is an explicit review action:
+The aggregate gate first runs the independent Python ADR oracle. It then compiles
+the production Haxe owner twice through immutable Genes, compares both generated
+trees, and runs the result on exact Node 22.17.0 with networking disabled. The
+production corpus creates isolated project roots and exercises success, caught
+failure, thirteen abrupt interruptions across build/clean/adopt phases, exact
+rollback/finalization, idempotent rebuild, complete staging, strict JSON,
+link/path/collision/edit failures, and malformed or tampered recovery state.
+Refreshing canonical fixtures remains an explicit review action:
 
 ```bash
 python3 scripts/ownership/test-contract.py --write-fixtures
 ```
 
-Fixture success does not claim a production CLI implementation, power-loss or
-Windows support, WordPress/Next.js runtime compatibility, or production support.
+The artifact-owner library is implemented, but SDK-043 has not exposed these
+operations through the final `wphx` command. The evidence does not claim
+power-loss, Windows/network-filesystem, hostile concurrent mutation,
+WordPress/Next.js runtime compatibility, or production support.

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-041",
+  "status": "implemented-sdk041",
+  "contract": {
+    "manifest": "wordpress-hx.generated-files.v1",
+    "journal": "wordpress-hx.ownership-journal.v1",
+    "transaction": "wordpress-hx.ownership-transaction.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
+    "commitMarker": "manifest-published-last"
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "publicOwner": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "publicTypes": [
+      "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
+      "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+      "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx"
+    ],
+    "internalContracts": [
+      "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+      "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
+      "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx"
+    ],
+    "exactToolchain": {
+      "haxe": "4.3.7",
+      "genes": "1.36.3",
+      "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "hxnodejs": "10.0.0",
+      "node": "22.17.0",
+      "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "genesSourceChanged": false,
+    "siblingDependencyCreated": false
+  },
+  "safety": {
+    "strictCanonicalJsonAndDuplicateKeys": true,
+    "binarySha256AndByteSize": true,
+    "portableRelativePaths": true,
+    "caseCollisionRejection": true,
+    "noFollowComponentChecks": true,
+    "singleFilesystemRenames": true,
+    "exclusiveProjectLock": true,
+    "journalDurableBeforeLiveMutation": true,
+    "completePrivateStage": true,
+    "manifestPublishedLast": true,
+    "exactHashRollback": true,
+    "exactHashFinalize": true,
+    "unexpectedBytesPreserved": true,
+    "cleanManifestOnly": true,
+    "adoptExactPathsOnly": true,
+    "forceFlag": false,
+    "networkDependency": false
+  },
+  "verification": {
+    "command": "bash scripts/ownership/test.sh",
+    "compileReplayCount": 2,
+    "exactNodeVersion": "22.17.0",
+    "positiveInvocationCount": 17,
+    "negativeInvocationCount": 26,
+    "crashCheckpointCount": 13,
+    "adrPositiveFilesystemCount": 11,
+    "adrNegativeFilesystemCount": 17,
+    "adrNegativeMutationCount": 25,
+    "recoveryModes": [
+      "finalize-complete-next",
+      "rollback-partial"
+    ],
+    "outcome": "passed"
+  },
+  "claims": {
+    "sdk041ArtifactOwner": "runtime-tested-local",
+    "processFailureAtomicity": "runtime-tested-local",
+    "processCrashConsistency": "runtime-tested-local",
+    "cleanAndAdopt": "runtime-tested-local",
+    "powerLossDurability": "not-tested",
+    "windowsFilesystem": "not-tested",
+    "networkFilesystem": "not-tested",
+    "hostileConcurrentMutation": "not-tested",
+    "finalWphxCommandIntegration": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "exact-node-22.17.0-linux-container-runtime-evidence",
+    "darwin-runtime-not-tested",
+    "process-failure-and-interruption-not-power-loss",
+    "no-windows-or-network-filesystem-evidence",
+    "no-hostile-concurrent-mutation-claim",
+    "sdk043-final-cli-integration-pending",
+    "no-real-wordpress-or-nextjs-generated-tree"
+  ]
+}

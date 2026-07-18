@@ -39,8 +39,9 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `generated-artifact-ownership.json` is the accepted ADR-007 exact-path/hash
   authority, portable path confinement, complete-stage, manifest-last journal,
   recovery, clean, and adoption lock. Its temporary-filesystem harness validates
-  the contract; SDK-041 still owns the production Haxe/CLI implementation and
-  broader platform evidence.
+  the historical contract. `ownership-implementation.json` records the SDK-041
+  Haxe/Genes implementation, its exact runtime profile, and its bounded local
+  filesystem evidence; target emitters and the final CLI remain later work.
 - `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
   effective-input, `wphx` command/stage/event, isolated compiler-server, and
   one-command development-loop lock. Its synthetic transcript proves dry-run,
@@ -96,22 +97,35 @@ Receipt `ADR-006-SEMANTIC-PLAN-CONTRACT` records the closed plan/emission
 schemas, content-addressed node schemas, canonical fixture digests, source and
 artifact traceability, sibling-pattern provenance, six canonicalization
 vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
-SDK-040, SDK-041 production publication, real emitters, and runtime compatibility
-remain unproven.
+SDK-040 collection and SDK-041 ownership publication now have separate
+implementation receipts; real emitters and runtime compatibility remain
+unproven.
 
 Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
 collector, four deterministic direct/server compilations, ten source-located
 compile failures, five schema/input mutations, exact effective inputs, and
 full-DCE runtime absence. It emits intermediate plan/input artifacts only;
-SDK-041 target publication and SDK-043/044 CLI/watch services remain unproven.
+the SDK-041 owner is implemented separately, while target emitter integration
+and SDK-043/044 CLI/watch services remain unproven.
 
 Receipt `ADR-007-GENERATED-ARTIFACT-OWNERSHIP` records the closed exact-file
 manifest and journal schemas, canonical old/new/create/replace/remove fixtures,
 portable path and collision rules, real temporary-filesystem rollback/recovery,
 manifest-only clean, explicit relinquishment, 11 positive filesystem scenarios,
-17 fail-closed filesystem cases, and 25 schema/journal mutations. It is contract evidence only;
-SDK-041, power-loss/Windows behavior, real site trees, packaging, and production
-support remain untested.
+17 fail-closed filesystem cases, and 25 schema/journal mutations. It remains the
+historical contract receipt; the SDK-041 implementation has its own receipt.
+Power-loss/Windows behavior, real site trees, packaging, and production support
+remain untested.
+
+Receipt `SDK-041-OWNERSHIP-TRANSACTION` records the Haxe-authored,
+Genes-emitted Node implementation of exact manifest ownership, complete private
+staging, journal-before-mutation publication, manifest-last commit, exact-hash
+rollback/finalization, manifest-only clean, and explicit adoption. Its locked
+Linux/Node corpus includes deterministic compiler replay, 17 successful
+invocations, 26 fail-closed invocations, and all 13 durable crash checkpoints.
+It does not claim power-loss durability, Windows or network filesystems,
+hostile concurrent mutation, final `wphx` command integration, real WordPress or
+Next.js generated trees, or production support.
 
 Receipt `ADR-016-PROJECT-CLI-CONFIGURATION` records four closed schemas, a
 synthetic Haxe-only consumer, an exact generated project lock, nine effective

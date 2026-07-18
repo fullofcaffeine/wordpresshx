@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
+  "bead": "wordpresshx-sdk-041",
+  "observedAt": "2026-07-18T21:59:45Z",
+  "subject": {
+    "architecture": {
+      "path": "manifests/ownership-implementation.json",
+      "sha256": "5e48c13e63f924e67afc39531cbe488ab0f3a8d5f36091cfd767c390989f4c8f"
+    },
+    "owner": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+      "sha256": "dfb6c5302da5e0783877ae80aba3bb72a95ef59b9ce515313b863c949c0e6763"
+    },
+    "contract": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+      "sha256": "71293cc7a2582054c5fac68c7b8016685f1f8939988a501a54577433f712c864"
+    },
+    "canonicalJson": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+      "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+    },
+    "fixtureEntry": {
+      "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
+      "sha256": "e6b3d96f27b383ff209c70e1789138e4b8c984025e181cf439af16652d71bcb9"
+    },
+    "compileProfile": {
+      "path": "packages/cli/profiles/ownership-test.hxml",
+      "sha256": "79b1db30b0e270c51e5bf62602c744bcf338efa62ed647e3c4f5cc89f60fe76b"
+    },
+    "productionCorpus": {
+      "path": "scripts/ownership/test-production.py",
+      "sha256": "546790441756d44486f2e4a6c7f68ffc7517bebae178c9cfa7359c8bf030f8c4"
+    },
+    "gate": {
+      "path": "scripts/ownership/test.sh",
+      "sha256": "d13128d03481e3e49e3b0f7082e3a6821b0ef59d8f6fbb3d7bb14de811507834"
+    },
+    "manifestSchema": {
+      "path": "schemas/generated-files.schema.json",
+      "sha256": "84797a5b01061bb7f5cf48271488864ce12de1330723717a7e7336bab0c7b485"
+    },
+    "journalSchema": {
+      "path": "schemas/ownership-transaction-journal.schema.json",
+      "sha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af"
+    }
+  },
+  "verification": {
+    "command": "bash scripts/ownership/test.sh",
+    "compileReplayCount": 2,
+    "exactNodeVersion": "22.17.0",
+    "network": "disabled",
+    "positiveInvocationCount": 17,
+    "negativeInvocationCount": 26,
+    "crashCheckpointCount": 13,
+    "adrPositiveFilesystemCount": 11,
+    "adrNegativeFilesystemCount": 17,
+    "adrNegativeMutationCount": 25,
+    "directVsReplayGeneratedTree": "byte-identical",
+    "diagnosticAbsolutePathPrivacy": "passed",
+    "noNetworkOrChildProcessImplementation": "passed",
+    "outcome": "passed"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "claims": {
+    "sdk041ArtifactOwner": "runtime-tested-local",
+    "processFailureAtomicity": "runtime-tested-local",
+    "processCrashConsistency": "runtime-tested-local",
+    "cleanAndAdopt": "runtime-tested-local",
+    "powerLossDurability": "not-tested",
+    "windowsFilesystem": "not-tested",
+    "networkFilesystem": "not-tested",
+    "hostileConcurrentMutation": "not-tested",
+    "finalWphxCommandIntegration": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "exact-node-22.17.0-linux-container-runtime-evidence",
+    "darwin-runtime-not-tested",
+    "process-failure-and-interruption-not-power-loss",
+    "no-windows-or-network-filesystem-evidence",
+    "no-hostile-concurrent-mutation-claim",
+    "sdk043-final-cli-integration-pending",
+    "no-real-wordpress-or-nextjs-generated-tree"
+  ]
+}

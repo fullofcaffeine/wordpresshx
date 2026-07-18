@@ -42,6 +42,7 @@ required_files=(
   docs/gates/README.md
   docs/gates/g0-product-authority-and-baseline.md
   docs/architecture/browser-compiler.md
+  docs/architecture/build-and-dev-loop.md
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
   docs/architecture/repository-layout.md
@@ -65,6 +66,7 @@ required_files=(
   packages/cli/browser-tooling/runtime.mjs
   packages/cli/profiles/browser-correlation.hxml
   packages/cli/profiles/classic.hxml
+  packages/cli/profiles/ownership-test.hxml
   packages/cli/scripts/add-node-shebang.py
   packages/cli/scripts/create-browser-trace-mutations.py
   packages/cli/scripts/package-browser-source-correlation.py
@@ -83,6 +85,14 @@ required_files=(
   packages/cli/src/wordpresshx/cli/SourceIndex.hx
   packages/cli/src/wordpresshx/cli/SourceMapV3.hx
   packages/cli/src/wordpresshx/cli/TraceFailure.hx
+  packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx
+  packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx
+  packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx
+  packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx
+  packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx
+  packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx
+  packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx
+  packages/cli/test/ownership/src/sdk041/fixture/Main.hx
   packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
   packages/cli/test/expected/browser-development.text
   packages/cli/test/expected/browser-production.text
@@ -270,7 +280,9 @@ required_files=(
   scripts/semantic-plan/test.sh
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
+  scripts/ownership/test-adr-contract.sh
   scripts/ownership/test-contract.py
+  scripts/ownership/test-production.py
   scripts/ownership/test.sh
   scripts/project-cli/test-contract.py
   scripts/project-cli/test.sh
@@ -345,6 +357,7 @@ required_files=(
   manifests/semantic-plan-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
+  manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
@@ -357,6 +370,7 @@ required_files=(
   manifests/evidence/adr-006-semantic-plan-contract.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
+  manifests/evidence/sdk-041-ownership-transaction.json
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -710,6 +724,14 @@ ownership_architecture = json.loads(
 ownership_receipt = json.loads(
     Path(
         "manifests/evidence/adr-007-generated-artifact-ownership.json"
+    ).read_text(encoding="utf-8")
+)
+ownership_implementation = json.loads(
+    Path("manifests/ownership-implementation.json").read_text(encoding="utf-8")
+)
+sdk041_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-041-ownership-transaction.json"
     ).read_text(encoding="utf-8")
 )
 project_cli_architecture = json.loads(
@@ -1625,6 +1647,9 @@ for reference in ownership_references:
     assert reference["copiedBytes"] is False
     assert reference["dependencyCreated"] is False
 ownership_verification = ownership_architecture["verification"]
+assert ownership_verification["command"] == (
+    "bash scripts/ownership/test-adr-contract.sh"
+)
 assert ownership_verification["positiveFilesystemCount"] == 11
 assert ownership_verification["negativeFilesystemCount"] == 17
 assert ownership_verification["negativeMutationCount"] == 25
@@ -1662,6 +1687,9 @@ assert ownership_receipt["receiptId"] == (
     "ADR-007-GENERATED-ARTIFACT-OWNERSHIP"
 )
 assert ownership_receipt["bead"] == "wordpresshx-adr-007"
+assert ownership_receipt["verification"]["command"] == (
+    "bash scripts/ownership/test-adr-contract.sh"
+)
 for ownership_subject in ownership_receipt["subject"].values():
     assert hashlib.sha256(Path(ownership_subject["path"]).read_bytes()).hexdigest() == (
         ownership_subject["sha256"]
@@ -1727,6 +1755,200 @@ for unproven_ownership_receipt_claim in (
     assert ownership_receipt["claims"][
         unproven_ownership_receipt_claim
     ] == "not-tested"
+
+assert ownership_implementation["schemaVersion"] == 1
+assert ownership_implementation["bead"] == "wordpresshx-sdk-041"
+assert ownership_implementation["status"] == "implemented-sdk041"
+assert ownership_implementation["contract"] == {
+    "manifest": "wordpress-hx.generated-files.v1",
+    "journal": "wordpress-hx.ownership-journal.v1",
+    "transaction": "wordpress-hx.ownership-transaction.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "ownershipAuthority": (
+        "exact-current-manifest-path-hash-size-and-regular-file"
+    ),
+    "commitMarker": "manifest-published-last",
+}
+ownership_code = ownership_implementation["implementation"]
+assert ownership_code["language"] == "Haxe"
+assert ownership_code["target"] == "Genes-emitted-Node-ESM"
+assert ownership_code["publicOwner"] == (
+    "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx"
+)
+assert ownership_code["publicTypes"] == [
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
+]
+assert ownership_code["internalContracts"] == [
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+]
+ownership_toolchain = ownership_code["exactToolchain"]
+assert ownership_toolchain == {
+    "haxe": cli_dependency_lock["haxe"]["version"],
+    "genes": cli_dependency_lock["compiler"]["version"],
+    "genesCommit": cli_dependency_lock["compiler"]["commit"],
+    "hxnodejs": cli_dependency_lock["nodeExterns"]["version"],
+    "node": cli_dependency_lock["runtime"]["version"],
+    "nodeImage": cli_dependency_lock["runtime"]["image"],
+}
+assert ownership_code["genesSourceChanged"] is False
+assert ownership_code["siblingDependencyCreated"] is False
+assert ownership_implementation["safety"] == {
+    "strictCanonicalJsonAndDuplicateKeys": True,
+    "binarySha256AndByteSize": True,
+    "portableRelativePaths": True,
+    "caseCollisionRejection": True,
+    "noFollowComponentChecks": True,
+    "singleFilesystemRenames": True,
+    "exclusiveProjectLock": True,
+    "journalDurableBeforeLiveMutation": True,
+    "completePrivateStage": True,
+    "manifestPublishedLast": True,
+    "exactHashRollback": True,
+    "exactHashFinalize": True,
+    "unexpectedBytesPreserved": True,
+    "cleanManifestOnly": True,
+    "adoptExactPathsOnly": True,
+    "forceFlag": False,
+    "networkDependency": False,
+}
+sdk041_verification = ownership_implementation["verification"]
+assert sdk041_verification["command"] == "bash scripts/ownership/test.sh"
+assert sdk041_verification["compileReplayCount"] == 2
+assert sdk041_verification["exactNodeVersion"] == "22.17.0"
+assert sdk041_verification["positiveInvocationCount"] == 17
+assert sdk041_verification["negativeInvocationCount"] == 26
+assert sdk041_verification["crashCheckpointCount"] == 13
+assert sdk041_verification["adrPositiveFilesystemCount"] == 11
+assert sdk041_verification["adrNegativeFilesystemCount"] == 17
+assert sdk041_verification["adrNegativeMutationCount"] == 25
+assert sdk041_verification["recoveryModes"] == [
+    "finalize-complete-next",
+    "rollback-partial",
+]
+assert sdk041_verification["outcome"] == "passed"
+for sdk041_local_claim in (
+    "sdk041ArtifactOwner",
+    "processFailureAtomicity",
+    "processCrashConsistency",
+    "cleanAndAdopt",
+):
+    assert ownership_implementation["claims"][sdk041_local_claim] == (
+        "runtime-tested-local"
+    )
+for sdk041_unproven_claim in (
+    "powerLossDurability",
+    "windowsFilesystem",
+    "networkFilesystem",
+    "hostileConcurrentMutation",
+    "finalWphxCommandIntegration",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "productionSupport",
+):
+    assert ownership_implementation["claims"][sdk041_unproven_claim] == (
+        "not-tested"
+    )
+assert ownership_implementation["limitations"] == [
+    "exact-node-22.17.0-linux-container-runtime-evidence",
+    "darwin-runtime-not-tested",
+    "process-failure-and-interruption-not-power-loss",
+    "no-windows-or-network-filesystem-evidence",
+    "no-hostile-concurrent-mutation-claim",
+    "sdk043-final-cli-integration-pending",
+    "no-real-wordpress-or-nextjs-generated-tree",
+]
+
+assert sdk041_receipt["schemaVersion"] == 1
+assert sdk041_receipt["receiptId"] == "SDK-041-OWNERSHIP-TRANSACTION"
+assert sdk041_receipt["bead"] == "wordpresshx-sdk-041"
+assert set(sdk041_receipt["subject"]) == {
+    "architecture",
+    "owner",
+    "contract",
+    "canonicalJson",
+    "fixtureEntry",
+    "compileProfile",
+    "productionCorpus",
+    "gate",
+    "manifestSchema",
+    "journalSchema",
+}
+for sdk041_subject in sdk041_receipt["subject"].values():
+    assert hashlib.sha256(Path(sdk041_subject["path"]).read_bytes()).hexdigest() == (
+        sdk041_subject["sha256"]
+    )
+sdk041_receipt_verification = sdk041_receipt["verification"]
+for sdk041_count in (
+    "compileReplayCount",
+    "positiveInvocationCount",
+    "negativeInvocationCount",
+    "crashCheckpointCount",
+    "adrPositiveFilesystemCount",
+    "adrNegativeFilesystemCount",
+    "adrNegativeMutationCount",
+):
+    assert sdk041_receipt_verification[sdk041_count] == (
+        sdk041_verification[sdk041_count]
+    )
+assert sdk041_receipt_verification["command"] == (
+    sdk041_verification["command"]
+)
+assert sdk041_receipt_verification["exactNodeVersion"] == (
+    sdk041_verification["exactNodeVersion"]
+)
+assert sdk041_receipt_verification["network"] == "disabled"
+assert sdk041_receipt_verification["directVsReplayGeneratedTree"] == (
+    "byte-identical"
+)
+for sdk041_receipt_proof in (
+    "diagnosticAbsolutePathPrivacy",
+    "noNetworkOrChildProcessImplementation",
+):
+    assert sdk041_receipt_verification[sdk041_receipt_proof] == "passed"
+assert sdk041_receipt_verification["outcome"] == "passed"
+sdk041_hosted = sdk041_receipt["hostedWorkflow"]
+assert sdk041_hosted["workflow"] == "Repository bootstrap"
+assert sdk041_hosted["job"] == "haxe"
+assert sdk041_hosted["required"] is True
+if sdk041_hosted["status"] == "pending-first-hosted-main-run":
+    assert sdk041_hosted["runId"] is None
+    assert sdk041_hosted["jobId"] is None
+    assert sdk041_hosted["commit"] is None
+    sdk041_evidence_level = "runtime-tested-local"
+elif sdk041_hosted["status"] == "passed":
+    assert isinstance(sdk041_hosted["runId"], int)
+    assert isinstance(sdk041_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk041_hosted["commit"])
+    sdk041_evidence_level = "runtime-tested-hosted"
+else:
+    raise AssertionError("SDK-041 ownership hosted status is invalid")
+for sdk041_proven_claim in (
+    "sdk041ArtifactOwner",
+    "processFailureAtomicity",
+    "processCrashConsistency",
+    "cleanAndAdopt",
+):
+    assert sdk041_receipt["claims"][sdk041_proven_claim] == (
+        sdk041_evidence_level
+    )
+for sdk041_unproven_claim in (
+    "powerLossDurability",
+    "windowsFilesystem",
+    "networkFilesystem",
+    "hostileConcurrentMutation",
+    "finalWphxCommandIntegration",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "productionSupport",
+):
+    assert sdk041_receipt["claims"][sdk041_unproven_claim] == "not-tested"
+assert sdk041_receipt["limitations"] == ownership_implementation["limitations"]
+assert "Test fail-closed generated-file ownership transaction" in workflow_text
+assert "bash scripts/ownership/test.sh" in workflow_text
 
 assert project_cli_architecture["schemaVersion"] == 1
 assert project_cli_architecture["decision"] == "ADR-016"

@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/generated-artifact-ownership.json",
-      "sha256": "08a59e06659bdb10b6b3b83630ae34f14a0939223843f21cca1a76ace3cfe1f5"
+      "sha256": "4ad244d14ea810022a72878ddf6367bff4e8eeea702d869c77ab1b5096b364f9"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -25,7 +25,7 @@
       "sha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1"
     },
     "gate": {
-      "path": "scripts/ownership/test.sh",
+      "path": "scripts/ownership/test-adr-contract.sh",
       "sha256": "6b901444fdf0b6132c56aa3d5b9c82b8b87d35b18356da446f410c044f2c4743"
     },
     "currentManifestFixture": {
@@ -53,7 +53,7 @@
     "forceOverwrite": false
   },
   "verification": {
-    "command": "bash scripts/ownership/test.sh",
+    "command": "bash scripts/ownership/test-adr-contract.sh",
     "positiveFilesystemCount": 11,
     "negativeFilesystemCount": 17,
     "negativeMutationCount": 25,

@@ -146,7 +146,7 @@
     }
   ],
   "verification": {
-    "command": "bash scripts/ownership/test.sh",
+    "command": "bash scripts/ownership/test-adr-contract.sh",
     "validatorPath": "scripts/ownership/test-contract.py",
     "validatorSha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1",
     "positiveFilesystemCount": 11,

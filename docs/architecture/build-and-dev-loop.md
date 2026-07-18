@@ -1,7 +1,8 @@
 # Build and development loop
 
-Status: SDK-040 collector implemented; SDK-041 through SDK-044 publication,
-CLI, and long-running watcher work remains planned and tracked in beads.
+Status: SDK-040 collection and SDK-041 fail-closed publication are implemented;
+SDK-042 through SDK-044 deterministic orchestration, CLI, and long-running
+watcher work remains planned and tracked in beads.
 
 ## Developer surface
 
@@ -30,8 +31,10 @@ declaration sources, declared resources, public build environment value
 digests, exact profile catalog, exact node schemas, collector implementation,
 and every generated project-lock tool identity. Runtime secrets are absent.
 
-SDK-043 will merge this report with ADR-016's project, HXML/classpath, package,
-and discovery graph. SDK-044 will watch that merged graph. There is no separate
+SDK-041 now provides the exact-hash, complete-stage, journaled manifest-last
+transaction that preserves the last good generation. SDK-043 will merge the
+collector report with ADR-016's project, HXML/classpath, package, and discovery
+graph. SDK-044 will watch that merged graph. There is no separate
 handwritten list of directories that can silently omit a macro, lock, resource,
 or newly discovered Haxe source.
 

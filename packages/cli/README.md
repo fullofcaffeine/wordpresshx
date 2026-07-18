@@ -27,6 +27,27 @@ the active Lix executable, so scoped libraries do not depend on whichever
 system Haxe happens to appear first on `PATH`. SDK-025 required no Genes source
 change or pull request.
 
+## Generated artifact ownership
+
+SDK-041 adds the production Haxe implementation of
+`wordpress-hx.ownership-transaction.v1` under
+`wordpresshx.cli.ownership`. Emitters hand it a canonical next manifest and a
+complete caller stage. The owner reruns the exact manifest validator callbacks,
+rehashes every binary file, copies the complete tree below a private
+same-filesystem transaction root, creates an exclusive lock and durable
+self-digested journal, moves exact old bytes to backups, and publishes the new
+manifest last as the commit marker.
+
+`clean` removes only current manifest entries whose bytes still match.
+`adoptGenerated` keeps exact live bytes while transactionally relinquishing the
+named entries. Recovery either finalizes a complete committed generation or
+walks operations backward and restores exact prior hashes; unexpected live,
+backup, lock, journal, or manifest bytes stop recovery without a force path.
+
+This is the safety primitive for the `wphx dev` last-known-good loop. SDK-043
+still needs to expose it through the final `wphx build`, `clean`, and
+`adopt-generated` commands, and SDK-044 still owns watching and services.
+
 ## PHP trace command
 
 Capture the native PHP exception as normal, then correlate it against the exact
