@@ -1531,8 +1531,20 @@ assert sdk032_local["sourceMaps"]["machinePathLeaks"] == 0
 sdk032_hosted = sdk032_receipt["repositoryHostedVerification"]
 assert sdk032_hosted["workflow"] == "Repository bootstrap"
 assert sdk032_hosted["required"] is True
+assert len(sdk032_hosted["attempts"]) >= 1
+sdk032_failed_attempt = sdk032_hosted["attempts"][0]
+assert sdk032_failed_attempt["runId"] == 29637826116
+assert sdk032_failed_attempt["url"] == (
+    "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637826116"
+)
+assert sha1.fullmatch(sdk032_failed_attempt["commit"])
+assert sdk032_failed_attempt["haxeJobId"] == 88063151337
+assert sdk032_failed_attempt["status"] == "failed"
+assert sdk032_failed_attempt["failedStep"] == (
+    "Test typed React and Gutenberg HXX"
+)
 if sdk032_receipt["status"] == "implemented-hosted-pending":
-    assert sdk032_hosted["status"] == "pending-first-main-run-with-sdk-032-step"
+    assert sdk032_hosted["status"] == "pending-rerun-after-lix-global-root-fix"
     assert browser_architecture["evidence"]["gutenbergHxxFixture"] == (
         "implemented-by-sdk-032-hosted-verification-pending"
     )

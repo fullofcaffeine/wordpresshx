@@ -12,13 +12,13 @@ for command_name in docker git haxe haxelib lix node npm python3; do
   fi
 done
 
-lix_binary="$(command -v lix)"
-lix_haxe="$(command -v haxe)"
-lix_install_root="$(cd "$(dirname "$(realpath "${lix_binary}")")/.." && pwd)"
-if [[ ! -f "${lix_install_root}/package.json" ]] \
-  || [[ "$(node -p 'require(process.argv[1]).version' "${lix_install_root}/package.json")" != "15.12.4" ]] \
+lix_package_path="$(npm root --global)/lix/package.json"
+lix_haxe="$(npm prefix --global)/bin/haxe"
+if [[ ! -f "${lix_package_path}" ]] \
+  || [[ ! -x "${lix_haxe}" ]] \
+  || [[ "$(node -p 'require(process.argv[1]).version' "${lix_package_path}")" != "15.12.4" ]] \
   || [[ "$(lix --version)" != "15.12.2" ]] \
-  || [[ "$(realpath "${lix_haxe}")" != "${lix_install_root}/bin/haxeshim.js" ]]; then
+  || [[ "$(basename "$(realpath "${lix_haxe}")")" != "haxeshim.js" ]]; then
   echo "SDK-032 HXX gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
   exit 1
 fi

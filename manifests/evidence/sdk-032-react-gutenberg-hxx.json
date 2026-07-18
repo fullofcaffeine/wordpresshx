@@ -168,7 +168,7 @@
       },
       "gateScript": {
         "path": "packages/gutenberg/scripts/test-hxx.sh",
-        "sha256": "c2c99ef5709acc9be7bd81984751ca957f8ec0e3706747043bfb495ad2daa417"
+        "sha256": "c513348bf2841e761fafb00a894a93ad3241f425ca132293fddc6fcd31e1b334"
       }
     },
     "generatedArtifacts": {
@@ -305,9 +305,21 @@
     "buildInput": false
   },
   "repositoryHostedVerification": {
-    "status": "pending-first-main-run-with-sdk-032-step",
+    "status": "pending-rerun-after-lix-global-root-fix",
     "workflow": "Repository bootstrap",
-    "required": true
+    "required": true,
+    "attempts": [
+      {
+        "runId": 29637826116,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637826116",
+        "commit": "c204f8b8521c9a2178c74ae186caa06969c16027",
+        "haxeJobId": 88063151337,
+        "status": "failed",
+        "failedStep": "Test typed React and Gutenberg HXX",
+        "reason": "the SDK-032 gate inferred the Lix package root from realpath(command -v lix), which is not stable across global npm shim layouts",
+        "resolution": "derive the exact package manifest and Haxe shim from npm root --global and npm prefix --global, matching the already-hosted SDK-031 and SDK-080 pattern"
+      }
+    ]
   },
   "changeDecision": {
     "genesSourceChanged": false,
