@@ -19,6 +19,15 @@ projection coverage, artifact bytes, owner/source nodes, source spans, and
 required validators. It grants no permission to write live files; ADR-007 owns
 publication and recovery.
 
+[`semantic-collector-config.schema.json`](semantic-collector-config.schema.json)
+closes the generated SDK-040 macro bootstrap: exact project/profile/toolchain,
+resource roots, public build environment allowlist, and content-addressed node
+schemas. [`semantic-collector-inputs.schema.json`](semantic-collector-inputs.schema.json)
+is the collector's canonical effective-input sidecar. It records only logical
+paths and public environment value digests, binds every exact tool identity,
+and links its fingerprint to the semantic plan without creating a circular
+digest. SDK-043 will merge this bounded graph with ADR-016's complete CLI graph.
+
 [`generated-files.schema.json`](generated-files.schema.json) is the accepted
 ADR-007 exact generated-file authority. It binds canonical manifest bytes,
 portable output roots, exact path/hash/size ownership, plan/emission/profile

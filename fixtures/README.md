@@ -24,6 +24,11 @@ capabilities, UTF-8 source spans, projection coverage, and expected artifact
 bytes, then exercises canonicalization and fail-closed mutations. It is not the
 SDK-040 macro collector or a production PHP emitter.
 
+`semantic-collector/` contains the SDK-040 Haxe macro corpus. It declares one
+plugin, action, resource, and public build environment input, then proves
+direct/managed-server byte equality, typed failures, exact input inspection,
+and no runtime collector leakage. It does not emit or publish target files.
+
 `ownership/` contains the ADR-007 canonical current/next manifests, prepared
 journal, and exact artifact bytes. Its reference-only harness exercises real
 temporary filesystem publication, rollback, crash recovery, clean, adoption,

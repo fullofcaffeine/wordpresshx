@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/semantic-collector-inputs.schema.json",
+  "title": "WordPressHx semantic collector effective inputs",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "fingerprintAlgorithm",
+    "fingerprint",
+    "planDigest",
+    "project",
+    "profile",
+    "files",
+    "resources",
+    "environment",
+    "tools"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.semantic-collector-inputs.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "fingerprintAlgorithm": {
+      "const": "sha256-canonical-json-without-fingerprint-and-planDigest-v1"
+    },
+    "fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "planDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/file"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/resource"
+      }
+    },
+    "environment": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/environment"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "configPath"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "configPath": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "catalogRevision",
+        "catalogSha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]*/catalog-v[1-9][0-9]*$"
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byteLength",
+        "role"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "role": {
+          "enum": [
+            "collector-config",
+            "collector-source",
+            "node-schema",
+            "profile-catalog",
+            "resource",
+            "source",
+            "toolchain-lock"
+          ]
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "classification",
+        "required",
+        "source",
+        "valueSha256"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "classification": {
+          "const": "public-build"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "default",
+            "environment",
+            "unset"
+          ]
+        },
+        "valueSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "identity",
+        "lockEntrySha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lockEntrySha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

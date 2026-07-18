@@ -24,8 +24,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Haxe 4.3.7
+        uses: krdlab/setup-haxe@d93667502be3b4f31a94a3308a74388f2e178a8d # v2.1.0
+        with:
+          haxe-version: 4.3.7
       - name: Validate canonical semantic plan and staged emitter result
         run: bash scripts/semantic-plan/test.sh
+      - name: Compile and validate the semantic macro collector
+        run: bash scripts/semantic-collector/test.sh
 
   wp70-source:
     runs-on: ubuntu-24.04

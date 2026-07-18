@@ -1,0 +1,61 @@
+{
+  "schema": "wordpress-hx.semantic-collector-config.v1",
+  "canonicalization": "wordpress-hx.canonical-json.v1",
+  "sdkVersion": "0.0.0",
+  "collectorVersion": "1.0.0",
+  "project": {
+    "id": "acme-observatory",
+    "version": "0.1.0"
+  },
+  "profile": {
+    "id": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "catalogPath": "generated/wp70-release/catalog-v1/catalog.json",
+    "catalogSha256": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
+    "catalogFileSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e"
+  },
+  "toolchainLock": {
+    "path": "fixtures/project-cli/project/.wphx/project.lock.json",
+    "sha256": "d200cd7ee8e1f84c6763e461dc8f7429aeb735c243466344265196e2c74cdc83"
+  },
+  "resourceRoots": [
+    "fixtures/semantic-collector/assets"
+  ],
+  "environment": [
+    {
+      "name": "REQUIRED_PUBLIC_VALUE",
+      "required": true,
+      "classification": "public-build"
+    },
+    {
+      "name": "SITE_LOCALE",
+      "required": false,
+      "classification": "public-build",
+      "default": "en_US"
+    }
+  ],
+  "nodeSchemas": [
+    {
+      "schemaId": "wordpress-hx.semantic-node.wordpress.hook.v1",
+      "kind": "wordpress.hook",
+      "version": 1,
+      "authority": "core",
+      "path": "schemas/semantic-nodes/hook.schema.json",
+      "schemaSha256": "f9adbb92bd3023c60cf32ec67e0c09a5645f3072f78ec3dd1ff0452d772a6695",
+      "consumerEmitters": [
+        "wordpress.php"
+      ]
+    },
+    {
+      "schemaId": "wordpress-hx.semantic-node.wordpress.module.v1",
+      "kind": "wordpress.module",
+      "version": 1,
+      "authority": "core",
+      "path": "schemas/semantic-nodes/module.schema.json",
+      "schemaSha256": "f4921d090f5d06acd41d37bd3d43314df39661b6629cb3dc0b7b73da9df873b0",
+      "consumerEmitters": [
+        "wordpress.php"
+      ]
+    }
+  ]
+}

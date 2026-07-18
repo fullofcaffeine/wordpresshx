@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-040",
+  "status": "implemented-and-locally-tested",
+  "scope": "initial-module-hook-semantic-plan-macro-collector",
+  "contracts": {
+    "config": {
+      "identity": "wordpress-hx.semantic-collector-config.v1",
+      "path": "schemas/semantic-collector-config.schema.json",
+      "sha256": "03824d979ff50178c3b9ab266e7496789e99a86eb0ea750298ec3f5333d9b23d"
+    },
+    "plan": {
+      "identity": "wordpress-hx.semantic-plan.v1",
+      "path": "schemas/semantic-plan.schema.json",
+      "canonicalization": "wordpress-hx.canonical-json.v1"
+    },
+    "inputs": {
+      "identity": "wordpress-hx.semantic-collector-inputs.v1",
+      "path": "schemas/semantic-collector-inputs.schema.json",
+      "sha256": "a6c569405fce7b6953f6ef0a615696c893190dae1ad4235c7ea3c235aa01d25b",
+      "fingerprintAlgorithm": "sha256-canonical-json-without-fingerprint-and-planDigest-v1"
+    },
+    "nodeSchemas": [
+      "wordpress-hx.semantic-node.wordpress.hook.v1",
+      "wordpress-hx.semantic-node.wordpress.module.v1"
+    ]
+  },
+  "publicSurface": {
+    "install": "wordpress.hx.build.SemanticPlan.install",
+    "moduleDeclarations": [
+      "wordpress.hx.build.semantic.Module.block",
+      "wordpress.hx.build.semantic.Module.mustUsePlugin",
+      "wordpress.hx.build.semantic.Module.plugin",
+      "wordpress.hx.build.semantic.Module.theme"
+    ],
+    "hookDeclarations": [
+      "wordpress.hx.build.semantic.Hook.action",
+      "wordpress.hx.build.semantic.Hook.filter"
+    ],
+    "inputDeclarations": [
+      "wordpress.hx.build.semantic.BuildInput.publicEnvironment",
+      "wordpress.hx.build.semantic.BuildInput.resource"
+    ],
+    "optionTypes": [
+      "wordpress.hx.build.semantic.HookOptions",
+      "wordpress.hx.build.semantic.ModuleOptions",
+      "wordpress.hx.build.semantic.PublicEnvironmentOptions",
+      "wordpress.hx.build.semantic.ResourceOptions"
+    ],
+    "literalIdentityRequired": true,
+    "runtimeRegistry": false,
+    "dynamicNodeEscapeHatch": false
+  },
+  "collection": {
+    "phase": "compile-time-only",
+    "registration": "typed-expression-macro-to-module-metadata",
+    "finalization": "compilation-local-onGenerate-nonpersistent",
+    "compilerServerRecovery": "rebuild-registry-from-current-generated-type-metadata",
+    "ordering": "stable-node-schema-node-projection-resource-environment-file-and-tool-keys",
+    "sourceSpan": "project-relative-content-bound-half-open-utf8-byte",
+    "callbackTyping": "Haxe-function-type-action-Void-filter-value-preservation",
+    "profileGate": "exact-catalog-capability-set",
+    "moduleAndProjectionDuplicates": "fail-before-plan-write",
+    "missingDependencies": "fail-before-plan-write"
+  },
+  "effectiveInputs": {
+    "fileRoles": [
+      "collector-config",
+      "collector-source",
+      "node-schema",
+      "profile-catalog",
+      "resource",
+      "source",
+      "toolchain-lock"
+    ],
+    "environmentClassification": "public-build-only",
+    "environmentRawValuesSerialized": false,
+    "runtimeSecretsRead": false,
+    "resourceContainment": "generated-config-allowlisted-project-relative-roots",
+    "absolutePathsSerialized": false,
+    "symlinkOrSpecialFilePolicy": "fail",
+    "networkReads": false,
+    "toolAuthority": "exact-generated-project-lock-components"
+  },
+  "canonicalization": {
+    "outputEncoding": "utf-8-one-lf",
+    "objectKeys": "sorted",
+    "declaredSets": "sorted-and-unique",
+    "floatingPoint": "forbidden",
+    "collectorStringSubset": "printable-ascii-already-nfc-stable",
+    "unicodeWidening": "requires-independent-nfc-proof",
+    "planWrite": "temporary-then-rename-build-artifact-only",
+    "finalTargetWrites": false
+  },
+  "extensionRules": {
+    "phase": "build-time-only",
+    "requiredInputs": [
+      "typed-collector-entrypoint",
+      "namespaced-extension-id",
+      "versioned-node-schema-id",
+      "exact-node-schema-sha256",
+      "exact-project-lock-entry",
+      "compatible-emitter-registration"
+    ],
+    "unknownExtension": "fail",
+    "networkSchemaResolution": false,
+    "publicDynamicPayloadCollector": false,
+    "breakingPayloadChange": "new-node-schema-version-and-explicit-migration"
+  },
+  "developmentLoopHandoff": {
+    "document": "docs/architecture/build-and-dev-loop.md",
+    "defaultCommand": "wphx dev",
+    "compileWatchOnly": "wphx dev --services=none",
+    "sdk043": "merge-collector-report-with-project-hxml-package-and-discovery-graph",
+    "sdk044": "watch-merged-effective-graph-and-atomically-publish-last-good-transactions",
+    "ci": "bounded-direct-compilation-no-watcher"
+  },
+  "referencePatterns": [
+    {
+      "repository": "genes",
+      "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+      "path": "src/genes/ModuleDirectivePlan.hx",
+      "blob": "7ac5c16dd050c9304e2ba0bc47180ae15455d70a",
+      "sha256": "c7b3378e18e770a5beb359ce82cbf57af661dd7527b62bd2d5838f3613ad7186",
+      "concept": "typed-metadata-capture-stable-source-order-and-pre-emission-validation",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "src/reflaxe/elixir/macros/MigrationRegistry.hx",
+      "blob": "4cea77ba0431e6deaa6c7994414a78a3a13beb11",
+      "sha256": "501c1c6268af1db07d37eeafc2b8a8915c1cfc97d70982bd9b24aaa5f0d3bc9b",
+      "concept": "deferred-validation-independent-of-compiler-typing-order",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_build_inputs.ex",
+      "blob": "08a9253a1f14f9f2b84b386e007d2a5c3fa58766",
+      "sha256": "7a94cb34afcf4280d3209d7c892c56ebc0eeb4f1996c97c4719f235773380cb6",
+      "concept": "watch-roots-derived-from-effective-compiler-inputs",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_watcher.ex",
+      "blob": "7a54b03b3c2fdf03caf53c7ac9e1aeba5cb0c418",
+      "sha256": "b5243f3279859d6d9fa50184af5e5450bc54fb34996725699bc5bcd1fe6c08b0",
+      "concept": "debounced-change-coalescing-and-managed-recompile",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_server.ex",
+      "blob": "db684a03e104cdaaa2e1fe23b07d7a99b64d1581",
+      "sha256": "1419b50305b80ae229cf441c4b9764b87732917c911740565a1c1f2c7352110c",
+      "concept": "project-bound-server-lifecycle-compatibility-and-cleanup",
+      "copiedBytes": false
+    }
+  ],
+  "verification": {
+    "command": "bash scripts/semantic-collector/test.sh",
+    "haxeVersion": "4.3.7",
+    "directBuildCount": 2,
+    "serverBuildCount": 2,
+    "negativeCompileCount": 10,
+    "negativeSchemaMutationCount": 5,
+    "collectorSourceCount": 13,
+    "effectiveFileCount": 20,
+    "toolCount": 8,
+    "nodeCount": 2,
+    "resourceCount": 1,
+    "environmentCount": 1,
+    "collectorSourceSha256": "48bf87907b923c5a6e7e5f234057b48d74d6599dd5a9f4e6abe10aedcf604351",
+    "effectiveInputsFingerprint": "87c0c67bc12a240603af082fe4620aba62430a7e0ecc3e903173eb3689cd54c2",
+    "planDigest": "c89808fc6a821c2b7fd6ed4192fa57db381177eea020e4101e100b4d145e16ff",
+    "directVsServerByteEquality": "passed",
+    "sourceLocatedDiagnostics": "passed",
+    "inputFingerprintInspection": "passed",
+    "noNetworkDependency": "passed",
+    "fullDceNoRuntimeCollector": "passed",
+    "failedCompileNoPlanOrInputs": "passed",
+    "outcome": "passed"
+  },
+  "claims": {
+    "sdk040MacroCollector": "compile-tested",
+    "canonicalPlanAndInputSidecar": "validated",
+    "haxeCompilationServerReplay": "compile-tested",
+    "productionEmitterIntegration": "not-tested",
+    "generatedFilePublicationSafety": "not-tested",
+    "productionWphxDevWatcher": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

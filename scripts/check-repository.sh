@@ -255,6 +255,8 @@ required_files=(
   schemas/semantic-nodes/hook.schema.json
   schemas/semantic-nodes/module.schema.json
   schemas/semantic-plan.schema.json
+  schemas/semantic-collector-config.schema.json
+  schemas/semantic-collector-inputs.schema.json
   schemas/generated-files.schema.json
   schemas/ownership-transaction-journal.schema.json
   schemas/project.schema.json
@@ -266,6 +268,8 @@ required_files=(
   scripts/source-correlation/validate-sdk025.py
   scripts/semantic-plan/test-contract.py
   scripts/semantic-plan/test.sh
+  scripts/semantic-collector/test-contract.py
+  scripts/semantic-collector/test.sh
   scripts/ownership/test-contract.py
   scripts/ownership/test.sh
   scripts/project-cli/test-contract.py
@@ -278,6 +282,11 @@ required_files=(
   fixtures/semantic-plan/src/SemanticPlanFixture.hx
   fixtures/semantic-plan/valid/minimal-plugin.emission.json
   fixtures/semantic-plan/valid/minimal-plugin.json
+  fixtures/semantic-collector/README.md
+  fixtures/semantic-collector/assets/brand.txt
+  fixtures/semantic-collector/config.json
+  fixtures/semantic-collector/src/fixtures/semanticcollector/InvalidFixture.hx
+  fixtures/semantic-collector/src/fixtures/semanticcollector/ValidFixture.hx
   fixtures/ownership/README.md
   fixtures/ownership/artifacts/initial/acme-observatory.php.txt
   fixtures/ownership/artifacts/initial/stale.php.txt
@@ -334,6 +343,7 @@ required_files=(
   manifests/hxx-architecture.json
   manifests/source-correlation-architecture.json
   manifests/semantic-plan-architecture.json
+  manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/project-cli-architecture.json
   manifests/package-topology.json
@@ -345,6 +355,7 @@ required_files=(
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
+  manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/ci-checkout-node24.json
@@ -368,6 +379,21 @@ required_files=(
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
   manifests/evidence/sdk-025-php-source-correlation.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
+  packages/build/README.md
+  packages/build/src/wordpress/hx/build/SemanticPlan.hx
+  packages/build/src/wordpress/hx/build/_internal/CanonicalJson.hx
+  packages/build/src/wordpress/hx/build/_internal/SemanticCollector.hx
+  packages/build/src/wordpress/hx/build/semantic/BuildInput.hx
+  packages/build/src/wordpress/hx/build/semantic/BuildInputDeclaration.hx
+  packages/build/src/wordpress/hx/build/semantic/Hook.hx
+  packages/build/src/wordpress/hx/build/semantic/HookDeclaration.hx
+  packages/build/src/wordpress/hx/build/semantic/HookOptions.hx
+  packages/build/src/wordpress/hx/build/semantic/Module.hx
+  packages/build/src/wordpress/hx/build/semantic/ModuleDeclaration.hx
+  packages/build/src/wordpress/hx/build/semantic/ModuleOptions.hx
+  packages/build/src/wordpress/hx/build/semantic/PublicEnvironmentOptions.hx
+  packages/build/src/wordpress/hx/build/semantic/ResourceOptions.hx
+  docs/architecture/build-and-dev-loop.md
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx
@@ -663,6 +689,16 @@ semantic_plan_architecture = json.loads(
 )
 semantic_plan_receipt = json.loads(
     Path("manifests/evidence/adr-006-semantic-plan-contract.json").read_text(
+        encoding="utf-8"
+    )
+)
+semantic_collector_architecture = json.loads(
+    Path("manifests/semantic-collector-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+semantic_collector_receipt = json.loads(
+    Path("manifests/evidence/sdk-040-semantic-collector.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1344,6 +1380,133 @@ for unproven_receipt_claim in (
     "productionSupport",
 ):
     assert semantic_plan_receipt["claims"][unproven_receipt_claim] == "not-tested"
+
+assert semantic_collector_architecture["schemaVersion"] == 1
+assert semantic_collector_architecture["bead"] == "wordpresshx-sdk-040"
+assert semantic_collector_architecture["status"] == (
+    "implemented-and-locally-tested"
+)
+collector_contracts = semantic_collector_architecture["contracts"]
+assert collector_contracts["config"]["identity"] == (
+    "wordpress-hx.semantic-collector-config.v1"
+)
+assert collector_contracts["plan"]["identity"] == (
+    "wordpress-hx.semantic-plan.v1"
+)
+assert collector_contracts["inputs"]["identity"] == (
+    "wordpress-hx.semantic-collector-inputs.v1"
+)
+for collector_contract in (
+    collector_contracts["config"],
+    collector_contracts["inputs"],
+):
+    assert hashlib.sha256(
+        Path(collector_contract["path"]).read_bytes()
+    ).hexdigest() == collector_contract["sha256"]
+collector_surface = semantic_collector_architecture["publicSurface"]
+assert collector_surface["runtimeRegistry"] is False
+assert collector_surface["dynamicNodeEscapeHatch"] is False
+assert collector_surface["literalIdentityRequired"] is True
+collector_inputs = semantic_collector_architecture["effectiveInputs"]
+assert collector_inputs["environmentClassification"] == "public-build-only"
+assert collector_inputs["environmentRawValuesSerialized"] is False
+assert collector_inputs["runtimeSecretsRead"] is False
+assert collector_inputs["absolutePathsSerialized"] is False
+assert collector_inputs["networkReads"] is False
+collector_extensions = semantic_collector_architecture["extensionRules"]
+assert collector_extensions["unknownExtension"] == "fail"
+assert collector_extensions["networkSchemaResolution"] is False
+assert collector_extensions["publicDynamicPayloadCollector"] is False
+collector_handoff = semantic_collector_architecture["developmentLoopHandoff"]
+assert collector_handoff["defaultCommand"] == "wphx dev"
+assert collector_handoff["compileWatchOnly"] == "wphx dev --services=none"
+collector_references = semantic_collector_architecture["referencePatterns"]
+assert {item["repository"] for item in collector_references} == {
+    "genes",
+    "haxe.elixir.codex",
+}
+for reference in collector_references:
+    assert sha1.fullmatch(reference["commit"])
+    assert sha1.fullmatch(reference["blob"])
+    assert sha256.fullmatch(reference["sha256"])
+    assert reference["copiedBytes"] is False
+collector_verification = semantic_collector_architecture["verification"]
+assert collector_verification["haxeVersion"] == "4.3.7"
+assert collector_verification["directBuildCount"] == 2
+assert collector_verification["serverBuildCount"] == 2
+assert collector_verification["negativeCompileCount"] == 10
+assert collector_verification["negativeSchemaMutationCount"] == 5
+assert collector_verification["collectorSourceCount"] == 13
+assert collector_verification["effectiveFileCount"] == 20
+assert collector_verification["toolCount"] == 8
+assert collector_verification["nodeCount"] == 2
+assert collector_verification["outcome"] == "passed"
+assert semantic_collector_architecture["claims"]["sdk040MacroCollector"] == (
+    "compile-tested"
+)
+for unproven_collector_claim in (
+    "productionEmitterIntegration",
+    "generatedFilePublicationSafety",
+    "productionWphxDevWatcher",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "productionSupport",
+):
+    assert semantic_collector_architecture["claims"][unproven_collector_claim] == (
+        "not-tested"
+    )
+
+assert semantic_collector_receipt["schemaVersion"] == 1
+assert semantic_collector_receipt["receiptId"] == "SDK-040-SEMANTIC-COLLECTOR"
+assert semantic_collector_receipt["bead"] == "wordpresshx-sdk-040"
+for collector_subject in semantic_collector_receipt["subject"].values():
+    assert hashlib.sha256(
+        Path(collector_subject["path"]).read_bytes()
+    ).hexdigest() == collector_subject["sha256"]
+collector_receipt_contract = semantic_collector_receipt["contract"]
+assert collector_receipt_contract["collectorSourceSha256"] == (
+    collector_verification["collectorSourceSha256"]
+)
+assert collector_receipt_contract["effectiveInputsFingerprint"] == (
+    collector_verification["effectiveInputsFingerprint"]
+)
+assert collector_receipt_contract["planDigest"] == collector_verification[
+    "planDigest"
+]
+collector_receipt_verification = semantic_collector_receipt["verification"]
+for count_key in (
+    "directBuildCount",
+    "serverBuildCount",
+    "negativeCompileCount",
+    "negativeSchemaMutationCount",
+    "effectiveFileCount",
+    "collectorSourceCount",
+    "toolCount",
+    "nodeCount",
+):
+    assert collector_receipt_verification[count_key] == collector_verification[
+        count_key
+    ]
+assert semantic_collector_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert semantic_collector_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert semantic_collector_receipt["referenceReview"]["genesSourceChanged"] is False
+collector_hosted = semantic_collector_receipt["hostedWorkflow"]
+assert collector_hosted["workflow"] == "Repository bootstrap"
+assert collector_hosted["job"] == "semantic-plan"
+assert collector_hosted["required"] is True
+if collector_hosted["status"] == "pending-first-hosted-main-run":
+    assert collector_hosted["runId"] is None
+    assert collector_hosted["jobId"] is None
+    assert collector_hosted["commit"] is None
+elif collector_hosted["status"] == "passed":
+    assert isinstance(collector_hosted["runId"], int)
+    assert isinstance(collector_hosted["jobId"], int)
+    assert sha1.fullmatch(collector_hosted["commit"])
+else:
+    raise AssertionError("semantic collector hosted status is invalid")
+workflow_text = Path(".github/workflows/repository.yml").read_text(encoding="utf-8")
+assert "Compile and validate the semantic macro collector" in workflow_text
+assert "bash scripts/semantic-collector/test.sh" in workflow_text
 
 assert ownership_architecture["schemaVersion"] == 1
 assert ownership_architecture["decision"] == "ADR-007"

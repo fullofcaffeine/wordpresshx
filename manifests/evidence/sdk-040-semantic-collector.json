@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
+  "bead": "wordpresshx-sdk-040",
+  "observedAt": "2026-07-18T21:05:05Z",
+  "subject": {
+    "architecture": {
+      "path": "manifests/semantic-collector-architecture.json",
+      "sha256": "07ddc76e96d1cc07d3dde4d0deeb17b52270831dfb4def445ce839d0db04bd2d"
+    },
+    "configSchema": {
+      "path": "schemas/semantic-collector-config.schema.json",
+      "sha256": "03824d979ff50178c3b9ab266e7496789e99a86eb0ea750298ec3f5333d9b23d"
+    },
+    "inputsSchema": {
+      "path": "schemas/semantic-collector-inputs.schema.json",
+      "sha256": "a6c569405fce7b6953f6ef0a615696c893190dae1ad4235c7ea3c235aa01d25b"
+    },
+    "collector": {
+      "path": "packages/build/src/wordpress/hx/build/_internal/SemanticCollector.hx",
+      "sha256": "edd1cef69f717edd666e1f8e7a83ce106b7cfbff9d2d0b6f675a7cc39af67a95"
+    },
+    "validator": {
+      "path": "scripts/semantic-collector/test-contract.py",
+      "sha256": "55f56d91b8dc1fa8f97d29dc835e2ac8ea8d3a2b4e3cf80371bce1f78f26d33e"
+    },
+    "gate": {
+      "path": "scripts/semantic-collector/test.sh",
+      "sha256": "696d612075926c462e1d09f14b00922722cb126275c264e14e474b5deed28008"
+    },
+    "configFixture": {
+      "path": "fixtures/semantic-collector/config.json",
+      "sha256": "e6a4f458bb9a3e147faf4c8a5b7d141316bec06798fa24a49ee2a6feef9610e5"
+    },
+    "haxeFixture": {
+      "path": "fixtures/semantic-collector/src/fixtures/semanticcollector/ValidFixture.hx",
+      "sha256": "7640578cabc12010be00240e48bbb74601023d6b40b02b063f9a3e690a7e9b80"
+    },
+    "negativeHaxeFixture": {
+      "path": "fixtures/semantic-collector/src/fixtures/semanticcollector/InvalidFixture.hx",
+      "sha256": "95664285585006f5b6e53a37f5e39d799d560dd25d9df4d045d9fb628e7abe2c"
+    },
+    "devLoopDocument": {
+      "path": "docs/architecture/build-and-dev-loop.md",
+      "sha256": "4f388b979bbb54a3c268b9b6f24c245b19ebcad297f1ca36eb6749712dba2b5b"
+    }
+  },
+  "contract": {
+    "config": "wordpress-hx.semantic-collector-config.v1",
+    "plan": "wordpress-hx.semantic-plan.v1",
+    "inputs": "wordpress-hx.semantic-collector-inputs.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "collectorVersion": "1.0.0",
+    "collectorSourceSha256": "48bf87907b923c5a6e7e5f234057b48d74d6599dd5a9f4e6abe10aedcf604351",
+    "effectiveInputsFingerprint": "87c0c67bc12a240603af082fe4620aba62430a7e0ecc3e903173eb3689cd54c2",
+    "planDigest": "c89808fc6a821c2b7fd6ed4192fa57db381177eea020e4101e100b4d145e16ff"
+  },
+  "verification": {
+    "command": "bash scripts/semantic-collector/test.sh",
+    "haxeVersion": "4.3.7",
+    "directBuildCount": 2,
+    "serverBuildCount": 2,
+    "negativeCompileCount": 10,
+    "negativeSchemaMutationCount": 5,
+    "effectiveFileCount": 20,
+    "collectorSourceCount": 13,
+    "toolCount": 8,
+    "nodeCount": 2,
+    "directVsServerByteEquality": "passed",
+    "sourceLocatedDiagnostics": "passed",
+    "inputFingerprintInspection": "passed",
+    "noNetworkDependency": "passed",
+    "fullDceNoRuntimeCollector": "passed",
+    "failedCompileNoPlanOrInputs": "passed",
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repositories": [
+      {
+        "repository": "genes",
+        "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b"
+      },
+      {
+        "repository": "haxe.elixir.codex",
+        "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+      }
+    ],
+    "exactCommitPathBlobAndSha256Recorded": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "semantic-plan",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "limitations": [
+    "The implemented breadth is the initial module and hook schemas plus declared resource and public-build-environment inputs.",
+    "The collector writes intermediate build artifacts only; SDK-041 has not yet proven fail-closed target publication.",
+    "The local Haxe wait-server replay is not the SDK-044 filesystem watcher, WordPress service supervisor, Next.js service supervisor, or browser reload loop.",
+    "No production emitter, packaged consumer, WordPress runtime, Next.js runtime, Windows watcher, or production-support claim is made."
+  ],
+  "claims": {
+    "sdk040MacroCollector": "compile-tested",
+    "canonicalPlanAndInputSidecar": "validated",
+    "haxeCompilationServerReplay": "compile-tested",
+    "productionEmitterIntegration": "not-tested",
+    "generatedFilePublicationSafety": "not-tested",
+    "productionWphxDevWatcher": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

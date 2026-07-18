@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/semantic-collector-config.schema.json",
+  "title": "WordPressHx semantic collector configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "sdkVersion",
+    "collectorVersion",
+    "project",
+    "profile",
+    "toolchainLock",
+    "resourceRoots",
+    "environment",
+    "nodeSchemas"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.semantic-collector-config.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "sdkVersion": {
+      "$ref": "#/$defs/semver"
+    },
+    "collectorVersion": {
+      "$ref": "#/$defs/semver"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "toolchainLock": {
+      "$ref": "#/$defs/toolchainLock"
+    },
+    "resourceRoots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/relativePath"
+      }
+    },
+    "environment": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/environment"
+      }
+    },
+    "nodeSchemas": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nodeSchema"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "schemaId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z0-9-]+)+\\.v[1-9][0-9]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "catalogRevision",
+        "catalogPath",
+        "catalogSha256",
+        "catalogFileSha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]*/catalog-v[1-9][0-9]*$"
+        },
+        "catalogPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "catalogFileSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "toolchainLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "required",
+        "classification"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "classification": {
+          "const": "public-build"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    },
+    "nodeSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaId",
+        "kind",
+        "version",
+        "authority",
+        "path",
+        "schemaSha256",
+        "consumerEmitters"
+      ],
+      "properties": {
+        "schemaId": {
+          "$ref": "#/$defs/schemaId"
+        },
+        "kind": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority": {
+          "enum": [
+            "core",
+            "extension"
+          ]
+        },
+        "extensionId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "schemaSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "consumerEmitters": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    }
+  }
+}

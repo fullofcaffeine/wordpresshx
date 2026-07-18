@@ -11,6 +11,7 @@ The repository is still establishing its durable documentation structure.
 - [Browser compiler pin and ownership](architecture/browser-compiler.md)
 - [Generic PHP compiler boundary](architecture/php-compiler.md)
 - [Haxe-first complete-site authoring](architecture/haxe-first-site-authoring.md)
+- [Build and development loop](architecture/build-and-dev-loop.md)
 - [Source-map and trace-correlation decision](adr/014-source-maps-and-php-trace-correlation.md)
 - [PHP source-correlation guide](php-source-correlation.md)
 - [Feasibility gate records](gates/README.md)

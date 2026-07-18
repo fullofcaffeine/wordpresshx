@@ -28,8 +28,14 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `semantic-plan-architecture.json` is the accepted ADR-006 canonical plan,
   content-addressed node-schema registry, stable identity/source-span,
   build-time extension, and staged-emitter boundary. Its two-node contract
-  fixture proves schema/canonicalization/traceability rules only; SDK-040 still
-  owns macro collection and production emitter integration.
+  fixture proves schema/canonicalization/traceability rules only; it remains a
+  historical contract record and does not retroactively claim the SDK-040
+  implementation.
+- `semantic-collector-architecture.json` is the SDK-040 implementation lock for
+  typed module/hook/resource/public-environment declarations, compilation-server
+  metadata recovery, canonical plan and input-sidecar generation, exact-profile
+  validation, and the SDK-043/044 development-loop handoff. It does not claim a
+  production emitter, target publication, or real `wphx dev` service loop.
 - `generated-artifact-ownership.json` is the accepted ADR-007 exact-path/hash
   authority, portable path confinement, complete-stage, manifest-last journal,
   recovery, clean, and adoption lock. Its temporary-filesystem harness validates
@@ -92,6 +98,12 @@ artifact traceability, sibling-pattern provenance, six canonicalization
 vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
 SDK-040, SDK-041 production publication, real emitters, and runtime compatibility
 remain unproven.
+
+Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
+collector, four deterministic direct/server compilations, ten source-located
+compile failures, five schema/input mutations, exact effective inputs, and
+full-DCE runtime absence. It emits intermediate plan/input artifacts only;
+SDK-041 target publication and SDK-043/044 CLI/watch services remain unproven.
 
 Receipt `ADR-007-GENERATED-ARTIFACT-OWNERSHIP` records the closed exact-file
 manifest and journal schemas, canonical old/new/create/replace/remove fixtures,

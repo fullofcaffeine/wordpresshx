@@ -39,3 +39,11 @@ the project bootstrap, exact lock, effective inputs, stable stages/events, and
 `wphx dev` lifecycle. The existing trace-only prototype still uses the private
 `wphx-sdk` bin until SDK-043 migrates it; SDK-044 owns the real watcher and
 service supervisor.
+
+SDK-040 establishes the [`build`](build/README.md) compile-time module. Typed
+module, hook, resource, and public-environment declarations are recovered from
+Haxe module metadata even under a persistent compilation server, validated
+against exact profile/schema/tool inputs, and serialized into one canonical
+semantic plan plus an inspectable input report. Full DCE leaves no build API or
+collector in application JavaScript. The implementation does not yet emit or
+publish target files; SDK-041 and later beads own that boundary.
