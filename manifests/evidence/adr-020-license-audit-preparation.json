@@ -70,17 +70,17 @@
   },
   "implementation": {
     "baseCommit": "24157cb992919f1dd2078e4593b2bb0d0bee2caf",
-    "commit": null
+    "commit": "4532ae47bfa845727bf946c21bc413735c84ffbd"
   },
   "hostedWorkflow": {
     "workflow": "repository.yml",
     "job": "license-policy",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending",
-    "fullMatrixStatus": "pending"
+    "runId": 29623554577,
+    "jobId": 88023304753,
+    "commit": "4532ae47bfa845727bf946c21bc413735c84ffbd",
+    "status": "passed",
+    "fullMatrixStatus": "passed"
   },
   "claims": {
     "componentInventory": "inventoried",
