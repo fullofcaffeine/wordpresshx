@@ -27,6 +27,7 @@
   },
   "toolchain": {
     "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
     "lixReportedCli": "15.12.2",
     "formatter": "1.18.0",
     "genes": {
@@ -143,7 +144,7 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "2715168ab6802b0afc6b97f17017a936c6377cfed7ebd7edfe5fed6c4334d450"
+      "sha256": "dd0cd5d7ba02328366957e3120102ee707c82b4dd406e3777eb69f7ea08de852"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/Main.hx",
@@ -155,7 +156,11 @@
     },
     {
       "path": "packages/cli/scripts/test.sh",
-      "sha256": "3ea9818f2701c4021fc77e60a09e73ae7c7086ab6e0deb8399bbcecabdbcf2c4"
+      "sha256": "bbef3c3bbbd080bc54a4a7558bf712fca2027e615aaafa2685f2b763c6bfa566"
+    },
+    {
+      "path": "packages/cli/scripts/verify-dependency-lock.py",
+      "sha256": "5dcf6943b1b9b976ae5687d180dfd35d9e89ea455ceb7c7618e60997d069754b"
     },
     {
       "path": "packages/cli/scripts/verify-php-trace.py",
@@ -298,10 +303,18 @@
     "debugCompanionBoundToProductionPhp": true
   },
   "hostedVerification": {
-    "status": "pending-main-push",
+    "status": "pending-rerun-after-lix-shim-fix",
     "workflow": "Repository bootstrap",
     "commit": null,
-    "runId": null
+    "runId": null,
+    "discardedAttempts": [
+      {
+        "runId": 29644579049,
+        "commit": "08b785fa92e6e43cedb1f49154b577bc5e069c44",
+        "outcome": "failed-before-cli-compile",
+        "reason": "the hosted gate invoked setup-haxe instead of the authenticated Lix shim after scoped dependencies were downloaded; all other nine hosted jobs passed"
+      }
+    ]
   },
   "claims": {
     "deterministicPhpRangeMap": "emitted-and-independently-validated",

@@ -1282,8 +1282,16 @@ assert sdk025_contracts["pathLookup"] == (
 
 sdk025_toolchain = sdk025_receipt["toolchain"]
 assert sdk025_toolchain["haxe"] == cli_dependency_lock["haxe"]["version"]
+assert sdk025_toolchain["lixPackage"] == (
+    cli_dependency_lock["lix"]["packageVersion"]
+)
 assert sdk025_toolchain["lixReportedCli"] == (
     cli_dependency_lock["lix"]["cliVersion"]
+)
+assert sdk025_toolchain["lixPackage"] == (
+    toolchain_lock["dependencyGraphs"]["npm"]["activePackages"][0][
+        "version"
+    ]
 )
 assert sdk025_toolchain["genes"]["version"] == (
     cli_dependency_lock["compiler"]["version"]
@@ -1388,7 +1396,23 @@ assert sdk025_packaging["debugCompanionBoundToProductionPhp"] is True
 assert sdk025_packaging["deterministicReplay"] == "passed"
 
 sdk025_hosted = sdk025_receipt["hostedVerification"]
-assert sdk025_hosted["status"] in {"pending-main-push", "passed"}
+assert sdk025_hosted["status"] in {
+    "pending-main-push",
+    "pending-rerun-after-lix-shim-fix",
+    "passed",
+}
+assert sdk025_hosted["discardedAttempts"] == [
+    {
+        "runId": 29644579049,
+        "commit": "08b785fa92e6e43cedb1f49154b577bc5e069c44",
+        "outcome": "failed-before-cli-compile",
+        "reason": (
+            "the hosted gate invoked setup-haxe instead of the authenticated "
+            "Lix shim after scoped dependencies were downloaded; all other "
+            "nine hosted jobs passed"
+        ),
+    }
+]
 if sdk025_hosted["status"] == "passed":
     assert sdk025_receipt["status"] == "verified"
     assert sha1.fullmatch(sdk025_hosted["commit"])

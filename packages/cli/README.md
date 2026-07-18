@@ -7,9 +7,13 @@ JavaScript implementation and no dependency on a sibling Genes checkout.
 
 The package is internal and publication remains blocked. Its exact build closure
 is recorded in [`dependency-lock.json`](dependency-lock.json): Haxe 4.3.7,
+Lix package 15.12.4 (reported CLI 15.12.2),
 Genes 1.36.3 at commit
 `c59ecb361fd91418584487c2138bae8d3d3a3961`, hxnodejs 10.0.0, and Node
-22.17.0. SDK-025 required no Genes source change or pull request.
+22.17.0. The test harness authenticates and invokes the Haxe shim adjacent to
+the active Lix executable, so scoped libraries do not depend on whichever
+system Haxe happens to appear first on `PATH`. SDK-025 required no Genes source
+change or pull request.
 
 ## PHP trace command
 

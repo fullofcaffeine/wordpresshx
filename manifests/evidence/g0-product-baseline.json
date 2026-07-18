@@ -13,7 +13,7 @@
   "subject": {
     "toolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "8ae7d3095946bfcf013cf422856860ba3b390218be8ee207fabdc60c1640fb02"
+      "sha256": "dd2b3dd868b0c8b5eda4630ac5e403f4af2f9a1b5b19f42ac860ab45058cb5f4"
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",

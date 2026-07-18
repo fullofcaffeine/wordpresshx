@@ -60,7 +60,10 @@ def main() -> None:
     }
     assert image_lock["tag"] == "docker.io/library/node:22.17.0-bookworm-slim"
     assert lock["haxe"] == {"version": "4.3.7"}
-    assert lock["lix"] == {"cliVersion": "15.12.2"}
+    assert lock["lix"] == {
+        "packageVersion": "15.12.4",
+        "cliVersion": "15.12.2",
+    }
 
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
     assert package["name"] == "@wordpress-hx/cli"

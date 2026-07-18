@@ -6,14 +6,31 @@ repository_root="$(cd "${package_root}/../.." && pwd)"
 node_image="docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
 php_image="docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367"
 
-for command_name in docker haxe haxelib lix node python3; do
+for command_name in docker haxe haxelib lix node python3 realpath; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "PHP trace CLI gate requires ${command_name}" >&2
     exit 1
   fi
 done
-if [[ "$(haxe --version)" != "4.3.7" ]] || [[ "$(lix --version)" != "15.12.2" ]]; then
-  echo "PHP trace CLI gate requires Haxe 4.3.7 and Lix CLI 15.12.2" >&2
+if [[ "$(haxe --version)" != "4.3.7" ]]; then
+  echo "PHP trace CLI gate requires host Haxe 4.3.7" >&2
+  exit 1
+fi
+
+lix_command="$(command -v lix)"
+lix_bin_dir="$(cd "$(dirname "${lix_command}")" && pwd -P)"
+lix_package_path="$(cd "$(dirname "$(realpath "${lix_command}")")/.." && pwd -P)/package.json"
+lix_haxe="${lix_bin_dir}/haxe"
+if [[ ! -f "${lix_package_path}" ]] \
+  || [[ ! -x "${lix_haxe}" ]] \
+  || [[ "$(node -p 'require(process.argv[1]).version' "${lix_package_path}")" != "15.12.4" ]] \
+  || [[ "$(lix --version)" != "15.12.2" ]] \
+  || [[ "$(basename "$(realpath "${lix_haxe}")")" != "haxeshim.js" ]]; then
+  echo "PHP trace CLI gate requires Lix package 15.12.4 (CLI 15.12.2) and its Haxe shim" >&2
+  exit 1
+fi
+if [[ "$(cd "${package_root}" && "${lix_haxe}" --version)" != "4.3.7" ]]; then
+  echo "PHP trace CLI gate requires Lix-scoped Haxe 4.3.7" >&2
   exit 1
 fi
 docker info >/dev/null
@@ -44,8 +61,8 @@ rm -rf -- "${package_root}/build"
 mkdir -p "${package_root}/build" "${replay_root}/build"
 (
   cd "${package_root}"
-  haxe profiles/classic.hxml -js build/index.js
-  haxe profiles/classic.hxml -js "${replay_root}/build/index.js"
+  "${lix_haxe}" profiles/classic.hxml -js build/index.js
+  "${lix_haxe}" profiles/classic.hxml -js "${replay_root}/build/index.js"
 )
 python3 "${package_root}/scripts/add-node-shebang.py" "${package_root}/build/index.js"
 python3 "${package_root}/scripts/add-node-shebang.py" "${replay_root}/build/index.js"
