@@ -3,7 +3,7 @@
   "receiptId": "SDK-034-BROWSER-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-034",
   "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T14:17:49Z",
+  "observedAt": "2026-07-18T14:25:05Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "cliPackage": "packages/cli",
@@ -161,7 +161,7 @@
     },
     {
       "path": "packages/cli/scripts/test-browser-source-correlation.sh",
-      "sha256": "525315cf5e9de75f941adf45fb774691768248f8b0ac96a7a49aed7256d0ec78"
+      "sha256": "762508d48d1c7531cff627d466bd84d4bd7424656a138e847697542b2ab447d5"
     },
     {
       "path": "packages/cli/test/expected/browser-development.text",
@@ -338,6 +338,13 @@
       "commit": "578f2998e60723c7535bd123f7e4de5855f4ee61",
       "outcome": "failed-before-browser-compile",
       "reason": "The gate queried the global Haxelib registry for a Genes dependency installed exclusively in the authenticated Lix cache; the other nine workflow jobs passed"
+    },
+    {
+      "runId": 29647864068,
+      "jobId": 88089020995,
+      "commit": "732f3f409f3b73842f605e6b9600477714557b75",
+      "outcome": "failed-before-browser-compile",
+      "reason": "The gate derived the Lix root from haxelib config, but the hosted haxelib command remained bound to the separate setup-haxe installation"
     }
   ],
   "claims": {

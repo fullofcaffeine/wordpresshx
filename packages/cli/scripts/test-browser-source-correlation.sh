@@ -45,10 +45,34 @@ haxelib run formatter --check \
   -s "${package_root}/src" \
   -s "${package_root}/test/browser-source-correlation/src"
 
-haxe_install_root="$(dirname "$(haxelib config)")"
-haxe_library_cache="${haxe_install_root}/haxe_libraries"
+lix_haxe_root="$(
+  node -e '
+    const os = require("node:os");
+    const path = require("node:path");
+    process.stdout.write(
+      process.env.HAXE_ROOT ||
+      process.env.HAXESHIM_ROOT ||
+      path.join(os.homedir(), "haxe")
+    );
+  '
+)"
+haxe_library_cache="$(
+  node -e '
+    const os = require("node:os");
+    const path = require("node:path");
+    const haxeRoot =
+      process.env.HAXE_ROOT ||
+      process.env.HAXESHIM_ROOT ||
+      path.join(os.homedir(), "haxe");
+    process.stdout.write(
+      process.env.HAXESHIM_LIBCACHE ||
+      process.env.HAXE_LIBCACHE ||
+      path.join(haxeRoot, "haxe_libraries")
+    );
+  '
+)"
 genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src"
-haxe_stdlib_root="${haxe_install_root}/versions/4.3.7/std"
+haxe_stdlib_root="${lix_haxe_root}/versions/4.3.7/std"
 if [[ ! -f "${genes_root}/genes/Register.hx" ]] \
   || [[ ! -f "${haxe_stdlib_root}/StdTypes.hx" ]]; then
   echo "SDK-034 gate could not resolve its exact Lix Genes/Haxe source roots" >&2

@@ -1707,15 +1707,29 @@ assert sdk034_receipt["discardedHostedAttempts"] == [
             "dependency installed exclusively in the authenticated Lix cache; "
             "the other nine workflow jobs passed"
         ),
-    }
+    },
+    {
+        "runId": 29647864068,
+        "jobId": 88089020995,
+        "commit": "732f3f409f3b73842f605e6b9600477714557b75",
+        "outcome": "failed-before-browser-compile",
+        "reason": (
+            "The gate derived the Lix root from haxelib config, but the hosted "
+            "haxelib command remained bound to the separate setup-haxe "
+            "installation"
+        ),
+    },
 ]
 sdk034_browser_gate_source = Path(
     "packages/cli/scripts/test-browser-source-correlation.sh"
 ).read_text(encoding="utf-8")
 assert "haxelib path genes-ts" not in sdk034_browser_gate_source
-assert 'haxe_library_cache="${haxe_install_root}/haxe_libraries"' in (
-    sdk034_browser_gate_source
-)
+assert 'process.env.HAXE_ROOT ||' in sdk034_browser_gate_source
+assert 'process.env.HAXESHIM_ROOT ||' in sdk034_browser_gate_source
+assert 'process.env.HAXESHIM_LIBCACHE ||' in sdk034_browser_gate_source
+assert 'process.env.HAXE_LIBCACHE ||' in sdk034_browser_gate_source
+assert 'path.join(os.homedir(), "haxe")' in sdk034_browser_gate_source
+assert 'path.join(haxeRoot, "haxe_libraries")' in sdk034_browser_gate_source
 assert (
     'genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/'
     'c59ecb361fd91418584487c2138bae8d3d3a3961/src"'
