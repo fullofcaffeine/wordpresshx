@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-031-STRICT-BROWSER-PROFILE",
   "bead": "wordpresshx-sdk-031",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T06:17:49Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T06:33:25Z",
   "subject": {
     "package": "packages/gutenberg",
     "profileId": "wp70-release",
@@ -251,10 +251,16 @@
   },
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
-    "runId": null,
-    "commit": null,
-    "status": "pending",
-    "haxeJob": "pending",
+    "runId": 29634161357,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29634161357",
+    "commit": "4d7e60821ab48ca0ae25ae5a27740ac6ab905caa",
+    "status": "passed",
+    "jobCount": 10,
+    "allJobsPassed": true,
+    "haxeJob": "passed",
+    "haxeJobId": 88053343606,
+    "haxeJobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29634161357/job/88053343606",
+    "hostedArtifactHashesMatched": true,
     "discardedAttempts": [
       {
         "runId": 29634010485,
@@ -269,7 +275,7 @@
     "strictTypeScriptSourceProfile": "runtime-tested",
     "classicDifferential": "runtime-tested",
     "publicExportRetention": "runtime-tested",
-    "deterministicGeneratedOutput": "locally-tested",
+    "deterministicGeneratedOutput": "hosted-runtime-tested",
     "reactGutenbergHxx": "not-tested",
     "wordpressBrowserRuntime": "not-tested",
     "productionSupport": "not-tested"

@@ -1283,9 +1283,21 @@ if sdk031_receipt["status"] == "implemented-hosted-pending":
 else:
     assert isinstance(sdk031_repository_hosted["runId"], int)
     assert sdk031_repository_hosted["runId"] > 0
+    assert sdk031_repository_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk031_repository_hosted['runId']}"
+    )
     assert sha1.fullmatch(sdk031_repository_hosted["commit"])
     assert sdk031_repository_hosted["status"] == "passed"
+    assert sdk031_repository_hosted["jobCount"] == 10
+    assert sdk031_repository_hosted["allJobsPassed"] is True
     assert sdk031_repository_hosted["haxeJob"] == "passed"
+    assert sdk031_repository_hosted["haxeJobId"] == 88053343606
+    assert sdk031_repository_hosted["haxeJobUrl"] == (
+        sdk031_repository_hosted["url"]
+        + f"/job/{sdk031_repository_hosted['haxeJobId']}"
+    )
+    assert sdk031_repository_hosted["hostedArtifactHashesMatched"] is True
     assert sdk031_receipt["claims"]["deterministicGeneratedOutput"] == (
         "hosted-runtime-tested"
     )
