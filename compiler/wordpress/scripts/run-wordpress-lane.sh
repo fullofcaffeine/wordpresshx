@@ -5,8 +5,9 @@ package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 repository_root="$(cd "${package_root}/../.." && pwd)"
 compose_file="${repository_root}/docker/wordpress/compose.yml"
 fixture_dir="${package_root}/build/acme-books"
+adapter_fixture_dir="${package_root}/build/acme-books-adapters"
 lane="${1:-}"
-project_name="${WORDPRESSHX_COMPOSE_PROJECT_NAME:-wordpresshx-sdk022}"
+project_name="${WORDPRESSHX_COMPOSE_PROJECT_NAME:-wordpresshx-sdk023}"
 
 if [[ "${lane}" != "mysql" && "${lane}" != "mariadb" ]]; then
   echo "usage: $0 <mysql|mariadb>" >&2
@@ -20,12 +21,16 @@ if [[ ! -f "${fixture_dir}/acme-books.php" ]]; then
   echo "missing generated acme-books plugin fixture" >&2
   exit 2
 fi
+if [[ ! -f "${adapter_fixture_dir}/acme-books-adapters.php" ]]; then
+  echo "missing generated acme-books-adapters plugin fixture" >&2
+  exit 2
+fi
 if ! command -v docker >/dev/null 2>&1; then
-  echo "Docker is required for the SDK-022 WordPress fixture" >&2
+  echo "Docker is required for the SDK-023 WordPress adapter fixture" >&2
   exit 1
 fi
 if ! command -v curl >/dev/null 2>&1; then
-  echo "curl is required for the SDK-022 WordPress HTTP check" >&2
+  echo "curl is required for the SDK-023 WordPress HTTP check" >&2
   exit 1
 fi
 docker info >/dev/null
@@ -78,10 +83,14 @@ if payload != expected:
 
 "${compose[@]}" cp "${fixture_dir}" \
   "${wordpress_service}:/var/www/html/wp-content/plugins/acme-books" >&2
+"${compose[@]}" cp "${adapter_fixture_dir}" \
+  "${wordpress_service}:/var/www/html/wp-content/plugins/acme-books-adapters" >&2
 "${compose[@]}" cp "${package_root}/runtime/activate-plugin.php" \
   "${wordpress_service}:/opt/wordpresshx/activate-plugin.php" >&2
 "${compose[@]}" cp "${package_root}/runtime/probe-plugin.php" \
   "${wordpress_service}:/opt/wordpresshx/probe-plugin.php" >&2
+"${compose[@]}" cp "${package_root}/runtime/probe-adapters.php" \
+  "${wordpress_service}:/opt/wordpresshx/probe-adapters.php" >&2
 
 activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/activate-plugin.php \
@@ -89,6 +98,12 @@ activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
 probe_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/probe-plugin.php \
   acme-books/acme-books.php 'Acme\Books\Bootstrap')"
+adapter_activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
+  php /opt/wordpresshx/activate-plugin.php \
+  acme-books-adapters/acme-books-adapters.php 'Acme\BooksAdapters\Bootstrap')"
+adapter_probe_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
+  php /opt/wordpresshx/probe-adapters.php \
+  acme-books-adapters/acme-books-adapters.php 'Acme\BooksAdapters\PublicAdapters')"
 health_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/health.php)"
 
@@ -106,15 +121,29 @@ if [[ "${http_body}" != *"WordPressHx SDK Harness"* ]]; then
 fi
 
 result="$(python3 - "${lane}" "${repository_root}/docker/images.lock.json" \
-  "${install_json}" "${health_json}" "${activation_json}" "${probe_json}" <<'PY'
+  "${install_json}" "${health_json}" "${activation_json}" "${probe_json}" \
+  "${adapter_activation_json}" "${adapter_probe_json}" <<'PY'
 import json
 import sys
 
-lane, lock_path, install_json, health_json, activation_json, probe_json = sys.argv[1:]
+(
+    lane,
+    lock_path,
+    install_json,
+    health_json,
+    activation_json,
+    probe_json,
+    adapter_activation_json,
+    adapter_probe_json,
+) = sys.argv[1:]
 images = json.load(open(lock_path, encoding="utf-8"))["images"]
 database_key = "mysql" if lane == "mysql" else "mariadb"
 print(json.dumps({
-    "check": "wordpresshx-sdk022-wordpress-lane-v1",
+    "adapterFixture": {
+        "activation": json.loads(adapter_activation_json),
+        "freshRequestProbe": json.loads(adapter_probe_json),
+    },
+    "check": "wordpresshx-sdk023-wordpress-lane-v1",
     "databaseImage": images[database_key]["reference"],
     "databaseLane": lane,
     "freshReset": "passed",

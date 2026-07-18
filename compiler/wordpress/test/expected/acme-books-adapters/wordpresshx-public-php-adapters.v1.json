@@ -1,0 +1,172 @@
+{
+  "blocks": [
+    {
+      "name": "acme-books/summary",
+      "renderCallback": "\\Acme\\BooksAdapters\\PublicAdapters::renderSummary"
+    }
+  ],
+  "plugin": {
+    "rootPath": "acme-books-adapters.php",
+    "adapterPath": "includes/PublicAdapters.php",
+    "slug": "acme-books-adapters",
+    "registrationPath": "includes/register-adapters.php",
+    "adapterClass": "\\Acme\\BooksAdapters\\PublicAdapters"
+  },
+  "profileId": "wp70-release",
+  "manifestId": "wordpresshx-public-php-adapters-v1",
+  "schemaVersion": 1,
+  "boundary": {
+    "rawPhpSegments": 0,
+    "privateImplementationMethods": 2,
+    "semanticPlanSchema": "not-implemented-adr-006",
+    "runtimeHxxDependency": false,
+    "ownershipTransaction": "not-implemented-adr-007",
+    "semanticPlanClassification": "file-symbol-edge",
+    "stockHaxePhpFiles": 0,
+    "buildTimeServerDependency": false
+  },
+  "schemaStatus": "internal-sdk023-evidence",
+  "hooks": [
+    {
+      "callback": "\\Acme\\BooksAdapters\\PublicAdapters::onInit",
+      "acceptedArgs": 0,
+      "priority": 9,
+      "kind": "action",
+      "hook": "init"
+    },
+    {
+      "callback": "\\Acme\\BooksAdapters\\PublicAdapters::filterTitle",
+      "acceptedArgs": 2,
+      "priority": 12,
+      "kind": "filter",
+      "hook": "the_title"
+    }
+  ],
+  "classification": "public-native",
+  "publicExports": [
+    {
+      "parameters": [
+        {
+          "name": "labels",
+          "byReference": true,
+          "variadic": false,
+          "type": "array",
+          "hasDefault": false
+        },
+        {
+          "name": "label",
+          "byReference": false,
+          "variadic": false,
+          "type": "string",
+          "hasDefault": false
+        }
+      ],
+      "returnType": "void",
+      "returnsByReference": false,
+      "stableName": "\\Acme\\BooksAdapters\\PublicAdapters::appendLabel"
+    },
+    {
+      "parameters": [],
+      "returnType": "bool",
+      "returnsByReference": false,
+      "stableName": "\\Acme\\BooksAdapters\\PublicAdapters::isInitialized"
+    },
+    {
+      "parameters": [
+        {
+          "name": "title",
+          "byReference": false,
+          "variadic": false,
+          "type": "string",
+          "hasDefault": false
+        }
+      ],
+      "returnType": "string",
+      "returnsByReference": false,
+      "stableName": "\\Acme\\BooksAdapters\\PublicAdapters::normalizeTitle"
+    }
+  ],
+  "claims": {
+    "publicationAuthorized": false,
+    "productionSupport": "not-tested",
+    "generation": "generated",
+    "wordpress70Runtime": "not-tested"
+  },
+  "files": [
+    {
+      "role": "plugin-root",
+      "declarations": [],
+      "classification": "public-native",
+      "path": "acme-books-adapters.php",
+      "sha256": "31e17a6bf37720a3746119a3ea6d6de48f571252bfda8b6abffe49e2418989e4",
+      "bytes": 459
+    },
+    {
+      "role": "bootstrap",
+      "declarations": [
+        {
+          "generatedStartLine": 7,
+          "generatedEndLine": 20,
+          "source": {
+            "endColumn": 2,
+            "startLine": 27,
+            "endLine": 28,
+            "startColumn": 2,
+            "file": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx"
+          },
+          "stableName": "class:Acme\\BooksAdapters\\Bootstrap"
+        }
+      ],
+      "classification": "public-native",
+      "path": "includes/Bootstrap.php",
+      "sha256": "dca8e55d4d76b67e9d0701e05e18560c8f335c99c77aa529af58cc6041f0a43c",
+      "bytes": 295
+    },
+    {
+      "role": "adapter-class",
+      "declarations": [
+        {
+          "generatedStartLine": 7,
+          "generatedEndLine": 77,
+          "source": {
+            "endColumn": 2,
+            "startLine": 27,
+            "endLine": 28,
+            "startColumn": 2,
+            "file": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx"
+          },
+          "stableName": "class:Acme\\BooksAdapters\\PublicAdapters"
+        }
+      ],
+      "classification": "public-native",
+      "path": "includes/PublicAdapters.php",
+      "sha256": "bd54264ecb3b797219b73ca505f0c4481fbfcac7cea74f747cb5da7e61f8f2d0",
+      "bytes": 2126
+    },
+    {
+      "role": "autoload",
+      "declarations": [],
+      "classification": "public-native",
+      "path": "includes/autoload.php",
+      "sha256": "888a9acac1473d6fe7be2bb448cdd793211bdacae3680d9c9d418699ef24987d",
+      "bytes": 169
+    },
+    {
+      "role": "registrations",
+      "declarations": [],
+      "classification": "public-native",
+      "path": "includes/register-adapters.php",
+      "sha256": "facdef81121c9f8d27b9ea079131778268addc2a49e53691f3605636804fd307",
+      "bytes": 439
+    }
+  ],
+  "restRoutes": [
+    {
+      "namespace": "acme-books/v1",
+      "permissionCallback": "\\Acme\\BooksAdapters\\PublicAdapters::restPermission",
+      "method": "READABLE",
+      "callback": "\\Acme\\BooksAdapters\\PublicAdapters::restBook",
+      "route": "/books/(?P<id>[\\d]+)"
+    }
+  ]
+}

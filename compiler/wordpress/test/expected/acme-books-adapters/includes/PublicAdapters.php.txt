@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Acme\BooksAdapters;
+
+class PublicAdapters {
+	private static $initialized = false;
+
+	public static function onInit(): void {
+		self::$initialized = true;
+	}
+
+	public static function isInitialized(): bool {
+		return self::$initialized;
+	}
+
+	public static function filterTitle(string $title, int $postId): string {
+		return self::normalizeTitleImpl( $title );
+	}
+
+	public static function restPermission(\WP_REST_Request $request): bool {
+		return \current_user_can( 'read' );
+	}
+
+	public static function restBook(\WP_REST_Request $request) {
+		$id = (int) $request->get_param( 'id' );
+		$payload = self::bookPayload( $id );
+		if ( \is_wp_error( $payload ) ) {
+			return $payload;
+		}
+		return new \WP_REST_Response( $payload, 200 );
+	}
+
+	public static function renderSummary(array $attributes, string $content, \WP_Block $block): string {
+		$title = $attributes['title'] ?? 'Books';
+		return \sprintf( '<section class="acme-books-summary">%s</section>', \esc_html( (string) $title ) );
+	}
+
+	public static function appendLabel(array &$labels, string $label): void {
+		$labels[] = $label;
+	}
+
+	public static function normalizeTitle(string $title): string {
+		return self::normalizeTitleImpl( $title );
+	}
+
+	private static function normalizeTitleImpl(string $title): string {
+		return \strtoupper( \trim( $title ) );
+	}
+
+	private static function bookPayload(int $id) {
+		if ( $id <= 0 ) {
+			return new \WP_Error( 'acme_books_invalid_id', 'Book ID must be positive.', array(
+				'status' => 400,
+			) );
+		}
+		return array(
+			'id'    => $id,
+			'title' => 'Book ' . (string) $id,
+		);
+	}
+
+	public static function registerRestRoutes(): void {
+		\register_rest_route( 'acme-books/v1', '/books/(?P<id>[\\d]+)', array(
+			'methods'             => \WP_REST_Server::READABLE,
+			'callback'            => array( self::class, 'restBook' ),
+			'permission_callback' => array( self::class, 'restPermission' ),
+		) );
+	}
+
+	public static function registerBlocks(): void {
+		\register_block_type( 'acme-books/summary', array(
+			'render_callback' => array( self::class, 'renderSummary' ),
+		) );
+	}
+}

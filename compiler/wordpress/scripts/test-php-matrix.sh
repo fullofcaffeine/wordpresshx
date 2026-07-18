@@ -3,10 +3,17 @@ set -euo pipefail
 
 package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fixture="build/acme-books/acme-books.php"
+adapter_fixture="build/acme-books-adapters/acme-books-adapters.php"
+adapter_class_file="build/acme-books-adapters/includes/PublicAdapters.php"
 expected_output='{"booted":true,"class":"Acme\\Books\\Bootstrap","methods":["boot","isBooted"],"outputBytes":0}'
+adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
 
 if [[ ! -f "${package_root}/${fixture}" ]]; then
   echo "missing generated WordPress PHP fixture; run scripts/test.sh first" >&2
+  exit 1
+fi
+if [[ ! -f "${package_root}/${adapter_fixture}" || ! -f "${package_root}/${adapter_class_file}" ]]; then
+  echo "missing generated WordPress adapter fixture; run scripts/test.sh first" >&2
   exit 1
 fi
 if ! command -v docker >/dev/null 2>&1; then
@@ -34,7 +41,7 @@ run_fixture() {
   docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" sh -euc \
-    "find build/acme-books -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
+    "find build/acme-books build/acme-books-adapters -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
   output="$(docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" php "${fixture}")"
@@ -44,12 +51,26 @@ run_fixture() {
   fi
   output="$(docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
+    -w /work "${image}" php "${adapter_fixture}")"
+  if [[ -n "${output}" ]]; then
+    echo "${label} adapter direct-access guard produced output: ${output}" >&2
+    exit 1
+  fi
+  output="$(docker run --rm --network none \
+    --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" php runtime/native-caller.php "${fixture}")"
   if [[ "${output}" != "${expected_output}" ]]; then
     echo "${label} native caller mismatch: ${output}" >&2
     exit 1
   fi
-  echo "${label} ${version} WordPress public PHP lint/native-caller passed"
+  output="$(docker run --rm --network none \
+    --mount "type=bind,src=${package_root},dst=/work,readonly" \
+    -w /work "${image}" php runtime/native-adapter-caller.php "${adapter_class_file}")"
+  if [[ "${output}" != "${adapter_expected_output}" ]]; then
+    echo "${label} native adapter caller mismatch: ${output}" >&2
+    exit 1
+  fi
+  echo "${label} ${version} WordPress public PHP lint/native-callers passed"
 }
 
 run_fixture "php74" "7.4.33" "${php74_image}"

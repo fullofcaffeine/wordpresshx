@@ -188,7 +188,9 @@ required_files=(
   compiler/reflaxe.php/scripts/test.sh
   compiler/wordpress/README.md
   compiler/wordpress/runtime/activate-plugin.php
+  compiler/wordpress/runtime/native-adapter-caller.php
   compiler/wordpress/runtime/native-caller.php
+  compiler/wordpress/runtime/probe-adapters.php
   compiler/wordpress/runtime/probe-plugin.php
   compiler/wordpress/scripts/run-wordpress-lane.sh
   compiler/wordpress/scripts/test-php-matrix.sh
@@ -196,17 +198,35 @@ required_files=(
   compiler/wordpress/scripts/test.sh
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginBootstrapPlan.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginHeader.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressBlockRegistration.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookKind.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookRegistration.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterFile.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterPlan.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicExport.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestMethod.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestRouteRegistration.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PublicAdapterProfile.hx
   compiler/wordpress/test.hxml
+  compiler/wordpress/test/expected/acme-books-adapters/acme-books-adapters.php.txt
+  compiler/wordpress/test/expected/acme-books-adapters/includes/Bootstrap.php.txt
+  compiler/wordpress/test/expected/acme-books-adapters/includes/PublicAdapters.php.txt
+  compiler/wordpress/test/expected/acme-books-adapters/includes/autoload.php.txt
+  compiler/wordpress/test/expected/acme-books-adapters/includes/register-adapters.php.txt
+  compiler/wordpress/test/expected/acme-books-adapters/wordpresshx-public-php-adapters.v1.json
   compiler/wordpress/test/expected/acme-books/acme-books.php.txt
   compiler/wordpress/test/expected/acme-books/includes/Bootstrap.php.txt
   compiler/wordpress/test/expected/acme-books/includes/autoload.php.txt
   compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json
+  compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx
   compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx
+  compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
   scripts/gates/test-g0-baseline.py
@@ -274,6 +294,7 @@ python3 - <<'PY'
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 
 lock = json.loads(Path("manifests/upstream.lock.json").read_text(encoding="utf-8"))
@@ -872,21 +893,56 @@ assert wordpress_subject["genericCompilerReceiptId"] == (
     php_ir_receipt["receiptId"]
 )
 wordpress_profile_root = Path(wordpress_subject["path"])
-wordpress_profile_files = sorted(
-    (
-        path
-        for path in wordpress_profile_root.rglob("*")
-        if path.is_file()
-        and "build" not in path.relative_to(wordpress_profile_root).parts
-    ),
-    key=lambda path: path.as_posix(),
-)
 wordpress_profile_digest_input = bytearray()
-for path in wordpress_profile_files:
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    wordpress_profile_digest_input.extend(
-        f"{digest}  {path.as_posix()}\n".encode()
+if wordpress_php_receipt["status"] == "verified":
+    receipt_commit = wordpress_php_receipt["implementation"][
+        "implementationCommit"
+    ]
+    assert sha1.fullmatch(receipt_commit)
+    historical_paths = subprocess.run(
+        [
+            "git",
+            "ls-tree",
+            "-r",
+            "--name-only",
+            receipt_commit,
+            "--",
+            wordpress_profile_root.as_posix(),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    historical_paths = sorted(
+        path
+        for path in historical_paths
+        if "build" not in Path(path).relative_to(wordpress_profile_root).parts
     )
+    for path in historical_paths:
+        content = subprocess.run(
+            ["git", "show", f"{receipt_commit}:{path}"],
+            check=True,
+            capture_output=True,
+        ).stdout
+        digest = hashlib.sha256(content).hexdigest()
+        wordpress_profile_digest_input.extend(
+            f"{digest}  {path}\n".encode()
+        )
+else:
+    wordpress_profile_files = sorted(
+        (
+            path
+            for path in wordpress_profile_root.rglob("*")
+            if path.is_file()
+            and "build" not in path.relative_to(wordpress_profile_root).parts
+        ),
+        key=lambda path: path.as_posix(),
+    )
+    for path in wordpress_profile_files:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        wordpress_profile_digest_input.extend(
+            f"{digest}  {path.as_posix()}\n".encode()
+        )
 assert hashlib.sha256(wordpress_profile_digest_input).hexdigest() == (
     wordpress_subject["packageContentSha256"]
 )

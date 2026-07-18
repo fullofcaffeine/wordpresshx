@@ -14,7 +14,7 @@ php -r 'if (PHP_VERSION_ID < 70400) { fwrite(STDERR, "PHP 7.4 or newer is requir
 haxelib run formatter --check -s src -s test
 haxe test.hxml
 
-find build/acme-books -type f -name '*.php' -print0 \
+find build/acme-books build/acme-books-adapters -type f -name '*.php' -print0 \
   | sort -z \
   | xargs -0 -n 1 php -l
 
@@ -37,6 +37,12 @@ if [[ -n "${guard_output}" ]]; then
   exit 1
 fi
 
+adapter_guard_output="$(php build/acme-books-adapters/acme-books-adapters.php)"
+if [[ -n "${adapter_guard_output}" ]]; then
+  echo "adapter plugin root produced output outside WordPress: ${adapter_guard_output}" >&2
+  exit 1
+fi
+
 native_output="$(php runtime/native-caller.php build/acme-books/acme-books.php)"
 expected_output='{"booted":true,"class":"Acme\\Books\\Bootstrap","methods":["boot","isBooted"],"outputBytes":0}'
 if [[ "${native_output}" != "${expected_output}" ]]; then
@@ -44,4 +50,11 @@ if [[ "${native_output}" != "${expected_output}" ]]; then
   exit 1
 fi
 
-echo "WordPress PHP profile local fixture passed"
+adapter_native_output="$(php runtime/native-adapter-caller.php build/acme-books-adapters/includes/PublicAdapters.php)"
+adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
+if [[ "${adapter_native_output}" != "${adapter_expected_output}" ]]; then
+  echo "unexpected native PHP adapter caller output: ${adapter_native_output}" >&2
+  exit 1
+fi
+
+echo "WordPress PHP profile and native adapter local fixtures passed"

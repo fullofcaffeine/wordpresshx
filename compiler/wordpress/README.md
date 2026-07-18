@@ -7,19 +7,31 @@ WordPress-specific public PHP artifacts. The dependency is one-way:
 compiler/reflaxe.php <- compiler/wordpress
 ```
 
-The first admitted SDK-022 slice owns typed plugin headers, the root-file
-`ABSPATH` guard, deterministic autoload inclusion, and a stable namespaced
-bootstrap class. Header values are structured profile data. Root/bootstrap PHP
-is constructed from typed generic IR; no application raw-PHP string or stock
-Haxe runtime enters the public artifact. The emitted JSON manifest is an
-internal SDK-022 evidence record; it explicitly does not claim ADR-006 semantic
-plan schema or ADR-007 transactional ownership.
+SDK-022 owns typed plugin headers, the root-file `ABSPATH` guard, deterministic
+autoload inclusion, and a stable namespaced bootstrap class. SDK-023 adds a
+closed native-adapter plan for actions, filters, REST routes with explicit
+permission callbacks, dynamic block render callbacks, and stable PHP exports.
+The profile checks callback visibility, static shape, argument and return types,
+by-reference parameters, duplicate registrations, and reserved generated names
+before emitting PHP.
 
-This is not yet a Reflaxe driver, hook/REST/block adapter profile, lifecycle
-implementation, private stock-Haxe package, HXX lowerer, or production-support
-claim. Those surfaces remain dependency-gated.
+Both fixtures are Haxe-only application inputs. Their public artifacts contain
+ordinary WordPress functions, callable arrays, native arrays and objects, and
+readable stable classes; no application raw-PHP string, stock Haxe runtime, or
+HXX runtime enters the output. The adapter fixture is exercised by an ordinary
+non-Haxe PHP caller, exact PHP 7.4 and 8.4 containers, and clean WordPress 7.0
+MySQL and MariaDB installs. Its runtime proof includes a native action/filter,
+REST success and `WP_Error` paths, escaped dynamic-block rendering, reflection,
+and by-reference mutation.
 
-Run the local generator/snapshot/native-caller gate:
+The emitted manifests are internal evidence records. They do not claim the
+ADR-006 semantic-plan schema, ADR-007 transactional ownership, WPCS/static
+analysis, a general Haxe-to-PHP driver, the full typed hook/REST/block catalogs,
+private stock-Haxe packaging, HXX lowering, publication, or production support.
+Those surfaces remain dependency-gated.
+
+Run the local generator, snapshot, fail-closed validation, and native-caller
+gate:
 
 ```bash
 bash compiler/wordpress/scripts/test.sh
