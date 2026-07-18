@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "ADR-006-SEMANTIC-PLAN-CONTRACT",
   "bead": "wordpresshx-adr-006",
-  "observedAt": "2026-07-18T18:07:37Z",
+  "observedAt": "2026-07-18T18:19:34Z",
   "subject": {
     "adr": {
       "path": "docs/adr/006-semantic-plan-and-emitter-contract.md",
@@ -91,10 +91,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "semantic-plan",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29655478603,
+    "jobId": 88108898023,
+    "commit": "9ecb7200c85f91d454e150688b870da07828a2a7",
+    "status": "passed",
     "required": true
   },
   "claims": {
