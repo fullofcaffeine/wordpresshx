@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-025-PHP-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-025",
-  "status": "verified",
-  "observedAt": "2026-07-18T12:48:23Z",
+  "status": "implemented-local-verified",
+  "observedAt": "2026-07-18T14:50:53Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -144,7 +144,7 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139"
+      "sha256": "85034b2fc7063436a63c788eb9fddf2e6b36d710fafce2280cb4a8e7fabcda8e"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/Main.hx",
@@ -164,7 +164,7 @@
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "f45324a03804c4a462eac47612aa10a442a56ae5051aa93feca589b4aa923c9c"
+      "sha256": "5b6a22e0ad8b6f75460336603056b4a66f6205572a572b8408850e9e5fe1e931"
     },
     {
       "path": "packages/cli/scripts/verify-php-trace.py",
@@ -307,14 +307,22 @@
     "debugCompanionBoundToProductionPhp": true
   },
   "hostedVerification": {
-    "status": "passed",
+    "status": "pending-main-push",
     "workflow": "Repository bootstrap",
-    "commit": "3fc02d0168d929993e42226db6e419a229b50267",
-    "runId": 29644917228,
-    "fullMatrixStatus": "passed",
-    "jobCount": 10,
-    "haxeJobId": 88081445092,
+    "commit": null,
+    "runId": null,
+    "fullMatrixStatus": null,
+    "jobCount": null,
+    "haxeJobId": null,
     "cliStep": "Test Haxe and Genes PHP trace CLI",
+    "reverificationReason": "The shared CLI dependency lock and verifier now authenticate the exact per-platform Playwright browser matrix introduced by SDK-034",
+    "previousPassedVerification": {
+      "commit": "3fc02d0168d929993e42226db6e419a229b50267",
+      "runId": 29644917228,
+      "fullMatrixStatus": "passed",
+      "jobCount": 10,
+      "haxeJobId": 88081445092
+    },
     "discardedAttempts": [
       {
         "runId": 29644579049,

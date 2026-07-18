@@ -203,7 +203,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             "reference",
             "nodeVersion",
             "npmVersion",
-            "chromiumVersion",
+            "platforms",
             "evidenceStatus",
         },
         "Playwright runtime lock",
@@ -215,8 +215,24 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(
         playwright.get("nodeVersion") == "24.13.0"
         and playwright.get("npmVersion") == "11.6.2"
-        and playwright.get("chromiumVersion") == "145.0.7632.0",
-        "Playwright runtime-reported Node/npm/Chromium tuple changed",
+        and playwright.get("platforms")
+        == {
+            "linux/amd64": {
+                "manifestDigest": (
+                    "sha256:65cefd09a5e943921ecd3a6e5414c603"
+                    "db2eb161e9eb48f2e2ccc63486dc7dc0"
+                ),
+                "browserVersion": "145.0.7632.6",
+            },
+            "linux/arm64": {
+                "manifestDigest": (
+                    "sha256:68f1c3dca663d0e8331e8af4681b0b3"
+                    "15eca7de1bd7fa934aac0accbeb9f8323"
+                ),
+                "browserVersion": "145.0.7632.0",
+            },
+        },
+        "Playwright runtime-reported Node/npm/platform browser matrix changed",
     )
     audit.check(
         playwright.get("evidenceStatus") == "runtime-tested",

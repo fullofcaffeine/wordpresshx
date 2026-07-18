@@ -69,7 +69,16 @@
       "reference": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
       "nodeVersion": "24.13.0",
       "npmVersion": "11.6.2",
-      "chromiumVersion": "145.0.7632.0",
+      "platforms": {
+        "linux/amd64": {
+          "manifestDigest": "sha256:65cefd09a5e943921ecd3a6e5414c603db2eb161e9eb48f2e2ccc63486dc7dc0",
+          "browserVersion": "145.0.7632.6"
+        },
+        "linux/arm64": {
+          "manifestDigest": "sha256:68f1c3dca663d0e8331e8af4681b0b315eca7de1bd7fa934aac0accbeb9f8323",
+          "browserVersion": "145.0.7632.0"
+        }
+      },
       "evidenceStatus": "runtime-tested"
     },
     "php": {
@@ -208,7 +217,7 @@
           "lockPath": "packages/cli/browser-tooling/package-lock.json",
           "lockSha256": "9aa6dfb868de55f1e7941aa3ece99eb4c1780d0c831f22d34cb24a08c28e55e4",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139",
+          "dependencyLockSha256": "85034b2fc7063436a63c788eb9fddf2e6b36d710fafce2280cb4a8e7fabcda8e",
           "directPackages": [
             "esbuild@0.27.2",
             "playwright-core@1.58.2"
@@ -229,7 +238,7 @@
           "lockPath": "packages/cli/package-lock.json",
           "lockSha256": "e9b5376aa5bdf1fb5691ed0ec177ad701fb7ed69ce4dea320201db50de2050a8",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139",
+          "dependencyLockSha256": "85034b2fc7063436a63c788eb9fddf2e6b36d710fafce2280cb4a8e7fabcda8e",
           "directPackages": [],
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
           "lifecycleScriptsAllowed": false,

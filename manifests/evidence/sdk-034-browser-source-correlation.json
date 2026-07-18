@@ -3,7 +3,7 @@
   "receiptId": "SDK-034-BROWSER-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-034",
   "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T14:25:05Z",
+  "observedAt": "2026-07-18T14:47:55Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "cliPackage": "packages/cli",
@@ -25,6 +25,10 @@
       "production"
     ],
     "twoStageMode": "two-stage",
+    "runtimePlatforms": [
+      "linux/amd64",
+      "linux/arm64"
+    ],
     "officialWordpressScriptsCorrelation": "not-tested-follow-up-wordpresshx-g2.4",
     "nextJsCorrelation": "not-tested-owned-by-sdk-113-per-adapter-entry-mode",
     "generalProductionSupport": false,
@@ -53,10 +57,19 @@
     "browser": {
       "driver": "playwright-core@1.58.2",
       "driverIntegrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==",
-      "engine": "Chromium 145.0.7632.0",
       "node": "24.13.0",
       "npm": "11.6.2",
-      "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d"
+      "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+      "platforms": {
+        "linux/amd64": {
+          "manifestDigest": "sha256:65cefd09a5e943921ecd3a6e5414c603db2eb161e9eb48f2e2ccc63486dc7dc0",
+          "browserVersion": "145.0.7632.6"
+        },
+        "linux/arm64": {
+          "manifestDigest": "sha256:68f1c3dca663d0e8331e8af4681b0b315eca7de1bd7fa934aac0accbeb9f8323",
+          "browserVersion": "145.0.7632.0"
+        }
+      }
     },
     "integrityLockedNpmPackageCount": 28
   },
@@ -145,7 +158,7 @@
     },
     {
       "path": "packages/cli/browser-tooling/runtime.mjs",
-      "sha256": "240734d7343003742134cfe1e44d0ebf65d38e2c8058b1fb5adb2a0725faed36"
+      "sha256": "681072b1daadbe31810bc14d4b4e824e624b89640c78cd0a1fc68f51708d6d45"
     },
     {
       "path": "packages/cli/scripts/package-browser-source-correlation.py",
@@ -153,7 +166,7 @@
     },
     {
       "path": "packages/cli/scripts/verify-browser-source-correlation.py",
-      "sha256": "f506aa406f5e771a4d891c3d3a5ef0932f21aa48973d2abb19f228f741d01c5b"
+      "sha256": "2dc9dcebf9ad93583868b305badc82f318b8a3087c138b24dfc3917ec9b52eb6"
     },
     {
       "path": "packages/cli/scripts/create-browser-trace-mutations.py",
@@ -177,11 +190,11 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139"
+      "sha256": "85034b2fc7063436a63c788eb9fddf2e6b36d710fafce2280cb4a8e7fabcda8e"
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "f45324a03804c4a462eac47612aa10a442a56ae5051aa93feca589b4aa923c9c"
+      "sha256": "5b6a22e0ad8b6f75460336603056b4a66f6205572a572b8408850e9e5fe1e931"
     },
     {
       "path": "schemas/source-correlation-index.schema.json",
@@ -203,7 +216,11 @@
     "sourceIndexSha256": "8861bb2d9eb120f55eb0010536fa30b7124d3a3934ca6e1117a993647f8543c1",
     "artifactSetSha256": "e301aa3d7ca11335366bd09eb67e0c70918cabd2f72d24bcf9c01a517d6b8675",
     "indexedFileCount": 15,
-    "browserReceiptSha256": "dd45eb299c51f0fc61f19982f4437fa0e201d84c318b442bfd5aaf8e14ee80b7",
+    "browserReceiptSha256ByPlatform": {
+      "linux/amd64": "f38d5c4127a4b852d085734ad0250d26676688a430e69fa6e2302cf56c4a3dba",
+      "linux/arm64": "b4440ee337b3e317b300672fe418e5ebc81a4a45fc7a2eba66622f74056510bb"
+    },
+    "stackHashesApplyToAllRuntimePlatforms": true,
     "modes": {
       "development": {
         "nativeFrame": "runtime/development.js:319:11",
@@ -249,6 +266,11 @@
       "deterministicBundleBuilds": 2,
       "deterministicPackageBuilds": 2,
       "realChromiumFailureRuns": 6,
+      "runtimePlatforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "crossPlatformNativeStackParity": true,
       "browserFailuresReplayStable": true,
       "nativeStackTextPreservedByteForByte": true,
       "canonicalJsonReplay": true,
@@ -345,6 +367,13 @@
       "commit": "732f3f409f3b73842f605e6b9600477714557b75",
       "outcome": "failed-before-browser-compile",
       "reason": "The gate derived the Lix root from haxelib config, but the hosted haxelib command remained bound to the separate setup-haxe installation"
+    },
+    {
+      "runId": 29648122317,
+      "jobId": 88089703498,
+      "commit": "bfefcd3e3cc77b0f67c826bf82e6f34f0e4b7f22",
+      "outcome": "failed-after-cross-platform-browser-execution",
+      "reason": "The multi-architecture Playwright index contains browser 145.0.7632.6 on AMD64 and 145.0.7632.0 on ARM64, but the receipt modeled only the ARM64 version; the other nine workflow jobs passed"
     }
   ],
   "claims": {
@@ -353,6 +382,7 @@
     "developmentComposition": "exact-fixture-runtime-tested",
     "productionComposition": "exact-fixture-runtime-tested",
     "twoStageFallback": "exact-fixture-runtime-tested",
+    "multiArchitectureBrowserRuntime": "exact-child-manifests-runtime-tested-with-byte-identical-stacks",
     "nativeFramePreservation": "controlled-runtime-tested",
     "debugCompanionRetention": "package-tested",
     "officialWordpressScriptsCorrelation": "not-tested-wordpresshx-g2.4",

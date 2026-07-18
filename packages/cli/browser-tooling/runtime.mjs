@@ -16,6 +16,13 @@ const outputRoot = path.resolve(outputRootValue);
 const host = "127.0.0.1";
 const port = 41734;
 const modes = ["development", "production", "two-stage"];
+const runtimeArchitecture = process.arch === "x64" ? "amd64" : process.arch;
+const runtimePlatform = `${process.platform}/${runtimeArchitecture}`;
+const browserVersions = Object.freeze({
+  "linux/amd64": "145.0.7632.6",
+  "linux/arm64": "145.0.7632.0",
+});
+const expectedBrowserVersion = browserVersions[runtimePlatform];
 
 assert.equal(process.version, "v24.13.0", "unexpected Playwright image Node runtime");
 assert.equal(
@@ -23,6 +30,7 @@ assert.equal(
   "11.6.2",
   "unexpected Playwright image npm runtime"
 );
+assert.ok(expectedBrowserVersion, `unsupported Playwright runtime: ${runtimePlatform}`);
 fs.mkdirSync(outputRoot, { recursive: true });
 
 function responseBody(requestPath) {
@@ -68,6 +76,12 @@ await new Promise((resolve, reject) => {
 let browser;
 try {
   browser = await chromium.launch({ headless: true });
+  const browserVersion = browser.version();
+  assert.equal(
+    browserVersion,
+    expectedBrowserVersion,
+    `unexpected browser version for ${runtimePlatform}`
+  );
   const receipts = [];
   for (const mode of modes) {
     let expectedStack = null;
@@ -111,7 +125,8 @@ try {
     `${JSON.stringify({
       schemaVersion: 1,
       engine: "chromium",
-      browserVersion: browser.version(),
+      runtimePlatform,
+      browserVersion,
       playwright: "1.58.2",
       host,
       port,
@@ -120,7 +135,8 @@ try {
     "utf8"
   );
   console.log(
-    `SDK-034 real Chromium throws passed: ${modes.join(", ")}; native stacks replay-stable`
+    `SDK-034 real Chromium throws passed on ${runtimePlatform} ` +
+      `(${browserVersion}): ${modes.join(", ")}; native stacks replay-stable`
   );
 } finally {
   if (browser) {

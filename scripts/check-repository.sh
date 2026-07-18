@@ -1462,6 +1462,17 @@ assert sdk025_hosted["discardedAttempts"] == [
         ),
     }
 ]
+assert sdk025_hosted["reverificationReason"] == (
+    "The shared CLI dependency lock and verifier now authenticate the exact "
+    "per-platform Playwright browser matrix introduced by SDK-034"
+)
+assert sdk025_hosted["previousPassedVerification"] == {
+    "commit": "3fc02d0168d929993e42226db6e419a229b50267",
+    "runId": 29644917228,
+    "fullMatrixStatus": "passed",
+    "jobCount": 10,
+    "haxeJobId": 88081445092,
+}
 if sdk025_hosted["status"] == "passed":
     assert sdk025_receipt["status"] == "verified"
     assert sha1.fullmatch(sdk025_hosted["commit"])
@@ -1501,6 +1512,7 @@ sdk034_scope = sdk034_receipt["scope"]
 assert sdk034_scope["genesLayerValidatedIndependently"] is True
 assert sdk034_scope["composedModes"] == ["development", "production"]
 assert sdk034_scope["twoStageMode"] == "two-stage"
+assert sdk034_scope["runtimePlatforms"] == ["linux/amd64", "linux/arm64"]
 assert sdk034_scope["officialWordpressScriptsCorrelation"] == (
     "not-tested-follow-up-wordpresshx-g2.4"
 )
@@ -1539,6 +1551,9 @@ assert sdk034_toolchain["browser"]["image"] == (
 )
 assert sdk034_toolchain["browser"]["image"] == (
     browser_correlation_lock["browserRuntime"]["image"]
+)
+assert sdk034_toolchain["browser"]["platforms"] == (
+    browser_correlation_lock["browserRuntime"]["platforms"]
 )
 
 sdk034_inputs = sdk034_receipt["authenticatedInputs"]
@@ -1591,7 +1606,15 @@ assert sdk034_fixture["expectedSource"] == {
 assert sdk034_fixture["indexedFileCount"] == 15
 assert sha256.fullmatch(sdk034_fixture["sourceIndexSha256"])
 assert sha256.fullmatch(sdk034_fixture["artifactSetSha256"])
-assert sha256.fullmatch(sdk034_fixture["browserReceiptSha256"])
+assert set(sdk034_fixture["browserReceiptSha256ByPlatform"]) == {
+    "linux/amd64",
+    "linux/arm64",
+}
+assert all(
+    sha256.fullmatch(value)
+    for value in sdk034_fixture["browserReceiptSha256ByPlatform"].values()
+)
+assert sdk034_fixture["stackHashesApplyToAllRuntimePlatforms"] is True
 sdk034_modes = sdk034_fixture["modes"]
 assert set(sdk034_modes) == {"development", "production", "two-stage"}
 assert sdk034_modes["development"]["status"] == "mapped-composed"
@@ -1605,6 +1628,13 @@ for mode in sdk034_modes.values():
 sdk034_verification = sdk034_receipt["verification"]
 assert sdk034_verification["browserGate"]["outcome"] == "passed"
 assert sdk034_verification["browserGate"]["realChromiumFailureRuns"] == 6
+assert sdk034_verification["browserGate"]["runtimePlatforms"] == [
+    "linux/amd64",
+    "linux/arm64",
+]
+assert sdk034_verification["browserGate"][
+    "crossPlatformNativeStackParity"
+] is True
 assert sdk034_verification["browserGate"]["browserFailuresReplayStable"] is True
 assert sdk034_verification["browserGate"]["nativeStackTextPreservedByteForByte"] is True
 assert sdk034_verification["browserGate"]["canonicalJsonReplay"] is True
@@ -1719,6 +1749,18 @@ assert sdk034_receipt["discardedHostedAttempts"] == [
             "installation"
         ),
     },
+    {
+        "runId": 29648122317,
+        "jobId": 88089703498,
+        "commit": "bfefcd3e3cc77b0f67c826bf82e6f34f0e4b7f22",
+        "outcome": "failed-after-cross-platform-browser-execution",
+        "reason": (
+            "The multi-architecture Playwright index contains browser "
+            "145.0.7632.6 on AMD64 and 145.0.7632.0 on ARM64, but the receipt "
+            "modeled only the ARM64 version; the other nine workflow jobs "
+            "passed"
+        ),
+    },
 ]
 sdk034_browser_gate_source = Path(
     "packages/cli/scripts/test-browser-source-correlation.sh"
@@ -1755,6 +1797,9 @@ assert sdk034_receipt["claims"]["officialWordpressScriptsCorrelation"] == (
 )
 assert sdk034_receipt["claims"]["nextJsCorrelation"] == (
     "not-tested-sdk-113"
+)
+assert sdk034_receipt["claims"]["multiArchitectureBrowserRuntime"] == (
+    "exact-child-manifests-runtime-tested-with-byte-identical-stacks"
 )
 assert sdk034_receipt["claims"]["productionSupport"] == "not-tested"
 assert sdk034_receipt["claims"]["publicPackagePublication"] == "blocked"

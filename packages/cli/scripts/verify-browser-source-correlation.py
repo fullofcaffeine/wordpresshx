@@ -24,6 +24,10 @@ EXPECTED_FRAME = {
     "production": (1, 2976, "mapped-composed"),
     "two-stage": (1, 2976, "mapped-two-stage"),
 }
+EXPECTED_BROWSER_VERSIONS = {
+    "linux/amd64": "145.0.7632.6",
+    "linux/arm64": "145.0.7632.0",
+}
 
 
 def digest(data: bytes) -> str:
@@ -169,10 +173,16 @@ def verify_packages(evidence: Path, index: dict) -> None:
 
 def verify_browser_and_cli(evidence: Path, browser: Path) -> None:
     receipt = json.loads((browser / "browser-receipt.json").read_text())
+    runtime_platform = receipt.get("runtimePlatform")
+    if runtime_platform not in EXPECTED_BROWSER_VERSIONS:
+        raise AssertionError(
+            f"unsupported real-browser runtime platform: {runtime_platform}"
+        )
     if receipt != {
         "schemaVersion": 1,
         "engine": "chromium",
-        "browserVersion": "145.0.7632.0",
+        "runtimePlatform": runtime_platform,
+        "browserVersion": EXPECTED_BROWSER_VERSIONS[runtime_platform],
         "playwright": "1.58.2",
         "host": "127.0.0.1",
         "port": 41734,

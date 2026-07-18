@@ -12,8 +12,10 @@ Lix package 15.12.4 (reported CLI 15.12.2),
 Genes 1.36.3 at commit
 `c59ecb361fd91418584487c2138bae8d3d3a3961`, hxnodejs 10.0.0, and Node
 22.17.0. The SDK-034 browser evidence closure additionally pins esbuild 0.27.2,
-playwright-core 1.58.2, and Chromium 145.0.7632.0 in its checksum-locked runtime
-image. The test harness authenticates and invokes the Haxe shim adjacent to
+playwright-core 1.58.2, and the Playwright image's exact platform children:
+browser 145.0.7632.6 on Linux AMD64 and 145.0.7632.0 on Linux ARM64. Both
+platforms produce byte-identical deliberate-failure stacks and source
+correlations. The test harness authenticates and invokes the Haxe shim adjacent to
 the active Lix executable, so scoped libraries do not depend on whichever
 system Haxe happens to appear first on `PATH`. SDK-025 required no Genes source
 change or pull request.
