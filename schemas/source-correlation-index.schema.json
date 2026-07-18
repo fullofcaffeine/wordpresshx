@@ -1,0 +1,518 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/source-correlation-index.schema.json",
+  "title": "WordPressHx package source-correlation index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "format",
+    "sdkVersion",
+    "buildInputsSha256",
+    "package",
+    "retention",
+    "sourceRoots",
+    "files",
+    "artifactSetSha256",
+    "correlations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "format": {
+      "const": "wordpresshx.source-correlation-index.v1"
+    },
+    "sdkVersion": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "buildInputsSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "package": {
+      "$ref": "#/$defs/packageIdentity"
+    },
+    "retention": {
+      "$ref": "#/$defs/retention"
+    },
+    "sourceRoots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/sourceRoot"
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/file"
+      }
+    },
+    "artifactSetSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "correlations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/phpCorrelation"
+          },
+          {
+            "$ref": "#/$defs/browserComposedCorrelation"
+          },
+          {
+            "$ref": "#/$defs/browserTwoStageCorrelation"
+          },
+          {
+            "$ref": "#/$defs/unavailableCorrelation"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}$"
+    },
+    "safeRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/$)(?!.*[\\\\\\u0000-\\u001F\\u007F:]).+$"
+    },
+    "packageIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "profileId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "profileId": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "indexDistribution",
+        "mapsInProduction",
+        "inlineMapsInProduction",
+        "sourceContentPolicy",
+        "machinePathsAllowed",
+        "developmentHandler",
+        "secretScanRequiredForShipping"
+      ],
+      "properties": {
+        "profile": {
+          "enum": [
+            "development",
+            "debug-companion",
+            "production-evidence"
+          ]
+        },
+        "indexDistribution": {
+          "enum": [
+            "debug-companion",
+            "local-only"
+          ]
+        },
+        "mapsInProduction": {
+          "const": false
+        },
+        "inlineMapsInProduction": {
+          "const": false
+        },
+        "sourceContentPolicy": {
+          "enum": [
+            "omitted",
+            "allowlisted-debug-only"
+          ]
+        },
+        "machinePathsAllowed": {
+          "const": false
+        },
+        "developmentHandler": {
+          "enum": [
+            "disabled",
+            "opt-in-augment-only"
+          ]
+        },
+        "secretScanRequiredForShipping": {
+          "const": true
+        }
+      }
+    },
+    "sourceRoot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "resolution",
+        "contentDistribution"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "kind": {
+          "enum": [
+            "project",
+            "dependency",
+            "haxe-stdlib",
+            "native"
+          ]
+        },
+        "resolution": {
+          "enum": [
+            "cli-root-argument",
+            "debug-companion-relative",
+            "not-resolvable"
+          ]
+        },
+        "contentDistribution": {
+          "enum": [
+            "external",
+            "debug-companion",
+            "local-only"
+          ]
+        },
+        "packagePath": {
+          "$ref": "#/$defs/safeRelativePath"
+        }
+      }
+    },
+    "sourceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rootId",
+        "path"
+      ],
+      "properties": {
+        "rootId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/safeRelativePath"
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "role",
+        "language",
+        "sha256",
+        "byteLength",
+        "distribution"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/safeRelativePath"
+        },
+        "role": {
+          "enum": [
+            "runtime",
+            "generated-source",
+            "source-map",
+            "source"
+          ]
+        },
+        "language": {
+          "enum": [
+            "php",
+            "javascript",
+            "typescript",
+            "tsx",
+            "haxe",
+            "json"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "distribution": {
+          "enum": [
+            "production",
+            "debug-companion",
+            "local-only",
+            "external"
+          ]
+        },
+        "sourceIdentity": {
+          "$ref": "#/$defs/sourceIdentity"
+        }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "order",
+        "mapFileId",
+        "format",
+        "generatedFileId",
+        "generatedLanguage",
+        "sourceLanguage",
+        "sourceFileIds"
+      ],
+      "properties": {
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mapFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "format": {
+          "enum": [
+            "wordpresshx.php-haxe-range-map.v1",
+            "source-map-v3"
+          ]
+        },
+        "generatedFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "generatedLanguage": {
+          "enum": [
+            "php",
+            "javascript",
+            "typescript",
+            "tsx"
+          ]
+        },
+        "sourceLanguage": {
+          "enum": [
+            "haxe",
+            "typescript",
+            "tsx"
+          ]
+        },
+        "sourceFileIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    },
+    "correlationStatus": {
+      "enum": [
+        "schema-only",
+        "bounded-local",
+        "hosted-runtime"
+      ]
+    },
+    "phpCorrelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entryFileId",
+        "target",
+        "strategy",
+        "status",
+        "layers",
+        "proofReceiptIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "entryFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "target": {
+          "const": "php"
+        },
+        "strategy": {
+          "const": "php-range-map"
+        },
+        "status": {
+          "$ref": "#/$defs/correlationStatus"
+        },
+        "layers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/layer"
+          }
+        },
+        "proofReceiptIds": {
+          "$ref": "#/$defs/receiptIds"
+        }
+      }
+    },
+    "browserComposedCorrelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entryFileId",
+        "target",
+        "strategy",
+        "status",
+        "layers",
+        "proofReceiptIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "entryFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "target": {
+          "const": "browser"
+        },
+        "strategy": {
+          "const": "browser-composed-v3"
+        },
+        "status": {
+          "$ref": "#/$defs/correlationStatus"
+        },
+        "layers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/layer"
+          }
+        },
+        "proofReceiptIds": {
+          "$ref": "#/$defs/receiptIds"
+        }
+      }
+    },
+    "browserTwoStageCorrelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entryFileId",
+        "target",
+        "strategy",
+        "status",
+        "layers",
+        "proofReceiptIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "entryFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "target": {
+          "const": "browser"
+        },
+        "strategy": {
+          "const": "browser-two-stage-v3"
+        },
+        "status": {
+          "$ref": "#/$defs/correlationStatus"
+        },
+        "layers": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/layer"
+          }
+        },
+        "proofReceiptIds": {
+          "$ref": "#/$defs/receiptIds"
+        }
+      }
+    },
+    "unavailableCorrelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entryFileId",
+        "target",
+        "strategy",
+        "status",
+        "reason",
+        "proofReceiptIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "entryFileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "target": {
+          "enum": [
+            "php",
+            "browser"
+          ]
+        },
+        "strategy": {
+          "const": "unavailable"
+        },
+        "status": {
+          "const": "unavailable"
+        },
+        "reason": {
+          "enum": [
+            "map-not-emitted",
+            "composition-unproven",
+            "unsupported-toolchain",
+            "retention-policy"
+          ]
+        },
+        "proofReceiptIds": {
+          "$ref": "#/$defs/receiptIds"
+        }
+      }
+    },
+    "receiptIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/stableId"
+      }
+    }
+  }
+}

@@ -33,6 +33,7 @@ required_files=(
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
+  docs/adr/014-source-maps-and-php-trace-correlation.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
@@ -197,6 +198,9 @@ required_files=(
   schemas/README.md
   schemas/profile.schema.json
   schemas/profile-diff.schema.json
+  schemas/php-haxe-map.schema.json
+  schemas/source-correlation-index.schema.json
+  scripts/source-correlation/validate-contracts.py
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -213,6 +217,17 @@ required_files=(
   fixtures/release-governance/expected/rehearsal.json
   fixtures/licenses/README.md
   fixtures/licenses/expected/publication-blocked.txt
+  fixtures/source-correlation/README.md
+  fixtures/source-correlation/source-index.valid.json
+  fixtures/source-correlation/source/project/src/fixture/Failure.hx
+  fixtures/source-correlation/artifacts/plugin/includes/failure.php
+  fixtures/source-correlation/artifacts/plugin/includes/failure.php.haxe-map.json
+  fixtures/source-correlation/artifacts/browser/composed.js
+  fixtures/source-correlation/artifacts/browser/composed.js.map
+  fixtures/source-correlation/artifacts/browser/two-stage.js
+  fixtures/source-correlation/artifacts/browser/two-stage.js.map
+  fixtures/source-correlation/artifacts/browser/two-stage.ts
+  fixtures/source-correlation/artifacts/browser/two-stage.ts.map
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -222,6 +237,7 @@ required_files=(
   manifests/README.md
   manifests/browser-build-architecture.json
   manifests/hxx-architecture.json
+  manifests/source-correlation-architecture.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -495,6 +511,11 @@ hxx_architecture = json.loads(
 )
 browser_architecture = json.loads(
     Path("manifests/browser-build-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+source_correlation_architecture = json.loads(
+    Path("manifests/source-correlation-architecture.json").read_text(
         encoding="utf-8"
     )
 )
@@ -994,6 +1015,200 @@ for scoped_hxml in Path("packages/hxx/haxe_libraries").glob("*.hxml"):
     scoped_content = scoped_hxml.read_text(encoding="utf-8")
     assert "=dev" not in scoped_content
     assert "../" not in scoped_content
+
+assert source_correlation_architecture["schemaVersion"] == 1
+assert source_correlation_architecture["decision"] == "ADR-014"
+assert source_correlation_architecture["status"] == "accepted-architecture"
+assert source_correlation_architecture["acceptedAt"] == "2026-07-18"
+assert source_correlation_architecture["claim"] == (
+    "schemas-and-contract-fixtures-only"
+)
+source_contract = source_correlation_architecture["publicContract"]
+assert source_contract["phpMapFormat"] == (
+    "wordpresshx.php-haxe-range-map.v1"
+)
+assert source_contract["sourceIndexFormat"] == (
+    "wordpresshx.source-correlation-index.v1"
+)
+assert source_contract["lookupBehaviorIsPublicApi"] is True
+
+php_map_schema = json.loads(
+    Path(source_contract["phpMapSchema"]).read_text(encoding="utf-8")
+)
+source_index_schema = json.loads(
+    Path(source_contract["sourceIndexSchema"]).read_text(encoding="utf-8")
+)
+assert php_map_schema["$schema"] == (
+    "https://json-schema.org/draft/2020-12/schema"
+)
+assert source_index_schema["$schema"] == php_map_schema["$schema"]
+assert php_map_schema["properties"]["schemaVersion"]["const"] == 1
+assert source_index_schema["properties"]["schemaVersion"]["const"] == 1
+assert php_map_schema["properties"]["format"]["const"] == (
+    source_contract["phpMapFormat"]
+)
+assert source_index_schema["properties"]["format"]["const"] == (
+    source_contract["sourceIndexFormat"]
+)
+
+source_coordinates = source_correlation_architecture["coordinates"]
+assert source_coordinates == {
+    "authoritativeUnit": "utf-8-bytes",
+    "range": "half-open",
+    "lineBase": 1,
+    "columnBase": 0,
+    "columnUnit": "utf-8-bytes",
+    "redundantCoordinatesValidatedAgainstBytes": True,
+    "generatedContentSha256Required": True,
+    "generatedByteLengthRequired": True,
+    "generatedLineCountRequired": True,
+    "sourceContentSha256Required": True,
+}
+source_paths = source_correlation_architecture["paths"]
+for forbidden_path_policy in (
+    "absolutePathsAllowed",
+    "drivePathsAllowed",
+    "backslashesAllowed",
+    "traversalSegmentsAllowed",
+    "basenameFallbackAllowed",
+    "nearestFileGuessAllowed",
+):
+    assert source_paths[forbidden_path_policy] is False
+assert source_paths["machinePathLeakCountAllowed"] == 0
+
+php_source_maps = source_correlation_architecture["php"]
+assert php_source_maps["owner"] == "compiler/reflaxe.php"
+assert php_source_maps["wordPressSemanticPlanOwner"] == "sdk-build-layer"
+assert php_source_maps["nestedRangesAllowed"] is True
+assert php_source_maps["crossingRangesAllowed"] is False
+assert php_source_maps["exactByteLookup"]["nearestMappingFallback"] is False
+assert php_source_maps["nativeStackLineLookup"] == {
+    "source": "unique-emitter-runtime-line-trace-anchor",
+    "missingAnchor": "unmapped-no-anchor",
+    "duplicateAnchor": "invalid-map",
+    "nearestMappingFallback": False,
+    "confidenceLabel": "mapped-trace-anchor",
+}
+assert php_source_maps["nativeFramesPreserved"] is True
+assert php_source_maps["standardBrowserSourceMapClaim"] is False
+
+browser_source_maps = source_correlation_architecture["browser"]
+assert browser_source_maps["layerFormat"] == "Source Map v3"
+assert browser_source_maps["haxeToGeneratedSourceOwner"] == "genes-ts"
+assert set(browser_source_maps["strategies"]) == {
+    "browser-composed-v3",
+    "browser-two-stage-v3",
+    "unavailable",
+}
+composition_admission = browser_source_maps["compositionAdmission"]
+assert composition_admission["developmentThrowRequired"] is True
+assert composition_admission["minifiedProductionThrowRequired"] is True
+assert composition_admission["sameExpectedHaxeTokenRequired"] is True
+assert composition_admission["silentPartialCompositionAllowed"] is False
+assert browser_source_maps["fallback"]["strategy"] == (
+    "browser-two-stage-v3"
+)
+assert browser_source_maps["fallback"]["bothLayersRetained"] is True
+
+source_index_contract = source_correlation_architecture["sourceIndex"]
+assert source_index_contract["owner"] == "sdk-build-layer"
+assert source_index_contract["mapAndGeneratedContentBoundBySha256"] is True
+assert source_index_contract["browserIntermediateContinuityRequired"] is True
+assert source_index_contract["unavailableStrategyIsFirstClass"] is True
+assert source_index_contract["lookupByCompleteFileIdentityOnly"] is True
+
+source_retention = source_correlation_architecture["retention"]
+default_production = source_retention["defaultProductionInstallArtifact"]
+for forbidden_production_content in (
+    "mapsIncluded",
+    "sourceIndexIncluded",
+    "sourceContentIncluded",
+    "inlineSourceMapsIncluded",
+    "developmentHandlerIncluded",
+):
+    assert default_production[forbidden_production_content] is False
+assert default_production["readableNativePhpRequired"] is True
+debug_companion = source_retention["debugCompanion"]
+assert debug_companion["separateFromInstallArtifact"] is True
+assert debug_companion["boundToExactProductionArtifactHashes"] is True
+assert debug_companion["defaultSourceContentPolicy"] == "omitted"
+assert debug_companion["allowlistedSourceContentRequiresSecretScan"] is True
+assert debug_companion["allowlistedSourceContentRequiresLicenseReview"] is True
+assert debug_companion["allowlistedSourceContentRequiresPathScan"] is True
+
+trace_cli = source_correlation_architecture["traceCli"]
+assert trace_cli["binary"] == "wphx-sdk"
+assert trace_cli["commands"] == ["trace php", "trace browser"]
+assert trace_cli["offlineByDefault"] is True
+assert trace_cli["networkLookupAllowed"] is False
+assert trace_cli["integrityValidationBeforeLookup"] is True
+assert trace_cli["validUnmappedFramesAreErrors"] is False
+assert trace_cli["invalidOrTamperedArtifactsFail"] is True
+assert trace_cli["ambiguousLookupFails"] is True
+assert trace_cli["nativeFrameTextPreserved"] is True
+assert trace_cli["exitCodes"] == {
+    "processed": 0,
+    "usageOrStackInput": 2,
+    "integrityOrSchema": 3,
+    "ambiguousContract": 4,
+}
+
+development_handler = source_correlation_architecture[
+    "wordpressDevelopmentHandler"
+]
+assert development_handler["default"] == "disabled"
+assert development_handler["augmentsLogs"] is True
+assert development_handler["suppressesNativeFrames"] is False
+assert development_handler["replacesWordpressRecoveryBehavior"] is False
+assert development_handler["changesHttpResponse"] is False
+assert development_handler["includedInProduction"] is False
+
+source_evidence = source_correlation_architecture["currentEvidence"]
+assert source_evidence["php"]["declarationRangeFoundationReceiptId"] == (
+    php_ir_receipt["receiptId"]
+)
+assert source_evidence["php"]["serializedMapRuntime"] == "not-tested"
+assert source_evidence["php"]["traceCli"] == "not-implemented"
+assert source_evidence["browser"]["genesCommit"] == (
+    gutenberg_dependency_lock["compiler"]["commit"]
+)
+assert source_evidence["browser"]["boundedEsbuildCompositionReceiptId"] == (
+    sdk032_receipt["receiptId"]
+)
+assert source_evidence["browser"]["officialWordpressScriptsLaneReceiptId"] == (
+    sdk033_receipt["receiptId"]
+)
+assert source_evidence["browser"]["officialWordpressScriptsCorrelation"] == (
+    "not-tested"
+)
+assert source_evidence["productionSupport"] == "not-tested"
+assert source_evidence["publicationAuthorized"] is False
+
+reference_review = source_correlation_architecture["referenceReview"]
+assert {reference["repository"] for reference in reference_review} == {
+    "https://github.com/fullofcaffeine/reflaxe.rust",
+    "https://github.com/fullofcaffeine/genes-ts",
+    "https://github.com/fullofcaffeine/reflaxe.elixir",
+    "https://github.com/fullofcaffeine/reflaxe.ruby",
+    "https://github.com/fullofcaffeine/hxhx",
+    "https://github.com/fullofcaffeine/reflaxe.go",
+    "https://github.com/fullofcaffeine/wordpresshx-port",
+}
+for reference in reference_review:
+    assert sha1.fullmatch(reference["commit"])
+    assert sha1.fullmatch(reference["tree"])
+    assert reference["copiedCode"] is False
+    assert reference["paths"]
+    for reviewed_path in reference["paths"]:
+        assert reviewed_path["path"]
+        assert sha1.fullmatch(reviewed_path["blob"])
+
+assert set(source_correlation_architecture["followUpBeads"]) == {
+    "wordpresshx-sdk-025",
+    "wordpresshx-sdk-034",
+    "wordpresshx-adr-019",
+}
+assert len(source_correlation_architecture["stopConditions"]) == 5
 
 assert lock["schemaVersion"] == 1
 assert lock["lockStatus"] == "partial"
@@ -3318,6 +3533,7 @@ python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
 python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
+python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only

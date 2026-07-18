@@ -1,0 +1,383 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-014",
+  "status": "accepted-architecture",
+  "acceptedAt": "2026-07-18",
+  "claim": "schemas-and-contract-fixtures-only",
+  "publicContract": {
+    "phpMapFormat": "wordpresshx.php-haxe-range-map.v1",
+    "phpMapSchema": "schemas/php-haxe-map.schema.json",
+    "sourceIndexFormat": "wordpresshx.source-correlation-index.v1",
+    "sourceIndexSchema": "schemas/source-correlation-index.schema.json",
+    "schemaChangePolicy": "versioned-migration-or-new-major-format",
+    "lookupBehaviorIsPublicApi": true
+  },
+  "coordinates": {
+    "authoritativeUnit": "utf-8-bytes",
+    "range": "half-open",
+    "lineBase": 1,
+    "columnBase": 0,
+    "columnUnit": "utf-8-bytes",
+    "redundantCoordinatesValidatedAgainstBytes": true,
+    "generatedContentSha256Required": true,
+    "generatedByteLengthRequired": true,
+    "generatedLineCountRequired": true,
+    "sourceContentSha256Required": true
+  },
+  "paths": {
+    "storedForm": "normalized-posix-logical-relative",
+    "declaredLogicalRootsRequired": true,
+    "absolutePathsAllowed": false,
+    "drivePathsAllowed": false,
+    "backslashesAllowed": false,
+    "traversalSegmentsAllowed": false,
+    "basenameFallbackAllowed": false,
+    "nearestFileGuessAllowed": false,
+    "runtimeRootResolution": "explicit-cli-root-id-to-local-path",
+    "machinePathLeakCountAllowed": 0
+  },
+  "php": {
+    "mapSuffix": ".haxe-map.json",
+    "owner": "compiler/reflaxe.php",
+    "wordPressSemanticPlanOwner": "sdk-build-layer",
+    "emission": "same-transaction-as-authenticated-generated-php",
+    "origins": [
+      "haxe-source",
+      "native-source",
+      "compiler-generated"
+    ],
+    "sourceOriginRequiresSemanticNodeId": true,
+    "compilerOriginRequiresClosedReasonClassAndStableReasonId": true,
+    "crossingRangesAllowed": false,
+    "nestedRangesAllowed": true,
+    "exactByteLookup": {
+      "precondition": "exact-generated-path-and-content-sha256",
+      "selection": [
+        "smallest-containing-byte-range",
+        "greatest-structural-depth"
+      ],
+      "remainingTie": "invalid-map",
+      "nearestMappingFallback": false
+    },
+    "nativeStackLineLookup": {
+      "source": "unique-emitter-runtime-line-trace-anchor",
+      "missingAnchor": "unmapped-no-anchor",
+      "duplicateAnchor": "invalid-map",
+      "nearestMappingFallback": false,
+      "confidenceLabel": "mapped-trace-anchor"
+    },
+    "comments": {
+      "lookupAuthority": false,
+      "developmentFineGrainedComments": "optional-when-header-and-output-safe",
+      "productionFineGrainedComments": "omitted-by-default",
+      "publicGeneratorHeader": "logical-identities-only-no-machine-paths"
+    },
+    "nativeFramesPreserved": true,
+    "standardBrowserSourceMapClaim": false
+  },
+  "browser": {
+    "layerFormat": "Source Map v3",
+    "haxeToGeneratedSourceOwner": "genes-ts",
+    "bundleLayerOwner": "selected-wordpress-build-adapter",
+    "strategies": [
+      "browser-composed-v3",
+      "browser-two-stage-v3",
+      "unavailable"
+    ],
+    "compositionAdmission": {
+      "scope": "exact-profile-build-adapter-entry-and-mode",
+      "standardsBased": true,
+      "developmentThrowRequired": true,
+      "minifiedProductionThrowRequired": true,
+      "sameExpectedHaxeTokenRequired": true,
+      "deterministicMapBytesRequired": true,
+      "contentAndLayerHashBindingRequired": true,
+      "machinePathLeakCountAllowed": 0,
+      "silentPartialCompositionAllowed": false
+    },
+    "fallback": {
+      "strategy": "browser-two-stage-v3",
+      "order": [
+        "javascript-to-typescript-or-tsx",
+        "typescript-or-tsx-to-haxe"
+      ],
+      "bothLayersRetained": true,
+      "eachLayerValidatedIndependently": true,
+      "intermediateContentIdentityMustMatch": true,
+      "automaticCompositionClaim": false
+    }
+  },
+  "sourceIndex": {
+    "owner": "sdk-build-layer",
+    "scope": "one-exact-package-build",
+    "records": [
+      "package-and-profile-identity",
+      "build-input-fingerprint",
+      "content-addressed-file-inventory",
+      "logical-source-roots",
+      "retention-policy",
+      "ordered-correlation-layers",
+      "proof-receipt-ids"
+    ],
+    "mapAndGeneratedContentBoundBySha256": true,
+    "browserIntermediateContinuityRequired": true,
+    "unavailableStrategyIsFirstClass": true,
+    "lookupByCompleteFileIdentityOnly": true
+  },
+  "retention": {
+    "defaultProductionInstallArtifact": {
+      "mapsIncluded": false,
+      "sourceIndexIncluded": false,
+      "sourceContentIncluded": false,
+      "inlineSourceMapsIncluded": false,
+      "developmentHandlerIncluded": false,
+      "readableNativePhpRequired": true
+    },
+    "debugCompanion": {
+      "optIn": true,
+      "separateFromInstallArtifact": true,
+      "boundToExactProductionArtifactHashes": true,
+      "defaultSourceContentPolicy": "omitted",
+      "allowlistedSourceContentRequiresSecretScan": true,
+      "allowlistedSourceContentRequiresLicenseReview": true,
+      "allowlistedSourceContentRequiresPathScan": true,
+      "externalMapsOnly": true
+    },
+    "development": {
+      "mapsAllowed": true,
+      "sourceContentDefault": "omitted",
+      "localSourceRootsPassedAtLookupTime": true
+    }
+  },
+  "traceCli": {
+    "binary": "wphx-sdk",
+    "commands": [
+      "trace php",
+      "trace browser"
+    ],
+    "offlineByDefault": true,
+    "networkLookupAllowed": false,
+    "readOnly": true,
+    "exactIndexRequired": true,
+    "integrityValidationBeforeLookup": true,
+    "formats": [
+      "text",
+      "json"
+    ],
+    "frameResults": [
+      "mapped-exact-range",
+      "mapped-trace-anchor",
+      "mapped-composed",
+      "mapped-two-stage",
+      "native-unmapped",
+      "unmapped-no-anchor",
+      "unmapped-no-layer"
+    ],
+    "validUnmappedFramesAreErrors": false,
+    "invalidOrTamperedArtifactsFail": true,
+    "ambiguousLookupFails": true,
+    "nativeFrameTextPreserved": true,
+    "machineReadableOutputDeterministic": true,
+    "exitCodes": {
+      "processed": 0,
+      "usageOrStackInput": 2,
+      "integrityOrSchema": 3,
+      "ambiguousContract": 4
+    }
+  },
+  "wordpressDevelopmentHandler": {
+    "default": "disabled",
+    "availability": "development-only-opt-in",
+    "usesSameOfflineLookupLibrary": true,
+    "augmentsLogs": true,
+    "suppressesNativeFrames": false,
+    "replacesWordpressRecoveryBehavior": false,
+    "changesHttpResponse": false,
+    "includedInProduction": false
+  },
+  "privacyAndIntegrity": {
+    "timestampsAllowed": false,
+    "machineUsernamesAllowed": false,
+    "temporaryPathsAllowed": false,
+    "absoluteSourcePathsAllowed": false,
+    "inlineProductionSourceContentAllowed": false,
+    "secretScanRequiredBeforeDebugCompanionDistribution": true,
+    "licenseReviewRequiredForDistributedSourceContent": true,
+    "changedGeneratedBytesInvalidateLookup": true,
+    "changedMapBytesInvalidateIndex": true,
+    "partialOrGuessedResultMayBeLabeledExact": false
+  },
+  "currentEvidence": {
+    "php": {
+      "declarationRangeFoundationReceiptId": "SDK-021-PHP-IR-PRINTER",
+      "serializedMapRuntime": "not-tested",
+      "traceCli": "not-implemented",
+      "contractFixture": "schema-only"
+    },
+    "browser": {
+      "genesCompilerVersion": "1.36.3",
+      "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "boundedEsbuildCompositionReceiptId": "SDK-032-REACT-GUTENBERG-HXX",
+      "boundedEsbuildComposition": "map-token-correlation-passed-not-deliberate-stack-throw",
+      "officialWordpressScriptsLaneReceiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
+      "officialWordpressScriptsCorrelation": "not-tested",
+      "deliberateDevelopmentAndProductionThrows": "not-tested"
+    },
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  },
+  "referenceReview": [
+    {
+      "repository": "https://github.com/fullofcaffeine/reflaxe.rust",
+      "commit": "8e4973032b4ef6868a92661084758e48fbc14522",
+      "tree": "9765c6297736dd1a45602f46ffa6e0186c7e1e5f",
+      "paths": [
+        {
+          "path": "docs/rust-source-maps.md",
+          "blob": "957340ceb039b9be85177b808c06bf88509742a6"
+        },
+        {
+          "path": "docs/schemas/rust-source-map-v1.schema.json",
+          "blob": "5e0b0c10ed4b472fc4e9c61703f721f9e789bb43"
+        },
+        {
+          "path": "src/reflaxe/rust/RustSourceMap.hx",
+          "blob": "6928f66d5c66781e1611a7531aa15bac65ad3da3"
+        }
+      ],
+      "influence": "conceptual-adaptation-of-content-binding-half-open-utf8-ranges-and-fail-closed-lookup",
+      "copiedCode": false
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/genes-ts",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "paths": [
+        {
+          "path": "src/genes/SourceMapGenerator.hx",
+          "blob": "c77578844f9d0c58693408e3836aa1a12fa61271"
+        },
+        {
+          "path": "docs/typescript-target/DEBUGGING.md",
+          "blob": "384228b956c9c7299498758e26b7af957c1faa7f"
+        },
+        {
+          "path": "scripts/test-output-quality.ts",
+          "blob": "67ce6ace47561624c292cbe3a3665e6bf1b40782"
+        },
+        {
+          "path": "scripts/test-genes-ts-sourcemaps.ts",
+          "blob": "b0ef3e71b58e5da414dd4a879329824a5f1a50fa"
+        }
+      ],
+      "influence": "source-map-v3-layer-authority-relative-paths-determinism-and-honest-two-layer-limit",
+      "copiedCode": false
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/reflaxe.elixir",
+      "commit": "f0a22ccfed9b36e0281df3166994e686adb92282",
+      "tree": "dd6513e8c932cd6cc17bf2b9d3a7d0d741503169",
+      "paths": [
+        {
+          "path": "docs/04-api-reference/SOURCE_MAPPING.md",
+          "blob": "2368362762dadbb84aa64224de3a9cf0f8cb249d"
+        },
+        {
+          "path": "src/reflaxe/elixir/SourceMapWriter.hx",
+          "blob": "9df4ae2f07fe1d1fbaa75a2813777addc5593dd7"
+        },
+        {
+          "path": "lib/source_map_lookup.ex",
+          "blob": "f13a57488b1d1e4d9d714b274b93f6831cce1ea2"
+        }
+      ],
+      "influence": "offline-native-target-lookup-and-optional-runtime-log-enrichment-precedent",
+      "copiedCode": false,
+      "notAdopted": "best-effort-nearest-context-mapping"
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/reflaxe.ruby",
+      "commit": "7b676bcd8f7c30e6caf3a228e6a21c82742e7477",
+      "tree": "a6293066d55a2b05f5dbf5a95a79f0a68eb4bd6b",
+      "paths": [
+        {
+          "path": "docs/debugging.md",
+          "blob": "695ef14471ee16030e88a6ccf602c9b6459fa2d7"
+        }
+      ],
+      "influence": "honest-readable-native-output-fallback-and-native-frame-preservation",
+      "copiedCode": false
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/hxhx",
+      "commit": "b9d2acc741631e749232861b568c2461b3ab5b88",
+      "tree": "2ec325c8c96d2656d3404319529243b48f25966b",
+      "paths": [
+        {
+          "path": "docs/02-user-guide/OCAML_TOOLING_SOURCE_MAPS.md",
+          "blob": "4357b86122e31e0822fc0bd8733ff2bf39a60140"
+        },
+        {
+          "path": "docs/02-user-guide/OCAML_TOOLING_ERROR_MAPPING.md",
+          "blob": "82735315f76756c61d720b2cb20eda9dff115cc5"
+        }
+      ],
+      "influence": "line-directive-alternative-and-explicit-best-effort-labeling",
+      "copiedCode": false,
+      "notAdopted": "directives-as-content-bound-map-authority"
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/reflaxe.go",
+      "commit": "16b1fa3cfc3c0cbda462a542b2de142a252fa633",
+      "tree": "98d52ecd67daeda9926f99831a9f161914ae1af0",
+      "paths": [
+        {
+          "path": "docs/spikes/native-stack-capture-contract.md",
+          "blob": "38516a32a684b0b284dde8dc377770677490c453"
+        }
+      ],
+      "influence": "target-sensitive-diagnostics-are-not-portable-semantic-parity",
+      "copiedCode": false
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "tree": "a5cc51c68ca443108b5b133612c2f389ebf31364",
+      "paths": [
+        {
+          "path": "docs/operations/wp-debug-source-maps.md",
+          "blob": "ad8e0f4805dcea72767d7f6a260dd6972a4b2238"
+        },
+        {
+          "path": "manifests/wp-debug/wphx-207-source-map-traces.v1.json",
+          "blob": "5f6d575e2ae0ddead7c683a3f418876be324844f"
+        },
+        {
+          "path": "manifests/wphx-php/bootstrap-debug.v1.json",
+          "blob": "0fd32862ebef199e35f10236cfd1ba91e364fb36"
+        }
+      ],
+      "influence": "bounded-php-stack-comment-and-original-shell-correlation-evidence-only",
+      "copiedCode": false,
+      "notAdopted": "comment-nearest-line-resolution-or-full-port-runtime-topology"
+    }
+  ],
+  "rollback": {
+    "browserComposition": "change-affected-entry-to-two-stage-without-changing-runtime-bytes",
+    "phpRuntime": "omit-map-and-report-native-unmapped-without-changing-native-exception-behavior",
+    "debugDistribution": "withdraw-debug-companion-without-changing-install-artifact",
+    "schema": "retain-v1-reader-and-emit-new-version-with-explicit-migration"
+  },
+  "followUpBeads": [
+    "wordpresshx-sdk-025",
+    "wordpresshx-sdk-034",
+    "wordpresshx-adr-019"
+  ],
+  "stopConditions": [
+    "do-not-label-line-correlation-exact-without-an-emitter-trace-anchor",
+    "do-not-label-browser-output-composed-without-exact-entry-mode-throw-proof",
+    "do-not-resolve-by-basename-nearest-line-or-changed-content",
+    "do-not-ship-source-content-machine-paths-or-dev-handlers-in-default-production-artifacts",
+    "publish-native-or-two-stage-partial-results-instead-of-inventing-full-map-claims"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "format": "wordpresshx.php-haxe-range-map.v1",
+  "generator": {
+    "id": "reflaxe.php-contract-fixture",
+    "version": "0.0.0-schema",
+    "sourceSha256": "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6"
+  },
+  "buildInputsSha256": "052b52a6b955670a0824ee74dc04832707dc0c6f14f4e69bedeae55d2a2fd425",
+  "coordinateSystem": {
+    "byteEncoding": "utf-8",
+    "byteRange": "half-open",
+    "lineBase": 1,
+    "columnBase": 0,
+    "columnEncoding": "utf-8-bytes"
+  },
+  "generated": {
+    "path": "artifacts/plugin/includes/failure.php",
+    "sha256": "092fd546e16e952d36c5f36c4937a80de101dc9098930ee4f53433a54cf4f667",
+    "byteLength": 119,
+    "lineCount": 8,
+    "encoding": "utf-8",
+    "lineEndings": "lf"
+  },
+  "sources": [
+    {
+      "id": "source:haxe:fixture.failure",
+      "rootId": "project",
+      "path": "src/fixture/Failure.hx",
+      "kind": "haxe",
+      "sha256": "81b609296c89ea4c6cb588f425266a221c7ba16dce4bcb4115b31a6aade48643",
+      "byteLength": 96,
+      "lineCount": 7
+    }
+  ],
+  "mappings": [
+    {
+      "id": "mapping:fixture.failure.fail.declaration",
+      "generatedSpan": {
+        "startByte": 52,
+        "endByte": 118,
+        "start": {
+          "line": 6,
+          "columnUtf8": 0
+        },
+        "end": {
+          "line": 8,
+          "columnUtf8": 1
+        }
+      },
+      "nodeKind": "declaration",
+      "structuralDepth": 1,
+      "origin": {
+        "kind": "haxe-source",
+        "sourceId": "source:haxe:fixture.failure",
+        "sourceSpan": {
+          "startByte": 34,
+          "endByte": 93,
+          "start": {
+            "line": 4,
+            "columnUtf8": 0
+          },
+          "end": {
+            "line": 6,
+            "columnUtf8": 2
+          }
+        },
+        "semanticNodeId": "fixture.failure.fail"
+      }
+    },
+    {
+      "id": "mapping:fixture.failure.fail.throw",
+      "generatedSpan": {
+        "startByte": 77,
+        "endByte": 116,
+        "start": {
+          "line": 7,
+          "columnUtf8": 1
+        },
+        "end": {
+          "line": 7,
+          "columnUtf8": 40
+        }
+      },
+      "nodeKind": "statement",
+      "structuralDepth": 2,
+      "origin": {
+        "kind": "haxe-source",
+        "sourceId": "source:haxe:fixture.failure",
+        "sourceSpan": {
+          "startByte": 74,
+          "endByte": 90,
+          "start": {
+            "line": 5,
+            "columnUtf8": 2
+          },
+          "end": {
+            "line": 5,
+            "columnUtf8": 18
+          }
+        },
+        "semanticNodeId": "fixture.failure.fail.throw"
+      }
+    }
+  ],
+  "traceAnchors": [
+    {
+      "generatedLine": 7,
+      "mappingId": "mapping:fixture.failure.fail.throw",
+      "selection": "emitter-runtime-line"
+    }
+  ]
+}

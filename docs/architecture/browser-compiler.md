@@ -47,6 +47,14 @@ fixture; the ADR is not runtime compatibility evidence.
 
 WordPress package maps, handles, profiles, metadata, and build integration belong in this SDK. Generic lowering, TypeScript/JavaScript semantics, module behavior, source maps, declarations, and ts2hx compiler behavior belong in genes-ts.
 
+ADR-014 keeps each Genes/bundler layer in standard Source Map v3, but requires
+the SDK package index to authenticate the exact files and layer order. A final
+JS-to-Haxe map is admitted only for the exact entry/mode after deliberate
+development and minified throws pass; otherwise the supported result is an
+explicit JS-to-TS/TSX-to-Haxe two-stage chain. SDK-032 is bounded composition
+evidence, while SDK-034 owns the general trace gate and official WordPress build
+proof.
+
 If SDK work exposes a generic compiler defect:
 
 1. reduce it to a fixture with no WordPress or SDK dependency;

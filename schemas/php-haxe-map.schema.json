@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/php-haxe-map.schema.json",
+  "title": "WordPressHx generated PHP to Haxe correlation range map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "format",
+    "generator",
+    "buildInputsSha256",
+    "coordinateSystem",
+    "generated",
+    "sources",
+    "mappings",
+    "traceAnchors"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "format": {
+      "const": "wordpresshx.php-haxe-range-map.v1"
+    },
+    "generator": {
+      "$ref": "#/$defs/generator"
+    },
+    "buildInputsSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "coordinateSystem": {
+      "$ref": "#/$defs/coordinateSystem"
+    },
+    "generated": {
+      "$ref": "#/$defs/generatedFile"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/sourceFile"
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mapping"
+      }
+    },
+    "traceAnchors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/traceAnchor"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,255}$"
+    },
+    "safeRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/$)(?!.*[\\\\\\u0000-\\u001F\\u007F:]).+$"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "sourceSha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "byteEncoding",
+        "byteRange",
+        "lineBase",
+        "columnBase",
+        "columnEncoding"
+      ],
+      "properties": {
+        "byteEncoding": {
+          "const": "utf-8"
+        },
+        "byteRange": {
+          "const": "half-open"
+        },
+        "lineBase": {
+          "const": 1
+        },
+        "columnBase": {
+          "const": 0
+        },
+        "columnEncoding": {
+          "const": "utf-8-bytes"
+        }
+      }
+    },
+    "generatedFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byteLength",
+        "lineCount",
+        "encoding",
+        "lineEndings"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/safeRelativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lineCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "encoding": {
+          "const": "utf-8"
+        },
+        "lineEndings": {
+          "const": "lf"
+        }
+      }
+    },
+    "sourceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "rootId",
+        "path",
+        "kind",
+        "sha256",
+        "byteLength",
+        "lineCount"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "rootId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/safeRelativePath"
+        },
+        "kind": {
+          "enum": [
+            "haxe",
+            "native"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lineCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "line",
+        "columnUtf8"
+      ],
+      "properties": {
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnUtf8": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startByte",
+        "endByte",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "startByte": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endByte": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "start": {
+          "$ref": "#/$defs/position"
+        },
+        "end": {
+          "$ref": "#/$defs/position"
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "generatedSpan",
+        "nodeKind",
+        "structuralDepth",
+        "origin"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "generatedSpan": {
+          "$ref": "#/$defs/span"
+        },
+        "nodeKind": {
+          "enum": [
+            "file",
+            "declaration",
+            "member",
+            "statement",
+            "expression",
+            "markup",
+            "adapter",
+            "compiler-generated"
+          ]
+        },
+        "structuralDepth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "origin": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/haxeOrigin"
+            },
+            {
+              "$ref": "#/$defs/nativeOrigin"
+            },
+            {
+              "$ref": "#/$defs/compilerOrigin"
+            }
+          ]
+        }
+      }
+    },
+    "haxeOrigin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "sourceId",
+        "sourceSpan",
+        "semanticNodeId"
+      ],
+      "properties": {
+        "kind": {
+          "const": "haxe-source"
+        },
+        "sourceId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "sourceSpan": {
+          "$ref": "#/$defs/span"
+        },
+        "semanticNodeId": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "nativeOrigin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "sourceId",
+        "sourceSpan",
+        "semanticNodeId"
+      ],
+      "properties": {
+        "kind": {
+          "const": "native-source"
+        },
+        "sourceId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "sourceSpan": {
+          "$ref": "#/$defs/span"
+        },
+        "semanticNodeId": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "compilerOrigin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reasonClass",
+        "reasonId"
+      ],
+      "properties": {
+        "kind": {
+          "const": "compiler-generated"
+        },
+        "reasonClass": {
+          "enum": [
+            "file-prologue",
+            "file-epilogue",
+            "namespace-declaration",
+            "import-declaration",
+            "compiler-helper",
+            "runtime-support",
+            "formatting",
+            "target-adapter",
+            "other-reviewed"
+          ]
+        },
+        "reasonId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "parentSemanticNodeId": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "traceAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedLine",
+        "mappingId",
+        "selection"
+      ],
+      "properties": {
+        "generatedLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mappingId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "selection": {
+          "const": "emitter-runtime-line"
+        }
+      }
+    }
+  }
+}

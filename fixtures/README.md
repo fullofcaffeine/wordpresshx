@@ -12,3 +12,8 @@ Reserved for minimal compiler/emitter, ownership, interop, schema, negative-diag
 also mutates review, publication, inventory, conflict, ordering, and output-origin
 state to prove the provisional gate fails closed. Passing means the repository
 truthfully records no license grant; it does not authorize publication.
+
+`source-correlation/` contains the ADR-014 schema-only PHP range-map and browser
+Source Map v3 chain fixtures. Its validator authenticates exact bytes, hashes,
+UTF-8 coordinates, source roots, map-layer continuity, retention, and
+fail-closed mutations. It is not PHP/browser runtime or trace-CLI evidence.

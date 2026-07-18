@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "format": "wordpresshx.source-correlation-index.v1",
+  "sdkVersion": "0.0.0-contract",
+  "buildInputsSha256": "052b52a6b955670a0824ee74dc04832707dc0c6f14f4e69bedeae55d2a2fd425",
+  "package": {
+    "id": "wordpresshx-adr-014-contract-fixture",
+    "version": "0.0.0",
+    "profileId": "wp70-release"
+  },
+  "retention": {
+    "profile": "debug-companion",
+    "indexDistribution": "debug-companion",
+    "mapsInProduction": false,
+    "inlineMapsInProduction": false,
+    "sourceContentPolicy": "allowlisted-debug-only",
+    "machinePathsAllowed": false,
+    "developmentHandler": "disabled",
+    "secretScanRequiredForShipping": true
+  },
+  "sourceRoots": [
+    {
+      "id": "project",
+      "kind": "project",
+      "resolution": "debug-companion-relative",
+      "contentDistribution": "debug-companion",
+      "packagePath": "source/project"
+    }
+  ],
+  "files": [
+    {
+      "id": "file:browser.composed.js",
+      "path": "artifacts/browser/composed.js",
+      "role": "runtime",
+      "language": "javascript",
+      "sha256": "a2749a3b73fcd01c944c0e1fd2bd08f3b873ddffaf6cf1a22e2d34ddf1e10c5c",
+      "byteLength": 65,
+      "distribution": "production"
+    },
+    {
+      "id": "file:browser.composed.map",
+      "path": "artifacts/browser/composed.js.map",
+      "role": "source-map",
+      "language": "json",
+      "sha256": "b7a4b4c8fe5eace08bcb67743c8fa0fe2d7e9bf3e25080cbabecab78d885a47f",
+      "byteLength": 122,
+      "distribution": "debug-companion"
+    },
+    {
+      "id": "file:browser.two-stage.js",
+      "path": "artifacts/browser/two-stage.js",
+      "role": "runtime",
+      "language": "javascript",
+      "sha256": "ca3e6f8c4b7b9ec0965ebb12d874b22a1ad6de391955e88390138403c0d33be7",
+      "byteLength": 66,
+      "distribution": "production"
+    },
+    {
+      "id": "file:browser.two-stage.js.map",
+      "path": "artifacts/browser/two-stage.js.map",
+      "role": "source-map",
+      "language": "json",
+      "sha256": "c6f4e29ce5cfc9cadcd416f11f21caa3f7dfd0fde64ec346a13702ed0c7e8bf5",
+      "byteLength": 92,
+      "distribution": "debug-companion"
+    },
+    {
+      "id": "file:browser.two-stage.ts",
+      "path": "artifacts/browser/two-stage.ts",
+      "role": "generated-source",
+      "language": "typescript",
+      "sha256": "f98283b12f4574042ad986ca06f3feca7f22e7389b114ae68b45058ac43d94ce",
+      "byteLength": 66,
+      "distribution": "debug-companion"
+    },
+    {
+      "id": "file:browser.two-stage.ts.map",
+      "path": "artifacts/browser/two-stage.ts.map",
+      "role": "source-map",
+      "language": "json",
+      "sha256": "e50e1ac8bc8dbf90ada2aed026219c851419db7103d3d3a719c6cb8f594c3559",
+      "byteLength": 123,
+      "distribution": "debug-companion"
+    },
+    {
+      "id": "file:haxe.fixture.failure",
+      "path": "source/project/src/fixture/Failure.hx",
+      "role": "source",
+      "language": "haxe",
+      "sha256": "81b609296c89ea4c6cb588f425266a221c7ba16dce4bcb4115b31a6aade48643",
+      "byteLength": 96,
+      "distribution": "debug-companion",
+      "sourceIdentity": {
+        "rootId": "project",
+        "path": "src/fixture/Failure.hx"
+      }
+    },
+    {
+      "id": "file:php.failure",
+      "path": "artifacts/plugin/includes/failure.php",
+      "role": "runtime",
+      "language": "php",
+      "sha256": "092fd546e16e952d36c5f36c4937a80de101dc9098930ee4f53433a54cf4f667",
+      "byteLength": 119,
+      "distribution": "production"
+    },
+    {
+      "id": "file:php.failure.map",
+      "path": "artifacts/plugin/includes/failure.php.haxe-map.json",
+      "role": "source-map",
+      "language": "json",
+      "sha256": "91383f8cbb3da82ab13d57a9fcdd954662bf0fd4b2a0da7f5cbfe4f0a82edc9f",
+      "byteLength": 2785,
+      "distribution": "debug-companion"
+    }
+  ],
+  "artifactSetSha256": "839224b2b25142d4f7f76e8d8f84ecf20f9716c4ab4b3923603c322e31afe414",
+  "correlations": [
+    {
+      "id": "correlation:browser.composed",
+      "entryFileId": "file:browser.composed.js",
+      "target": "browser",
+      "strategy": "browser-composed-v3",
+      "status": "schema-only",
+      "layers": [
+        {
+          "order": 0,
+          "mapFileId": "file:browser.composed.map",
+          "format": "source-map-v3",
+          "generatedFileId": "file:browser.composed.js",
+          "generatedLanguage": "javascript",
+          "sourceLanguage": "haxe",
+          "sourceFileIds": [
+            "file:haxe.fixture.failure"
+          ]
+        }
+      ],
+      "proofReceiptIds": []
+    },
+    {
+      "id": "correlation:browser.two-stage",
+      "entryFileId": "file:browser.two-stage.js",
+      "target": "browser",
+      "strategy": "browser-two-stage-v3",
+      "status": "schema-only",
+      "layers": [
+        {
+          "order": 0,
+          "mapFileId": "file:browser.two-stage.js.map",
+          "format": "source-map-v3",
+          "generatedFileId": "file:browser.two-stage.js",
+          "generatedLanguage": "javascript",
+          "sourceLanguage": "typescript",
+          "sourceFileIds": [
+            "file:browser.two-stage.ts"
+          ]
+        },
+        {
+          "order": 1,
+          "mapFileId": "file:browser.two-stage.ts.map",
+          "format": "source-map-v3",
+          "generatedFileId": "file:browser.two-stage.ts",
+          "generatedLanguage": "typescript",
+          "sourceLanguage": "haxe",
+          "sourceFileIds": [
+            "file:haxe.fixture.failure"
+          ]
+        }
+      ],
+      "proofReceiptIds": []
+    },
+    {
+      "id": "correlation:php.failure",
+      "entryFileId": "file:php.failure",
+      "target": "php",
+      "strategy": "php-range-map",
+      "status": "schema-only",
+      "layers": [
+        {
+          "order": 0,
+          "mapFileId": "file:php.failure.map",
+          "format": "wordpresshx.php-haxe-range-map.v1",
+          "generatedFileId": "file:php.failure",
+          "generatedLanguage": "php",
+          "sourceLanguage": "haxe",
+          "sourceFileIds": [
+            "file:haxe.fixture.failure"
+          ]
+        }
+      ],
+      "proofReceiptIds": []
+    }
+  ]
+}
