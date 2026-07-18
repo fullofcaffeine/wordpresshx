@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-023-WORDPRESS-PUBLIC-PHP-ADAPTERS",
+  "observedAt": "2026-07-18T03:01:47Z",
+  "bead": "wordpresshx-sdk-023",
+  "status": "verified",
+  "subject": {
+    "profile": "wp70-release",
+    "path": "compiler/wordpress",
+    "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
+    "packageContentSha256": "47b29084c02c4e536bc484a05856c25e36a76457cdf089596f4a4c435ad65ce8",
+    "packageFiles": [
+      {
+        "path": "compiler/wordpress/README.md",
+        "sha256": "4c2ee6e6eb4f0ffc01350cb1feb1acb483b299f1eed13d494d23f90c83ab7f31"
+      },
+      {
+        "path": "compiler/wordpress/runtime/activate-plugin.php",
+        "sha256": "a3f068e51c2734ad65488bf439600a1e4d2bcd0dec9759f4e19ec32d4605ffea"
+      },
+      {
+        "path": "compiler/wordpress/runtime/native-adapter-caller.php",
+        "sha256": "578061e4d01a66d35b7b315ed4add9b676353ec315515f4954aa43fca3ed83d9"
+      },
+      {
+        "path": "compiler/wordpress/runtime/native-caller.php",
+        "sha256": "14e76e07f17c21f6f1b7ed7c9415d4850fa4b3f76c571ddbb613b551484f8e74"
+      },
+      {
+        "path": "compiler/wordpress/runtime/probe-adapters.php",
+        "sha256": "ce475595a307fabf87ade5ed4101f610fbc1c5850c1d7d7de13ac964a034e41c"
+      },
+      {
+        "path": "compiler/wordpress/runtime/probe-plugin.php",
+        "sha256": "3d47a3f7f3af36c21d210f8a4fbc50c145cd3545a9a11350203f54880305704b"
+      },
+      {
+        "path": "compiler/wordpress/scripts/run-wordpress-lane.sh",
+        "sha256": "f55ee9621926526ef63f0bf1018f4446324e5c163418aa935f5882902443bb8a"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test-php-matrix.sh",
+        "sha256": "0a0ff7893fbf87e14833503adce9e7fa48423a89195025caafdbfba3412021cb"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test-wordpress.sh",
+        "sha256": "c840101ec898c08072c7af8cc70252a2adf58482d43499aa2456d1ebc8a3b71b"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test.sh",
+        "sha256": "18ebbf57e187eebbf9dbfdb83d66866fb53c200bf6da85084e61d8d4e8c7e9b3"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginBootstrapPlan.hx",
+        "sha256": "f81038e06ea1db07705f3f7422ca7093af207979b7775869dd4763f0da695500"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginHeader.hx",
+        "sha256": "50604a89992bb2987ebaa8bccd9672a2b2b85d960ec9cbcf5006db69079f2e04"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressBlockRegistration.hx",
+        "sha256": "75f47d082415beda64856f729c03dd3bde74ed4d488f9efddbddb95d7f11c3ad"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookKind.hx",
+        "sha256": "476187a95a0748eac5eebd1f90495a24d97675c618ec1da11253ba9f7fba101c"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookRegistration.hx",
+        "sha256": "92efb5098f35ea0ae92482c97b76cf77b020740f9051804c4a55e7f8ac7991b1"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx",
+        "sha256": "6bce97622d74fb1a18906449b31850e07d2c7faa19bdd155ad5b49c76670560d"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx",
+        "sha256": "ac65acec9bcce58e20ec2da9614f44b025678453610eeea6e09981e7b384d387"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx",
+        "sha256": "1e4e26af725b0dea3ccfb1f3ede1b43dfeadf2c6613f35a483e8f9140212c232"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx",
+        "sha256": "9cb411078796904f4445c3ec5ba86748abbbc891fdc0776cd3ab69f84ce68d57"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterFile.hx",
+        "sha256": "40856a85c26cb04e06025d82a406b27c6202897a704f51894eff80e38c7e6476"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterPlan.hx",
+        "sha256": "a4cf273feac6675843e5fb4b175778f538cbe4668f267b46e5633093b45c5f7e"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicExport.hx",
+        "sha256": "1518c39b11294b9bac22613587e8dc53885b86a6c69f916e19c63b8f32f9e653"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestMethod.hx",
+        "sha256": "bf3bb496a9c47e444eeb3d96f3c6bfae658d4815530b5f228536916ba3b2998d"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestRouteRegistration.hx",
+        "sha256": "66228a94cbf55cee9b1a7f01e9fd9963084e7e6afe2850c4d898648cf56fc141"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx",
+        "sha256": "ebff13acba053841043efcf04217446a0a03de8585fd87d4c5cafddc157a13c7"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PublicAdapterProfile.hx",
+        "sha256": "cdfe125c59707c34de0c8448bbdc8fc496bc8bff1aed02fe44104e549a77c726"
+      },
+      {
+        "path": "compiler/wordpress/test.hxml",
+        "sha256": "01e364f67e61677669e25d1cfc648e8fc43056917d15d41dc67fdc91409dad8b"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/acme-books-adapters.php.txt",
+        "sha256": "31e17a6bf37720a3746119a3ea6d6de48f571252bfda8b6abffe49e2418989e4"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/includes/Bootstrap.php.txt",
+        "sha256": "dca8e55d4d76b67e9d0701e05e18560c8f335c99c77aa529af58cc6041f0a43c"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/includes/PublicAdapters.php.txt",
+        "sha256": "bd54264ecb3b797219b73ca505f0c4481fbfcac7cea74f747cb5da7e61f8f2d0"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/includes/autoload.php.txt",
+        "sha256": "888a9acac1473d6fe7be2bb448cdd793211bdacae3680d9c9d418699ef24987d"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/includes/register-adapters.php.txt",
+        "sha256": "facdef81121c9f8d27b9ea079131778268addc2a49e53691f3605636804fd307"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books-adapters/wordpresshx-public-php-adapters.v1.json",
+        "sha256": "faad37103662f7d7db14b88dd7722f7fc4cc6517012dfbebbb00ad6442944828"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/acme-books.php.txt",
+        "sha256": "b757b6b59e202c79951ec44fcdabc855d50dd5587326493cc35b2a9f7659f265"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/includes/Bootstrap.php.txt",
+        "sha256": "d8bb76474eb3e6a5258fe1ea8c6b19df7272624715ed99593c1b2cf0fa796b58"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/includes/autoload.php.txt",
+        "sha256": "b17397693e23c805a4ee76c66611cd531cdc436ce4befb66d2033b7c1d8ab839"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json",
+        "sha256": "4312da610b0e96b950fb06bb1ee976574ee0247904d5e377f9643362d34353a8"
+      },
+      {
+        "path": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx",
+        "sha256": "c539c088e939a99b1aa02b1048a8c68c15837e1091a3a644a56a92d793b7b40d"
+      },
+      {
+        "path": "compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx",
+        "sha256": "3b17a5007a40e9674283df40ff7e8e6297c76e59a341fd9072489b53b1dafe05"
+      },
+      {
+        "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx",
+        "sha256": "29dfb5d099b777e5ce30eb3ae71663efe3de176c19c4ae89d7672321e5cb1708"
+      },
+      {
+        "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx",
+        "sha256": "b14bb198d022620ccf6a4889191939daec97647c4a3c31f8e3ff7d0ef92d4302"
+      }
+    ],
+    "genericCompilerReceiptId": "SDK-021-PHP-IR-PRINTER",
+    "bootstrapReceiptId": "SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE",
+    "emissionPolicy": {
+      "path": "manifests/php-emission-policy.json",
+      "sha256": "a69b8a332e24fdda31bebb5b6e1d06013ca926a9c8cf3084777f0333c3bd243f"
+    },
+    "artifactManifestSnapshot": {
+      "path": "compiler/wordpress/test/expected/acme-books-adapters/wordpresshx-public-php-adapters.v1.json",
+      "sha256": "faad37103662f7d7db14b88dd7722f7fc4cc6517012dfbebbb00ad6442944828"
+    }
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "formatter": "1.18.0",
+    "localPhp": "8.4.7",
+    "localDockerClient": "28.3.2",
+    "localDockerServer": "28.3.2",
+    "localDockerCompose": "2.38.2-desktop.1",
+    "php74": {
+      "version": "7.4.33",
+      "reference": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5"
+    },
+    "php84": {
+      "version": "8.4.7",
+      "reference": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367"
+    },
+    "wordpress": {
+      "version": "7.0",
+      "phpVersion": "8.4.23",
+      "reference": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161"
+    },
+    "mysql": {
+      "version": "8.4.10",
+      "reference": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d"
+    },
+    "mariadb": {
+      "version": "11.4.5",
+      "reference": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b"
+    }
+  },
+  "implementation": {
+    "primaryFeatureCommit": "f7d7b33e654cb9f2cfbd92c8ea066789b90dff82",
+    "implementationCommit": "e4d8e30a04d20748227744a1dcb0288d6224fee0",
+    "haxeSourceAndTestFileCount": 20,
+    "sdk023OwnedHaxeFiles": [
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressBlockRegistration.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookKind.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookRegistration.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterFile.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterPlan.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicExport.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestMethod.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestRouteRegistration.hx",
+      "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PublicAdapterProfile.hx",
+      "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx",
+      "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx"
+    ],
+    "input": {
+      "language": "Haxe",
+      "path": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx",
+      "handwrittenPhpApplicationSource": false
+    },
+    "classification": "public-native",
+    "semanticClassification": "file-symbol-edge",
+    "generatedFileCount": 5,
+    "stableAdapterClass": "Acme\\BooksAdapters\\PublicAdapters",
+    "publicMethods": [
+      "appendLabel",
+      "filterTitle",
+      "isInitialized",
+      "normalizeTitle",
+      "onInit",
+      "registerBlocks",
+      "registerRestRoutes",
+      "renderSummary",
+      "restBook",
+      "restPermission"
+    ],
+    "privateMethods": [
+      "bookPayload",
+      "normalizeTitleImpl"
+    ],
+    "registrations": {
+      "actions": 3,
+      "filters": 1,
+      "restRoutes": 1,
+      "dynamicBlocks": 1,
+      "namedPublicExports": 3
+    },
+    "deterministicRepeatedEmission": true,
+    "rawPhpSegments": 0,
+    "stockHaxePhpFiles": 0,
+    "runtimeHxxDependency": false,
+    "buildTimeServerDependency": false
+  },
+  "generatedArtifacts": [
+    {
+      "role": "plugin-root",
+      "path": "acme-books-adapters.php",
+      "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/acme-books-adapters.php.txt",
+      "bytes": 459,
+      "lines": 18,
+      "sha256": "31e17a6bf37720a3746119a3ea6d6de48f571252bfda8b6abffe49e2418989e4"
+    },
+    {
+      "role": "bootstrap",
+      "path": "includes/Bootstrap.php",
+      "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/includes/Bootstrap.php.txt",
+      "bytes": 295,
+      "lines": 20,
+      "sha256": "dca8e55d4d76b67e9d0701e05e18560c8f335c99c77aa529af58cc6041f0a43c"
+    },
+    {
+      "role": "adapter-class",
+      "path": "includes/PublicAdapters.php",
+      "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/includes/PublicAdapters.php.txt",
+      "bytes": 2126,
+      "lines": 77,
+      "sha256": "bd54264ecb3b797219b73ca505f0c4481fbfcac7cea74f747cb5da7e61f8f2d0"
+    },
+    {
+      "role": "autoload",
+      "path": "includes/autoload.php",
+      "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/includes/autoload.php.txt",
+      "bytes": 169,
+      "lines": 7,
+      "sha256": "888a9acac1473d6fe7be2bb448cdd793211bdacae3680d9c9d418699ef24987d"
+    },
+    {
+      "role": "registrations",
+      "path": "includes/register-adapters.php",
+      "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/includes/register-adapters.php.txt",
+      "bytes": 439,
+      "lines": 8,
+      "sha256": "facdef81121c9f8d27b9ea079131778268addc2a49e53691f3605636804fd307"
+    }
+  ],
+  "verification": {
+    "localProfile": {
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed",
+      "coverage": [
+        "Haxe formatter and deterministic committed snapshots",
+        "fail-closed names, inventories, callback signatures, visibility, static shape, duplicates, and reserved files",
+        "native PHP lint, direct-access guards, reflection, by-reference mutation, and ordinary non-Haxe callers"
+      ]
+    },
+    "exactPhpMatrix": {
+      "command": "bash compiler/wordpress/scripts/test-php-matrix.sh",
+      "containerNetwork": "none",
+      "php74Lint": "passed",
+      "php74DirectGuards": "passed-zero-output",
+      "php74NativeCallers": "passed",
+      "php84Lint": "passed",
+      "php84DirectGuards": "passed-zero-output",
+      "php84NativeCallers": "passed"
+    },
+    "wordpressMatrix": {
+      "command": "bash compiler/wordpress/scripts/test-wordpress.sh",
+      "wordpressVersion": "7.0",
+      "plugin": "acme-books-adapters/acme-books-adapters.php",
+      "headerDiscovery": "passed",
+      "activationError": null,
+      "activationOutputBytes": 0,
+      "activeAfterFreshRequest": true,
+      "actionFilter": {
+        "initPriority": 9,
+        "filterPriority": 12,
+        "result": "TYPED TITLE"
+      },
+      "rest": {
+        "permission": true,
+        "routeRegistered": true,
+        "positiveStatus": 200,
+        "positivePayload": {
+          "id": 7,
+          "title": "Book 7"
+        },
+        "negativeStatus": 400,
+        "negativeCode": "acme_books_invalid_id"
+      },
+      "dynamicBlock": {
+        "registered": true,
+        "markup": "<section class=\"acme-books-summary\">Typed &amp; Safe</section>"
+      },
+      "publicExports": {
+        "byReferenceMutation": "passed",
+        "normalizeTitle": "RUNTIME TITLE"
+      },
+      "lanes": [
+        {
+          "database": "mysql",
+          "freshInstall": "passed",
+          "activation": "passed",
+          "freshRequestProbe": "passed",
+          "volumeResetBeforeAndAfter": "passed"
+        },
+        {
+          "database": "mariadb",
+          "freshInstall": "passed",
+          "activation": "passed",
+          "freshRequestProbe": "passed",
+          "volumeResetBeforeAndAfter": "passed"
+        }
+      ],
+      "outcome": "passed"
+    },
+    "depthOneRepositoryCheckout": {
+      "historicalCommitAvailable": false,
+      "selfContainedReceiptAggregate": "passed",
+      "command": "bash scripts/check-repository.sh",
+      "outcome": "passed"
+    },
+    "regressions": {
+      "genericPhpCompiler": "passed",
+      "exactProfileContracts": "passed",
+      "typedHxxPrototype": "passed",
+      "repositoryInvariants": "passed",
+      "stagedGitleaks": "passed"
+    },
+    "readability": {
+      "trackedNativeSnapshots": true,
+      "totalPhpBytes": 3488,
+      "totalPhpLines": 130,
+      "adapterClassBytes": 2126,
+      "adapterClassLines": 77,
+      "ordinaryPhpSymbolsVisible": true,
+      "automatedRawScaffoldReview": "passed",
+      "independentWordpressPhpReviewer": "pending-g1"
+    }
+  },
+  "hostedWorkflow": {
+    "path": ".github/workflows/repository.yml",
+    "runId": 29628012835,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29628012835",
+    "commit": "e4d8e30a04d20748227744a1dcb0288d6224fee0",
+    "status": "passed",
+    "fullMatrixStatus": "passed",
+    "jobCount": 10,
+    "requiredJobs": [
+      {
+        "name": "repository",
+        "jobId": 88036109437,
+        "status": "passed"
+      },
+      {
+        "name": "haxe",
+        "jobId": 88036109454,
+        "status": "passed"
+      },
+      {
+        "name": "wordpress-runtime",
+        "jobId": 88036109518,
+        "status": "passed"
+      },
+      {
+        "name": "security",
+        "jobId": 88036109461,
+        "status": "passed"
+      }
+    ],
+    "precedingFailure": {
+      "runId": 29627785837,
+      "commit": "f7d7b33e654cb9f2cfbd92c8ea066789b90dff82",
+      "failedJob": {
+        "name": "repository",
+        "jobId": 88035464684,
+        "cause": "historical SDK-022 git object unavailable in the intentional depth-1 checkout"
+      },
+      "implementationJobs": {
+        "haxe": {
+          "jobId": 88035464705,
+          "status": "passed"
+        },
+        "wordpress-runtime": {
+          "jobId": 88035464706,
+          "status": "passed"
+        }
+      },
+      "resolution": "SDK-022 receipt now carries its exact per-file digest inventory; full clones additionally cross-check historical Git bytes"
+    }
+  },
+  "designProvenance": [
+    {
+      "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "path": "src/wphx/compiler/php/WphxPhpWordPressAdapters.hx",
+      "blob": "d32636d61fccca8634a224ff37ea30981f98b13c",
+      "use": "read-only reference for typed callable-array and WP_Error boundary shapes; no code copied and no Core ownership imported"
+    },
+    {
+      "repository": "https://github.com/fullofcaffeine/reflaxe.ruby",
+      "commit": "fb253f1869d4d4fb7e429ce3c2ff42d9fe35d837",
+      "paths": [
+        {
+          "path": "src/reflaxe/ruby/rails/RailsRouteManifest.hx",
+          "blob": "deecc737e467772b1679c7b45806edac94b16cf0"
+        },
+        {
+          "path": "src/reflaxe/ruby/rails/RailsRoutesExtractor.hx",
+          "blob": "9b22f420429d7b8356ef025ce58d6b8edaf56251"
+        }
+      ],
+      "use": "read-only reference for stable manifest, source-position, and duplicate-route diagnostics; no code copied"
+    }
+  ],
+  "claims": {
+    "nativeActionFilterAdapters": "runtime-tested",
+    "nativeRestAdapterAndPermission": "runtime-tested",
+    "nativeDynamicBlockRender": "runtime-tested",
+    "stablePublicPhpExports": "runtime-tested",
+    "nativePhp74Adapters": "runtime-tested",
+    "nativePhp84Adapters": "runtime-tested",
+    "wordpress70DiscoveryActivation": "runtime-tested",
+    "mysqlLane": "runtime-tested",
+    "mariadbLane": "runtime-tested",
+    "wpcsAndStaticAnalysis": "not-tested-sdk-026",
+    "independentReadabilityReview": "not-tested-g1",
+    "publication": "unsupported",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "adr-006-semantic-plan-schema-not-implemented",
+    "adr-007-ownership-transaction-not-implemented",
+    "bidirectional-facade-generation-deferred-to-sdk-071",
+    "full-typed-hook-catalog-deferred-to-sdk-050",
+    "hxx-lowering-not-included",
+    "independent-wordpress-php-review-pending-g1",
+    "private-stock-haxe-lane-not-included",
+    "publication-blocked-by-adr-020-and-sdk-002",
+    "rest-codecs-and-browser-client-deferred-to-sdk-054",
+    "typed-dynamic-block-contract-and-preview-deferred-to-sdk-062",
+    "wpcs-and-static-analysis-deferred-to-sdk-026"
+  ]
+}

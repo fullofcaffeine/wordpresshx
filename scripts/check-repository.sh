@@ -160,6 +160,7 @@ required_files=(
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
+  manifests/evidence/sdk-023-wordpress-public-php-adapters.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
@@ -326,6 +327,11 @@ wordpress_php_receipt = json.loads(
         "manifests/evidence/sdk-022-wordpress-public-php-profile.json"
     ).read_text(encoding="utf-8")
 )
+wordpress_adapter_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-023-wordpress-public-php-adapters.json"
+    ).read_text(encoding="utf-8")
+)
 haxelib = json.loads(
     Path("compiler/reflaxe.php/haxelib.json").read_text(encoding="utf-8")
 )
@@ -422,6 +428,72 @@ entry = lock["entries"]["genes-ts"]
 subject = receipt["subject"]
 sha1 = re.compile(r"[0-9a-f]{40}\Z")
 sha256 = re.compile(r"[0-9a-f]{64}\Z")
+
+
+def verify_historical_package(subject, implementation_commit):
+    package_root = Path(subject["path"])
+    package_digest_input = bytearray()
+    package_files = subject["packageFiles"]
+    assert isinstance(package_files, list)
+    assert package_files
+    package_paths = []
+    for package_file in package_files:
+        assert set(package_file) == {"path", "sha256"}
+        assert sha256.fullmatch(package_file["sha256"])
+        package_path = Path(package_file["path"])
+        relative_package_path = package_path.relative_to(package_root)
+        assert ".." not in relative_package_path.parts
+        assert "build" not in relative_package_path.parts
+        package_paths.append(package_file["path"])
+        package_digest_input.extend(
+            f"{package_file['sha256']}  {package_file['path']}\n".encode()
+        )
+    assert package_paths == sorted(set(package_paths))
+    assert hashlib.sha256(package_digest_input).hexdigest() == (
+        subject["packageContentSha256"]
+    )
+
+    assert sha1.fullmatch(implementation_commit)
+    historical_commit_available = subprocess.run(
+        ["git", "cat-file", "-e", f"{implementation_commit}^{{commit}}"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    if historical_commit_available:
+        historical_paths = subprocess.run(
+            [
+                "git",
+                "ls-tree",
+                "-r",
+                "--name-only",
+                implementation_commit,
+                "--",
+                package_root.as_posix(),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        historical_paths = sorted(
+            path
+            for path in historical_paths
+            if "build" not in Path(path).relative_to(package_root).parts
+        )
+        assert historical_paths == package_paths
+        for package_file in package_files:
+            content = subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{implementation_commit}:{package_file['path']}",
+                ],
+                check=True,
+                capture_output=True,
+            ).stdout
+            assert hashlib.sha256(content).hexdigest() == (
+                package_file["sha256"]
+            )
+    return package_files
 
 assert package_topology["schemaVersion"] == 1
 assert package_topology["decision"] == "ADR-003"
@@ -892,65 +964,10 @@ assert wordpress_subject["profile"] == "wp70-release"
 assert wordpress_subject["genericCompilerReceiptId"] == (
     php_ir_receipt["receiptId"]
 )
-wordpress_profile_root = Path(wordpress_subject["path"])
-wordpress_profile_digest_input = bytearray()
-wordpress_package_files = wordpress_subject["packageFiles"]
-assert isinstance(wordpress_package_files, list)
-assert wordpress_package_files
-wordpress_package_paths = []
-for entry in wordpress_package_files:
-    assert set(entry) == {"path", "sha256"}
-    assert sha256.fullmatch(entry["sha256"])
-    entry_path = Path(entry["path"])
-    relative_entry_path = entry_path.relative_to(wordpress_profile_root)
-    assert ".." not in relative_entry_path.parts
-    assert "build" not in relative_entry_path.parts
-    wordpress_package_paths.append(entry["path"])
-    wordpress_profile_digest_input.extend(
-        f"{entry['sha256']}  {entry['path']}\n".encode()
-    )
-assert wordpress_package_paths == sorted(set(wordpress_package_paths))
-assert hashlib.sha256(wordpress_profile_digest_input).hexdigest() == (
-    wordpress_subject["packageContentSha256"]
-)
-
 receipt_commit = wordpress_php_receipt["implementation"][
     "implementationCommit"
 ]
-assert sha1.fullmatch(receipt_commit)
-historical_commit_available = subprocess.run(
-    ["git", "cat-file", "-e", f"{receipt_commit}^{{commit}}"],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL,
-).returncode == 0
-if historical_commit_available:
-    historical_paths = subprocess.run(
-        [
-            "git",
-            "ls-tree",
-            "-r",
-            "--name-only",
-            receipt_commit,
-            "--",
-            wordpress_profile_root.as_posix(),
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.splitlines()
-    historical_paths = sorted(
-        path
-        for path in historical_paths
-        if "build" not in Path(path).relative_to(wordpress_profile_root).parts
-    )
-    assert historical_paths == wordpress_package_paths
-    for entry in wordpress_package_files:
-        content = subprocess.run(
-            ["git", "show", f"{receipt_commit}:{entry['path']}"],
-            check=True,
-            capture_output=True,
-        ).stdout
-        assert hashlib.sha256(content).hexdigest() == entry["sha256"]
+verify_historical_package(wordpress_subject, receipt_commit)
 for subject_id in ("emissionPolicy", "artifactManifestSnapshot"):
     evidence = wordpress_subject[subject_id]
     evidence_path = Path(evidence["path"])
@@ -1118,6 +1135,322 @@ assert wordpress_php_receipt["claims"] == {
 }
 assert wordpress_php_receipt["limitations"] == sorted(
     wordpress_php_receipt["limitations"]
+)
+
+assert wordpress_adapter_receipt["schemaVersion"] == 1
+assert wordpress_adapter_receipt["receiptId"] == (
+    "SDK-023-WORDPRESS-PUBLIC-PHP-ADAPTERS"
+)
+assert wordpress_adapter_receipt["bead"] == "wordpresshx-sdk-023"
+assert wordpress_adapter_receipt["status"] == "verified"
+adapter_subject = wordpress_adapter_receipt["subject"]
+assert adapter_subject["profile"] == "wp70-release"
+assert adapter_subject["genericCompilerReceiptId"] == (
+    php_ir_receipt["receiptId"]
+)
+assert adapter_subject["bootstrapReceiptId"] == (
+    wordpress_php_receipt["receiptId"]
+)
+adapter_implementation = wordpress_adapter_receipt["implementation"]
+adapter_commit = adapter_implementation["implementationCommit"]
+adapter_package_files = verify_historical_package(
+    adapter_subject,
+    adapter_commit,
+)
+assert len(adapter_package_files) == 41
+adapter_package_digests = {
+    package_file["path"]: package_file["sha256"]
+    for package_file in adapter_package_files
+}
+for subject_id in ("emissionPolicy", "artifactManifestSnapshot"):
+    evidence = adapter_subject[subject_id]
+    evidence_path = Path(evidence["path"])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        evidence["sha256"]
+    )
+assert adapter_subject["emissionPolicy"] == {
+    "path": "manifests/php-emission-policy.json",
+    "sha256": wordpress_subject["emissionPolicy"]["sha256"],
+}
+
+adapter_manifest = json.loads(
+    Path(
+        adapter_subject["artifactManifestSnapshot"]["path"]
+    ).read_text(encoding="utf-8")
+)
+assert adapter_manifest["schemaVersion"] == 1
+assert adapter_manifest["manifestId"] == (
+    "wordpresshx-public-php-adapters-v1"
+)
+assert adapter_manifest["profileId"] == "wp70-release"
+assert adapter_manifest["classification"] == "public-native"
+assert adapter_manifest["plugin"] == {
+    "rootPath": "acme-books-adapters.php",
+    "adapterPath": "includes/PublicAdapters.php",
+    "slug": "acme-books-adapters",
+    "registrationPath": "includes/register-adapters.php",
+    "adapterClass": "\\Acme\\BooksAdapters\\PublicAdapters",
+}
+assert adapter_manifest["boundary"] == {
+    "rawPhpSegments": 0,
+    "privateImplementationMethods": 2,
+    "semanticPlanSchema": "not-implemented-adr-006",
+    "runtimeHxxDependency": False,
+    "ownershipTransaction": "not-implemented-adr-007",
+    "semanticPlanClassification": "file-symbol-edge",
+    "stockHaxePhpFiles": 0,
+    "buildTimeServerDependency": False,
+}
+assert [hook["kind"] for hook in adapter_manifest["hooks"]] == [
+    "action",
+    "filter",
+]
+assert [hook["acceptedArgs"] for hook in adapter_manifest["hooks"]] == [
+    0,
+    2,
+]
+assert len(adapter_manifest["restRoutes"]) == 1
+assert adapter_manifest["restRoutes"][0]["permissionCallback"] == (
+    "\\Acme\\BooksAdapters\\PublicAdapters::restPermission"
+)
+assert len(adapter_manifest["blocks"]) == 1
+assert len(adapter_manifest["publicExports"]) == 3
+
+adapter_generated_files = {
+    artifact["path"]: artifact
+    for artifact in wordpress_adapter_receipt["generatedArtifacts"]
+}
+assert set(adapter_generated_files) == {
+    "acme-books-adapters.php",
+    "includes/Bootstrap.php",
+    "includes/PublicAdapters.php",
+    "includes/autoload.php",
+    "includes/register-adapters.php",
+}
+assert {
+    artifact["role"] for artifact in adapter_generated_files.values()
+} == {
+    "plugin-root",
+    "bootstrap",
+    "adapter-class",
+    "autoload",
+    "registrations",
+}
+adapter_manifest_files = {
+    artifact["path"]: artifact
+    for artifact in adapter_manifest["files"]
+}
+assert set(adapter_manifest_files) == set(adapter_generated_files)
+for path, artifact in adapter_generated_files.items():
+    snapshot_path = Path(artifact["snapshotPath"])
+    snapshot = snapshot_path.read_bytes()
+    digest = hashlib.sha256(snapshot).hexdigest()
+    assert digest == artifact["sha256"]
+    assert digest == adapter_manifest_files[path]["sha256"]
+    assert digest == adapter_package_digests[artifact["snapshotPath"]]
+    assert len(snapshot) == artifact["bytes"]
+    assert len(snapshot) == adapter_manifest_files[path]["bytes"]
+    assert len(snapshot.splitlines()) == artifact["lines"]
+
+assert adapter_implementation["primaryFeatureCommit"] == (
+    wordpress_adapter_receipt["hostedWorkflow"]["precedingFailure"][
+        "commit"
+    ]
+)
+assert sha1.fullmatch(adapter_implementation["primaryFeatureCommit"])
+assert adapter_implementation["haxeSourceAndTestFileCount"] == 20
+adapter_owned_haxe_files = adapter_implementation["sdk023OwnedHaxeFiles"]
+assert len(adapter_owned_haxe_files) == 12
+assert adapter_owned_haxe_files == sorted(set(adapter_owned_haxe_files))
+for path in adapter_owned_haxe_files:
+    assert path.endswith(".hx")
+    assert path in adapter_package_digests
+assert adapter_implementation["input"] == {
+    "language": "Haxe",
+    "path": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx",
+    "handwrittenPhpApplicationSource": False,
+}
+assert adapter_implementation["classification"] == "public-native"
+assert adapter_implementation["semanticClassification"] == "file-symbol-edge"
+assert adapter_implementation["generatedFileCount"] == 5
+assert adapter_implementation["stableAdapterClass"] == (
+    "Acme\\BooksAdapters\\PublicAdapters"
+)
+assert adapter_implementation["publicMethods"] == [
+    "appendLabel",
+    "filterTitle",
+    "isInitialized",
+    "normalizeTitle",
+    "onInit",
+    "registerBlocks",
+    "registerRestRoutes",
+    "renderSummary",
+    "restBook",
+    "restPermission",
+]
+assert adapter_implementation["privateMethods"] == [
+    "bookPayload",
+    "normalizeTitleImpl",
+]
+assert adapter_implementation["registrations"] == {
+    "actions": 3,
+    "filters": 1,
+    "restRoutes": 1,
+    "dynamicBlocks": 1,
+    "namedPublicExports": 3,
+}
+assert adapter_implementation["deterministicRepeatedEmission"] is True
+for field in ("rawPhpSegments", "stockHaxePhpFiles"):
+    assert adapter_implementation[field] == 0
+for field in ("runtimeHxxDependency", "buildTimeServerDependency"):
+    assert adapter_implementation[field] is False
+
+adapter_toolchain = wordpress_adapter_receipt["toolchain"]
+assert adapter_toolchain["haxe"] == "4.3.7"
+assert adapter_toolchain["formatter"] == "1.18.0"
+for receipt_key, image_key in (
+    ("php74", "php74Floor"),
+    ("php84", "php84Cli"),
+    ("wordpress", "wordpress70Php84"),
+    ("mysql", "mysql"),
+    ("mariadb", "mariadb"),
+):
+    assert adapter_toolchain[receipt_key]["reference"] == (
+        image_lock["images"][image_key]["reference"]
+    )
+
+adapter_verification = wordpress_adapter_receipt["verification"]
+assert adapter_verification["localProfile"]["outcome"] == "passed"
+adapter_php_matrix = adapter_verification["exactPhpMatrix"]
+assert adapter_php_matrix["containerNetwork"] == "none"
+for field in (
+    "php74Lint",
+    "php74NativeCallers",
+    "php84Lint",
+    "php84NativeCallers",
+):
+    assert adapter_php_matrix[field] == "passed"
+for field in ("php74DirectGuards", "php84DirectGuards"):
+    assert adapter_php_matrix[field] == "passed-zero-output"
+adapter_wordpress_matrix = adapter_verification["wordpressMatrix"]
+assert adapter_wordpress_matrix["wordpressVersion"] == "7.0"
+assert adapter_wordpress_matrix["activationError"] is None
+assert adapter_wordpress_matrix["activationOutputBytes"] == 0
+assert adapter_wordpress_matrix["activeAfterFreshRequest"] is True
+assert adapter_wordpress_matrix["actionFilter"] == {
+    "initPriority": 9,
+    "filterPriority": 12,
+    "result": "TYPED TITLE",
+}
+assert adapter_wordpress_matrix["rest"] == {
+    "permission": True,
+    "routeRegistered": True,
+    "positiveStatus": 200,
+    "positivePayload": {"id": 7, "title": "Book 7"},
+    "negativeStatus": 400,
+    "negativeCode": "acme_books_invalid_id",
+}
+assert adapter_wordpress_matrix["dynamicBlock"] == {
+    "registered": True,
+    "markup": (
+        '<section class="acme-books-summary">Typed &amp; Safe</section>'
+    ),
+}
+assert adapter_wordpress_matrix["publicExports"] == {
+    "byReferenceMutation": "passed",
+    "normalizeTitle": "RUNTIME TITLE",
+}
+assert [
+    lane["database"] for lane in adapter_wordpress_matrix["lanes"]
+] == ["mysql", "mariadb"]
+for lane in adapter_wordpress_matrix["lanes"]:
+    for field in (
+        "freshInstall",
+        "activation",
+        "freshRequestProbe",
+        "volumeResetBeforeAndAfter",
+    ):
+        assert lane[field] == "passed"
+assert adapter_wordpress_matrix["outcome"] == "passed"
+assert adapter_verification["depthOneRepositoryCheckout"] == {
+    "historicalCommitAvailable": False,
+    "selfContainedReceiptAggregate": "passed",
+    "command": "bash scripts/check-repository.sh",
+    "outcome": "passed",
+}
+for result in adapter_verification["regressions"].values():
+    assert result == "passed"
+adapter_readability = adapter_verification["readability"]
+assert adapter_readability["trackedNativeSnapshots"] is True
+assert adapter_readability["totalPhpBytes"] == sum(
+    artifact["bytes"] for artifact in adapter_generated_files.values()
+)
+assert adapter_readability["totalPhpLines"] == sum(
+    artifact["lines"] for artifact in adapter_generated_files.values()
+)
+assert adapter_readability["totalPhpBytes"] == 3488
+assert adapter_readability["totalPhpLines"] == 130
+assert adapter_readability["adapterClassBytes"] == 2126
+assert adapter_readability["adapterClassLines"] == 77
+assert adapter_readability["ordinaryPhpSymbolsVisible"] is True
+assert adapter_readability["automatedRawScaffoldReview"] == "passed"
+assert adapter_readability["independentWordpressPhpReviewer"] == (
+    "pending-g1"
+)
+
+adapter_hosted = wordpress_adapter_receipt["hostedWorkflow"]
+assert adapter_hosted["path"] == ".github/workflows/repository.yml"
+assert adapter_hosted["runId"] == 29628012835
+assert adapter_hosted["commit"] == adapter_commit
+assert adapter_hosted["status"] == "passed"
+assert adapter_hosted["fullMatrixStatus"] == "passed"
+assert adapter_hosted["jobCount"] == 10
+assert [job["name"] for job in adapter_hosted["requiredJobs"]] == [
+    "repository",
+    "haxe",
+    "wordpress-runtime",
+    "security",
+]
+for job in adapter_hosted["requiredJobs"]:
+    assert isinstance(job["jobId"], int) and job["jobId"] > 0
+    assert job["status"] == "passed"
+preceding_failure = adapter_hosted["precedingFailure"]
+assert preceding_failure["runId"] == 29627785837
+assert preceding_failure["failedJob"]["name"] == "repository"
+assert preceding_failure["failedJob"]["jobId"] == 88035464684
+for job in preceding_failure["implementationJobs"].values():
+    assert isinstance(job["jobId"], int) and job["jobId"] > 0
+    assert job["status"] == "passed"
+
+adapter_provenance = wordpress_adapter_receipt["designProvenance"]
+assert len(adapter_provenance) == 2
+for reference in adapter_provenance:
+    assert reference["repository"].startswith("https://github.com/")
+    assert sha1.fullmatch(reference["commit"])
+    assert "no code copied" in reference["use"]
+    if "path" in reference:
+        assert sha1.fullmatch(reference["blob"])
+    else:
+        for source in reference["paths"]:
+            assert sha1.fullmatch(source["blob"])
+
+assert wordpress_adapter_receipt["claims"] == {
+    "nativeActionFilterAdapters": "runtime-tested",
+    "nativeRestAdapterAndPermission": "runtime-tested",
+    "nativeDynamicBlockRender": "runtime-tested",
+    "stablePublicPhpExports": "runtime-tested",
+    "nativePhp74Adapters": "runtime-tested",
+    "nativePhp84Adapters": "runtime-tested",
+    "wordpress70DiscoveryActivation": "runtime-tested",
+    "mysqlLane": "runtime-tested",
+    "mariadbLane": "runtime-tested",
+    "wpcsAndStaticAnalysis": "not-tested-sdk-026",
+    "independentReadabilityReview": "not-tested-g1",
+    "publication": "unsupported",
+    "productionSupport": "not-tested",
+}
+assert wordpress_adapter_receipt["limitations"] == sorted(
+    wordpress_adapter_receipt["limitations"]
 )
 
 generic_haxe_files = list((package_root / "src").rglob("*.hx")) + list(
