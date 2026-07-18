@@ -1,0 +1,70 @@
+{
+  "plugin": {
+    "textDomain": "acme-books",
+    "requiresWordPress": "7.0",
+    "autoloadPath": "includes/autoload.php",
+    "rootPath": "acme-books.php",
+    "slug": "acme-books",
+    "requiresPhp": "7.4",
+    "bootstrapClass": "\\Acme\\Books\\Bootstrap"
+  },
+  "profileId": "wp70-release",
+  "manifestId": "wordpresshx-public-php-artifact-v1",
+  "schemaVersion": 1,
+  "boundary": {
+    "rawPhpSegments": 0,
+    "semanticPlanSchema": "not-implemented-adr-006",
+    "runtimeHxxDependency": false,
+    "ownershipTransaction": "not-implemented-adr-007",
+    "semanticPlanClassification": "file-symbol-edge",
+    "stockHaxePhpFiles": 0,
+    "buildTimeServerDependency": false
+  },
+  "schemaStatus": "internal-sdk022-evidence",
+  "classification": "public-native",
+  "claims": {
+    "publicationAuthorized": false,
+    "wordpress70Activation": "not-tested",
+    "productionSupport": "not-tested",
+    "generation": "generated"
+  },
+  "files": [
+    {
+      "role": "plugin-root",
+      "declarations": [],
+      "classification": "public-native",
+      "path": "acme-books.php",
+      "sha256": "b757b6b59e202c79951ec44fcdabc855d50dd5587326493cc35b2a9f7659f265",
+      "bytes": 425
+    },
+    {
+      "role": "bootstrap",
+      "declarations": [
+        {
+          "generatedStartLine": 7,
+          "generatedEndLine": 20,
+          "source": {
+            "endColumn": 3,
+            "startLine": 10,
+            "endLine": 13,
+            "startColumn": 2,
+            "file": "compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx"
+          },
+          "stableName": "class:Acme\\Books\\Bootstrap"
+        }
+      ],
+      "classification": "public-native",
+      "path": "includes/Bootstrap.php",
+      "sha256": "d8bb76474eb3e6a5258fe1ea8c6b19df7272624715ed99593c1b2cf0fa796b58",
+      "bytes": 287
+    },
+    {
+      "role": "autoload",
+      "declarations": [],
+      "classification": "public-native",
+      "path": "includes/autoload.php",
+      "sha256": "b17397693e23c805a4ee76c66611cd531cdc436ce4befb66d2033b7c1d8ab839",
+      "bytes": 74
+    }
+  ]
+}

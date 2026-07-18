@@ -1,0 +1,18 @@
+<?php
+/**
+ * Plugin Name: Acme Books
+ * Description: Typed SDK-022 native bootstrap fixture.
+ * Version: 0.0.0
+ * Requires at least: 7.0
+ * Requires PHP: 7.4
+ * Author: WordPressHx SDK fixture
+ * License: LicenseRef-WordPressHx-Review-Pending
+ * Text Domain: acme-books
+ * Domain Path: /languages
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
+require_once __DIR__ . '/includes/autoload.php';
+\Acme\Books\Bootstrap::boot();

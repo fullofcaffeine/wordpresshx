@@ -83,6 +83,22 @@ EXPECTED_ARTIFACT_CLASSES = [
 ]
 
 
+def action_pins(workflow: str, action: str) -> list[str]:
+    """Return every immutable ref used for one exact GitHub Action name."""
+    return re.findall(rf"uses:\s+{re.escape(action)}@([^\s#]+)", workflow)
+
+
+def every_action_use_is_exact(workflow: str, action: str, expected_commit: Any) -> bool:
+    """Require at least one use and reject any ref other than the expected commit."""
+    pins = action_pins(workflow, action)
+    return (
+        isinstance(expected_commit, str)
+        and SHA1.fullmatch(expected_commit) is not None
+        and len(pins) > 0
+        and all(pin == expected_commit for pin in pins)
+    )
+
+
 class Audit:
     def __init__(self, root: Path) -> None:
         self.root = root
@@ -778,10 +794,14 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
         audit.errors.append(f"cannot enumerate tracked package manifests: {error}")
 
     workflow = audit.read_text(".github/workflows/repository.yml")
-    checkout_pins = re.findall(r"uses:\s+actions/checkout@([^\s]+)", workflow)
+    checkout_pins = action_pins(workflow, "actions/checkout")
     audit.check(
         len(checkout_pins) == 10
-        and set(checkout_pins) == {components.get("actions-checkout-7.0.0", {}).get("commit")},
+        and every_action_use_is_exact(
+            workflow,
+            "actions/checkout",
+            components.get("actions-checkout-7.0.0", {}).get("commit"),
+        ),
         "all ten checkout actions must use the inventoried exact commit",
     )
     audit.check(
@@ -793,10 +813,13 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
         is not None,
         "the security job must be the only explicit full-history checkout",
     )
-    setup_pins = re.findall(r"uses:\s+krdlab/setup-haxe@([^\s]+)", workflow)
     audit.check(
-        setup_pins == [components.get("krdlab-setup-haxe-2.1.0", {}).get("commit")],
-        "setup-haxe must use the inventoried exact commit once",
+        every_action_use_is_exact(
+            workflow,
+            "krdlab/setup-haxe",
+            components.get("krdlab-setup-haxe-2.1.0", {}).get("commit"),
+        ),
+        "every setup-haxe use must use the inventoried exact commit",
     )
     for fragment in (
         "haxe-version: 4.3.7",

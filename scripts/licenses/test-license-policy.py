@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 import subprocess
 import sys
@@ -17,6 +18,15 @@ CHECKER = ROOT / "scripts/licenses/check-license-policy.py"
 POLICY_PATH = ROOT / "LICENSES/policy.json"
 COMPONENTS_PATH = ROOT / "LICENSES/components.json"
 GOLDEN_PATH = ROOT / "fixtures/licenses/expected/publication-blocked.txt"
+
+
+def load_checker_module() -> Any:
+    spec = importlib.util.spec_from_file_location("wordpresshx_license_checker", CHECKER)
+    if spec is None or spec.loader is None:
+        raise AssertionError("cannot load license policy checker module")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def run_checker(*arguments: str) -> subprocess.CompletedProcess[str]:
@@ -68,6 +78,37 @@ def run_mutation(
 def main() -> int:
     policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
     components = json.loads(COMPONENTS_PATH.read_text(encoding="utf-8"))
+    checker = load_checker_module()
+
+    expected_setup_commit = next(
+        component["commit"]
+        for component in components["components"]
+        if component["id"] == "krdlab-setup-haxe-2.1.0"
+    )
+    duplicate_exact_workflow = "\n".join(
+        [
+            f"uses: krdlab/setup-haxe@{expected_setup_commit}",
+            f"uses: krdlab/setup-haxe@{expected_setup_commit} # repeated exact use",
+        ]
+    )
+    expect(
+        checker.every_action_use_is_exact(
+            duplicate_exact_workflow, "krdlab/setup-haxe", expected_setup_commit
+        ),
+        "repeated exact action pins must pass",
+    )
+    expect(
+        not checker.every_action_use_is_exact(
+            duplicate_exact_workflow + "\nuses: krdlab/setup-haxe@" + ("0" * 40),
+            "krdlab/setup-haxe",
+            expected_setup_commit,
+        ),
+        "one mismatched action pin among exact duplicates must fail",
+    )
+    expect(
+        not checker.every_action_use_is_exact("", "krdlab/setup-haxe", expected_setup_commit),
+        "an absent required action must fail",
+    )
 
     normal = run_checker()
     expect(normal.returncode == 0, f"ordinary policy validation failed:\n{normal.stderr}")
@@ -140,7 +181,10 @@ def main() -> int:
         ),
     )
 
-    print("license policy tests passed: 1 positive, 1 blocked gate, 8 negative mutations")
+    print(
+        "license policy tests passed: 1 positive, 1 blocked gate, "
+        "8 policy mutations, 3 action-pin cases"
+    )
     return 0
 
 

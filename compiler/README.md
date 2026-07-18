@@ -3,7 +3,10 @@
 During 0.x this monorepo owns two deliberately separate PHP compiler layers:
 
 - `reflaxe.php/`: generic PHP IR, lowering, printing, runtime/stdlib adaptation, generic fixtures, compiler package metadata, and the ADR-011 typed PHP-markup IR/lowerer;
-- `wordpress/`: the future SDK-owned WordPress application profile, package/file mapping, public ABI policy, typed WordPress HXX/helper extensions, and WordPress-specific fixtures.
+- `wordpress/`: the SDK-owned WordPress application profile, package/file
+  mapping, public ABI policy, typed WordPress HXX/helper extensions, and
+  WordPress-specific fixtures. SDK-022 implements its first typed plugin-header,
+  guard, autoload, and stable-bootstrap slice.
 
 The generic package must not import SDK packages or contain WordPress concepts. The WordPress profile may depend on the generic package; the reverse dependency is forbidden. Full-port Core linking, original-path replacement, ownership state, and distribution assembly remain outside this repository.
 

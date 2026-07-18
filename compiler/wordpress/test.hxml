@@ -1,0 +1,5 @@
+-cp ../reflaxe.php/src
+-cp src
+-cp test
+-main wordpress.hx.compiler.php.profile.tests.WordPressPhpProfileTest
+--interp

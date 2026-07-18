@@ -58,6 +58,21 @@ The machine-readable contract is
 all real WordPress/native ABI evidence `not-tested` until SDK-022 and Gate G1
 exercise an ordinary PHP caller and a real WordPress 7.0 plugin.
 
+SDK-022 now implements the first `compiler/wordpress` vertical slice without
+changing the content-addressed generic compiler package. Typed profile values
+produce an exact plugin header; generic IR produces the direct-access guard,
+local autoload file, namespaced bootstrap class, and stable boot call. The
+three-file `acme-books` fixture is byte-snapshotted, linted and invoked by an
+ordinary PHP caller on exact PHP 7.4/8.4, then discovered and activated by real
+WordPress 7.0 over both pinned database lanes. The artifact's JSON is explicitly
+an internal SDK-022 evidence manifest, not the still-pending ADR-006 semantic
+plan or ADR-007 ownership schema.
+
+This advances only the bootstrap/profile slice. Hook, REST, block, lifecycle,
+private stock-Haxe packaging, WPCS/static-analysis integration, independent
+readability sign-off, HXX lowering, and production support remain separate
+beads and claims.
+
 ## Planned typed-markup capability
 
 ADR-011 makes server HXX a first-class generic compiler capability. A future `reflaxe.php` slice owns a neutral, typed PHP-markup IR for positioned elements/text, typed dynamic segments, attributes, control flow, output contexts, source correlation, and deterministic mixed PHP/HTML rendering. This replaces handwritten mixed PHP markup for Haxe-owned templates; it does not introduce a runtime parser, VDOM, component registry, template resolver, or request dispatcher.
@@ -90,7 +105,7 @@ The aggregate gate covers the five compiler areas that were directly stale in th
 
 The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
-The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The current IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json).
+The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The current IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json).
 
 ## Current non-claims
 
@@ -100,8 +115,9 @@ The package does not yet claim:
 - complete typed-AST lowering;
 - Haxe runtime/stdlib ownership;
 - serialized source maps, trace CLI, or production diagnostics;
-- WordPress support, public ABI compatibility, or original-path emission;
+- WordPress support beyond the bounded SDK-022 plugin bootstrap, general public
+  ABI compatibility, or original-path emission;
 - typed HXX/PHP-markup IR or mixed PHP/HTML lowering;
 - publication eligibility.
 
-SDK-021 establishes the structural IR/printer foundation through neutral fixtures. SDK-025 owns serialized source correlation, and the WordPress profile begins separately under SDK-022 after the public/private emission decision.
+SDK-021 establishes the structural IR/printer foundation through neutral fixtures. SDK-025 owns serialized source correlation. SDK-022 begins the separate WordPress profile with a native plugin bootstrap; SDK-023 and later beads own the representative public callback surfaces and broader Gate G1 proof.

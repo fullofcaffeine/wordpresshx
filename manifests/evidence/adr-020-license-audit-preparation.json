@@ -35,11 +35,11 @@
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "716c13e5c5f22e89105ea32d344dea739bb8bfefd907f078de8a1f89b8674a81"
+      "sha256": "33a4a10a2bf58a866b7a4b25e87f672c8e3ff64e6378e1aff83a32d6fab1d3aa"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",
-      "sha256": "c1fa815518aaa776ad284fe5974fa33e1953ed4c6857b358144b71d455888247"
+      "sha256": "74ea29fb9fb9e9aeeb3825e48662f8122871cc53e24e842f084775f8ea1a3452"
     }
   },
   "audit": {
@@ -70,17 +70,17 @@
   },
   "implementation": {
     "baseCommit": "24157cb992919f1dd2078e4593b2bb0d0bee2caf",
-    "commit": "4532ae47bfa845727bf946c21bc413735c84ffbd"
+    "commit": null
   },
   "hostedWorkflow": {
     "workflow": "repository.yml",
     "job": "license-policy",
     "required": true,
-    "runId": 29623554577,
-    "jobId": 88023304753,
-    "commit": "4532ae47bfa845727bf946c21bc413735c84ffbd",
-    "status": "passed",
-    "fullMatrixStatus": "passed"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending"
   },
   "claims": {
     "componentInventory": "inventoried",

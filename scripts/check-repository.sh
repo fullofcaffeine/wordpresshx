@@ -159,6 +159,7 @@ required_files=(
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
+  manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
@@ -185,6 +186,27 @@ required_files=(
   compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
+  compiler/wordpress/README.md
+  compiler/wordpress/runtime/activate-plugin.php
+  compiler/wordpress/runtime/native-caller.php
+  compiler/wordpress/runtime/probe-plugin.php
+  compiler/wordpress/scripts/run-wordpress-lane.sh
+  compiler/wordpress/scripts/test-php-matrix.sh
+  compiler/wordpress/scripts/test-wordpress.sh
+  compiler/wordpress/scripts/test.sh
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginBootstrapPlan.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginHeader.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx
+  compiler/wordpress/test.hxml
+  compiler/wordpress/test/expected/acme-books/acme-books.php.txt
+  compiler/wordpress/test/expected/acme-books/includes/Bootstrap.php.txt
+  compiler/wordpress/test/expected/acme-books/includes/autoload.php.txt
+  compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json
+  compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx
+  compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
   scripts/gates/test-g0-baseline.py
@@ -277,6 +299,11 @@ php_ir_receipt = json.loads(
     Path("manifests/evidence/sdk-021-php-ir-printer.json").read_text(
         encoding="utf-8"
     )
+)
+wordpress_php_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-022-wordpress-public-php-profile.json"
+    ).read_text(encoding="utf-8")
 )
 haxelib = json.loads(
     Path("compiler/reflaxe.php/haxelib.json").read_text(encoding="utf-8")
@@ -829,6 +856,208 @@ for path in package_files:
     package_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
 package_digest = hashlib.sha256(package_digest_input).hexdigest()
 assert package_digest == php_ir_receipt["subject"]["packageContentSha256"]
+
+assert wordpress_php_receipt["schemaVersion"] == 1
+assert wordpress_php_receipt["receiptId"] == (
+    "SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE"
+)
+assert wordpress_php_receipt["bead"] == "wordpresshx-sdk-022"
+assert wordpress_php_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+wordpress_subject = wordpress_php_receipt["subject"]
+assert wordpress_subject["profile"] == "wp70-release"
+assert wordpress_subject["genericCompilerReceiptId"] == (
+    php_ir_receipt["receiptId"]
+)
+wordpress_profile_root = Path(wordpress_subject["path"])
+wordpress_profile_files = sorted(
+    (
+        path
+        for path in wordpress_profile_root.rglob("*")
+        if path.is_file()
+        and "build" not in path.relative_to(wordpress_profile_root).parts
+    ),
+    key=lambda path: path.as_posix(),
+)
+wordpress_profile_digest_input = bytearray()
+for path in wordpress_profile_files:
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    wordpress_profile_digest_input.extend(
+        f"{digest}  {path.as_posix()}\n".encode()
+    )
+assert hashlib.sha256(wordpress_profile_digest_input).hexdigest() == (
+    wordpress_subject["packageContentSha256"]
+)
+for subject_id in ("emissionPolicy", "artifactManifestSnapshot"):
+    evidence = wordpress_subject[subject_id]
+    evidence_path = Path(evidence["path"])
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
+        evidence["sha256"]
+    )
+wordpress_artifact_manifest = json.loads(
+    Path(
+        wordpress_subject["artifactManifestSnapshot"]["path"]
+    ).read_text(encoding="utf-8")
+)
+assert wordpress_artifact_manifest["profileId"] == "wp70-release"
+assert wordpress_artifact_manifest["classification"] == "public-native"
+assert wordpress_artifact_manifest["boundary"]["rawPhpSegments"] == 0
+assert wordpress_artifact_manifest["boundary"]["stockHaxePhpFiles"] == 0
+assert wordpress_artifact_manifest["boundary"]["runtimeHxxDependency"] is False
+assert wordpress_artifact_manifest["boundary"]["buildTimeServerDependency"] is False
+assert wordpress_artifact_manifest["claims"]["publicationAuthorized"] is False
+
+wordpress_generated_files = {
+    artifact["path"]: artifact
+    for artifact in wordpress_php_receipt["generatedArtifacts"]
+}
+assert set(wordpress_generated_files) == {
+    "acme-books.php",
+    "includes/Bootstrap.php",
+    "includes/autoload.php",
+}
+assert {
+    artifact["role"] for artifact in wordpress_generated_files.values()
+} == {"plugin-root", "bootstrap", "autoload"}
+manifest_files = {
+    artifact["path"]: artifact
+    for artifact in wordpress_artifact_manifest["files"]
+}
+assert set(manifest_files) == set(wordpress_generated_files)
+for path, artifact in wordpress_generated_files.items():
+    snapshot = Path(artifact["snapshotPath"]).read_bytes()
+    digest = hashlib.sha256(snapshot).hexdigest()
+    assert digest == artifact["sha256"] == manifest_files[path]["sha256"]
+    assert len(snapshot) == artifact["bytes"] == manifest_files[path]["bytes"]
+    assert len(snapshot.splitlines()) == artifact["lines"]
+
+wordpress_implementation = wordpress_php_receipt["implementation"]
+assert wordpress_implementation["haxeSourceAndTestFileCount"] == 8
+assert wordpress_implementation["input"] == {
+    "language": "Haxe",
+    "path": "compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx",
+    "handwrittenPhpApplicationSource": False,
+}
+assert wordpress_implementation["classification"] == "public-native"
+assert wordpress_implementation["semanticClassification"] == "file-symbol-edge"
+assert wordpress_implementation["generatedFileCount"] == 3
+assert wordpress_implementation["stableBootstrapClass"] == (
+    "Acme\\Books\\Bootstrap"
+)
+assert wordpress_implementation["stableBootstrapMethods"] == [
+    "boot",
+    "isBooted",
+]
+for field in (
+    "deterministicRepeatedEmission",
+):
+    assert wordpress_implementation[field] is True
+for field in ("rawPhpSegments", "stockHaxePhpFiles"):
+    assert wordpress_implementation[field] == 0
+for field in ("runtimeHxxDependency", "buildTimeServerDependency"):
+    assert wordpress_implementation[field] is False
+
+wordpress_toolchain = wordpress_php_receipt["toolchain"]
+assert wordpress_toolchain["haxe"] == "4.3.7"
+assert wordpress_toolchain["formatter"] == "1.18.0"
+for receipt_key, image_key in (
+    ("php74", "php74Floor"),
+    ("php84", "php84Cli"),
+    ("wordpress", "wordpress70Php84"),
+    ("mysql", "mysql"),
+    ("mariadb", "mariadb"),
+):
+    assert wordpress_toolchain[receipt_key]["reference"] == (
+        image_lock["images"][image_key]["reference"]
+    )
+
+wordpress_verification = wordpress_php_receipt["verification"]
+assert wordpress_verification["localProfile"]["outcome"] == "passed"
+php_matrix = wordpress_verification["exactPhpMatrix"]
+assert php_matrix["containerNetwork"] == "none"
+for field in (
+    "php74Lint",
+    "php74NativeCaller",
+    "php84Lint",
+    "php84NativeCaller",
+):
+    assert php_matrix[field] == "passed"
+for field in ("php74DirectGuard", "php84DirectGuard"):
+    assert php_matrix[field] == "passed-zero-output"
+wordpress_matrix = wordpress_verification["wordpressMatrix"]
+assert wordpress_matrix["wordpressVersion"] == "7.0"
+assert wordpress_matrix["activationError"] is None
+assert wordpress_matrix["activationOutputBytes"] == 0
+assert wordpress_matrix["activeAfterFreshRequest"] is True
+assert wordpress_matrix["bootstrapClassBootedAfterFreshRequest"] is True
+assert wordpress_matrix["outcome"] == "passed"
+assert [lane["database"] for lane in wordpress_matrix["lanes"]] == [
+    "mysql",
+    "mariadb",
+]
+for lane in wordpress_matrix["lanes"]:
+    for field in (
+        "freshInstall",
+        "activation",
+        "freshRequestProbe",
+        "volumeResetBeforeAndAfter",
+    ):
+        assert lane[field] == "passed"
+readability = wordpress_verification["readability"]
+assert readability["trackedNativeSnapshots"] is True
+assert readability["totalPhpBytes"] == 786
+assert readability["totalPhpLines"] == 43
+assert readability["rootHeaderWithinNativeScanWindow"] is True
+assert readability["ordinaryPhpSymbolsVisible"] is True
+assert readability["automatedRawScaffoldReview"] == "passed"
+assert readability["independentWordpressPhpReviewer"] == "pending-g1"
+
+wordpress_hosted = wordpress_php_receipt["hostedWorkflow"]
+assert wordpress_hosted["path"] == ".github/workflows/repository.yml"
+assert [job["name"] for job in wordpress_hosted["requiredJobs"]] == [
+    "haxe",
+    "wordpress-runtime",
+]
+if wordpress_php_receipt["status"] == "implemented-hosted-pending":
+    assert wordpress_implementation["implementationCommit"] is None
+    for field in ("runId", "commit"):
+        assert wordpress_hosted[field] is None
+    assert wordpress_hosted["status"] == "pending"
+    assert wordpress_hosted["fullMatrixStatus"] == "pending"
+    for job in wordpress_hosted["requiredJobs"]:
+        assert job["jobId"] is None
+        assert job["status"] == "pending"
+else:
+    assert sha1.fullmatch(wordpress_implementation["implementationCommit"])
+    assert wordpress_implementation["implementationCommit"] == (
+        wordpress_hosted["commit"]
+    )
+    assert isinstance(wordpress_hosted["runId"], int)
+    assert wordpress_hosted["runId"] > 0
+    assert sha1.fullmatch(wordpress_hosted["commit"])
+    assert wordpress_hosted["status"] == "passed"
+    assert wordpress_hosted["fullMatrixStatus"] == "passed"
+    for job in wordpress_hosted["requiredJobs"]:
+        assert isinstance(job["jobId"], int) and job["jobId"] > 0
+        assert job["status"] == "passed"
+
+assert wordpress_php_receipt["claims"] == {
+    "structuredPluginHeaders": "snapshot-tested",
+    "nativePhp74Bootstrap": "runtime-tested",
+    "nativePhp84Bootstrap": "runtime-tested",
+    "wordpress70DiscoveryActivation": "runtime-tested",
+    "mysqlLane": "runtime-tested",
+    "mariadbLane": "runtime-tested",
+    "wpcsAndStaticAnalysis": "not-tested-sdk-026",
+    "independentReadabilityReview": "not-tested-g1",
+    "publication": "unsupported",
+    "productionSupport": "not-tested",
+}
+assert wordpress_php_receipt["limitations"] == sorted(
+    wordpress_php_receipt["limitations"]
+)
 
 generic_haxe_files = list((package_root / "src").rglob("*.hx")) + list(
     (package_root / "test").rglob("*.hx")

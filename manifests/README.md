@@ -53,4 +53,12 @@ release path, not to permission for experimental G1–G3 work.
 
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 
+Receipt `SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE` records the first Haxe-authored,
+structured public PHP plugin bootstrap: deterministic native headers, direct
+access guard, local autoload, and stable namespaced boot class. Exact PHP
+7.4/8.4 native callers and real WordPress 7.0 activation over both database
+lanes pass. Hook/REST/block adapters, lifecycle behavior, WPCS/static analysis,
+independent readability sign-off, publication, and production support remain
+separately gated.
+
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

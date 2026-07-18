@@ -26,6 +26,10 @@ All notable project changes will be recorded here once versioning policy is acce
   file/symbol/edge classification, structured native WordPress ABI, a bounded
   audited stock-Haxe private lane, direct-return server-HXX ownership, and
   fail-closed pre-G8 migration/removal triggers.
+- First structured `wp70-release` public PHP profile: typed plugin headers,
+  direct-access guard, local autoload, and stable native bootstrap, with
+  deterministic artifacts, PHP 7.4/8.4 native-caller coverage, and real
+  WordPress 7.0 discovery/activation over MySQL and MariaDB.
 
 ### Release status
 

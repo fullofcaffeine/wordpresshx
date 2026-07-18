@@ -74,14 +74,22 @@ jobs:
 
   wordpress-runtime:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Haxe 4.3.7
+        uses: krdlab/setup-haxe@d93667502be3b4f31a94a3308a74388f2e178a8d # v2.1.0
+        with:
+          haxe-version: 4.3.7
+      - name: Install Haxe Formatter 1.18.0
+        run: haxelib install formatter 1.18.0 --quiet
       - name: Validate immutable container inputs
         run: python3 scripts/docker/check-image-lock.py
-      - name: Install WordPress 7.0 against exact MySQL and MariaDB lanes
-        run: bash scripts/wordpress/test-harness.sh
+      - name: Generate the native public PHP plugin fixture
+        run: bash compiler/wordpress/scripts/test.sh
+      - name: Discover and activate the plugin on real WordPress 7.0
+        run: bash compiler/wordpress/scripts/test-wordpress.sh
 
   security:
     runs-on: ubuntu-24.04
@@ -122,6 +130,10 @@ jobs:
         run: bash compiler/reflaxe.php/scripts/test.sh
       - name: Test exact PHP 7.4 and 8.4 runtime matrix
         run: bash compiler/reflaxe.php/scripts/test-php-matrix.sh
+      - name: Test WordPress public PHP profile
+        run: bash compiler/wordpress/scripts/test.sh
+      - name: Test public PHP on exact PHP 7.4 and 8.4
+        run: bash compiler/wordpress/scripts/test-php-matrix.sh
       - name: Install exact scoped HXX toolchain
         run: |
           npm install --global lix@15.12.4

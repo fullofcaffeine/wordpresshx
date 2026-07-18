@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Acme\Books;
+
+class Bootstrap {
+	private static $booted = false;
+
+	public static function boot(): void {
+		if ( self::$booted ) {
+			return;
+		}
+		self::$booted = true;
+	}
+
+	public static function isBooted(): bool {
+		return self::$booted;
+	}
+}
