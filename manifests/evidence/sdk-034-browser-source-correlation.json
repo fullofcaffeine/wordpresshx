@@ -194,7 +194,7 @@
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "5b6a22e0ad8b6f75460336603056b4a66f6205572a572b8408850e9e5fe1e931"
+      "sha256": "dabe093c104d1554caed21b9d3a0c0b32148c6cdb2e305320830ba046ac1aa10"
     },
     {
       "path": "schemas/source-correlation-index.schema.json",
@@ -377,6 +377,17 @@
       "reason": "The multi-architecture Playwright index contains browser 145.0.7632.6 on AMD64 and 145.0.7632.0 on ARM64, but the receipt modeled only the ARM64 version; the other nine workflow jobs passed"
     }
   ],
+  "sdk043CompatibilityReverification": {
+    "observedAt": "2026-07-18T23:01:29Z",
+    "reason": "The private trace bin remains exact while SDK-043 adds the final wphx project bin to the same package manifest.",
+    "requiredBins": {
+      "wphx": "build/wphx.js",
+      "wphx-sdk": "build/index.js"
+    },
+    "command": "bash packages/cli/scripts/test-browser-source-correlation.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-043-PROJECT-CLI"
+  },
   "claims": {
     "genesSourceMapLayer": "independently-validated",
     "browserTraceCli": "controlled-runtime-tested",

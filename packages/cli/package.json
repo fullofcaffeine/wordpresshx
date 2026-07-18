@@ -5,6 +5,7 @@
   "description": "Haxe-authored WordPressHx SDK command-line interface.",
   "type": "module",
   "bin": {
+    "wphx": "build/wphx.js",
     "wphx-sdk": "build/index.js"
   },
   "engines": {

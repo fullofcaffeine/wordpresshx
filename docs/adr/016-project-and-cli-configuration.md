@@ -506,11 +506,11 @@ bytes were copied, no dependency was created, and Genes source was unchanged.
 
 ## Migration, rollback, and supersession
 
-SDK-043 must introduce `wphx` while keeping existing private trace evidence
-readable, then migrate repository fixtures away from the prototype spelling.
-Generated projects use only `wphx`. A project created before this ADR is
-initialized explicitly; existing source/native files remain unowned until a
-separate adoption action.
+SDK-043 introduces `wphx` while keeping the frozen private trace entry and its
+evidence readable at `wphx-sdk`. Generated projects use only `wphx`; historical
+trace fixtures retain their authenticated spelling. A project created before
+this ADR is initialized explicitly; existing source/native files remain
+unowned until a separate adoption action.
 
 Before stable release, a clean installed consumer must reproduce its lock and
 effective graph without monorepo or sibling paths. If the selected command,
@@ -530,3 +530,20 @@ implementations may not drift in place.
   cleanup matrix.
 - `wordpresshx-sdk-112` through `wordpresshx-sdk-117`: consume the same contract
   in the landing, blog, commerce, and Next.js reference sites.
+
+## SDK-043 implementation status
+
+The bounded command foundation is implemented in Haxe and emitted as Node ESM
+by immutable Genes 1.36.3. It validates the generated bootstrap and exact lock,
+derives the accepted effective-input graph, types the Haxe project directly,
+and exposes build/check/inspect/clean/doctor plus canonical JSONL diagnostics.
+Build publication uses the SDK-041 manifest-last owner; all read-only commands
+and dry-run are proven not to publish. The original trace entry and ownership
+JSON implementation remain byte-identical to their earlier receipts.
+
+This does not complete the development transcript above. Until SDK-044 lands,
+`wphx dev` validates the project and exits with `WPHX4000` without writing or
+starting children. The exact implementation and bounded non-claims are in
+[`project-cli-implementation.json`](../../manifests/project-cli-implementation.json)
+and
+[`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json).

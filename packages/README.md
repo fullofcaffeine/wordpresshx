@@ -36,9 +36,9 @@ WordPress-specific compiler branch was required.
 
 ADR-016 selects `wphx` as that package's final project-local binary and defines
 the project bootstrap, exact lock, effective inputs, stable stages/events, and
-`wphx dev` lifecycle. The existing trace-only prototype still uses the private
-`wphx-sdk` bin until SDK-043 migrates it; SDK-044 owns the real watcher and
-service supervisor.
+`wphx dev` lifecycle. SDK-043 now provides the bounded final command while the
+existing trace-only prototype remains available as the private `wphx-sdk`
+compatibility bin. SDK-044 owns the real watcher and service supervisor.
 
 SDK-040 establishes the [`build`](build/README.md) compile-time module. Typed
 module, hook, resource, and public-environment declarations are recovered from
@@ -49,5 +49,6 @@ collector in application JavaScript. The collector does not emit target files.
 SDK-041 adds the Haxe-authored artifact owner inside [`cli`](cli/README.md): it
 validates the complete stage, owns only exact manifest path+hash entries,
 publishes the manifest last, and recovers a durable journal without overwriting
-unexpected bytes. SDK-043 will connect that library to the final `wphx`
-commands.
+unexpected bytes. SDK-043 connects that library to `wphx build` and `clean`, adds
+strict project/lock/effective-input resolution, read-only check/inspect/doctor
+modes, and preserves the previous trace implementation byte-for-byte.

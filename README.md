@@ -48,8 +48,10 @@ generated bootstrap locates the Haxe site authority; an exact project lock,
 deterministic effective-input graph, stable stages/diagnostics, canonical JSONL
 events, compatible isolated Haxe server, last-good publication, and typed
 WordPress/Next service contract keep watch mode reproducible. The contract
-fixture passes; SDK-043/044 still own the production CLI, watcher, process, and
-runtime evidence.
+fixture passes, and SDK-043 now implements the bounded build/check/inspect/
+clean/doctor command foundation with exact project discovery and fail-closed
+publication. SDK-044 still owns the real watcher, compiler server, service,
+readiness, reload, shutdown, and runtime evidence.
 
 The product is not a WordPress fork, a replacement runtime, a generic CMS abstraction, or a proprietary site builder. The SDK and the separate full `wordpress-hx` port may share released generic compiler packages and public contracts, but neither project may import the other's unpublished implementation internals or merge its compatibility claims.
 
@@ -77,6 +79,7 @@ The only repository-wide executable check at this stage validates the policy/lay
 bash scripts/check-repository.sh
 bash scripts/ownership/test.sh
 bash scripts/project-cli/test.sh
+bash scripts/project-cli/test-production.sh
 bd lint
 bd dep cycles
 ```

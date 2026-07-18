@@ -39,5 +39,7 @@ code or a runtime/platform support claim.
 bootstrap/lock, deterministic effective-input graph, bounded dry-run events,
 and development-loop JSONL transcript. Its contract harness exercises input
 discovery, environment separation, last-good retention, reload ordering, and
-owned shutdown. It is not the SDK-043 CLI, SDK-044 watcher/process supervisor,
-or WordPress/Next.js runtime evidence.
+owned shutdown. SDK-043 additionally runs the production Haxe/Genes one-shot
+CLI against isolated copies of the same consumer while preserving the original
+contract vectors. It is not the SDK-044 watcher/process supervisor or
+WordPress/Next.js runtime evidence.

@@ -1,8 +1,9 @@
 # Build and development loop
 
-Status: SDK-040 collection and SDK-041 fail-closed publication are implemented;
-SDK-042 through SDK-044 deterministic orchestration, CLI, and long-running
-watcher work remains planned and tracked in beads.
+Status: SDK-040 collection, SDK-041 fail-closed publication, and the SDK-043
+bounded `wphx` command foundation are implemented. SDK-042 still owns the
+aggregate deterministic-build replay gate, and SDK-044 owns the long-running
+watcher, compiler-server, service, readiness, reload, and shutdown engine.
 
 ## Developer surface
 
@@ -31,14 +32,32 @@ declaration sources, declared resources, public build environment value
 digests, exact profile catalog, exact node schemas, collector implementation,
 and every generated project-lock tool identity. Runtime secrets are absent.
 
-SDK-041 now provides the exact-hash, complete-stage, journaled manifest-last
-transaction that preserves the last good generation. SDK-043 will merge the
-collector report with ADR-016's project, HXML/classpath, package, and discovery
-graph. SDK-044 will watch that merged graph. There is no separate
+SDK-041 provides the exact-hash, complete-stage, journaled manifest-last
+transaction that preserves the last good generation. SDK-043 now constructs
+ADR-016's project, HXML/classpath, package, discovery, public-environment, and
+tool graph from the strict generated bootstrap and lock. Its production corpus
+reproduces the accepted fixture fingerprint exactly, including nested source
+discovery and runtime-secret exclusion. SDK-044 will watch this same graph;
+there is no separate
 handwritten list of directories that can silently omit a macro, lock, resource,
 or newly discovered Haxe source.
 
-## Planned `wphx dev` lifecycle
+## Implemented bounded lifecycle
+
+`wphx build`, `check`, `inspect`, `clean`, and `doctor` share one project
+resolver and one stage pipeline. One-shot builds type Haxe directly rather than
+silently inheriting a developer compilation server. `build` stages a complete
+generation privately and publishes through the SDK-041 owner; `check`,
+`doctor`, `inspect`, and `build --dry-run` have no publication authority.
+
+The current generation is intentionally limited to CLI effective-input
+metadata. Missing PHP, browser, and asset producers appear as explicit skipped
+stages. The stable `wphx dev` entry validates project and ownership state, then
+exits `WPHX4000` without starting children or writing files until SDK-044's
+engine is present. The transcript in ADR-016 remains a contract fixture, not a
+claim that the watcher already runs.
+
+## SDK-044 `wphx dev` lifecycle
 
 The stable lifecycle is:
 

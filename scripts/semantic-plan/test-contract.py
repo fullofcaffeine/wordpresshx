@@ -903,7 +903,12 @@ def main() -> None:
     emission_negative(
         "result digest tamper",
         lambda value: value.update(
-            {"resultDigest": "1" + value["resultDigest"][1:]}
+            {
+                "resultDigest": (
+                    "0" if value["resultDigest"][0] != "0" else "1"
+                )
+                + value["resultDigest"][1:]
+            }
         ),
         "canonical digest mismatch",
         redigest=False,

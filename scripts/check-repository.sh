@@ -67,6 +67,7 @@ required_files=(
   packages/cli/profiles/browser-correlation.hxml
   packages/cli/profiles/classic.hxml
   packages/cli/profiles/ownership-test.hxml
+  packages/cli/profiles/wphx.hxml
   packages/cli/scripts/add-node-shebang.py
   packages/cli/scripts/create-browser-trace-mutations.py
   packages/cli/scripts/package-browser-source-correlation.py
@@ -77,6 +78,10 @@ required_files=(
   packages/cli/scripts/verify-php-trace.py
   packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx
   packages/cli/src/wordpresshx/cli/CanonicalJson.hx
+  packages/cli/src/wordpresshx/cli/CliArguments.hx
+  packages/cli/src/wordpresshx/cli/CliEventStream.hx
+  packages/cli/src/wordpresshx/cli/CliFailure.hx
+  packages/cli/src/wordpresshx/cli/CliInvocation.hx
   packages/cli/src/wordpresshx/cli/Content.hx
   packages/cli/src/wordpresshx/cli/Contract.hx
   packages/cli/src/wordpresshx/cli/Main.hx
@@ -84,7 +89,9 @@ required_files=(
   packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx
   packages/cli/src/wordpresshx/cli/SourceIndex.hx
   packages/cli/src/wordpresshx/cli/SourceMapV3.hx
+  packages/cli/src/wordpresshx/cli/TraceCommand.hx
   packages/cli/src/wordpresshx/cli/TraceFailure.hx
+  packages/cli/src/wordpresshx/cli/WphxMain.hx
   packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx
@@ -92,6 +99,22 @@ required_files=(
   packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx
   packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx
+  packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx
+  packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx
+  packages/cli/src/wordpresshx/cli/project/Doctor.hx
+  packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx
+  packages/cli/src/wordpresshx/cli/project/Inspector.hx
+  packages/cli/src/wordpresshx/cli/project/OwnershipPaths.hx
+  packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectBootstrap.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectContext.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectContract.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectFiles.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectJson.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectOutputRoot.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectOwnershipPaths.hx
   packages/cli/test/ownership/src/sdk041/fixture/Main.hx
   packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
   packages/cli/test/expected/browser-development.text
@@ -285,6 +308,8 @@ required_files=(
   scripts/ownership/test-production.py
   scripts/ownership/test.sh
   scripts/project-cli/test-contract.py
+  scripts/project-cli/test-production.py
+  scripts/project-cli/test-production.sh
   scripts/project-cli/test.sh
   tools/README.md
   examples/README.md
@@ -359,6 +384,7 @@ required_files=(
   manifests/generated-artifact-ownership.json
   manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
+  manifests/project-cli-implementation.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -372,6 +398,7 @@ required_files=(
   manifests/evidence/adr-007-generated-artifact-ownership.json
   manifests/evidence/sdk-041-ownership-transaction.json
   manifests/evidence/adr-016-project-cli-configuration.json
+  manifests/evidence/sdk-043-project-cli.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -741,6 +768,16 @@ project_cli_receipt = json.loads(
     Path(
         "manifests/evidence/adr-016-project-cli-configuration.json"
     ).read_text(encoding="utf-8")
+)
+project_cli_implementation = json.loads(
+    Path("manifests/project-cli-implementation.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk043_receipt = json.loads(
+    Path("manifests/evidence/sdk-043-project-cli.json").read_text(
+        encoding="utf-8"
+    )
 )
 cli_dependency_lock = json.loads(
     Path("packages/cli/dependency-lock.json").read_text(encoding="utf-8")
@@ -2212,6 +2249,244 @@ for unproven_project_cli_receipt_claim in (
     assert project_cli_receipt["claims"][
         unproven_project_cli_receipt_claim
     ] == "not-tested"
+
+assert project_cli_implementation["schemaVersion"] == 1
+assert project_cli_implementation["bead"] == "wordpresshx-sdk-043"
+assert project_cli_implementation["status"] in {
+    "implemented-sdk043-local-verified",
+    "implemented-sdk043-hosted-verified",
+}
+sdk043_contracts = project_cli_implementation["contracts"]
+assert sdk043_contracts["project"]["identity"] == (
+    project_cli_contracts["project"]["identity"]
+)
+assert sdk043_contracts["projectLock"]["identity"] == (
+    project_cli_contracts["projectLock"]["identity"]
+)
+assert sdk043_contracts["effectiveInputs"]["identity"] == (
+    project_cli_contracts["effectiveInputs"]["identity"]
+)
+assert sdk043_contracts["events"]["identity"] == (
+    project_cli_contracts["events"]["identity"]
+)
+for sdk043_contract_name in (
+    "project",
+    "projectLock",
+    "effectiveInputs",
+    "events",
+):
+    assert Path(sdk043_contracts[sdk043_contract_name]["schema"]).is_file()
+sdk043_command = project_cli_implementation["commandSurface"]
+assert sdk043_command["binary"] == "wphx"
+assert sdk043_command["legacyTraceBinary"] == "wphx-sdk"
+assert sdk043_command["commands"] == [
+    "build",
+    "check",
+    "inspect",
+    "clean",
+    "doctor",
+    "dev",
+    "trace",
+]
+cli_package_manifest = json.loads(
+    Path("packages/cli/package.json").read_text(encoding="utf-8")
+)
+assert cli_package_manifest["bin"] == {
+    "wphx": "build/wphx.js",
+    "wphx-sdk": "build/index.js",
+}
+assert project_cli_implementation["stages"] == (
+    project_cli_architecture["buildStages"]
+)
+sdk043_implementation = project_cli_implementation["implementation"]
+assert sdk043_implementation["language"] == "Haxe"
+assert sdk043_implementation["target"] == "Genes-emitted-Node-ESM"
+assert sdk043_implementation["genesSourceChanged"] is False
+assert sdk043_implementation["genesPullRequest"] is None
+assert sdk043_implementation["siblingDependencyCreated"] is False
+assert sdk043_implementation["handwrittenJavascriptImplementation"] is False
+assert sdk043_implementation["exactToolchain"]["haxe"] == (
+    cli_dependency_lock["haxe"]["version"]
+)
+assert sdk043_implementation["exactToolchain"]["genesCommit"] == (
+    cli_dependency_lock["compiler"]["commit"]
+)
+assert sdk043_implementation["exactToolchain"]["nodeImage"] == (
+    cli_dependency_lock["runtime"]["image"]
+)
+sdk043_side_effects = project_cli_implementation["sideEffects"]
+for sdk043_no_write_command in (
+    "check",
+    "doctor",
+    "inspect",
+    "buildDryRun",
+    "failedCommand",
+):
+    assert sdk043_side_effects[sdk043_no_write_command] == "none"
+assert sdk043_side_effects["forcePath"] is False
+sdk043_dev_handoff = project_cli_implementation["devHandoff"]
+assert sdk043_dev_handoff["commandParsed"] is True
+assert sdk043_dev_handoff["missingEngineDiagnostic"] == "WPHX4000"
+assert sdk043_dev_handoff["sideEffectsBeforeEngine"] is False
+for sdk043_unimplemented_dev_part in (
+    "watcherImplemented",
+    "compilerServerImplemented",
+    "servicesImplemented",
+    "reloadImplemented",
+):
+    assert sdk043_dev_handoff[sdk043_unimplemented_dev_part] is False
+for sdk043_preserved in project_cli_implementation["compatibility"].values():
+    if not isinstance(sdk043_preserved, dict) or "path" not in sdk043_preserved:
+        continue
+    assert hashlib.sha256(Path(sdk043_preserved["path"]).read_bytes()).hexdigest() == (
+        sdk043_preserved["sha256"]
+    )
+for sdk043_reference in project_cli_implementation["referencePatterns"]:
+    assert sdk043_reference["repository"] == "haxe.elixir.codex"
+    assert sdk043_reference["commit"] == (
+        "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+    )
+    assert sha1.fullmatch(sdk043_reference["blob"])
+    assert sha256.fullmatch(sdk043_reference["sha256"])
+    assert sdk043_reference["copiedBytes"] is False
+sdk043_verification = project_cli_implementation["verification"]
+assert sdk043_verification["command"] == (
+    "bash scripts/project-cli/test-production.sh"
+)
+assert sdk043_verification["compileReplayCount"] == 2
+assert sdk043_verification["positiveCases"] == 15
+assert sdk043_verification["negativeCases"] == 16
+assert sdk043_verification["noWriteAssertions"] == 18
+assert sdk043_verification["acceptedFixtureEffectiveFingerprint"] == (
+    project_cli_contracts["effectiveInputs"]["fingerprint"]
+)
+assert sdk043_verification["historicalTraceCompatibility"] == (
+    "php-and-browser-suites-passed"
+)
+assert sdk043_verification["outcome"] == "passed"
+sdk043_adoption = project_cli_implementation["aggregateLockAdoption"]
+assert sdk043_adoption["toolchainLockSha256"] == hashlib.sha256(
+    Path("manifests/toolchain.lock.json").read_bytes()
+).hexdigest()
+assert sdk043_adoption["cliManifestSha256"] == hashlib.sha256(
+    Path("packages/cli/package.json").read_bytes()
+).hexdigest()
+assert sdk043_adoption["cliLockSha256"] == hashlib.sha256(
+    Path("packages/cli/package-lock.json").read_bytes()
+).hexdigest()
+for sdk043_adoption_invariant in (
+    "dependencySetChanged",
+    "toolOrRuntimeIdentityChanged",
+    "semanticNodesProjectionsSourcesOrArtifactBytesChanged",
+    "ownershipOperationSetOrArtifactBytesChanged",
+    "publicationAuthorized",
+):
+    assert sdk043_adoption[sdk043_adoption_invariant] is False
+for sdk043_unproven_claim in (
+    "productionWphxDevWatcher",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "targetEmitterIntegration",
+    "productionSupport",
+):
+    assert project_cli_implementation["claims"][sdk043_unproven_claim] == (
+        "not-tested"
+    )
+
+assert sdk043_receipt["schemaVersion"] == 1
+assert sdk043_receipt["receiptId"] == "SDK-043-PROJECT-CLI"
+assert sdk043_receipt["bead"] == "wordpresshx-sdk-043"
+assert sdk043_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+
+def verify_sdk043_subject(record):
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+for sdk043_subject_name, sdk043_subject in sdk043_receipt["subject"].items():
+    if sdk043_subject_name in {"schemas", "preservedHistoricalInputs"}:
+        for sdk043_subject_record in sdk043_subject:
+            verify_sdk043_subject(sdk043_subject_record)
+    else:
+        verify_sdk043_subject(sdk043_subject)
+assert sdk043_receipt["subject"]["architecture"]["sha256"] == (
+    hashlib.sha256(
+        Path("manifests/project-cli-implementation.json").read_bytes()
+    ).hexdigest()
+)
+assert sdk043_receipt["implementation"]["binary"] == "wphx"
+assert sdk043_receipt["implementation"]["legacyTraceBinary"] == "wphx-sdk"
+assert sdk043_receipt["implementation"]["genesSourceChanged"] is False
+assert sdk043_receipt["implementation"]["genesPullRequest"] is None
+assert sdk043_receipt["verification"]["outcome"] == "passed"
+assert sdk043_receipt["verification"]["positiveCases"] == 15
+assert sdk043_receipt["verification"]["negativeCases"] == 16
+assert sdk043_receipt["verification"]["noWriteAssertions"] == 18
+assert sdk043_receipt["verification"]["effectiveFingerprint"] == (
+    project_cli_contracts["effectiveInputs"]["fingerprint"]
+)
+assert sdk043_receipt["verification"]["legacyPhpTrace"]["outcome"] == (
+    "passed"
+)
+assert sdk043_receipt["verification"]["legacyBrowserTrace"]["outcome"] == (
+    "passed"
+)
+for sdk043_aggregate_gate in (
+    "aggregateG0Gate",
+    "semanticPlanContractGate",
+    "ownershipContractGate",
+    "repositoryAggregateGate",
+):
+    assert sdk043_receipt["verification"][sdk043_aggregate_gate] == "passed"
+assert "Test production project CLI foundation" in workflow_text
+assert "bash scripts/project-cli/test-production.sh" in workflow_text
+sdk043_hosted = sdk043_receipt["hostedWorkflow"]
+assert sdk043_hosted["workflow"] == "Repository bootstrap"
+assert sdk043_hosted["job"] == "haxe"
+assert sdk043_hosted["step"] == "Test production project CLI foundation"
+assert sdk043_hosted["required"] is True
+if sdk043_hosted["status"] == "pending-first-main-run":
+    assert sdk043_receipt["status"] == "implemented-hosted-pending"
+    assert sdk043_receipt["implementation"]["implementationCommit"] is None
+    assert sdk043_hosted["runId"] is None
+    assert sdk043_hosted["jobId"] is None
+    assert sdk043_hosted["commit"] is None
+elif sdk043_hosted["status"] == "passed":
+    assert sdk043_receipt["status"] == "verified"
+    assert sha1.fullmatch(
+        sdk043_receipt["implementation"]["implementationCommit"]
+    )
+    assert isinstance(sdk043_hosted["runId"], int)
+    assert isinstance(sdk043_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk043_hosted["commit"])
+else:
+    raise AssertionError("SDK-043 project CLI hosted status is invalid")
+for sdk043_unproven_receipt_claim in (
+    "productionWphxDevWatcher",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "targetEmitterIntegration",
+    "productionSupport",
+):
+    assert sdk043_receipt["claims"][sdk043_unproven_receipt_claim] == (
+        "not-tested"
+    )
+
+for sdk043_compatibility_receipt in (sdk025_receipt, sdk034_receipt):
+    sdk043_compatibility = sdk043_compatibility_receipt[
+        "sdk043CompatibilityReverification"
+    ]
+    assert sdk043_compatibility["requiredBins"] == {
+        "wphx": "build/wphx.js",
+        "wphx-sdk": "build/index.js",
+    }
+    assert sdk043_compatibility["outcome"] == "passed-local"
+    assert sdk043_compatibility["hostedEvidenceOwner"] == (
+        sdk043_receipt["receiptId"]
+    )
 
 assert source_correlation_architecture["schemaVersion"] == 1
 assert source_correlation_architecture["decision"] == "ADR-014"
@@ -5831,8 +6106,10 @@ python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/ownership/test-contract.py
 python3 scripts/project-cli/test-contract.py
+python3 -m py_compile scripts/project-cli/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
+python3 packages/cli/scripts/verify-dependency-lock.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'

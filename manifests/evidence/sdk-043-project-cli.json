@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-043-PROJECT-CLI",
+  "bead": "wordpresshx-sdk-043",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T23:01:29Z",
+  "subject": {
+    "architecture": {
+      "path": "manifests/project-cli-implementation.json",
+      "sha256": "683f5d419665cdb54ab3749d1f875734789c0ba98c1108e71552287d69b24b27"
+    },
+    "entry": {
+      "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+      "sha256": "a72d1ed0f51a37249f0eedadaab9bc849f3c80fb001b9cb5149101e462bceb0a"
+    },
+    "arguments": {
+      "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+      "sha256": "5a76f9abf79518d8745d5df27911aecbacf6d32885d4269743d2b1d1b07a763e"
+    },
+    "events": {
+      "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+      "sha256": "29856d6c045395f63e0e47badb6c81381a894f3231d73a685cf0c5827916d2ef"
+    },
+    "resolver": {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
+      "sha256": "288af7dfe096503949a9b767f09783f570b5110551b6fff7a4e038babbf2efec"
+    },
+    "effectiveInputs": {
+      "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
+      "sha256": "657ba3e78c6c99166e4dccc11eb4ca46709e84dae6b49403e75b27df9bf2b046"
+    },
+    "commands": {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
+      "sha256": "54821653f8730909a7d5352e9e1a244378e3e34f2408598109086841c365af46"
+    },
+    "publisher": {
+      "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+      "sha256": "34aa961d3031c8f0941f10e9c356a64d18ebd0f1a46e8ad270f99ee2d7687154"
+    },
+    "profile": {
+      "path": "packages/cli/profiles/wphx.hxml",
+      "sha256": "22c26e0bc60d4813b0d634ef924459cdc14878af192009cbc1ab0b52c0fbe369"
+    },
+    "packageManifest": {
+      "path": "packages/cli/package.json",
+      "sha256": "18d7909224a2db4293836261f0dc1f0e8311a6a5fb9857fbb76ccb42ffcbc164"
+    },
+    "packageLock": {
+      "path": "packages/cli/package-lock.json",
+      "sha256": "57a6dc69e9bb4519cccfdddf2625c8a635831e45178b6ecae3c744d8c243d075"
+    },
+    "dependencyVerifier": {
+      "path": "packages/cli/scripts/verify-dependency-lock.py",
+      "sha256": "dabe093c104d1554caed21b9d3a0c0b32148c6cdb2e305320830ba046ac1aa10"
+    },
+    "validator": {
+      "path": "scripts/project-cli/test-production.py",
+      "sha256": "53c3ab4dc5a7cc7d5e073f895f5a719a7f0979d64ed4ff4b99c4b957a3426d1d"
+    },
+    "gate": {
+      "path": "scripts/project-cli/test-production.sh",
+      "sha256": "828c705afa2074c75332f1a4e4fb4a2df6327573a621f944c77fd41a423f8e2d"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "3bd3d3f0148b6e36d73189122a992a242c1cb3d86c9f56b14ac165d0e7874e08"
+    },
+    "aggregateToolchainLock": {
+      "path": "manifests/toolchain.lock.json",
+      "sha256": "549f0b84740be8df96ecb576690358874cb173a37aeb62298e6ae9cbb0bd5a46"
+    },
+    "semanticPlanValidator": {
+      "path": "scripts/semantic-plan/test-contract.py",
+      "sha256": "21b9ec138bfd0bf1bde1f41c09b89f4c105c76aee735510852c3432f024a0570"
+    },
+    "semanticPlanFixture": {
+      "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
+      "sha256": "9de65539baed674562f90707a2d5bbe0fe1f089022c7ca17d25f8f31f158fd49"
+    },
+    "semanticEmissionFixture": {
+      "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
+      "sha256": "5a265058db49d614a25cec15d9175efe7bc3c6a682418e663ec5c4b9aac1e2e3"
+    },
+    "ownershipContractValidator": {
+      "path": "scripts/ownership/test-contract.py",
+      "sha256": "bdbce5c45b955110071164b8ddfd6e1b5f5e5ec1eaba7f498dedd7045e89e0fb"
+    },
+    "ownershipCurrentFixture": {
+      "path": "fixtures/ownership/valid/current.generated-files.json",
+      "sha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475"
+    },
+    "ownershipNextFixture": {
+      "path": "fixtures/ownership/valid/next.generated-files.json",
+      "sha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9"
+    },
+    "ownershipJournalFixture": {
+      "path": "fixtures/ownership/valid/prepared.journal.json",
+      "sha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb"
+    },
+    "schemas": [
+      {
+        "path": "schemas/project.schema.json",
+        "sha256": "dbce06ce7a336e159e1b551b17120ce3c958b2545730da2b24fac6614d98b920"
+      },
+      {
+        "path": "schemas/project-lock.schema.json",
+        "sha256": "f232581d27a192631a15864d5cfa29fc6343858c171d537c4a177b6cc442c831"
+      },
+      {
+        "path": "schemas/effective-inputs.schema.json",
+        "sha256": "403ffd1f0c112c726b3de47009acae05dad4f631a75d28d95c304dd989878d1a"
+      },
+      {
+        "path": "schemas/cli-event.schema.json",
+        "sha256": "a9025459637adf399794e7f4d1f743eca7070da6a51cc88cfdb38cc05faf76fd"
+      }
+    ],
+    "preservedHistoricalInputs": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/Main.hx",
+        "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+        "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+      }
+    ]
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "binary": "wphx",
+    "legacyTraceBinary": "wphx-sdk",
+    "commands": [
+      "build",
+      "check",
+      "inspect",
+      "clean",
+      "doctor",
+      "dev",
+      "trace"
+    ],
+    "directBoundedHaxeForOneShotCommands": true,
+    "manifestLastPublication": true,
+    "forcePath": false,
+    "networkReads": false,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "hxnodejs": "10.0.0",
+    "node": {
+      "version": "22.17.0",
+      "npm": "10.9.2",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    }
+  },
+  "verification": {
+    "command": "bash scripts/project-cli/test-production.sh",
+    "outcome": "passed",
+    "compileReplayCount": 2,
+    "actualHaxeFixtureTyped": true,
+    "containerNetwork": "none",
+    "positiveCases": 15,
+    "negativeCases": 16,
+    "noWriteAssertions": 18,
+    "effectiveFingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "effectiveFixtureByteEquality": "passed",
+    "deterministicGenesOutput": "passed",
+    "eventContractValidation": "passed",
+    "secretExclusion": "passed",
+    "publicEnvironmentInvalidation": "passed",
+    "ownershipPublishReplayProvenanceClean": "passed",
+    "tamperAndUnsafeFilesystemRejection": "passed",
+    "failedCommandPublicationCount": 0,
+    "aggregateG0Gate": "passed",
+    "semanticPlanContractGate": "passed",
+    "ownershipContractGate": "passed",
+    "repositoryAggregateGate": "passed",
+    "legacyPhpTrace": {
+      "command": "bash packages/cli/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "legacyBrowserTrace": {
+      "command": "bash packages/cli/scripts/test-browser-source-correlation.sh",
+      "outcome": "passed"
+    }
+  },
+  "referenceReview": {
+    "repository": "haxe.elixir.codex",
+    "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+    "concepts": [
+      "effective-input-and-watch-root-unification",
+      "project-bound-compiler-server-compatibility"
+    ],
+    "exactPathBlobAndSha256RecordedInArchitecture": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test production project CLI foundation",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true
+  },
+  "limitations": [
+    "The only produced artifact is CLI-owned effective-input metadata; PHP, browser, asset, and site-package producers are not registered.",
+    "The stable dev command exits WPHX4000 without side effects until SDK-044 supplies the watcher and process supervisor.",
+    "The runtime corpus uses exact Linux Node 22.17.0; Windows, network filesystems, WordPress, Next.js, and production deployment are not tested.",
+    "The package remains private and publication is blocked."
+  ],
+  "claims": {
+    "sdk043ProjectCli": "runtime-tested-local-hosted-pending",
+    "exactProjectAndLockResolution": "runtime-tested-local",
+    "effectiveInputGraph": "runtime-tested-local",
+    "directHaxeTyping": "compile-tested",
+    "ownershipPublicationAndClean": "runtime-tested-local",
+    "noWriteCommands": "runtime-tested-local",
+    "legacyTraceCompatibility": "runtime-tested-local",
+    "productionWphxDevWatcher": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "targetEmitterIntegration": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

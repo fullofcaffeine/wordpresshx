@@ -102,7 +102,10 @@ def main() -> None:
     assert package["name"] == "@wordpress-hx/cli"
     assert package["type"] == "module"
     assert package["engines"] == {"node": "22.17.0"}
-    assert package["bin"] == {"wphx-sdk": "build/index.js"}
+    assert package["bin"] == {
+        "wphx": "build/wphx.js",
+        "wphx-sdk": "build/index.js",
+    }
 
     browser_manifest = json.loads(
         (ROOT / "browser-tooling/package.json").read_text(encoding="utf-8")

@@ -42,7 +42,7 @@
     },
     "devLoopDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "7def453e8e30077acf28d1bf939d106a041d27c2dcdccdc2354ed2a2aa3f2b08"
+      "sha256": "bc4bf833c532bc5ba5371496c4da19039316bdd5fae1a0f6d9fdbfbf4f11a927"
     }
   },
   "contract": {
@@ -89,6 +89,13 @@
     "codeOrFixtureBytesCopied": false,
     "runtimeOrBuildDependencyCreated": false,
     "genesSourceChanged": false
+  },
+  "sdk043DocumentationRevision": {
+    "observedAt": "2026-07-18T23:01:29Z",
+    "reason": "The authenticated development-loop document now distinguishes the implemented SDK-043 bounded commands from the still-unimplemented SDK-044 watcher and services.",
+    "collectorContractChanged": false,
+    "collectorRuntimeReverificationRequired": false,
+    "evidenceOwner": "SDK-043-PROJECT-CLI"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

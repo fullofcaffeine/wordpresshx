@@ -14,11 +14,11 @@
       "schemaPath": "schemas/generated-files.schema.json",
       "schemaSha256": "84797a5b01061bb7f5cf48271488864ce12de1330723717a7e7336bab0c7b485",
       "currentFixturePath": "fixtures/ownership/valid/current.generated-files.json",
-      "currentFixtureSha256": "ab1587b97a3e291cf2f1536c3aba7ce78979885dd42dd5a9f78831967a20d13c",
-      "currentManifestDigest": "a60ba0a4d13437bb03f8d9db7e308352128dcbc5993f3482a695b048b028048b",
+      "currentFixtureSha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475",
+      "currentManifestDigest": "4f90772d16347850680681b2e0e337c4a4fa5292fbf077ff3c9115212cdc60ed",
       "nextFixturePath": "fixtures/ownership/valid/next.generated-files.json",
-      "nextFixtureSha256": "8d66fc5fb3f113f45e350ddbaea4485cb1f2b4ca8dde8548184a8dd2b3c67bac",
-      "nextManifestDigest": "7e0d33f79927e81d3abf7bb7fd03548a96afe587ea7c779a6601c0036536dd4f"
+      "nextFixtureSha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9",
+      "nextManifestDigest": "2da74105e544350413ecf4c05337557c70becf0617214251c1562a237f721f2e"
     },
     "journal": {
       "identity": "wordpress-hx.ownership-journal.v1",
@@ -26,8 +26,8 @@
       "schemaPath": "schemas/ownership-transaction-journal.schema.json",
       "schemaSha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af",
       "fixturePath": "fixtures/ownership/valid/prepared.journal.json",
-      "fixtureSha256": "57dfd5d247e9a48121143e4f9cee1743ea46d1bf612fd2a4a5d468f1793ffb92",
-      "journalDigest": "38679313ff9d942d188c4aa4f4d8246927df00a182b30542e95a548de7c1a33d"
+      "fixtureSha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb",
+      "journalDigest": "cdfb36d1e9e556b4faae2b780dbb4f6f55a112dad1152dcc4741559d3de7aee2"
     }
   },
   "authority": {
@@ -148,7 +148,7 @@
   "verification": {
     "command": "bash scripts/ownership/test-adr-contract.sh",
     "validatorPath": "scripts/ownership/test-contract.py",
-    "validatorSha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1",
+    "validatorSha256": "bdbce5c45b955110071164b8ddfd6e1b5f5e5ec1eaba7f498dedd7045e89e0fb",
     "positiveFilesystemCount": 11,
     "negativeFilesystemCount": 17,
     "negativeMutationCount": 25,

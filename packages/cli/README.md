@@ -1,17 +1,16 @@
 # WordPressHx CLI
 
 `@wordpress-hx/cli` is the version-matched host executable for WordPressHx.
-SDK-025 implements offline PHP stack correlation and SDK-034 adds authenticated
-browser Source Map v3 correlation. Its application logic is Haxe and Genes
-emits the Node ESM executable; there is no handwritten JavaScript implementation
-and no dependency on a sibling Genes checkout.
+SDK-043 adds the production Haxe command foundation at `wphx`; SDK-025's
+private `wphx-sdk` trace launcher remains as a compatibility alias for its
+authenticated historical evidence. Both applications are authored in Haxe and
+Genes emits their Node ESM executables. There is no handwritten JavaScript
+implementation and no dependency on a sibling Genes checkout.
 
-ADR-016 selects `wphx` as the generated-project binary and `wphx dev` as the
-one-command development loop. This package is still a private trace-only
-prototype whose checked launcher is named `wphx-sdk`; SDK-043 must add and
-migrate the final command without invalidating the existing correlation
-evidence, and SDK-044 must prove real watch/process behavior. No released user
-depends on the prototype spelling.
+The final project command is compiled from `wordpresshx.cli.WphxMain` with
+`profiles/wphx.hxml`; the frozen trace-only entry remains compiled from
+`wordpresshx.cli.Main` with `profiles/classic.hxml`. No released user depends
+on the prototype spelling.
 
 The package is internal and publication remains blocked. Its exact build closure
 is recorded in [`dependency-lock.json`](dependency-lock.json): Haxe 4.3.7,
@@ -44,9 +43,48 @@ named entries. Recovery either finalizes a complete committed generation or
 walks operations backward and restores exact prior hashes; unexpected live,
 backup, lock, journal, or manifest bytes stop recovery without a force path.
 
-This is the safety primitive for the `wphx dev` last-known-good loop. SDK-043
-still needs to expose it through the final `wphx build`, `clean`, and
-`adopt-generated` commands, and SDK-044 still owns watching and services.
+This is the safety primitive used by `wphx build` and `wphx clean`, and the
+future `wphx dev` last-known-good loop. SDK-044 still owns the long-running
+watcher, compiler server, services, readiness, reload, and shutdown engine.
+
+## Project commands
+
+Run commands from a directory at or below a generated `wordpress-hx.json`, or
+pass `--project <path>`. The CLI discovers and strictly validates the project,
+its self-digested exact lock, profile, package graph, HXML inputs, source and
+asset discovery roots, public build environment, and ownership state before it
+invokes a tool or writes an artifact.
+
+```bash
+wphx build
+wphx build --dry-run --json
+wphx check
+wphx inspect project
+wphx inspect inputs --json
+wphx inspect build --json
+wphx inspect provenance .wphx/generated/effective-inputs.json --json
+wphx doctor
+wphx clean
+```
+
+`build` types the configured Haxe entry directly with the exact locked
+toolchain, validates the complete staged generation, and commits it through the
+manifest-last artifact owner. `check`, `doctor`, every `inspect` topic, and
+`build --dry-run` are read-only. `clean` removes only current manifest entries
+whose exact bytes still match and retains every unowned file.
+
+The SDK-043 slice deliberately emits only the CLI-owned effective-input
+metadata artifact. PHP, browser, and asset stages report `stage-skipped` until
+their registered producers land; a skipped producer is never represented as a
+site build. `wphx dev` is a stable parsed command but currently exits with
+`WPHX4000` without modifying the project, because SDK-044 must supply and prove
+the real long-running engine. This avoids a polling placeholder or a false
+watch/runtime claim.
+
+Use `--json` for canonical JSONL lifecycle events and closed diagnostics. Human
+errors include a stable `WPHXnnnn` code, failing stage, safe project-relative
+path when one is available, and an actionable remediation. Runtime secrets are
+neither read into the effective graph nor serialized into diagnostics.
 
 ## PHP trace command
 
@@ -122,11 +160,21 @@ Run the complete deterministic compile, locked Node/PHP runtime, output snapshot
 package replay, path-privacy, and tamper suite from the repository root:
 
 ```bash
+bash scripts/project-cli/test-production.sh
 bash packages/cli/scripts/test.sh
 bash packages/cli/scripts/test-browser-source-correlation.sh
 ```
 
+The project-command corpus compiles the `wphx` entry twice and compares the
+generated trees, types the real Haxe fixture, and exercises the command through
+exact Node 22.17.0 with networking disabled. It covers discovery, effective
+input parity, public-environment invalidation, secret exclusion, no-write
+commands, publication/replay/clean/provenance, tamper and ownership failures,
+invalid locks/configuration/package graphs, links and special files, Haxe
+failure, and the honest SDK-044 handoff.
+
 The bounded implementation and non-claims are recorded by
+[`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json),
 [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json)
 and
 [`SDK-034-BROWSER-SOURCE-CORRELATION`](../../manifests/evidence/sdk-034-browser-source-correlation.json).

@@ -6,7 +6,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
-      "sha256": "c6d731f9615da38ca8f3e45e8860d372dfd0ecd4ff938969b808aa1f35571dbe"
+      "sha256": "8214b0d7961ec8f9ba5e0d8d5918289919a7569ba4e5088d9087fb2a2a2a7ba9"
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",
@@ -111,6 +111,13 @@
     "codeOrFixtureBytesCopied": false,
     "runtimeOrBuildDependencyCreated": false,
     "genesSourceChanged": false
+  },
+  "sdk043DocumentationRevision": {
+    "observedAt": "2026-07-18T23:01:29Z",
+    "reason": "The authenticated ADR now records SDK-043's bounded implementation while preserving the accepted contract fixture and reserving the watcher lifecycle for SDK-044.",
+    "architectureContractChanged": false,
+    "fixtureBytesChanged": false,
+    "evidenceOwner": "SDK-043-PROJECT-CLI"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

@@ -32,7 +32,7 @@ Refreshing canonical fixtures remains an explicit review action:
 python3 scripts/ownership/test-contract.py --write-fixtures
 ```
 
-The artifact-owner library is implemented, but SDK-043 has not exposed these
-operations through the final `wphx` command. The evidence does not claim
+The artifact-owner library is implemented and SDK-043 exercises it through
+`wphx build` and `wphx clean`. The evidence does not claim
 power-loss, Windows/network-filesystem, hostile concurrent mutation,
 WordPress/Next.js runtime compatibility, or production support.

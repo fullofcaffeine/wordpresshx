@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-043",
+  "status": "implemented-sdk043-local-verified",
+  "scope": "bounded-project-command-foundation",
+  "contracts": {
+    "project": {
+      "identity": "wordpress-hx.project.v1",
+      "schema": "schemas/project.schema.json"
+    },
+    "projectLock": {
+      "identity": "wordpress-hx.project-lock.v1",
+      "schema": "schemas/project-lock.schema.json",
+      "digestAlgorithm": "sha256-canonical-json-without-lockDigest-v1"
+    },
+    "effectiveInputs": {
+      "identity": "wordpress-hx.effective-inputs.v1",
+      "schema": "schemas/effective-inputs.schema.json",
+      "fingerprintAlgorithm": "sha256-canonical-json-without-fingerprint-v1"
+    },
+    "events": {
+      "identity": "wordpress-hx.cli-event.v1",
+      "schema": "schemas/cli-event.schema.json",
+      "encoding": "canonical-jsonl"
+    },
+    "ownershipManifest": "wordpress-hx.generated-files.v1",
+    "ownershipTransaction": "wordpress-hx.ownership-transaction.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1"
+  },
+  "commandSurface": {
+    "binary": "wphx",
+    "legacyTraceBinary": "wphx-sdk",
+    "commands": [
+      "build",
+      "check",
+      "inspect",
+      "clean",
+      "doctor",
+      "dev",
+      "trace"
+    ],
+    "globalOptions": [
+      "--project",
+      "--profile",
+      "--json"
+    ],
+    "buildOptions": [
+      "--dry-run"
+    ],
+    "inspectTopics": [
+      "project",
+      "inputs",
+      "build",
+      "provenance"
+    ],
+    "devOptions": [
+      "--services=none"
+    ],
+    "exitCodes": {
+      "success": 0,
+      "usage": 2,
+      "configurationOrIntegrity": 3,
+      "profileMismatch": 4,
+      "compilerFailure": 6,
+      "environmentOrOwnership": 7,
+      "internal": 70
+    }
+  },
+  "stages": [
+    "configuration",
+    "profile-resolution",
+    "haxe-typing-and-plan",
+    "php-emission",
+    "browser-emission",
+    "metadata-emission",
+    "format-and-static-check",
+    "asset-build",
+    "artifact-validation",
+    "ownership-publish"
+  ],
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "entry": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+    "profile": "packages/cli/profiles/wphx.hxml",
+    "parser": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+    "resolver": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
+    "effectiveGraph": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
+    "commands": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
+    "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+    "artifactOwner": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "exactToolchain": {
+      "haxe": "4.3.7",
+      "lixPackage": "15.12.4",
+      "lixReportedCli": "15.12.2",
+      "genes": "1.36.3",
+      "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "genesTree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "hxnodejs": "10.0.0",
+      "node": "22.17.0",
+      "npm": "10.9.2",
+      "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false,
+    "handwrittenJavascriptImplementation": false
+  },
+  "resolution": {
+    "projectDiscovery": "ancestor-search-to-filesystem-root-or-explicit-project",
+    "json": "strict-utf8-duplicate-key-free-nfc-integer-only-closed-shape",
+    "paths": "portable-project-relative-regular-files-no-symlinks-or-special-files",
+    "lock": "canonical-self-digested-exact-components-and-package-hashes",
+    "componentIdentity": "immutable-release-git-tree-oci-or-content-digest-only",
+    "sourceDiscovery": "recursive-sorted-haxe-files-under-declared-roots",
+    "environment": "public-build-values-hashed-runtime-and-secret-values-excluded",
+    "watchRoots": "derived-from-the-same-effective-input-and-discovery-graph",
+    "networkReads": false
+  },
+  "sideEffects": {
+    "build": "complete-private-stage-and-manifest-last-publication",
+    "clean": "exact-current-manifest-owned-matching-bytes-only",
+    "check": "none",
+    "doctor": "none",
+    "inspect": "none",
+    "buildDryRun": "none",
+    "failedCommand": "none",
+    "forcePath": false
+  },
+  "currentProducerBreadth": {
+    "haxeTyping": "implemented-direct-bounded",
+    "cliMetadata": "implemented",
+    "php": "not-registered-stage-skipped",
+    "browser": "not-registered-stage-skipped",
+    "assets": "not-registered-stage-skipped",
+    "sitePackage": "not-generated"
+  },
+  "devHandoff": {
+    "commandParsed": true,
+    "projectAndOwnershipValidated": true,
+    "missingEngineDiagnostic": "WPHX4000",
+    "sideEffectsBeforeEngine": false,
+    "owner": "wordpresshx-sdk-044",
+    "watcherImplemented": false,
+    "compilerServerImplemented": false,
+    "servicesImplemented": false,
+    "reloadImplemented": false
+  },
+  "compatibility": {
+    "legacyTraceEntryPreserved": {
+      "path": "packages/cli/src/wordpresshx/cli/Main.hx",
+      "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
+    },
+    "ownershipCanonicalJsonPreserved": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+      "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+    },
+    "legacyTraceAliasRetained": true,
+    "traceSuitesRequired": [
+      "bash packages/cli/scripts/test.sh",
+      "bash packages/cli/scripts/test-browser-source-correlation.sh"
+    ]
+  },
+  "aggregateLockAdoption": {
+    "reason": "admit-final-wphx-bin-without-changing-the-dependency-set",
+    "previousToolchainLockSha256": "f76230a6e27154d9ffc467362a0a75c51b633a6aa59bf696df6ab5f15e872785",
+    "toolchainLockSha256": "549f0b84740be8df96ecb576690358874cb173a37aeb62298e6ae9cbb0bd5a46",
+    "cliManifestSha256": "18d7909224a2db4293836261f0dc1f0e8311a6a5fb9857fbb76ccb42ffcbc164",
+    "cliLockSha256": "57a6dc69e9bb4519cccfdddf2625c8a635831e45178b6ecae3c744d8c243d075",
+    "semanticPlanFixtureSha256": "9de65539baed674562f90707a2d5bbe0fe1f089022c7ca17d25f8f31f158fd49",
+    "semanticEmissionFixtureSha256": "5a265058db49d614a25cec15d9175efe7bc3c6a682418e663ec5c4b9aac1e2e3",
+    "ownershipCurrentFixtureSha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475",
+    "ownershipNextFixtureSha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9",
+    "ownershipJournalFixtureSha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb",
+    "dependencySetChanged": false,
+    "toolOrRuntimeIdentityChanged": false,
+    "semanticNodesProjectionsSourcesOrArtifactBytesChanged": false,
+    "ownershipOperationSetOrArtifactBytesChanged": false,
+    "publicationAuthorized": false
+  },
+  "referencePatterns": [
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_build_inputs.ex",
+      "blob": "08a9253a1f14f9f2b84b386e007d2a5c3fa58766",
+      "sha256": "7a94cb34afcf4280d3209d7c892c56ebc0eeb4f1996c97c4719f235773380cb6",
+      "concept": "single-effective-compiler-input-and-watch-root-graph",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_server.ex",
+      "blob": "db684a03e104cdaaa2e1fe23b07d7a99b64d1581",
+      "sha256": "1419b50305b80ae229cf441c4b9764b87732917c911740565a1c1f2c7352110c",
+      "concept": "project-bound-compatible-compiler-server-handoff",
+      "copiedBytes": false
+    }
+  ],
+  "verification": {
+    "command": "bash scripts/project-cli/test-production.sh",
+    "compileReplayCount": 2,
+    "actualHaxeFixtureTyped": true,
+    "containerNetwork": "none",
+    "exactNodeVersion": "22.17.0",
+    "positiveCases": 15,
+    "negativeCases": 16,
+    "noWriteAssertions": 18,
+    "acceptedFixtureEffectiveFingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "effectiveFixtureByteEquality": "passed",
+    "deterministicCompilerReplay": "passed",
+    "eventContractValidation": "passed",
+    "historicalTraceCompatibility": "php-and-browser-suites-passed",
+    "outcome": "passed"
+  },
+  "claims": {
+    "sdk043ProjectCli": "runtime-tested-local",
+    "exactProjectAndLockResolution": "runtime-tested-local",
+    "effectiveInputGraph": "runtime-tested-local",
+    "directHaxeTyping": "compile-tested",
+    "ownershipPublicationAndClean": "runtime-tested-local",
+    "noWriteCommands": "runtime-tested-local",
+    "productionWphxDevWatcher": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "targetEmitterIntegration": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

@@ -41,12 +41,14 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   recovery, clean, and adoption lock. Its temporary-filesystem harness validates
   the historical contract. `ownership-implementation.json` records the SDK-041
   Haxe/Genes implementation, its exact runtime profile, and its bounded locked
-  Linux filesystem evidence; target emitters and the final CLI remain later work.
+  Linux filesystem evidence; target emitters remain later work.
 - `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
   effective-input, `wphx` command/stage/event, isolated compiler-server, and
   one-command development-loop lock. Its synthetic transcript proves dry-run,
-  last-good, reload-order, and shutdown semantics; SDK-043/044 still own real
-  CLI/watch/process/WordPress/Next.js evidence.
+  last-good, reload-order, and shutdown semantics. The separate
+  `project-cli-implementation.json` records SDK-043's real bounded Haxe/Genes
+  command, exact input resolver, read-only modes, and ownership publication;
+  SDK-044 still owns real watch/process/WordPress/Next.js evidence.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
@@ -106,7 +108,16 @@ collector, four deterministic direct/server compilations, ten source-located
 compile failures, five schema/input mutations, exact effective inputs, and
 full-DCE runtime absence. It emits intermediate plan/input artifacts only;
 the SDK-041 owner is implemented separately, while target emitter integration
-and SDK-043/044 CLI/watch services remain unproven.
+and SDK-044 watch services remain unproven.
+
+Receipt `SDK-043-PROJECT-CLI` records the Haxe-authored, Genes-emitted `wphx`
+command foundation. Its exact Node corpus covers strict discovery and lock
+validation, parity with ADR-016's effective-input fingerprint, direct Haxe
+typing, no-write check/inspect/doctor/dry-run behavior, manifest-last build,
+provenance, exact clean, tamper rejection, and preservation of the frozen
+`wphx-sdk` trace entry. PHP/browser/asset emitters, the SDK-044 watcher and
+services, real WordPress/Next.js runtimes, and production support remain
+explicit non-claims.
 
 Receipt `ADR-007-GENERATED-ARTIFACT-OWNERSHIP` records the closed exact-file
 manifest and journal schemas, canonical old/new/create/replace/remove fixtures,

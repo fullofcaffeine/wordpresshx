@@ -392,7 +392,7 @@ def make_manifest(
             "generatorId": "wordpress-hx.ownership.contract-fixture",
             "generatorSourceSha256": script_digest,
             "toolchainSha256": (
-                "f76230a6e27154d9ffc467362a0a75c51b633a6aa59bf696df6ab5f15e872785"
+                "549f0b84740be8df96ecb576690358874cb173a37aeb62298e6ae9cbb0bd5a46"
             ),
         },
         "inputs": {
@@ -400,10 +400,10 @@ def make_manifest(
                 "f4eb38f34bc4aa1e048dd382379b86cb6d209a3e31d482c55d31a14e59722f2c"
             ),
             "semanticPlanSha256": (
-                "511822d880d688b1ba88ba855782f423d1157dcd67461abac3884ed05aa8822f"
+                "9de65539baed674562f90707a2d5bbe0fe1f089022c7ca17d25f8f31f158fd49"
             ),
             "emissionResultSha256s": [
-                "5b23c7a5aa4da0a902953d01bdc9afbd27600410ea71cb78f91e22d829353767"
+                "5a265058db49d614a25cec15d9175efe7bc3c6a682418e663ec5c4b9aac1e2e3"
             ],
             "generationSha256": generation_digest(files),
             "profile": {

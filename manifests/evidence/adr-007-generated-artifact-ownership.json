@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/generated-artifact-ownership.json",
-      "sha256": "4ad244d14ea810022a72878ddf6367bff4e8eeea702d869c77ab1b5096b364f9"
+      "sha256": "7b4d25d6e0202b379287fd07b481ee427b1e2d0d5f88e4425cb3c4a6ccb9df04"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -22,7 +22,7 @@
     },
     "validator": {
       "path": "scripts/ownership/test-contract.py",
-      "sha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1"
+      "sha256": "bdbce5c45b955110071164b8ddfd6e1b5f5e5ec1eaba7f498dedd7045e89e0fb"
     },
     "gate": {
       "path": "scripts/ownership/test-adr-contract.sh",
@@ -30,24 +30,24 @@
     },
     "currentManifestFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "ab1587b97a3e291cf2f1536c3aba7ce78979885dd42dd5a9f78831967a20d13c"
+      "sha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475"
     },
     "nextManifestFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "8d66fc5fb3f113f45e350ddbaea4485cb1f2b4ca8dde8548184a8dd2b3c67bac"
+      "sha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9"
     },
     "journalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "57dfd5d247e9a48121143e4f9cee1743ea46d1bf612fd2a4a5d468f1793ffb92"
+      "sha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb"
     }
   },
   "contract": {
     "manifestSchema": "wordpress-hx.generated-files.v1",
     "journalSchema": "wordpress-hx.ownership-journal.v1",
     "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
-    "currentManifestDigest": "a60ba0a4d13437bb03f8d9db7e308352128dcbc5993f3482a695b048b028048b",
-    "nextManifestDigest": "7e0d33f79927e81d3abf7bb7fd03548a96afe587ea7c779a6601c0036536dd4f",
-    "preparedJournalDigest": "38679313ff9d942d188c4aa4f4d8246927df00a182b30542e95a548de7c1a33d",
+    "currentManifestDigest": "4f90772d16347850680681b2e0e337c4a4fa5292fbf077ff3c9115212cdc60ed",
+    "nextManifestDigest": "2da74105e544350413ecf4c05337557c70becf0617214251c1562a237f721f2e",
+    "preparedJournalDigest": "cdfb36d1e9e556b4faae2b780dbb4f6f55a112dad1152dcc4741559d3de7aee2",
     "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
     "manifestPublication": "last-as-commit-marker",
     "forceOverwrite": false
@@ -90,6 +90,14 @@
     "codeOrFixtureBytesCopied": false,
     "runtimeOrBuildDependencyCreated": false,
     "genesSourceChanged": false
+  },
+  "sdk043ToolchainRevision": {
+    "observedAt": "2026-07-18T23:01:29Z",
+    "reason": "The canonical ownership vectors were regenerated after the aggregate lock and bound semantic-plan fixtures admitted the final wphx package bin; file operations and artifact bytes are unchanged.",
+    "ownershipContractChanged": false,
+    "operationSetChanged": false,
+    "localGate": "passed",
+    "hostedEvidenceOwner": "SDK-043-PROJECT-CLI"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
