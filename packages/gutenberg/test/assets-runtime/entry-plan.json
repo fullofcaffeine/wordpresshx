@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "entryId": "wordpresshx-sdk033-editor",
+  "sourceEntry": "src/editor.tsx",
+  "scriptFilename": "editor.js",
+  "scriptHandle": "wordpresshx-sdk033-editor",
+  "textDomain": "wordpresshx-sdk033",
+  "translationRelativePath": "languages",
+  "browserExportId": "wordpresshx.sdk033.editor-panel",
+  "plugin": {
+    "slug": "wordpresshx-sdk033-assets",
+    "name": "WordPressHx SDK-033 Asset Proof",
+    "version": "0.0.0",
+    "requiresWordPress": "7.0",
+    "requiresPhp": "7.4"
+  }
+}

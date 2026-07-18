@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "reportKind": "wordpresshx-release-governance-rehearsal",
   "reportDigestAlgorithm": "sha256-canonical-json-v1",
-  "reportDigest": "162f35982c0478c1c986c4ee0903e440f191dc2e84dbf5ea3acc7bb32add3c79",
+  "reportDigest": "41a9cf27c3bbeaffbdb343d239cb83b95a787d82495c275b8f4740ee957c5bbf",
   "policyId": "wordpresshx-release-support-v1",
   "scenarioSet": "sdk003-governance-rehearsal-v1",
   "simulationOnly": true,
@@ -42,7 +42,7 @@
       "owner": "Marcelo Serpa",
       "decision": "blocked-stable-publication",
       "nextAction": "Resolve every recorded stable blocker; keep the candidate development-only.",
-      "evidence": "{\"blockers\":[\"backup-release-security-owner\",\"final-package-consumer-matrix\",\"g8-production-evidence\",\"licensing-and-output-review\",\"private-vulnerability-reporting\",\"production-release-rollback-rehearsal\"],\"candidateCommit\":\"3f0eced6a354f69704aa9e1385dd7d6611082060\",\"catalogDigest\":\"28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf\",\"profileId\":\"wp70-release\"}"
+      "evidence": "{\"blockers\":[\"backup-release-security-owner\",\"final-package-consumer-matrix\",\"g8-production-evidence\",\"licensing-and-output-review\",\"private-vulnerability-reporting\",\"production-release-rollback-rehearsal\"],\"candidateCommit\":\"3f0eced6a354f69704aa9e1385dd7d6611082060\",\"catalogDigest\":\"530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61\",\"profileId\":\"wp70-release\"}"
     }
   ],
   "claims": {

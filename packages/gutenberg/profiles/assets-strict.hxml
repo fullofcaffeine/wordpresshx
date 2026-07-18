@@ -1,0 +1,5 @@
+profiles/hxx-common.hxml
+-cp test/assets-fixture/src
+-main sdk033.fixture.Main
+-D genes.library
+--macro include('sdk033.fixture')

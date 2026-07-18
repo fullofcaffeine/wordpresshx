@@ -7,7 +7,6 @@
 -D genes.ts
 -D genes.ts.no_extension
 -D genes.react.no_inline_markup
--D js-source-map
 -D js-es=6
 -dce full
 --macro wordpress.hx.gutenberg.hxx.BrowserHxx.enable()

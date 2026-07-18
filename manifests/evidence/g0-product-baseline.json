@@ -13,11 +13,11 @@
   "subject": {
     "toolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "30ee39796bc08c10f5767f737b89797b1e39531427956da5f4215e0801346023"
+      "sha256": "50ed229c0278497a9e7f7ea3bf82f0b8b247b0a8c917b3e48b68424675685e94"
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",
-      "sha256": "c3035e1e90c6a14dc26ffd9e932818806a09c5816d83c88c13c4f531e1a4b10d"
+      "sha256": "b59ea893e776c3619d3a9b64bccab3b1cba05be89fddb61df2cf2a09c700ea60"
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",
@@ -50,7 +50,7 @@
         "profileId": "wp70-release",
         "sourceReceiptId": "SDK-010-WP70-RELEASE-SOURCE",
         "catalogReceiptId": "SDK-013-PROFILE-GENERATOR",
-        "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+        "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
         "evidenceStatus": "inventoried"
       },
       {
@@ -118,7 +118,7 @@
     },
     {
       "id": "wp70-release-catalog-v1",
-      "sha256": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "sha256": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
       "method": "exact-object read-only generation, two clean byte-equal runs, and committed-tree comparison",
       "receiptId": "SDK-013-PROFILE-GENERATOR"
     },

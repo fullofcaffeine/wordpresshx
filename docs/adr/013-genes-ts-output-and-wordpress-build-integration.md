@@ -254,6 +254,47 @@ content hashes are generated in the same artifact transaction. Target-language
 post-processing that changes behavior or imports after dependency extraction
 is prohibited.
 
+### SDK-033 implementation evidence
+
+SDK-033 closes the classic-script asset boundary for the `wp70-release`
+profile. The exact private build graph uses `@wordpress/scripts` 31.5.0 and
+`@wordpress/dependency-extraction-webpack-plugin` 6.40.0 inside the locked Node
+22.17.0 image. Development is the deterministic one-shot command
+`wp-scripts start --no-watch`; production uses `wp-scripts build`.
+
+The adapter loads the official default configuration, requires exactly one
+official dependency-extraction plugin instance, and replaces that instance
+exactly once with the same official plugin plus only
+`externalizedReport: true`. It also requires exactly one official Babel loader
+and adds Babel's standard TypeScript transform with `allowDeclareFields`,
+`allExtensions`, and `isTSX`. This accepts standards-valid `declare` fields in
+Genes TypeScript output without changing Genes or adding WordPress behavior to
+the generic compiler. Entry names are normalized from `.ts`/`.tsx` to native
+WordPress `editor.js`/`editor.asset.php` pairs with collision checks.
+
+The proof begins with Haxe/HXX and static `@wordpress/components` and
+`@wordpress/i18n` calls. Its SDK-owned mount entry adds
+`@wordpress/element`; the automatic JSX transform adds `react/jsx-runtime`.
+Both official build modes report the same final dependencies:
+`react-jsx-runtime`, `wp-components`, `wp-element`, and `wp-i18n`. Clean
+replays reproduce every generated and bundled byte. The native emitter copies
+the official asset PHP unchanged, loads it at runtime, and derives the script
+version from final bundle bytes rather than a pre-bundle guess.
+
+The generated plugin was run on exact WordPress 7.0 with MySQL. WordPress
+registered all catalog-admitted handles, ordered every direct dependency
+before `wordpresshx-sdk033-editor`, emitted the bundle-derived version in the
+script URL, loaded the generated Jed JSON from `languages`, and printed its
+translation payload before the final script tag. The receipt is
+`SDK-033-WORDPRESS-ASSET-METADATA`.
+
+The exact provider build lock currently contains known development-tool
+advisories. SDK-033 does not run `npm audit fix` because that would silently
+replace the frozen provider. Installs are unprivileged and disposable, use
+`npm ci --ignore-scripts`, expose no dev server, and never ship `node_modules`.
+Advisory reachability and retirement are tracked explicitly by
+`wordpresshx-g2.3`; public package publication remains blocked.
+
 ## Rationale
 
 Strict TS/TSX keeps the generated browser surface reviewable and lets the

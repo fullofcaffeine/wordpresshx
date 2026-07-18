@@ -222,7 +222,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
     external_graphs = npm.get("externalGraphs", [])
     audit.check(
-        isinstance(external_graphs, list) and len(external_graphs) == 3,
+        isinstance(external_graphs, list) and len(external_graphs) == 4,
         "npm external graph set changed",
     )
     genes_graph = (
@@ -238,6 +238,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     sdk032_graph = (
         external_graphs[2]
         if isinstance(external_graphs, list) and len(external_graphs) > 2
+        else {}
+    )
+    sdk033_graph = (
+        external_graphs[3]
+        if isinstance(external_graphs, list) and len(external_graphs) > 3
         else {}
     )
     audit.check(
@@ -290,6 +295,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             [
                 "packages/gutenberg/tooling/package.json",
                 "packages/gutenberg/hxx-tooling/package.json",
+                "packages/gutenberg/build-tooling/package.json",
             ]
         ),
         "unlocked package.json found",
@@ -303,6 +309,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             [
                 "packages/gutenberg/tooling/package-lock.json",
                 "packages/gutenberg/hxx-tooling/package-lock.json",
+                "packages/gutenberg/build-tooling/package-lock.json",
             ]
         ),
         "unlocked package-manager lock found",
@@ -423,6 +430,106 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         sdk032_graph.get("receiptId") == "SDK-032-REACT-GUTENBERG-HXX",
         "SDK-032 npm graph receipt changed",
     )
+    audit.exact_keys(
+        sdk033_graph,
+        {
+            "id",
+            "authority",
+            "profilePath",
+            "profileSha256",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "directPackages",
+            "runtimeImage",
+            "lifecycleScriptsAllowed",
+            "buildInputOnly",
+            "advisoryFollowUp",
+            "receiptId",
+        },
+        "SDK-033 npm graph",
+    )
+    audit.check(
+        sdk033_graph.get("id")
+        == "sdk-033-wordpress-assets-verification-graph",
+        "SDK-033 npm graph ID changed",
+    )
+    audit.check(
+        sdk033_graph.get("authority")
+        == "official-wordpress-build-tool-and-exact-provider-profile-lock",
+        "SDK-033 npm graph authority changed",
+    )
+    sdk033_profile = sdk033_graph.get("profilePath")
+    sdk033_manifest = sdk033_graph.get("manifestPath")
+    sdk033_lock = sdk033_graph.get("lockPath")
+    audit.check(
+        sdk033_profile
+        == (
+            "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+            "wp70-release.browser-assets.json"
+        ),
+        "SDK-033 browser-assets profile path changed",
+    )
+    audit.check(
+        sdk033_manifest == "packages/gutenberg/build-tooling/package.json",
+        "SDK-033 npm manifest path changed",
+    )
+    audit.check(
+        sdk033_lock == "packages/gutenberg/build-tooling/package-lock.json",
+        "SDK-033 npm lock path changed",
+    )
+    for path, digest, label in (
+        (sdk033_profile, sdk033_graph.get("profileSha256"), "profile"),
+        (sdk033_manifest, sdk033_graph.get("manifestSha256"), "manifest"),
+        (sdk033_lock, sdk033_graph.get("lockSha256"), "lock"),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-033 {label} digest changed",
+            )
+    audit.check(
+        sdk033_graph.get("directPackages")
+        == [
+            "@babel/core@7.25.7",
+            "@babel/plugin-transform-typescript@7.29.7",
+            "@playwright/test@1.58.2",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/components@32.2.0",
+            "@wordpress/dependency-extraction-webpack-plugin@6.40.0",
+            "@wordpress/element@6.40.0",
+            "@wordpress/i18n@6.13.0",
+            "@wordpress/scripts@31.5.0",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3",
+            "webpack@5.108.4",
+        ],
+        "SDK-033 direct npm package set changed",
+    )
+    audit.check(
+        sdk033_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-033 npm runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk033_graph.get("lifecycleScriptsAllowed") is False,
+        "SDK-033 npm lifecycle scripts must remain disabled",
+    )
+    audit.check(
+        sdk033_graph.get("buildInputOnly") is True,
+        "SDK-033 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk033_graph.get("advisoryFollowUp") == "wordpresshx-g2.3",
+        "SDK-033 advisory follow-up changed",
+    )
+    audit.check(
+        sdk033_graph.get("receiptId")
+        == "SDK-033-WORDPRESS-ASSET-METADATA",
+        "SDK-033 npm graph receipt changed",
+    )
     active_npm = npm.get("activePackages", [])
     audit.check(isinstance(active_npm, list) and len(active_npm) == 1, "exactly one direct npm build package is expected")
     lix = active_npm[0] if isinstance(active_npm, list) and active_npm else {}
@@ -515,7 +622,11 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             audit.check(audit.sha256(catalog_path) == catalog_file_sha, f"{profile_id} catalog bytes differ from receipt")
     audit.check(
         nested(upstream, "entries", "wp70-release", "testReceiptIds")
-        == [wp_receipt.get("receiptId"), "SDK-032-REACT-GUTENBERG-HXX"],
+        == [
+            wp_receipt.get("receiptId"),
+            "SDK-032-REACT-GUTENBERG-HXX",
+            "SDK-033-WORDPRESS-ASSET-METADATA",
+        ],
         "wp70 upstream/source receipt link changed",
     )
     audit.check(nested(upstream, "entries", "gutenberg-forward-23.4", "testReceiptIds") == [forward_receipt.get("receiptId")], "forward upstream/source receipt link changed")
@@ -560,7 +671,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
         "gutenberg-23.4-release-zip": ("988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a", "SDK-011-GUTENBERG-FORWARD-23.4"),
         "genes-ts-1.33.0-submit-zip": ("4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145", "SDK-030-GENES-TS-V1.33.0"),
         "reflaxe-php-package-content": ("cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6", "SDK-021-PHP-IR-PRINTER"),
-        "wp70-release-catalog-v1": ("28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf", "SDK-013-PROFILE-GENERATOR"),
+        "wp70-release-catalog-v1": ("530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61", "SDK-013-PROFILE-GENERATOR"),
         "gutenberg-forward-23.4-catalog-v1": ("66bcac1aba265913c0a541c5f1ab7c58c5431404b3274e43fa415d1e137d0404", "SDK-013-PROFILE-GENERATOR"),
     }
     audit.check(isinstance(artifacts, list) and len(artifacts) == len(expected_artifacts), "G0 reference artifact ledger must contain exactly six entries")

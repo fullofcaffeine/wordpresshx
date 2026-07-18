@@ -343,6 +343,45 @@
           }
         },
         {
+          "capabilityId": "wordpress.script-handle.react",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/script-loader.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "react",
+            "expectedCount": 2
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.react-dom",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/script-loader.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "react-dom",
+            "expectedCount": 2
+          }
+        },
+        {
+          "capabilityId": "wordpress.script-handle.react-jsx-runtime",
+          "providerIdentity": "wordpress:7.0",
+          "kind": "script-handle",
+          "classification": "public",
+          "sourceInputId": "wordpress-source",
+          "sourcePath": "src/wp-includes/script-loader.php",
+          "locator": {
+            "kind": "php-array-key",
+            "value": "react-jsx-runtime",
+            "expectedCount": 2
+          }
+        },
+        {
           "capabilityId": "wordpress.block-metadata-key.apiVersion",
           "providerIdentity": "wordpress:7.0",
           "kind": "block-metadata-key",

@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
+  "bead": "wordpresshx-sdk-033",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T03:54:30-06:00",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json",
+      "sha256": "a364622558bb3c0627ea8407eb28ad588fbf119f693c025a17dec94f75a8fa17"
+    },
+    "entryPlan": {
+      "path": "packages/gutenberg/test/assets-runtime/entry-plan.json",
+      "sha256": "a00ec07ed473fab8396808fd263ff1fd10d2459a69b4a73c3e300f308d98e1c2"
+    },
+    "toolingManifest": {
+      "path": "packages/gutenberg/build-tooling/package.json",
+      "sha256": "e60c4dd69ef9ee97c2ecb85e247447ed9706be1ddc78fd6080e0c614f523b979"
+    },
+    "toolingLock": {
+      "path": "packages/gutenberg/build-tooling/package-lock.json",
+      "sha256": "8a251476ff8642346e50ea74fb4e8734929fe5d2716e542c834302a04ab4184a"
+    },
+    "webpackAdapter": {
+      "path": "packages/gutenberg/build-tooling/webpack.config.cjs",
+      "sha256": "fb14754f0811d95f3fac9888c79ac285a88133fe77512b57c05b5f75dfa5745a"
+    },
+    "haxeProfile": {
+      "path": "packages/gutenberg/profiles/assets-strict.hxml",
+      "sha256": "bbadb0e1727d7de25e9044f81cad3c41d490d747fff0845a7b5e2e96202c3b22"
+    },
+    "i18nBoundary": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx",
+      "sha256": "bacfc89777034f9fa1f9f845f8a4346fd78ed7590e65bb86576bb00b383e2e7c"
+    },
+    "haxeFixture": {
+      "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",
+      "sha256": "1527b560567c67ef18276c37551bd93a7ddf444293ece6d7c4789e8553925663"
+    },
+    "nativeEntryFixture": {
+      "path": "packages/gutenberg/test/assets-runtime/editor-entry.tsx",
+      "sha256": "44ce89ef2fc698500ae0da7e15b11324e25f21bb9dda40d19875ac6355f5e8f5"
+    },
+    "profileVerifier": {
+      "path": "packages/gutenberg/scripts/verify-assets-profile.py",
+      "sha256": "8b248debf1a8edae919d92647ce36f67cbe8a5cea235790e394a5540a99391c4"
+    },
+    "artifactVerifier": {
+      "path": "packages/gutenberg/scripts/verify-assets.mjs",
+      "sha256": "dc43cf668c878507b2c2ef56a70faa5781b5a2593f528c8d4777fb30136c4462"
+    },
+    "nativeEmitter": {
+      "path": "packages/gutenberg/scripts/emit-assets-plugin.py",
+      "sha256": "1602e95822c9c43cb6e072662ffd8018ef43bf7f0407a096aea08fc281c586c9"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-assets.sh",
+      "sha256": "863a4d85df70d728e9b8d2d5b8d7cce8b9af20b92dd3e1c45844520e767ceba9"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-assets-lane.sh",
+      "sha256": "11cdbd6558013090511712faf4752b7adb03d91a670c34e7441be62b3604e695"
+    },
+    "wordpressProbe": {
+      "path": "packages/gutenberg/test/assets-runtime/probe-assets.php",
+      "sha256": "417b9c53f9b72a5f27aa5e39953cffea3eed8b784b39f3b6d6b98f843de00ace"
+    }
+  },
+  "provider": {
+    "profileId": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
+    "catalogFileSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e",
+    "mappingSource": {
+      "path": "packages/dependency-extraction-webpack-plugin/lib/util.js",
+      "blob": "11211cf0f2ef9d8c106c104c57226dac735f4205",
+      "sha256": "3f6a43e202b158297dc95da9d8a40127118469a856d8eae94459cb89528c7367"
+    }
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "node": {
+      "version": "22.17.0",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "babelCore": "7.25.7",
+    "babelTypeScriptTransform": "7.29.7",
+    "webpack": "5.108.4",
+    "wordpressScripts": "31.5.0",
+    "dependencyExtractionPlugin": "6.40.0",
+    "react": "18.3.1",
+    "wordpressComponents": "32.2.0",
+    "wordpressElement": "6.40.0",
+    "wordpressI18n": "6.13.0",
+    "integrityLockedPackageCount": 1657
+  },
+  "catalogEvolution": {
+    "sourceCommitChanged": false,
+    "catalogRevisionChanged": false,
+    "previousCapabilityCount": 28,
+    "capabilityCount": 31,
+    "addedCapabilities": [
+      "wordpress.script-handle.react",
+      "wordpress.script-handle.react-dom",
+      "wordpress.script-handle.react-jsx-runtime"
+    ],
+    "selectionSha256": "f5ef84b20c9111c087bce694ea9a197c3eddaa46263b863e83c8002353fb683a",
+    "inputFingerprint": "815972e2abc5d5c2ef384573717063ef5026f8ec6f8120ce3b69e3d45a4ea870",
+    "doubleRunByteEquality": "passed",
+    "committedTreeEquality": "passed",
+    "evidenceStatus": "inventoried"
+  },
+  "compilation": {
+    "authoringSurface": "haxe-hxx",
+    "ordinaryReturnMarkup": true,
+    "companionApplicationTsxAuthoredByDeveloper": false,
+    "compilerProfile": "strict-typescript-source",
+    "browserExportId": "wordpresshx.sdk033.editor-panel",
+    "generatedModule": "sdk033/fixture/EditorPanel",
+    "generatedTreeSha256": "3792559c66050767a95639271b0d631fd1fff003a8ea31909d1880ba8d60a54e",
+    "sourceImports": [
+      "@wordpress/components",
+      "@wordpress/element",
+      "@wordpress/i18n"
+    ],
+    "translationMessages": [
+      "Bundle metadata, under proof.",
+      "Inspect final dependencies"
+    ],
+    "translationDomain": "wordpresshx-sdk033",
+    "outcome": "passed"
+  },
+  "adapter": {
+    "officialDefaultConfigurationLoaded": true,
+    "officialDependencyPluginInstanceCount": 1,
+    "officialDependencyPluginReplacementCount": 1,
+    "replacementOptionDelta": {
+      "externalizedReport": true
+    },
+    "officialBabelLoaderMatchCount": 1,
+    "typescriptCompatibility": {
+      "plugin": "@babel/plugin-transform-typescript",
+      "allExtensions": true,
+      "allowDeclareFields": true,
+      "isTSX": true
+    },
+    "entryExtensionNormalization": "collision-checked-ts-tsx-js-jsx-to-native-entry-name",
+    "genesSourceChanged": false,
+    "manualMappingDuplicated": false
+  },
+  "builds": {
+    "development": {
+      "command": "wp-scripts start src/editor.tsx --no-watch --config webpack.config.cjs --output-path build/development",
+      "bundlePath": "editor.js",
+      "bundleSha256": "7225eab5d553ab8e08015acb7479e6a28df165fa2c5b63df110c444356a45f69",
+      "sourceMapSha256": "bba015f4b3eb931cdbca70a20765440398f0682e9ac7c6597db77ff4eb2d7215",
+      "assetPhpSha256": "dd98f3a41e34cb7387f506e3731f7f4a662eefbd114cf46ee7e1aa15ee400eec",
+      "version": "953de22dcd4c1eaeeec1",
+      "outcome": "passed"
+    },
+    "production": {
+      "command": "wp-scripts build src/editor.tsx --config webpack.config.cjs --output-path build/production",
+      "bundlePath": "editor.js",
+      "bundleSha256": "4dc231f4abe8ca8c95eb087a064059d75283ba076122a0f24f1177b37389bf1b",
+      "assetPhpSha256": "1ebc50afcfa707cedc77bbe65b517a9e434f7589a581425a6a9697e4455afbe4",
+      "version": "12677fc28b825e84abda",
+      "outcome": "passed"
+    },
+    "externalizedReportSha256": "4b7f8e017b2c027d52dc6809d7744984e29d9e7d9871c5fa3dbcc0d75964498c",
+    "externalizedRequests": [
+      "@wordpress/components",
+      "@wordpress/element",
+      "@wordpress/i18n",
+      "react/jsx-runtime"
+    ],
+    "finalDependencies": [
+      "react-jsx-runtime",
+      "wp-components",
+      "wp-element",
+      "wp-i18n"
+    ],
+    "dependencySetParity": "passed",
+    "assetVersionDerivedFromFinalBundleBytes": true,
+    "absolutePathLeakScan": "passed"
+  },
+  "nativeEmission": {
+    "semanticPlanGenerated": true,
+    "officialAssetPhpCopiedUnchanged": true,
+    "manualAssetPhpEditingAllowed": false,
+    "pluginPhpGenerated": true,
+    "translationJsonGenerated": true,
+    "php74Syntax": "passed",
+    "php84Syntax": "passed",
+    "doubleRunByteEquality": "passed"
+  },
+  "wordpressRuntime": {
+    "wordpressVersion": "7.0",
+    "phpVersion": "8.4.23",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "databaseLane": "mysql",
+    "databaseImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+    "scriptHandle": "wordpresshx-sdk033-editor",
+    "registeredDependencies": [
+      "react-jsx-runtime",
+      "wp-components",
+      "wp-element",
+      "wp-i18n"
+    ],
+    "resolvedDirectAndFinalOrder": [
+      "react-jsx-runtime",
+      "wp-i18n",
+      "wp-element",
+      "wp-components",
+      "wordpresshx-sdk033-editor"
+    ],
+    "allDirectDependenciesBeforeFinal": true,
+    "registeredVersionMatchesAsset": true,
+    "versionedScriptTag": true,
+    "translationDomain": "wordpresshx-sdk033",
+    "translationPath": "languages",
+    "translationJsonLoaded": true,
+    "translationsPrintedBeforeFinalScript": true,
+    "outcome": "passed"
+  },
+  "security": {
+    "directPackageSourceAndLicenseCheck": "passed",
+    "admittedDirectLicenses": [
+      "Apache-2.0",
+      "GPL-2.0-or-later",
+      "MIT"
+    ],
+    "audit": {
+      "command": "npm audit --package-lock-only --ignore-scripts --json",
+      "observedAt": "2026-07-18T03:54:30-06:00",
+      "counts": {
+        "info": 0,
+        "low": 1,
+        "moderate": 23,
+        "high": 12,
+        "critical": 0,
+        "total": 36
+      },
+      "uniqueAdvisoryIds": [
+        "GHSA-22p9-wv53-3rq4",
+        "GHSA-23c5-xmqv-rm74",
+        "GHSA-3ppc-4f35-3m26",
+        "GHSA-4v9v-hfq4-rm2v",
+        "GHSA-4x5r-pxfx-6jf8",
+        "GHSA-5c6j-r48x-rmvq",
+        "GHSA-6v5v-wf23-fmfq",
+        "GHSA-79cf-xcqc-c78w",
+        "GHSA-7r86-cg39-jmmj",
+        "GHSA-8988-4f7v-96qf",
+        "GHSA-9jgg-88mc-972h",
+        "GHSA-mx8g-39q3-5c79",
+        "GHSA-qj8w-gfj5-8c6v",
+        "GHSA-w5hq-g745-h8pq",
+        "GHSA-xcpc-8h2w-3j85"
+      ],
+      "auditFixApplied": false,
+      "deterministicGateDependsOnLiveRegistryAudit": false,
+      "followUpBead": "wordpresshx-g2.3"
+    },
+    "mitigations": {
+      "immutableContainer": true,
+      "unprivilegedContainerUser": true,
+      "disposableWorkspaceAndCache": true,
+      "npmLifecycleScriptsAllowed": false,
+      "devServerStarted": false,
+      "untrustedBuildInputAllowed": false,
+      "nodeModulesShipped": false,
+      "publicationAuthorized": false
+    }
+  },
+  "reproducibility": {
+    "haxeGeneratedTreeDoubleRunByteEquality": "passed",
+    "developmentBundleDoubleRunByteEquality": "passed",
+    "productionBundleDoubleRunByteEquality": "passed",
+    "assetPlanDoubleRunByteEquality": "passed",
+    "nativePluginDoubleRunByteEquality": "passed",
+    "machineLocalPathScan": "passed"
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "reason": "The build adapter accepts standards-valid Genes TypeScript declare fields through Babel's general TypeScript option; no compiler defect or WordPress-specific Genes behavior was required."
+  },
+  "localVerification": {
+    "commands": [
+      "bash packages/gutenberg/scripts/test-assets.sh",
+      "bash scripts/profiles/test-catalog-generator.sh",
+      "python3 scripts/gates/check-g0-baseline.py",
+      "python3 scripts/release/test-governance.py"
+    ],
+    "outcome": "passed"
+  },
+  "implementation": {
+    "baseCommit": "838e15db8826feac5c7033cbcc4532d7c80cf3ef",
+    "commit": null
+  },
+  "hostedVerification": {
+    "workflow": "repository.yml",
+    "job": "wordpress-runtime",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-push",
+    "sdk033Step": "pending",
+    "fullMatrixStatus": "pending",
+    "required": true
+  },
+  "knownLimitations": [
+    "This receipt proves classic WordPress scripts; the Script Modules API remains a separate profile and evidence lane.",
+    "The SDK-owned TSX mount entry and JSON fixture plan are build-boundary proof inputs; later scaffolding must generate them from typed Haxe declarations before claiming a complete Haxe-only project surface.",
+    "SDK-055 owns typed message keys, plural/context contracts, extraction, and production translation catalogs.",
+    "The exact provider build graph has known non-critical development-tool advisories tracked by wordpresshx-g2.3; no advisory-free or general untrusted-input build claim is made.",
+    "Source-map policy and correlation remain SDK-034 even though the bounded development map is deterministic and path-clean here.",
+    "Public package publication and production support remain blocked."
+  ],
+  "claims": {
+    "profilePackageHandleMappings": "inventoried-and-bounded-runtime-tested",
+    "officialDependencyExtraction": "runtime-tested",
+    "developmentProductionDependencyParity": "runtime-tested",
+    "assetPhpAndFinalBundleVersion": "runtime-tested",
+    "nativeRegisterEnqueueOrder": "runtime-tested",
+    "translationAttachment": "runtime-tested",
+    "scriptModules": "not-tested",
+    "typedI18nCatalog": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

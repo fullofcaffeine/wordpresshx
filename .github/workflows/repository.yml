@@ -90,6 +90,13 @@ jobs:
         run: bash compiler/wordpress/scripts/test.sh
       - name: Discover and activate the plugin on real WordPress 7.0
         run: bash compiler/wordpress/scripts/test-wordpress.sh
+      - name: Install exact scoped browser asset toolchain
+        run: |
+          npm install --global lix@15.12.4
+          lix install haxe 4.3.7 --global
+          haxelib install formatter 1.18.0 --quiet
+      - name: Prove official assets, handles, enqueue order, and translations
+        run: bash packages/gutenberg/scripts/test-assets.sh
 
   security:
     runs-on: ubuntu-24.04

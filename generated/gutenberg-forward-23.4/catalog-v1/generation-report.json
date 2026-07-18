@@ -30,7 +30,7 @@
     "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
     "version": "1"
   },
-  "inputFingerprint": "60c9719fd305d35a494686c105355a4e1fa36c8c920116b3d3c9f11f7b86a46c",
+  "inputFingerprint": "c2f131b1fb4ec570cc18a49125d9ca5dd9322870910caaee2f3b4542a4e7febd",
   "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
   "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
   "outputs": {
@@ -55,7 +55,7 @@
   "schemaVersion": 1,
   "selection": {
     "path": "profiles/catalog-selection.json",
-    "sha256": "3b98ba912eeb56378336335f0483c84d540b8ebc463e605c1a6599bda75423bc"
+    "sha256": "f5ef84b20c9111c087bce694ea9a197c3eddaa46263b863e83c8002353fb683a"
   },
   "sourceLock": {
     "path": "profiles/gutenberg-forward-23.4/source.lock.json",

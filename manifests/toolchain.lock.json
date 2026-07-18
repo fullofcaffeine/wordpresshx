@@ -157,6 +157,37 @@
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
           "buildInputOnly": true,
           "receiptId": "SDK-032-REACT-GUTENBERG-HXX"
+        },
+        {
+          "id": "sdk-033-wordpress-assets-verification-graph",
+          "authority": "official-wordpress-build-tool-and-exact-provider-profile-lock",
+          "profilePath": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json",
+          "profileSha256": "a364622558bb3c0627ea8407eb28ad588fbf119f693c025a17dec94f75a8fa17",
+          "manifestPath": "packages/gutenberg/build-tooling/package.json",
+          "manifestSha256": "e60c4dd69ef9ee97c2ecb85e247447ed9706be1ddc78fd6080e0c614f523b979",
+          "lockPath": "packages/gutenberg/build-tooling/package-lock.json",
+          "lockSha256": "8a251476ff8642346e50ea74fb4e8734929fe5d2716e542c834302a04ab4184a",
+          "directPackages": [
+            "@babel/core@7.25.7",
+            "@babel/plugin-transform-typescript@7.29.7",
+            "@playwright/test@1.58.2",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/components@32.2.0",
+            "@wordpress/dependency-extraction-webpack-plugin@6.40.0",
+            "@wordpress/element@6.40.0",
+            "@wordpress/i18n@6.13.0",
+            "@wordpress/scripts@31.5.0",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3",
+            "webpack@5.108.4"
+          ],
+          "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "lifecycleScriptsAllowed": false,
+          "buildInputOnly": true,
+          "advisoryFollowUp": "wordpresshx-g2.3",
+          "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA"
         }
       ]
     },
@@ -191,7 +222,7 @@
   "profileInputs": {
     "upstreamLock": {
       "path": "manifests/upstream.lock.json",
-      "sha256": "4b2dbd0dbdd1731648b139255fb9d7904b3b8c1fedf25be8ab3f4c2170aa3465"
+      "sha256": "c5672d9b19d867404014d2dd727e9700435851219e2078f4494b0db4f1a82990"
     },
     "profiles": [
       "wp70-release",

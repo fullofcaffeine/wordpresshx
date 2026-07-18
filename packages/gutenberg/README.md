@@ -109,3 +109,39 @@ gets a full `skipLibCheck: false` lane. Its upstream Ariakit declarations do
 not support `exactOptionalPropertyTypes`; generated user modules therefore get
 a separate stricter lane with that option enabled and zero public `any` or
 `unknown` types.
+
+## Official WordPress assets and translations
+
+SDK-033 takes the same Haxe/HXX source through the exact official WordPress
+build. Its fixture imports Gutenberg components and i18n from Haxe; an
+SDK-owned native mount entry is supplied as a bounded build-boundary input.
+Later scaffolding must generate that entry from typed Haxe declarations before
+the project surface can claim to be entirely Haxe-authored. Developers do not
+author or patch `asset.php`, dependency handles, versions, enqueue PHP, or
+translation JSON.
+
+Run the complete deterministic bundle and real WordPress proof:
+
+~~~sh
+bash packages/gutenberg/scripts/test-assets.sh
+~~~
+
+The gate compiles twice with Genes, installs the exact npm lock in the pinned
+Node image with lifecycle scripts disabled, and builds both one-shot
+development and minified production lanes with `@wordpress/scripts` 31.5.0.
+It compares source imports, the official externalized report, final bundles,
+unchanged official asset PHP, exact profile mappings, and a semantic native
+enqueue plan. It then emits an inspectable plugin, checks PHP 7.4 and 8.4
+syntax, and runs that plugin on WordPress 7.0/MySQL to prove dependency order,
+the final content version, and translation attachment.
+
+For a build-only replay, omit the database lane:
+
+~~~sh
+bash packages/gutenberg/scripts/test-assets.sh --skip-wordpress
+~~~
+
+Set `SDK033_ASSET_OUTPUT` to retain the semantic plan and generated native
+plugin for inspection. The emitted PHP/JS/JSON are build artifacts; the Haxe
+fixture remains the application authoring surface. Script Modules are not
+claimed by SDK-033 and require a separate profile and parity proof.

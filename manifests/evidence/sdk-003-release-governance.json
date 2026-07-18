@@ -14,11 +14,11 @@
     },
     "scenarios": {
       "path": "fixtures/release-governance/scenarios.json",
-      "sha256": "346a635536290bb567ae41ac1ca33f76ef8807cc5eb7579e3980a4a9a9d2b2a8"
+      "sha256": "d1cac19b128cf27e4c9eb7e7ec2de0493bc83b327e58ab026928da504a1a2246"
     },
     "expectedReport": {
       "path": "fixtures/release-governance/expected/rehearsal.json",
-      "sha256": "c8996e779b2777f0ce4af5ffc95bc15e37b83dab886601cd09e8b6e3e8eb8da1"
+      "sha256": "bbdcfd3561c605a028236558d553040129c0f7e8ff5ecddfe84f9732f0a1f61d"
     },
     "releaseChecklist": {
       "path": "docs/release/release-checklist.md",
@@ -71,7 +71,7 @@
     "scenarioCount": 4,
     "simulationOnly": true,
     "reportDigestAlgorithm": "sha256-canonical-json-v1",
-    "reportDigest": "162f35982c0478c1c986c4ee0903e440f191dc2e84dbf5ea3acc7bb32add3c79",
+    "reportDigest": "41a9cf27c3bbeaffbdb343d239cb83b95a787d82495c275b8f4740ee957c5bbf",
     "goldenByteEquality": "passed",
     "scenarios": [
       {

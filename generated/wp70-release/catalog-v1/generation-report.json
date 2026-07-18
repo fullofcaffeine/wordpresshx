@@ -69,6 +69,11 @@
       "sourcePath": "src/wp-includes/rest-api.php"
     },
     {
+      "sourceDigest": "e5b725771b52db8da27ff34d0924d6a8f39c0b49cc3585e656f916b580889a31",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/wp-includes/script-loader.php"
+    },
+    {
       "sourceDigest": "e56fb879616515a04ead712bd6c72026c2177ff09bae14efa60d0046e6bb7861",
       "sourceInputId": "wordpress-source",
       "sourcePath": "src/wp-settings.php"
@@ -80,15 +85,15 @@
     "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
     "version": "1"
   },
-  "inputFingerprint": "288938a08b722d77c8c63810d9640f32d3edc4a8e296591565d58076028f531d",
+  "inputFingerprint": "815972e2abc5d5c2ef384573717063ef5026f8ec6f8120ce3b69e3d45a4ea870",
   "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
   "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
   "outputs": {
     "catalog": {
-      "capabilityCount": 28,
-      "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "capabilityCount": 31,
+      "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
       "path": "catalog.json",
-      "sha256": "f349ef5d9ca5000d723b1c3d67c2f31a85b7eae9d46c30b7d0fbd581e96eb65a"
+      "sha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e"
     },
     "omissions": {
       "omissionCount": 2,
@@ -105,7 +110,7 @@
   "schemaVersion": 1,
   "selection": {
     "path": "profiles/catalog-selection.json",
-    "sha256": "3b98ba912eeb56378336335f0483c84d540b8ebc463e605c1a6599bda75423bc"
+    "sha256": "f5ef84b20c9111c087bce694ea9a197c3eddaa46263b863e83c8002353fb683a"
   },
   "sourceLock": {
     "path": "profiles/wp70-release/source.lock.json",

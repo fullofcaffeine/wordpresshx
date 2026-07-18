@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogRevision": "wp70-release/catalog-v1",
+  "provider": {
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+  },
+  "build": {
+    "adapter": "@wordpress/scripts",
+    "adapterVersion": "31.5.0",
+    "dependencyExtraction": "@wordpress/dependency-extraction-webpack-plugin",
+    "dependencyExtractionVersion": "6.40.0",
+    "externalizedReportOption": true
+  },
+  "mappingSource": {
+    "path": "packages/dependency-extraction-webpack-plugin/lib/util.js",
+    "blob": "11211cf0f2ef9d8c106c104c57226dac735f4205",
+    "sha256": "3f6a43e202b158297dc95da9d8a40127118469a856d8eae94459cb89528c7367"
+  },
+  "mappings": [
+    {
+      "request": "@wordpress/blocks",
+      "handle": "wp-blocks",
+      "packageCapability": "gutenberg.package.@wordpress/blocks",
+      "handleCapability": "wordpress.script-handle.wp-blocks"
+    },
+    {
+      "request": "@wordpress/components",
+      "handle": "wp-components",
+      "packageCapability": "gutenberg.package.@wordpress/components",
+      "handleCapability": "wordpress.script-handle.wp-components"
+    },
+    {
+      "request": "@wordpress/data",
+      "handle": "wp-data",
+      "packageCapability": "gutenberg.package.@wordpress/data",
+      "handleCapability": "wordpress.script-handle.wp-data"
+    },
+    {
+      "request": "@wordpress/element",
+      "handle": "wp-element",
+      "packageCapability": "gutenberg.package.@wordpress/element",
+      "handleCapability": "wordpress.script-handle.wp-element"
+    },
+    {
+      "request": "@wordpress/i18n",
+      "handle": "wp-i18n",
+      "packageCapability": "gutenberg.package.@wordpress/i18n",
+      "handleCapability": "wordpress.script-handle.wp-i18n"
+    },
+    {
+      "request": "react",
+      "handle": "react",
+      "packageCapability": null,
+      "handleCapability": "wordpress.script-handle.react"
+    },
+    {
+      "request": "react-dom",
+      "handle": "react-dom",
+      "packageCapability": null,
+      "handleCapability": "wordpress.script-handle.react-dom"
+    },
+    {
+      "request": "react/jsx-runtime",
+      "handle": "react-jsx-runtime",
+      "packageCapability": null,
+      "handleCapability": "wordpress.script-handle.react-jsx-runtime"
+    }
+  ],
+  "policy": {
+    "scriptModules": false,
+    "manualAssetPhpEditingAllowed": false,
+    "finalBundleIsAuthority": true,
+    "developmentProductionDependencySetParityRequired": true,
+    "translationsAttachToFinalHandle": true
+  }
+}

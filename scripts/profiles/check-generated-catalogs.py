@@ -333,7 +333,7 @@ def main() -> None:
         item["capabilityId"]
         for item in catalogs["gutenberg-forward-23.4"]["catalog"]["capabilities"]
     }
-    assert len(wp_ids) == 28
+    assert len(wp_ids) == 31
     assert len(forward_ids) == 5
     assert {
         "wordpress.php.function.add_action",
@@ -341,6 +341,9 @@ def main() -> None:
         "wordpress.hook.init",
         "gutenberg.export.@wordpress/blocks.registerBlockType",
         "wordpress.script-handle.wp-blocks",
+        "wordpress.script-handle.react",
+        "wordpress.script-handle.react-dom",
+        "wordpress.script-handle.react-jsx-runtime",
         "wordpress.block-metadata-key.apiVersion",
     }.issubset(wp_ids)
     assert "gutenberg.package.@wordpress/content-types" in forward_ids
@@ -363,7 +366,7 @@ def main() -> None:
     assert "gutenberg.content-types.private-api-lock" in forward_omissions
     print(
         "generated profile catalog checks passed: "
-        "33 inventoried capabilities, 4 explicit omissions"
+        "36 inventoried capabilities, 4 explicit omissions"
     )
 
 

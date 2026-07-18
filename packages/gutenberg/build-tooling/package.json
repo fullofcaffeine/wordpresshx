@@ -1,0 +1,52 @@
+{
+  "name": "@wordpress-hx/sdk-033-build-tooling",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Exact private WordPress bundle and asset-metadata verification closure.",
+  "type": "module",
+  "engines": {
+    "node": "22.17.0",
+    "npm": "10.9.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.25.7",
+    "@babel/plugin-transform-typescript": "7.29.7",
+    "@playwright/test": "1.58.2",
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
+    "@wordpress/components": "32.2.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "6.40.0",
+    "@wordpress/element": "6.40.0",
+    "@wordpress/i18n": "6.13.0",
+    "@wordpress/scripts": "31.5.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "typescript": "5.9.3",
+    "webpack": "5.108.4"
+  },
+  "overrides": {
+    "@ariakit/react": "0.4.21",
+    "@wordpress/a11y": "4.40.0",
+    "@wordpress/base-styles": "6.16.0",
+    "@wordpress/compose": "7.40.0",
+    "@wordpress/data": "10.40.0",
+    "@wordpress/date": "5.40.0",
+    "@wordpress/deprecated": "4.40.0",
+    "@wordpress/dom": "4.40.0",
+    "@wordpress/dom-ready": "4.40.0",
+    "@wordpress/escape-html": "3.40.0",
+    "@wordpress/hooks": "4.40.0",
+    "@wordpress/html-entities": "4.40.0",
+    "@wordpress/icons": "11.7.0",
+    "@wordpress/is-shallow-equal": "5.40.0",
+    "@wordpress/keycodes": "4.40.0",
+    "@wordpress/primitives": "4.40.0",
+    "@wordpress/priority-queue": "3.40.0",
+    "@wordpress/private-apis": "1.40.0",
+    "@wordpress/redux-routine": "5.40.0",
+    "@wordpress/rich-text": "7.40.0",
+    "@wordpress/undo-manager": "1.40.0",
+    "@wordpress/warning": "3.40.0"
+  },
+  "packageManager": "npm@10.9.2"
+}

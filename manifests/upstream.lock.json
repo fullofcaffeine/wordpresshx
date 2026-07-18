@@ -27,7 +27,8 @@
       "runtimeCompatibilityStatus": "not-tested",
       "testReceiptIds": [
         "SDK-010-WP70-RELEASE-SOURCE",
-        "SDK-032-REACT-GUTENBERG-HXX"
+        "SDK-032-REACT-GUTENBERG-HXX",
+        "SDK-033-WORDPRESS-ASSET-METADATA"
       ],
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",
       "rollback": null

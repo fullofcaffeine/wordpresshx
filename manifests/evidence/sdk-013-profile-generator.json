@@ -7,11 +7,11 @@
     "generatorPath": "scripts/profiles/generate-catalogs.py",
     "generatorSha256": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
     "checkerPath": "scripts/profiles/check-generated-catalogs.py",
-    "checkerSha256": "e7fe77c686cb770de98e4d552642bef47d1965009881647ee2142e8b55e84b44",
+    "checkerSha256": "c54b27a10bd539dd1b060cd028044bac86c959b4497eba7b92b8cff9eaa29cc5",
     "testPath": "scripts/profiles/test-catalog-generator.sh",
     "testSha256": "254c1f847032976a13dbb15f1e7c171110d452ebc139dbc7fb2df9199949ad4f",
     "selectionPath": "profiles/catalog-selection.json",
-    "selectionSha256": "3b98ba912eeb56378336335f0483c84d540b8ebc463e605c1a6599bda75423bc",
+    "selectionSha256": "f5ef84b20c9111c087bce694ea9a197c3eddaa46263b863e83c8002353fb683a",
     "profileSchemaPath": "schemas/profile.schema.json",
     "profileSchemaSha256": "66a8fa5d1b2f53b609a44d5f592b2bfb9e68ee63c8e96832fd46e58bca293e52",
     "generatorIdentity": "wordpresshx-exact-profile-generator",
@@ -43,13 +43,13 @@
       "catalogRevision": "wp70-release/catalog-v1",
       "sourceCommit": "26b68024931348d267b70e2a29910e1320d0094f",
       "embeddedGutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
-      "inputFingerprint": "288938a08b722d77c8c63810d9640f32d3edc4a8e296591565d58076028f531d",
-      "effectiveInputCount": 13,
+      "inputFingerprint": "815972e2abc5d5c2ef384573717063ef5026f8ec6f8120ce3b69e3d45a4ea870",
+      "effectiveInputCount": 14,
       "catalog": {
         "path": "generated/wp70-release/catalog-v1/catalog.json",
-        "fileSha256": "f349ef5d9ca5000d723b1c3d67c2f31a85b7eae9d46c30b7d0fbd581e96eb65a",
-        "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
-        "capabilityCount": 28,
+        "fileSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e",
+        "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
+        "capabilityCount": 31,
         "evidenceStatus": "inventoried"
       },
       "omissions": {
@@ -60,7 +60,7 @@
       },
       "generationReport": {
         "path": "generated/wp70-release/catalog-v1/generation-report.json",
-        "fileSha256": "1b26926957b50ce7442dd7ade7ce93dba37c79e3ecf5600d645d07b1854d344c"
+        "fileSha256": "ab481e2f18870cfd9da2526d1987656d7c56644bc60d11142d5b6baf89f6e467"
       }
     },
     {
@@ -68,7 +68,7 @@
       "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
       "sourceCommit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
       "wordpress70Compatibility": "forbidden",
-      "inputFingerprint": "60c9719fd305d35a494686c105355a4e1fa36c8c920116b3d3c9f11f7b86a46c",
+      "inputFingerprint": "c2f131b1fb4ec570cc18a49125d9ca5dd9322870910caaee2f3b4542a4e7febd",
       "effectiveInputCount": 3,
       "catalog": {
         "path": "generated/gutenberg-forward-23.4/catalog-v1/catalog.json",
@@ -85,7 +85,7 @@
       },
       "generationReport": {
         "path": "generated/gutenberg-forward-23.4/catalog-v1/generation-report.json",
-        "fileSha256": "44d819ae1cfd36ef51e0f3a0739908e3a6cf03ee8913782279215cbef922c60b"
+        "fileSha256": "3a069da9092170c5d1c08eabcea99bef110ac498c9712935422d4a5af7fefdb6"
       }
     }
   ],
@@ -96,6 +96,9 @@
       "wordpress.hook.init",
       "gutenberg.export.@wordpress/blocks.registerBlockType",
       "wordpress.script-handle.wp-blocks",
+      "wordpress.script-handle.react",
+      "wordpress.script-handle.react-dom",
+      "wordpress.script-handle.react-jsx-runtime",
       "wordpress.block-metadata-key.apiVersion"
     ],
     "forwardEntries": [
@@ -121,6 +124,14 @@
     "path": ".github/workflows/repository.yml",
     "job": "profile-generator",
     "required": true
+  },
+  "postReceiptEvolution": {
+    "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
+    "change": "SDK-033 added the exact native react, react-dom, and react-jsx-runtime script-handle inventory required to validate the official dependency-extraction mapping.",
+    "wordpressSourceCommitChanged": false,
+    "catalogRevisionChanged": false,
+    "classificationOrEvidenceStatusChanged": false,
+    "generatorReplay": "passed"
   },
   "claims": {
     "generatorImplementation": "generated",

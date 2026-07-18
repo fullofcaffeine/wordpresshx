@@ -41,7 +41,7 @@
       "candidateVersion": "1.0.0",
       "candidateCommit": "3f0eced6a354f69704aa9e1385dd7d6611082060",
       "profileId": "wp70-release",
-      "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
       "publicationRequested": true,
       "expectedBlockers": [
         "backup-release-security-owner",

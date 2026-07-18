@@ -1,3 +1,4 @@
 profiles/hxx-common.hxml
+-D js-source-map
 -cp test/hxx-fixture/src
 -main sdk032.fixture.Main

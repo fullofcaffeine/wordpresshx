@@ -113,13 +113,22 @@ required_files=(
   packages/gutenberg/haxe_libraries/tink_parse.hxml
   packages/gutenberg/hxx-tooling/package-lock.json
   packages/gutenberg/hxx-tooling/package.json
+  packages/gutenberg/build-tooling/package-lock.json
+  packages/gutenberg/build-tooling/package.json
+  packages/gutenberg/build-tooling/webpack.config.cjs
+  packages/gutenberg/profiles/assets-strict.hxml
   packages/gutenberg/profiles/classic.hxml
   packages/gutenberg/profiles/default-dce.hxml
   packages/gutenberg/profiles/hxx-common.hxml
   packages/gutenberg/profiles/hxx-strict.hxml
   packages/gutenberg/profiles/strict.hxml
   packages/gutenberg/scripts/test-hxx.sh
+  packages/gutenberg/scripts/test-assets.sh
   packages/gutenberg/scripts/test.sh
+  packages/gutenberg/scripts/emit-assets-plugin.py
+  packages/gutenberg/scripts/run-wordpress-assets-lane.sh
+  packages/gutenberg/scripts/verify-assets-profile.py
+  packages/gutenberg/scripts/verify-assets.mjs
   packages/gutenberg/scripts/verify-browser-profile.mjs
   packages/gutenberg/scripts/verify-dependency-lock.py
   packages/gutenberg/scripts/verify-hxx-profile.py
@@ -134,6 +143,8 @@ required_files=(
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/BrowserHxx.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/react/DomTypes.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/react/Hooks.hx
@@ -157,6 +168,11 @@ required_files=(
   packages/gutenberg/test/hxx-runtime/index.html
   packages/gutenberg/test/hxx-runtime/runtime-entry.tsx
   packages/gutenberg/test/hxx-runtime/visual-entry.tsx
+  packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx
+  packages/gutenberg/test/assets-fixture/src/sdk033/fixture/Main.hx
+  packages/gutenberg/test/assets-runtime/editor-entry.tsx
+  packages/gutenberg/test/assets-runtime/entry-plan.json
+  packages/gutenberg/test/assets-runtime/probe-assets.php
   packages/gutenberg/test/runtime/setup.d.ts
   packages/gutenberg/test/runtime/setup.js
   packages/gutenberg/test/runtime/signals.d.ts
@@ -225,6 +241,7 @@ required_files=(
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-031-strict-browser-profile.json
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
+  manifests/evidence/sdk-033-wordpress-asset-metadata.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
@@ -510,6 +527,22 @@ sdk032_tooling_lock_path = Path(
 sdk032_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-032-react-gutenberg-hxx.json"
+    ).read_text(encoding="utf-8")
+)
+sdk033_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.browser-assets.json"
+)
+sdk033_profile = json.loads(sdk033_profile_path.read_text(encoding="utf-8"))
+sdk033_tooling_manifest_path = Path(
+    "packages/gutenberg/build-tooling/package.json"
+)
+sdk033_tooling_lock_path = Path(
+    "packages/gutenberg/build-tooling/package-lock.json"
+)
+sdk033_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-033-wordpress-asset-metadata.json"
     ).read_text(encoding="utf-8")
 )
 toolchain_lock = json.loads(
@@ -1144,11 +1177,8 @@ assert browser_imports[
 assert browser_imports[
     "compilerOwnedWordpressNameRewritesAllowed"
 ] is False
-catalog = json.loads(
-    Path("generated/wp70-release/catalog-v1/catalog.json").read_text(
-        encoding="utf-8"
-    )
-)
+catalog_path = Path("generated/wp70-release/catalog-v1/catalog.json")
+catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
 catalog_capability_ids = {
     capability["capabilityId"]
     for capability in catalog["catalog"]["capabilities"]
@@ -1159,11 +1189,28 @@ for package_mapping in browser_imports["selectedMappings"]:
     assert package_mapping["handle"] == (
         "wp-" + package_mapping["request"].removeprefix("@wordpress/")
     )
-assert browser_imports["reactMappingsPendingTypedProfileAdmission"] == [
-    {"request": "react", "handle": "react"},
-    {"request": "react-dom", "handle": "react-dom"},
-    {"request": "react/jsx-runtime", "handle": "react-jsx-runtime"},
+assert browser_imports["reactMappings"] == [
+    {
+        "request": "react",
+        "handle": "react",
+        "packageCapability": None,
+        "handleCapability": "wordpress.script-handle.react",
+    },
+    {
+        "request": "react-dom",
+        "handle": "react-dom",
+        "packageCapability": None,
+        "handleCapability": "wordpress.script-handle.react-dom",
+    },
+    {
+        "request": "react/jsx-runtime",
+        "handle": "react-jsx-runtime",
+        "packageCapability": None,
+        "handleCapability": "wordpress.script-handle.react-jsx-runtime",
+    },
 ]
+for react_mapping in browser_imports["reactMappings"]:
+    assert react_mapping["handleCapability"] in catalog_capability_ids
 
 public_exports = browser_architecture["publicExports"]
 assert public_exports["sourceOfTruth"] == (
@@ -1195,12 +1242,19 @@ assert browser_dce["publicGraphRetained"] is True
 assert browser_dce["privateUnreachableCodeRetained"] is False
 assert browser_dce["sideEffectRootsDeclared"] is True
 asset_metadata = browser_architecture["assetMetadata"]
+assert asset_metadata["status"] == (
+    "verified-sdk-033-final-bundle-and-real-wordpress"
+)
 assert asset_metadata["producer"] == (
     "@wordpress/dependency-extraction-webpack-plugin"
 )
 assert asset_metadata["versionComesFromFinalBundleToolOutput"] is True
 assert asset_metadata["manualPreBundleVersionAllowed"] is False
 assert asset_metadata["deterministicCleanReplayRequired"] is True
+assert asset_metadata["translationAttachmentValidatedAgainstFinalHandle"] is True
+assert browser_architecture["evidence"]["wordpressBundleAndAssetParity"] == (
+    "verified-by-sdk-033-wordpress-asset-metadata"
+)
 
 for source_authority in browser_architecture["provenance"].values():
     for source_file in source_authority:
@@ -1591,6 +1645,188 @@ assert sdk032_receipt["claims"]["reactGutenbergHxx"] == (
 )
 assert sdk032_receipt["claims"]["realWordPressEditorRuntime"] == "not-tested"
 assert sdk032_receipt["claims"]["productionSupport"] == "not-tested"
+
+assert sdk033_receipt["schemaVersion"] == 1
+assert sdk033_receipt["receiptId"] == "SDK-033-WORDPRESS-ASSET-METADATA"
+assert sdk033_receipt["bead"] == "wordpresshx-sdk-033"
+assert sdk033_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk033_subject_name, sdk033_subject in sdk033_receipt["subject"].items():
+    if sdk033_subject_name == "package":
+        continue
+    sdk033_subject_path = Path(sdk033_subject["path"])
+    assert hashlib.sha256(sdk033_subject_path.read_bytes()).hexdigest() == (
+        sdk033_subject["sha256"]
+    )
+assert sdk033_receipt["provider"]["profileId"] == sdk033_profile["profileId"]
+assert sdk033_receipt["provider"]["catalogRevision"] == (
+    sdk033_profile["catalogRevision"]
+)
+assert sdk033_receipt["provider"]["catalogDigest"] == catalog["catalogDigest"]
+assert sdk033_receipt["provider"]["catalogFileSha256"] == hashlib.sha256(
+    catalog_path.read_bytes()
+).hexdigest()
+assert sdk033_receipt["provider"]["mappingSource"] == (
+    sdk033_profile["mappingSource"]
+)
+assert sdk033_receipt["toolchain"]["genes"]["version"] == (
+    gutenberg_dependency_lock["compiler"]["version"]
+)
+assert sdk033_receipt["toolchain"]["node"]["image"] == (
+    image_lock["images"]["node"]["reference"]
+)
+assert sdk033_receipt["toolchain"]["integrityLockedPackageCount"] == (
+    len(json.loads(sdk033_tooling_lock_path.read_text(encoding="utf-8"))["packages"])
+    - 1
+)
+sdk033_graph = next(
+    graph
+    for graph in toolchain_lock["dependencyGraphs"]["npm"]["externalGraphs"]
+    if graph["id"] == "sdk-033-wordpress-assets-verification-graph"
+)
+assert sdk033_graph["receiptId"] == sdk033_receipt["receiptId"]
+assert sdk033_graph["profilePath"] == sdk033_profile_path.as_posix()
+assert sdk033_graph["profileSha256"] == hashlib.sha256(
+    sdk033_profile_path.read_bytes()
+).hexdigest()
+assert sdk033_graph["manifestPath"] == sdk033_tooling_manifest_path.as_posix()
+assert sdk033_graph["manifestSha256"] == hashlib.sha256(
+    sdk033_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk033_graph["lockPath"] == sdk033_tooling_lock_path.as_posix()
+assert sdk033_graph["lockSha256"] == hashlib.sha256(
+    sdk033_tooling_lock_path.read_bytes()
+).hexdigest()
+sdk033_tooling_manifest = json.loads(
+    sdk033_tooling_manifest_path.read_text(encoding="utf-8")
+)
+assert set(sdk033_graph["directPackages"]) == {
+    f"{name}@{version}"
+    for name, version in sdk033_tooling_manifest["devDependencies"].items()
+}
+assert sdk033_graph["lifecycleScriptsAllowed"] is False
+assert sdk033_graph["advisoryFollowUp"] == "wordpresshx-g2.3"
+assert sdk033_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+sdk033_evolution = sdk033_receipt["catalogEvolution"]
+assert sdk033_evolution["sourceCommitChanged"] is False
+assert sdk033_evolution["previousCapabilityCount"] == 28
+assert sdk033_evolution["capabilityCount"] == 31
+assert set(sdk033_evolution["addedCapabilities"]) == {
+    "wordpress.script-handle.react",
+    "wordpress.script-handle.react-dom",
+    "wordpress.script-handle.react-jsx-runtime",
+}
+assert all(
+    capability in catalog_capability_ids
+    for capability in sdk033_evolution["addedCapabilities"]
+)
+sdk033_compilation = sdk033_receipt["compilation"]
+assert sdk033_compilation["authoringSurface"] == "haxe-hxx"
+assert sdk033_compilation["ordinaryReturnMarkup"] is True
+assert sdk033_compilation["companionApplicationTsxAuthoredByDeveloper"] is False
+assert sdk033_compilation["sourceImports"] == [
+    "@wordpress/components",
+    "@wordpress/element",
+    "@wordpress/i18n",
+]
+sdk033_adapter = sdk033_receipt["adapter"]
+assert sdk033_adapter["officialDefaultConfigurationLoaded"] is True
+assert sdk033_adapter["officialDependencyPluginInstanceCount"] == 1
+assert sdk033_adapter["officialDependencyPluginReplacementCount"] == 1
+assert sdk033_adapter["replacementOptionDelta"] == {
+    "externalizedReport": True
+}
+assert sdk033_adapter["officialBabelLoaderMatchCount"] == 1
+assert sdk033_adapter["genesSourceChanged"] is False
+assert sdk033_adapter["manualMappingDuplicated"] is False
+sdk033_builds = sdk033_receipt["builds"]
+assert sdk033_builds["externalizedRequests"] == [
+    "@wordpress/components",
+    "@wordpress/element",
+    "@wordpress/i18n",
+    "react/jsx-runtime",
+]
+assert sdk033_builds["finalDependencies"] == [
+    "react-jsx-runtime",
+    "wp-components",
+    "wp-element",
+    "wp-i18n",
+]
+assert sdk033_builds["dependencySetParity"] == "passed"
+assert sdk033_builds["assetVersionDerivedFromFinalBundleBytes"] is True
+for sdk033_lane in ("development", "production"):
+    assert sdk033_builds[sdk033_lane]["outcome"] == "passed"
+    assert sha256.fullmatch(sdk033_builds[sdk033_lane]["bundleSha256"])
+    assert re.fullmatch(
+        r"[0-9a-f]{20}", sdk033_builds[sdk033_lane]["version"]
+    )
+assert sdk033_receipt["nativeEmission"]["officialAssetPhpCopiedUnchanged"] is True
+assert sdk033_receipt["nativeEmission"]["manualAssetPhpEditingAllowed"] is False
+assert sdk033_receipt["nativeEmission"]["php74Syntax"] == "passed"
+assert sdk033_receipt["nativeEmission"]["php84Syntax"] == "passed"
+sdk033_runtime = sdk033_receipt["wordpressRuntime"]
+assert sdk033_runtime["wordpressVersion"] == "7.0"
+assert sdk033_runtime["wordpressImage"] == (
+    image_lock["images"]["wordpress70Php84"]["reference"]
+)
+assert sdk033_runtime["databaseImage"] == image_lock["images"]["mysql"][
+    "reference"
+]
+assert sdk033_runtime["allDirectDependenciesBeforeFinal"] is True
+assert sdk033_runtime["registeredVersionMatchesAsset"] is True
+assert sdk033_runtime["translationJsonLoaded"] is True
+assert sdk033_runtime["translationsPrintedBeforeFinalScript"] is True
+sdk033_security = sdk033_receipt["security"]
+assert sdk033_security["directPackageSourceAndLicenseCheck"] == "passed"
+assert sdk033_security["audit"]["counts"] == {
+    "info": 0,
+    "low": 1,
+    "moderate": 23,
+    "high": 12,
+    "critical": 0,
+    "total": 36,
+}
+assert sdk033_security["audit"]["auditFixApplied"] is False
+assert sdk033_security["audit"]["deterministicGateDependsOnLiveRegistryAudit"] is False
+assert sdk033_security["audit"]["followUpBead"] == "wordpresshx-g2.3"
+assert sdk033_security["mitigations"]["npmLifecycleScriptsAllowed"] is False
+assert sdk033_security["mitigations"]["nodeModulesShipped"] is False
+assert sdk033_security["mitigations"]["publicationAuthorized"] is False
+assert all(
+    result == "passed"
+    for result in sdk033_receipt["reproducibility"].values()
+)
+assert sdk033_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk033_receipt["changeDecision"]["genesPullRequest"] is None
+sdk033_hosted = sdk033_receipt["hostedVerification"]
+assert sdk033_hosted["workflow"] == "repository.yml"
+assert sdk033_hosted["job"] == "wordpress-runtime"
+assert sdk033_hosted["required"] is True
+if sdk033_receipt["status"] == "implemented-hosted-pending":
+    assert sdk033_receipt["implementation"]["commit"] is None
+    assert sdk033_hosted["status"] == "pending-first-push"
+    assert sdk033_hosted["sdk033Step"] == "pending"
+    assert sdk033_hosted["fullMatrixStatus"] == "pending"
+else:
+    assert sdk033_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk033_receipt["implementation"]["commit"])
+    assert sdk033_hosted["commit"] == sdk033_receipt["implementation"]["commit"]
+    assert isinstance(sdk033_hosted["runId"], int)
+    assert isinstance(sdk033_hosted["jobId"], int)
+    assert sdk033_hosted["status"] == "passed"
+    assert sdk033_hosted["sdk033Step"] == "passed"
+    assert sdk033_hosted["fullMatrixStatus"] == "passed"
+assert browser_architecture["evidence"]["wordpressBundleAndAssetParity"] == (
+    "verified-by-sdk-033-wordpress-asset-metadata"
+)
+assert sdk033_receipt["claims"]["officialDependencyExtraction"] == (
+    "runtime-tested"
+)
+assert sdk033_receipt["claims"]["translationAttachment"] == "runtime-tested"
+assert sdk033_receipt["claims"]["scriptModules"] == "not-tested"
+assert sdk033_receipt["claims"]["publicPackagePublication"] == "blocked"
+assert sdk033_receipt["claims"]["productionSupport"] == "not-tested"
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"
@@ -2708,7 +2944,7 @@ assert set(sdk013_profiles) == {
     "wp70-release",
     "gutenberg-forward-23.4",
 }
-assert sdk013_profiles["wp70-release"]["catalog"]["capabilityCount"] == 28
+assert sdk013_profiles["wp70-release"]["catalog"]["capabilityCount"] == 31
 assert sdk013_profiles["gutenberg-forward-23.4"]["catalog"][
     "capabilityCount"
 ] == 5
@@ -2735,6 +2971,12 @@ assert sdk013_receipt["negativeEvidence"]["privateApiPublished"] is False
 assert sdk013_receipt["negativeEvidence"]["contentTypesLeakedIntoWp70"] is False
 assert sdk013_receipt["hostedWorkflow"]["job"] == "profile-generator"
 assert sdk013_receipt["hostedWorkflow"]["required"] is True
+sdk013_evolution = sdk013_receipt["postReceiptEvolution"]
+assert sdk013_evolution["receiptId"] == "SDK-033-WORDPRESS-ASSET-METADATA"
+assert sdk013_evolution["wordpressSourceCommitChanged"] is False
+assert sdk013_evolution["catalogRevisionChanged"] is False
+assert sdk013_evolution["classificationOrEvidenceStatusChanged"] is False
+assert sdk013_evolution["generatorReplay"] == "passed"
 assert sdk013_receipt["claims"]["generatorImplementation"] == "generated"
 assert sdk013_receipt["claims"]["wp70CapabilityCatalog"] == "inventoried"
 assert sdk013_receipt["claims"]["forwardCapabilityCatalog"] == "inventoried"

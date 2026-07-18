@@ -68,9 +68,9 @@
     "defaultAdapter": {
       "package": "@wordpress/scripts",
       "version": "31.5.0",
-      "commandDevelopment": "wp-scripts start",
+      "commandDevelopment": "wp-scripts start --no-watch",
       "commandProduction": "wp-scripts build",
-      "status": "selected-pending-sdk-031-and-sdk-033-install-and-runtime-proof"
+      "status": "verified-sdk-033-final-bundle-and-real-wordpress"
     },
     "dependencyExtraction": {
       "package": "@wordpress/dependency-extraction-webpack-plugin",
@@ -80,7 +80,20 @@
       "manualAssetPhpEditingAllowed": false,
       "finalBundleIsAuthority": true,
       "externalizedReportRequired": true,
-      "developmentProductionDependencySetParityRequired": true
+      "developmentProductionDependencySetParityRequired": true,
+      "officialPluginInstanceCountBeforeAdaptation": 1,
+      "officialPluginReplacementCount": 1,
+      "replacementOptionDelta": {
+        "externalizedReport": true
+      },
+      "genesTypeScriptBabelCompatibility": {
+        "loaderMatchCount": 1,
+        "plugin": "@babel/plugin-transform-typescript",
+        "allowDeclareFields": true,
+        "allExtensions": true,
+        "isTSX": true,
+        "genesSourceChanged": false
+      }
     },
     "equivalentAdapterPolicy": "post-mvp-superseding-or-extending-adr-plus-independent-parity-evidence",
     "scriptModuleDefault": false,
@@ -188,18 +201,24 @@
         "handleCapability": "wordpress.script-handle.wp-i18n"
       }
     ],
-    "reactMappingsPendingTypedProfileAdmission": [
+    "reactMappings": [
       {
         "request": "react",
-        "handle": "react"
+        "handle": "react",
+        "packageCapability": null,
+        "handleCapability": "wordpress.script-handle.react"
       },
       {
         "request": "react-dom",
-        "handle": "react-dom"
+        "handle": "react-dom",
+        "packageCapability": null,
+        "handleCapability": "wordpress.script-handle.react-dom"
       },
       {
         "request": "react/jsx-runtime",
-        "handle": "react-jsx-runtime"
+        "handle": "react-jsx-runtime",
+        "packageCapability": null,
+        "handleCapability": "wordpress.script-handle.react-jsx-runtime"
       }
     ]
   },
@@ -240,6 +259,8 @@
     "retentionManifestComparedBeforeAndAfterBundle": true
   },
   "assetMetadata": {
+    "status": "verified-sdk-033-final-bundle-and-real-wordpress",
+    "profilePath": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json",
     "producer": "@wordpress/dependency-extraction-webpack-plugin",
     "inputsCompared": [
       "generated-esm-import-plan",
@@ -252,7 +273,14 @@
     "versionComesFromFinalBundleToolOutput": true,
     "manualPreBundleVersionAllowed": false,
     "deterministicCleanReplayRequired": true,
-    "translationAttachmentValidatedAgainstFinalHandle": true
+    "translationAttachmentValidatedAgainstFinalHandle": true,
+    "developmentCommandIsOneShot": true,
+    "nativeRuntime": {
+      "wordpressVersion": "7.0",
+      "databaseLane": "mysql",
+      "registeredFinalHandle": "wordpresshx-sdk033-editor",
+      "translationDomain": "wordpresshx-sdk033"
+    }
   },
   "provenance": {
     "genes": [
@@ -310,7 +338,7 @@
     "genesReleaseGatePassed": true,
     "sdkStrictFixture": "verified-by-sdk-031-strict-browser-profile",
     "gutenbergHxxFixture": "verified-by-sdk-032-react-gutenberg-hxx",
-    "wordpressBundleAndAssetParity": "owned-by-wordpresshx-sdk-033",
+    "wordpressBundleAndAssetParity": "verified-by-sdk-033-wordpress-asset-metadata",
     "classicDifferential": "owned-by-wordpresshx-sdk-035",
     "sourceMaps": "owned-by-wordpresshx-sdk-034",
     "browserSdkCompatibility": "not-tested",

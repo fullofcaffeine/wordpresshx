@@ -817,6 +817,111 @@
         "availableIn": [
           "wp70-release"
         ],
+        "capabilityId": "wordpress.script-handle.react",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:react",
+            "sourceDigest": "e5b725771b52db8da27ff34d0924d6a8f39c0b49cc3585e656f916b580889a31",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/script-loader.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.react-dom",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:react-dom",
+            "sourceDigest": "e5b725771b52db8da27ff34d0924d6a8f39c0b49cc3585e656f916b580889a31",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/script-loader.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
+        "capabilityId": "wordpress.script-handle.react-jsx-runtime",
+        "classification": "public",
+        "classificationMetadata": {},
+        "evidence": {
+          "inventory": {
+            "receiptId": "SDK-013-PROFILE-GENERATOR"
+          }
+        },
+        "evidenceStatus": "inventoried",
+        "kind": "script-handle",
+        "provenance": [
+          {
+            "locator": "php-array-key:react-jsx-runtime",
+            "sourceDigest": "e5b725771b52db8da27ff34d0924d6a8f39c0b49cc3585e656f916b580889a31",
+            "sourceInputId": "wordpress-source",
+            "sourcePath": "src/wp-includes/script-loader.php"
+          }
+        ],
+        "providerIdentity": "wordpress:7.0",
+        "receiptIds": [
+          "SDK-010-WP70-RELEASE-SOURCE",
+          "SDK-013-PROFILE-GENERATOR"
+        ]
+      },
+      {
+        "administrativeResults": [
+          {
+            "reason": "SDK-013 inventories exact lexical presence; typed, runtime, and production behavior remain unproven.",
+            "receiptId": "SDK-013-PROFILE-GENERATOR",
+            "result": "not-tested"
+          }
+        ],
+        "availableIn": [
+          "wp70-release"
+        ],
         "capabilityId": "wordpress.script-handle.wp-blocks",
         "classification": "public",
         "classificationMetadata": {},
@@ -1014,7 +1119,7 @@
       }
     ]
   },
-  "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+  "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
   "catalogDigestAlgorithm": "sha256-canonical-json-v1",
   "generator": {
     "identity": "wordpresshx-exact-profile-generator",
