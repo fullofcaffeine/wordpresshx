@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G0-PRODUCT-AUTHORITY-BASELINE",
   "bead": "wordpresshx-g0",
-  "status": "verified",
+  "status": "implemented-hosted-pending",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
@@ -13,15 +13,15 @@
   "subject": {
     "toolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "50ed229c0278497a9e7f7ea3bf82f0b8b247b0a8c917b3e48b68424675685e94"
+      "sha256": "8ae7d3095946bfcf013cf422856860ba3b390218be8ee207fabdc60c1640fb02"
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",
-      "sha256": "b59ea893e776c3619d3a9b64bccab3b1cba05be89fddb61df2cf2a09c700ea60"
+      "sha256": "d3662716374cae775660806c8f353d9debb7bcc1bd2412b773324e741603dee8"
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",
-      "sha256": "dc53a8775fdc2e09be8a08f4e7b0a30a8ec9267c65cf1c3e1ca0a6a641aed783"
+      "sha256": "750b4e678a9bccf6cbabe5bd53fb40d41d1346d92c8752c1d231882e05552ae6"
     },
     "review": {
       "path": "docs/gates/g0-product-authority-and-baseline.md",
@@ -139,14 +139,14 @@
   },
   "implementation": {
     "baseCommit": "9dd2b389c172a9446c0b73ffbcb05a468d53be7b",
-    "commit": "5bd27c512c83b9388ef70a3e1833b4789a2c956b"
+    "commit": null
   },
   "hostedWorkflow": {
     "workflow": "repository.yml",
-    "runId": 29624812133,
-    "commit": "5bd27c512c83b9388ef70a3e1833b4789a2c956b",
-    "status": "passed",
-    "fullMatrixStatus": "passed",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending",
     "jobCount": 10
   },
   "publicationBoundary": {
@@ -157,7 +157,7 @@
     "publicPackagePublicationAuthorized": false
   },
   "claims": {
-    "g0ProductAuthorityAndBaseline": "verified",
+    "g0ProductAuthorityAndBaseline": "implemented-hosted-pending",
     "profileCapabilities": "inventoried",
     "nativePhpBoundary": "not-tested-by-g0",
     "browserBoundary": "not-tested-by-g0",

@@ -16,6 +16,7 @@ class WordPressPublicAdapterPlan {
 	public final registrationPath:String;
 	public final adapterClass:String;
 	public final absoluteAdapterClass:String;
+	public final semanticNodeId:Null<String>;
 
 	final propertyValues:Array<PhpProperty>;
 	final methodValues:Array<PhpMethod>;
@@ -33,7 +34,7 @@ class WordPressPublicAdapterPlan {
 
 	public function new(plugin:PluginBootstrapPlan, className:PhpIdentifier, source:PhpSourceRange, properties:Array<PhpProperty>, methods:Array<PhpMethod>,
 			hooks:Array<WordPressHookRegistration>, restRoutes:Array<WordPressRestRouteRegistration>, blocks:Array<WordPressBlockRegistration>,
-			exports:Array<WordPressPublicExport>) {
+			exports:Array<WordPressPublicExport>, ?semanticNodeId:String) {
 		if (plugin == null || className == null || source == null || properties == null || methods == null || hooks == null || restRoutes == null
 			|| blocks == null || exports == null) {
 			throw "WordPress public adapter plan requires every closed inventory";
@@ -49,6 +50,10 @@ class WordPressPublicAdapterPlan {
 		this.registrationPath = "includes/register-adapters.php";
 		this.adapterClass = plugin.namespace.toString() + "\\" + className.value;
 		this.absoluteAdapterClass = "\\" + adapterClass;
+		if (source.isExact && semanticNodeId == null) {
+			throw "An exact WordPress adapter source requires a semantic node ID";
+		}
+		this.semanticNodeId = semanticNodeId == null ? null : reflaxe.php.ir.PhpStableId.validate(semanticNodeId, "adapter semantic node ID");
 		this.propertyValues = checkedProperties(properties);
 		this.methodValues = checkedMethods(methods);
 		this.hookValues = checkedValues(hooks, "hook");

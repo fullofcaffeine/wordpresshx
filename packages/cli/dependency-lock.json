@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "profile": "classic-genes-node-esm",
+  "compiler": {
+    "name": "genes-ts",
+    "version": "1.36.3",
+    "repository": "https://github.com/fullofcaffeine/genes-ts",
+    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+    "dependency": {
+      "name": "helder.set",
+      "version": "0.3.1"
+    },
+    "sourceChanged": false,
+    "pullRequest": null
+  },
+  "nodeExterns": {
+    "name": "hxnodejs",
+    "version": "10.0.0",
+    "repository": "https://github.com/HaxeFoundation/hxnodejs",
+    "license": "MIT",
+    "haxelibManifestSha256": "406ba17008d327c591bec4c62b0d54c410d98e4a4e84a6501779c6040044112f"
+  },
+  "runtime": {
+    "name": "node",
+    "version": "22.17.0",
+    "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+  },
+  "haxe": {
+    "version": "4.3.7"
+  },
+  "lix": {
+    "cliVersion": "15.12.2"
+  }
+}

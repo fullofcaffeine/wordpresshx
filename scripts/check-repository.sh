@@ -42,11 +42,33 @@ required_files=(
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
   docs/architecture/repository-layout.md
+  docs/php-source-correlation.md
   docs/product/README.md
   docs/release/README.md
   docs/release/release-checklist.md
   docs/release/rollback-checklist.md
   packages/README.md
+  packages/cli/.haxerc
+  packages/cli/README.md
+  packages/cli/dependency-lock.json
+  packages/cli/haxe_libraries/genes-ts.hxml
+  packages/cli/haxe_libraries/helder.set.hxml
+  packages/cli/haxe_libraries/hxnodejs.hxml
+  packages/cli/package-lock.json
+  packages/cli/package.json
+  packages/cli/profiles/classic.hxml
+  packages/cli/scripts/add-node-shebang.py
+  packages/cli/scripts/test.sh
+  packages/cli/scripts/verify-dependency-lock.py
+  packages/cli/scripts/verify-php-trace.py
+  packages/cli/src/wordpresshx/cli/CanonicalJson.hx
+  packages/cli/src/wordpresshx/cli/Content.hx
+  packages/cli/src/wordpresshx/cli/Contract.hx
+  packages/cli/src/wordpresshx/cli/Main.hx
+  packages/cli/src/wordpresshx/cli/NodeGlobals.hx
+  packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx
+  packages/cli/src/wordpresshx/cli/TraceFailure.hx
+  packages/cli/test/expected/private.text
   packages/core/README.md
   packages/core/test.hxml
   packages/core/src/wordpress/hx/core/profile/AdministrativeResult.hx
@@ -201,6 +223,7 @@ required_files=(
   schemas/php-haxe-map.schema.json
   schemas/source-correlation-index.schema.json
   scripts/source-correlation/validate-contracts.py
+  scripts/source-correlation/validate-sdk025.py
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -262,6 +285,7 @@ required_files=(
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
+  manifests/evidence/sdk-025-php-source-correlation.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
@@ -279,12 +303,21 @@ required_files=(
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpProperty.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpQualifiedName.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceRange.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceFile.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceKind.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourcePosition.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpStableId.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpStmt.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpType.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpVisibility.hx
   compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx
   compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedDeclaration.hx
   compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedFile.hx
+  compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedMapping.hx
+  compiler/reflaxe.php/src/reflaxe/php/map/PhpCanonicalJson.hx
+  compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapConfig.hx
+  compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx
+  compiler/reflaxe.php/test/fixtures/SourceFixture.hx
   compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
@@ -294,6 +327,9 @@ required_files=(
   compiler/wordpress/runtime/native-caller.php
   compiler/wordpress/runtime/probe-adapters.php
   compiler/wordpress/runtime/probe-plugin.php
+  compiler/wordpress/runtime/probe-source-correlation.php
+  compiler/wordpress/runtime/source-correlation-caller.php
+  compiler/wordpress/scripts/package-source-correlation.py
   compiler/wordpress/scripts/run-wordpress-lane.sh
   compiler/wordpress/scripts/test-php-matrix.sh
   compiler/wordpress/scripts/test-wordpress.sh
@@ -304,6 +340,8 @@ required_files=(
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookKind.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookRegistration.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpRangeMapWriter.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx
@@ -327,7 +365,10 @@ required_files=(
   compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json
   compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx
   compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx
+  compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx
+  compiler/wordpress/test/fixtures/SourceCorrelationFixture.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx
+  compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressSourceCorrelationTest.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
@@ -433,6 +474,11 @@ wordpress_adapter_receipt = json.loads(
         "manifests/evidence/sdk-023-wordpress-public-php-adapters.json"
     ).read_text(encoding="utf-8")
 )
+sdk025_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-025-php-source-correlation.json"
+    ).read_text(encoding="utf-8")
+)
 haxelib = json.loads(
     Path("compiler/reflaxe.php/haxelib.json").read_text(encoding="utf-8")
 )
@@ -518,6 +564,9 @@ source_correlation_architecture = json.loads(
     Path("manifests/source-correlation-architecture.json").read_text(
         encoding="utf-8"
     )
+)
+cli_dependency_lock = json.loads(
+    Path("packages/cli/dependency-lock.json").read_text(encoding="utf-8")
 )
 gutenberg_dependency_lock_path = Path("packages/gutenberg/dependency-lock.json")
 gutenberg_dependency_lock = json.loads(
@@ -1021,7 +1070,7 @@ assert source_correlation_architecture["decision"] == "ADR-014"
 assert source_correlation_architecture["status"] == "accepted-architecture"
 assert source_correlation_architecture["acceptedAt"] == "2026-07-18"
 assert source_correlation_architecture["claim"] == (
-    "schemas-and-contract-fixtures-only"
+    "sdk-025-php-runtime-and-cli-verified-browser-pending"
 )
 source_contract = source_correlation_architecture["publicContract"]
 assert source_contract["phpMapFormat"] == (
@@ -1167,8 +1216,30 @@ source_evidence = source_correlation_architecture["currentEvidence"]
 assert source_evidence["php"]["declarationRangeFoundationReceiptId"] == (
     php_ir_receipt["receiptId"]
 )
-assert source_evidence["php"]["serializedMapRuntime"] == "not-tested"
-assert source_evidence["php"]["traceCli"] == "not-implemented"
+assert source_evidence["php"]["implementationReceiptId"] == (
+    sdk025_receipt["receiptId"]
+)
+assert source_evidence["php"]["serializedMapRuntime"] == (
+    "bounded-development-packaged-and-wordpress-passed"
+)
+assert source_evidence["php"]["traceCli"] == (
+    "php-implemented-browser-pending-sdk-034"
+)
+assert source_evidence["php"]["contractFixture"] == "runtime-validated"
+assert source_evidence["php"]["exactPhp74"] == (
+    "lint-and-four-native-failures-passed"
+)
+assert source_evidence["php"]["exactPhp84"] == (
+    "lint-and-four-native-failures-passed"
+)
+assert source_evidence["php"]["wordpress70"] == (
+    "four-native-failures-passed-on-mysql-and-mariadb"
+)
+assert source_evidence["php"]["productionPackageRetention"] == (
+    "five-readable-php-files-only"
+)
+assert source_evidence["php"]["nativeFrames"] == "preserved"
+assert source_evidence["php"]["nearestOrBasenameGuessing"] is False
 assert source_evidence["browser"]["genesCommit"] == (
     gutenberg_dependency_lock["compiler"]["commit"]
 )
@@ -1182,7 +1253,154 @@ assert source_evidence["browser"]["officialWordpressScriptsCorrelation"] == (
     "not-tested"
 )
 assert source_evidence["productionSupport"] == "not-tested"
+assert source_evidence["boundedProductionPackageEvidence"] == (
+    "passed-not-a-production-support-claim"
+)
 assert source_evidence["publicationAuthorized"] is False
+
+assert sdk025_receipt["schemaVersion"] == 1
+assert sdk025_receipt["receiptId"] == "SDK-025-PHP-SOURCE-CORRELATION"
+assert sdk025_receipt["bead"] == "wordpresshx-sdk-025"
+assert sdk025_receipt["status"] in {
+    "implemented-local-verified",
+    "verified",
+}
+sdk025_contracts = sdk025_receipt["publicContracts"]
+assert sdk025_contracts["phpMapFormat"] == source_contract["phpMapFormat"]
+assert sdk025_contracts["sourceIndexFormat"] == (
+    source_contract["sourceIndexFormat"]
+)
+assert sdk025_contracts["genericMapFixtureFormat"] == (
+    "reflaxe.php-range-map.v1"
+)
+assert sdk025_contracts["nativeLineLookup"] == (
+    "unique emitter-owned trace anchor only"
+)
+assert sdk025_contracts["pathLookup"] == (
+    "complete normalized logical relative identity only"
+)
+
+sdk025_toolchain = sdk025_receipt["toolchain"]
+assert sdk025_toolchain["haxe"] == cli_dependency_lock["haxe"]["version"]
+assert sdk025_toolchain["lixReportedCli"] == (
+    cli_dependency_lock["lix"]["cliVersion"]
+)
+assert sdk025_toolchain["genes"]["version"] == (
+    cli_dependency_lock["compiler"]["version"]
+)
+assert sdk025_toolchain["genes"]["commit"] == (
+    cli_dependency_lock["compiler"]["commit"]
+)
+assert sdk025_toolchain["genes"]["tree"] == (
+    cli_dependency_lock["compiler"]["tree"]
+)
+assert sdk025_toolchain["node"]["image"] == (
+    image_lock["images"]["node"]["reference"]
+)
+assert sdk025_toolchain["php74"]["image"] == (
+    image_lock["images"]["php74Floor"]["reference"]
+)
+assert sdk025_toolchain["php84"]["image"] == (
+    image_lock["images"]["php84Cli"]["reference"]
+)
+assert sdk025_toolchain["wordpress"]["image"] == (
+    image_lock["images"]["wordpress70Php84"]["reference"]
+)
+assert sdk025_toolchain["mysql"] == image_lock["images"]["mysql"][
+    "reference"
+]
+assert sdk025_toolchain["mariadb"] == image_lock["images"]["mariadb"][
+    "reference"
+]
+
+sdk025_implementation = sdk025_receipt["implementation"]
+assert sdk025_implementation["genericCompiler"]["wordpressKnowledge"] is False
+assert sdk025_implementation["cli"]["applicationLanguage"] == "Haxe"
+assert sdk025_implementation["cli"]["javascriptCompiler"] == "Genes"
+assert sdk025_implementation["cli"]["offline"] is True
+assert sdk025_implementation["cli"]["readOnly"] is True
+assert sdk025_implementation["cli"]["networkLookup"] is False
+assert sdk025_implementation["changeDecision"]["genesSourceChanged"] is False
+assert sdk025_implementation["changeDecision"]["genesPullRequest"] is None
+if sdk025_implementation["implementationCommit"] is not None:
+    assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
+
+sdk025_inputs = sdk025_receipt["authenticatedInputs"]
+assert len({record["path"] for record in sdk025_inputs}) == len(sdk025_inputs)
+for record in sdk025_inputs:
+    assert sha256.fullmatch(record["sha256"])
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+sdk025_fixture = sdk025_receipt["fixtureEvidence"]
+assert sdk025_fixture["mappingCount"] == 13
+assert sdk025_fixture["traceAnchorCount"] == 4
+assert set(sdk025_fixture["failureModes"]) == {
+    "hook",
+    "rest",
+    "render",
+    "private",
+}
+assert sdk025_fixture["privateFailureProducesHonestPartialFrame"] is True
+assert sdk025_fixture["multibyteGenericFixture"] == "café"
+
+sdk025_verification = sdk025_receipt["verification"]
+assert sdk025_verification["genericCompiler"]["outcome"] == "passed"
+assert sdk025_verification["wordpressProfile"]["outcome"] == "passed"
+assert sdk025_verification["exactPhpMatrix"]["php74"] == "passed"
+assert sdk025_verification["exactPhpMatrix"]["php84"] == "passed"
+assert sdk025_verification["wordpressMatrix"]["wordpressVersion"] == "7.0"
+assert len(sdk025_verification["wordpressMatrix"]["lanes"]) == 2
+assert sdk025_verification["wordpressMatrix"]["nativeStackPreserved"] is True
+assert sdk025_verification["traceCli"]["nativeStackCount"] == 8
+assert sdk025_verification["traceCli"]["mappedTraceAnchorCount"] == 8
+assert sdk025_verification["traceCli"]["nativeLinesPreservedByteForByte"] is True
+assert sdk025_verification["traceCli"]["stableTextOutput"] is True
+assert sdk025_verification["traceCli"]["canonicalJsonOutput"] is True
+assert sdk025_verification["failClosed"]["ambiguousAnchorExit"] == 4
+assert sdk025_verification["failClosed"]["basenameOnlyPath"] == (
+    "unmapped-no-layer"
+)
+assert sdk025_verification["failClosed"]["nearestLineFallback"] is False
+assert sdk025_verification["failClosed"]["machinePathLeakCount"] == 0
+
+sdk025_packaging = sdk025_receipt["packaging"]
+assert sdk025_packaging["productionEntries"] == [
+    "includes/Bootstrap.php",
+    "includes/FailureCallbacks.php",
+    "includes/autoload.php",
+    "includes/register-adapters.php",
+    "source-correlation.php",
+]
+assert sdk025_packaging["debugCompanionEntries"] == [
+    "includes/FailureCallbacks.php.haxe-map.json",
+    "source-index.json",
+]
+for forbidden_sdk025_retention in (
+    "mapsInProduction",
+    "sourceIndexInProduction",
+    "sourceContentIncluded",
+    "developmentHandlerIncluded",
+):
+    assert sdk025_packaging[forbidden_sdk025_retention] is False
+assert sdk025_packaging["debugCompanionBoundToProductionPhp"] is True
+assert sdk025_packaging["deterministicReplay"] == "passed"
+
+sdk025_hosted = sdk025_receipt["hostedVerification"]
+assert sdk025_hosted["status"] in {"pending-main-push", "passed"}
+if sdk025_hosted["status"] == "passed":
+    assert sdk025_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk025_hosted["commit"])
+    assert isinstance(sdk025_hosted["runId"], int)
+else:
+    assert sdk025_hosted["commit"] is None
+    assert sdk025_hosted["runId"] is None
+assert sdk025_receipt["claims"]["browserTraceCorrelation"] == (
+    "not-implemented-sdk-034"
+)
+assert sdk025_receipt["claims"]["productionSupport"] == "not-tested"
+assert sdk025_receipt["claims"]["publicPackagePublication"] == "blocked"
 
 reference_review = source_correlation_architecture["referenceReview"]
 assert {reference["repository"] for reference in reference_review} == {
@@ -1204,7 +1422,6 @@ for reference in reference_review:
         assert sha1.fullmatch(reviewed_path["blob"])
 
 assert set(source_correlation_architecture["followUpBeads"]) == {
-    "wordpresshx-sdk-025",
     "wordpresshx-sdk-034",
     "wordpresshx-adr-019",
 }
@@ -2138,7 +2355,15 @@ for path in package_files:
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     package_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
 package_digest = hashlib.sha256(package_digest_input).hexdigest()
-assert package_digest == php_ir_receipt["subject"]["packageContentSha256"]
+assert php_ir_receipt["subject"]["packageContentSha256"] == (
+    "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6"
+)
+assert len(package_files) == sdk025_receipt["subject"][
+    "genericCompilerPackageFileCount"
+]
+assert package_digest == sdk025_receipt["subject"][
+    "genericCompilerPackageContentSha256"
+]
 
 assert wordpress_php_receipt["schemaVersion"] == 1
 assert wordpress_php_receipt["receiptId"] == (

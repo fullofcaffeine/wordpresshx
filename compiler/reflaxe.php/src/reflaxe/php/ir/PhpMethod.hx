@@ -8,6 +8,7 @@ class PhpMethod {
 	public final name:PhpIdentifier;
 	public final returnType:Null<PhpType>;
 	public final source:PhpSourceRange;
+	public final semanticNodeId:Null<String>;
 
 	final parameterValues:Array<PhpParameter>;
 	final bodyValues:Null<Array<PhpStmt>>;
@@ -16,7 +17,7 @@ class PhpMethod {
 	public var body(get, never):Null<Array<PhpStmt>>;
 
 	public function new(visibility:PhpVisibility, isStatic:Bool, returnsByReference:Bool, name:PhpIdentifier, parameters:Array<PhpParameter>,
-			source:PhpSourceRange, ?returnType:PhpType, ?body:Array<PhpStmt>) {
+			source:PhpSourceRange, ?returnType:PhpType, ?body:Array<PhpStmt>, ?semanticNodeId:String) {
 		if (visibility == null || name == null || parameters == null || source == null) {
 			throw "PHP method requires visibility, name, parameters, and source";
 		}
@@ -35,6 +36,7 @@ class PhpMethod {
 		this.returnType = returnType;
 		this.bodyValues = body == null ? null : body.copy();
 		this.source = source;
+		this.semanticNodeId = semanticNodeId == null ? null : PhpStableId.validate(semanticNodeId, "method semantic node ID");
 	}
 
 	function get_parameters():Array<PhpParameter> {

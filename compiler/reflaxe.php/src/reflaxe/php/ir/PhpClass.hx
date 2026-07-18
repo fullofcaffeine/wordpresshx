@@ -6,6 +6,7 @@ class PhpClass {
 	public final name:PhpIdentifier;
 	public final extendsName:Null<PhpQualifiedName>;
 	public final source:PhpSourceRange;
+	public final semanticNodeId:Null<String>;
 
 	final implementedNameValues:Array<PhpQualifiedName>;
 	final propertyValues:Array<PhpProperty>;
@@ -16,7 +17,7 @@ class PhpClass {
 	public var methods(get, never):Array<PhpMethod>;
 
 	public function new(kind:PhpClassKind, name:PhpIdentifier, source:PhpSourceRange, ?extendsName:PhpQualifiedName, ?implementsNames:Array<PhpQualifiedName>,
-			?properties:Array<PhpProperty>, ?methods:Array<PhpMethod>) {
+			?properties:Array<PhpProperty>, ?methods:Array<PhpMethod>, ?semanticNodeId:String) {
 		if (kind == null || name == null || source == null) {
 			throw "PHP class declaration requires kind, name, and source";
 		}
@@ -94,6 +95,7 @@ class PhpClass {
 		this.propertyValues = declaredProperties;
 		this.methodValues = declaredMethods;
 		this.source = source;
+		this.semanticNodeId = semanticNodeId == null ? null : PhpStableId.validate(semanticNodeId, "class semantic node ID");
 	}
 
 	function get_implementsNames():Array<PhpQualifiedName> {

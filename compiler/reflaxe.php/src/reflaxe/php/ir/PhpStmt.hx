@@ -2,6 +2,9 @@ package reflaxe.php.ir;
 
 /** Typed statements admitted by the generic PHP printer. **/
 enum PhpStmt {
+	/** Exact statement provenance; the boolean explicitly opts into a line-only runtime anchor. **/
+	PhpMapped(statement:PhpStmt, source:PhpSourceRange, semanticNodeId:String, traceAnchor:Bool);
+
 	PhpIf(condition:PhpExpr, body:Array<PhpStmt>);
 	PhpIfElse(condition:PhpExpr, body:Array<PhpStmt>, elseBody:Array<PhpStmt>);
 	PhpFor(init:PhpExpr, condition:PhpExpr, update:PhpExpr, body:Array<PhpStmt>);

@@ -18,3 +18,11 @@ spreads, and control flow before Genes emits ordinary readable TSX. The proof
 page bundles and runs real React 18 and WordPress Button/Notice code while
 shipping no HXX parser or UI runtime. No sibling Genes checkout or
 WordPress-specific Genes branch is used.
+
+SDK-025 establishes the [`cli`](cli/README.md) build source for
+`@wordpress-hx/cli`. Its PHP trace application is authored in Haxe and compiled
+to Node ESM by immutable Genes 1.36.3. It validates exact package indexes and
+PHP range maps offline, preserves native frames, emits stable text or canonical
+JSON, and consumes separately retained debug companions. Browser trace
+correlation remains SDK-034 work. No Genes source change, sibling checkout, or
+WordPress-specific compiler branch was required.

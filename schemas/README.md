@@ -16,4 +16,13 @@ line-only PHP frames. The package index binds PHP maps and standard Source Map
 v3 browser layers to complete file identities, supports proven composition,
 explicit two-stage resolution, and unavailable outcomes, and carries debug
 retention policy. The schemas and contract fixture do not claim SDK-025/034
-runtime completion.
+runtime completion by themselves.
+
+SDK-025 now implements and independently validates the PHP side: deterministic
+map/index emission, deliberate public/private WordPress failures, offline
+Haxe/Genes CLI lookup, stable native-plus-correlated output, debug-companion
+retention, tamper/privacy negatives, exact PHP 7.4/8.4 execution, and clean
+WordPress 7.0 MySQL/MariaDB runtime lanes. The bounded receipt is
+[`SDK-025-PHP-SOURCE-CORRELATION`](../manifests/evidence/sdk-025-php-source-correlation.json).
+SDK-034 still owns browser stack parsing, composed/two-stage lookup, and
+development/minified throw evidence.

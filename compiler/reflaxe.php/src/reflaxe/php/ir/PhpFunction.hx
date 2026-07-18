@@ -6,6 +6,7 @@ class PhpFunction {
 	public final name:PhpIdentifier;
 	public final returnType:Null<PhpType>;
 	public final source:PhpSourceRange;
+	public final semanticNodeId:Null<String>;
 
 	final parameterValues:Array<PhpParameter>;
 	final bodyValues:Array<PhpStmt>;
@@ -14,7 +15,7 @@ class PhpFunction {
 	public var body(get, never):Array<PhpStmt>;
 
 	public function new(returnsByReference:Bool, name:PhpIdentifier, parameters:Array<PhpParameter>, body:Array<PhpStmt>, source:PhpSourceRange,
-			?returnType:PhpType) {
+			?returnType:PhpType, ?semanticNodeId:String) {
 		if (name == null || parameters == null || body == null || source == null) {
 			throw "PHP function requires name, parameters, body, and source";
 		}
@@ -29,6 +30,7 @@ class PhpFunction {
 		this.returnType = returnType;
 		this.bodyValues = body.copy();
 		this.source = source;
+		this.semanticNodeId = semanticNodeId == null ? null : PhpStableId.validate(semanticNodeId, "function semantic node ID");
 	}
 
 	function get_parameters():Array<PhpParameter> {

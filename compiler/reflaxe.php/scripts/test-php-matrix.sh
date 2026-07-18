@@ -3,9 +3,10 @@ set -euo pipefail
 
 package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fixture="build/generic-printer-fixture.php"
+correlation_fixture="build/source-correlation-fixture.php"
 expected_output='{"total":14,"count":4,"error":"RuntimeException","label":"generic"}'
 
-if [[ ! -f "${package_root}/${fixture}" ]]; then
+if [[ ! -f "${package_root}/${fixture}" || ! -f "${package_root}/${correlation_fixture}" ]]; then
   echo "missing generated PHP fixture; run scripts/test.sh first" >&2
   exit 1
 fi
@@ -33,11 +34,21 @@ run_fixture() {
   fi
 
   docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php -l "${fixture}"
+	docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php -l "${correlation_fixture}"
   output="$(docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php "${fixture}")"
   if [[ "${output}" != "${expected_output}" ]]; then
     echo "${label} runtime mismatch: ${output}" >&2
     exit 1
   fi
+	set +e
+	output="$(docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php "${correlation_fixture}" 2>&1)"
+	local correlation_status=$?
+	set -e
+	if (( correlation_status == 0 )) || [[ "${output}" != *"RuntimeException: mapped café failure: generic"* ]]; then
+		echo "${label} exact source-correlation failure fixture differed" >&2
+		printf '%s\n' "${output}" >&2
+		exit 1
+	fi
   echo "${label} ${version} lint/runtime fixture passed"
 }
 

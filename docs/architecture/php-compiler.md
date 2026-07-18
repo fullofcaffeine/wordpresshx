@@ -36,6 +36,14 @@ The initial import contains typed statements and expressions for control flow, a
 
 The fixture is neutral: it compiles and prints a PHP program that sums a native array and emits JSON. It also snapshots representative closures, control flow, exceptions, arrays, names, and string escaping, plus negative injection-shaped inputs.
 
+SDK-025 adds exact, content-authenticated source primitives without changing the
+legacy one-based declaration-range view. The printer can record declaration,
+member, and explicitly mapped statement spans as half-open UTF-8 byte ranges,
+paired with stable semantic node IDs and optional emitter-owned line-trace
+anchors. A neutral canonical writer receives its format identity from the
+caller, preserving the generic package's WordPress isolation. Its multibyte
+fixture proves byte/line/column agreement without a target-specific CLI.
+
 ## Public and private emission boundary
 
 ADR-005 classifies generated PHP semantically at the file, symbol, and call-edge
@@ -91,7 +99,15 @@ SDK-080 proves the pinned parser adapter. SDK-081 owns the generic markup and Wo
 
 The package test passed with Haxe 4.3.7 and formatter 1.18.0. The generated namespaced file passes lint and runtime execution on exact PHP 7.4.33 and PHP 8.4.7 container images with output `{"total":14,"count":4,"error":"RuntimeException","label":"generic"}`. The fixture exercises native indexed/associative arrays, callable class-method arrays, a typed static method, a by-reference parameter and local alias, and native exception/catch behavior.
 
-The official PHP images are pinned by multi-platform index digest, and runtime containers execute with networking disabled. Declaration records preserve validated repository-relative Haxe ranges and exact generated start/end lines. ADR-014 now fixes the future content-bound, half-open UTF-8 range-map, unique line-anchor, source-index, retention, and offline trace contracts. SDK-025 owns their implementation, nested expression/statement mappings, deliberate failures, and runtime evidence; SDK-021 does not overstate its one-based declaration records as the accepted map coordinate system or a completed PHP source-map system.
+The official PHP images are pinned by multi-platform index digest, and runtime
+containers execute with networking disabled. SDK-021 declaration records
+preserve their legacy validated source ranges and generated lines. SDK-025 now
+implements ADR-014's separate content-bound, half-open UTF-8 range maps, unique
+line anchors, package source index, retention profiles, and offline PHP trace
+CLI. The representative public/private failure plugin runs directly on exact
+PHP 7.4/8.4 and as an activated WordPress 7.0 plugin over both database lanes;
+eight development/packaged CLI traces preserve every native line and resolve
+the four exact throw anchors.
 
 The original source audit correctly found stale committed evidence rather than claiming a disposable regeneration as a clean pass. `wordpresshx-g1.1` reconciled the source-port evidence through reviewed [PR #1](https://github.com/fullofcaffeine/wordpresshx-port/pull/1) and added the missing closure receipt through [PR #2](https://github.com/fullofcaffeine/wordpresshx-port/pull/2). From a fresh detached checkout of the current authority, `npm ci --ignore-scripts`, `wphx:php:adoption-ci:check`, and `receipts:validate` pass without regeneration: 29 required checks, 28 included WPHX manifests, zero exclusions, and 493 closed tasks linked to 493 receipts.
 
@@ -105,7 +121,7 @@ The aggregate gate covers the five compiler areas that were directly stale in th
 
 The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
-The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The current IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json).
+The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The structural IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json), and exact PHP source-correlation evidence is in [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json).
 
 ## Current non-claims
 
@@ -114,10 +130,14 @@ The package does not yet claim:
 - a Reflaxe compiler driver or arbitrary-Haxe compilation;
 - complete typed-AST lowering;
 - Haxe runtime/stdlib ownership;
-- serialized source maps, trace CLI, or production diagnostics;
+- browser stack/source-map correlation or a production diagnostics handler;
 - WordPress support beyond the bounded SDK-022 plugin bootstrap, general public
   ABI compatibility, or original-path emission;
 - typed HXX/PHP-markup IR or mixed PHP/HTML lowering;
 - publication eligibility.
 
-SDK-021 establishes the structural IR/printer foundation through neutral fixtures. SDK-025 owns serialized source correlation. SDK-022 begins the separate WordPress profile with a native plugin bootstrap; SDK-023 and later beads own the representative public callback surfaces and broader Gate G1 proof.
+SDK-021 establishes the structural IR/printer foundation through neutral
+fixtures. SDK-025 supplies serialized PHP source correlation while preserving
+the same generic boundary. SDK-022 begins the separate WordPress profile with a
+native plugin bootstrap; SDK-023 and later beads own the representative public
+callback surfaces and broader Gate G1 proof. SDK-034 owns browser correlation.

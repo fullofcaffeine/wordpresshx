@@ -276,6 +276,23 @@ Candidate family contracts include portable result/schema types, compiler metada
 
 Cross-project integration requires a public versioned package, schema, or CLI contract; an immutable version/commit and content hash; independent consumer evidence; and a rollback identity. Floating sibling worktrees and private implementation imports are forbidden release dependencies. Cafetera or other future composition tooling may consume published manifests/evidence as a control plane, but it does not become a WordPress runtime dependency.
 
+## Reference-site design evidence
+
+The landing, editorial, and commerce reference sites use the canonical
+[Anthropic frontend-design rubric](https://github.com/anthropics/skills/blob/fa0fa64bdc967915dc8399e803be67759e1e62b8/skills/frontend-design/SKILL.md)
+at commit `fa0fa64bdc967915dc8399e803be67759e1e62b8`, blob
+`decdff43d05908b4c1fc2cfd2d80fc5743440934`. The rubric is a design-process
+reference, not a runtime/build dependency and not copied SDK code.
+
+Each site must pin a concrete subject, audience, and single page job; define a
+subject-grounded four-to-six-color palette and deliberate display/body/utility
+type roles; compare layout sketches; select one justified signature element;
+and critique away choices that could belong to any generic site. Copy uses real
+domain content. Responsive, keyboard-focus, reduced-motion, accessibility, and
+overflow checks are blocking. Desktop/mobile screenshots and a post-build
+critique are retained as evidence. The three sites must not converge on one
+template, palette, type pair, or fashionable default aesthetic.
+
 ## Implementation and evidence sequence
 
 - `SDK-045` proves the Site.hx-centered scaffold and generated ownership boundaries.
@@ -285,5 +302,7 @@ Cross-project integration requires a public versioned package, schema, or CLI co
 - `SDK-084` expands theme metadata, design tokens, patterns, parts, and generated styling.
 - `SDK-110` implements the complete multi-deployable solution workspace.
 - `SDK-111` is the P0 acceptance vertical: a complete site with zero handwritten PHP, JS/TS, WordPress JSON metadata, or CSS configuration.
+- `SDK-112` through `SDK-117` build and verify the reusable reference-site
+  foundation plus distinct landing, editorial, and WooCommerce integrations.
 
 Each bead advances only its named evidence. This document defines intended architecture; it does not promote any capability to `typed`, `generated`, `runtime-tested`, or `production-supported`.

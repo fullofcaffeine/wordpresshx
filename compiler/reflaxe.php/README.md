@@ -7,10 +7,15 @@ The current admitted surface is deliberately bounded:
 - typed PHP file, namespace, function, class, interface, trait, property, method, statement, and expression IR;
 - PHP 7.4-compatible signature types, parameters, by-reference boundaries, native arrays, callable arrays, and closures;
 - validated relative file/source paths, identifiers, qualified names, magic constants, and binary operators;
-- deterministic declaration ordering and declaration-level generated/source line correlation;
+- deterministic declaration ordering plus authenticated declaration, member,
+  and statement-level generated/source byte correlation;
+- content-bound logical source files, semantic node IDs, explicit line-trace
+  anchors, and a deterministic caller-named range-map writer; and
 - a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers.
 
-This is not yet a complete arbitrary-Haxe PHP backend. The Reflaxe driver, typed-AST lowering breadth, Haxe runtime/stdlib strategy, source maps, and public release remain separate gated work.
+This is not yet a complete arbitrary-Haxe PHP backend. The Reflaxe driver,
+typed-AST lowering breadth, Haxe runtime/stdlib strategy, WordPress package
+index/trace policy, and public release remain separate gated work.
 
 ## Boundary
 
@@ -26,7 +31,10 @@ From the repository root:
 bash compiler/reflaxe.php/scripts/test.sh
 ```
 
-The test compiles the Haxe test harness with Haxe 4.3.7, checks deterministic snapshots and rejected unsafe names/operators, writes an ignored PHP fixture, runs `php -l`, and executes the fixture.
+The test compiles the Haxe test harness with Haxe 4.3.7, checks deterministic
+snapshots and rejected unsafe names/operators, emits a neutral multibyte
+source-correlation fixture, writes ignored PHP/map artifacts, runs `php -l`, and
+executes both fixtures.
 
 Run the exact PHP floor/current matrix after the package test has generated its fixture:
 
@@ -34,7 +42,11 @@ Run the exact PHP floor/current matrix after the package test has generated its 
 bash compiler/reflaxe.php/scripts/test-php-matrix.sh
 ```
 
-The matrix uses immutable official PHP container index digests and disables container networking during lint/runtime execution. The rendered declaration ranges are the structural input for SDK-025; this package does not yet serialize the final `*.haxe-map.json` format or provide a trace CLI.
+The matrix uses immutable official PHP container index digests and disables
+container networking during lint/runtime execution. The generic writer accepts
+the map identity from its caller, so the neutral package does not own the public
+WordPressHx `*.haxe-map.json` format, package source index, or CLI. Those remain
+one-way consumers in `compiler/wordpress` and `packages/cli`.
 
 ## Origin and release status
 

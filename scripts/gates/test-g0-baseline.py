@@ -134,13 +134,16 @@ def main() -> int:
         add_port_coupling,
         "full-port coupling pattern 'wphx.compiler'",
     )
+    def invent_hosted_proof(root: Path) -> None:
+        def mutate(value: dict) -> None:
+            value["status"] = "verified"
+            value["claims"]["g0ProductAuthorityAndBaseline"] = "verified"
+
+        mutate_json(root, "manifests/evidence/g0-product-baseline.json", mutate)
+
     negative_case(
         "invented-hosted-proof",
-        lambda root: mutate_json(
-            root,
-            "manifests/evidence/g0-product-baseline.json",
-            lambda value: value["hostedWorkflow"].__setitem__("runId", None),
-        ),
+        invent_hosted_proof,
         "verified G0 receipt needs a hosted run ID",
     )
     negative_case(

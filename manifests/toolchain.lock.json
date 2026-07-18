@@ -188,6 +188,22 @@
           "buildInputOnly": true,
           "advisoryFollowUp": "wordpresshx-g2.3",
           "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA"
+        },
+        {
+          "id": "sdk-025-php-trace-cli-graph",
+          "authority": "package-local-empty-npm-lock-and-exact-haxe-dependency-lock",
+          "manifestPath": "packages/cli/package.json",
+          "manifestSha256": "ba09efcfffc5734a8f31f9fef4d4010a887d1adf94f4e2ffe4a0673d2c940e53",
+          "lockPath": "packages/cli/package-lock.json",
+          "lockSha256": "e9b5376aa5bdf1fb5691ed0ec177ad701fb7ed69ce4dea320201db50de2050a8",
+          "dependencyLockPath": "packages/cli/dependency-lock.json",
+          "dependencyLockSha256": "2715168ab6802b0afc6b97f17017a936c6377cfed7ebd7edfe5fed6c4334d450",
+          "directPackages": [],
+          "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "lifecycleScriptsAllowed": false,
+          "runtimeTool": true,
+          "publicationAuthorized": false,
+          "receiptId": "SDK-025-PHP-SOURCE-CORRELATION"
         }
       ]
     },

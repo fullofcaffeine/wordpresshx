@@ -14,11 +14,27 @@ php -r 'if (PHP_VERSION_ID < 70400) { fwrite(STDERR, "PHP 7.4 or newer is requir
 haxelib run formatter --check -s src -s test
 haxe test.hxml
 php -l build/generic-printer-fixture.php
+php -l build/source-correlation-fixture.php
 
 actual_output="$(php build/generic-printer-fixture.php)"
 expected_output='{"total":14,"count":4,"error":"RuntimeException","label":"generic"}'
 if [[ "${actual_output}" != "${expected_output}" ]]; then
   echo "unexpected PHP runtime output: ${actual_output}" >&2
+  exit 1
+fi
+
+set +e
+correlation_output="$(php build/source-correlation-fixture.php 2>&1)"
+correlation_status=$?
+set -e
+if (( correlation_status == 0 )); then
+  echo "source-correlation fixture did not throw as expected" >&2
+  exit 1
+fi
+if [[ "${correlation_output}" != *"RuntimeException: mapped café failure: generic"* ]] \
+  || [[ "${correlation_output}" != *"source-correlation-fixture.php:"* ]]; then
+  printf '%s\n' "${correlation_output}" >&2
+  echo "source-correlation fixture did not preserve its native PHP failure" >&2
   exit 1
 fi
 

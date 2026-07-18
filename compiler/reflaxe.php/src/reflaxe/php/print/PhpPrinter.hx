@@ -12,8 +12,10 @@ import reflaxe.php.ir.PhpMethod;
 import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpStmt;
+import reflaxe.php.ir.PhpStableId;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
+import haxe.io.Bytes;
 
 using StringTools;
 
@@ -63,7 +65,9 @@ class PhpPrinter {
 				lines.push(line);
 			}
 		}
-		return new PhpRenderedFile(file.path, lines.join("\n") + "\n", renderedDeclarations);
+		final source = lines.join("\n") + "\n";
+		final mappings = collectMappings(file, declarations, renderedDeclarations, source);
+		return new PhpRenderedFile(file.path, source, renderedDeclarations, mappings);
 	}
 
 	public function printDeclaration(declaration:PhpDeclaration):String {
@@ -80,6 +84,9 @@ class PhpPrinter {
 	public function printStatement(statement:PhpStmt, depth:Int = 0):String {
 		final prefix = tabs(depth);
 		return switch (statement) {
+			case PhpMapped(inner, source, semanticNodeId, _):
+				validateMappedStatement(inner, source, semanticNodeId);
+				printStatement(inner, depth);
 			case PhpIf(condition, body):
 				prefix
 				+ "if ( "
@@ -196,6 +203,185 @@ class PhpPrinter {
 				prefix + "break;";
 			case PhpContinue:
 				prefix + "continue;";
+		}
+	}
+
+	function collectMappings(file:PhpFile, declarations:Array<PhpDeclaration>, renderedDeclarations:Array<PhpRenderedDeclaration>,
+			source:String):Array<PhpRenderedMapping> {
+		final mappings:Array<PhpRenderedMapping> = [];
+		for (index in 0...declarations.length) {
+			final declaration = declarations[index];
+			final renderedDeclaration = renderedDeclarations[index];
+			final declarationText = printDeclaration(declaration);
+			final declarationStartByte = byteOffsetForLine(source, renderedDeclaration.generatedStartLine);
+			final declarationEndByte = declarationStartByte + Bytes.ofString(declarationText).length;
+			requireGeneratedSlice(source, declarationStartByte, declarationEndByte, declarationText, renderedDeclaration.stableName);
+			switch (declaration) {
+				case PhpFunctionDeclaration(value):
+					addExactMapping(mappings, "declaration", declarationStartByte, declarationEndByte, value.source, value.semanticNodeId, 0, false);
+					collectStatementMappings(value.body, 1, declarationText, declarationStartByte, 0, mappings, 1);
+				case PhpClassDeclaration(value):
+					addExactMapping(mappings, "declaration", declarationStartByte, declarationEndByte, value.source, value.semanticNodeId, 0, false);
+					var methodCursor = 0;
+					for (method in value.methods) {
+						final methodText = printMethod(method, 1);
+						final methodCharOffset = declarationText.indexOf(methodText, methodCursor);
+						if (methodCharOffset < 0) {
+							throw "Could not locate rendered PHP method: " + method.name.value;
+						}
+						methodCursor = methodCharOffset + methodText.length;
+						final methodStartByte = declarationStartByte + byteOffsetAtCharacter(declarationText, methodCharOffset);
+						final methodEndByte = methodStartByte + Bytes.ofString(methodText).length;
+						addExactMapping(mappings, "member", semanticStartByte(methodText, methodStartByte, 1), methodEndByte, method.source,
+							method.semanticNodeId, 1, false);
+						if (method.body != null) {
+							collectStatementMappings(method.body, 2, methodText, methodStartByte, 0, mappings, 2);
+						}
+					}
+			}
+		}
+		if (file.statements.length > 0) {
+			final startCharacter = source.lastIndexOf(printStatements(file.statements));
+			if (startCharacter < 0) {
+				throw "Could not locate rendered top-level PHP statements";
+			}
+			collectStatementMappings(file.statements, 0, source.substr(startCharacter), byteOffsetAtCharacter(source, startCharacter), 0, mappings, 0);
+		}
+		return mappings;
+	}
+
+	function collectStatementMappings(statements:Array<PhpStmt>, depth:Int, container:String, containerStartByte:Int, initialCursor:Int,
+			mappings:Array<PhpRenderedMapping>, structuralDepth:Int):Int {
+		var cursor = initialCursor;
+		for (statement in statements) {
+			final statementText = printStatement(statement, depth);
+			final statementCharOffset = container.indexOf(statementText, cursor);
+			if (statementCharOffset < 0) {
+				throw "Could not locate rendered PHP statement for exact correlation";
+			}
+			cursor = statementCharOffset + statementText.length;
+			final statementStartByte = containerStartByte + byteOffsetAtCharacter(container, statementCharOffset);
+			final statementEndByte = statementStartByte + Bytes.ofString(statementText).length;
+			final unwrapped = unwrapMappedStatement(statement);
+			if (unwrapped.source != null) {
+				addExactMapping(mappings, "statement", semanticStartByte(statementText, statementStartByte, depth), statementEndByte, unwrapped.source,
+					unwrapped.semanticNodeId, structuralDepth, unwrapped.traceAnchor);
+			}
+			collectNestedStatementMappings(unwrapped.statement, depth, statementText, statementStartByte, mappings, structuralDepth + 1);
+		}
+		return cursor;
+	}
+
+	function collectNestedStatementMappings(statement:PhpStmt, depth:Int, container:String, containerStartByte:Int, mappings:Array<PhpRenderedMapping>,
+			structuralDepth:Int):Void {
+		var cursor = 0;
+		switch (statement) {
+			case PhpIf(_, body) | PhpFor(_, _, _, body) | PhpWhile(_, body) | PhpForeach(_, _, body) | PhpForeachKeyValue(_, _, _, body):
+				collectStatementMappings(body, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+			case PhpIfElse(_, body, elseBody):
+				cursor = collectStatementMappings(body, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+				collectStatementMappings(elseBody, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+			case PhpTryCatch(tryBody, _, _, catchBody):
+				cursor = collectStatementMappings(tryBody, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+				collectStatementMappings(catchBody, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+			case PhpMapped(_, _, _, _):
+				throw "Nested PHP mapping wrappers are not admitted";
+			case _:
+		}
+	}
+
+	function unwrapMappedStatement(statement:PhpStmt):{
+		statement:PhpStmt,
+		source:Null<reflaxe.php.ir.PhpSourceRange>,
+		semanticNodeId:Null<String>,
+		traceAnchor:Bool
+	} {
+		return switch (statement) {
+			case PhpMapped(inner, source, semanticNodeId, traceAnchor):
+				validateMappedStatement(inner, source, semanticNodeId);
+				{
+					statement: inner,
+					source: source,
+					semanticNodeId: semanticNodeId,
+					traceAnchor: traceAnchor
+				};
+			case _: {
+					statement: statement,
+					source: null,
+					semanticNodeId: null,
+					traceAnchor: false
+				};
+		}
+	}
+
+	function validateMappedStatement(statement:PhpStmt, source:reflaxe.php.ir.PhpSourceRange, semanticNodeId:String):Void {
+		if (statement == null || source == null || !source.isExact) {
+			throw "Mapped PHP statement requires an exact source range";
+		}
+		switch (statement) {
+			case PhpMapped(_, _, _, _):
+				throw "Nested PHP mapping wrappers are not admitted";
+			case _:
+		}
+		PhpStableId.validate(semanticNodeId, "statement semantic node ID");
+	}
+
+	function addExactMapping(mappings:Array<PhpRenderedMapping>, nodeKind:String, startByte:Int, endByte:Int, source:reflaxe.php.ir.PhpSourceRange,
+			semanticNodeId:Null<String>, structuralDepth:Int, traceAnchor:Bool):Void {
+		if (!source.isExact) {
+			if (semanticNodeId != null) {
+				throw "A PHP semantic node ID cannot be serialized from a legacy source range";
+			}
+			return;
+		}
+		if (semanticNodeId == null) {
+			throw "An exact PHP source range requires a semantic node ID";
+		}
+		mappings.push(new PhpRenderedMapping(semanticNodeId, nodeKind, startByte, endByte, source, semanticNodeId, structuralDepth, traceAnchor));
+	}
+
+	function byteOffsetForLine(source:String, line:Int):Int {
+		if (line <= 0) {
+			throw "Generated PHP line must be one-based";
+		}
+		final bytes = Bytes.ofString(source);
+		if (line == 1) {
+			return 0;
+		}
+		var currentLine = 1;
+		for (index in 0...bytes.length) {
+			if (bytes.get(index) == 0x0a) {
+				currentLine++;
+				if (currentLine == line) {
+					return index + 1;
+				}
+			}
+		}
+		throw "Generated PHP line is out of bounds: " + line;
+	}
+
+	function byteOffsetAtCharacter(value:String, characterOffset:Int):Int {
+		if (characterOffset < 0 || characterOffset > value.length) {
+			throw "Generated PHP character offset is out of bounds";
+		}
+		return Bytes.ofString(value.substr(0, characterOffset)).length;
+	}
+
+	function semanticStartByte(rendered:String, startByte:Int, depth:Int):Int {
+		final indentation = tabs(depth);
+		if (!rendered.startsWith(indentation)) {
+			throw "Rendered PHP node does not have its expected indentation";
+		}
+		return startByte + Bytes.ofString(indentation).length;
+	}
+
+	function requireGeneratedSlice(source:String, startByte:Int, endByte:Int, expected:String, label:String):Void {
+		final bytes = Bytes.ofString(source);
+		if (startByte < 0
+			|| endByte > bytes.length
+			|| endByte <= startByte
+			|| bytes.sub(startByte, endByte - startByte).toString() != expected) {
+			throw "Rendered PHP byte span does not match declaration: " + label;
 		}
 	}
 

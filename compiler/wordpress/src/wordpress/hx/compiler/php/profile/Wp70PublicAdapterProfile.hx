@@ -31,7 +31,7 @@ class Wp70PublicAdapterProfile {
 		final methods = plan.methods;
 		methods.push(registrationMethod("registerRestRoutes", restRegistrationBody(plan), plan));
 		methods.push(registrationMethod("registerBlocks", blockRegistrationBody(plan), plan));
-		final adapterClass = new PhpClass(PhpClassKindClass, plan.className, plan.source, null, [], plan.properties, methods);
+		final adapterClass = new PhpClass(PhpClassKindClass, plan.className, plan.source, null, [], plan.properties, methods, plan.semanticNodeId);
 		final adapterFile = new PhpFile(plan.adapterPath, plan.plugin.namespace, true, [PhpClassDeclaration(adapterClass)]);
 		final registrationFile = new PhpFile(plan.registrationPath, null, true, [], registrationStatements(plan));
 		final autoloadFile = new PhpFile(plan.plugin.autoloadPath, null, true, [], [
@@ -54,7 +54,8 @@ class Wp70PublicAdapterProfile {
 	}
 
 	static function registrationMethod(name:String, body:Array<PhpStmt>, plan:WordPressPublicAdapterPlan):PhpMethod {
-		return new PhpMethod(PhpPublic, true, false, id(name), [], plan.source, PhpVoidType, body);
+		final semanticNodeId = plan.semanticNodeId == null ? null : plan.semanticNodeId + ":synthesized:" + name.toLowerCase();
+		return new PhpMethod(PhpPublic, true, false, id(name), [], plan.source, PhpVoidType, body, semanticNodeId);
 	}
 
 	static function restRegistrationBody(plan:WordPressPublicAdapterPlan):Array<PhpStmt> {

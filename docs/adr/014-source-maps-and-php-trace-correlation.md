@@ -8,6 +8,18 @@
 - Supersedes: none
 - Superseded by: none
 
+## Implementation status
+
+SDK-025 now implements the PHP half of this decision. The generic compiler emits
+authenticated declaration/member/statement ranges and unique trace anchors; the
+WordPress build layer writes the v1 map/index; and the Haxe/Genes CLI provides
+offline stable text/JSON lookup while preserving native frames. Exact PHP
+7.4/8.4, development/debug-companion packaging, and real WordPress 7.0
+MySQL/MariaDB failure lanes pass. This is bounded runtime and package evidence,
+not a general production-support or publication claim. SDK-034 still owns the
+browser half, and the optional WordPress development handler remains
+unimplemented.
+
 ## Context
 
 WordPressHx needs failures in generated PHP and browser bundles to lead a Haxe
@@ -415,10 +427,10 @@ Costs and limitations:
   checks.
 - Map composition must be re-proven per exact adapter/profile/entry/mode after
   relevant toolchain changes.
-- The current declaration range types require a deliberate SDK-025 migration.
-- This ADR accepts formats and contract fixtures only. PHP runtime mapping, the
-  CLI, official WordPress browser correlation, deliberate throws, and production
-  support remain untested.
+- Fine-grained mappings still require explicit lowering coverage; SDK-025 does
+  not infer spans for arbitrary compiler output.
+- Official WordPress browser correlation, the optional development handler,
+  general production support, and publication remain untested.
 
 ## Evidence and commands
 
@@ -430,6 +442,10 @@ browser continuity, production map leakage, and source-content policy.
 
 ```bash
 python3 scripts/source-correlation/validate-contracts.py
+bash compiler/reflaxe.php/scripts/test.sh
+bash compiler/wordpress/scripts/test.sh
+bash compiler/wordpress/scripts/test-wordpress.sh
+bash packages/cli/scripts/test.sh
 bash scripts/check-repository.sh
 ```
 
@@ -446,6 +462,13 @@ Existing bounded evidence remains linked rather than promoted:
   correlation with zero machine-path leaks; and
 - `SDK-033-WORDPRESS-ASSET-METADATA`: exact official WordPress build/asset lane,
   with source correlation explicitly pending.
+
+`SDK-025-PHP-SOURCE-CORRELATION` adds the PHP implementation evidence: two
+closed runtime indexes/maps, 13 mappings and four trace anchors per profile,
+eight stable development/packaged CLI traces, deliberate hook/REST/render/private
+failures on clean WordPress over both database lanes, deterministic PHP-only
+production and map/index-only debug ZIPs, and fail-closed tamper/path tests. The
+receipt deliberately leaves browser correlation and production support pending.
 
 ### Compiler-family and full-port review provenance
 
@@ -478,10 +501,11 @@ change is required by this ADR.
 
 ## Migration, rollback, and supersession
 
-SDK-025 must add exact byte provenance to the generic PHP printer/lowering path
-without reinterpreting SDK-021's one-based range type. It should first emit and
-lookup the neutral fixture, then add deliberate public/private WordPress failures,
-package indexing, trace text/JSON snapshots, and privacy negatives.
+SDK-025 added exact byte provenance beside, rather than by reinterpreting,
+SDK-021's one-based legacy range view. Its neutral fixture, deliberate
+public/private WordPress failures, package index, trace snapshots, and privacy
+negatives are retained as regression gates. A regression can still omit the map
+and report native/unmapped frames without changing PHP runtime bytes.
 
 SDK-034 must project existing SDK-032 evidence into the index, add deliberate
 development/minified failures, and independently prove the official
@@ -499,8 +523,6 @@ old evidence.
 
 ## Follow-up beads
 
-- `wordpresshx-sdk-025`: implement PHP range-map emission, source indexing, and
-  offline PHP trace CLI with deliberate public/private failures.
 - `wordpresshx-sdk-034`: implement exact browser composition admission,
   two-stage lookup, and development/minified runtime throws.
 - `wordpresshx-adr-019`: finish the general unsafe-boundary/waiver policy used by

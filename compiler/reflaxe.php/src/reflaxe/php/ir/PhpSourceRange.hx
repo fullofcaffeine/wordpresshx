@@ -1,14 +1,26 @@
 package reflaxe.php.ir;
 
-/** Immutable one-based Haxe source range with repository-relative file identity. **/
+/**
+ * Source range with a legacy one-based view and optional authenticated bytes.
+ *
+ * `at` preserves the original declaration-range contract. `exact` adds the
+ * authoritative half-open UTF-8 byte coordinates required by range maps.
+**/
 class PhpSourceRange {
 	public final file:String;
 	public final startLine:Int;
 	public final startColumn:Int;
 	public final endLine:Int;
 	public final endColumn:Int;
+	public final sourceFile:Null<PhpSourceFile>;
+	public final startByte:Null<Int>;
+	public final endByte:Null<Int>;
+	public final startColumnUtf8:Null<Int>;
+	public final endColumnUtf8:Null<Int>;
+	public final isExact:Bool;
 
-	private function new(file:String, startLine:Int, startColumn:Int, endLine:Int, endColumn:Int) {
+	private function new(file:String, startLine:Int, startColumn:Int, endLine:Int, endColumn:Int, sourceFile:Null<PhpSourceFile>, startByte:Null<Int>,
+			endByte:Null<Int>, startColumnUtf8:Null<Int>, endColumnUtf8:Null<Int>) {
 		this.file = validateFile(file);
 		if (startLine <= 0
 			|| startColumn <= 0
@@ -22,10 +34,26 @@ class PhpSourceRange {
 		this.startColumn = startColumn;
 		this.endLine = endLine;
 		this.endColumn = endColumn;
+		this.sourceFile = sourceFile;
+		this.startByte = startByte;
+		this.endByte = endByte;
+		this.startColumnUtf8 = startColumnUtf8;
+		this.endColumnUtf8 = endColumnUtf8;
+		this.isExact = sourceFile != null;
 	}
 
 	public static function at(file:String, startLine:Int, startColumn:Int, endLine:Int, endColumn:Int):PhpSourceRange {
-		return new PhpSourceRange(file, startLine, startColumn, endLine, endColumn);
+		return new PhpSourceRange(file, startLine, startColumn, endLine, endColumn, null, null, null, null, null);
+	}
+
+	public static function exact(sourceFile:PhpSourceFile, startByte:Int, endByte:Int):PhpSourceRange {
+		if (sourceFile == null || startByte < 0 || endByte <= startByte || endByte > sourceFile.byteLength) {
+			throw "Exact PHP source range must be non-empty and in bounds";
+		}
+		final start = sourceFile.positionAt(startByte);
+		final end = sourceFile.positionAt(endByte);
+		return new PhpSourceRange(sourceFile.path, start.line, start.columnUtf8 + 1, end.line, end.columnUtf8 + 1, sourceFile, startByte, endByte,
+			start.columnUtf8, end.columnUtf8);
 	}
 
 	static function validateFile(value:String):String {

@@ -3,7 +3,7 @@
   "decision": "ADR-014",
   "status": "accepted-architecture",
   "acceptedAt": "2026-07-18",
-  "claim": "schemas-and-contract-fixtures-only",
+  "claim": "sdk-025-php-runtime-and-cli-verified-browser-pending",
   "publicContract": {
     "phpMapFormat": "wordpresshx.php-haxe-range-map.v1",
     "phpMapSchema": "schemas/php-haxe-map.schema.json",
@@ -210,9 +210,17 @@
   "currentEvidence": {
     "php": {
       "declarationRangeFoundationReceiptId": "SDK-021-PHP-IR-PRINTER",
-      "serializedMapRuntime": "not-tested",
-      "traceCli": "not-implemented",
-      "contractFixture": "schema-only"
+      "implementationReceiptId": "SDK-025-PHP-SOURCE-CORRELATION",
+      "serializedMapRuntime": "bounded-development-packaged-and-wordpress-passed",
+      "traceCli": "php-implemented-browser-pending-sdk-034",
+      "contractFixture": "runtime-validated",
+      "exactPhp74": "lint-and-four-native-failures-passed",
+      "exactPhp84": "lint-and-four-native-failures-passed",
+      "wordpress70": "four-native-failures-passed-on-mysql-and-mariadb",
+      "productionPackageRetention": "five-readable-php-files-only",
+      "debugCompanion": "deterministic-content-bound-map-and-index-no-source-content",
+      "nativeFrames": "preserved",
+      "nearestOrBasenameGuessing": false
     },
     "browser": {
       "genesCompilerVersion": "1.36.3",
@@ -224,6 +232,7 @@
       "deliberateDevelopmentAndProductionThrows": "not-tested"
     },
     "productionSupport": "not-tested",
+    "boundedProductionPackageEvidence": "passed-not-a-production-support-claim",
     "publicationAuthorized": false
   },
   "referenceReview": [
@@ -369,7 +378,6 @@
     "schema": "retain-v1-reader-and-emit-new-version-with-explicit-migration"
   },
   "followUpBeads": [
-    "wordpresshx-sdk-025",
     "wordpresshx-sdk-034",
     "wordpresshx-adr-019"
   ],

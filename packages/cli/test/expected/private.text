@@ -1,0 +1,8 @@
+RuntimeException: private failure in /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php:29
+  => mapped-trace-anchor project:compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx:26:2 semantic=fixture:source-correlation:throw:private mapping=fixture:source-correlation:throw:private
+Stack trace:
+#0 /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php(25): Fixture\Correlation\FailureCallbacks::privateFailure()
+  => unmapped-no-anchor
+#1 /repo/compiler/wordpress/runtime/source-correlation-caller.php(40): Fixture\Correlation\FailureCallbacks::failPrivate()
+  => unmapped-no-layer
+#2 {main}

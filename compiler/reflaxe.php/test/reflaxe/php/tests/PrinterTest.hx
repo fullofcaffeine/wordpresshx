@@ -1,5 +1,8 @@
 package reflaxe.php.tests;
 
+import haxe.Json;
+import haxe.crypto.Sha256;
+import haxe.io.Bytes;
 import reflaxe.php.ir.PhpArrayEntry;
 import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
@@ -14,9 +17,13 @@ import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpQualifiedName;
 import reflaxe.php.ir.PhpSourceRange;
+import reflaxe.php.ir.PhpSourceFile;
+import reflaxe.php.ir.PhpSourceKind;
 import reflaxe.php.ir.PhpStmt;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
+import reflaxe.php.map.PhpRangeMapConfig;
+import reflaxe.php.map.PhpRangeMapWriter;
 import reflaxe.php.print.PhpPrinter;
 import sys.FileSystem;
 import sys.io.File;
@@ -30,6 +37,7 @@ class PrinterTest {
 		testStatements();
 		testClassShapes();
 		testFileDeclarationsAndSourceRanges();
+		testExactSourceCorrelation();
 		testFailClosedNamesAndOperators();
 		writeExecutableFixture();
 		Sys.println("reflaxe.php printer tests passed");
@@ -94,6 +102,56 @@ class PrinterTest {
 			[new PhpProperty(PhpProtected, false, id("label"), PhpString("generic"))], [traitMethod]);
 		assertEquals("trait Helper {\n\tprotected $label = 'generic';\n\n\tprotected function label(): string {\n\t\treturn $label;\n\t}\n}",
 			printer.printDeclaration(PhpClassDeclaration(traitDeclaration)), "trait declaration");
+	}
+
+	static function testExactSourceCorrelation():Void {
+		final content = File.getContent("test/fixtures/SourceFixture.hx");
+		final sourceFile = new PhpSourceFile("source:fixture", "project", "test/fixtures/SourceFixture.hx", PhpHaxeSource, content);
+		final classSource = exactDelimited(sourceFile, "class SourceFixture", content.length);
+		final methodStart = content.indexOf("public static function fail");
+		final methodEnd = content.indexOf("\n\t}", methodStart) + 3;
+		final methodSource = exactDelimited(sourceFile, "public static function fail", methodEnd);
+		final throwSource = exactNeedle(sourceFile, "throw new haxe.Exception(\"mapped café failure: \" + label);");
+		final mappedThrow = PhpMapped(PhpThrow(PhpNew("\\RuntimeException", [PhpBinop(".", PhpString("mapped café failure: "), PhpVar("label"))])),
+			throwSource, "source-fixture:fail:throw", true);
+		final method = new PhpMethod(PhpPublic, true, false, id("fail"), [PhpParameter.named(id("label"), PhpStringType)], methodSource, PhpVoidType,
+			[mappedThrow], "source-fixture:fail");
+		final declaration = new PhpClass(PhpClassKindClass, id("SourceFixture"), classSource, null, [], [], [method], "source-fixture:class");
+		final rendered = printer.printFile(new PhpFile("build/source-correlation-fixture.php", PhpQualifiedName.relative("Fixture\\Correlation"), true,
+			[PhpClassDeclaration(declaration)], [PhpExprStmt(PhpStaticCall("SourceFixture", "fail", [PhpString("generic")]))]));
+		assertEquals("3", Std.string(rendered.mappingCount), "exact rendered mapping count");
+		assertEquals("statement", rendered.mappingAt(2).nodeKind, "statement mapping kind");
+		assertEquals("true", Std.string(rendered.mappingAt(2).traceAnchor), "statement trace anchor intent");
+
+		final hash = Sha256.encode("neutral-range-map-fixture").toLowerCase();
+		final writer = new PhpRangeMapWriter(new PhpRangeMapConfig("reflaxe.php-range-map.v1", "reflaxe.php.fixture", "0.0.0", hash,
+			Sha256.encode(content).toLowerCase()));
+		final map = writer.write(rendered);
+		assertEquals(map, writer.write(rendered), "exact range-map determinism");
+		final document:Dynamic = Json.parse(map);
+		assertEquals("reflaxe.php-range-map.v1", document.format, "neutral range-map format");
+		assertEquals(sourceFile.sha256, document.sources[0].sha256, "source content hash");
+		assertEquals("1", Std.string(document.traceAnchors.length), "trace anchor count");
+		assertEquals("source-fixture:fail:throw", document.traceAnchors[0].mappingId, "trace anchor mapping ID");
+		final throwMapping = mappingById(document, "source-fixture:fail:throw");
+		assertEquals("2", Std.string(throwMapping.origin.sourceSpan.start.columnUtf8), "UTF-8 source column");
+		assertEquals("2", Std.string(throwMapping.generatedSpan.start.columnUtf8), "UTF-8 generated column");
+
+		final accentCharacter = content.indexOf("é");
+		final accentByte = Bytes.ofString(content.substr(0, accentCharacter)).length;
+		assertThrows(() -> sourceFile.positionAt(accentByte + 1), "split UTF-8 source offset");
+		assertThrows(() -> sourceFile.exactRange(accentByte + 1, accentByte + 2), "split UTF-8 exact range");
+		assertThrows(() -> printer.printFile(new PhpFile("build/missing-semantic.php", null, true, [
+			PhpClassDeclaration(new PhpClass(PhpClassKindClass, id("MissingSemantic"), classSource))
+		])), "exact range without semantic identity");
+		assertThrows(() -> printer.printStatement(PhpMapped(PhpMapped(PhpReturnVoid, throwSource, "inner", false), throwSource, "outer", false)),
+			"nested statement mapping");
+
+		if (!FileSystem.exists("build")) {
+			FileSystem.createDirectory("build");
+		}
+		File.saveContent("build/source-correlation-fixture.php", rendered.source);
+		File.saveContent("build/source-correlation-fixture.php.haxe-map.json", map);
 	}
 
 	static function testFailClosedNamesAndOperators():Void {
@@ -185,6 +243,32 @@ class PrinterTest {
 
 	static function id(value:String):PhpIdentifier {
 		return PhpIdentifier.named(value);
+	}
+
+	static function exactNeedle(source:PhpSourceFile, needle:String):PhpSourceRange {
+		final start = source.content.indexOf(needle);
+		if (start < 0 || source.content.indexOf(needle, start + needle.length) >= 0) {
+			throw "fixture needle must occur exactly once: " + needle;
+		}
+		final startByte = Bytes.ofString(source.content.substr(0, start)).length;
+		return source.exactRange(startByte, startByte + Bytes.ofString(needle).length);
+	}
+
+	static function mappingById(document:Dynamic, mappingId:String):Dynamic {
+		for (mapping in cast(document.mappings, Array<Dynamic>)) {
+			if (mapping.id == mappingId) {
+				return mapping;
+			}
+		}
+		throw "missing fixture mapping: " + mappingId;
+	}
+
+	static function exactDelimited(source:PhpSourceFile, startNeedle:String, endCharacter:Int):PhpSourceRange {
+		final start = source.content.indexOf(startNeedle);
+		if (start < 0 || endCharacter <= start || endCharacter > source.content.length) {
+			throw "fixture exact delimiter is invalid: " + startNeedle;
+		}
+		return source.exactRange(Bytes.ofString(source.content.substr(0, start)).length, Bytes.ofString(source.content.substr(0, endCharacter)).length);
 	}
 
 	static function item(value:PhpExpr):PhpArrayEntry {

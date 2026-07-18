@@ -1,0 +1,6 @@
+-lib genes-ts
+-lib hxnodejs
+-cp src
+-main wordpresshx.cli.Main
+-D js-es=6
+-dce full

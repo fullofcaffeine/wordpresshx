@@ -6,6 +6,7 @@ repository_root="$(cd "${package_root}/../.." && pwd)"
 compose_file="${repository_root}/docker/wordpress/compose.yml"
 fixture_dir="${package_root}/build/acme-books"
 adapter_fixture_dir="${package_root}/build/acme-books-adapters"
+correlation_fixture_dir="${package_root}/build/source-correlation/production-plugin"
 lane="${1:-}"
 project_name="${WORDPRESSHX_COMPOSE_PROJECT_NAME:-wordpresshx-sdk023}"
 
@@ -23,6 +24,10 @@ if [[ ! -f "${fixture_dir}/acme-books.php" ]]; then
 fi
 if [[ ! -f "${adapter_fixture_dir}/acme-books-adapters.php" ]]; then
   echo "missing generated acme-books-adapters plugin fixture" >&2
+  exit 2
+fi
+if [[ ! -f "${correlation_fixture_dir}/source-correlation.php" ]]; then
+  echo "missing generated source-correlation plugin fixture" >&2
   exit 2
 fi
 if ! command -v docker >/dev/null 2>&1; then
@@ -85,12 +90,16 @@ if payload != expected:
   "${wordpress_service}:/var/www/html/wp-content/plugins/acme-books" >&2
 "${compose[@]}" cp "${adapter_fixture_dir}" \
   "${wordpress_service}:/var/www/html/wp-content/plugins/acme-books-adapters" >&2
+"${compose[@]}" cp "${correlation_fixture_dir}" \
+  "${wordpress_service}:/var/www/html/wp-content/plugins/source-correlation" >&2
 "${compose[@]}" cp "${package_root}/runtime/activate-plugin.php" \
   "${wordpress_service}:/opt/wordpresshx/activate-plugin.php" >&2
 "${compose[@]}" cp "${package_root}/runtime/probe-plugin.php" \
   "${wordpress_service}:/opt/wordpresshx/probe-plugin.php" >&2
 "${compose[@]}" cp "${package_root}/runtime/probe-adapters.php" \
   "${wordpress_service}:/opt/wordpresshx/probe-adapters.php" >&2
+"${compose[@]}" cp "${package_root}/runtime/probe-source-correlation.php" \
+  "${wordpress_service}:/opt/wordpresshx/probe-source-correlation.php" >&2
 
 activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/activate-plugin.php \
@@ -104,6 +113,12 @@ adapter_activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" 
 adapter_probe_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/probe-adapters.php \
   acme-books-adapters/acme-books-adapters.php 'Acme\BooksAdapters\PublicAdapters')"
+correlation_activation_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
+  php /opt/wordpresshx/activate-plugin.php \
+  source-correlation/source-correlation.php 'Fixture\Correlation\Bootstrap')"
+correlation_probe_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
+  php /opt/wordpresshx/probe-source-correlation.php \
+  source-correlation/source-correlation.php 'Fixture\Correlation\FailureCallbacks')"
 health_json="$("${compose[@]}" exec --no-TTY "${wordpress_service}" \
   php /opt/wordpresshx/health.php)"
 
@@ -122,7 +137,8 @@ fi
 
 result="$(python3 - "${lane}" "${repository_root}/docker/images.lock.json" \
   "${install_json}" "${health_json}" "${activation_json}" "${probe_json}" \
-  "${adapter_activation_json}" "${adapter_probe_json}" <<'PY'
+  "${adapter_activation_json}" "${adapter_probe_json}" \
+  "${correlation_activation_json}" "${correlation_probe_json}" <<'PY'
 import json
 import sys
 
@@ -135,6 +151,8 @@ import sys
     probe_json,
     adapter_activation_json,
     adapter_probe_json,
+    correlation_activation_json,
+    correlation_probe_json,
 ) = sys.argv[1:]
 images = json.load(open(lock_path, encoding="utf-8"))["images"]
 database_key = "mysql" if lane == "mysql" else "mariadb"
@@ -143,7 +161,7 @@ print(json.dumps({
         "activation": json.loads(adapter_activation_json),
         "freshRequestProbe": json.loads(adapter_probe_json),
     },
-    "check": "wordpresshx-sdk023-wordpress-lane-v1",
+    "check": "wordpresshx-sdk023-sdk025-wordpress-lane-v1",
     "databaseImage": images[database_key]["reference"],
     "databaseLane": lane,
     "freshReset": "passed",
@@ -152,6 +170,10 @@ print(json.dumps({
     "pluginFixture": {
         "activation": json.loads(activation_json),
         "freshRequestProbe": json.loads(probe_json),
+    },
+    "sourceCorrelationFixture": {
+        "activation": json.loads(correlation_activation_json),
+        "freshRequestProbe": json.loads(correlation_probe_json),
     },
     "runtime": json.loads(health_json),
     "wordpressImage": images["wordpress70Php84"]["reference"],

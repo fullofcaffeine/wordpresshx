@@ -41,7 +41,7 @@ run_fixture() {
   docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" sh -euc \
-    "find build/acme-books build/acme-books-adapters -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
+    "find build/acme-books build/acme-books-adapters build/source-correlation -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
   output="$(docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" php "${fixture}")"
@@ -70,6 +70,22 @@ run_fixture() {
     echo "${label} native adapter caller mismatch: ${output}" >&2
     exit 1
   fi
+	for correlation_profile in development packaged-evidence production-plugin; do
+		for mode in hook rest render private; do
+			set +e
+			output="$(docker run --rm --network none \
+				--mount "type=bind,src=${package_root},dst=/work,readonly" \
+				-w /work "${image}" php runtime/source-correlation-caller.php \
+				"build/source-correlation/${correlation_profile}/includes/FailureCallbacks.php" "${mode}" 2>&1)"
+			local correlation_status=$?
+			set -e
+			if (( correlation_status != 17 )) || [[ "${output}" != *"${mode} failure"* ]] || [[ "${output}" != *"FailureCallbacks.php"* ]]; then
+				echo "${label} ${correlation_profile}/${mode} native failure differed" >&2
+				printf '%s\n' "${output}" >&2
+				exit 1
+			fi
+		done
+	done
   echo "${label} ${version} WordPress public PHP lint/native-callers passed"
 }
 

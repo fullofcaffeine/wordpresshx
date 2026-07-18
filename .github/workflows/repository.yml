@@ -146,6 +146,8 @@ jobs:
           npm install --global lix@15.12.4
           lix install haxe 4.3.7 --global
           haxelib install formatter 1.18.0 --quiet
+      - name: Test Haxe and Genes PHP trace CLI
+        run: bash packages/cli/scripts/test.sh
       - name: Test typed compile-time HXX parser prototype
         run: bash packages/hxx/scripts/test.sh
       - name: Test strict Gutenberg browser compiler profile

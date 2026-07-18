@@ -222,7 +222,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
     external_graphs = npm.get("externalGraphs", [])
     audit.check(
-        isinstance(external_graphs, list) and len(external_graphs) == 4,
+        isinstance(external_graphs, list) and len(external_graphs) == 5,
         "npm external graph set changed",
     )
     genes_graph = (
@@ -243,6 +243,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     sdk033_graph = (
         external_graphs[3]
         if isinstance(external_graphs, list) and len(external_graphs) > 3
+        else {}
+    )
+    sdk025_graph = (
+        external_graphs[4]
+        if isinstance(external_graphs, list) and len(external_graphs) > 4
         else {}
     )
     audit.check(
@@ -296,6 +301,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/tooling/package.json",
                 "packages/gutenberg/hxx-tooling/package.json",
                 "packages/gutenberg/build-tooling/package.json",
+                "packages/cli/package.json",
             ]
         ),
         "unlocked package.json found",
@@ -310,6 +316,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/tooling/package-lock.json",
                 "packages/gutenberg/hxx-tooling/package-lock.json",
                 "packages/gutenberg/build-tooling/package-lock.json",
+                "packages/cli/package-lock.json",
             ]
         ),
         "unlocked package-manager lock found",
@@ -529,6 +536,88 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         sdk033_graph.get("receiptId")
         == "SDK-033-WORDPRESS-ASSET-METADATA",
         "SDK-033 npm graph receipt changed",
+    )
+    audit.exact_keys(
+        sdk025_graph,
+        {
+            "id",
+            "authority",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "dependencyLockPath",
+            "dependencyLockSha256",
+            "directPackages",
+            "runtimeImage",
+            "lifecycleScriptsAllowed",
+            "runtimeTool",
+            "publicationAuthorized",
+            "receiptId",
+        },
+        "SDK-025 CLI npm graph",
+    )
+    audit.check(
+        sdk025_graph.get("id") == "sdk-025-php-trace-cli-graph",
+        "SDK-025 CLI graph ID changed",
+    )
+    audit.check(
+        sdk025_graph.get("authority")
+        == "package-local-empty-npm-lock-and-exact-haxe-dependency-lock",
+        "SDK-025 CLI graph authority changed",
+    )
+    sdk025_manifest = sdk025_graph.get("manifestPath")
+    sdk025_lock = sdk025_graph.get("lockPath")
+    sdk025_dependency_lock = sdk025_graph.get("dependencyLockPath")
+    audit.check(
+        sdk025_manifest == "packages/cli/package.json",
+        "SDK-025 CLI manifest path changed",
+    )
+    audit.check(
+        sdk025_lock == "packages/cli/package-lock.json",
+        "SDK-025 CLI npm lock path changed",
+    )
+    audit.check(
+        sdk025_dependency_lock == "packages/cli/dependency-lock.json",
+        "SDK-025 Haxe dependency lock path changed",
+    )
+    for path, digest, label in (
+        (sdk025_manifest, sdk025_graph.get("manifestSha256"), "manifest"),
+        (sdk025_lock, sdk025_graph.get("lockSha256"), "npm lock"),
+        (
+            sdk025_dependency_lock,
+            sdk025_graph.get("dependencyLockSha256"),
+            "Haxe dependency lock",
+        ),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-025 CLI {label} digest changed",
+            )
+    audit.check(
+        sdk025_graph.get("directPackages") == [],
+        "SDK-025 CLI npm graph must remain dependency-free",
+    )
+    audit.check(
+        sdk025_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-025 CLI runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk025_graph.get("lifecycleScriptsAllowed") is False,
+        "SDK-025 CLI npm lifecycle scripts must remain disabled",
+    )
+    audit.check(
+        sdk025_graph.get("runtimeTool") is True,
+        "SDK-025 CLI graph must remain a host runtime tool",
+    )
+    audit.check(
+        sdk025_graph.get("publicationAuthorized") is False,
+        "SDK-025 CLI graph must not authorize publication",
+    )
+    audit.check(
+        sdk025_graph.get("receiptId") == "SDK-025-PHP-SOURCE-CORRELATION",
+        "SDK-025 CLI graph receipt changed",
     )
     active_npm = npm.get("activePackages", [])
     audit.check(isinstance(active_npm, list) and len(active_npm) == 1, "exactly one direct npm build package is expected")
