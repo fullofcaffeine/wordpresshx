@@ -295,10 +295,10 @@ class PackageBuilder:
             raise ValueError(f"unsafe or foreign Webpack source: {source_reference}")
         payload = posixpath.normpath(source_reference[len(WEBPACK_PREFIX) :])
         genes_marker = (
-            f"haxe/haxe_libraries/genes-ts/{GENES_VERSION}/github/"
+            f"genes-ts/{GENES_VERSION}/github/"
             f"{GENES_COMMIT}/src/"
         )
-        stdlib_marker = "haxe/versions/4.3.7/std/"
+        stdlib_marker = "versions/4.3.7/std/"
         if genes_marker in payload:
             relative = safe_logical_path(payload.split(genes_marker, 1)[1])
             return self.classify_haxe_path(

@@ -56,7 +56,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-assets.sh",
-      "sha256": "7092ce25428112f502cd4665f9662aa0b35ff18e10e6dcab5735a7e486622d17"
+      "sha256": "a191e421ee2503a366c6233f111a21d6fea416ee745491422b9126353aa4215d"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-assets-lane.sh",
@@ -350,6 +350,17 @@
     "status": "passed",
     "completedAt": "2026-07-18T10:25:42Z"
   },
+  "failedHostedAttempts": [
+    {
+      "runId": 29651610543,
+      "jobId": 88098774931,
+      "commit": "9d048df2b05d1ad30bbd6bd06d7efefcd23ebeab",
+      "outcome": "failed-before-sdk-033-build",
+      "reason": "The clean runner checked the exact Genes cache path before the authenticated project-scoped lix download materialized it; the preceding WordPress runtime setup and the other nine workflow jobs passed.",
+      "completedAt": "2026-07-18T16:17:12Z",
+      "otherJobsPassed": 9
+    }
+  ],
   "knownLimitations": [
     "This receipt proves classic WordPress scripts; the Script Modules API remains a separate profile and evidence lane.",
     "The SDK-owned TSX mount entry and JSON fixture plan are build-boundary proof inputs; later scaffolding must generate them from typed Haxe declarations before claiming a complete Haxe-only project surface.",

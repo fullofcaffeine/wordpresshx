@@ -2034,6 +2034,22 @@ assert all(
     sha256.fullmatch(value)
     for value in g24_fixture["browserReceiptSha256ByPlatform"].values()
 )
+assert g24_receipt["failedHostedAttempts"] == [
+    {
+        "runId": 29651610543,
+        "jobId": 88098774931,
+        "commit": "9d048df2b05d1ad30bbd6bd06d7efefcd23ebeab",
+        "outcome": "failed-before-g2.4-build",
+        "reason": (
+            "The clean runner checked the exact Genes cache path before the "
+            "authenticated project-scoped lix download materialized it; the "
+            "preceding WordPress runtime setup and the other nine workflow "
+            "jobs passed."
+        ),
+        "completedAt": "2026-07-18T16:17:12Z",
+        "otherJobsPassed": 9,
+    }
+]
 assert g24_receipt["claims"]["generalProductionSupport"] == "not-tested"
 assert g24_receipt["claims"]["publicPackagePublication"] == "blocked"
 assert g24_receipt["receiptId"] in lock["entries"]["wp70-release"][
@@ -2951,6 +2967,22 @@ assert sdk033_prior_hosted == {
     "status": "passed",
     "completedAt": "2026-07-18T10:25:42Z",
 }
+assert sdk033_receipt["failedHostedAttempts"] == [
+    {
+        "runId": 29651610543,
+        "jobId": 88098774931,
+        "commit": "9d048df2b05d1ad30bbd6bd06d7efefcd23ebeab",
+        "outcome": "failed-before-sdk-033-build",
+        "reason": (
+            "The clean runner checked the exact Genes cache path before the "
+            "authenticated project-scoped lix download materialized it; the "
+            "preceding WordPress runtime setup and the other nine workflow "
+            "jobs passed."
+        ),
+        "completedAt": "2026-07-18T16:17:12Z",
+        "otherJobsPassed": 9,
+    }
+]
 assert browser_architecture["evidence"]["wordpressBundleAndAssetParity"] == (
     "verified-by-sdk-033-wordpress-asset-metadata"
 )

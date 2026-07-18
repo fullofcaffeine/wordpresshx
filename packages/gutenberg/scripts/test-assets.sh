@@ -68,6 +68,10 @@ haxe_library_cache="$(
 )"
 genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src"
 haxe_stdlib_root="${lix_haxe_root}/versions/4.3.7/std"
+(
+  cd "${package_root}"
+  lix --silent download
+)
 if [[ ! -f "${haxe_stdlib_root}/StdTypes.hx" ]] \
   || [[ ! -f "${genes_root}/genes/Register.hx" ]]; then
   echo "SDK-033 asset gate could not resolve the exact Lix Haxe source root" >&2
@@ -78,10 +82,6 @@ fi
 
 python3 "${package_root}/scripts/verify-dependency-lock.py" --metadata-only
 python3 "${package_root}/scripts/verify-assets-profile.py"
-(
-  cd "${package_root}"
-  lix --silent download
-)
 (
   cd "${repository_root}"
   haxelib run formatter --check \
@@ -157,6 +157,8 @@ docker run --rm \
   --tmpfs /tmp:rw,exec,nosuid,nodev \
   -e npm_config_cache=/tmp/npm-cache \
   --mount "type=bind,src=${lix_haxe_root},dst=/haxe,readonly" \
+  --mount "type=bind,src=${haxe_library_cache},dst=${haxe_library_cache},readonly" \
+  --mount "type=bind,src=${haxe_stdlib_root},dst=${haxe_stdlib_root},readonly" \
   -v "${repository_root}:/repo" \
   -v "${tooling_root}:/tooling" \
   -w /tooling \

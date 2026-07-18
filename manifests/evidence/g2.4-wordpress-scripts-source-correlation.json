@@ -81,7 +81,7 @@
     },
     {
       "path": "packages/gutenberg/scripts/package-source-correlation.py",
-      "sha256": "db45387310377e9361d711380cee41c6445b9e526b01d0397dd7d8ba9686ece5"
+      "sha256": "2a633563893b359bb444a3a74db848816f669887761ad4df145e509992722817"
     },
     {
       "path": "packages/gutenberg/scripts/run-source-correlation-browser.mjs",
@@ -89,7 +89,7 @@
     },
     {
       "path": "packages/gutenberg/scripts/test-assets.sh",
-      "sha256": "7092ce25428112f502cd4665f9662aa0b35ff18e10e6dcab5735a7e486622d17"
+      "sha256": "a191e421ee2503a366c6233f111a21d6fea416ee745491422b9126353aa4215d"
     },
     {
       "path": "packages/gutenberg/scripts/verify-source-correlation.py",
@@ -327,6 +327,17 @@
     "fullMatrixStatus": "pending",
     "g24Step": "pending"
   },
+  "failedHostedAttempts": [
+    {
+      "runId": 29651610543,
+      "jobId": 88098774931,
+      "commit": "9d048df2b05d1ad30bbd6bd06d7efefcd23ebeab",
+      "outcome": "failed-before-g2.4-build",
+      "reason": "The clean runner checked the exact Genes cache path before the authenticated project-scoped lix download materialized it; the preceding WordPress runtime setup and the other nine workflow jobs passed.",
+      "completedAt": "2026-07-18T16:17:12Z",
+      "otherJobsPassed": 9
+    }
+  ],
   "claims": {
     "officialWordpressScriptsCorrelation": "implemented-local-verified-hosted-pending",
     "sourceMapComposition": "exact-entry-development-and-production-only",
