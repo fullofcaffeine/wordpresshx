@@ -1814,8 +1814,25 @@ else:
     assert sdk033_hosted["commit"] == sdk033_receipt["implementation"]["commit"]
     assert isinstance(sdk033_hosted["runId"], int)
     assert isinstance(sdk033_hosted["jobId"], int)
+    assert sdk033_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk033_hosted['runId']}"
+    )
+    assert sdk033_hosted["jobUrl"] == (
+        sdk033_hosted["url"] + f"/job/{sdk033_hosted['jobId']}"
+    )
+    assert sdk033_hosted["attempt"] == 1
     assert sdk033_hosted["status"] == "passed"
     assert sdk033_hosted["sdk033Step"] == "passed"
+    assert sdk033_hosted["generatedTreeSha256"] == (
+        sdk033_compilation["generatedTreeSha256"]
+    )
+    assert sdk033_hosted["productionBundleSha256"] == (
+        sdk033_builds["production"]["bundleSha256"]
+    )
+    assert sdk033_hosted["hostedArtifactHashesMatched"] is True
+    assert sdk033_hosted["jobCount"] == 10
+    assert sdk033_hosted["allJobsPassed"] is True
     assert sdk033_hosted["fullMatrixStatus"] == "passed"
 assert browser_architecture["evidence"]["wordpressBundleAndAssetParity"] == (
     "verified-by-sdk-033-wordpress-asset-metadata"

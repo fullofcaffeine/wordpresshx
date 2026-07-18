@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
   "bead": "wordpresshx-sdk-033",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "observedAt": "2026-07-18T03:54:30-06:00",
   "subject": {
     "package": "packages/gutenberg",
@@ -310,17 +310,26 @@
   },
   "implementation": {
     "baseCommit": "838e15db8826feac5c7033cbcc4532d7c80cf3ef",
-    "commit": null
+    "commit": "23696ca999a419d64181c44018e193c94a5569f3"
   },
   "hostedVerification": {
     "workflow": "repository.yml",
     "job": "wordpress-runtime",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-push",
-    "sdk033Step": "pending",
-    "fullMatrixStatus": "pending",
+    "runId": 29640752835,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29640752835",
+    "attempt": 1,
+    "jobId": 88070758398,
+    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29640752835/job/88070758398",
+    "commit": "23696ca999a419d64181c44018e193c94a5569f3",
+    "status": "passed",
+    "sdk033Step": "passed",
+    "generatedTreeSha256": "3792559c66050767a95639271b0d631fd1fff003a8ea31909d1880ba8d60a54e",
+    "productionBundleSha256": "4dc231f4abe8ca8c95eb087a064059d75283ba076122a0f24f1177b37389bf1b",
+    "hostedArtifactHashesMatched": true,
+    "jobCount": 10,
+    "allJobsPassed": true,
+    "fullMatrixStatus": "passed",
+    "completedAt": "2026-07-18T10:25:42Z",
     "required": true
   },
   "knownLimitations": [
