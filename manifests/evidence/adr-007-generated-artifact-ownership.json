@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "ADR-007-GENERATED-ARTIFACT-OWNERSHIP",
   "bead": "wordpresshx-adr-007",
-  "observedAt": "2026-07-18T19:09:04Z",
+  "observedAt": "2026-07-18T19:15:08Z",
   "subject": {
     "adr": {
       "path": "docs/adr/007-generated-artifact-ownership.md",
@@ -94,10 +94,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "repository",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29657425980,
+    "jobId": 88114180867,
+    "commit": "7bc2d88f3ebef2ff6fc55abd6bbe02a330ba3de6",
+    "status": "passed",
     "required": true
   },
   "claims": {
@@ -115,7 +115,7 @@
   "limitations": [
     "reference-harness-not-production-cli",
     "process-failure-and-interruption-not-power-loss",
-    "local-macos-and-hosted-ubuntu-filesystems-only-after-hosted-pass",
+    "local-macos-and-hosted-ubuntu-filesystems-only",
     "no-windows-or-network-filesystem-evidence",
     "no-real-generated-wordpress-or-nextjs-tree"
   ]
