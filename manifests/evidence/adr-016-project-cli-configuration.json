@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "ADR-016-PROJECT-CLI-CONFIGURATION",
   "bead": "wordpresshx-adr-016",
-  "observedAt": "2026-07-18T19:55:00Z",
+  "observedAt": "2026-07-18T20:18:29Z",
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
@@ -117,16 +117,16 @@
     "jobs": {
       "contract": {
         "name": "repository",
-        "jobId": null
+        "jobId": 88119101761
       },
       "haxeTyping": {
         "name": "haxe",
-        "jobId": null
+        "jobId": 88119101776
       }
     },
-    "runId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29659327926,
+    "commit": "bec4fb9e0181e6e4f3ca9ba3b04cec9fa109a7d7",
+    "status": "passed",
     "required": true
   },
   "limitations": [
