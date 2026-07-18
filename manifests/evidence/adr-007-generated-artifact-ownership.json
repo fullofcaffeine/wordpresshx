@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-007-GENERATED-ARTIFACT-OWNERSHIP",
+  "bead": "wordpresshx-adr-007",
+  "observedAt": "2026-07-18T19:09:04Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/007-generated-artifact-ownership.md",
+      "sha256": "7abd837e5321c74065e6605a5740f7bbee13f580910a0ea6a62b92f0db060fc0"
+    },
+    "architecture": {
+      "path": "manifests/generated-artifact-ownership.json",
+      "sha256": "08a59e06659bdb10b6b3b83630ae34f14a0939223843f21cca1a76ace3cfe1f5"
+    },
+    "manifestSchema": {
+      "path": "schemas/generated-files.schema.json",
+      "sha256": "84797a5b01061bb7f5cf48271488864ce12de1330723717a7e7336bab0c7b485"
+    },
+    "journalSchema": {
+      "path": "schemas/ownership-transaction-journal.schema.json",
+      "sha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af"
+    },
+    "validator": {
+      "path": "scripts/ownership/test-contract.py",
+      "sha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1"
+    },
+    "gate": {
+      "path": "scripts/ownership/test.sh",
+      "sha256": "6b901444fdf0b6132c56aa3d5b9c82b8b87d35b18356da446f410c044f2c4743"
+    },
+    "currentManifestFixture": {
+      "path": "fixtures/ownership/valid/current.generated-files.json",
+      "sha256": "ab1587b97a3e291cf2f1536c3aba7ce78979885dd42dd5a9f78831967a20d13c"
+    },
+    "nextManifestFixture": {
+      "path": "fixtures/ownership/valid/next.generated-files.json",
+      "sha256": "8d66fc5fb3f113f45e350ddbaea4485cb1f2b4ca8dde8548184a8dd2b3c67bac"
+    },
+    "journalFixture": {
+      "path": "fixtures/ownership/valid/prepared.journal.json",
+      "sha256": "57dfd5d247e9a48121143e4f9cee1743ea46d1bf612fd2a4a5d468f1793ffb92"
+    }
+  },
+  "contract": {
+    "manifestSchema": "wordpress-hx.generated-files.v1",
+    "journalSchema": "wordpress-hx.ownership-journal.v1",
+    "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
+    "currentManifestDigest": "a60ba0a4d13437bb03f8d9db7e308352128dcbc5993f3482a695b048b028048b",
+    "nextManifestDigest": "7e0d33f79927e81d3abf7bb7fd03548a96afe587ea7c779a6601c0036536dd4f",
+    "preparedJournalDigest": "38679313ff9d942d188c4aa4f4d8246927df00a182b30542e95a548de7c1a33d",
+    "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
+    "manifestPublication": "last-as-commit-marker",
+    "forceOverwrite": false
+  },
+  "verification": {
+    "command": "bash scripts/ownership/test.sh",
+    "positiveFilesystemCount": 11,
+    "negativeFilesystemCount": 17,
+    "negativeMutationCount": 25,
+    "currentFileCount": 2,
+    "nextFileCount": 2,
+    "journalOperationCount": 3,
+    "operationKinds": [
+      "create",
+      "remove",
+      "replace"
+    ],
+    "recoveryModes": [
+      "finalize-complete-next",
+      "rollback-partial"
+    ],
+    "cleanPreservesUnowned": "passed",
+    "adoptGeneratedPreservesBytesAndRelinquishes": "passed",
+    "completeBuildStageRequired": "passed",
+    "caughtFailureRestoresExactTree": "passed",
+    "caughtPostCommitFailureFinalizes": "passed",
+    "hardLinksReplaceEntriesNotTargets": "passed",
+    "journalDerivedFromBoundManifests": "passed",
+    "processInterruptionRecovery": "passed",
+    "specialFilesRejected": "passed",
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repositories": [
+      "genes",
+      "haxe.go",
+      "wordpresshx-port"
+    ],
+    "exactCommitPathBlobAndSha256Recorded": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "repository",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "claims": {
+    "architectureDecision": "accepted",
+    "schemaAndFilesystemContract": "validated",
+    "sdk041ProductionImplementation": "not-tested",
+    "powerLossDurability": "not-tested",
+    "windowsFilesystem": "not-tested",
+    "hostileConcurrentMutation": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "deterministicZip": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "reference-harness-not-production-cli",
+    "process-failure-and-interruption-not-power-loss",
+    "local-macos-and-hosted-ubuntu-filesystems-only-after-hosted-pass",
+    "no-windows-or-network-filesystem-evidence",
+    "no-real-generated-wordpress-or-nextjs-tree"
+  ]
+}

@@ -19,6 +19,17 @@ projection coverage, artifact bytes, owner/source nodes, source spans, and
 required validators. It grants no permission to write live files; ADR-007 owns
 publication and recovery.
 
+[`generated-files.schema.json`](generated-files.schema.json) is the accepted
+ADR-007 exact generated-file authority. It binds canonical manifest bytes,
+portable output roots, exact path/hash/size ownership, plan/emission/profile
+inputs, source provenance, and staged validator results.
+
+[`ownership-transaction-journal.schema.json`](ownership-transaction-journal.schema.json)
+binds exact prior/next manifest states and sorted create/replace/remove/
+relinquish operations to private stage and backup paths. It enables hash-inferred
+finalize or rollback after interruption; it is not the SDK-041 production
+transaction implementation.
+
 [`php-haxe-map.schema.json`](php-haxe-map.schema.json) and
 [`source-correlation-index.schema.json`](source-correlation-index.schema.json)
 are the accepted ADR-014 contracts. The PHP format binds half-open UTF-8 byte

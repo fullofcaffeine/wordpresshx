@@ -35,6 +35,13 @@ source spans, schema extensions, and complete artifact traceability; macro
 collection and production emission remain dependency-gated implementation
 work.
 
+[ADR-007](docs/adr/007-generated-artifact-ownership.md) now defines the next
+boundary: exact path-and-hash ownership, complete staging, manifest-last
+publication, durable journal/backups, deterministic recovery, manifest-only
+clean, and explicit ownership relinquishment. Its real-filesystem contract
+fixture passes; the production SDK-041 Haxe/CLI owner and platform/runtime
+claims remain separate work.
+
 The product is not a WordPress fork, a replacement runtime, a generic CMS abstraction, or a proprietary site builder. The SDK and the separate full `wordpress-hx` port may share released generic compiler packages and public contracts, but neither project may import the other's unpublished implementation internals or merge its compatibility claims.
 
 The longer-term architecture should compose with the maintainer's broader Haxe compiler and framework family through portable Haxe contracts, versioned semantic-plan/artifact schemas, immutable compiler packages, and independent evidence receipts. It must not acquire floating dependencies on sibling repositories merely to simulate that future integration.
@@ -59,6 +66,7 @@ The only repository-wide executable check at this stage validates the policy/lay
 
 ```bash
 bash scripts/check-repository.sh
+bash scripts/ownership/test.sh
 bd lint
 bd dep cycles
 ```

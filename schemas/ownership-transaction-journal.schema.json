@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/ownership-transaction-journal.schema.json",
+  "title": "WordPressHx generated-file transaction journal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "journalDigestAlgorithm",
+    "journalDigest",
+    "transactionId",
+    "mode",
+    "phase",
+    "locations",
+    "priorManifest",
+    "nextManifest",
+    "operations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.ownership-journal.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "journalDigestAlgorithm": {
+      "const": "sha256-canonical-json-without-journalDigest-v1"
+    },
+    "journalDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "transactionId": {
+      "$ref": "#/$defs/sha256"
+    },
+    "mode": {
+      "enum": [
+        "build",
+        "clean",
+        "adopt-generated"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "prepared",
+        "publishing",
+        "manifest-published"
+      ]
+    },
+    "locations": {
+      "$ref": "#/$defs/locations"
+    },
+    "priorManifest": {
+      "$ref": "#/$defs/manifestState"
+    },
+    "nextManifest": {
+      "$ref": "#/$defs/presentManifestState"
+    },
+    "operations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/operation"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "locations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestPath",
+        "transactionRoot",
+        "lockPath",
+        "journalPath",
+        "workRoot",
+        "stageRoot",
+        "backupRoot"
+      ],
+      "properties": {
+        "manifestPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "transactionRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "lockPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "journalPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "workRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "stageRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "backupRoot": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "absentContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "const": "absent"
+        }
+      }
+    },
+    "fileContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "sha256",
+        "sizeBytes"
+      ],
+      "properties": {
+        "state": {
+          "const": "file"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "contentState": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/absentContent"
+        },
+        {
+          "$ref": "#/$defs/fileContent"
+        }
+      ]
+    },
+    "manifestState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content",
+        "storagePath"
+      ],
+      "properties": {
+        "content": {
+          "$ref": "#/$defs/contentState"
+        },
+        "storagePath": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "presentManifestState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content",
+        "storagePath"
+      ],
+      "properties": {
+        "content": {
+          "$ref": "#/$defs/fileContent"
+        },
+        "storagePath": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "action",
+        "path",
+        "rootId",
+        "oldContent",
+        "newContent",
+        "backupPath",
+        "stagedPath"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "action": {
+          "enum": [
+            "create",
+            "replace",
+            "remove",
+            "relinquish"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "rootId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "oldContent": {
+          "$ref": "#/$defs/contentState"
+        },
+        "newContent": {
+          "$ref": "#/$defs/contentState"
+        },
+        "backupPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "stagedPath": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    }
+  }
+}

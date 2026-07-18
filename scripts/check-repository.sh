@@ -31,6 +31,7 @@ required_files=(
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/005-public-versus-private-php-emission.md
   docs/adr/006-semantic-plan-and-emitter-contract.md
+  docs/adr/007-generated-artifact-ownership.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
@@ -253,11 +254,15 @@ required_files=(
   schemas/semantic-nodes/hook.schema.json
   schemas/semantic-nodes/module.schema.json
   schemas/semantic-plan.schema.json
+  schemas/generated-files.schema.json
+  schemas/ownership-transaction-journal.schema.json
   schemas/source-correlation-index.schema.json
   scripts/source-correlation/validate-contracts.py
   scripts/source-correlation/validate-sdk025.py
   scripts/semantic-plan/test-contract.py
   scripts/semantic-plan/test.sh
+  scripts/ownership/test-contract.py
+  scripts/ownership/test.sh
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -266,6 +271,14 @@ required_files=(
   fixtures/semantic-plan/src/SemanticPlanFixture.hx
   fixtures/semantic-plan/valid/minimal-plugin.emission.json
   fixtures/semantic-plan/valid/minimal-plugin.json
+  fixtures/ownership/README.md
+  fixtures/ownership/artifacts/initial/acme-observatory.php.txt
+  fixtures/ownership/artifacts/initial/stale.php.txt
+  fixtures/ownership/artifacts/next/acme-observatory.php.txt
+  fixtures/ownership/artifacts/next/theme.json.txt
+  fixtures/ownership/valid/current.generated-files.json
+  fixtures/ownership/valid/next.generated-files.json
+  fixtures/ownership/valid/prepared.journal.json
   fixtures/profiles/README.md
   fixtures/profiles/valid/gutenberg-forward-23.4.json
   fixtures/profiles/valid/wp70-release.json
@@ -301,6 +314,7 @@ required_files=(
   manifests/hxx-architecture.json
   manifests/source-correlation-architecture.json
   manifests/semantic-plan-architecture.json
+  manifests/generated-artifact-ownership.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -310,6 +324,7 @@ required_files=(
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
+  manifests/evidence/adr-007-generated-artifact-ownership.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -628,6 +643,16 @@ semantic_plan_receipt = json.loads(
     Path("manifests/evidence/adr-006-semantic-plan-contract.json").read_text(
         encoding="utf-8"
     )
+)
+ownership_architecture = json.loads(
+    Path("manifests/generated-artifact-ownership.json").read_text(
+        encoding="utf-8"
+    )
+)
+ownership_receipt = json.loads(
+    Path(
+        "manifests/evidence/adr-007-generated-artifact-ownership.json"
+    ).read_text(encoding="utf-8")
 )
 cli_dependency_lock = json.loads(
     Path("packages/cli/dependency-lock.json").read_text(encoding="utf-8")
@@ -1289,6 +1314,226 @@ for unproven_receipt_claim in (
     "productionSupport",
 ):
     assert semantic_plan_receipt["claims"][unproven_receipt_claim] == "not-tested"
+
+assert ownership_architecture["schemaVersion"] == 1
+assert ownership_architecture["decision"] == "ADR-007"
+assert ownership_architecture["status"] == (
+    "accepted-contract-not-sdk041-production-implementation"
+)
+ownership_contracts = ownership_architecture["contracts"]
+ownership_manifest_contract = ownership_contracts["manifest"]
+ownership_journal_contract = ownership_contracts["journal"]
+assert ownership_manifest_contract["identity"] == (
+    "wordpress-hx.generated-files.v1"
+)
+assert ownership_journal_contract["identity"] == (
+    "wordpress-hx.ownership-journal.v1"
+)
+assert ownership_journal_contract["protocol"] == (
+    "wordpress-hx.ownership-transaction.v1"
+)
+for contract, schema_key, fixture_keys in (
+    (
+        ownership_manifest_contract,
+        "schemaPath",
+        ("currentFixturePath", "nextFixturePath"),
+    ),
+    (
+        ownership_journal_contract,
+        "schemaPath",
+        ("fixturePath",),
+    ),
+):
+    assert hashlib.sha256(Path(contract[schema_key]).read_bytes()).hexdigest() == (
+        contract["schemaSha256"]
+    )
+    for fixture_key in fixture_keys:
+        digest_key = fixture_key.replace("Path", "Sha256")
+        assert hashlib.sha256(Path(contract[fixture_key]).read_bytes()).hexdigest() == (
+            contract[digest_key]
+        )
+ownership_current_fixture = json.loads(
+    Path(ownership_manifest_contract["currentFixturePath"]).read_text(
+        encoding="utf-8"
+    )
+)
+ownership_next_fixture = json.loads(
+    Path(ownership_manifest_contract["nextFixturePath"]).read_text(
+        encoding="utf-8"
+    )
+)
+ownership_journal_fixture = json.loads(
+    Path(ownership_journal_contract["fixturePath"]).read_text(encoding="utf-8")
+)
+assert ownership_current_fixture["manifestDigest"] == (
+    ownership_manifest_contract["currentManifestDigest"]
+)
+assert ownership_next_fixture["manifestDigest"] == (
+    ownership_manifest_contract["nextManifestDigest"]
+)
+assert ownership_journal_fixture["journalDigest"] == (
+    ownership_journal_contract["journalDigest"]
+)
+ownership_authority = ownership_architecture["authority"]
+assert ownership_authority[
+    "ownedOnlyWhenExactCurrentManifestPathAndHashMatch"
+] is True
+assert ownership_authority["byteSizeBound"] is True
+assert ownership_authority["directoryOwnership"] is False
+assert ownership_authority["commentHeaderOwnership"] is False
+assert ownership_authority["looksGeneratedOwnership"] is False
+assert ownership_authority["equalUnownedBytesGrantOwnership"] is False
+assert ownership_authority["missingManifestMeansNoOwnedFiles"] is True
+assert ownership_authority["manifestPublishedLastAsCommitMarker"] is True
+ownership_paths = ownership_architecture["pathPolicy"]
+assert ownership_paths["absoluteDriveUncTraversalBackslashOrControlAllowed"] is False
+assert ownership_paths["duplicatesAllowed"] is False
+assert ownership_paths["unicodeCaseFoldCollisionsAllowed"] is False
+assert ownership_paths["nestedOutputRootsAllowed"] is False
+assert ownership_paths[
+    "symbolicLinksJunctionsReparseOrBrokenLinksAllowed"
+] is False
+assert ownership_paths["hardLinkedRegularFilesMutatedInPlace"] is False
+assert ownership_paths["generatedFilesMayUseReservedMetadataRoot"] is False
+assert ownership_paths["oneFilesystemV1"] is True
+assert ownership_paths["copyDeletePublicationFallback"] is False
+ownership_transaction = ownership_architecture["transaction"]
+assert ownership_architecture["preflight"][
+    "identicalBuildRequiresCompleteStage"
+] is True
+assert ownership_transaction["journalDurableBeforeLiveMutation"] is True
+assert ownership_transaction["manifestPublishedLast"] is True
+assert ownership_transaction["normalOrCaughtFailure"] == "failure-atomic"
+assert ownership_transaction["caughtFailureAfterCompleteCommit"] == (
+    "finalize-and-report-published"
+)
+assert ownership_transaction["simultaneousMultiFileVisibilityClaimed"] is False
+assert ownership_transaction["powerLossDurabilityClaimed"] is False
+assert ownership_transaction["forceOverwriteFlag"] is False
+ownership_recovery = ownership_architecture["recovery"]
+assert ownership_recovery["completeNextManifestAndTree"] == "finalize"
+assert ownership_recovery[
+    "journalPlanDerivedFromBoundPriorAndNextManifests"
+] is True
+assert ownership_recovery["newPathRemovalRequiresExactNewHash"] is True
+assert ownership_recovery["backupRestoreRequiresExactOldHash"] is True
+assert ownership_recovery["blindRollForward"] is False
+assert ownership_recovery["blindRollbackOverwrite"] is False
+ownership_references = ownership_architecture["referencePatterns"]
+assert {reference["repository"] for reference in ownership_references} == {
+    "genes",
+    "haxe.go",
+    "wordpresshx-port",
+}
+for reference in ownership_references:
+    assert sha1.fullmatch(reference["commit"])
+    assert sha1.fullmatch(reference["blob"])
+    assert sha256.fullmatch(reference["sha256"])
+    assert reference["copiedBytes"] is False
+    assert reference["dependencyCreated"] is False
+ownership_verification = ownership_architecture["verification"]
+assert ownership_verification["positiveFilesystemCount"] == 11
+assert ownership_verification["negativeFilesystemCount"] == 17
+assert ownership_verification["negativeMutationCount"] == 25
+assert ownership_verification["currentFileCount"] == 2
+assert ownership_verification["nextFileCount"] == 2
+assert ownership_verification["journalOperationCount"] == 3
+assert ownership_verification["recoveryModes"] == [
+    "finalize-complete-next",
+    "rollback-partial",
+]
+assert ownership_verification["outcome"] == "passed"
+assert hashlib.sha256(
+    Path(ownership_verification["validatorPath"]).read_bytes()
+).hexdigest() == ownership_verification["validatorSha256"]
+assert ownership_architecture["claims"]["architectureDecision"] == "accepted"
+assert ownership_architecture["claims"]["schemaAndFilesystemContract"] == (
+    "validated"
+)
+for unproven_ownership_claim in (
+    "sdk041ProductionImplementation",
+    "powerLossDurability",
+    "windowsFilesystem",
+    "hostileConcurrentMutation",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "deterministicZip",
+    "productionSupport",
+):
+    assert ownership_architecture["claims"][unproven_ownership_claim] == (
+        "not-tested"
+    )
+
+assert ownership_receipt["schemaVersion"] == 1
+assert ownership_receipt["receiptId"] == (
+    "ADR-007-GENERATED-ARTIFACT-OWNERSHIP"
+)
+assert ownership_receipt["bead"] == "wordpresshx-adr-007"
+for ownership_subject in ownership_receipt["subject"].values():
+    assert hashlib.sha256(Path(ownership_subject["path"]).read_bytes()).hexdigest() == (
+        ownership_subject["sha256"]
+    )
+assert ownership_receipt["contract"]["currentManifestDigest"] == (
+    ownership_manifest_contract["currentManifestDigest"]
+)
+assert ownership_receipt["contract"]["nextManifestDigest"] == (
+    ownership_manifest_contract["nextManifestDigest"]
+)
+assert ownership_receipt["contract"]["preparedJournalDigest"] == (
+    ownership_journal_contract["journalDigest"]
+)
+assert ownership_receipt["contract"]["forceOverwrite"] is False
+assert ownership_receipt["verification"]["positiveFilesystemCount"] == 11
+assert ownership_receipt["verification"]["negativeFilesystemCount"] == 17
+assert ownership_receipt["verification"]["negativeMutationCount"] == 25
+assert ownership_receipt["verification"]["operationKinds"] == [
+    "create",
+    "remove",
+    "replace",
+]
+for ownership_proof in (
+    "completeBuildStageRequired",
+    "caughtPostCommitFailureFinalizes",
+    "hardLinksReplaceEntriesNotTargets",
+    "journalDerivedFromBoundManifests",
+    "specialFilesRejected",
+):
+    assert ownership_receipt["verification"][ownership_proof] == "passed"
+assert ownership_receipt["verification"]["outcome"] == "passed"
+assert ownership_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert ownership_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert ownership_receipt["referenceReview"]["genesSourceChanged"] is False
+ownership_hosted = ownership_receipt["hostedWorkflow"]
+assert ownership_hosted["workflow"] == "Repository bootstrap"
+assert ownership_hosted["job"] == "repository"
+assert ownership_hosted["required"] is True
+if ownership_hosted["status"] == "pending-first-hosted-main-run":
+    assert ownership_hosted["runId"] is None
+    assert ownership_hosted["jobId"] is None
+    assert ownership_hosted["commit"] is None
+elif ownership_hosted["status"] == "passed":
+    assert isinstance(ownership_hosted["runId"], int)
+    assert isinstance(ownership_hosted["jobId"], int)
+    assert sha1.fullmatch(ownership_hosted["commit"])
+else:
+    raise AssertionError("generated ownership hosted status is invalid")
+assert ownership_receipt["claims"]["architectureDecision"] == "accepted"
+assert ownership_receipt["claims"]["schemaAndFilesystemContract"] == (
+    "validated"
+)
+for unproven_ownership_receipt_claim in (
+    "sdk041ProductionImplementation",
+    "powerLossDurability",
+    "windowsFilesystem",
+    "hostileConcurrentMutation",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "deterministicZip",
+    "productionSupport",
+):
+    assert ownership_receipt["claims"][
+        unproven_ownership_receipt_claim
+    ] == "not-tested"
 
 assert source_correlation_architecture["schemaVersion"] == 1
 assert source_correlation_architecture["decision"] == "ADR-014"
@@ -4906,6 +5151,7 @@ python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
+python3 scripts/ownership/test-contract.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only

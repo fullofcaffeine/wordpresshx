@@ -1,0 +1,372 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/generated-files.schema.json",
+  "title": "WordPressHx generated-file ownership manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "transactionProtocol",
+    "manifestDigestAlgorithm",
+    "manifestDigest",
+    "locations",
+    "generator",
+    "inputs",
+    "outputRoots",
+    "validators",
+    "files"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.generated-files.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "transactionProtocol": {
+      "const": "wordpress-hx.ownership-transaction.v1"
+    },
+    "manifestDigestAlgorithm": {
+      "const": "sha256-canonical-json-without-manifestDigest-v1"
+    },
+    "manifestDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "locations": {
+      "$ref": "#/$defs/locations"
+    },
+    "generator": {
+      "$ref": "#/$defs/generator"
+    },
+    "inputs": {
+      "$ref": "#/$defs/inputs"
+    },
+    "outputRoots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/outputRoot"
+      }
+    },
+    "validators": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/validator"
+      }
+    },
+    "files": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/file"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "locations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestPath",
+        "transactionRoot",
+        "lockPath",
+        "journalPath"
+      ],
+      "properties": {
+        "manifestPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "transactionRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "lockPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "journalPath": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sdkVersion",
+        "cliVersion",
+        "generatorId",
+        "generatorSourceSha256",
+        "toolchainSha256"
+      ],
+      "properties": {
+        "sdkVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "cliVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "generatorId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "generatorSourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "toolchainSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "catalogRevision",
+        "catalogSha256"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "catalogRevision": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceTreeSha256",
+        "semanticPlanSha256",
+        "emissionResultSha256s",
+        "generationSha256",
+        "profile"
+      ],
+      "properties": {
+        "sourceTreeSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "semanticPlanSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "emissionResultSha256s": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "generationSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "profile": {
+          "$ref": "#/$defs/profile"
+        }
+      }
+    },
+    "outputRoot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rootId",
+        "path",
+        "ownershipMode"
+      ],
+      "properties": {
+        "rootId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "ownershipMode": {
+          "const": "exact-file-manifest-coexists-with-unowned"
+        }
+      }
+    },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validatorId",
+        "tool",
+        "version",
+        "toolSha256",
+        "configSha256",
+        "scope",
+        "outcome"
+      ],
+      "properties": {
+        "validatorId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "tool": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "toolSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "configSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scope": {
+          "enum": [
+            "complete-staged-tree",
+            "selected-artifacts"
+          ]
+        },
+        "outcome": {
+          "const": "passed"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offset",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sourceSha256",
+        "start",
+        "end",
+        "symbol"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "start": {
+          "$ref": "#/$defs/point"
+        },
+        "end": {
+          "$ref": "#/$defs/point"
+        },
+        "symbol": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "rootId",
+        "contentSha256",
+        "sizeBytes",
+        "kind",
+        "ownerNodeId",
+        "projectionIds",
+        "sourceNodeIds",
+        "sourceSpans",
+        "validatorIds"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "rootId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "contentSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "$ref": "#/$defs/stableId"
+        },
+        "ownerNodeId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "projectionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "sourceNodeIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "sourceSpans": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          }
+        },
+        "validatorIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    }
+  }
+}

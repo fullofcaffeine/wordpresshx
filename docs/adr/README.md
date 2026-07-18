@@ -40,6 +40,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-004: Generic PHP compiler home and extraction boundary](004-generic-php-compiler-home.md)
 - [ADR-005: Public versus private PHP emission](005-public-versus-private-php-emission.md)
 - [ADR-006: Semantic plan and emitter contract](006-semantic-plan-and-emitter-contract.md)
+- [ADR-007: Generated artifact ownership](007-generated-artifact-ownership.md)
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)

@@ -5,6 +5,7 @@ The repository is still establishing its durable documentation structure.
 - [Product authority](product/README.md)
 - [ADR process and template](adr/README.md)
 - [Semantic plan and emitter contract](adr/006-semantic-plan-and-emitter-contract.md)
+- [Generated artifact ownership and recovery](adr/007-generated-artifact-ownership.md)
 - [Provisional repository layout](architecture/repository-layout.md)
 - [Browser compiler pin and ownership](architecture/browser-compiler.md)
 - [Generic PHP compiler boundary](architecture/php-compiler.md)

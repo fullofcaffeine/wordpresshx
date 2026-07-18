@@ -30,6 +30,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   build-time extension, and staged-emitter boundary. Its two-node contract
   fixture proves schema/canonicalization/traceability rules only; SDK-040 still
   owns macro collection and production emitter integration.
+- `generated-artifact-ownership.json` is the accepted ADR-007 exact-path/hash
+  authority, portable path confinement, complete-stage, manifest-last journal,
+  recovery, clean, and adoption lock. Its temporary-filesystem harness validates
+  the contract; SDK-041 still owns the production Haxe/CLI implementation and
+  broader platform evidence.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
@@ -80,8 +85,16 @@ Receipt `ADR-006-SEMANTIC-PLAN-CONTRACT` records the closed plan/emission
 schemas, content-addressed node schemas, canonical fixture digests, source and
 artifact traceability, sibling-pattern provenance, six canonicalization
 vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
-SDK-040, ADR-007/SDK-041, real emitters, and runtime compatibility remain
-unproven.
+SDK-040, SDK-041 production publication, real emitters, and runtime compatibility
+remain unproven.
+
+Receipt `ADR-007-GENERATED-ARTIFACT-OWNERSHIP` records the closed exact-file
+manifest and journal schemas, canonical old/new/create/replace/remove fixtures,
+portable path and collision rules, real temporary-filesystem rollback/recovery,
+manifest-only clean, explicit relinquishment, 11 positive filesystem scenarios,
+17 fail-closed filesystem cases, and 25 schema/journal mutations. It is contract evidence only;
+SDK-041, power-loss/Windows behavior, real site trees, packaging, and production
+support remain untested.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

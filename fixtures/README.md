@@ -23,3 +23,9 @@ contract fixtures. The validator binds exact node schemas, profile
 capabilities, UTF-8 source spans, projection coverage, and expected artifact
 bytes, then exercises canonicalization and fail-closed mutations. It is not the
 SDK-040 macro collector or a production PHP emitter.
+
+`ownership/` contains the ADR-007 canonical current/next manifests, prepared
+journal, and exact artifact bytes. Its reference-only harness exercises real
+temporary filesystem publication, rollback, crash recovery, clean, adoption,
+links, collisions, edits, and malformed state. It is not SDK-041 production
+code or a runtime/platform support claim.

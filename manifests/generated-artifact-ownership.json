@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-007",
+  "status": "accepted-contract-not-sdk041-production-implementation",
+  "scope": [
+    "php-and-server-hxx-artifacts",
+    "genes-browser-artifacts",
+    "gutenberg-and-theme-metadata",
+    "styles-translations-source-maps-and-packages"
+  ],
+  "contracts": {
+    "manifest": {
+      "identity": "wordpress-hx.generated-files.v1",
+      "schemaPath": "schemas/generated-files.schema.json",
+      "schemaSha256": "84797a5b01061bb7f5cf48271488864ce12de1330723717a7e7336bab0c7b485",
+      "currentFixturePath": "fixtures/ownership/valid/current.generated-files.json",
+      "currentFixtureSha256": "ab1587b97a3e291cf2f1536c3aba7ce78979885dd42dd5a9f78831967a20d13c",
+      "currentManifestDigest": "a60ba0a4d13437bb03f8d9db7e308352128dcbc5993f3482a695b048b028048b",
+      "nextFixturePath": "fixtures/ownership/valid/next.generated-files.json",
+      "nextFixtureSha256": "8d66fc5fb3f113f45e350ddbaea4485cb1f2b4ca8dde8548184a8dd2b3c67bac",
+      "nextManifestDigest": "7e0d33f79927e81d3abf7bb7fd03548a96afe587ea7c779a6601c0036536dd4f"
+    },
+    "journal": {
+      "identity": "wordpress-hx.ownership-journal.v1",
+      "protocol": "wordpress-hx.ownership-transaction.v1",
+      "schemaPath": "schemas/ownership-transaction-journal.schema.json",
+      "schemaSha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af",
+      "fixturePath": "fixtures/ownership/valid/prepared.journal.json",
+      "fixtureSha256": "57dfd5d247e9a48121143e4f9cee1743ea46d1bf612fd2a4a5d468f1793ffb92",
+      "journalDigest": "38679313ff9d942d188c4aa4f4d8246927df00a182b30542e95a548de7c1a33d"
+    }
+  },
+  "authority": {
+    "ownedOnlyWhenExactCurrentManifestPathAndHashMatch": true,
+    "byteSizeBound": true,
+    "directoryOwnership": false,
+    "commentHeaderOwnership": false,
+    "looksGeneratedOwnership": false,
+    "equalUnownedBytesGrantOwnership": false,
+    "missingManifestMeansNoOwnedFiles": true,
+    "legacyOrMalformedManifest": "fail-without-implicit-migration",
+    "manifestPublishedLastAsCommitMarker": true
+  },
+  "canonicalization": {
+    "identity": "wordpress-hx.canonical-json.v1",
+    "manifestDigest": "sha256-canonical-json-without-manifestDigest-v1",
+    "journalDigest": "sha256-canonical-json-without-journalDigest-v1",
+    "fileOrder": "exact-normalized-path",
+    "setOrder": "schema-declared-stable-key",
+    "floatingPointNumbers": "forbidden",
+    "terminalNewline": "exactly-one-lf"
+  },
+  "pathPolicy": {
+    "syntax": "nfc-portable-ascii-project-relative-posix",
+    "absoluteDriveUncTraversalBackslashOrControlAllowed": false,
+    "windowsDeviceOrTrailingDotSpaceAllowed": false,
+    "duplicatesAllowed": false,
+    "unicodeCaseFoldCollisionsAllowed": false,
+    "nestedOutputRootsAllowed": false,
+    "symbolicLinksJunctionsReparseOrBrokenLinksAllowed": false,
+    "specialFilesAllowed": false,
+    "hardLinkedRegularFilesMutatedInPlace": false,
+    "generatedFilesMayUseReservedMetadataRoot": false,
+    "existingComponentsCheckedWithNoFollowSemantics": true,
+    "revalidatedAfterLockAndBeforeRename": true,
+    "oneFilesystemV1": true,
+    "copyDeletePublicationFallback": false
+  },
+  "preflight": {
+    "recoverBeforeNewWork": true,
+    "verifyAllCurrentOwnedBytes": true,
+    "completeNextTreeStaged": true,
+    "identicalBuildRequiresCompleteStage": true,
+    "undeclaredStageFiles": "fail",
+    "validatorsRunInsideStage": true,
+    "rehashAfterValidators": true,
+    "unownedDestination": "fail-even-when-bytes-match",
+    "modifiedOwnedOrStale": "fail-before-publication",
+    "emitterLiveWriteAuthority": false
+  },
+  "transaction": {
+    "exclusiveProjectLock": true,
+    "journalDurableBeforeLiveMutation": true,
+    "oldFilesMovedToSameFilesystemBackup": true,
+    "newFilesRenamedFromVerifiedStage": true,
+    "manifestPublishedLast": true,
+    "unchangedFilesRewritten": false,
+    "identicalGeneration": "no-op",
+    "normalOrCaughtFailure": "failure-atomic",
+    "caughtFailureAfterCompleteCommit": "finalize-and-report-published",
+    "abruptInterruption": "crash-consistent-until-mandatory-recovery",
+    "simultaneousMultiFileVisibilityClaimed": false,
+    "powerLossDurabilityClaimed": false,
+    "forceOverwriteFlag": false
+  },
+  "recovery": {
+    "completeNextManifestAndTree": "finalize",
+    "partialOrPriorState": "reverse-operations-and-restore-exact-prior-bytes",
+    "journalPlanDerivedFromBoundPriorAndNextManifests": true,
+    "newPathRemovalRequiresExactNewHash": true,
+    "backupRestoreRequiresExactOldHash": true,
+    "unexpectedBytesOrTypes": "stop-preserve-and-diagnose",
+    "blindRollForward": false,
+    "blindRollbackOverwrite": false,
+    "preJournalAbandonedLock": "must-distinguish-active-owner-no-time-threshold-alone"
+  },
+  "commands": {
+    "clean": "same-transaction-to-empty-owned-set-never-recursive-live-root-delete",
+    "adoptGenerated": "exact-path-relinquish-keeps-verified-live-bytes",
+    "dryRunDiffCheck": "complete-plan-without-publication-authority",
+    "destructiveRecovery": "separate-future-explicit-path-backed-up-accountable-command-only"
+  },
+  "referencePatterns": [
+    {
+      "repository": "genes",
+      "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+      "path": "src/genes/OutputTransaction.hx",
+      "blob": "e579eefbf936e2595a7bb2db3c6d49f4769ea2d6",
+      "sha256": "ee6fe44935f860627065fd50043bb6a95762d0dd9637c09ffdd1a55398134dd5",
+      "concept": "buffer-complete-files-backup-affected-paths-rollback-and-publish-manifest-last",
+      "contractStrengthening": "persistent-self-digested-journal-exact-old-new-hashes-portable-collisions-and-recovery",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.go",
+      "commit": "07467e5a84d733ec30ca718f2dbdbcf48c8cae4d",
+      "path": "src/reflaxe/go/compiler/GoGeneratedOutputBoundary.hx",
+      "blob": "b52990cc67ddce1d2420b0c103411df38d0cc595",
+      "sha256": "21be3e6f53897ff0312fce31d65e242f36e35a5f2e94475462522f2576463e3f",
+      "concept": "typed-relative-path-boundary-path-redacted-errors-and-repeated-no-follow-component-checks",
+      "contractStrengthening": "case-fold-root-transaction-and-content-ownership-rules",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "wordpresshx-port",
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "path": "manifests/ownership/wphx-320-02-theme-hxx-markup-pilot.v1.json",
+      "blob": "1dfaa3d8adfbfdca8fc0b1871b0ad19785efffe4",
+      "sha256": "9bb398b0fcadbf2d73479915f15954154479af07db748fd6d4c07a3687b13025",
+      "concept": "semantic-template-ownership-axes-and-bounded-claim-language",
+      "limitation": "path-list-is-not-exact-live-hash-or-crash-publication-authority",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    }
+  ],
+  "verification": {
+    "command": "bash scripts/ownership/test.sh",
+    "validatorPath": "scripts/ownership/test-contract.py",
+    "validatorSha256": "c5d49ddf0f4292a7ceb119ceb824484efe41f784053f9219ad4f705bcda8d2d1",
+    "positiveFilesystemCount": 11,
+    "negativeFilesystemCount": 17,
+    "negativeMutationCount": 25,
+    "currentFileCount": 2,
+    "nextFileCount": 2,
+    "journalOperationCount": 3,
+    "recoveryModes": [
+      "finalize-complete-next",
+      "rollback-partial"
+    ],
+    "outcome": "passed"
+  },
+  "claims": {
+    "architectureDecision": "accepted",
+    "schemaAndFilesystemContract": "validated",
+    "sdk041ProductionImplementation": "not-tested",
+    "powerLossDurability": "not-tested",
+    "windowsFilesystem": "not-tested",
+    "hostileConcurrentMutation": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "deterministicZip": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}
