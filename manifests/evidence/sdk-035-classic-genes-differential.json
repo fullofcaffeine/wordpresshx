@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+  "bead": "wordpresshx-sdk-035",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T17:20:30Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profileId": "wp70-release",
+    "files": [
+      {
+        "path": "packages/gutenberg/profiles/differential-classic.hxml",
+        "sha256": "a69e0710e7d88a873e82cb62e0ecb5c03c56b0f5c8b388a9674facc27eeb0164"
+      },
+      {
+        "path": "packages/gutenberg/profiles/differential-common.hxml",
+        "sha256": "c7e2497fb43af209c3068962f73c6570104f69d57c576b8714e201af8ca7935e"
+      },
+      {
+        "path": "packages/gutenberg/profiles/differential-strict.hxml",
+        "sha256": "485b6a721e831d523f62fe20b15c89e0f3c57b3e4eca87b2b0ce7184467179e7"
+      },
+      {
+        "path": "packages/gutenberg/scripts/test-differential.sh",
+        "sha256": "4b59b589a7e701f05176e693d21fc01616576a8b557235cf21c1b70597c4bc97"
+      },
+      {
+        "path": "packages/gutenberg/scripts/verify-differential-profile.py",
+        "sha256": "f6fb9807495cac8fdce2c0403c0ecaae60e6c32873034686d6a1b98b90a3f2f5"
+      },
+      {
+        "path": "packages/gutenberg/scripts/verify-differential.mjs",
+        "sha256": "89b3cfa27be3e282d9c019ab56611aee84f28229dce4f6e0b05004c88ed8445a"
+      },
+      {
+        "path": "packages/gutenberg/test/differential-consumer/consumer.ts",
+        "sha256": "564adfe2dc4b54cf9b57363b446c74b349842a7a07249a636f207de5c179e2dd"
+      },
+      {
+        "path": "packages/gutenberg/test/differential-fixture/src/sdk035/fixture/DifferentialApi.hx",
+        "sha256": "816928e54c9bc6609eb1a087519e86f87c1a996b1386c39046633a47b2b0cb25"
+      },
+      {
+        "path": "packages/gutenberg/test/differential-fixture/src/sdk035/fixture/Main.hx",
+        "sha256": "e9463b8d698f023f36d3dbac3f3e70bd13b21e602cb62b7099c3465fa60bb9d8"
+      },
+      {
+        "path": "packages/gutenberg/test/differential-runtime/run.mjs",
+        "sha256": "1d820faaf704d9b31964ef24d1840812d87bb8a9d8d5fbcdea5be5e24f96c4e1"
+      },
+      {
+        "path": "packages/gutenberg/test/expected/differential.json",
+        "sha256": "b4e6bdc24bb8bb4456c9da91d5f7deaaf3dc3879b87d7062521d48f976e2af55"
+      }
+    ]
+  },
+  "immutableInputs": {
+    "compiler": {
+      "name": "genes-ts",
+      "version": "1.36.3",
+      "tag": "v1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+      "dependencyLock": {
+        "path": "packages/gutenberg/dependency-lock.json",
+        "sha256": "8161ff0a60ca0a764d2133f2a3d84f046046eb0513846071fb32c170b328bd74"
+      },
+      "admissionReceipt": "SDK-031-STRICT-BROWSER-PROFILE"
+    },
+    "hxx": {
+      "parser": "tink_hxx",
+      "version": "0.25.1",
+      "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+      "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+      "releaseArtifactSha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e",
+      "parserReceipt": "SDK-080-HXX-PARSER-PROTOTYPE",
+      "browserLoweringReceipt": "SDK-032-REACT-GUTENBERG-HXX"
+    },
+    "provider": {
+      "profileId": "wp70-release",
+      "wordpressVersion": "7.0.0",
+      "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+      "wordPressElement": "6.40.0",
+      "react": "18.3.1",
+      "reactTypes": "18.3.27"
+    },
+    "toolchain": {
+      "haxe": "4.3.7",
+      "lixNpmPackage": "15.12.4",
+      "lixReportedCliVersion": "15.12.2",
+      "formatter": "1.18.0",
+      "node": {
+        "version": "22.17.0",
+        "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+      },
+      "npm": "10.9.2",
+      "typescript": "5.9.3",
+      "esbuild": "0.27.2",
+      "jsdom": "26.1.0",
+      "manifest": {
+        "path": "packages/gutenberg/hxx-tooling/package.json",
+        "sha256": "164edb641502bf77cb5df246a1384ac737c02f488f12c2fdb0da7459baeae501"
+      },
+      "lock": {
+        "path": "packages/gutenberg/hxx-tooling/package-lock.json",
+        "sha256": "48ad5675e26b86e96bc6371bf3146f783ba3a7f2df18f25e69b5af2d3071f8df"
+      },
+      "install": "npm ci --ignore-scripts --no-audit --no-fund"
+    },
+    "referenceFixture": {
+      "repository": "https://github.com/fullofcaffeine/genes-ts",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
+      "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",
+      "sha256": "4d49ecde37d13de4b76c52f20e3e5c8ef81739f680da5f42bc0d3d9c5e147184",
+      "relationship": "concept-reference-only-no-copied-bytes",
+      "buildInput": false
+    }
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "authoring": "one SDK-owned Haxe facade with direct inline HXX return",
+    "profiles": {
+      "shared": "packages/gutenberg/profiles/differential-common.hxml",
+      "strict": {
+        "id": "strict-typescript-source",
+        "output": "split-esm-tsx",
+        "defines": [
+          "genes.ts",
+          "genes.ts.no_extension",
+          "genes.library",
+          "genes.react.no_inline_markup",
+          "js-es=6"
+        ],
+        "primary": true
+      },
+      "classic": {
+        "id": "classic-genes-esm",
+        "output": "split-esm-javascript-plus-declarations",
+        "defines": [
+          "dts",
+          "genes.library",
+          "genes.no_extension",
+          "genes.react.no_inline_markup",
+          "js-es=6"
+        ],
+        "primary": false
+      }
+    },
+    "hxxProjection": {
+      "parserOwner": "wordpresshx-sdk-032-browser-hxx",
+      "loweringTime": "compile-time",
+      "genesIntentContract": "generic-react-jsx-plan",
+      "genesInlineMarkupParserEnabled": false,
+      "shippedHxxRuntime": false
+    },
+    "retention": {
+      "stableExportId": "wordpresshx.sdk035.differential-api",
+      "exportName": "DifferentialApi",
+      "rule": "genes-library-root",
+      "manifestsComparedAcrossProfiles": true
+    },
+    "corpus": [
+      "retained split-ESM module",
+      "typed public aliases and static methods",
+      "pure Array and String data behavior",
+      "React static server markup",
+      "mounted useState initial state",
+      "real bubbling click transition"
+    ]
+  },
+  "localVerification": {
+    "host": {
+      "os": "macOS 15.4",
+      "architecture": "arm64",
+      "dockerEngine": "28.3.2"
+    },
+    "gate": {
+      "command": "bash packages/gutenberg/scripts/test-differential.sh",
+      "outcome": "passed",
+      "cleanGenesCompileCount": 4,
+      "bundleCount": 4,
+      "isolatedRuntimeProcessCount": 4,
+      "generatedTreesByteIdentical": true,
+      "strictBundlesByteIdentical": true,
+      "classicBundlesByteIdentical": true,
+      "allRuntimeTranscriptsIdentical": true
+    },
+    "generatedContract": {
+      "exportEntriesEqual": true,
+      "strictExternalConsumer": "passed",
+      "classicDeclarationConsumer": "passed",
+      "typescriptOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "strict": true,
+        "strictNullChecks": true,
+        "exactOptionalPropertyTypes": true,
+        "noUncheckedIndexedAccess": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": false,
+        "jsx": "react-jsx",
+        "noEmit": true
+      },
+      "authoredPublicAny": 0,
+      "authoredPublicUnknown": 0,
+      "unexplainedContractDifferenceCount": 0
+    },
+    "targetShape": {
+      "strictReactElementForm": "tsx-jsx",
+      "classicReactElementForm": "React__genes_jsx.createElement",
+      "allowedDifferences": [
+        "typescript-annotations-versus-adjacent-declarations",
+        "tsx-syntax-versus-react-create-element",
+        "emitter-owned-local-names-and-formatting"
+      ],
+      "unexplainedSemanticDifferenceCount": 0
+    },
+    "artifacts": {
+      "generatedTreeSha256": "33fe5430a23c837d7fea3aa9771abd099413e9a02a8a80d97e2a163d6bff3bf4",
+      "strictBundle": {
+        "bytes": 12294,
+        "sha256": "f0700b1584463fb1cb5b42f016b85ccb53ec67675d9a79c53f7da2f7c84470c2"
+      },
+      "classicBundle": {
+        "bytes": 12364,
+        "sha256": "558b0b4f7cec15ebee0f9387fef4d5c34669caf4802e02c711d057730a1086a6"
+      },
+      "machineLocalPathLeaks": 0
+    },
+    "runtimeTranscript": {
+      "description": "SDK-035:3:7:item-3|item-1|item-3",
+      "serverHtmlSha256": "3a0afa29d23e4eb0fb9944d4be07b3cbc07e6b1809f5668862b433d315d6fcdc",
+      "clientCountBefore": "2",
+      "clientCountAfterClick": "5"
+    }
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test strict and classic Genes React differential",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "wordpressSpecificGenesBranch": false,
+    "siblingGenesBuildInput": false,
+    "reason": "released Genes 1.36.3 already preserves the bounded typed HXX intent, authored contract, SSR, hook state, and click semantics in both printers"
+  },
+  "claims": {
+    "sameSourceCorpus": "runtime-and-contract-tested",
+    "strictTsxPrimaryLane": "unchanged",
+    "classicGenesDefaultProductionLane": false,
+    "universalSameSourceSwitch": "not-claimed",
+    "realWordPressEditorRuntime": "not-tested-by-sdk-035",
+    "nextJsRuntime": "not-tested-owned-by-sdk-113",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  },
+  "limitations": [
+    "The differential covers only the named facade and semantics; target-specific application constructs require independent evidence.",
+    "Expected generated syntax and declaration-placement differences are not represented as runtime equivalence outside the observed corpus.",
+    "The Node/jsdom React runtime is not a WordPress editor or Next.js integration claim.",
+    "Classic JavaScript remains a regression lane and is not an automatic production fallback.",
+    "Public package publication and production support remain blocked by later gates."
+  ]
+}

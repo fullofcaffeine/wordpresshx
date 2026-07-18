@@ -893,6 +893,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             "SDK-032-REACT-GUTENBERG-HXX",
             "SDK-033-WORDPRESS-ASSET-METADATA",
             "SDK-034-BROWSER-SOURCE-CORRELATION",
+            "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
             "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
         ],
         "wp70 upstream/source receipt link changed",

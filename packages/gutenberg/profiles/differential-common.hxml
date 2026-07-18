@@ -1,0 +1,14 @@
+-lib genes-ts
+-lib tink_hxx
+-cp ../hxx/src
+-cp src
+-cp test/differential-fixture/src
+-main sdk035.fixture.Main
+-D wordpress_hx_profile=wp70-release
+-D wordpress_hx_browser_hxx
+-D genes.react.no_inline_markup
+-D genes.library
+-D js-es=6
+-dce full
+--macro wordpress.hx.gutenberg.hxx.BrowserHxx.enable()
+--macro include('sdk035.fixture')

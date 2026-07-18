@@ -158,10 +158,14 @@ required_files=(
   packages/gutenberg/profiles/assets-strict.hxml
   packages/gutenberg/profiles/classic.hxml
   packages/gutenberg/profiles/default-dce.hxml
+  packages/gutenberg/profiles/differential-classic.hxml
+  packages/gutenberg/profiles/differential-common.hxml
+  packages/gutenberg/profiles/differential-strict.hxml
   packages/gutenberg/profiles/hxx-common.hxml
   packages/gutenberg/profiles/hxx-strict.hxml
   packages/gutenberg/profiles/strict.hxml
   packages/gutenberg/scripts/test-hxx.sh
+  packages/gutenberg/scripts/test-differential.sh
   packages/gutenberg/scripts/test-assets.sh
   packages/gutenberg/scripts/test.sh
   packages/gutenberg/scripts/emit-assets-plugin.py
@@ -170,6 +174,8 @@ required_files=(
   packages/gutenberg/scripts/verify-assets.mjs
   packages/gutenberg/scripts/verify-browser-profile.mjs
   packages/gutenberg/scripts/verify-dependency-lock.py
+  packages/gutenberg/scripts/verify-differential-profile.py
+  packages/gutenberg/scripts/verify-differential.mjs
   packages/gutenberg/scripts/verify-hxx-profile.py
   packages/gutenberg/scripts/verify-hxx.mjs
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx
@@ -198,7 +204,12 @@ required_files=(
   packages/gutenberg/test-negative-hxx/wrong_ref/Main.hx
   packages/gutenberg/test/consumer/consumer.ts
   packages/gutenberg/test/consumer/ordinary-consumer.mjs
+  packages/gutenberg/test/differential-consumer/consumer.ts
+  packages/gutenberg/test/differential-fixture/src/sdk035/fixture/DifferentialApi.hx
+  packages/gutenberg/test/differential-fixture/src/sdk035/fixture/Main.hx
+  packages/gutenberg/test/differential-runtime/run.mjs
   packages/gutenberg/test/expected/browser-profile.json
+  packages/gutenberg/test/expected/differential.json
   packages/gutenberg/test/fixture/src/sdk031/fixture/BrowserApi.hx
   packages/gutenberg/test/fixture/src/sdk031/fixture/Main.hx
   packages/gutenberg/test/fixture/src/sdk031/fixture/RuntimeSignals.hx
@@ -298,6 +309,7 @@ required_files=(
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
   manifests/evidence/sdk-034-browser-source-correlation.json
+  manifests/evidence/sdk-035-classic-genes-differential.json
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -632,6 +644,17 @@ sdk032_tooling_lock_path = Path(
 sdk032_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-032-react-gutenberg-hxx.json"
+    ).read_text(encoding="utf-8")
+)
+sdk035_expected_path = Path(
+    "packages/gutenberg/test/expected/differential.json"
+)
+sdk035_expected = json.loads(
+    sdk035_expected_path.read_text(encoding="utf-8")
+)
+sdk035_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-035-classic-genes-differential.json"
     ).read_text(encoding="utf-8")
 )
 sdk033_profile_path = Path(
@@ -2259,6 +2282,21 @@ assert classic_output["forbiddenDefine"] == "genes.ts"
 assert classic_output["comparison"] == (
     "observable-runtime-and-public-contract-not-textual-output"
 )
+assert classic_output["sdkHxxProjection"] == {
+    "profileFiles": [
+        "packages/gutenberg/profiles/differential-common.hxml",
+        "packages/gutenberg/profiles/differential-strict.hxml",
+        "packages/gutenberg/profiles/differential-classic.hxml",
+    ],
+    "compileTimeMarkupOwner": "wordpresshx-sdk-032-browser-hxx",
+    "genesIntentContract": "generic-react-jsx-plan",
+    "genesInlineMarkupParserEnabled": False,
+    "define": "genes.react.no_inline_markup",
+    "reason": (
+        "the SDK parser has already lowered HXX to typed Genes intent, so a "
+        "second source parser would be ambiguous"
+    ),
+}
 assert classic_output["coveragePolicy"] == (
     "bounded-explicit-corpus-no-universal-mode-switch-claim"
 )
@@ -2741,6 +2779,227 @@ assert sdk032_receipt["claims"]["reactGutenbergHxx"] == (
 )
 assert sdk032_receipt["claims"]["realWordPressEditorRuntime"] == "not-tested"
 assert sdk032_receipt["claims"]["productionSupport"] == "not-tested"
+
+assert sdk035_receipt["schemaVersion"] == 1
+assert sdk035_receipt["receiptId"] == "SDK-035-CLASSIC-GENES-DIFFERENTIAL"
+assert sdk035_receipt["bead"] == "wordpresshx-sdk-035"
+assert sdk035_receipt["status"] in {"implemented-hosted-pending", "verified"}
+assert sdk035_receipt["subject"]["package"] == "packages/gutenberg"
+assert sdk035_receipt["subject"]["profileId"] == "wp70-release"
+sdk035_subject_files = sdk035_receipt["subject"]["files"]
+sdk035_subject_paths = [item["path"] for item in sdk035_subject_files]
+assert sdk035_subject_paths == sorted(set(sdk035_subject_paths))
+for sdk035_subject_file in sdk035_subject_files:
+    sdk035_subject_path = Path(sdk035_subject_file["path"])
+    assert sha256.fullmatch(sdk035_subject_file["sha256"])
+    assert hashlib.sha256(sdk035_subject_path.read_bytes()).hexdigest() == (
+        sdk035_subject_file["sha256"]
+    )
+
+assert sdk035_expected["schemaVersion"] == 1
+assert sdk035_expected["fixtureId"] == (
+    "wordpresshx-sdk035-classic-genes-differential-v1"
+)
+assert sdk035_expected["profileId"] == sdk035_receipt["subject"]["profileId"]
+sdk035_expected_subject = next(
+    item
+    for item in sdk035_subject_files
+    if item["path"] == sdk035_expected_path.as_posix()
+)
+assert sdk035_expected_subject["sha256"] == hashlib.sha256(
+    sdk035_expected_path.read_bytes()
+).hexdigest()
+
+sdk035_inputs = sdk035_receipt["immutableInputs"]
+sdk035_compiler = sdk035_inputs["compiler"]
+for field in ("name", "version", "commit", "tree"):
+    assert sdk035_compiler[field] == gutenberg_dependency_lock["compiler"][field]
+assert sdk035_compiler["tag"] == gutenberg_dependency_lock["compiler"]["tag"]
+assert sdk035_compiler["releaseArtifactSha256"] == (
+    gutenberg_dependency_lock["compiler"]["releaseArtifact"]["sha256"]
+)
+sdk035_dependency_lock_path = Path(
+    sdk035_compiler["dependencyLock"]["path"]
+)
+assert sdk035_dependency_lock_path == gutenberg_dependency_lock_path
+assert sdk035_compiler["dependencyLock"]["sha256"] == hashlib.sha256(
+    sdk035_dependency_lock_path.read_bytes()
+).hexdigest()
+assert sdk035_compiler["admissionReceipt"] == sdk031_receipt["receiptId"]
+
+sdk035_hxx = sdk035_inputs["hxx"]
+assert sdk035_hxx["version"] == hxx_dependency_lock["parser"]["version"]
+assert sdk035_hxx["commit"] == hxx_dependency_lock["parser"]["commit"]
+assert sdk035_hxx["tree"] == hxx_dependency_lock["parser"]["tree"]
+assert sdk035_hxx["releaseArtifactSha256"] == (
+    hxx_dependency_lock["parser"]["artifact"]["sha256"]
+)
+assert sdk035_hxx["parserReceipt"] == hxx_receipt["receiptId"]
+assert sdk035_hxx["browserLoweringReceipt"] == sdk032_receipt["receiptId"]
+
+sdk035_toolchain = sdk035_inputs["toolchain"]
+assert sdk035_toolchain["node"]["image"] == image_lock["images"]["node"][
+    "reference"
+]
+assert sdk035_toolchain["node"]["version"] == "22.17.0"
+assert sdk035_toolchain["npm"] == "10.9.2"
+assert sdk035_toolchain["typescript"] == "5.9.3"
+assert sdk035_toolchain["esbuild"] == "0.27.2"
+assert sdk035_toolchain["manifest"]["path"] == (
+    sdk032_tooling_manifest_path.as_posix()
+)
+assert sdk035_toolchain["manifest"]["sha256"] == hashlib.sha256(
+    sdk032_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk035_toolchain["lock"]["path"] == sdk032_tooling_lock_path.as_posix()
+assert sdk035_toolchain["lock"]["sha256"] == hashlib.sha256(
+    sdk032_tooling_lock_path.read_bytes()
+).hexdigest()
+assert sdk035_toolchain["install"] == (
+    "npm ci --ignore-scripts --no-audit --no-fund"
+)
+
+sdk035_reference = sdk035_inputs["referenceFixture"]
+assert sdk035_reference == sdk035_expected["compilerProvenance"][
+    "referenceFixture"
+] | {
+    "repository": "https://github.com/fullofcaffeine/genes-ts",
+    "commit": gutenberg_dependency_lock["compiler"]["commit"],
+}
+assert sdk035_reference["relationship"] == (
+    "concept-reference-only-no-copied-bytes"
+)
+assert sdk035_reference["buildInput"] is False
+
+sdk035_implementation = sdk035_receipt["implementation"]
+assert sdk035_implementation["authoring"] == (
+    "one SDK-owned Haxe facade with direct inline HXX return"
+)
+assert sdk035_implementation["profiles"]["strict"]["primary"] is True
+assert sdk035_implementation["profiles"]["classic"]["primary"] is False
+assert sdk035_implementation["hxxProjection"] == {
+    "parserOwner": "wordpresshx-sdk-032-browser-hxx",
+    "loweringTime": "compile-time",
+    "genesIntentContract": "generic-react-jsx-plan",
+    "genesInlineMarkupParserEnabled": False,
+    "shippedHxxRuntime": False,
+}
+assert sdk035_implementation["retention"]["stableExportId"] == (
+    sdk035_expected["exportPlan"]["stableExportId"]
+)
+assert sdk035_implementation["retention"]["manifestsComparedAcrossProfiles"] is True
+assert len(sdk035_implementation["corpus"]) == 6
+
+sdk035_local = sdk035_receipt["localVerification"]
+assert sdk035_local["gate"]["command"] == (
+    "bash packages/gutenberg/scripts/test-differential.sh"
+)
+assert sdk035_local["gate"]["outcome"] == "passed"
+assert sdk035_local["gate"]["cleanGenesCompileCount"] == 4
+assert sdk035_local["gate"]["bundleCount"] == 4
+assert sdk035_local["gate"]["isolatedRuntimeProcessCount"] == 4
+assert all(
+    sdk035_local["gate"][field] is True
+    for field in (
+        "generatedTreesByteIdentical",
+        "strictBundlesByteIdentical",
+        "classicBundlesByteIdentical",
+        "allRuntimeTranscriptsIdentical",
+    )
+)
+assert sdk035_local["generatedContract"]["exportEntriesEqual"] is True
+assert sdk035_local["generatedContract"]["strictExternalConsumer"] == "passed"
+assert sdk035_local["generatedContract"]["classicDeclarationConsumer"] == (
+    "passed"
+)
+assert sdk035_local["generatedContract"]["typescriptOptions"] == (
+    primary_output["typecheck"]
+)
+assert sdk035_local["generatedContract"]["authoredPublicAny"] == 0
+assert sdk035_local["generatedContract"]["authoredPublicUnknown"] == 0
+assert sdk035_local["generatedContract"][
+    "unexplainedContractDifferenceCount"
+] == sdk035_expected["publicContract"]["unexplainedContractDifferenceCount"] == 0
+assert sdk035_local["targetShape"]["allowedDifferences"] == (
+    sdk035_expected["targetShape"]["allowedDifferences"]
+)
+assert sdk035_local["targetShape"][
+    "unexplainedSemanticDifferenceCount"
+] == sdk035_expected["targetShape"]["unexplainedSemanticDifferenceCount"] == 0
+assert sdk035_local["artifacts"] == sdk035_expected["artifacts"] | {
+    "machineLocalPathLeaks": 0
+}
+assert sdk035_local["runtimeTranscript"]["description"] == (
+    sdk035_expected["runtimeTranscript"]["description"]
+)
+assert sdk035_local["runtimeTranscript"]["serverHtmlSha256"] == hashlib.sha256(
+    sdk035_expected["runtimeTranscript"]["serverHtml"].encode()
+).hexdigest()
+assert sdk035_local["runtimeTranscript"]["clientCountBefore"] == (
+    sdk035_expected["runtimeTranscript"]["clientBefore"]["count"]
+)
+assert sdk035_local["runtimeTranscript"]["clientCountAfterClick"] == (
+    sdk035_expected["runtimeTranscript"]["clientAfter"]["count"]
+)
+
+sdk035_hosted = sdk035_receipt["repositoryHostedVerification"]
+assert sdk035_hosted["workflow"] == "Repository bootstrap"
+assert sdk035_hosted["job"] == "haxe"
+assert sdk035_hosted["step"] == (
+    "Test strict and classic Genes React differential"
+)
+assert sdk035_hosted["required"] is True
+if sdk035_receipt["status"] == "implemented-hosted-pending":
+    assert sdk035_implementation["implementationCommit"] is None
+    assert sdk035_hosted["status"] == "pending-main-push"
+    for field in ("commit", "runId", "jobId", "url"):
+        assert sdk035_hosted[field] is None
+    assert sdk035_hosted["allJobsPassed"] is None
+    assert sdk035_hosted["artifactHashesMatched"] is None
+    assert browser_architecture["evidence"]["classicDifferential"] == (
+        "implemented-by-sdk-035-hosted-verification-pending"
+    )
+else:
+    assert sha1.fullmatch(sdk035_implementation["implementationCommit"])
+    assert sdk035_hosted["status"] == "passed"
+    assert sdk035_hosted["commit"] == sdk035_implementation[
+        "implementationCommit"
+    ]
+    assert isinstance(sdk035_hosted["runId"], int)
+    assert isinstance(sdk035_hosted["jobId"], int)
+    assert sdk035_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk035_hosted['runId']}"
+    )
+    assert sdk035_hosted["jobCount"] == 10
+    assert sdk035_hosted["allJobsPassed"] is True
+    assert sdk035_hosted["artifactHashesMatched"] is True
+    assert browser_architecture["evidence"]["classicDifferential"] == (
+        "verified-by-sdk-035-classic-genes-differential"
+    )
+
+assert sdk035_receipt["changeDecision"] == {
+    "genesSourceChanged": False,
+    "genesPullRequest": None,
+    "wordpressSpecificGenesBranch": False,
+    "siblingGenesBuildInput": False,
+    "reason": (
+        "released Genes 1.36.3 already preserves the bounded typed HXX "
+        "intent, authored contract, SSR, hook state, and click semantics in "
+        "both printers"
+    ),
+}
+assert sdk035_receipt["claims"]["sameSourceCorpus"] == (
+    "runtime-and-contract-tested"
+)
+assert sdk035_receipt["claims"]["strictTsxPrimaryLane"] == "unchanged"
+assert sdk035_receipt["claims"]["classicGenesDefaultProductionLane"] is False
+assert sdk035_receipt["claims"]["universalSameSourceSwitch"] == "not-claimed"
+assert sdk035_receipt["claims"]["productionSupport"] == "not-tested"
+assert sdk035_receipt["claims"]["publicationAuthorized"] is False
+assert sdk035_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
 
 assert sdk033_receipt["schemaVersion"] == 1
 assert sdk033_receipt["receiptId"] == "SDK-033-WORDPRESS-ASSET-METADATA"

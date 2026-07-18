@@ -19,6 +19,15 @@ The complete admission, strict-output, DCE, runtime, and reproducibility proof
 is recorded by
 [`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
 
+SDK-035 closes the representative React differential with the same immutable
+Genes 1.36.3 pin. One SDK-owned Haxe/HXX facade is emitted as strict TSX and as
+classic JavaScript plus declarations, consumed under strict TypeScript 5.9.3,
+and executed through pure functions, React SSR, a mounted hook, and a real
+click. The clean replay and all four isolated runtime transcripts match. The
+comparison is intentionally corpus-scoped; classic output is neither the
+default production lane nor a universal fallback. The complete proof is
+[`SDK-035-CLASSIC-GENES-DIFFERENTIAL`](../../manifests/evidence/sdk-035-classic-genes-differential.json).
+
 ADR-013 selects how that compiler enters WordPress projects. Its
 machine-readable contract is
 [`manifests/browser-build-architecture.json`](../../manifests/browser-build-architecture.json):
@@ -75,6 +84,13 @@ symbols, tested across strict TypeScript, classic Genes, standard Haxe, and
 supported TypeScript versions, then merged as upstream PR #3. Release builds
 consume the resulting immutable release/commit, never the floating sibling
 checkout.
+
+SDK-035 found no generic compiler defect. It reuses the released Genes JSX
+intent contract and records the upstream `DualJsxMain.hx` fixture only as an
+immutable concept reference; no source bytes or sibling checkout enter the
+build. The SDK-owned HXX parser disables Genes' second source-markup parser in
+both differential profiles, while Genes remains the sole owner of TSX and
+classic JavaScript printing.
 
 ## Upgrade and rollback
 

@@ -155,6 +155,18 @@
       "forbiddenDefine": "genes.ts",
       "moduleFormat": "split-esm",
       "comparison": "observable-runtime-and-public-contract-not-textual-output",
+      "sdkHxxProjection": {
+        "profileFiles": [
+          "packages/gutenberg/profiles/differential-common.hxml",
+          "packages/gutenberg/profiles/differential-strict.hxml",
+          "packages/gutenberg/profiles/differential-classic.hxml"
+        ],
+        "compileTimeMarkupOwner": "wordpresshx-sdk-032-browser-hxx",
+        "genesIntentContract": "generic-react-jsx-plan",
+        "genesInlineMarkupParserEnabled": false,
+        "define": "genes.react.no_inline_markup",
+        "reason": "the SDK parser has already lowered HXX to typed Genes intent, so a second source parser would be ambiguous"
+      },
       "strictDeclarationConsumer": {
         "skipLibCheck": false,
         "exactOptionalPropertyTypes": true,
@@ -339,7 +351,7 @@
     "sdkStrictFixture": "verified-by-sdk-031-strict-browser-profile",
     "gutenbergHxxFixture": "verified-by-sdk-032-react-gutenberg-hxx",
     "wordpressBundleAndAssetParity": "verified-by-sdk-033-wordpress-asset-metadata",
-    "classicDifferential": "owned-by-wordpresshx-sdk-035",
+    "classicDifferential": "implemented-by-sdk-035-hosted-verification-pending",
     "sourceMaps": "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-development-production-composition-verified",
     "browserSdkCompatibility": "not-tested",
     "productionSupport": "not-tested",

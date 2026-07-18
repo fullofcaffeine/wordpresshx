@@ -12,9 +12,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `browser-build-architecture.json` is the accepted ADR-013 strict TS/TSX
   primary lane, bounded classic Genes differential, exact project
   Node/npm/TypeScript tuple, public export/DCE retention, normal WordPress
-  package externalization, and final-asset authority lock. It selects the
-  architecture only: SDK-031 through SDK-035 still own strict fixture,
-  Gutenberg HXX, bundle/asset parity, source-map, and classic runtime evidence.
+  package externalization, and final-asset authority lock. SDK-031 through
+  SDK-035 now provide the bounded strict fixture, Gutenberg HXX, bundle/asset
+  parity, source-map, and classic runtime evidence. Those receipts do not
+  broaden the explicit fixture corpus into a universal output switch or
+  production-support claim.
 - `source-correlation-architecture.json` is the accepted ADR-014 content-bound
   PHP range-map, package source-index, browser composition/two-stage fallback,
   offline trace, logical-path, and debug-retention lock. SDK-025 implements the
@@ -58,6 +60,16 @@ source-map composition, and local Chrome accessibility/visual review. It does
 not claim dependency extraction, translations, real WordPress editor loading,
 the classic differential, complete G2 closure, publication, or production
 support.
+
+Receipt `SDK-035-CLASSIC-GENES-DIFFERENTIAL` compiles one retained Haxe/HXX
+facade through strict TSX and classic JavaScript plus declarations from the
+same immutable Genes 1.36.3 input. It compares the authored public contract,
+strict external consumers, pure data behavior, React SSR, mounted hook state,
+and a real click transition across byte-identical clean replays. Expected
+printer differences are classified separately; no unexplained semantic or
+contract difference is admitted. The receipt is bounded to this corpus and
+does not make classic output the default or claim arbitrary same-source
+switching.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

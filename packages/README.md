@@ -19,6 +19,13 @@ page bundles and runs real React 18 and WordPress Button/Notice code while
 shipping no HXX parser or UI runtime. No sibling Genes checkout or
 WordPress-specific Genes branch is used.
 
+SDK-035 uses one additional Haxe/HXX facade to compare the strict TSX and
+classic JavaScript-plus-declarations printers. Both outputs retain the same
+declared module, pass strict external TypeScript consumption, and produce the
+same data, SSR, mounted-state, and click behavior in isolated React 18
+processes. This is a bounded regression corpus, not a universal mode switch;
+it required no Genes source change or sibling build input.
+
 SDK-025 establishes the [`cli`](cli/README.md) build source for
 `@wordpress-hx/cli`. Its PHP trace application is authored in Haxe and compiled
 to Node ESM by immutable Genes 1.36.3. It validates exact package indexes and

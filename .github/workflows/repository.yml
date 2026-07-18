@@ -156,3 +156,5 @@ jobs:
         run: bash packages/gutenberg/scripts/test.sh
       - name: Test typed React and Gutenberg HXX
         run: bash packages/gutenberg/scripts/test-hxx.sh
+      - name: Test strict and classic Genes React differential
+        run: bash packages/gutenberg/scripts/test-differential.sh

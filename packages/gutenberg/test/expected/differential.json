@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "wordpresshx-sdk035-classic-genes-differential-v1",
+  "profileId": "wp70-release",
+  "exportPlan": {
+    "stableExportId": "wordpresshx.sdk035.differential-api",
+    "haxeSource": "test/differential-fixture/src/sdk035/fixture/DifferentialApi.hx",
+    "generatedModule": "sdk035/fixture/DifferentialApi",
+    "exportName": "DifferentialApi",
+    "typeIdentity": "sdk035.fixture.DifferentialApi",
+    "retentionRule": "genes-library-root",
+    "profileCapabilityRefs": []
+  },
+  "compilerProvenance": {
+    "name": "genes-ts",
+    "version": "1.36.3",
+    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "referenceFixture": {
+      "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
+      "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",
+      "sha256": "4d49ecde37d13de4b76c52f20e3e5c8ef81739f680da5f42bc0d3d9c5e147184",
+      "relationship": "concept-reference-only-no-copied-bytes",
+      "buildInput": false
+    },
+    "wordpressSpecificGenesChange": false,
+    "genesPullRequest": null
+  },
+  "publicContract": {
+    "className": "DifferentialApi",
+    "methods": [
+      {
+        "kind": "static-method",
+        "name": "Counter",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "props",
+            "type": "CounterProps",
+            "optional": false
+          }
+        ],
+        "returns": "BrowserNode"
+      },
+      {
+        "kind": "static-method",
+        "name": "describe",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "label",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "name": "summary",
+            "type": "DifferentialSummary",
+            "optional": false
+          }
+        ],
+        "returns": "string"
+      },
+      {
+        "kind": "static-method",
+        "name": "summarize",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "prefix",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "name": "values",
+            "type": "number[]",
+            "optional": false
+          }
+        ],
+        "returns": "DifferentialSummary"
+      }
+    ],
+    "typeAliases": {
+      "CounterProps": {
+        "initial": "number",
+        "label": "string",
+        "step": "number"
+      },
+      "DifferentialSummary": {
+        "count": "number",
+        "labels": "string[]",
+        "total": "number"
+      }
+    },
+    "weakTypeInventory": {
+      "authoredPublicAny": 0,
+      "authoredPublicUnknown": 0
+    },
+    "unexplainedContractDifferenceCount": 0
+  },
+  "targetShape": {
+    "strict": {
+      "entryExtension": ".tsx",
+      "reactElementForm": "jsx",
+      "declarationSource": "typed-source"
+    },
+    "classic": {
+      "entryExtension": ".js",
+      "declarationExtension": ".d.ts",
+      "reactElementForm": "react-create-element"
+    },
+    "allowedDifferences": [
+      "typescript-annotations-versus-adjacent-declarations",
+      "tsx-syntax-versus-react-create-element",
+      "emitter-owned-local-names-and-formatting"
+    ],
+    "unexplainedSemanticDifferenceCount": 0
+  },
+  "runtimeTranscript": {
+    "summary": {
+      "count": 3,
+      "total": 7,
+      "labels": [
+        "item-3",
+        "item-1",
+        "item-3"
+      ]
+    },
+    "description": "SDK-035:3:7:item-3|item-1|item-3",
+    "serverHtml": "<section class=\"differential-counter\" data-state=\"2\" aria-label=\"Differential count\"><span class=\"differential-counter__label\">Differential count</span><span class=\"differential-counter__value\" aria-live=\"polite\">2</span><button type=\"button\">Add 3</button></section>",
+    "clientBefore": {
+      "count": "2",
+      "output": "2",
+      "action": "Add 3",
+      "label": "Differential count"
+    },
+    "clientAfter": {
+      "count": "5",
+      "output": "5",
+      "action": "Add 3",
+      "label": "Differential count"
+    }
+  },
+  "artifacts": {
+    "generatedTreeSha256": "33fe5430a23c837d7fea3aa9771abd099413e9a02a8a80d97e2a163d6bff3bf4",
+    "strictBundle": {
+      "bytes": 12294,
+      "sha256": "f0700b1584463fb1cb5b42f016b85ccb53ec67675d9a79c53f7da2f7c84470c2"
+    },
+    "classicBundle": {
+      "bytes": 12364,
+      "sha256": "558b0b4f7cec15ebee0f9387fef4d5c34669caf4802e02c711d057730a1086a6"
+    }
+  },
+  "budgets": {
+    "strictBundleMaximumBytes": 50000,
+    "classicBundleMaximumBytes": 50000
+  }
+}

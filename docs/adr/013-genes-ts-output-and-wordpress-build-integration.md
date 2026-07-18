@@ -295,6 +295,37 @@ replace the frozen provider. Installs are unprivileged and disposable, use
 Advisory reachability and retirement are tracked explicitly by
 `wordpresshx-g2.3`; public package publication remains blocked.
 
+### SDK-035 implementation evidence
+
+SDK-035 closes the representative classic differential without changing the
+primary lane. A single retained `DifferentialApi` Haxe facade combines typed
+data functions with a `useState` counter that directly returns inline HXX.
+The SDK-032 compile-time parser resolves the markup once and emits Genes'
+generic JSX intent; `genes.react.no_inline_markup` prevents a second source
+parser from interpreting already-lowered expressions.
+
+The strict profile emits split-ESM TSX, while the classic profile emits
+split-ESM JavaScript and adjacent declarations. Both preserve the same export
+manifest and authored aliases/methods. An external consumer passes TypeScript
+5.9.3 with strict null checks, exact optional properties, unchecked-index
+checks, verbatim modules, and `skipLibCheck: false`. Expected syntax,
+declaration-placement, local-name, and formatting differences are recorded
+separately from observable behavior.
+
+Each lane is compiled twice and bundled twice. The generated trees and each
+lane's bundles are byte-identical across clean replay. Four isolated Node
+22.17.0/jsdom/React 18 processes compare the pure summary, static server
+markup, initial mounted state, and a real bubbling click transition. The
+transcripts are identical and the unexplained contract and semantic deltas are
+both zero. This proves only the named corpus; it does not promise arbitrary
+same-source switching or authorize classic output as a production fallback.
+
+The immutable Genes 1.36.3 `DualJsxMain.hx` fixture informed the comparison
+shape, but no bytes were copied and it is not a build input. The released
+compiler already supported the required generic semantics, so SDK-035 made no
+Genes source change and opened no upstream PR. The receipt is
+`SDK-035-CLASSIC-GENES-DIFFERENTIAL`.
+
 ## Rationale
 
 Strict TS/TSX keeps the generated browser surface reviewable and lets the
