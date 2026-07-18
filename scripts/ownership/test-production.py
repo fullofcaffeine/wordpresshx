@@ -125,6 +125,8 @@ class Runtime:
             "--rm",
             "--network",
             "none",
+            "--user",
+            f"{os.getuid()}:{os.getgid()}",
             "--mount",
             f"type=bind,src={self.runtime_root},dst=/runtime,readonly",
             "--mount",

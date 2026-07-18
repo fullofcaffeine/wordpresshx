@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-18T21:59:45Z",
+  "observedAt": "2026-07-18T22:10:18Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
@@ -30,7 +30,7 @@
     },
     "productionCorpus": {
       "path": "scripts/ownership/test-production.py",
-      "sha256": "546790441756d44486f2e4a6c7f68ffc7517bebae178c9cfa7359c8bf030f8c4"
+      "sha256": "3a6738631d9c7ece19e14e254925ddf6a744ea882f9e3a9422794797e088c82d"
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
@@ -70,6 +70,15 @@
     "status": "pending-first-hosted-main-run",
     "required": true
   },
+  "discardedHostedAttempts": [
+    {
+      "runId": 29662888829,
+      "jobId": 88128417925,
+      "commit": "d85b6f9308f80059c99eb6471b8115b9e8780942",
+      "status": "failed",
+      "failure": "locked Node container wrote root-owned mode-0600 evidence files; the generalized harness now runs the runtime as the invoking POSIX uid:gid"
+    }
+  ],
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-local",
     "processFailureAtomicity": "runtime-tested-local",

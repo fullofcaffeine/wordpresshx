@@ -1926,6 +1926,19 @@ elif sdk041_hosted["status"] == "passed":
     sdk041_evidence_level = "runtime-tested-hosted"
 else:
     raise AssertionError("SDK-041 ownership hosted status is invalid")
+assert sdk041_receipt["discardedHostedAttempts"] == [
+    {
+        "runId": 29662888829,
+        "jobId": 88128417925,
+        "commit": "d85b6f9308f80059c99eb6471b8115b9e8780942",
+        "status": "failed",
+        "failure": (
+            "locked Node container wrote root-owned mode-0600 evidence files; "
+            "the generalized harness now runs the runtime as the invoking POSIX "
+            "uid:gid"
+        ),
+    }
+]
 for sdk041_proven_claim in (
     "sdk041ArtifactOwner",
     "processFailureAtomicity",
