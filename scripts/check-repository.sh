@@ -894,11 +894,36 @@ assert wordpress_subject["genericCompilerReceiptId"] == (
 )
 wordpress_profile_root = Path(wordpress_subject["path"])
 wordpress_profile_digest_input = bytearray()
-if wordpress_php_receipt["status"] == "verified":
-    receipt_commit = wordpress_php_receipt["implementation"][
-        "implementationCommit"
-    ]
-    assert sha1.fullmatch(receipt_commit)
+wordpress_package_files = wordpress_subject["packageFiles"]
+assert isinstance(wordpress_package_files, list)
+assert wordpress_package_files
+wordpress_package_paths = []
+for entry in wordpress_package_files:
+    assert set(entry) == {"path", "sha256"}
+    assert sha256.fullmatch(entry["sha256"])
+    entry_path = Path(entry["path"])
+    relative_entry_path = entry_path.relative_to(wordpress_profile_root)
+    assert ".." not in relative_entry_path.parts
+    assert "build" not in relative_entry_path.parts
+    wordpress_package_paths.append(entry["path"])
+    wordpress_profile_digest_input.extend(
+        f"{entry['sha256']}  {entry['path']}\n".encode()
+    )
+assert wordpress_package_paths == sorted(set(wordpress_package_paths))
+assert hashlib.sha256(wordpress_profile_digest_input).hexdigest() == (
+    wordpress_subject["packageContentSha256"]
+)
+
+receipt_commit = wordpress_php_receipt["implementation"][
+    "implementationCommit"
+]
+assert sha1.fullmatch(receipt_commit)
+historical_commit_available = subprocess.run(
+    ["git", "cat-file", "-e", f"{receipt_commit}^{{commit}}"],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+).returncode == 0
+if historical_commit_available:
     historical_paths = subprocess.run(
         [
             "git",
@@ -918,34 +943,14 @@ if wordpress_php_receipt["status"] == "verified":
         for path in historical_paths
         if "build" not in Path(path).relative_to(wordpress_profile_root).parts
     )
-    for path in historical_paths:
+    assert historical_paths == wordpress_package_paths
+    for entry in wordpress_package_files:
         content = subprocess.run(
-            ["git", "show", f"{receipt_commit}:{path}"],
+            ["git", "show", f"{receipt_commit}:{entry['path']}"],
             check=True,
             capture_output=True,
         ).stdout
-        digest = hashlib.sha256(content).hexdigest()
-        wordpress_profile_digest_input.extend(
-            f"{digest}  {path}\n".encode()
-        )
-else:
-    wordpress_profile_files = sorted(
-        (
-            path
-            for path in wordpress_profile_root.rglob("*")
-            if path.is_file()
-            and "build" not in path.relative_to(wordpress_profile_root).parts
-        ),
-        key=lambda path: path.as_posix(),
-    )
-    for path in wordpress_profile_files:
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        wordpress_profile_digest_input.extend(
-            f"{digest}  {path.as_posix()}\n".encode()
-        )
-assert hashlib.sha256(wordpress_profile_digest_input).hexdigest() == (
-    wordpress_subject["packageContentSha256"]
-)
+        assert hashlib.sha256(content).hexdigest() == entry["sha256"]
 for subject_id in ("emissionPolicy", "artifactManifestSnapshot"):
     evidence = wordpress_subject[subject_id]
     evidence_path = Path(evidence["path"])

@@ -9,6 +9,92 @@
     "path": "compiler/wordpress",
     "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
     "packageContentSha256": "258e0039a7db1969fbfe5b7d8713a1b89c57c887f9ab50fb87703e683ee665e6",
+    "packageFiles": [
+      {
+        "path": "compiler/wordpress/README.md",
+        "sha256": "8a5a87a4100ab23c5107c92fbdb7076e7dfae90351ee5e678c1894c289a66458"
+      },
+      {
+        "path": "compiler/wordpress/runtime/activate-plugin.php",
+        "sha256": "a3f068e51c2734ad65488bf439600a1e4d2bcd0dec9759f4e19ec32d4605ffea"
+      },
+      {
+        "path": "compiler/wordpress/runtime/native-caller.php",
+        "sha256": "14e76e07f17c21f6f1b7ed7c9415d4850fa4b3f76c571ddbb613b551484f8e74"
+      },
+      {
+        "path": "compiler/wordpress/runtime/probe-plugin.php",
+        "sha256": "3d47a3f7f3af36c21d210f8a4fbc50c145cd3545a9a11350203f54880305704b"
+      },
+      {
+        "path": "compiler/wordpress/scripts/run-wordpress-lane.sh",
+        "sha256": "391a9cc37e2d9cd030e6d964ae407e28981834e48c04f19fc49d6fac9698cc15"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test-php-matrix.sh",
+        "sha256": "bb18e04a2dfb2ce59b6bacb5aa570a2f61484e1a3318f14c5b3a2079932f78cb"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test-wordpress.sh",
+        "sha256": "1c05e1623ba2c98aebe36e417073557dcafb769bdb5e8b3a074504a8c42ed57e"
+      },
+      {
+        "path": "compiler/wordpress/scripts/test.sh",
+        "sha256": "0c9fbcb393b801bac721ad753abee91b06f8dad6b50e123071b10bb1b9ce3cc6"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginBootstrapPlan.hx",
+        "sha256": "f81038e06ea1db07705f3f7422ca7093af207979b7775869dd4763f0da695500"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginHeader.hx",
+        "sha256": "50604a89992bb2987ebaa8bccd9672a2b2b85d960ec9cbcf5006db69079f2e04"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx",
+        "sha256": "6bce97622d74fb1a18906449b31850e07d2c7faa19bdd155ad5b49c76670560d"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx",
+        "sha256": "ac65acec9bcce58e20ec2da9614f44b025678453610eeea6e09981e7b384d387"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx",
+        "sha256": "1e4e26af725b0dea3ccfb1f3ede1b43dfeadf2c6613f35a483e8f9140212c232"
+      },
+      {
+        "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx",
+        "sha256": "ebff13acba053841043efcf04217446a0a03de8585fd87d4c5cafddc157a13c7"
+      },
+      {
+        "path": "compiler/wordpress/test.hxml",
+        "sha256": "01e364f67e61677669e25d1cfc648e8fc43056917d15d41dc67fdc91409dad8b"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/acme-books.php.txt",
+        "sha256": "b757b6b59e202c79951ec44fcdabc855d50dd5587326493cc35b2a9f7659f265"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/includes/Bootstrap.php.txt",
+        "sha256": "d8bb76474eb3e6a5258fe1ea8c6b19df7272624715ed99593c1b2cf0fa796b58"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/includes/autoload.php.txt",
+        "sha256": "b17397693e23c805a4ee76c66611cd531cdc436ce4befb66d2033b7c1d8ab839"
+      },
+      {
+        "path": "compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json",
+        "sha256": "4312da610b0e96b950fb06bb1ee976574ee0247904d5e377f9643362d34353a8"
+      },
+      {
+        "path": "compiler/wordpress/test/fixtures/AcmeBooksPlugin.hx",
+        "sha256": "3b17a5007a40e9674283df40ff7e8e6297c76e59a341fd9072489b53b1dafe05"
+      },
+      {
+        "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx",
+        "sha256": "901fff4ffc6e60732a61d51423c88410ca2af1b354ac9f2fabc0356e4d53605b"
+      }
+    ],
     "genericCompilerReceiptId": "SDK-021-PHP-IR-PRINTER",
     "emissionPolicy": {
       "path": "manifests/php-emission-policy.json",
