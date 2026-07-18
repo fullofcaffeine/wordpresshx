@@ -3,7 +3,7 @@
   "receiptId": "SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE",
   "observedAt": "2026-07-18T02:07:47Z",
   "bead": "wordpresshx-sdk-022",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "subject": {
     "profile": "wp70-release",
     "path": "compiler/wordpress",
@@ -68,7 +68,7 @@
     "stockHaxePhpFiles": 0,
     "runtimeHxxDependency": false,
     "buildTimeServerDependency": false,
-    "implementationCommit": null
+    "implementationCommit": "e4855dc398c9c9ea16ee97d9e4152e52eb355432"
   },
   "generatedArtifacts": [
     {
@@ -158,20 +158,20 @@
   },
   "hostedWorkflow": {
     "path": ".github/workflows/repository.yml",
-    "runId": null,
-    "commit": null,
-    "status": "pending",
-    "fullMatrixStatus": "pending",
+    "runId": 29626729649,
+    "commit": "e4855dc398c9c9ea16ee97d9e4152e52eb355432",
+    "status": "passed",
+    "fullMatrixStatus": "passed",
     "requiredJobs": [
       {
         "name": "haxe",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 88032521950,
+        "status": "passed"
       },
       {
         "name": "wordpress-runtime",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 88032521926,
+        "status": "passed"
       }
     ]
   },
