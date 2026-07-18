@@ -33,6 +33,8 @@ required_files=(
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
+  docs/gates/README.md
+  docs/gates/g0-product-authority-and-baseline.md
   docs/architecture/browser-compiler.md
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
@@ -139,7 +141,9 @@ required_files=(
   manifests/hxx-architecture.json
   manifests/package-topology.json
   manifests/release-support-policy.json
+  manifests/toolchain.lock.json
   manifests/upstream.lock.json
+  manifests/evidence/g0-product-baseline.json
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/ci-checkout-node24.json
@@ -180,6 +184,8 @@ required_files=(
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
   scripts/beads/push-safe.sh
+  scripts/gates/check-g0-baseline.py
+  scripts/gates/test-g0-baseline.py
   scripts/ci/check-checkout-action.py
   scripts/ci/check-security-tooling.sh
   scripts/ci/install-gitleaks.sh
@@ -1704,6 +1710,7 @@ python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
 python3 scripts/licenses/test-license-policy.py
 python3 scripts/docker/check-image-lock.py
+python3 scripts/gates/test-g0-baseline.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'
 scan_output="$(mktemp)"

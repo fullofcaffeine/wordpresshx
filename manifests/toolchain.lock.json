@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "lockId": "G0-TOOLCHAIN-BASELINE",
+  "status": "closed-g0-baseline",
+  "authority": "wordpress-hx-sdk",
+  "scope": "Exact build and profile-feasibility inputs admitted through Gate G0; later gates must add or supersede entries before use.",
+  "compilers": {
+    "haxe": {
+      "version": "4.3.7",
+      "repository": "https://github.com/HaxeFoundation/haxe",
+      "tag": "4.3.7",
+      "commit": "e0b355c6be312c1b17382603f018cf52522ec651",
+      "tree": "55d2c4c59ed55c52fa0660e2fe385081a94b23d1",
+      "hostedInstaller": {
+        "repository": "https://github.com/krdlab/setup-haxe",
+        "version": "2.1.0",
+        "commit": "d93667502be3b4f31a94a3308a74388f2e178a8d"
+      },
+      "evidenceStatus": "version-and-source-locked"
+    },
+    "genesTs": {
+      "version": "1.33.0",
+      "repository": "https://github.com/fullofcaffeine/genes-ts",
+      "tag": "v1.33.0",
+      "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+      "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+      "artifactSha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145",
+      "receiptId": "SDK-030-GENES-TS-V1.33.0",
+      "evidenceStatus": "release-gate-tested"
+    },
+    "reflaxePhp": {
+      "version": "0.0.0",
+      "path": "compiler/reflaxe.php",
+      "originRepository": "https://github.com/fullofcaffeine/wordpresshx-port",
+      "originCommit": "20b9c974f141375b6cf191db6f25b115812e282c",
+      "originTree": "1de1d4869f8cea49ebebc9e54295057c62dee011",
+      "packageContentSha256": "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6",
+      "receiptId": "SDK-021-PHP-IR-PRINTER",
+      "releaseEligible": false,
+      "evidenceStatus": "generic-ir-printer-runtime-tested"
+    }
+  },
+  "formatters": {
+    "haxeFormatter": {
+      "version": "1.18.0",
+      "repository": "https://github.com/HaxeCheckstyle/haxe-formatter",
+      "commit": "93ba289893d515614298f4ce7cee8619c31b420c",
+      "tree": "88d00af312c4601d319e64afb0c9eda0499447bd",
+      "artifact": {
+        "url": "https://lib.haxe.org/files/3.0/formatter-1,18,0.zip",
+        "sha256": "2d29c9b56e54b2643e07ee64003c3fc30a5bc133bdcb4cc15c48f09acda7a047"
+      }
+    }
+  },
+  "runtimeImages": {
+    "lock": {
+      "path": "docker/images.lock.json",
+      "sha256": "a3236e2342b82766945471c858505e44b211763529e0493d139cfb0613461ffb"
+    },
+    "node": {
+      "version": "22.17.0",
+      "imageKey": "node",
+      "reference": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+      "evidenceStatus": "inventoried"
+    },
+    "php": {
+      "syntaxFloor": {
+        "version": "7.4.33",
+        "imageKey": "php74Floor",
+        "reference": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+        "evidenceStatus": "runtime-tested"
+      },
+      "primaryCli": {
+        "version": "8.4.7",
+        "imageKey": "php84Cli",
+        "reference": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+        "evidenceStatus": "runtime-tested"
+      },
+      "wordpressRuntime": {
+        "wordpressVersion": "7.0",
+        "observedPhpVersion": "8.4.23",
+        "imageKey": "wordpress70Php84",
+        "reference": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+        "evidenceStatus": "runtime-tested"
+      }
+    }
+  },
+  "dependencyGraphs": {
+    "composer": {
+      "status": "not-active-in-g0",
+      "manifestPaths": [],
+      "lockPaths": [],
+      "activePackages": [],
+      "admission": "A later gate must add an exact composer.lock and artifact receipt before Composer packages become build or runtime inputs."
+    },
+    "npm": {
+      "status": "bounded-build-inputs",
+      "rootManifestPaths": [],
+      "rootLockPaths": [],
+      "activePackages": [
+        {
+          "name": "lix",
+          "version": "15.12.4",
+          "reportedCliVersion": "15.12.2",
+          "artifactUrl": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz",
+          "artifactSha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa",
+          "npmIntegrity": "sha512-xfwGQrXXNba9BM7VcP2u9WvElBYgGJW+1gviaFqJH5OUFPAhwv8TZNk5f+Yew4pyKOmMqshdUYgk9+d3U6P6kw==",
+          "role": "compile-time-hxx-package-manager"
+        }
+      ],
+      "externalGraphs": [
+        {
+          "id": "genes-ts-v1.33.0-release-graph",
+          "authority": "immutable-release-artifact-and-source-manifest-digests",
+          "receiptId": "SDK-030-GENES-TS-V1.33.0"
+        }
+      ]
+    },
+    "haxelib": {
+      "status": "bounded-build-inputs",
+      "manifestPaths": [
+        "compiler/reflaxe.php/haxelib.json"
+      ],
+      "internalPackages": [
+        {
+          "name": "reflaxe.php",
+          "version": "0.0.0",
+          "publishable": false
+        }
+      ],
+      "toolPackages": [
+        {
+          "name": "formatter",
+          "version": "1.18.0",
+          "artifactSha256": "2d29c9b56e54b2643e07ee64003c3fc30a5bc133bdcb4cc15c48f09acda7a047"
+        }
+      ],
+      "parserClosure": {
+        "path": "packages/hxx/dependency-lock.json",
+        "sha256": "a26d44e9296a4bd0ac8373e9b0456d10dc1f32d2c187728ee3ac9a3690d378b7",
+        "rootPackage": "tink_hxx@0.25.1",
+        "transitiveCount": 5,
+        "compileTimeOnly": true
+      }
+    }
+  },
+  "profileInputs": {
+    "upstreamLock": {
+      "path": "manifests/upstream.lock.json",
+      "sha256": "1065131e56fb5f11cb480b65a8e5987a95f3d3de33f0574cbc05e07872c5f580"
+    },
+    "profiles": [
+      "wp70-release",
+      "gutenberg-forward-23.4"
+    ]
+  },
+  "policy": {
+    "floatingVersionsAllowed": false,
+    "mutableSiblingCheckoutAsBuildInputAllowed": false,
+    "fullPortInternalPathOrImportAllowed": false,
+    "omittedFutureInputTreatment": "unresolved-not-implied",
+    "newInputRequiresExactIdentityAndReceipt": true
+  },
+  "claims": {
+    "g0ToolchainCoverage": "locked",
+    "browserSdkCompatibility": "not-tested",
+    "wordpressSdkCompatibility": "not-tested",
+    "publicPackagePublicationAuthorized": false,
+    "productionSupport": "not-tested"
+  }
+}

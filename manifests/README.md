@@ -7,6 +7,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
+- `toolchain.lock.json` is the closed G0 aggregate projection over the exact
+  Haxe, formatter, Genes, co-located PHP compiler, Node/PHP images, Lix, and HXX
+  inputs. It also records inactive Composer/root npm graphs explicitly. The
+  aggregate does not make a package publishable and later gates must add or
+  supersede an entry before admitting a new input.
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
 
 The first resolved external input is genes-ts `v1.33.0`, recorded by `wordpresshx-sdk-030`. The canonical public Git and Beads transport is recorded by `evidence/sdk-004-canonical-repository.json`. The first co-located PHP compiler import is recorded by `evidence/sdk-020-reflaxe-php-bootstrap.json`; it is an internal source receipt, not an external release pin.
@@ -34,6 +39,12 @@ release, exact verified commit/tree/license evidence, Node 24 runtime declaratio
 all ten immutable workflow pins, and preservation of full Git history only for
 the security lane. Its hosted claim is limited to the exact GitHub-hosted
 Ubuntu 24.04 workflow run; it creates no SDK or generated-artifact claim.
+
+Receipt `G0-PRODUCT-AUTHORITY-BASELINE` closes the independent product,
+repository, exact-profile, toolchain, classification, full-port-separation, and
+reference-hash feasibility baseline. It deliberately leaves ADR-020 and SDK-002
+open and publication blocked: the PRD assigns qualified licensing review to the
+release path, not to permission for experimental G1–G3 work.
 
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 

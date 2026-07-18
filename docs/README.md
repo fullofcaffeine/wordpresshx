@@ -8,6 +8,7 @@ The repository is still establishing its durable documentation structure.
 - [Browser compiler pin and ownership](architecture/browser-compiler.md)
 - [Generic PHP compiler boundary](architecture/php-compiler.md)
 - [Haxe-first complete-site authoring](architecture/haxe-first-site-authoring.md)
+- [Feasibility gate records](gates/README.md)
 - [Release status](release/README.md)
 
 Future guides, generated reference, compatibility ledgers, and operational runbooks must state the exact SDK/profile/toolchain they describe and distinguish inventoried, typed, emitted, runtime-tested, packaged, and supported states.

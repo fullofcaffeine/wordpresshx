@@ -19,6 +19,9 @@ All notable project changes will be recorded here once versioning policy is acce
   retaining the action's default shallow checkout.
 - Deterministic HXX dependency-lock cleanup by disabling detached automatic Git
   maintenance for short-lived exact-source fetches.
+- Fail-closed G0 aggregate toolchain lock and gate receipt covering exact
+  compiler, formatter, image, npm, Haxelib, profile, and empty Composer graph
+  identities while preserving the separate licensing publication blocker.
 
 ### Release status
 

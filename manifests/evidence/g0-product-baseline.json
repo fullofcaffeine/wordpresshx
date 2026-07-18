@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G0-PRODUCT-AUTHORITY-BASELINE",
+  "bead": "wordpresshx-g0",
+  "status": "implemented-hosted-pending",
+  "gateContract": {
+    "path": "wordpress-hx-sdk-product-requirements.md",
+    "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
+    "section": "Gate G0 — Product authority and baseline lock",
+    "licensingDecisionDeadline": "before-any-public-release",
+    "laterExperimentalWorkAllowed": true
+  },
+  "subject": {
+    "toolchainLock": {
+      "path": "manifests/toolchain.lock.json",
+      "sha256": "67af54b9f299626aa1bf35d3326dcbbd5970e5490d30952a349ad58a794236e4"
+    },
+    "validator": {
+      "path": "scripts/gates/check-g0-baseline.py",
+      "sha256": "7a047d40db458a84af9ce545ee6421826b63fb1494f02cb70442342a410a963e"
+    },
+    "tests": {
+      "path": "scripts/gates/test-g0-baseline.py",
+      "sha256": "a3b3ccb1d861cac8a216df952b9578687236f0b79189ebf58bc319c9c314264b"
+    },
+    "review": {
+      "path": "docs/gates/g0-product-authority-and-baseline.md",
+      "sha256": "08e5e372d36e85fabfdace3edf0fea32a7ab0d4adf2c299361b3f3414364dab7"
+    }
+  },
+  "acceptance": {
+    "repositoryAuthority": {
+      "receiptId": "SDK-004-CANONICAL-REPOSITORY",
+      "nameWithOwner": "fullofcaffeine/wordpresshx",
+      "visibility": "public",
+      "defaultBranch": "main",
+      "gitHistorySecurity": "passed",
+      "beadsAuthority": "refs/dolt/data"
+    },
+    "acceptedDecisions": [
+      "ADR-001",
+      "ADR-002",
+      "ADR-003",
+      "ADR-004",
+      "ADR-008",
+      "ADR-021"
+    ],
+    "profiles": [
+      {
+        "profileId": "wp70-release",
+        "sourceReceiptId": "SDK-010-WP70-RELEASE-SOURCE",
+        "catalogReceiptId": "SDK-013-PROFILE-GENERATOR",
+        "catalogDigest": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+        "evidenceStatus": "inventoried"
+      },
+      {
+        "profileId": "gutenberg-forward-23.4",
+        "sourceReceiptId": "SDK-011-GUTENBERG-FORWARD-23.4",
+        "catalogReceiptId": "SDK-013-PROFILE-GENERATOR",
+        "catalogDigest": "66bcac1aba265913c0a541c5f1ab7c58c5431404b3274e43fa415d1e137d0404",
+        "evidenceStatus": "inventoried-experimental"
+      }
+    ],
+    "toolchain": {
+      "lockId": "G0-TOOLCHAIN-BASELINE",
+      "status": "closed-g0-baseline",
+      "covers": [
+        "haxe",
+        "haxe-formatter",
+        "genes-ts",
+        "reflaxe.php",
+        "node-image",
+        "php-images",
+        "composer-empty-graph",
+        "npm-build-inputs",
+        "haxelib-build-inputs"
+      ]
+    },
+    "apiClassification": {
+      "decision": "ADR-008",
+      "schemaReceiptId": "SDK-012-PROFILE-SCHEMA",
+      "catalogReceiptId": "SDK-013-PROFILE-GENERATOR",
+      "classificationAndEvidenceSeparate": true,
+      "broadDynamicFallbackAllowed": false
+    },
+    "fullPortBoundary": {
+      "originProvenanceRecorded": true,
+      "sourceOrPathRuntimeDependency": false,
+      "coreLinkerImported": false,
+      "mutableSiblingBuildInput": false,
+      "sourceScan": "passed"
+    }
+  },
+  "referenceArtifacts": [
+    {
+      "id": "wordpress-7.0-distribution-tree",
+      "sha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+      "method": "clean tar/zip materialization and byte-identical normalized content tree",
+      "receiptId": "SDK-010-WP70-RELEASE-SOURCE"
+    },
+    {
+      "id": "gutenberg-23.4-release-zip",
+      "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a",
+      "method": "exact release download, safe archive inspection, and source/release comparison",
+      "receiptId": "SDK-011-GUTENBERG-FORWARD-23.4"
+    },
+    {
+      "id": "genes-ts-1.33.0-submit-zip",
+      "sha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145",
+      "method": "exact GitHub release download plus complete clean upstream release gate",
+      "receiptId": "SDK-030-GENES-TS-V1.33.0"
+    },
+    {
+      "id": "reflaxe-php-package-content",
+      "sha256": "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6",
+      "method": "sorted per-file SHA-256 lines with build output excluded plus deterministic reverse-order printer replay",
+      "receiptId": "SDK-021-PHP-IR-PRINTER"
+    },
+    {
+      "id": "wp70-release-catalog-v1",
+      "sha256": "28a76d41ce548cc5e2b233b6a853af1a0a8f943cc70467989e3d38d7c5bf6ddf",
+      "method": "exact-object read-only generation, two clean byte-equal runs, and committed-tree comparison",
+      "receiptId": "SDK-013-PROFILE-GENERATOR"
+    },
+    {
+      "id": "gutenberg-forward-23.4-catalog-v1",
+      "sha256": "66bcac1aba265913c0a541c5f1ab7c58c5431404b3274e43fa415d1e137d0404",
+      "method": "exact-object read-only generation, two clean byte-equal runs, and committed-tree comparison",
+      "receiptId": "SDK-013-PROFILE-GENERATOR"
+    }
+  ],
+  "localVerification": {
+    "commands": [
+      "python3 scripts/gates/test-g0-baseline.py",
+      "bash scripts/check-repository.sh",
+      "bash scripts/hooks/test.sh"
+    ],
+    "outcome": "passed"
+  },
+  "implementation": {
+    "baseCommit": "9dd2b389c172a9446c0b73ffbcb05a468d53be7b",
+    "commit": null
+  },
+  "hostedWorkflow": {
+    "workflow": "repository.yml",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending",
+    "jobCount": 10
+  },
+  "publicationBoundary": {
+    "adr020Status": "proposed",
+    "sdk002RequiredBeforeRelease": true,
+    "g0BlocksOnQualifiedLicenseReview": false,
+    "publicationGate": "blocked",
+    "publicPackagePublicationAuthorized": false
+  },
+  "claims": {
+    "g0ProductAuthorityAndBaseline": "implemented-hosted-pending",
+    "profileCapabilities": "inventoried",
+    "nativePhpBoundary": "not-tested-by-g0",
+    "browserBoundary": "not-tested-by-g0",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}
