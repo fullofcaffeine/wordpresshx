@@ -9,6 +9,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   evidence remains `not-tested`, stock-Haxe output is not guaranteed after
   `1.0`, and publication remains blocked.
 - `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
+- `browser-build-architecture.json` is the accepted ADR-013 strict TS/TSX
+  primary lane, bounded classic Genes differential, exact project
+  Node/npm/TypeScript tuple, public export/DCE retention, normal WordPress
+  package externalization, and final-asset authority lock. It selects the
+  architecture only: SDK-031 through SDK-035 still own strict fixture,
+  Gutenberg HXX, bundle/asset parity, source-map, and classic runtime evidence.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.

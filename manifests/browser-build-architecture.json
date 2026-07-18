@@ -1,0 +1,327 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-013",
+  "status": "accepted-architecture",
+  "acceptedAt": "2026-07-18",
+  "profile": {
+    "id": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "embeddedGutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd"
+  },
+  "compiler": {
+    "name": "genes-ts",
+    "version": "1.33.0",
+    "tag": "v1.33.0",
+    "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+    "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+    "artifactSha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145",
+    "receiptId": "SDK-030-GENES-TS-V1.33.0",
+    "authorityCheckout": "../genes",
+    "mutableSiblingBuildInputAllowed": false,
+    "wordpressSpecificCompilerBranchesAllowed": false,
+    "upstreamChangePolicy": "generic-fixture-isolated-worktree-full-regression-pr-then-new-immutable-sdk-pin"
+  },
+  "toolchains": {
+    "haxe": {
+      "version": "4.3.7"
+    },
+    "sdkProject": {
+      "node": {
+        "version": "22.17.0",
+        "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+        "observedVersion": "v22.17.0",
+        "evidenceStatus": "exact-image-version-probed"
+      },
+      "packageManager": {
+        "name": "npm",
+        "version": "10.9.2",
+        "lockfile": "package-lock.json",
+        "lockfileVersion": 3,
+        "installCommand": "npm ci",
+        "rangesAllowedForGeneratedDirectDependencies": false
+      },
+      "typescript": {
+        "package": "typescript",
+        "version": "5.9.3",
+        "selectionAuthority": "wp70-release-embedded-gutenberg-root-package",
+        "evidenceStatus": "selected-pending-sdk-031-runtime-proof"
+      }
+    },
+    "genesReleaseVerification": {
+      "nodeLocalExact": "20.19.3",
+      "nodeUpstreamLanes": [
+        "20",
+        "22"
+      ],
+      "packageManager": "yarn@1.22.22",
+      "typescriptGeneratedOutputMatrix": [
+        "5.5.4",
+        "6.0.2",
+        "7.0.2"
+      ],
+      "typescriptProgramApiEngine": "6.0.3",
+      "consumerProjectAuthority": false
+    }
+  },
+  "wordpressBuild": {
+    "defaultAdapter": {
+      "package": "@wordpress/scripts",
+      "version": "31.5.0",
+      "commandDevelopment": "wp-scripts start",
+      "commandProduction": "wp-scripts build",
+      "status": "selected-pending-sdk-031-and-sdk-033-install-and-runtime-proof"
+    },
+    "dependencyExtraction": {
+      "package": "@wordpress/dependency-extraction-webpack-plugin",
+      "version": "6.40.0",
+      "owner": "normal-wordpress-build-tooling",
+      "defaultConfigurationFirst": true,
+      "manualAssetPhpEditingAllowed": false,
+      "finalBundleIsAuthority": true,
+      "externalizedReportRequired": true,
+      "developmentProductionDependencySetParityRequired": true
+    },
+    "equivalentAdapterPolicy": "post-mvp-superseding-or-extending-adr-plus-independent-parity-evidence",
+    "scriptModuleDefault": false,
+    "sourceGlobalsAllowed": false,
+    "legacyGlobalsPolicy": "generated-typed-profile-mappings-only"
+  },
+  "sourceOutput": {
+    "primary": {
+      "id": "strict-typescript-source",
+      "status": "primary-development-and-production-input",
+      "extensions": [
+        ".ts",
+        ".tsx"
+      ],
+      "genesDefines": [
+        "genes.ts",
+        "genes.ts.no_extension",
+        "genes.library",
+        "js-es=6"
+      ],
+      "moduleFormat": "split-esm",
+      "relativeSpecifierPolicy": "extensionless-bundler-first",
+      "markup": {
+        "authoring": "haxe-inline-hxx",
+        "tsxSelection": "tsx-extension-for-markup-bearing-entry",
+        "jsxRuntime": "react-jsx-automatic",
+        "jsxRuntimeRequest": "react/jsx-runtime",
+        "wordpressHandle": "react-jsx-runtime"
+      },
+      "typecheck": {
+        "noEmit": true,
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "strict": true,
+        "strictNullChecks": true,
+        "exactOptionalPropertyTypes": true,
+        "noUncheckedIndexedAccess": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": false,
+        "jsx": "react-jsx"
+      },
+      "weakTypePolicy": "no-unexplained-any-or-unknown-in-user-or-public-export-surfaces"
+    },
+    "classicDifferential": {
+      "id": "classic-genes-esm",
+      "status": "representative-differential-not-default-production-fallback",
+      "extensions": [
+        ".js",
+        ".d.ts"
+      ],
+      "genesDefines": [
+        "dts",
+        "genes.library",
+        "genes.no_extension",
+        "genes.react.inline_markup",
+        "js-es=6"
+      ],
+      "forbiddenDefine": "genes.ts",
+      "moduleFormat": "split-esm",
+      "comparison": "observable-runtime-and-public-contract-not-textual-output",
+      "strictDeclarationConsumer": {
+        "skipLibCheck": false,
+        "exactOptionalPropertyTypes": true,
+        "noUncheckedIndexedAccess": true
+      },
+      "coveragePolicy": "bounded-explicit-corpus-no-universal-mode-switch-claim"
+    }
+  },
+  "imports": {
+    "sourcePolicy": "normal-esm-package-specifiers",
+    "profileApprovalRequired": true,
+    "sideEffectImportsPreserved": true,
+    "developmentProductionSemanticImportsIdentical": true,
+    "compilerOwnedWordpressNameRewritesAllowed": false,
+    "selectedMappings": [
+      {
+        "request": "@wordpress/blocks",
+        "handle": "wp-blocks",
+        "packageCapability": "gutenberg.package.@wordpress/blocks",
+        "handleCapability": "wordpress.script-handle.wp-blocks"
+      },
+      {
+        "request": "@wordpress/components",
+        "handle": "wp-components",
+        "packageCapability": "gutenberg.package.@wordpress/components",
+        "handleCapability": "wordpress.script-handle.wp-components"
+      },
+      {
+        "request": "@wordpress/data",
+        "handle": "wp-data",
+        "packageCapability": "gutenberg.package.@wordpress/data",
+        "handleCapability": "wordpress.script-handle.wp-data"
+      },
+      {
+        "request": "@wordpress/element",
+        "handle": "wp-element",
+        "packageCapability": "gutenberg.package.@wordpress/element",
+        "handleCapability": "wordpress.script-handle.wp-element"
+      },
+      {
+        "request": "@wordpress/i18n",
+        "handle": "wp-i18n",
+        "packageCapability": "gutenberg.package.@wordpress/i18n",
+        "handleCapability": "wordpress.script-handle.wp-i18n"
+      }
+    ],
+    "reactMappingsPendingTypedProfileAdmission": [
+      {
+        "request": "react",
+        "handle": "react"
+      },
+      {
+        "request": "react-dom",
+        "handle": "react-dom"
+      },
+      {
+        "request": "react/jsx-runtime",
+        "handle": "react-jsx-runtime"
+      }
+    ]
+  },
+  "publicExports": {
+    "sourceOfTruth": "versioned-browser-entry-and-export-semantic-plan",
+    "retention": {
+      "genesRootMetadata": "@:genes.library",
+      "genesDefine": "genes.library",
+      "typingRoot": "macro-include-of-declared-public-namespace",
+      "classicDeclarationsRequired": true,
+      "globalDceDisableAllowed": false,
+      "scatteredUnmanifestedKeepAllowed": false
+    },
+    "manifestFields": [
+      "stableExportId",
+      "haxeSource",
+      "generatedModule",
+      "exportName",
+      "typeIdentity",
+      "retentionRule",
+      "profileCapabilityRefs",
+      "sourceSpan"
+    ],
+    "verification": [
+      "generated-source-export-inventory",
+      "strict-semantic-export-audit",
+      "production-bundle-export-audit",
+      "ordinary-javascript-import-and-call",
+      "classic-declaration-consumer"
+    ]
+  },
+  "deadCodeElimination": {
+    "development": "conservative-debug-profile-with-identical-export-plan",
+    "production": "full",
+    "publicGraphRetained": true,
+    "privateUnreachableCodeRetained": false,
+    "sideEffectRootsDeclared": true,
+    "retentionManifestComparedBeforeAndAfterBundle": true
+  },
+  "assetMetadata": {
+    "producer": "@wordpress/dependency-extraction-webpack-plugin",
+    "inputsCompared": [
+      "generated-esm-import-plan",
+      "externalized-dependencies-report",
+      "final-bundle",
+      "final-asset-php",
+      "profile-package-handle-catalog",
+      "enqueue-plan"
+    ],
+    "versionComesFromFinalBundleToolOutput": true,
+    "manualPreBundleVersionAllowed": false,
+    "deterministicCleanReplayRequired": true,
+    "translationAttachmentValidatedAgainstFinalHandle": true
+  },
+  "provenance": {
+    "genes": [
+      {
+        "path": "package.json",
+        "blob": "6186f40b8a488f644ccaf311142dcf474293d701",
+        "sha256": "a8060089fdb79d1cdf6e17acc59d5aa7e117db6066aed913fba611d3cfc4d5a2"
+      },
+      {
+        "path": "config/toolchains.json",
+        "blob": "9510473825ad9745d8fbec355da09ad69fb1f3a1",
+        "sha256": "cd22b01857eebdacc666c85a521768ef285ef69ef3a51e65e6dc10ae5c57ecc3"
+      },
+      {
+        "path": "docs/OUTPUT_MODES.md",
+        "blob": "1680608306d8e4d1cfce72cffe37a5991a7a1f8c",
+        "sha256": "a9ea8a022ea0dde04741452237dde6b05dcc5d0579d553a8faa72824f5a424fb"
+      },
+      {
+        "path": "docs/typescript-target/INTEROP.md",
+        "blob": "857f641ad37dfff9bd2f77f12f93502e5b99d5f7",
+        "sha256": "13df2d330e8d8fa0278e89bff30fa9d7df32be83576d93d39d2bcfe351ae5d79"
+      },
+      {
+        "path": "docs/typescript-target/REACT_HXX.md",
+        "blob": "7c147867d2b3b1ebdf2800f69c2190f585aabae9",
+        "sha256": "95aeb2bf4ee73d91d2818c6674c746c43b22ba75769272691d45faefa8ca55bf"
+      }
+    ],
+    "embeddedGutenberg": [
+      {
+        "path": "package.json",
+        "blob": "07971d08cf1829cfee6776872e93c5b9ae57cfd8",
+        "sha256": "6afb98b70f7432e0162e833893b71d536533ae5b20c348686904b269c778e072"
+      },
+      {
+        "path": "packages/scripts/package.json",
+        "blob": "1817e05efd072872d1b8e0e915904a4c82c6c42a",
+        "sha256": "f0c201f14402a336291680917ae82949ca469dbbab24c225d2a6203c35f318ee"
+      },
+      {
+        "path": "packages/dependency-extraction-webpack-plugin/package.json",
+        "blob": "13a3428e4eb0e685161b4e2e1cabe490a5cad21b",
+        "sha256": "fec35f1d34d7e2defcf991ea95cbd454db69c1fe998e380ee54de2d6151e0c79"
+      },
+      {
+        "path": "packages/dependency-extraction-webpack-plugin/lib/util.js",
+        "blob": "11211cf0f2ef9d8c106c104c57226dac735f4205",
+        "sha256": "3f6a43e202b158297dc95da9d8a40127118469a856d8eae94459cb89528c7367"
+      }
+    ]
+  },
+  "evidence": {
+    "architectureAccepted": true,
+    "genesReleaseGatePassed": true,
+    "sdkStrictFixture": "owned-by-wordpresshx-sdk-031",
+    "gutenbergHxxFixture": "owned-by-wordpresshx-sdk-032",
+    "wordpressBundleAndAssetParity": "owned-by-wordpresshx-sdk-033",
+    "classicDifferential": "owned-by-wordpresshx-sdk-035",
+    "sourceMaps": "owned-by-wordpresshx-sdk-034",
+    "browserSdkCompatibility": "not-tested",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  },
+  "stopConditions": [
+    "strict-tsx-requires-routine-unexplained-any-or-unknown",
+    "profile-approved-imports-cannot-produce-profile-correct-final-handles",
+    "public-exports-cannot-survive-production-dce-with-bounded-retention",
+    "classic-differential-has-unexplained-observable-divergence",
+    "wordpress-specific-compiler-branch-would-be-required"
+  ]
+}

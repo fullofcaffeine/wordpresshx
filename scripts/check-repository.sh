@@ -32,6 +32,7 @@ required_files=(
   docs/adr/005-public-versus-private-php-emission.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
+  docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
@@ -139,6 +140,7 @@ required_files=(
   docker/wordpress/health.php
   docker/wordpress/install.php
   manifests/README.md
+  manifests/browser-build-architecture.json
   manifests/hxx-architecture.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
@@ -407,6 +409,11 @@ package_topology = json.loads(
 )
 hxx_architecture = json.loads(
     Path("manifests/hxx-architecture.json").read_text(encoding="utf-8")
+)
+browser_architecture = json.loads(
+    Path("manifests/browser-build-architecture.json").read_text(
+        encoding="utf-8"
+    )
 )
 hxx_dependency_lock_path = Path("packages/hxx/dependency-lock.json")
 hxx_dependency_lock = json.loads(
@@ -869,6 +876,249 @@ assert sha256.fullmatch(entry["releaseArtifact"]["sha256"])
 assert receipt["localVerification"]["releaseGate"]["outcome"] == "passed"
 assert receipt["changeDecision"]["genesSourceChanged"] is False
 assert receipt["changeDecision"]["upstreamPullRequest"] is None
+
+assert browser_architecture["schemaVersion"] == 1
+assert browser_architecture["decision"] == "ADR-013"
+assert browser_architecture["status"] == "accepted-architecture"
+assert browser_architecture["acceptedAt"] == "2026-07-18"
+browser_profile = browser_architecture["profile"]
+assert browser_profile["id"] == wp_source_lock["profileId"] == "wp70-release"
+assert browser_profile["catalogRevision"] == wp_source_lock["catalogRevision"]
+assert browser_profile["wordpressCommit"] == (
+    wp_source_lock["wordpressSource"]["commit"]
+)
+assert browser_profile["embeddedGutenbergCommit"] == (
+    wp_source_lock["embeddedGutenberg"]["commit"]
+)
+
+browser_compiler = browser_architecture["compiler"]
+assert browser_compiler["name"] == "genes-ts"
+assert browser_compiler["version"] == entry["version"]
+assert browser_compiler["tag"] == entry["releaseTag"]
+assert browser_compiler["commit"] == entry["commit"]
+assert browser_compiler["tree"] == entry["tree"]
+assert browser_compiler["artifactSha256"] == (
+    entry["releaseArtifact"]["sha256"]
+)
+assert browser_compiler["receiptId"] == receipt["receiptId"]
+assert browser_compiler["authorityCheckout"] == "../genes"
+assert browser_compiler["mutableSiblingBuildInputAllowed"] is False
+assert browser_compiler["wordpressSpecificCompilerBranchesAllowed"] is False
+assert browser_compiler["upstreamChangePolicy"] == (
+    "generic-fixture-isolated-worktree-full-regression-pr-then-new-immutable-sdk-pin"
+)
+
+browser_toolchains = browser_architecture["toolchains"]
+assert browser_toolchains["haxe"]["version"] == "4.3.7"
+project_toolchain = browser_toolchains["sdkProject"]
+assert project_toolchain["node"] == {
+    "version": "22.17.0",
+    "image": image_lock["images"]["node"]["reference"],
+    "observedVersion": "v22.17.0",
+    "evidenceStatus": "exact-image-version-probed",
+}
+assert image_lock["images"]["node"]["tag"] == (
+    "docker.io/library/node:22.17.0-bookworm-slim"
+)
+assert project_toolchain["packageManager"] == {
+    "name": "npm",
+    "version": "10.9.2",
+    "lockfile": "package-lock.json",
+    "lockfileVersion": 3,
+    "installCommand": "npm ci",
+    "rangesAllowedForGeneratedDirectDependencies": False,
+}
+assert project_toolchain["typescript"]["package"] == "typescript"
+assert project_toolchain["typescript"]["version"] == "5.9.3"
+assert project_toolchain["typescript"]["selectionAuthority"] == (
+    "wp70-release-embedded-gutenberg-root-package"
+)
+assert project_toolchain["typescript"]["evidenceStatus"] == (
+    "selected-pending-sdk-031-runtime-proof"
+)
+genes_verification = browser_toolchains["genesReleaseVerification"]
+assert genes_verification["nodeLocalExact"] == (
+    receipt["toolchains"]["nodeLocalExact"]
+)
+assert genes_verification["nodeUpstreamLanes"] == (
+    receipt["toolchains"]["nodeUpstreamLanes"]
+)
+assert genes_verification["packageManager"] == "yarn@1.22.22"
+assert genes_verification["typescriptGeneratedOutputMatrix"] == [
+    receipt["toolchains"]["typescript"]["legacyFloor"],
+    receipt["toolchains"]["typescript"]["apiBridge"],
+    receipt["toolchains"]["typescript"]["current"],
+]
+assert genes_verification["typescriptProgramApiEngine"] == (
+    receipt["toolchains"]["typescript"]["programApiEngine"]
+)
+assert genes_verification["consumerProjectAuthority"] is False
+
+wordpress_browser_build = browser_architecture["wordpressBuild"]
+assert wordpress_browser_build["defaultAdapter"]["package"] == (
+    "@wordpress/scripts"
+)
+assert wordpress_browser_build["defaultAdapter"]["version"] == "31.5.0"
+assert wordpress_browser_build["dependencyExtraction"]["package"] == (
+    "@wordpress/dependency-extraction-webpack-plugin"
+)
+assert wordpress_browser_build["dependencyExtraction"]["version"] == "6.40.0"
+assert wordpress_browser_build["dependencyExtraction"][
+    "defaultConfigurationFirst"
+] is True
+assert wordpress_browser_build["dependencyExtraction"][
+    "manualAssetPhpEditingAllowed"
+] is False
+assert wordpress_browser_build["dependencyExtraction"][
+    "finalBundleIsAuthority"
+] is True
+assert wordpress_browser_build["dependencyExtraction"][
+    "externalizedReportRequired"
+] is True
+assert wordpress_browser_build["scriptModuleDefault"] is False
+assert wordpress_browser_build["sourceGlobalsAllowed"] is False
+
+source_output = browser_architecture["sourceOutput"]
+primary_output = source_output["primary"]
+assert primary_output["status"] == "primary-development-and-production-input"
+assert primary_output["extensions"] == [".ts", ".tsx"]
+assert primary_output["genesDefines"] == [
+    "genes.ts",
+    "genes.ts.no_extension",
+    "genes.library",
+    "js-es=6",
+]
+assert primary_output["moduleFormat"] == "split-esm"
+assert primary_output["markup"] == {
+    "authoring": "haxe-inline-hxx",
+    "tsxSelection": "tsx-extension-for-markup-bearing-entry",
+    "jsxRuntime": "react-jsx-automatic",
+    "jsxRuntimeRequest": "react/jsx-runtime",
+    "wordpressHandle": "react-jsx-runtime",
+}
+assert primary_output["typecheck"] == {
+    "noEmit": True,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": True,
+    "strictNullChecks": True,
+    "exactOptionalPropertyTypes": True,
+    "noUncheckedIndexedAccess": True,
+    "verbatimModuleSyntax": True,
+    "skipLibCheck": False,
+    "jsx": "react-jsx",
+}
+assert primary_output["weakTypePolicy"] == (
+    "no-unexplained-any-or-unknown-in-user-or-public-export-surfaces"
+)
+
+classic_output = source_output["classicDifferential"]
+assert classic_output["status"] == (
+    "representative-differential-not-default-production-fallback"
+)
+assert classic_output["extensions"] == [".js", ".d.ts"]
+assert classic_output["genesDefines"] == [
+    "dts",
+    "genes.library",
+    "genes.no_extension",
+    "genes.react.inline_markup",
+    "js-es=6",
+]
+assert classic_output["forbiddenDefine"] == "genes.ts"
+assert classic_output["comparison"] == (
+    "observable-runtime-and-public-contract-not-textual-output"
+)
+assert classic_output["coveragePolicy"] == (
+    "bounded-explicit-corpus-no-universal-mode-switch-claim"
+)
+
+browser_imports = browser_architecture["imports"]
+assert browser_imports["sourcePolicy"] == "normal-esm-package-specifiers"
+assert browser_imports["profileApprovalRequired"] is True
+assert browser_imports["sideEffectImportsPreserved"] is True
+assert browser_imports[
+    "developmentProductionSemanticImportsIdentical"
+] is True
+assert browser_imports[
+    "compilerOwnedWordpressNameRewritesAllowed"
+] is False
+catalog = json.loads(
+    Path("generated/wp70-release/catalog-v1/catalog.json").read_text(
+        encoding="utf-8"
+    )
+)
+catalog_capability_ids = {
+    capability["capabilityId"]
+    for capability in catalog["catalog"]["capabilities"]
+}
+for package_mapping in browser_imports["selectedMappings"]:
+    assert package_mapping["packageCapability"] in catalog_capability_ids
+    assert package_mapping["handleCapability"] in catalog_capability_ids
+    assert package_mapping["handle"] == (
+        "wp-" + package_mapping["request"].removeprefix("@wordpress/")
+    )
+assert browser_imports["reactMappingsPendingTypedProfileAdmission"] == [
+    {"request": "react", "handle": "react"},
+    {"request": "react-dom", "handle": "react-dom"},
+    {"request": "react/jsx-runtime", "handle": "react-jsx-runtime"},
+]
+
+public_exports = browser_architecture["publicExports"]
+assert public_exports["sourceOfTruth"] == (
+    "versioned-browser-entry-and-export-semantic-plan"
+)
+assert public_exports["retention"] == {
+    "genesRootMetadata": "@:genes.library",
+    "genesDefine": "genes.library",
+    "typingRoot": "macro-include-of-declared-public-namespace",
+    "classicDeclarationsRequired": True,
+    "globalDceDisableAllowed": False,
+    "scatteredUnmanifestedKeepAllowed": False,
+}
+assert public_exports["manifestFields"] == [
+    "stableExportId",
+    "haxeSource",
+    "generatedModule",
+    "exportName",
+    "typeIdentity",
+    "retentionRule",
+    "profileCapabilityRefs",
+    "sourceSpan",
+]
+assert "ordinary-javascript-import-and-call" in public_exports["verification"]
+
+browser_dce = browser_architecture["deadCodeElimination"]
+assert browser_dce["production"] == "full"
+assert browser_dce["publicGraphRetained"] is True
+assert browser_dce["privateUnreachableCodeRetained"] is False
+assert browser_dce["sideEffectRootsDeclared"] is True
+asset_metadata = browser_architecture["assetMetadata"]
+assert asset_metadata["producer"] == (
+    "@wordpress/dependency-extraction-webpack-plugin"
+)
+assert asset_metadata["versionComesFromFinalBundleToolOutput"] is True
+assert asset_metadata["manualPreBundleVersionAllowed"] is False
+assert asset_metadata["deterministicCleanReplayRequired"] is True
+
+for source_authority in browser_architecture["provenance"].values():
+    for source_file in source_authority:
+        assert sha1.fullmatch(source_file["blob"])
+        assert sha256.fullmatch(source_file["sha256"])
+assert browser_architecture["evidence"]["architectureAccepted"] is True
+assert browser_architecture["evidence"]["genesReleaseGatePassed"] is True
+assert browser_architecture["evidence"]["browserSdkCompatibility"] == (
+    "not-tested"
+)
+assert browser_architecture["evidence"]["productionSupport"] == "not-tested"
+assert browser_architecture["evidence"]["publicationAuthorized"] is False
+assert set(browser_architecture["stopConditions"]) == {
+    "strict-tsx-requires-routine-unexplained-any-or-unknown",
+    "profile-approved-imports-cannot-produce-profile-correct-final-handles",
+    "public-exports-cannot-survive-production-dce-with-bounded-retention",
+    "classic-differential-has-unexplained-observable-divergence",
+    "wordpress-specific-compiler-branch-would-be-required",
+}
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"

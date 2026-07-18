@@ -8,6 +8,14 @@ The SDK's browser compiler authority is the separate, generic [genes-ts reposito
 
 The machine-readable lock is [`manifests/upstream.lock.json`](../../manifests/upstream.lock.json). The complete SDK-030 verification, including the clean-worktree replay, hosted jobs, package hashes, discarded harness attempt, and the experimental Haxe 5 limitation, is [`manifests/evidence/sdk-030-genes-ts-v1.33.0.json`](../../manifests/evidence/sdk-030-genes-ts-v1.33.0.json).
 
+ADR-013 selects how that compiler enters WordPress projects. Its
+machine-readable contract is
+[`manifests/browser-build-architecture.json`](../../manifests/browser-build-architecture.json):
+strict split ESM TS/TSX is primary, classic ESM JS plus declarations is a
+bounded semantic differential, explicit Genes library roots retain public
+exports through DCE, and normal WordPress tooling owns externalization and
+final asset metadata.
+
 ## Evidence boundary
 
 The supported upstream release gate passed with Haxe 4.3.7, Node 20, Yarn 1.22.22, TypeScript 5.5.4/6.0.2/7.0.2, classic JavaScript output, strict TypeScript output, ts2hx, security scans, and real Playwright runs. Node 22 upstream smoke/classic lanes and CodeQL also passed.
@@ -15,6 +23,14 @@ The supported upstream release gate passed with Haxe 4.3.7, Node 20, Yarn 1.22.2
 Haxe `5.0.0-preview.1` is an explicitly non-blocking upstream experiment. Its job failed on preview macro/library API incompatibilities (`ExprDef`, `tink.OutcomeTools`, and `ClassBuilder` were unavailable). That failure is not represented as supported Haxe 4.3.7 evidence, and this SDK makes no Haxe 5 browser-compiler claim.
 
 This pin resolves the older PRD snapshot discrepancy between a `v1.13.0`-era full-port lock and later `1.32.0` package metadata. Neither historical value is used implicitly.
+
+The compiler release toolchain and generated-project toolchain are separate.
+SDK-030's exact local replay used Node 20.19.3 and Yarn 1.22.22. The selected
+WordPress project tuple is Node 22.17.0, npm 10.9.2, and TypeScript 5.9.3:
+WordPress 7.0's source admits that Node/npm line, embedded Gutenberg selects
+TypeScript 5.9.3, and the checksum-locked Node image reports those exact
+versions. SDK-031 must still prove the project tuple against the strict
+fixture; the ADR is not runtime compatibility evidence.
 
 ## Ownership rule
 

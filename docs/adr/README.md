@@ -41,6 +41,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-005: Public versus private PHP emission](005-public-versus-private-php-emission.md)
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
+- [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-021: Release and support policy](021-release-and-support-policy.md)
 
 ## Proposed records
