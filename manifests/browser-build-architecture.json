@@ -351,7 +351,7 @@
     "sdkStrictFixture": "verified-by-sdk-031-strict-browser-profile",
     "gutenbergHxxFixture": "verified-by-sdk-032-react-gutenberg-hxx",
     "wordpressBundleAndAssetParity": "verified-by-sdk-033-wordpress-asset-metadata",
-    "classicDifferential": "implemented-by-sdk-035-hosted-verification-pending",
+    "classicDifferential": "verified-by-sdk-035-classic-genes-differential",
     "sourceMaps": "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-development-production-composition-verified",
     "browserSdkCompatibility": "not-tested",
     "productionSupport": "not-tested",

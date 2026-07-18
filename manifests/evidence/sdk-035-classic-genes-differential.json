@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
   "bead": "wordpresshx-sdk-035",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T17:20:30Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T17:34:11Z",
   "subject": {
     "package": "packages/gutenberg",
     "profileId": "wp70-release",
@@ -120,7 +120,7 @@
     }
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "99ba71f42b1a3b9b7835b44321dc0fa81155a0d4",
     "authoring": "one SDK-owned Haxe facade with direct inline HXX return",
     "profiles": {
       "shared": "packages/gutenberg/profiles/differential-common.hxml",
@@ -243,13 +243,14 @@
     "job": "haxe",
     "step": "Test strict and classic Genes React differential",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null,
-    "allJobsPassed": null,
-    "artifactHashesMatched": null
+    "status": "passed",
+    "commit": "99ba71f42b1a3b9b7835b44321dc0fa81155a0d4",
+    "runId": 29654043752,
+    "jobId": 88105136917,
+    "jobCount": 10,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29654043752",
+    "allJobsPassed": true,
+    "artifactHashesMatched": true
   },
   "changeDecision": {
     "genesSourceChanged": false,
