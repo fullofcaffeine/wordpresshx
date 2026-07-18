@@ -1479,7 +1479,7 @@ if sdk025_hosted["status"] == "passed":
     assert isinstance(sdk025_hosted["runId"], int)
     assert sdk025_hosted["fullMatrixStatus"] == "passed"
     assert sdk025_hosted["jobCount"] == 10
-    assert sdk025_hosted["haxeJobId"] == 88081445092
+    assert sdk025_hosted["haxeJobId"] == 88091750488
     assert sdk025_hosted["cliStep"] == "Test Haxe and Genes PHP trace CLI"
 else:
     assert sdk025_hosted["commit"] is None
@@ -1782,6 +1782,7 @@ if sdk034_hosted["status"] == "passed":
     assert sha1.fullmatch(sdk034_hosted["commit"])
     assert isinstance(sdk034_hosted["runId"], int)
     assert isinstance(sdk034_hosted["jobId"], int)
+    assert sdk034_hosted["jobCount"] == 10
     assert sdk034_hosted["fullMatrixStatus"] == "passed"
     assert sdk034_hosted["cliStep"] == (
         "Test real browser source-map composition and trace CLI"

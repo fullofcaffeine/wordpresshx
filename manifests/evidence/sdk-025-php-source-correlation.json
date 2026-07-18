@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-025-PHP-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-025",
-  "status": "implemented-local-verified",
-  "observedAt": "2026-07-18T14:50:53Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T14:57:30Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -307,13 +307,13 @@
     "debugCompanionBoundToProductionPhp": true
   },
   "hostedVerification": {
-    "status": "pending-main-push",
+    "status": "passed",
     "workflow": "Repository bootstrap",
-    "commit": null,
-    "runId": null,
-    "fullMatrixStatus": null,
-    "jobCount": null,
-    "haxeJobId": null,
+    "commit": "95de6f37f2e85878439563722ab157cd4e2b5bc6",
+    "runId": 29648907754,
+    "fullMatrixStatus": "passed",
+    "jobCount": 10,
+    "haxeJobId": 88091750488,
     "cliStep": "Test Haxe and Genes PHP trace CLI",
     "reverificationReason": "The shared CLI dependency lock and verifier now authenticate the exact per-platform Playwright browser matrix introduced by SDK-034",
     "previousPassedVerification": {
