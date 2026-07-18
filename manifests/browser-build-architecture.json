@@ -340,7 +340,7 @@
     "gutenbergHxxFixture": "verified-by-sdk-032-react-gutenberg-hxx",
     "wordpressBundleAndAssetParity": "verified-by-sdk-033-wordpress-asset-metadata",
     "classicDifferential": "owned-by-wordpresshx-sdk-035",
-    "sourceMaps": "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-development-production-composition-implemented-hosted-pending",
+    "sourceMaps": "sdk-034-esbuild-contract-and-g2.4-exact-wordpress-scripts-entry-development-production-composition-verified",
     "browserSdkCompatibility": "not-tested",
     "productionSupport": "not-tested",
     "publicationAuthorized": false

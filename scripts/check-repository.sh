@@ -1106,7 +1106,7 @@ assert source_correlation_architecture["status"] == "accepted-architecture"
 assert source_correlation_architecture["acceptedAt"] == "2026-07-18"
 assert source_correlation_architecture["claim"] == (
     "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-"
-    "official-wordpress-adapter-source-correlation-implemented-hosted-pending"
+    "official-wordpress-adapter-source-correlation-hosted-verified"
 )
 source_contract = source_correlation_architecture["publicContract"]
 assert source_contract["phpMapFormat"] == (

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
   "bead": "wordpresshx-g2.4",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T15:44:30Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T16:45:41Z",
   "subject": {
     "package": "packages/gutenberg",
     "profileId": "wp70-release",
@@ -167,6 +167,7 @@
     "artifactSetSha256": "b1b173ac6f4257da7173c587744034276a7c889dfff282a80a1f3c4314d3dea5",
     "indexedFileCount": 15,
     "browserReceiptSha256ByPlatform": {
+      "linux/amd64": "413b0d328099a29f5e1a273c384d88e3a37e5450bbb98b4b7181b990dafe635d",
       "linux/arm64": "c3abb9e78b51fda16a14d2397d413c36ae6c0aebab7f5ef09a076518b297927b"
     },
     "modes": {
@@ -314,18 +315,18 @@
   },
   "implementation": {
     "baseCommit": "24fb649dc216662d53627732c0272635a3f5ccef",
-    "commit": null
+    "commit": "c7f01b8a0514ac3873176c1be26f738193234b40"
   },
   "hostedVerification": {
     "workflow": "repository.yml",
     "job": "wordpress-runtime",
-    "status": "pending-main-push",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "jobCount": null,
-    "fullMatrixStatus": "pending",
-    "g24Step": "pending"
+    "status": "passed",
+    "runId": 29652492122,
+    "jobId": 88101074575,
+    "commit": "c7f01b8a0514ac3873176c1be26f738193234b40",
+    "jobCount": 10,
+    "fullMatrixStatus": "passed",
+    "g24Step": "passed"
   },
   "failedHostedAttempts": [
     {
@@ -339,7 +340,7 @@
     }
   ],
   "claims": {
-    "officialWordpressScriptsCorrelation": "implemented-local-verified-hosted-pending",
+    "officialWordpressScriptsCorrelation": "hosted-verified",
     "sourceMapComposition": "exact-entry-development-and-production-only",
     "productionArtifactPrivacy": "passed",
     "nextJsCorrelation": "not-tested-sdk-113",
