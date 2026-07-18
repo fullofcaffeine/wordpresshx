@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-005",
+  "status": "accepted-architecture",
+  "claim": "not-tested",
+  "profile": "wp70-release",
+  "classification": {
+    "authority": "semantic-file-symbol-edge-plan",
+    "haxeVisibilityIsAuthority": false,
+    "unknownDisposition": "reject",
+    "classes": [
+      "public-native",
+      "private-stock-haxe"
+    ],
+    "breakingChangeRule": "released-public-native-to-private-is-breaking"
+  },
+  "publicNativeLane": {
+    "owner": "compiler/wordpress",
+    "emitter": "structured-php-ir-and-wordpress-profile",
+    "stockHaxePhpAllowed": false,
+    "routineRawPhpAllowed": false,
+    "haxeRuntimeShapeAllowedAtBoundary": false,
+    "inventory": [
+      "plugin-and-mu-plugin-roots",
+      "plugin-headers-guards-autoload-and-boot",
+      "lifecycle-registration-and-callbacks",
+      "hook-registration-and-callbacks",
+      "rest-registration-permission-validation-and-endpoints",
+      "dynamic-block-render-callbacks",
+      "theme-admin-and-mixed-php-html-templates",
+      "public-facade-functions-classes-and-includable-files",
+      "wordpress-discovered-names-globals-and-side-effects",
+      "public-to-private-adapters",
+      "host-visible-stack-entrypoints"
+    ],
+    "requiredShapes": [
+      "php74-compatible-syntax",
+      "native-scalars-nullables-objects-arrays-iterables-callables",
+      "native-indexed-and-associative-arrays",
+      "native-callable-arrays-and-stable-callback-identity",
+      "native-functions-methods-closures-namespaces-and-types",
+      "native-parameter-and-return-references",
+      "native-provider-objects-including-wp-error",
+      "structured-conditional-declarations",
+      "declared-top-level-statements-and-deterministic-includes",
+      "readable-names-and-source-correlated-stack-entries",
+      "direct-context-safe-mixed-php-html"
+    ],
+    "forbiddenBoundaryShapes": [
+      "stock-haxe-boot-types",
+      "haxe-collection-wrappers",
+      "haxe-callable-wrappers",
+      "haxe-reflection-registries",
+      "anonymous-runtime-carriers",
+      "mangled-private-implementation-names"
+    ]
+  },
+  "privateStockHaxeLane": {
+    "owner": "stock-haxe-php-through-sdk-owned-native-adapters",
+    "disposition": "provisional-0.x-migration-lane",
+    "guaranteedAfter1_0": false,
+    "packageScope": "one-namespaced-dependency-closed-plugin-or-theme",
+    "sharedSiteRuntimeAllowed": false,
+    "admission": [
+      "private-dependency-closed-closure",
+      "no-direct-wordpress-or-non-haxe-php-entry",
+      "all-entry-edges-use-public-native-adapter",
+      "native-values-converted-immediately-at-adapter",
+      "exact-runtime-file-symbol-helper-and-size-inventory",
+      "php-matrix-source-correlation-conflict-and-determinism-pass",
+      "package-local-namespaced-runtime"
+    ],
+    "forbiddenUses": [
+      "plugin-or-theme-root",
+      "template-file",
+      "public-facade",
+      "hook-or-lifecycle-callback",
+      "rest-or-block-callback",
+      "wordpress-discovered-name",
+      "consumer-extension-point",
+      "opaque-carrier-forwarding"
+    ],
+    "auditInventory": [
+      "exact-stock-haxe-compiler-and-runtime",
+      "adapter-and-private-root-plan-ids",
+      "private-files-symbols-and-content-hashes",
+      "retained-runtime-helpers-and-dce-reasons",
+      "all-boundary-conversions",
+      "compressed-uncompressed-size-and-bootstrap-timing",
+      "two-plugin-namespace-and-runtime-conflicts",
+      "source-correlation-and-gate-receipts"
+    ],
+    "missingInventoryDisposition": "reject-build"
+  },
+  "adapterContract": {
+    "adapterLane": "public-native",
+    "allPrivateEntriesRequireAdapter": true,
+    "immediateNativeConversionRequired": true,
+    "opaqueForwardingAllowed": false,
+    "publicAbiStableAcrossPrivateMigration": true,
+    "nonHaxeCallerIsRequiredAuthority": true
+  },
+  "serverHxx": {
+    "routineAuthoring": "return-inline-markup",
+    "lowering": "compile-time-generic-markup-ir-then-wordpress-public-native-lane",
+    "runtimeParserOrVdomShipped": false,
+    "stockHaxeTemplateRuntimeAllowed": false,
+    "directMixedPhpHtmlOutputRequired": true
+  },
+  "requiredG1Evidence": [
+    {
+      "id": "php74-lint-and-php84-execution",
+      "status": "not-tested"
+    },
+    {
+      "id": "wpcs-and-selected-static-analysis",
+      "status": "not-tested"
+    },
+    {
+      "id": "native-array-callable-reference-wp-error-semantics",
+      "status": "not-tested"
+    },
+    {
+      "id": "wordpress70-install-activation-hooks-and-render",
+      "status": "not-tested"
+    },
+    {
+      "id": "public-reflection-snapshot",
+      "status": "not-tested"
+    },
+    {
+      "id": "ordinary-non-haxe-php-caller",
+      "status": "not-tested"
+    },
+    {
+      "id": "readable-source-correlated-stack-trace",
+      "status": "not-tested"
+    },
+    {
+      "id": "deterministic-private-runtime-size-and-bootstrap-audit",
+      "status": "not-tested"
+    },
+    {
+      "id": "two-plugin-runtime-conflict-fixture",
+      "status": "not-tested"
+    },
+    {
+      "id": "independent-wordpress-php-readability-review",
+      "status": "not-tested"
+    }
+  ],
+  "migrationPolicy": {
+    "decisionDeadline": "before-g8-api-freeze",
+    "allowedOutcomes": [
+      "supported-private-profile-with-budgets",
+      "explicit-migration-only-profile",
+      "removed-after-custom-lowering-migration"
+    ],
+    "symbolMigrationTriggers": [
+      "becomes-host-visible",
+      "needs-more-than-one-representation-preserving-adapter",
+      "leaks-haxe-runtime-shape",
+      "prevents-source-correlation",
+      "fails-syntax-security-or-static-analysis",
+      "creates-package-or-cross-plugin-conflict",
+      "fails-measured-size-bootstrap-or-readability-budget"
+    ],
+    "laneRemovalReviewTriggers": [
+      "fixed-runtime-cost-dominates-representative-package",
+      "cross-plugin-isolation-fails",
+      "upstream-runtime-misses-supported-php-matrix",
+      "security-maintenance-cannot-be-owned",
+      "custom-compiler-covers-closure-with-simpler-packaging"
+    ],
+    "numericBudgetsApproved": false,
+    "budgetOwner": "ADR-018-and-G8-after-G1-measurement"
+  },
+  "stopConditions": [
+    "pervasive-raw-public-templates",
+    "opaque-haxe-runtime-wrapper-leak",
+    "php74-syntax-floor-failure",
+    "non-native-public-abi-or-reflection",
+    "unreadable-or-uncorrelated-public-stack-frames"
+  ],
+  "releaseBoundary": {
+    "publicationAuthorized": false,
+    "licensingBlockedBy": [
+      "wordpresshx-adr-020",
+      "wordpresshx-sdk-002"
+    ],
+    "productionSupport": "not-tested"
+  },
+  "implementationOwners": {
+    "wordpressProfile": "wordpresshx-sdk-022",
+    "semanticPlan": "wordpresshx-adr-006",
+    "hookContract": "wordpresshx-adr-010",
+    "sourceCorrelation": "wordpresshx-sdk-025",
+    "serverHxx": "wordpresshx-sdk-081",
+    "runtimePackaging": "wordpresshx-adr-018",
+    "feasibilityGate": "wordpresshx-g1",
+    "retentionDecision": "wordpresshx-g8"
+  }
+}

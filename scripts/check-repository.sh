@@ -29,6 +29,7 @@ required_files=(
   docs/adr/002-exact-compatibility-profiles.md
   docs/adr/003-package-topology-and-lockstep-versioning.md
   docs/adr/004-generic-php-compiler-home.md
+  docs/adr/005-public-versus-private-php-emission.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/020-licensing-and-generated-output.md
@@ -140,6 +141,7 @@ required_files=(
   manifests/README.md
   manifests/hxx-architecture.json
   manifests/package-topology.json
+  manifests/php-emission-policy.json
   manifests/release-support-policy.json
   manifests/toolchain.lock.json
   manifests/upstream.lock.json
@@ -210,6 +212,8 @@ required_files=(
   scripts/release/test-governance.py
   scripts/licenses/check-license-policy.py
   scripts/licenses/test-license-policy.py
+  scripts/php/check-emission-policy.py
+  scripts/php/test-emission-policy.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
@@ -1709,6 +1713,7 @@ python3 scripts/profiles/check-generated-catalogs.py
 python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
 python3 scripts/licenses/test-license-policy.py
+python3 scripts/php/test-emission-policy.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 

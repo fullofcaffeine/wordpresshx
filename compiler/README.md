@@ -9,4 +9,8 @@ The generic package must not import SDK packages or contain WordPress concepts. 
 
 Server HXX therefore belongs to this compiler family in two layers: generic typed markup and native PHP/HTML emission in `reflaxe.php`, then WordPress hierarchy/helper/escaping ergonomics in `wordpress/` and SDK adapters. It replaces hand-authored mixed PHP markup for Haxe-owned templates without shipping an HXX runtime. Browser HXX remains a separate Genes concern.
 
-[ADR-004](../docs/adr/004-generic-php-compiler-home.md) defines the temporary monorepo ownership model and explicit extraction triggers.
+[ADR-004](../docs/adr/004-generic-php-compiler-home.md) defines the temporary
+monorepo ownership model and explicit extraction triggers. [ADR-005](../docs/adr/005-public-versus-private-php-emission.md)
+classifies every host-visible WordPress file, symbol, callback, template, and
+adapter into the structured native lane; stock Haxe PHP may only produce an
+audited dependency-closed private implementation behind those adapters.

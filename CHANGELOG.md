@@ -22,6 +22,10 @@ All notable project changes will be recorded here once versioning policy is acce
 - Fail-closed G0 aggregate toolchain lock and gate receipt covering exact
   compiler, formatter, image, npm, Haxelib, profile, and empty Composer graph
   identities while preserving the separate licensing publication blocker.
+- Accepted ADR-005 public/private PHP emission contract with semantic
+  file/symbol/edge classification, structured native WordPress ABI, a bounded
+  audited stock-Haxe private lane, direct-return server-HXX ownership, and
+  fail-closed pre-G8 migration/removal triggers.
 
 ### Release status
 

@@ -38,6 +38,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-002: Exact compatibility profiles](002-exact-compatibility-profiles.md)
 - [ADR-003: Package topology and lockstep versioning](003-package-topology-and-lockstep-versioning.md)
 - [ADR-004: Generic PHP compiler home and extraction boundary](004-generic-php-compiler-home.md)
+- [ADR-005: Public versus private PHP emission](005-public-versus-private-php-emission.md)
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
 - [ADR-021: Release and support policy](021-release-and-support-policy.md)

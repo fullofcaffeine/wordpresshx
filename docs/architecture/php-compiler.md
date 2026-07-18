@@ -36,6 +36,28 @@ The initial import contains typed statements and expressions for control flow, a
 
 The fixture is neutral: it compiles and prints a PHP program that sums a native array and emits JSON. It also snapshots representative closures, control flow, exceptions, arrays, names, and string escaping, plus negative injection-shaped inputs.
 
+## Public and private emission boundary
+
+ADR-005 classifies generated PHP semantically at the file, symbol, and call-edge
+level. Everything WordPress discovers or calls, every template/bootstrap file,
+every intentionally exposed PHP facade, and every adapter into private logic is
+`public-native` and must be emitted through structured PHP IR plus the WordPress
+profile. Stock Haxe PHP cannot appear at that boundary.
+
+Stock Haxe PHP is a provisional `0.x` implementation/migration lane only. A
+private closure must be namespaced, dependency-closed within one generated
+plugin/theme, unreachable by WordPress or non-Haxe PHP except through an
+SDK-owned native adapter, and fully inventoried for files, symbols, helpers,
+conversions, hashes, size, timing, conflicts, and source correlation. Unknown
+classification or missing inventory rejects the build. Before the G8 API freeze,
+runtime evidence must decide whether this lane becomes supported, migration-only,
+or removed; it is not currently guaranteed after `1.0`.
+
+The machine-readable contract is
+[`php-emission-policy.json`](../../manifests/php-emission-policy.json). It keeps
+all real WordPress/native ABI evidence `not-tested` until SDK-022 and Gate G1
+exercise an ordinary PHP caller and a real WordPress 7.0 plugin.
+
 ## Planned typed-markup capability
 
 ADR-011 makes server HXX a first-class generic compiler capability. A future `reflaxe.php` slice owns a neutral, typed PHP-markup IR for positioned elements/text, typed dynamic segments, attributes, control flow, output contexts, source correlation, and deterministic mixed PHP/HTML rendering. This replaces handwritten mixed PHP markup for Haxe-owned templates; it does not introduce a runtime parser, VDOM, component registry, template resolver, or request dispatcher.
