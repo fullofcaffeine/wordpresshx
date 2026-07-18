@@ -128,7 +128,7 @@ def main() -> int:
         lambda root: mutate_json(
             root,
             "manifests/evidence/g0-product-baseline.json",
-            lambda value: value.__setitem__("status", "verified"),
+            lambda value: value["hostedWorkflow"].__setitem__("runId", None),
         ),
         "verified G0 receipt needs a hosted run ID",
     )

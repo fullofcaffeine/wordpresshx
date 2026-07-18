@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G0-PRODUCT-AUTHORITY-BASELINE",
   "bead": "wordpresshx-g0",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
@@ -21,7 +21,7 @@
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",
-      "sha256": "a3b3ccb1d861cac8a216df952b9578687236f0b79189ebf58bc319c9c314264b"
+      "sha256": "23f76dccbcaa036ed827cbaa389c057102aa0c5038e8d72de25f48357d88c73f"
     },
     "review": {
       "path": "docs/gates/g0-product-authority-and-baseline.md",
@@ -139,14 +139,14 @@
   },
   "implementation": {
     "baseCommit": "9dd2b389c172a9446c0b73ffbcb05a468d53be7b",
-    "commit": null
+    "commit": "5bd27c512c83b9388ef70a3e1833b4789a2c956b"
   },
   "hostedWorkflow": {
     "workflow": "repository.yml",
-    "runId": null,
-    "commit": null,
-    "status": "pending",
-    "fullMatrixStatus": "pending",
+    "runId": 29624812133,
+    "commit": "5bd27c512c83b9388ef70a3e1833b4789a2c956b",
+    "status": "passed",
+    "fullMatrixStatus": "passed",
     "jobCount": 10
   },
   "publicationBoundary": {
@@ -157,7 +157,7 @@
     "publicPackagePublicationAuthorized": false
   },
   "claims": {
-    "g0ProductAuthorityAndBaseline": "implemented-hosted-pending",
+    "g0ProductAuthorityAndBaseline": "verified",
     "profileCapabilities": "inventoried",
     "nativePhpBoundary": "not-tested-by-g0",
     "browserBoundary": "not-tested-by-g0",
