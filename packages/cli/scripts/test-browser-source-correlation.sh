@@ -45,17 +45,15 @@ haxelib run formatter --check \
   -s "${package_root}/src" \
   -s "${package_root}/test/browser-source-correlation/src"
 
-genes_root="$(
-  cd "${package_root}"
-  haxelib path genes-ts | \
-    grep -E '/genes-ts/1\.36\.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src/$' | \
-    tail -n 1
-)"
 haxe_install_root="$(dirname "$(haxelib config)")"
+haxe_library_cache="${haxe_install_root}/haxe_libraries"
+genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src"
 haxe_stdlib_root="${haxe_install_root}/versions/4.3.7/std"
 if [[ ! -f "${genes_root}/genes/Register.hx" ]] \
   || [[ ! -f "${haxe_stdlib_root}/StdTypes.hx" ]]; then
-  echo "SDK-034 gate could not resolve its exact Genes/Haxe source roots" >&2
+  echo "SDK-034 gate could not resolve its exact Lix Genes/Haxe source roots" >&2
+  echo "expected Genes root: ${genes_root}" >&2
+  echo "expected Haxe standard-library root: ${haxe_stdlib_root}" >&2
   exit 1
 fi
 

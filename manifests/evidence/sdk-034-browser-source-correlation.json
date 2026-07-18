@@ -3,7 +3,7 @@
   "receiptId": "SDK-034-BROWSER-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-034",
   "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T13:50:54Z",
+  "observedAt": "2026-07-18T14:17:49Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "cliPackage": "packages/cli",
@@ -161,7 +161,7 @@
     },
     {
       "path": "packages/cli/scripts/test-browser-source-correlation.sh",
-      "sha256": "65ab01e1021841550df4b86ff3009e5834cb41fee5cff842a39a3f222694c0cc"
+      "sha256": "525315cf5e9de75f941adf45fb774691768248f8b0ac96a7a49aed7256d0ec78"
     },
     {
       "path": "packages/cli/test/expected/browser-development.text",
@@ -331,6 +331,15 @@
     "fullMatrixStatus": null,
     "cliStep": "Test real browser source-map composition and trace CLI"
   },
+  "discardedHostedAttempts": [
+    {
+      "runId": 29647539344,
+      "jobId": 88088189941,
+      "commit": "578f2998e60723c7535bd123f7e4de5855f4ee61",
+      "outcome": "failed-before-browser-compile",
+      "reason": "The gate queried the global Haxelib registry for a Genes dependency installed exclusively in the authenticated Lix cache; the other nine workflow jobs passed"
+    }
+  ],
   "claims": {
     "genesSourceMapLayer": "independently-validated",
     "browserTraceCli": "controlled-runtime-tested",

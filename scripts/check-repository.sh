@@ -1696,6 +1696,30 @@ assert sdk034_receipt["receiptId"] in lock["entries"]["wp70-release"][
 
 sdk034_hosted = sdk034_receipt["hostedVerification"]
 assert sdk034_hosted["status"] in {"pending-main-push", "passed"}
+assert sdk034_receipt["discardedHostedAttempts"] == [
+    {
+        "runId": 29647539344,
+        "jobId": 88088189941,
+        "commit": "578f2998e60723c7535bd123f7e4de5855f4ee61",
+        "outcome": "failed-before-browser-compile",
+        "reason": (
+            "The gate queried the global Haxelib registry for a Genes "
+            "dependency installed exclusively in the authenticated Lix cache; "
+            "the other nine workflow jobs passed"
+        ),
+    }
+]
+sdk034_browser_gate_source = Path(
+    "packages/cli/scripts/test-browser-source-correlation.sh"
+).read_text(encoding="utf-8")
+assert "haxelib path genes-ts" not in sdk034_browser_gate_source
+assert 'haxe_library_cache="${haxe_install_root}/haxe_libraries"' in (
+    sdk034_browser_gate_source
+)
+assert (
+    'genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/'
+    'c59ecb361fd91418584487c2138bae8d3d3a3961/src"'
+) in sdk034_browser_gate_source
 if sdk034_hosted["status"] == "passed":
     assert sdk034_receipt["status"] == "verified"
     assert sha1.fullmatch(sdk034_implementation["implementationCommit"])
