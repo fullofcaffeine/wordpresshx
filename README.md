@@ -82,6 +82,14 @@ in the [browser compiler pin](docs/architecture/browser-compiler.md). These are
 compiler-input and strict-fixture claims, not yet a complete WordPress browser
 support claim.
 
+SDK-032 now layers typed Haxe inline markup over that boundary for the exact
+`wp70-release` React/Gutenberg profile. Its Haxe-only registration-proof page
+exercises Button, Notice, hooks, state, context, DOM refs, mouse and keyboard
+events, fragments, conditions, loops, and closed spreads, then verifies the
+generated TSX, real React runtime, accessibility structure, visual bundle, and
+source maps. Dependency extraction, translations, full browser trace evidence,
+and the classic differential remain separately gated, so G2 is not yet closed.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the working agreement and [docs/](docs/) for the documentation map.
 
 ## Policies

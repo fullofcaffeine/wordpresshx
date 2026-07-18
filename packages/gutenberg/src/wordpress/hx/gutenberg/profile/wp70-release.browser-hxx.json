@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogRevision": "wp70-release/catalog-v1",
+  "provider": {
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "dependencyLock": {
+      "path": "package-lock.json",
+      "blob": "b45618b56375df75595ba7184f688cebf41795f8",
+      "sha256": "48a76d63400289c1e80ca9685651157fd49d7eded233a68cb19ced59f78cc9ee"
+    }
+  },
+  "react": {
+    "runtimeVersion": "18.3.1",
+    "typesVersion": "18.3.27",
+    "jsxRuntimeRequest": "react/jsx-runtime",
+    "wordpressHandle": "react-jsx-runtime"
+  },
+  "packages": [
+    {
+      "request": "@wordpress/components",
+      "version": "32.2.0",
+      "packageCapability": "gutenberg.package.@wordpress/components",
+      "wordpressHandle": "wp-components",
+      "handleCapability": "wordpress.script-handle.wp-components",
+      "source": {
+        "path": "packages/components/package.json",
+        "blob": "cedd04f3bef8185ddd33f632fa0e6fe00e1ef6a6",
+        "sha256": "602487e26f0146cb0f28089500bc67233246b33a5ddaa6bc5d0d4602a566afb1"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/components/-/components-32.2.0.tgz",
+        "integrity": "sha512-hfb8Yznykl83MCopXhNeVznP1/fpHAnQSgzF5IDfzC+VJLOqQkwjS4xUcmvLaSRN3xedYYvz1zlMbwnv2Fh8Nw==",
+        "shasum": "c62fe73e8e56f9c0097e1629c4e7ccb506596544"
+      }
+    },
+    {
+      "request": "@wordpress/element",
+      "version": "6.40.0",
+      "packageCapability": "gutenberg.package.@wordpress/element",
+      "wordpressHandle": "wp-element",
+      "handleCapability": "wordpress.script-handle.wp-element",
+      "source": {
+        "path": "packages/element/package.json",
+        "blob": "70f4b2fb7045f8ad8f7d29cab30019f4ec6bddd3",
+        "sha256": "51d94ba04d64fb12892d60e34a6cfdc1b46f77cd6be14a3694ebe87e293b4229"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/element/-/element-6.40.0.tgz",
+        "integrity": "sha512-OhU8B2xEGg7c41rh/VRiJLOz6TnM/r5r8sraAg5ISc2bF7s2oAFqLwvlR0/U6ervyYwbK644osWZGQxFyL3huA==",
+        "shasum": "bf8b9f56a648258bd5c79744115458cb54a0de0c"
+      }
+    }
+  ],
+  "components": [
+    {
+      "tag": "Button",
+      "haxeType": "wordpress.hx.gutenberg.components.Button",
+      "propsType": "wordpress.hx.gutenberg.components.ButtonProps",
+      "children": "optional",
+      "request": "@wordpress/components",
+      "export": "Button",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/button/types.ts",
+        "propsBlob": "d730f49b1e813871dd11482f2e69d5dc9d7728bc",
+        "propsSha256": "5536c8940f324404f9364e4e31d55430add629947f3223d92174a1b1206c6541"
+      }
+    },
+    {
+      "tag": "Notice",
+      "haxeType": "wordpress.hx.gutenberg.components.Notice",
+      "propsType": "wordpress.hx.gutenberg.components.NoticeProps",
+      "children": "required",
+      "request": "@wordpress/components",
+      "export": "Notice",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/notice/types.ts",
+        "propsBlob": "d0264e6265d93466e8bea47c40b03839ebd7aea4",
+        "propsSha256": "0c2f66843351de93f4e8a43983f85faaef7d20d9008718935987a57a46a774e8"
+      }
+    }
+  ],
+  "hooks": [
+    "createContext",
+    "useContext",
+    "useEffect",
+    "useRef",
+    "useState"
+  ],
+  "hookSource": {
+    "path": "packages/element/src/react.ts",
+    "blob": "4b66ec2ae59c689ac433abe7d738fae0ba9e2314",
+    "sha256": "de6bc5809c4852af25993a695f29172309da54d11cef6a8aad2351317af56d04"
+  },
+  "policy": {
+    "rawJsxAllowed": false,
+    "browserHxxRuntimeAllowed": false,
+    "openAttributeSpreadsAllowed": false,
+    "profileGeneratedOrCurated": "curated-exact-source-and-published-types"
+  }
+}

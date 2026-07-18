@@ -26,7 +26,8 @@
       "capabilityEvidenceStatus": "inventoried",
       "runtimeCompatibilityStatus": "not-tested",
       "testReceiptIds": [
-        "SDK-010-WP70-RELEASE-SOURCE"
+        "SDK-010-WP70-RELEASE-SOURCE",
+        "SDK-032-REACT-GUTENBERG-HXX"
       ],
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",
       "rollback": null
@@ -157,7 +158,8 @@
       "publicTinkTypesExposed": false,
       "runtimeDistributionAllowed": false,
       "testReceiptIds": [
-        "SDK-080-HXX-PARSER-PROTOTYPE"
+        "SDK-080-HXX-PARSER-PROTOTYPE",
+        "SDK-032-REACT-GUTENBERG-HXX"
       ],
       "upgradeOwner": "wordpress-hx-sdk HXX maintainers",
       "rollback": {

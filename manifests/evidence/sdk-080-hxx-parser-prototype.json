@@ -12,7 +12,12 @@
     },
     "adapter": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
-      "sha256": "b60eee3148c37f0abab0411bffd1e870b6a9231c3781f393d6d882bd27f8db07"
+      "sha256": "079e2cb49bf311dcf8383e6b7117675a529b68698443dafbacd50970d67d15c0"
+    },
+    "neutralSyntax": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxSyntax.hx",
+      "sha256": "99aa61cae5eb09122e6f34fc4f0d93f04c5de067600f9f2abd4cc1cfe9f7f180",
+      "introducedByReceipt": "SDK-032-REACT-GUTENBERG-HXX"
     },
     "expectedSnapshots": {
       "server": {
@@ -259,6 +264,13 @@
     "genesSourceChanged": false,
     "genesUpstreamPullRequest": null,
     "reason": "the exact public parser supports the neutral syntax and position requirements; target semantics remain internal SDK work"
+  },
+  "postReceiptEvolution": {
+    "receiptId": "SDK-032-REACT-GUTENBERG-HXX",
+    "change": "the internal parser adapter now also projects parser nodes into an SDK-owned neutral positioned syntax tree",
+    "publicTinkTypesAdded": false,
+    "sdk080SnapshotsChanged": false,
+    "sdk080GateReplayed": "passed"
   },
   "knownLimitations": [
     "The serialized semantic snapshot is evidence-only; it is not a runtime node model or supported public renderer.",

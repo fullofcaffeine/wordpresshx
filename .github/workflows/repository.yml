@@ -143,3 +143,5 @@ jobs:
         run: bash packages/hxx/scripts/test.sh
       - name: Test strict Gutenberg browser compiler profile
         run: bash packages/gutenberg/scripts/test.sh
+      - name: Test typed React and Gutenberg HXX
+        run: bash packages/gutenberg/scripts/test-hxx.sh

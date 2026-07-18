@@ -1,0 +1,3 @@
+profiles/hxx-common.hxml
+-cp test/hxx-fixture/src
+-main sdk032.fixture.Main

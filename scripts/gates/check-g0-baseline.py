@@ -222,7 +222,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
     external_graphs = npm.get("externalGraphs", [])
     audit.check(
-        isinstance(external_graphs, list) and len(external_graphs) == 2,
+        isinstance(external_graphs, list) and len(external_graphs) == 3,
         "npm external graph set changed",
     )
     genes_graph = (
@@ -233,6 +233,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     sdk031_graph = (
         external_graphs[1]
         if isinstance(external_graphs, list) and len(external_graphs) > 1
+        else {}
+    )
+    sdk032_graph = (
+        external_graphs[2]
+        if isinstance(external_graphs, list) and len(external_graphs) > 2
         else {}
     )
     audit.check(
@@ -280,7 +285,13 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         "SDK-031 npm lock path changed",
     )
     audit.check(
-        manifest_paths(audit.root, {"package.json"}) == [sdk031_manifest],
+        manifest_paths(audit.root, {"package.json"})
+        == sorted(
+            [
+                "packages/gutenberg/tooling/package.json",
+                "packages/gutenberg/hxx-tooling/package.json",
+            ]
+        ),
         "unlocked package.json found",
     )
     audit.check(
@@ -288,7 +299,12 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             audit.root,
             {"package-lock.json", "yarn.lock", "pnpm-lock.yaml"},
         )
-        == [sdk031_lock],
+        == sorted(
+            [
+                "packages/gutenberg/tooling/package-lock.json",
+                "packages/gutenberg/hxx-tooling/package-lock.json",
+            ]
+        ),
         "unlocked package-manager lock found",
     )
     if isinstance(sdk031_manifest, str):
@@ -317,6 +333,95 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(
         sdk031_graph.get("receiptId") == "SDK-031-STRICT-BROWSER-PROFILE",
         "SDK-031 npm graph receipt changed",
+    )
+    audit.exact_keys(
+        sdk032_graph,
+        {
+            "id",
+            "authority",
+            "profilePath",
+            "profileSha256",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "directPackages",
+            "runtimeImage",
+            "buildInputOnly",
+            "receiptId",
+        },
+        "SDK-032 npm graph",
+    )
+    audit.check(
+        sdk032_graph.get("id")
+        == "sdk-032-react-gutenberg-hxx-verification-graph",
+        "SDK-032 npm graph ID changed",
+    )
+    audit.check(
+        sdk032_graph.get("authority")
+        == "exact-provider-source-profile-and-package-local-npm-lock",
+        "SDK-032 npm graph authority changed",
+    )
+    sdk032_profile = sdk032_graph.get("profilePath")
+    sdk032_manifest = sdk032_graph.get("manifestPath")
+    sdk032_lock = sdk032_graph.get("lockPath")
+    audit.check(
+        sdk032_profile
+        == (
+            "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+            "wp70-release.browser-hxx.json"
+        ),
+        "SDK-032 browser-HXX profile path changed",
+    )
+    audit.check(
+        sdk032_manifest == "packages/gutenberg/hxx-tooling/package.json",
+        "SDK-032 npm manifest path changed",
+    )
+    audit.check(
+        sdk032_lock == "packages/gutenberg/hxx-tooling/package-lock.json",
+        "SDK-032 npm lock path changed",
+    )
+    for path, digest, label in (
+        (sdk032_profile, sdk032_graph.get("profileSha256"), "profile"),
+        (sdk032_manifest, sdk032_graph.get("manifestSha256"), "manifest"),
+        (sdk032_lock, sdk032_graph.get("lockSha256"), "lock"),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-032 {label} digest changed",
+            )
+    audit.check(
+        sdk032_graph.get("directPackages")
+        == [
+            "@testing-library/dom@10.4.1",
+            "@testing-library/user-event@14.6.1",
+            "@types/jsdom@21.1.7",
+            "@types/node@22.15.30",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/components@32.2.0",
+            "@wordpress/element@6.40.0",
+            "axe-core@4.10.2",
+            "esbuild@0.27.2",
+            "jsdom@26.1.0",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3",
+        ],
+        "SDK-032 direct npm package set changed",
+    )
+    audit.check(
+        sdk032_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-032 npm runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk032_graph.get("buildInputOnly") is True,
+        "SDK-032 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk032_graph.get("receiptId") == "SDK-032-REACT-GUTENBERG-HXX",
+        "SDK-032 npm graph receipt changed",
     )
     active_npm = npm.get("activePackages", [])
     audit.check(isinstance(active_npm, list) and len(active_npm) == 1, "exactly one direct npm build package is expected")
@@ -408,7 +513,11 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
         catalog_file_sha = nested(generated, "catalog", "fileSha256")
         if isinstance(catalog_path, str):
             audit.check(audit.sha256(catalog_path) == catalog_file_sha, f"{profile_id} catalog bytes differ from receipt")
-    audit.check(nested(upstream, "entries", "wp70-release", "testReceiptIds") == [wp_receipt.get("receiptId")], "wp70 upstream/source receipt link changed")
+    audit.check(
+        nested(upstream, "entries", "wp70-release", "testReceiptIds")
+        == [wp_receipt.get("receiptId"), "SDK-032-REACT-GUTENBERG-HXX"],
+        "wp70 upstream/source receipt link changed",
+    )
     audit.check(nested(upstream, "entries", "gutenberg-forward-23.4", "testReceiptIds") == [forward_receipt.get("receiptId")], "forward upstream/source receipt link changed")
 
     classification = audit.read_json("profiles/classification-decision-lock.json", "classification decision lock")

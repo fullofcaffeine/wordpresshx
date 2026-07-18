@@ -45,7 +45,7 @@
         "package": "typescript",
         "version": "5.9.3",
         "selectionAuthority": "wp70-release-embedded-gutenberg-root-package",
-        "evidenceStatus": "selected-pending-sdk-031-runtime-proof"
+        "evidenceStatus": "verified-sdk-031-strict-runtime"
       }
     },
     "genesReleaseVerification": {
@@ -308,8 +308,8 @@
   "evidence": {
     "architectureAccepted": true,
     "genesReleaseGatePassed": true,
-    "sdkStrictFixture": "owned-by-wordpresshx-sdk-031",
-    "gutenbergHxxFixture": "owned-by-wordpresshx-sdk-032",
+    "sdkStrictFixture": "verified-by-sdk-031-strict-browser-profile",
+    "gutenbergHxxFixture": "implemented-by-sdk-032-hosted-verification-pending",
     "wordpressBundleAndAssetParity": "owned-by-wordpresshx-sdk-033",
     "classicDifferential": "owned-by-wordpresshx-sdk-035",
     "sourceMaps": "owned-by-wordpresshx-sdk-034",

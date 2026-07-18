@@ -80,6 +80,7 @@ required_files=(
   packages/hxx/scripts/verify-dependency-lock.py
   packages/hxx/scripts/verify-snapshots.py
   packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx
+  packages/hxx/src/wordpress/hx/hxx/_internal/HxxSyntax.hx
   packages/hxx/src/wordpress/hx/hxx/prototype/BrowserHxx.hx
   packages/hxx/src/wordpress/hx/hxx/prototype/BrowserSnapshot.hx
   packages/hxx/src/wordpress/hx/hxx/prototype/ServerHxx.hx
@@ -103,22 +104,59 @@ required_files=(
   packages/gutenberg/README.md
   packages/gutenberg/dependency-lock.json
   packages/gutenberg/haxe_libraries/genes-ts.hxml
+  packages/gutenberg/haxe_libraries/html-entities.hxml
   packages/gutenberg/haxe_libraries/helder.set.hxml
+  packages/gutenberg/haxe_libraries/tink_anon.hxml
+  packages/gutenberg/haxe_libraries/tink_core.hxml
+  packages/gutenberg/haxe_libraries/tink_hxx.hxml
+  packages/gutenberg/haxe_libraries/tink_macro.hxml
+  packages/gutenberg/haxe_libraries/tink_parse.hxml
+  packages/gutenberg/hxx-tooling/package-lock.json
+  packages/gutenberg/hxx-tooling/package.json
   packages/gutenberg/profiles/classic.hxml
   packages/gutenberg/profiles/default-dce.hxml
+  packages/gutenberg/profiles/hxx-common.hxml
+  packages/gutenberg/profiles/hxx-strict.hxml
   packages/gutenberg/profiles/strict.hxml
+  packages/gutenberg/scripts/test-hxx.sh
   packages/gutenberg/scripts/test.sh
   packages/gutenberg/scripts/verify-browser-profile.mjs
   packages/gutenberg/scripts/verify-dependency-lock.py
+  packages/gutenberg/scripts/verify-hxx-profile.py
+  packages/gutenberg/scripts/verify-hxx.mjs
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserNode.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/Button.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/ButtonProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/Notice.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/NoticeProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/html/HtmlProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/hxx/BrowserHxx.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json
+  packages/gutenberg/src/wordpress/hx/gutenberg/react/DomTypes.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/react/Hooks.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx
   packages/gutenberg/test-negative/invalid_capability/Main.hx
   packages/gutenberg/test-negative/invalid_export_id/Main.hx
+  packages/gutenberg/test-negative-hxx/missing_notice_children/Main.hx
+  packages/gutenberg/test-negative-hxx/open_spread/Main.hx
+  packages/gutenberg/test-negative-hxx/unknown_prop/Main.hx
+  packages/gutenberg/test-negative-hxx/unsupported_switch/Main.hx
+  packages/gutenberg/test-negative-hxx/wrong_event/Main.hx
+  packages/gutenberg/test-negative-hxx/wrong_ref/Main.hx
   packages/gutenberg/test/consumer/consumer.ts
   packages/gutenberg/test/consumer/ordinary-consumer.mjs
   packages/gutenberg/test/expected/browser-profile.json
   packages/gutenberg/test/fixture/src/sdk031/fixture/BrowserApi.hx
   packages/gutenberg/test/fixture/src/sdk031/fixture/Main.hx
   packages/gutenberg/test/fixture/src/sdk031/fixture/RuntimeSignals.hx
+  packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/Main.hx
+  packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/ProofStyles.hx
+  packages/gutenberg/test/hxx-runtime/index.html
+  packages/gutenberg/test/hxx-runtime/runtime-entry.tsx
+  packages/gutenberg/test/hxx-runtime/visual-entry.tsx
   packages/gutenberg/test/runtime/setup.d.ts
   packages/gutenberg/test/runtime/setup.js
   packages/gutenberg/test/runtime/signals.d.ts
@@ -186,6 +224,7 @@ required_files=(
   manifests/evidence/sdk-090-wordpress-harness.json
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-031-strict-browser-profile.json
+  manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
@@ -456,6 +495,25 @@ sdk031_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-031-strict-browser-profile.json"
     ).read_text(encoding="utf-8")
+)
+sdk032_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.browser-hxx.json"
+)
+sdk032_profile = json.loads(sdk032_profile_path.read_text(encoding="utf-8"))
+sdk032_tooling_manifest_path = Path(
+    "packages/gutenberg/hxx-tooling/package.json"
+)
+sdk032_tooling_lock_path = Path(
+    "packages/gutenberg/hxx-tooling/package-lock.json"
+)
+sdk032_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-032-react-gutenberg-hxx.json"
+    ).read_text(encoding="utf-8")
+)
+toolchain_lock = json.loads(
+    Path("manifests/toolchain.lock.json").read_text(encoding="utf-8")
 )
 hxx_dependency_lock_path = Path("packages/hxx/dependency-lock.json")
 hxx_dependency_lock = json.loads(
@@ -791,6 +849,7 @@ assert hxx_receipt["subject"]["dependencyLock"]["sha256"] == (
 )
 for receipt_subject in (
     hxx_receipt["subject"]["adapter"],
+    hxx_receipt["subject"]["neutralSyntax"],
     hxx_receipt["subject"]["expectedSnapshots"]["server"],
     hxx_receipt["subject"]["expectedSnapshots"]["browser"],
 ):
@@ -976,7 +1035,7 @@ assert project_toolchain["typescript"]["selectionAuthority"] == (
     "wp70-release-embedded-gutenberg-root-package"
 )
 assert project_toolchain["typescript"]["evidenceStatus"] == (
-    "selected-pending-sdk-031-runtime-proof"
+    "verified-sdk-031-strict-runtime"
 )
 genes_verification = browser_toolchains["genesReleaseVerification"]
 assert genes_verification["nodeLocalExact"] == (
@@ -1304,6 +1363,205 @@ else:
 assert sdk031_receipt["claims"]["reactGutenbergHxx"] == "not-tested"
 assert sdk031_receipt["claims"]["wordpressBrowserRuntime"] == "not-tested"
 assert sdk031_receipt["claims"]["productionSupport"] == "not-tested"
+
+assert sdk032_receipt["schemaVersion"] == 1
+assert sdk032_receipt["receiptId"] == "SDK-032-REACT-GUTENBERG-HXX"
+assert sdk032_receipt["bead"] == "wordpresshx-sdk-032"
+assert sdk032_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+sdk032_subject = sdk032_receipt["subject"]
+assert sdk032_subject["package"] == "packages/gutenberg"
+assert sdk032_subject["profileId"] == "wp70-release"
+for locked_subject in sdk032_subject.values():
+    if not isinstance(locked_subject, dict) or "path" not in locked_subject:
+        continue
+    locked_path = Path(locked_subject["path"])
+    assert hashlib.sha256(locked_path.read_bytes()).hexdigest() == (
+        locked_subject["sha256"]
+    )
+assert sdk032_subject["profile"]["path"] == sdk032_profile_path.as_posix()
+assert sdk032_profile["schemaVersion"] == 1
+assert sdk032_profile["profileId"] == "wp70-release"
+assert sdk032_profile["catalogRevision"] == "wp70-release/catalog-v1"
+assert sdk032_profile["provider"]["wordpressCommit"] == (
+    wp_source_lock["wordpressSource"]["commit"]
+)
+assert sdk032_profile["provider"]["gutenbergCommit"] == (
+    wp_source_lock["embeddedGutenberg"]["commit"]
+)
+assert sdk032_profile["provider"]["gutenbergTree"] == (
+    wp_source_lock["embeddedGutenberg"]["tree"]
+)
+assert sdk032_profile["policy"] == {
+    "rawJsxAllowed": False,
+    "browserHxxRuntimeAllowed": False,
+    "openAttributeSpreadsAllowed": False,
+    "profileGeneratedOrCurated": "curated-exact-source-and-published-types",
+}
+assert [component["tag"] for component in sdk032_profile["components"]] == [
+    "Button",
+    "Notice",
+]
+assert sdk032_profile["hooks"] == [
+    "createContext",
+    "useContext",
+    "useEffect",
+    "useRef",
+    "useState",
+]
+
+sdk032_inputs = sdk032_receipt["immutableInputs"]
+for compiler_field in ("name", "version", "tag", "commit", "tree"):
+    assert sdk032_inputs["compiler"][compiler_field] == (
+        locked_compiler[compiler_field]
+    )
+assert sdk032_inputs["compiler"]["releaseArtifactSha256"] == (
+    locked_compiler["releaseArtifact"]["sha256"]
+)
+assert sdk032_inputs["parser"]["commit"] == hxx_parser["commit"]
+assert sdk032_inputs["parser"]["tree"] == hxx_parser["tree"]
+assert sdk032_inputs["provider"]["dependencyLockBlob"] == (
+    sdk032_profile["provider"]["dependencyLock"]["blob"]
+)
+assert sdk032_inputs["provider"]["dependencyLockSha256"] == (
+    sdk032_profile["provider"]["dependencyLock"]["sha256"]
+)
+for npm_subject, npm_path in (
+    (sdk032_inputs["npm"]["manifest"], sdk032_tooling_manifest_path),
+    (sdk032_inputs["npm"]["lock"], sdk032_tooling_lock_path),
+):
+    assert npm_subject["path"] == npm_path.as_posix()
+    assert hashlib.sha256(npm_path.read_bytes()).hexdigest() == (
+        npm_subject["sha256"]
+    )
+
+sdk032_graph = next(
+    graph
+    for graph in toolchain_lock["dependencyGraphs"]["npm"]["externalGraphs"]
+    if graph["id"] == "sdk-032-react-gutenberg-hxx-verification-graph"
+)
+assert sdk032_graph["receiptId"] == sdk032_receipt["receiptId"]
+assert sdk032_graph["profilePath"] == sdk032_profile_path.as_posix()
+assert sdk032_graph["profileSha256"] == hashlib.sha256(
+    sdk032_profile_path.read_bytes()
+).hexdigest()
+assert sdk032_graph["manifestPath"] == sdk032_tooling_manifest_path.as_posix()
+assert sdk032_graph["manifestSha256"] == hashlib.sha256(
+    sdk032_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk032_graph["lockPath"] == sdk032_tooling_lock_path.as_posix()
+assert sdk032_graph["lockSha256"] == hashlib.sha256(
+    sdk032_tooling_lock_path.read_bytes()
+).hexdigest()
+sdk032_tooling_manifest = json.loads(
+    sdk032_tooling_manifest_path.read_text(encoding="utf-8")
+)
+assert set(sdk032_graph["directPackages"]) == {
+    f"{name}@{version}"
+    for name, version in sdk032_tooling_manifest["devDependencies"].items()
+}
+assert sdk032_graph["runtimeImage"] == image_lock["images"]["node"]["reference"]
+assert sdk032_graph["buildInputOnly"] is True
+assert sdk032_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+assert sdk032_receipt["receiptId"] in hxx_entry["testReceiptIds"]
+assert hxx_receipt["subject"]["neutralSyntax"]["introducedByReceipt"] == (
+    sdk032_receipt["receiptId"]
+)
+
+sdk032_exact = sdk032_receipt["exactProfileVerification"]
+sdk032_profile_verifier = Path(sdk032_exact["verifier"]["path"])
+assert hashlib.sha256(sdk032_profile_verifier.read_bytes()).hexdigest() == (
+    sdk032_exact["verifier"]["sha256"]
+)
+compile(
+    sdk032_profile_verifier.read_text(encoding="utf-8"),
+    sdk032_profile_verifier.as_posix(),
+    "exec",
+)
+assert sdk032_exact["immutableGutenbergBlobCount"] == 5
+assert sdk032_exact["outcome"] == "passed"
+
+sdk032_local = sdk032_receipt["localVerification"]
+assert sdk032_local["gate"]["outcome"] == "passed"
+assert sdk032_local["gate"]["secondCleanCompileMatched"] is True
+assert sdk032_local["gate"]["secondVisualBundleMatched"] is True
+for verifier in sdk032_local["verifiers"].values():
+    verifier_path = Path(verifier["path"])
+    assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
+        verifier["sha256"]
+    )
+assert sha256.fullmatch(sdk032_local["generatedArtifacts"]["treeSha256"])
+assert sha256.fullmatch(sdk032_local["generatedArtifacts"]["mainTsxSha256"])
+assert sdk032_local["generatedArtifacts"]["undeclaredReactGlobal"] is False
+assert sdk032_local["generatedArtifacts"]["parserOrMarkerLeakScan"] == "passed"
+assert sdk032_local["typechecks"]["publicWeakTypes"] == []
+assert sdk032_local["typechecks"]["internalWeakInventory"] == [
+    "Main.App:tmp:any[]",
+    "Main.ProofCheckRow:tmp1:any[]",
+    "Main.ProofCheckRow:tmp:any[]",
+]
+assert sdk032_local["typechecks"]["generatedSource"][
+    "exactOptionalPropertyTypes"
+] is True
+assert sdk032_local["typechecks"]["providerDeclarations"]["skipLibCheck"] is False
+assert all(
+    result == "passed"
+    for result in sdk032_local["runtime"].values()
+    if isinstance(result, str)
+)
+assert sdk032_local["runtime"]["consoleErrors"] == 0
+assert sdk032_local["accessibility"]["controlledRuntime"][
+    "seriousOrCriticalViolationsExcludingUnavailableJsdomColorContrast"
+] == 0
+assert sdk032_local["accessibility"]["browserReview"][
+    "initialSeriousOrCriticalViolations"
+] == 0
+assert sdk032_local["accessibility"]["browserReview"][
+    "acceptedStateSeriousOrCriticalViolations"
+] == 0
+assert sdk032_local["browserVisualReview"]["mobile"][
+    "documentScrollWidth"
+] == sdk032_local["browserVisualReview"]["mobile"]["documentClientWidth"]
+assert sdk032_local["sourceMaps"]["machinePathLeaks"] == 0
+
+sdk032_hosted = sdk032_receipt["repositoryHostedVerification"]
+assert sdk032_hosted["workflow"] == "Repository bootstrap"
+assert sdk032_hosted["required"] is True
+if sdk032_receipt["status"] == "implemented-hosted-pending":
+    assert sdk032_hosted["status"] == "pending-first-main-run-with-sdk-032-step"
+    assert browser_architecture["evidence"]["gutenbergHxxFixture"] == (
+        "implemented-by-sdk-032-hosted-verification-pending"
+    )
+else:
+    assert sdk032_hosted["status"] == "passed"
+    assert isinstance(sdk032_hosted["runId"], int)
+    assert sdk032_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk032_hosted['runId']}"
+    )
+    assert sha1.fullmatch(sdk032_hosted["commit"])
+    assert sdk032_hosted["haxeJob"] == "passed"
+    assert isinstance(sdk032_hosted["haxeJobId"], int)
+    assert sdk032_hosted["sdk032Step"] == "passed"
+    assert sdk032_hosted["hostedArtifactHashesMatched"] is True
+    assert browser_architecture["evidence"]["gutenbergHxxFixture"] == (
+        "verified-by-sdk-032-react-gutenberg-hxx"
+    )
+assert browser_architecture["evidence"]["sdkStrictFixture"] == (
+    "verified-by-sdk-031-strict-browser-profile"
+)
+assert sdk032_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk032_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk032_receipt["changeDecision"]["tinkHxxSourceChanged"] is False
+assert sdk032_receipt["claims"]["reactGutenbergHxx"] == (
+    "controlled-runtime-tested"
+)
+assert sdk032_receipt["claims"]["realWordPressEditorRuntime"] == "not-tested"
+assert sdk032_receipt["claims"]["productionSupport"] == "not-tested"
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"

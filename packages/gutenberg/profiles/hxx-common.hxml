@@ -1,0 +1,13 @@
+-lib genes-ts
+-lib tink_hxx
+-cp ../hxx/src
+-cp src
+-D wordpress_hx_profile=wp70-release
+-D wordpress_hx_browser_hxx
+-D genes.ts
+-D genes.ts.no_extension
+-D genes.react.no_inline_markup
+-D js-source-map
+-D js-es=6
+-dce full
+--macro wordpress.hx.gutenberg.hxx.BrowserHxx.enable()

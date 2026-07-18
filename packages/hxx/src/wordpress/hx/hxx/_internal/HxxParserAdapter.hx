@@ -13,6 +13,13 @@ import tink.hxx.Node.Child;
 import tink.hxx.Node.Children;
 import tink.hxx.Node.Node;
 import tink.hxx.Parser;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxAttribute;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxChild;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxChildKind;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxChildren;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxName;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxNode;
+import wordpress.hx.hxx._internal.HxxSyntax.HxxSyntaxSwitchCase;
 
 using StringTools;
 
@@ -60,6 +67,16 @@ private typedef SnapshotEntry = {
  * native lowerers are intentionally owned by SDK-081 and SDK-032.
  */
 class HxxParserAdapter {
+	/**
+	 * Parses Haxe inline markup into the SDK-owned neutral syntax contract.
+	 *
+	 * Browser and server lowerers consume this positioned tree without importing
+	 * or exposing parser-library types.
+	 */
+	public static function parseSyntax(markup:Expr):HxxSyntaxChildren {
+		return NeutralSyntaxBuilder.children(parse(markup));
+	}
+
 	public static function lowerServer(markup:Expr):Expr {
 		return lower(markup, Server);
 	}
@@ -69,17 +86,7 @@ class HxxParserAdapter {
 	}
 
 	private static function lower(markup:Expr, target:HxxTarget):Expr {
-		final children = Parser.parseRoot(markup, {
-			defaultExtension: "hxx",
-			fragment: "__fragment__",
-			noControlStructures: false,
-			defaultSwitchTarget: macro __data__,
-			isVoid: name -> isVoidElement(name.value),
-			treatNested: nested -> {
-				Context.error("WPXHXX1015 nested inline markup inside an expression is outside the SDK-080 prototype", nested.pos);
-				macro null;
-			}
-		});
+		final children = parse(markup);
 		final snapshot = new SnapshotBuilder(target).build(children);
 
 		return switch target {
@@ -90,6 +97,20 @@ class HxxParserAdapter {
 		}
 	}
 
+	private static function parse(markup:Expr):Children {
+		return Parser.parseRoot(markup, {
+			defaultExtension: "hxx",
+			fragment: "__fragment__",
+			noControlStructures: false,
+			defaultSwitchTarget: macro __data__,
+			isVoid: name -> isVoidElement(name.value),
+			treatNested: nested -> {
+				Context.error("WPXHXX1015 nested inline markup inside an expression is outside the admitted parser subset", nested.pos);
+				macro null;
+			}
+		});
+	}
+
 	private static function isVoidElement(name:String):Bool {
 		return switch name {
 			case "area" | "base" | "br" | "col" | "embed" | "hr" | "img" | "input" | "link" | "meta" | "param" | "source" | "track" | "wbr":
@@ -97,6 +118,77 @@ class HxxParserAdapter {
 			default:
 				false;
 		}
+	}
+}
+
+private class NeutralSyntaxBuilder {
+	public static function children(source:Children):HxxSyntaxChildren {
+		return {
+			items: [for (child in source.value) convertChild(child)],
+			pos: source.pos
+		};
+	}
+
+	private static function optionalChildren(source:Null<Children>):Null<HxxSyntaxChildren> {
+		return source == null ? null : children(source);
+	}
+
+	private static function convertChild(source:Child):HxxSyntaxChild {
+		final kind:HxxSyntaxChildKind = switch source.value {
+			case CLet(variables, body):
+				Let([for (variable in variables) attribute(variable)], children(body));
+			case CIf(condition, consequent, alternative):
+				If(condition, children(consequent), optionalChildren(alternative));
+			case CFor(head, body):
+				For(head, children(body));
+			case CSwitch(target, cases):
+				Switch(target, [for (item in cases) switchCase(item)]);
+			case CNode(value):
+				Node(node(value, source.pos));
+			case CText(value):
+				Text(name(value.value, value.pos));
+			case CExpr(value):
+				Expression(value);
+			case CSplat(value):
+				ChildSpread(value);
+		};
+		return {kind: kind, pos: source.pos};
+	}
+
+	private static function node(source:Node, position:Position):HxxSyntaxNode {
+		return {
+			name: name(source.name.value, source.name.pos),
+			attributes: [for (item in source.attributes) attribute(item)],
+			children: optionalChildren(source.children),
+			pos: position
+		};
+	}
+
+	private static function attribute(source:Attribute):HxxSyntaxAttribute {
+		return switch source {
+			case Splat(value):
+				Spread(value);
+			case Empty(value):
+				Empty(name(value.value, value.pos));
+			case Regular(attributeName, value):
+				Regular(name(attributeName.value, attributeName.pos), value);
+		};
+	}
+
+	private static function switchCase(source:{
+		values:Array<Expr>,
+		?guard:Expr,
+		children:Children
+	}):HxxSyntaxSwitchCase {
+		return {
+			values: source.values,
+			guard: source.guard,
+			children: children(source.children)
+		};
+	}
+
+	private static function name(value:String, position:Position):HxxSyntaxName {
+		return {value: value, pos: position};
 	}
 }
 

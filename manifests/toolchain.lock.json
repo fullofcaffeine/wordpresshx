@@ -128,6 +128,35 @@
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
           "buildInputOnly": true,
           "receiptId": "SDK-031-STRICT-BROWSER-PROFILE"
+        },
+        {
+          "id": "sdk-032-react-gutenberg-hxx-verification-graph",
+          "authority": "exact-provider-source-profile-and-package-local-npm-lock",
+          "profilePath": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json",
+          "profileSha256": "e805417cbf00eb9a3a729d9a1d896bddfb7554ca6a13694c357da858dcb09ed1",
+          "manifestPath": "packages/gutenberg/hxx-tooling/package.json",
+          "manifestSha256": "164edb641502bf77cb5df246a1384ac737c02f488f12c2fdb0da7459baeae501",
+          "lockPath": "packages/gutenberg/hxx-tooling/package-lock.json",
+          "lockSha256": "48ad5675e26b86e96bc6371bf3146f783ba3a7f2df18f25e69b5af2d3071f8df",
+          "directPackages": [
+            "@testing-library/dom@10.4.1",
+            "@testing-library/user-event@14.6.1",
+            "@types/jsdom@21.1.7",
+            "@types/node@22.15.30",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/components@32.2.0",
+            "@wordpress/element@6.40.0",
+            "axe-core@4.10.2",
+            "esbuild@0.27.2",
+            "jsdom@26.1.0",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3"
+          ],
+          "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "buildInputOnly": true,
+          "receiptId": "SDK-032-REACT-GUTENBERG-HXX"
         }
       ]
     },
@@ -162,7 +191,7 @@
   "profileInputs": {
     "upstreamLock": {
       "path": "manifests/upstream.lock.json",
-      "sha256": "1065131e56fb5f11cb480b65a8e5987a95f3d3de33f0574cbc05e07872c5f580"
+      "sha256": "4b2dbd0dbdd1731648b139255fb9d7904b3b8c1fedf25be8ab3f4c2170aa3465"
     },
     "profiles": [
       "wp70-release",

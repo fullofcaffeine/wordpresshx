@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-032-REACT-GUTENBERG-HXX",
+  "bead": "wordpresshx-sdk-032",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T08:10:44Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profileId": "wp70-release",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json",
+      "sha256": "e805417cbf00eb9a3a729d9a1d896bddfb7554ca6a13694c357da858dcb09ed1"
+    },
+    "browserHxx": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/BrowserHxx.hx",
+      "sha256": "9623fa98a4632e2863a2e96aff68a511f97670fabe690a9ef6c56ae1718d77b9"
+    },
+    "lowerer": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
+      "sha256": "d9144c7e1cdc5f167b77f0195f3947e90f0f98444a994d5a967cc1aade9e9f32"
+    },
+    "profileResolver": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx",
+      "sha256": "7d6f28b12efefa10fd566b77d4e5bfc2d1cb55329a2f007b40c3a874b2940f93"
+    },
+    "parserAdapter": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
+      "sha256": "079e2cb49bf311dcf8383e6b7117675a529b68698443dafbacd50970d67d15c0"
+    },
+    "neutralSyntax": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxSyntax.hx",
+      "sha256": "99aa61cae5eb09122e6f34fc4f0d93f04c5de067600f9f2abd4cc1cfe9f7f180"
+    },
+    "fixture": {
+      "path": "packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/Main.hx",
+      "sha256": "2bbd4ca2e99c9162dfce7978689456090e7deefffe3dfcf1a30276fdfe55c1c2"
+    },
+    "visualStyles": {
+      "path": "packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/ProofStyles.hx",
+      "sha256": "fb896459ceeeede535e682ce97a123be68539b72ca22be55ed013ad84933beae"
+    }
+  },
+  "immutableInputs": {
+    "compiler": {
+      "name": "genes-ts",
+      "version": "1.36.3",
+      "tag": "v1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+      "admissionReceipt": "SDK-031-STRICT-BROWSER-PROFILE"
+    },
+    "parser": {
+      "name": "tink_hxx",
+      "version": "0.25.1",
+      "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+      "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+      "releaseArtifactSha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e",
+      "admissionReceipt": "SDK-080-HXX-PARSER-PROTOTYPE"
+    },
+    "provider": {
+      "wordpressVersion": "7.0.0",
+      "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+      "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+      "dependencyLockBlob": "b45618b56375df75595ba7184f688cebf41795f8",
+      "dependencyLockSha256": "48a76d63400289c1e80ca9685651157fd49d7eded233a68cb19ced59f78cc9ee"
+    },
+    "npm": {
+      "manifest": {
+        "path": "packages/gutenberg/hxx-tooling/package.json",
+        "sha256": "164edb641502bf77cb5df246a1384ac737c02f488f12c2fdb0da7459baeae501"
+      },
+      "lock": {
+        "path": "packages/gutenberg/hxx-tooling/package-lock.json",
+        "sha256": "48ad5675e26b86e96bc6371bf3146f783ba3a7f2df18f25e69b5af2d3071f8df"
+      },
+      "wordPressPackageCount": 24,
+      "react": "18.3.1",
+      "reactTypes": "18.3.27",
+      "wordPressComponents": "32.2.0",
+      "wordPressElement": "6.40.0",
+      "ariakitReact": "0.4.21"
+    }
+  },
+  "implementation": {
+    "authoring": "direct Haxe 4 inline markup returned from typed BrowserNode functions",
+    "globalRewrite": "profile-enabled build macro rewrites positioned @:markup expressions",
+    "parserBoundary": "tink_hxx types terminate at an internal adapter that emits an SDK-owned neutral positioned tree",
+    "loweringBoundary": "neutral syntax resolves against closed Haxe contracts before compile-time Genes JSX intent markers",
+    "componentImports": [
+      "@wordpress/components#Button",
+      "@wordpress/components#Notice"
+    ],
+    "hookImports": [
+      "@wordpress/element#createContext",
+      "@wordpress/element#useContext",
+      "@wordpress/element#useEffect",
+      "@wordpress/element#useRef",
+      "@wordpress/element#useState"
+    ],
+    "typedContracts": [
+      "closed intrinsic HTML props",
+      "required and optional component children",
+      "React mouse and keyboard events with HTMLButtonElement targets",
+      "React object refs with HTMLButtonElement targets",
+      "typed context and hook state",
+      "fragments and expression children",
+      "if/else children",
+      "Array loop children",
+      "closed attribute spreads",
+      "typed child spreads",
+      "typed Haxe function components"
+    ],
+    "failClosed": {
+      "rawJsx": true,
+      "browserParserRuntime": true,
+      "openAttributeSpread": true,
+      "unknownProps": true,
+      "unsupportedControlFlow": true
+    },
+    "shippedHxxRuntime": false,
+    "wordpressSpecificGenesBranch": false
+  },
+  "exactProfileVerification": {
+    "verifier": {
+      "path": "packages/gutenberg/scripts/verify-hxx-profile.py",
+      "sha256": "f4cb201ccb46fa3ebd93cbad66faff1f9b7d6ebd682b3447d65463f53cace94d"
+    },
+    "immutableGutenbergBlobCount": 5,
+    "checks": [
+      "WordPress source-lock commit and tree cross-link",
+      "raw immutable source SHA-256",
+      "Git blob SHA-1",
+      "provider package-lock identity",
+      "all 24 installed @wordpress package versions equal the provider lock",
+      "Ariakit version equals the provider lock",
+      "direct npm package integrity equals the browser-HXX profile"
+    ],
+    "outcome": "passed"
+  },
+  "localVerification": {
+    "host": {
+      "os": "macOS 15.4",
+      "architecture": "arm64",
+      "dockerEngine": "28.3.2"
+    },
+    "toolchains": {
+      "haxe": "4.3.7",
+      "lixNpmPackage": "15.12.4",
+      "lixReportedCliVersion": "15.12.2",
+      "formatter": "1.18.0",
+      "node": "22.17.0",
+      "npm": "10.9.2",
+      "typescript": "5.9.3",
+      "esbuild": "0.27.2"
+    },
+    "gate": {
+      "command": "bash packages/gutenberg/scripts/test-hxx.sh",
+      "outcome": "passed",
+      "secondCleanCompileMatched": true,
+      "secondVisualBundleMatched": true
+    },
+    "verifiers": {
+      "compilerRuntime": {
+        "path": "packages/gutenberg/scripts/verify-hxx.mjs",
+        "sha256": "cf2bc40dcbb3fa29b393e237bb206296b81607d28be8121271ca6ce42ab38353"
+      },
+      "gateScript": {
+        "path": "packages/gutenberg/scripts/test-hxx.sh",
+        "sha256": "c2c99ef5709acc9be7bd81984751ca957f8ec0e3706747043bfb495ad2daa417"
+      }
+    },
+    "generatedArtifacts": {
+      "treeSha256": "ae53b1e699bb52c58432383c7c170697420e1681ae19521535516a26f8670373",
+      "mainTsxSha256": "11a8cbc1f6817dbc70b5e952e9dcf2bb6742f67081203692d4d564e585b4981c",
+      "runtimeBundle": {
+        "bytes": 1428876,
+        "sha256": "c4b9bcecdc68332540e2562efc998e0c9aa9c1a6e7595b5950614bee458f8ef8"
+      },
+      "visualJavascript": {
+        "bytes": 617227,
+        "sha256": "8405985795fe71d60400e45a8e2b6b4ab1896357769a54c0c72c999fdfbd1a47"
+      },
+      "visualCss": {
+        "bytes": 118036,
+        "sha256": "23b1c0f0bcedd9684ad2d6196e89fbab8b87f0e75a83a859c008303e170b67af"
+      },
+      "undeclaredReactGlobal": false,
+      "parserOrMarkerLeakScan": "passed",
+      "machineLocalPathLeakScan": "passed"
+    },
+    "typechecks": {
+      "generatedSource": {
+        "strict": true,
+        "strictNullChecks": true,
+        "exactOptionalPropertyTypes": true,
+        "noUncheckedIndexedAccess": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": true,
+        "outcome": "passed"
+      },
+      "providerDeclarations": {
+        "strict": true,
+        "strictNullChecks": true,
+        "exactOptionalPropertyTypes": false,
+        "noUncheckedIndexedAccess": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": false,
+        "outcome": "passed"
+      },
+      "publicWeakTypes": [],
+      "internalWeakInventory": [
+        "Main.App:tmp:any[]",
+        "Main.ProofCheckRow:tmp1:any[]",
+        "Main.ProofCheckRow:tmp:any[]"
+      ],
+      "internalWeakExplanation": "Genes marker-protocol evaluation-order temporaries are internal implementation locals; no weak type reaches a public field, parameter, return type, prop, event, ref, hook, or context contract."
+    },
+    "negativeDiagnostics": {
+      "WPX3213": "switch-control HXX is outside the admitted browser subset",
+      "WPX3215": "required Notice children are missing",
+      "WPX3218": "attribute spread is not a closed structural type",
+      "WPX3226": "unknown component prop",
+      "typedEventMismatch": "mouse callback target is not HTMLButtonElement",
+      "typedRefMismatch": "ref target is not HTMLButtonElement",
+      "originalSourcePaths": true
+    },
+    "runtime": {
+      "realPackages": [
+        "react@18.3.1",
+        "react-dom@18.3.1",
+        "@wordpress/components@32.2.0",
+        "@wordpress/element@6.40.0"
+      ],
+      "componentCount": 2,
+      "mouseEvent": "passed",
+      "keyboardEnter": "passed",
+      "focus": "passed",
+      "state": "passed",
+      "ref": "passed",
+      "context": "passed",
+      "consoleErrors": 0
+    },
+    "accessibility": {
+      "controlledRuntime": {
+        "engine": "axe-core 4.10.2",
+        "seriousOrCriticalViolationsExcludingUnavailableJsdomColorContrast": 0,
+        "reducedMotionRule": true
+      },
+      "browserReview": {
+        "browser": "Google Chrome 150.0.7871.127",
+        "engine": "axe-core 4.10.2 injected through the DevTools protocol",
+        "initialSeriousOrCriticalViolations": 0,
+        "acceptedStateSeriousOrCriticalViolations": 0,
+        "incompleteDecorativeColorChecks": 3,
+        "providerOwnedModerateFindings": [
+          "@wordpress/a11y inserts its notification-introduction node outside the application landmark"
+        ]
+      }
+    },
+    "browserVisualReview": {
+      "browser": "Google Chrome 150.0.7871.127",
+      "desktop": {
+        "viewport": "1440x1400",
+        "documentScrollWidth": 1440,
+        "screenshotSha256": "9384c6e1dd3f2cf9b9a837ef606622caeab2e0a1ae0c85b10e71123d92bf4b61"
+      },
+      "mobile": {
+        "viewport": "390x844",
+        "fullPageDimensions": "390x1847",
+        "documentScrollWidth": 390,
+        "documentClientWidth": 390,
+        "screenshotSha256": "399b2f3dcc547c1fdd327aa3760cf73f3e3ad80be623346d127df80e5632b0cd"
+      },
+      "outcome": "responsive layout, hierarchy, component styling, and all content reviewed without clipping or horizontal overflow",
+      "artifactRetention": "screenshots are local review artifacts; the reproducible visual entry and preview command are committed"
+    },
+    "sourceMaps": {
+      "generatedTsxToHaxe": "passed",
+      "visualAndRuntimeBundleToHaxe": "passed",
+      "machinePathLeaks": 0
+    }
+  },
+  "referenceReview": {
+    "genes": {
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "path": "src/genes/react/internal/Jsx.hx",
+      "blob": "8fb09a8870ec56363f11df515edad98c2a28afc4",
+      "use": "runtime-free typed JSX intent marker contract"
+    },
+    "haxeRuby": {
+      "commit": "7b676bcd8f7c30e6caf3a228e6a21c82742e7477",
+      "path": "src/reflaxe/ruby/macros/RailsInlineMarkup.hx",
+      "blob": "7472e6d89d1a9a129eab37d746a8d1f9089759bd",
+      "use": "global inline-markup build rewriting pattern"
+    },
+    "haxeElixirCodex": {
+      "commit": "9ce13357b033a1f36e8a1261f455ae517713056b",
+      "path": "src/reflaxe/elixir/macros/heex_tsx/HeexTsxParser.hx",
+      "blob": "fa2f0cc700bc33bd8afe217e50db1073692fd1ee",
+      "use": "positioned AST construction and explicit-return loop mapper pattern"
+    },
+    "copiedBytes": false,
+    "buildInput": false
+  },
+  "repositoryHostedVerification": {
+    "status": "pending-first-main-run-with-sdk-032-step",
+    "workflow": "Repository bootstrap",
+    "required": true
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "tinkHxxSourceChanged": false,
+    "tinkHxxForkCreated": false,
+    "wordpressSpecificCompilerBranch": false,
+    "reason": "the admitted public parser and released Genes marker contract support the bounded typed surface without a generic compiler change"
+  },
+  "claims": {
+    "directReturnMarkupErgonomics": "compile-tested",
+    "exactProfileComponentResolution": "source-and-runtime-tested",
+    "typedReactEventsRefsHooksContext": "compile-and-runtime-tested",
+    "reactGutenbergHxx": "controlled-runtime-tested",
+    "browserVisualAccessibility": "local-browser-reviewed",
+    "noBrowserHxxRuntime": "bundle-scanned",
+    "realWordPressEditorRuntime": "not-tested",
+    "wordpressDependencyExtractionAndAssetPhp": "not-tested",
+    "translations": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "The first profile curates Button and Notice plus a bounded native-HTML surface; additional Gutenberg components remain later generated or curated work.",
+    "switch and let controls are rejected in the SDK-032 browser subset; conditions and Array loops are admitted.",
+    "The exact provider Ariakit declarations do not typecheck with exactOptionalPropertyTypes enabled, so generated user modules and full provider declarations use separate strict lanes rather than weakening both.",
+    "Three internal any[] locals are exact Genes marker-protocol evaluation-order storage; the verifier inventories them and rejects any public any or unknown.",
+    "The real-browser screenshots and color-contrast audit are local review evidence rather than a content-addressed browser CI lane.",
+    "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings.",
+    "Dependency extraction, translations, real WordPress editor loading, classic differential, and complete G2 closure remain SDK-033 through SDK-035.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

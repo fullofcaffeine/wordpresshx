@@ -42,6 +42,15 @@ runtime, deterministic generated tree and bundle hashes, and local portability
 boundary. It does not claim React/Gutenberg HXX or WordPress browser-runtime
 support; those remain SDK-032 and later evidence.
 
+Receipt `SDK-032-REACT-GUTENBERG-HXX` records direct inline-markup returns,
+the SDK-owned neutral parser tree, exact-profile Button/Notice and hook
+contracts, typed events/refs/context/children/control flow, deterministic
+runtime and visual bundles, compile negatives, real React/Gutenberg behavior,
+source-map composition, and local Chrome accessibility/visual review. It does
+not claim dependency extraction, translations, real WordPress editor loading,
+the classic differential, complete G2 closure, publication, or production
+support.
+
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 
 The exact `gutenberg-forward-23.4` authority is a separate lock entry and profile tree. Receipt `SDK-011-GUTENBERG-FORWARD-23.4` records direct source/release materialization, compile-admission negatives, and final-artifact leak scans. It remains experimental; WordPress 7.0 compatibility is forbidden and runtime/production claims are `not-tested`.
