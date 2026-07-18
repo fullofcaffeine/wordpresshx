@@ -17,6 +17,8 @@ All notable project changes will be recorded here once versioning policy is acce
 - Immutable `actions/checkout` v7.0.0 upgrade using its Node 24 action runtime,
   with the security lane's full-history checkout preserved and every other lane
   retaining the action's default shallow checkout.
+- Deterministic HXX dependency-lock cleanup by disabling detached automatic Git
+  maintenance for short-lived exact-source fetches.
 
 ### Release status
 

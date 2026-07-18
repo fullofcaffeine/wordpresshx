@@ -135,19 +135,19 @@ def verify_haxelib(entry: dict) -> None:
 def verify_git(entry: dict, selected_dependencies: list[dict] | None = None) -> None:
     with tempfile.TemporaryDirectory(prefix="wordpresshx-sdk080-git-") as root:
         subprocess.run(["git", "init", "--quiet", root], check=True)
-        subprocess.run(
-            [
-                "git",
-                "-C",
-                root,
-                "fetch",
-                "--quiet",
-                "--depth=1",
-                entry["repository"],
-                entry["commit"],
-            ],
-            check=True,
-        )
+        fetch_command = [
+            "git",
+            "-C",
+            root,
+            "fetch",
+            "--quiet",
+            "--depth=1",
+            "--no-auto-maintenance",
+            entry["repository"],
+            entry["commit"],
+        ]
+        assert fetch_command.count("--no-auto-maintenance") == 1
+        subprocess.run(fetch_command, check=True)
         commit = subprocess.check_output(
             ["git", "-C", root, "rev-parse", "FETCH_HEAD"], text=True
         ).strip()

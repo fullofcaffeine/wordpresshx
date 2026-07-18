@@ -145,7 +145,7 @@
     },
     "dependencyVerifier": {
       "path": "packages/hxx/scripts/verify-dependency-lock.py",
-      "sha256": "46f4a4c9334d0805189c7626ddd542e069aa2e0dc66b12630c32f3c9e51629bc",
+      "sha256": "6cf7f1386e15bae056dbdc60c05fad12bd90fb7ff7a5c7556b5b7037545c48f3",
       "networkMaterialization": "passed"
     },
     "snapshotVerifier": {
