@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-031-STRICT-BROWSER-PROFILE",
+  "bead": "wordpresshx-sdk-031",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T06:17:49Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profileId": "wp70-release",
+    "dependencyLock": {
+      "path": "packages/gutenberg/dependency-lock.json",
+      "sha256": "8161ff0a60ca0a764d2133f2a3d84f046046eb0513846071fb32c170b328bd74"
+    },
+    "exportDirective": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx",
+      "sha256": "33c290d38082be4415edde8e544099e95fe666d8a8e6868ae162cf5153d42d31"
+    },
+    "expectedArtifacts": {
+      "path": "packages/gutenberg/test/expected/browser-profile.json",
+      "sha256": "857098caa265e25cee09d2a7521db668c97450d9cae7251663f22be3d946d663"
+    },
+    "compiler": {
+      "name": "genes-ts",
+      "version": "1.36.3",
+      "tag": "v1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "releaseArtifact": {
+        "name": "submit.zip",
+        "sizeBytes": 234698,
+        "sha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.36.3/submit.zip"
+      }
+    }
+  },
+  "compilerAdmission": {
+    "baseline": {
+      "receiptId": "SDK-030-GENES-TS-V1.33.0",
+      "version": "1.33.0",
+      "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+      "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+      "preservedAsHistoricalSelectionEvidence": true
+    },
+    "finding": {
+      "classification": "generic-compiler-defect",
+      "description": "Typed Array<T> bracket reads did not preserve the source nullability contract under TypeScript noUncheckedIndexedAccess.",
+      "wordpressSymbolsInReduction": false,
+      "wordpressSpecificCompilerBranch": false,
+      "mutableSiblingBuildInput": false
+    },
+    "change": {
+      "pullRequest": {
+        "number": 3,
+        "title": "fix(types): preserve typed indexed reads",
+        "url": "https://github.com/fullofcaffeine/genes-ts/pull/3",
+        "baseCommit": "f0d917ccd54e97075de874993d32253212114fe5",
+        "headCommit": "77aa609279886fd8f53f48e0d2b751f898489930",
+        "headTree": "987359de08e83b4159aefc1a7987aa4146285037",
+        "mergeCommit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
+        "mergedAt": "2026-07-18T05:49:44Z"
+      },
+      "genericFixtureCoverage": [
+        "Array<T> reads",
+        "Array<Null<T>> reads",
+        "Array<Undefinable<T>> reads",
+        "indexed writes",
+        "TypeScript 5.5, 6, and 7",
+        "classic Genes JavaScript",
+        "standard Haxe JavaScript",
+        "raw-syntax precedence"
+      ],
+      "releaseLineage": [
+        "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+        "77aa609279886fd8f53f48e0d2b751f898489930",
+        "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
+        "c59ecb361fd91418584487c2138bae8d3d3a3961"
+      ],
+      "lineageVerification": "git merge-base --is-ancestor passed for baseline -> fix -> merge -> release"
+    }
+  },
+  "upstreamVerification": {
+    "local": {
+      "checkout": "isolated Genes worktree",
+      "headCommit": "77aa609279886fd8f53f48e0d2b751f898489930",
+      "baseCommit": "f0d917ccd54e97075de874993d32253212114fe5",
+      "command": "PATH=<Node-20.19.3-bin> yarn test:ci",
+      "toolchains": {
+        "haxe": "4.3.7",
+        "node": "20.19.3",
+        "yarn": "1.22.22"
+      },
+      "durationSeconds": 481.57,
+      "outcome": "passed",
+      "selectedResults": {
+        "classicCompilerAssertions": 333,
+        "strictTypeScriptMatrix": "passed",
+        "classicAndStandardDifferentials": "passed",
+        "securityAndVulnerabilities": "gitleaks and OSV passed",
+        "playwright": "six browser tests passed",
+        "ts2hx": "passed",
+        "snapshots": "passed"
+      }
+    },
+    "hosted": {
+      "pullRequestCi": {
+        "runId": 29632514102,
+        "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29632514102",
+        "commit": "77aa609279886fd8f53f48e0d2b751f898489930",
+        "conclusion": "success",
+        "dependencyReview": "success",
+        "gitleaks": "success",
+        "osv": "success"
+      },
+      "pullRequestCodeql": {
+        "runId": 29632514088,
+        "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29632514088",
+        "commit": "77aa609279886fd8f53f48e0d2b751f898489930",
+        "conclusion": "success"
+      },
+      "mainCi": {
+        "runId": 29632929104,
+        "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29632929104",
+        "commit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
+        "conclusion": "success",
+        "primaryJobDurationSeconds": 752,
+        "nodeNextLtsSmoke": "success",
+        "gitleaks": "success",
+        "osv": "success"
+      },
+      "mainCodeql": {
+        "runId": 29632929103,
+        "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29632929103",
+        "commit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
+        "conclusion": "success"
+      },
+      "release": {
+        "runId": 29633302304,
+        "url": "https://github.com/fullofcaffeine/genes-ts/actions/runs/29633302304",
+        "testedCommit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
+        "conclusion": "success",
+        "fullGateDurationSeconds": 589,
+        "publishedTag": "v1.36.3",
+        "publishedAt": "2026-07-18T06:12:58Z",
+        "releaseUrl": "https://github.com/fullofcaffeine/genes-ts/releases/tag/v1.36.3"
+      }
+    },
+    "releaseArtifactVerification": {
+      "apiDigestMatchedDownloadedBytes": true,
+      "apiSizeMatchedDownloadedBytes": true,
+      "embeddedHaxelibName": "genes-ts",
+      "embeddedHaxelibVersion": "1.36.3",
+      "embeddedDependencies": {
+        "helder.set": "0.3.1"
+      }
+    }
+  },
+  "projectToolchain": {
+    "haxe": "4.3.7",
+    "lix": {
+      "npmPackage": "15.12.4",
+      "reportedCliVersion": "15.12.2"
+    },
+    "formatter": "1.18.0",
+    "node": {
+      "version": "22.17.0",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "esbuild": "0.27.2"
+  },
+  "localVerification": {
+    "host": {
+      "os": "macOS 15.4 (24E248)",
+      "architecture": "arm64",
+      "dockerEngine": "28.3.2",
+      "hostNodeControlPlane": "23.9.0; excluded from generated/runtime claims"
+    },
+    "gate": {
+      "command": "bash packages/gutenberg/scripts/test.sh",
+      "outcome": "passed",
+      "finalDurationSeconds": 16.16,
+      "secondCleanCompileMatched": true
+    },
+    "verifiers": {
+      "dependency": {
+        "path": "packages/gutenberg/scripts/verify-dependency-lock.py",
+        "sha256": "150752b1dcff06dc53b93ee68f739a4f446e28091b96975b361b8907f73431bb",
+        "metadataOnly": "passed",
+        "networkMaterialization": "passed"
+      },
+      "browserProfile": {
+        "path": "packages/gutenberg/scripts/verify-browser-profile.mjs",
+        "sha256": "7024a7989529fd83114c11c167ba5d2c30999bdabacfca099e0d5080fafe5c37",
+        "outcome": "passed"
+      },
+      "gateScript": {
+        "path": "packages/gutenberg/scripts/test.sh",
+        "sha256": "44b97008fa87a0e8d9eec18db0358921ee29f676a5c0b23fc1e33e75fe9903d2"
+      }
+    },
+    "generatedArtifacts": {
+      "treeSha256": "69e47fd4fc35e0ae452e4e3e0451ecca80cc7653746cc403a13dc7187d2226d8",
+      "strictBundle": {
+        "bytes": 13799,
+        "sha256": "375f2fc31ab8480b09f1946359848d1b0107b78351f9ecf9760a424bcd28a9e2"
+      },
+      "classicBundle": {
+        "bytes": 13178,
+        "sha256": "8502678b2eb977ac9d9666f1d8796b7278328365910b0f1d04ef8293b61b1465"
+      },
+      "machineLocalPathLeakScan": "passed"
+    },
+    "strictProfile": {
+      "moduleFormat": "split ESM",
+      "strict": true,
+      "strictNullChecks": true,
+      "exactOptionalPropertyTypes": true,
+      "noUncheckedIndexedAccess": true,
+      "verbatimModuleSyntax": true,
+      "skipLibCheck": false,
+      "authoredPublicAny": 0,
+      "authoredPublicUnknown": 0,
+      "unexplainedWeakTypeDelta": 0
+    },
+    "behavior": {
+      "strictClassicPublicContractParity": "passed",
+      "stableNamedExport": "BrowserApi",
+      "sideEffectImport": "passed",
+      "liveEsmBinding": "passed",
+      "ordinaryJavascriptConsumer": "passed",
+      "privateMemberRemoved": true,
+      "defaultDceRemovesUnrootedFacade": true,
+      "runtimeTranscriptParity": "passed"
+    },
+    "negativeDiagnostics": {
+      "WPX3100": "invalid stable export ID",
+      "WPX3101": "missing exact profile",
+      "WPX3102": "invalid capability ID",
+      "WPX3106": "missing export manifest"
+    },
+    "harnessPortability": {
+      "finding": "macOS exposes the temporary directory through the /var -> /private/var symlink",
+      "resolution": "canonicalize the temporary parent before output selection",
+      "genesSymlinkTraversalGuardRelaxed": false,
+      "linuxBehaviorChanged": false
+    }
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "haxeJob": "pending"
+  },
+  "claims": {
+    "immutableCompilerAdmission": "verified",
+    "strictTypeScriptSourceProfile": "runtime-tested",
+    "classicDifferential": "runtime-tested",
+    "publicExportRetention": "runtime-tested",
+    "deterministicGeneratedOutput": "locally-tested",
+    "reactGutenbergHxx": "not-tested",
+    "wordpressBrowserRuntime": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "SDK-031 proves the compiler/profile boundary with a WordPress-independent facade; React and Gutenberg component semantics remain SDK-032.",
+    "The Haxe 5 preview lane remains advisory and does not establish a supported Haxe 5 claim.",
+    "Source-map composition, WordPress dependency extraction, asset PHP, translations, and final WordPress runtime loading remain later beads.",
+    "The generated TypeScript and JavaScript fixtures are evidence artifacts; application authors remain on the Haxe source surface.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

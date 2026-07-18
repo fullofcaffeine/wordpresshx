@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "exportPlan": {
+    "stableExportId": "wordpresshx.sdk031.browser-api",
+    "haxeSource": "test/fixture/src/sdk031/fixture/BrowserApi.hx",
+    "generatedModule": "sdk031/fixture/BrowserApi",
+    "exportName": "BrowserApi",
+    "typeIdentity": "sdk031.fixture.BrowserApi",
+    "retentionRule": "genes-library-root",
+    "profileCapabilityRefs": []
+  },
+  "publicContract": {
+    "className": "BrowserApi",
+    "members": [
+      {
+        "kind": "constructor",
+        "name": "constructor",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "prefix",
+            "type": "string",
+            "optional": false
+          }
+        ],
+        "returns": null
+      },
+      {
+        "kind": "property",
+        "name": "prefix",
+        "type": "string"
+      },
+      {
+        "kind": "method",
+        "name": "greet",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false
+          }
+        ],
+        "returns": "string"
+      },
+      {
+        "kind": "method",
+        "name": "identity",
+        "typeParameters": [
+          "T"
+        ],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "T",
+            "optional": false
+          }
+        ],
+        "returns": "T"
+      },
+      {
+        "kind": "method",
+        "name": "nullableLabel",
+        "typeParameters": [],
+        "parameters": [
+          {
+            "name": "value",
+            "type": "string | null",
+            "optional": false
+          }
+        ],
+        "returns": "string"
+      },
+      {
+        "kind": "method",
+        "name": "observeSignals",
+        "typeParameters": [],
+        "parameters": [],
+        "returns": "SignalSnapshot"
+      }
+    ],
+    "signalSnapshot": {
+      "after": "number",
+      "before": "number",
+      "setupCount": "number"
+    },
+    "weakTypeInventory": {
+      "authoredPublicAny": 0,
+      "authoredPublicUnknown": 0,
+      "unexplainedDelta": 0
+    }
+  },
+  "runtimeTranscript": {
+    "exports": [
+      "BrowserApi"
+    ],
+    "greeting": "Hello, World",
+    "identity": "typed",
+    "nullable": "none",
+    "signals": {
+      "before": 7,
+      "after": 8,
+      "setupCount": 1
+    }
+  },
+  "artifacts": {
+    "generatedTreeSha256": "69e47fd4fc35e0ae452e4e3e0451ecca80cc7653746cc403a13dc7187d2226d8",
+    "strictBundle": {
+      "bytes": 13799,
+      "sha256": "375f2fc31ab8480b09f1946359848d1b0107b78351f9ecf9760a424bcd28a9e2"
+    },
+    "classicBundle": {
+      "bytes": 13178,
+      "sha256": "8502678b2eb977ac9d9666f1d8796b7278328365910b0f1d04ef8293b61b1465"
+    }
+  },
+  "budgets": {
+    "strictBundleMaximumBytes": 40000,
+    "classicBundleMaximumBytes": 40000
+  }
+}

@@ -25,7 +25,22 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   supersede an entry before admitting a new input.
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
 
-The first resolved external input is genes-ts `v1.33.0`, recorded by `wordpresshx-sdk-030`. The canonical public Git and Beads transport is recorded by `evidence/sdk-004-canonical-repository.json`. The first co-located PHP compiler import is recorded by `evidence/sdk-020-reflaxe-php-bootstrap.json`; it is an internal source receipt, not an external release pin.
+The first resolved external input is genes-ts `v1.33.0`, recorded by
+`wordpresshx-sdk-030`. SDK-031 preserves that selection record and admits the
+active `v1.36.3` browser fixture through
+`packages/gutenberg/dependency-lock.json`, which proves the baseline, generic
+fix, reviewed merge, and release lineage. The canonical public Git and Beads
+transport is recorded by `evidence/sdk-004-canonical-repository.json`. The
+first co-located PHP compiler import is recorded by
+`evidence/sdk-020-reflaxe-php-bootstrap.json`; it is an internal source receipt,
+not an external release pin.
+
+Receipt `SDK-031-STRICT-BROWSER-PROFILE` records the generalized upstream
+Array-index fix, immutable Genes v1.36.3 admission, strict/classic compiler
+differential, public ESM retention, weak-type inventory, ordinary JavaScript
+runtime, deterministic generated tree and bundle hashes, and local portability
+boundary. It does not claim React/Gutenberg HXX or WordPress browser-runtime
+support; those remain SDK-032 and later evidence.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

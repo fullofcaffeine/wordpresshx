@@ -1,12 +1,23 @@
 # Browser compiler pin and ownership
 
-The SDK's browser compiler authority is the separate, generic [genes-ts repository](https://github.com/fullofcaffeine/genes-ts). The current immutable baseline is `genes-ts` `v1.33.0`:
+The SDK's browser compiler authority is the separate, generic [genes-ts repository](https://github.com/fullofcaffeine/genes-ts). The immutable SDK-030 audit baseline is `genes-ts` `v1.33.0`:
 
 - commit `7999b7cff09f78ebb8e09c3db6e221beb141b67b`;
 - Git tree `5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5`;
 - released `submit.zip` SHA-256 `4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145`.
 
 The machine-readable lock is [`manifests/upstream.lock.json`](../../manifests/upstream.lock.json). The complete SDK-030 verification, including the clean-worktree replay, hosted jobs, package hashes, discarded harness attempt, and the experimental Haxe 5 limitation, is [`manifests/evidence/sdk-030-genes-ts-v1.33.0.json`](../../manifests/evidence/sdk-030-genes-ts-v1.33.0.json).
+
+SDK-031's active Gutenberg/browser package uses the later immutable
+`genes-ts` `v1.36.3` release. Its package-local
+[`dependency-lock.json`](../../packages/gutenberg/dependency-lock.json) records
+the complete SDK-030 baseline -> generalized fix -> reviewed merge -> release
+lineage. Keeping both records is intentional: SDK-030 explains the compiler
+selection, while SDK-031 proves the exact compiler version used by the strict
+WordPress browser fixture.
+The complete admission, strict-output, DCE, runtime, and reproducibility proof
+is recorded by
+[`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
 
 ADR-013 selects how that compiler enters WordPress projects. Its
 machine-readable contract is
@@ -43,9 +54,16 @@ If SDK work exposes a generic compiler defect:
 3. implement and test both strict TypeScript and classic JavaScript behavior;
 4. run the full upstream release gate and all directly affected lanes;
 5. open an upstream PR only after the worktree is clean and regressions are green;
-6. update this lock only to an immutable merged commit or release and record the PR/receipt.
+6. update the active package lock only to an immutable merged commit or release
+   and record the PR/receipt without rewriting the earlier selection receipt.
 
-No genes-ts change or PR was needed to establish `v1.33.0`. Release builds must consume the immutable release/commit, never the floating sibling checkout.
+No genes-ts change or PR was needed to establish the historical `v1.33.0`
+baseline. SDK-031 later exposed a generic `Array<T>` indexed-read issue under
+TypeScript's `noUncheckedIndexedAccess`; the fix was reduced without WordPress
+symbols, tested across strict TypeScript, classic Genes, standard Haxe, and
+supported TypeScript versions, then merged as upstream PR #3. Release builds
+consume the resulting immutable release/commit, never the floating sibling
+checkout.
 
 ## Upgrade and rollback
 

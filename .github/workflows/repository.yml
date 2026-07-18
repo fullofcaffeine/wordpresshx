@@ -112,7 +112,7 @@ jobs:
 
   haxe:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -141,3 +141,5 @@ jobs:
           haxelib install formatter 1.18.0 --quiet
       - name: Test typed compile-time HXX parser prototype
         run: bash packages/hxx/scripts/test.sh
+      - name: Test strict Gutenberg browser compiler profile
+        run: bash packages/gutenberg/scripts/test.sh

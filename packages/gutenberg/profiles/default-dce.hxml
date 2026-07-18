@@ -1,0 +1,9 @@
+-lib genes-ts
+-cp src
+-cp test/fixture/src
+-main sdk031.fixture.Main
+-D wordpress_hx_profile=wp70-release
+-D genes.no_extension
+-D js-es=6
+-dce full
+--macro include('sdk031.fixture')

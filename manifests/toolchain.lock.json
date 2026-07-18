@@ -113,6 +113,21 @@
           "id": "genes-ts-v1.33.0-release-graph",
           "authority": "immutable-release-artifact-and-source-manifest-digests",
           "receiptId": "SDK-030-GENES-TS-V1.33.0"
+        },
+        {
+          "id": "sdk-031-gutenberg-verification-graph",
+          "authority": "package-local-exact-lock-and-sdk-receipt",
+          "manifestPath": "packages/gutenberg/tooling/package.json",
+          "manifestSha256": "3756e4dc123cf0e5d85bd2d8313dbc875e1216d84b3136c1eb8d033e4c6da6c7",
+          "lockPath": "packages/gutenberg/tooling/package-lock.json",
+          "lockSha256": "177c7326fa27fbed71f4ad4360355c66ea31ed8391fe19d55869b189f5834047",
+          "directPackages": [
+            "esbuild@0.27.2",
+            "typescript@5.9.3"
+          ],
+          "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "buildInputOnly": true,
+          "receiptId": "SDK-031-STRICT-BROWSER-PROFILE"
         }
       ]
     },

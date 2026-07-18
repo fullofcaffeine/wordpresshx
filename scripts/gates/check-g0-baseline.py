@@ -220,8 +220,104 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("status") == "bounded-build-inputs", "npm graph status changed")
     audit.check(npm.get("rootManifestPaths") == [], "root npm manifests must be absent at G0")
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
-    audit.check(manifest_paths(audit.root, {"package.json"}) == [], "unlocked package.json found")
-    audit.check(manifest_paths(audit.root, {"package-lock.json", "yarn.lock", "pnpm-lock.yaml"}) == [], "unlocked root npm lock found")
+    external_graphs = npm.get("externalGraphs", [])
+    audit.check(
+        isinstance(external_graphs, list) and len(external_graphs) == 2,
+        "npm external graph set changed",
+    )
+    genes_graph = (
+        external_graphs[0]
+        if isinstance(external_graphs, list) and len(external_graphs) > 0
+        else {}
+    )
+    sdk031_graph = (
+        external_graphs[1]
+        if isinstance(external_graphs, list) and len(external_graphs) > 1
+        else {}
+    )
+    audit.check(
+        genes_graph
+        == {
+            "id": "genes-ts-v1.33.0-release-graph",
+            "authority": "immutable-release-artifact-and-source-manifest-digests",
+            "receiptId": "SDK-030-GENES-TS-V1.33.0",
+        },
+        "Genes external npm graph changed",
+    )
+    audit.exact_keys(
+        sdk031_graph,
+        {
+            "id",
+            "authority",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "directPackages",
+            "runtimeImage",
+            "buildInputOnly",
+            "receiptId",
+        },
+        "SDK-031 npm graph",
+    )
+    audit.check(
+        sdk031_graph.get("id") == "sdk-031-gutenberg-verification-graph",
+        "SDK-031 npm graph ID changed",
+    )
+    audit.check(
+        sdk031_graph.get("authority")
+        == "package-local-exact-lock-and-sdk-receipt",
+        "SDK-031 npm graph authority changed",
+    )
+    sdk031_manifest = sdk031_graph.get("manifestPath")
+    sdk031_lock = sdk031_graph.get("lockPath")
+    audit.check(
+        sdk031_manifest == "packages/gutenberg/tooling/package.json",
+        "SDK-031 npm manifest path changed",
+    )
+    audit.check(
+        sdk031_lock == "packages/gutenberg/tooling/package-lock.json",
+        "SDK-031 npm lock path changed",
+    )
+    audit.check(
+        manifest_paths(audit.root, {"package.json"}) == [sdk031_manifest],
+        "unlocked package.json found",
+    )
+    audit.check(
+        manifest_paths(
+            audit.root,
+            {"package-lock.json", "yarn.lock", "pnpm-lock.yaml"},
+        )
+        == [sdk031_lock],
+        "unlocked package-manager lock found",
+    )
+    if isinstance(sdk031_manifest, str):
+        audit.check(
+            audit.sha256(sdk031_manifest) == sdk031_graph.get("manifestSha256"),
+            "SDK-031 npm manifest digest changed",
+        )
+    if isinstance(sdk031_lock, str):
+        audit.check(
+            audit.sha256(sdk031_lock) == sdk031_graph.get("lockSha256"),
+            "SDK-031 npm lock digest changed",
+        )
+    audit.check(
+        sdk031_graph.get("directPackages")
+        == ["esbuild@0.27.2", "typescript@5.9.3"],
+        "SDK-031 direct npm package set changed",
+    )
+    audit.check(
+        sdk031_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-031 npm runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk031_graph.get("buildInputOnly") is True,
+        "SDK-031 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk031_graph.get("receiptId") == "SDK-031-STRICT-BROWSER-PROFILE",
+        "SDK-031 npm graph receipt changed",
+    )
     active_npm = npm.get("activePackages", [])
     audit.check(isinstance(active_npm, list) and len(active_npm) == 1, "exactly one direct npm build package is expected")
     lix = active_npm[0] if isinstance(active_npm, list) and active_npm else {}

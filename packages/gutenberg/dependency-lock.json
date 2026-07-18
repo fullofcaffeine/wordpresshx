@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "status": "resolved-sdk-031",
+  "profile": "wp70-release",
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lix": {
+      "version": "15.12.4",
+      "reportedCliVersion": "15.12.2",
+      "artifact": {
+        "url": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz",
+        "sizeBytes": 266103,
+        "sha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa",
+        "npmIntegrity": "sha512-xfwGQrXXNba9BM7VcP2u9WvElBYgGJW+1gviaFqJH5OUFPAhwv8TZNk5f+Yew4pyKOmMqshdUYgk9+d3U6P6kw=="
+      }
+    },
+    "node": {
+      "version": "22.17.0",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "esbuild": "0.27.2"
+  },
+  "compiler": {
+    "name": "genes-ts",
+    "version": "1.36.3",
+    "tag": "v1.36.3",
+    "repository": "https://github.com/fullofcaffeine/genes-ts",
+    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+    "releaseArtifact": {
+      "name": "submit.zip",
+      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.36.3/submit.zip",
+      "sizeBytes": 234698,
+      "sha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b"
+    },
+    "admission": {
+      "kind": "generalized-upstream-fix-release",
+      "baseline": {
+        "receiptId": "SDK-030-GENES-TS-V1.33.0",
+        "version": "1.33.0",
+        "tag": "v1.33.0",
+        "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+        "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+        "releaseArtifactSha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145"
+      },
+      "change": {
+        "pullRequest": {
+          "number": 3,
+          "url": "https://github.com/fullofcaffeine/genes-ts/pull/3"
+        },
+        "fixCommit": "77aa609279886fd8f53f48e0d2b751f898489930",
+        "fixTree": "987359de08e83b4159aefc1a7987aa4146285037",
+        "mergeCommit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58"
+      }
+    }
+  },
+  "dependencies": [
+    {
+      "name": "helder.set",
+      "version": "0.3.1",
+      "sourceKind": "haxelib",
+      "artifact": {
+        "url": "https://lib.haxe.org/files/3.0/helder,set-0,3,1.zip",
+        "sizeBytes": 8919,
+        "sha256": "f9effb98b4e11d38efc3bfd6691f7453e7f26f00f3a0e81d7398ebee90a9543c"
+      }
+    }
+  ],
+  "npmClosure": {
+    "manifest": "packages/gutenberg/tooling/package.json",
+    "lock": "packages/gutenberg/tooling/package-lock.json",
+    "install": "npm ci --ignore-scripts --no-audit --no-fund"
+  },
+  "policy": {
+    "floatingVersionsAllowed": false,
+    "haxelibDevAllowed": false,
+    "repositoryRelativeDependencyAllowed": false,
+    "mutableSiblingCheckoutAllowed": false,
+    "wordpressSpecificGenesPatchAllowed": false,
+    "generatedDirectNpmRangesAllowed": false
+  }
+}

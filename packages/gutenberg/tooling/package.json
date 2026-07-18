@@ -1,0 +1,16 @@
+{
+  "name": "@wordpress-hx/sdk-031-browser-tooling",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Exact private verification closure for the SDK-031 browser profile.",
+  "type": "module",
+  "engines": {
+    "node": "22.17.0",
+    "npm": "10.9.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.27.2",
+    "typescript": "5.9.3"
+  },
+  "packageManager": "npm@10.9.2"
+}

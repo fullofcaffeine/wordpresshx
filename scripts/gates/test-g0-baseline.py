@@ -101,6 +101,17 @@ def main() -> int:
         ),
         "Composer graph must be explicitly inactive at G0",
     )
+
+    def add_unlocked_npm_graph(root: Path) -> None:
+        path = root / "fixtures/unlocked-npm/package.json"
+        path.parent.mkdir(parents=True)
+        path.write_text('{"private": true}\n', encoding="utf-8")
+
+    negative_case(
+        "unlocked-npm-graph",
+        add_unlocked_npm_graph,
+        "unlocked package.json found",
+    )
     negative_case(
         "missing-decision",
         lambda root: mutate_json(
@@ -144,7 +155,7 @@ def main() -> int:
         "G0 licensing/publication boundary changed",
     )
 
-    print("G0 baseline tests passed: 1 positive and 7 fail-closed mutations")
+    print("G0 baseline tests passed: 1 positive and 8 fail-closed mutations")
     return 0
 
 
