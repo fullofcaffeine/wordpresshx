@@ -17,6 +17,11 @@ required_files=(
   SUPPORT.md
   CHANGELOG.md
   LICENSES/README.md
+  LICENSES/policy.json
+  LICENSES/components.json
+  LICENSES/GENERATED_OUTPUT.md
+  LICENSES/THIRD_PARTY_NOTICES.md
+  LICENSES/QUALIFIED_REVIEW.md
   wordpress-hx-sdk-product-requirements.md
   docs/README.md
   docs/adr/README.md
@@ -26,6 +31,7 @@ required_files=(
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
+  docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/architecture/browser-compiler.md
   docs/architecture/haxe-first-site-authoring.md
@@ -121,6 +127,8 @@ required_files=(
   fixtures/release-governance/README.md
   fixtures/release-governance/scenarios.json
   fixtures/release-governance/expected/rehearsal.json
+  fixtures/licenses/README.md
+  fixtures/licenses/expected/publication-blocked.txt
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -133,6 +141,7 @@ required_files=(
   manifests/release-support-policy.json
   manifests/upstream.lock.json
   manifests/evidence/sdk-003-release-governance.json
+  manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
@@ -191,6 +200,8 @@ required_files=(
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
   scripts/release/test-governance.py
+  scripts/licenses/check-license-policy.py
+  scripts/licenses/test-license-policy.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
   scripts/profiles/verify-wp70-release.py
   scripts/security/run-beads-gitleaks.sh
@@ -1689,6 +1700,7 @@ python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/check-generated-catalogs.py
 python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
+python3 scripts/licenses/test-license-policy.py
 python3 scripts/docker/check-image-lock.py
 
 forbidden_dependency_pattern='\.\./wordpresshx-port|wordpresshx-port/(src|compiler|packages)|haxelib[[:space:]]+dev[^[:cntrl:]]*wordpresshx-port'

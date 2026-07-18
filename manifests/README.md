@@ -23,6 +23,12 @@ Receipt `SDK-014-PROFILE-DIFF` records the read-only exact-catalog comparison to
 
 Receipt `SDK-003-RELEASE-GOVERNANCE` records the closed policy validator and deterministic issue/security/release/rollback rehearsal. The rehearsal is synthetic: private reporting remains disabled, the backup role remains unassigned, stable publication remains blocked, no registry credential or package is exercised, and no SLA or production-support claim is created.
 
+Receipt `ADR-020-LICENSE-AUDIT-PREPARATION` records the provisional licensing
+policy, exact component/origin inventory, generated-output model, human review
+packet, deterministic blocked-publication diagnostic, and negative mutations.
+It deliberately records no license grant or qualified acceptance; ADR-020 and
+SDK-002 remain open and all public publication remains blocked.
+
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

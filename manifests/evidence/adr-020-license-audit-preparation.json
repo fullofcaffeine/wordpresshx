@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-020-LICENSE-AUDIT-PREPARATION",
+  "bead": "wordpresshx-adr-020",
+  "decision": "ADR-020",
+  "status": "prepared-review-pending",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/020-licensing-and-generated-output.md",
+      "sha256": "27520f59ba2890d61be4224d85e3eb9c034853f5aa5d62b5b21b4ea5dad2fcc6"
+    },
+    "components": {
+      "path": "LICENSES/components.json",
+      "sha256": "07909c701affdc99a0dbc561473179bb96c5270d10dfe498fe5bed5ae53b0cfc"
+    },
+    "generatedOutput": {
+      "path": "LICENSES/GENERATED_OUTPUT.md",
+      "sha256": "44106e7689f519c7a09e8514d26d91cb8a84a5d01d2ad6385fcf5bf7db3fddd1"
+    },
+    "policy": {
+      "path": "LICENSES/policy.json",
+      "sha256": "3277cf4789241368792f4f263dbbf2f131287b5e4cc827b7e47dc4f6bcbe1435"
+    },
+    "publicationGolden": {
+      "path": "fixtures/licenses/expected/publication-blocked.txt",
+      "sha256": "0daa6aca5b1fb6cd9b0399e0d46ae9adfed662966aba657301d9f4375391f1da"
+    },
+    "qualifiedReview": {
+      "path": "LICENSES/QUALIFIED_REVIEW.md",
+      "sha256": "4e4a82f9c7dc6f98bf71808d40c85aca2b3907f9331bf50346b9bc576d57132b"
+    },
+    "thirdPartyNotices": {
+      "path": "LICENSES/THIRD_PARTY_NOTICES.md",
+      "sha256": "a96ee6e2ffed25a73a7359ccce2182c74a22613340cb98179800a37bd2d74a2c"
+    },
+    "validator": {
+      "path": "scripts/licenses/check-license-policy.py",
+      "sha256": "112e936c2d0ab272e689b75c891b8a4d238d447406ea45bf0d242fec155c418b"
+    },
+    "validatorTests": {
+      "path": "scripts/licenses/test-license-policy.py",
+      "sha256": "c1fa815518aaa776ad284fe5974fa33e1953ed4c6857b358144b71d455888247"
+    }
+  },
+  "audit": {
+    "componentCount": 22,
+    "unresolvedFindingCount": 8,
+    "conflictCount": 3,
+    "rootLicensePresent": false
+  },
+  "validation": {
+    "command": "python3 scripts/licenses/test-license-policy.py",
+    "outcome": "passed",
+    "positiveScenarioCount": 1,
+    "blockedGateCount": 1,
+    "negativeMutationCount": 8
+  },
+  "publicationGate": {
+    "command": "python3 scripts/licenses/check-license-policy.py --publication-gate",
+    "expectedExitCode": 3,
+    "expectedMessage": "PUBLICATION BLOCKED: ADR-020 remains proposed and no repository-wide license grant exists; qualified review, owner approval, resolved inventory findings, and artifact notices are required.",
+    "allowed": false
+  },
+  "review": {
+    "qualifiedReview": "pending",
+    "reviewer": null,
+    "ownerApproval": null,
+    "adrAccepted": false,
+    "sdk002Complete": false
+  },
+  "implementation": {
+    "baseCommit": "24157cb992919f1dd2078e4593b2bb0d0bee2caf",
+    "commit": null
+  },
+  "hostedWorkflow": {
+    "workflow": "repository.yml",
+    "job": "license-policy",
+    "required": true,
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending"
+  },
+  "claims": {
+    "componentInventory": "inventoried",
+    "generatedOutputGuidance": "provisional",
+    "qualifiedReview": "not-tested",
+    "repositoryLicenseGrant": "not-granted",
+    "publicPublication": "unsupported",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "artifact-specific-notice-generation-not-implemented",
+    "contributor-rights-not-confirmed",
+    "derived-catalog-treatment-not-qualified",
+    "generated-runtime-boundaries-not-inventoried",
+    "qualified-review-and-owner-approval-pending",
+    "upstream-license-discrepancies-unresolved"
+  ]
+}

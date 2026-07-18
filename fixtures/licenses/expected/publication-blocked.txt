@@ -1,0 +1,1 @@
+PUBLICATION BLOCKED: ADR-020 remains proposed and no repository-wide license grant exists; qualified review, owner approval, resolved inventory findings, and artifact notices are required.

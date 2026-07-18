@@ -1,0 +1,799 @@
+{
+  "schemaVersion": 1,
+  "inventoryId": "wordpresshx-third-party-and-origin-audit-v1",
+  "status": "provisional-qualified-review-required",
+  "scope": "Repository source, generated catalogs, pinned compiler inputs, HXX parser closure, CI/build tools, and exact runtime test inputs present before ADR-020 acceptance.",
+  "components": [
+    {
+      "id": "actions-checkout-4.2.2",
+      "name": "actions/checkout",
+      "version": "4.2.2",
+      "role": "hosted-ci-source-checkout",
+      "repository": "https://github.com/actions/checkout",
+      "commit": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "tree": "eae7c53f2f38f74f97aa0d04fed48ece50437a1b",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-action"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/actions/checkout/blob/11bd71901bbe5b1630ceea73d27597364c9af683/LICENSE",
+          "blob": "a67dca8b4f65d6bd351f6b1e333ce2cd84d843a5",
+          "sha256": null,
+          "observation": "MIT license text at the workflow-pinned commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-bytes-copied",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Executed by GitHub Actions; not currently copied into an SDK or generated WordPress artifact."
+    },
+    {
+      "id": "beads-1.0.4",
+      "name": "beads",
+      "version": "1.0.4",
+      "role": "issue-tracker-and-managed-repository-hooks",
+      "repository": "https://github.com/steveyegge/beads",
+      "commit": "ce242a87967836a361a8f11f0674335173fdbb27",
+      "tree": "489473786eadf3434bd14a5ad1e8ea9ec17f29da",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": true,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "attribute-managed-hook-and-instruction-sections"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/steveyegge/beads/blob/ce242a87967836a361a8f11f0674335173fdbb27/LICENSE",
+          "blob": "2a187917a0b9e8ea3ab3db2d9e60649f0e2e4ea5",
+          "sha256": null,
+          "observation": "MIT license text at the version-resolved source commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "repository-notice-required-for-managed-copied-sections",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Only marked managed/copied hook and AGENTS.md sections are within this component; project issue data is repository data, not Beads source code."
+    },
+    {
+      "id": "docker-test-image-set",
+      "name": "exact Docker runtime test image set",
+      "version": "docker/images.lock.json@schema-1",
+      "role": "runtime-test-inputs",
+      "repository": null,
+      "commit": null,
+      "tree": null,
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "test-input-only-no-redistribution"
+      },
+      "declaredLicense": "NOASSERTION",
+      "licenseEvidence": [
+        {
+          "kind": "local-exact-input-lock",
+          "locator": "docker/images.lock.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Seven OCI image references are digest-pinned; their layered license inventories are not copied into this repository."
+        }
+      ],
+      "licenseConclusion": "test-input-only-no-distribution-conclusion",
+      "noticeStatus": "not-applicable-unless-image-bytes-are-redistributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "The lock proves runtime input identity, not the licensing of every package in each image."
+    },
+    {
+      "id": "genes-ts-1.33.0",
+      "name": "genes-ts",
+      "version": "1.33.0",
+      "role": "generic-browser-compiler-authority",
+      "repository": "https://github.com/fullofcaffeine/genes-ts",
+      "commit": "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
+      "tree": "5ec14a28160ae676d24e6092ace8f1d2a4ad6dc5",
+      "artifact": {
+        "name": "submit.zip",
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.33.0/submit.zip",
+        "sha256": "4bf2d2d1046ee5a99830ef31158a90033bfa521da12eb1d5ecd136b35b4fd145"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "future-exact-build-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/fullofcaffeine/genes-ts/blob/7999b7cff09f78ebb8e09c3db6e221beb141b67b/LICENSE",
+          "blob": "a4b6a58ab9a32222e0473260ed34ee4ab34a2fb9",
+          "sha256": "db06c7b27c072c83ad42ec1826ea0e2e28485222b1e047a92e411552079a7c2d",
+          "observation": "MIT license text at the exact release commit."
+        },
+        {
+          "kind": "artifact-inspection",
+          "locator": "manifests/evidence/sdk-030-genes-ts-v1.33.0.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "The inspected Haxelib release archive declares MIT metadata but omits a LICENSE file."
+        }
+      ],
+      "licenseConclusion": "source-verified-artifact-license-text-missing",
+      "noticeStatus": "future-package-notice-required",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Compiler input only today. Generated-output boundaries must be audited again if Genes runtime or boilerplate bytes are copied."
+    },
+    {
+      "id": "gitleaks-8.30.0",
+      "name": "Gitleaks",
+      "version": "8.30.0",
+      "role": "secret-scanning-build-tool",
+      "repository": "https://github.com/gitleaks/gitleaks",
+      "commit": "6eaad039603a4de39fddd1cf5f727391efe9974e",
+      "tree": "2e329225c34c440e02351bc5c73c42dafe53d9b5",
+      "artifact": {
+        "name": "gitleaks_8.30.0_linux_x64.tar.gz",
+        "url": "https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz",
+        "sha256": "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-tool"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "tag-source-license",
+          "locator": "https://github.com/gitleaks/gitleaks/blob/v8.30.0/LICENSE",
+          "blob": "3c270b36c539ca8fbc4cc1017d3cbb7be1e44bbc",
+          "sha256": null,
+          "observation": "MIT license text at tag v8.30.0."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-binary-redistributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Downloaded into ephemeral CI storage and not placed in release artifacts."
+    },
+    {
+      "id": "gutenberg-23.4.0",
+      "name": "Gutenberg",
+      "version": "23.4.0",
+      "role": "forward-profile-source-and-release-authority",
+      "repository": "https://github.com/WordPress/gutenberg",
+      "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+      "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f",
+      "artifact": {
+        "name": "gutenberg.zip",
+        "url": "https://github.com/WordPress/gutenberg/releases/download/v23.4.0/gutenberg.zip",
+        "sha256": "988334d3142a776be911888e6128ef3f45ee1f1e1831aa1ed43f0a28d042733a"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "derive-facts-identifiers-and-contract-metadata-with-provenance"
+      },
+      "declaredLicense": "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/WordPress/gutenberg/blob/98a796c8780c480ef7bcfe03c42302d9564d785c/LICENSE.md",
+          "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+          "sha256": null,
+          "observation": "Project licensing statement at the exact forward-profile commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-derived-data-treatment-pending",
+      "noticeStatus": "profile-provenance-and-future-package-notice-required",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Current catalogs contain selected facts and identifiers, not copied implementation bodies; that characterization still requires qualified review."
+    },
+    {
+      "id": "gutenberg-wp70-embedded",
+      "name": "Gutenberg embedded in WordPress 7.0",
+      "version": "wordpress-7.0-embedded",
+      "role": "vanilla-profile-embedded-editor-authority",
+      "repository": "https://github.com/WordPress/gutenberg",
+      "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+      "tree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "derive-facts-identifiers-and-contract-metadata-with-provenance"
+      },
+      "declaredLicense": "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/WordPress/gutenberg/blob/a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd/LICENSE.md",
+          "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+          "sha256": null,
+          "observation": "Project licensing statement at the exact embedded commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-derived-data-treatment-pending",
+      "noticeStatus": "profile-provenance-and-future-package-notice-required",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Kept separate from Gutenberg 23.4.0 because profile identity and claims do not transfer."
+    },
+    {
+      "id": "haxe-4.3.7-compiler",
+      "name": "Haxe compiler",
+      "version": "4.3.7",
+      "role": "language-compiler-build-tool",
+      "repository": "https://github.com/HaxeFoundation/haxe",
+      "commit": "e0b355c6be312c1b17382603f018cf52522ec651",
+      "tree": "55d2c4c59ed55c52fa0660e2fe385081a94b23d1",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-tool"
+      },
+      "declaredLicense": "GPL-2.0-or-later",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/HaxeFoundation/haxe/blob/e0b3551ca0511b660d5f3ba8752b3c4c89587307/extra/LICENSE.txt",
+          "blob": "b4142af748da6420ab697e7485b105c8e6689486",
+          "sha256": null,
+          "observation": "Haxe compiler license statement at the exact 4.3.7 tag commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-compiler-bytes-redistributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "The compiler license alone does not automatically relicense output; copied standard-library/runtime portions remain origin-sensitive."
+    },
+    {
+      "id": "haxe-4.3.7-stdlib",
+      "name": "Haxe standard library",
+      "version": "4.3.7",
+      "role": "language-standard-library-and-potential-output-input",
+      "repository": "https://github.com/HaxeFoundation/haxe",
+      "commit": "e0b355c6be312c1b17382603f018cf52522ec651",
+      "tree": "55d2c4c59ed55c52fa0660e2fe385081a94b23d1",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "inventory-any-copied-output-portions-per-target"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "official-project-licensing-statement",
+          "locator": "https://haxe.org/foundation/open-source.html",
+          "blob": null,
+          "sha256": null,
+          "observation": "The Haxe Foundation identifies the standard library as MIT-licensed."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-output-boundary-pending",
+      "noticeStatus": "notice-required-if-standard-library-bytes-are-copied",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Future native PHP and browser artifacts must identify whether target output contains standard-library or runtime implementation bytes."
+    },
+    {
+      "id": "haxe-formatter-1.18.0",
+      "name": "Haxe Formatter",
+      "version": "1.18.0",
+      "role": "source-formatting-build-tool",
+      "repository": "https://github.com/HaxeCheckstyle/haxe-formatter",
+      "commit": "93ba289893d515614298f4ce7cee8619c31b420c",
+      "tree": "88d00af312c4601d319e64afb0c9eda0499447bd",
+      "artifact": {
+        "name": "formatter-1,18,0.zip",
+        "url": "https://lib.haxe.org/files/3.0/formatter-1,18,0.zip",
+        "sha256": "2d29c9b56e54b2643e07ee64003c3fc30a5bc133bdcb4cc15c48f09acda7a047"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-tool"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/HaxeCheckstyle/haxe-formatter/blob/93ba289893d515614298f4ce7cee8619c31b420c/LICENSE.md",
+          "blob": "8e35f9b75f8b5651d7994a6048f21d6c87cb6cf6",
+          "sha256": null,
+          "observation": "MIT license text at the resolved release commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-tool-bytes-redistributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Pinned by repository hooks and hosted CI."
+    },
+    {
+      "id": "helder-set-0.3.1",
+      "name": "helder.set",
+      "version": "0.3.1",
+      "role": "genes-ts-transitive-build-dependency",
+      "repository": "https://lib.haxe.org/p/helder.set/0.3.1/",
+      "commit": null,
+      "tree": null,
+      "artifact": {
+        "name": "helder,set-0,3,1.zip",
+        "url": "https://lib.haxe.org/files/3.0/helder,set-0,3,1.zip",
+        "sha256": "f9effb98b4e11d38efc3bfd6691f7453e7f26f00f3a0e81d7398ebee90a9543c"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "transitive-build-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "artifact-metadata-and-inspection",
+          "locator": "manifests/evidence/sdk-030-genes-ts-v1.33.0.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Haxelib metadata declares MIT; the inspected archive omits a license text."
+        }
+      ],
+      "licenseConclusion": "metadata-only-license-text-missing",
+      "noticeStatus": "pending-license-text-resolution-if-distributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Not currently redistributed by WordPressHx."
+    },
+    {
+      "id": "html-entities-1.0.0",
+      "name": "html-entities",
+      "version": "1.0.0",
+      "role": "compile-time-hxx-parser-dependency",
+      "repository": "https://lib.haxe.org/p/html-entities/1.0.0/",
+      "commit": null,
+      "tree": null,
+      "artifact": {
+        "name": "html-entities-1,0,0.zip",
+        "url": "https://lib.haxe.org/files/3.0/html-entities-1,0,0.zip",
+        "sha256": "1b2596357dd035cdc6648544b7e36de15a93c2716ee484c05d6e2f03ad82614c"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "artifact-metadata-and-inspection",
+          "locator": "packages/hxx/dependency-lock.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Haxelib metadata declares MIT; the inspected archive omits a license text."
+        }
+      ],
+      "licenseConclusion": "metadata-only-license-text-missing",
+      "noticeStatus": "pending-license-text-resolution-if-distributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Parser dependency is prohibited from the generated runtime by ADR-011."
+    },
+    {
+      "id": "krdlab-setup-haxe-2.1.0",
+      "name": "krdlab/setup-haxe",
+      "version": "2.1.0",
+      "role": "hosted-ci-haxe-setup",
+      "repository": "https://github.com/krdlab/setup-haxe",
+      "commit": "d93667502be3b4f31a94a3308a74388f2e178a8d",
+      "tree": "09589e96efe9d659df6634e3388727d2e0956624",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-action"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/krdlab/setup-haxe/blob/d93667502be3b4f31a94a3308a74388f2e178a8d/LICENSE",
+          "blob": "db488d73162a2fbe3fa9402f75a5c4849dca2ac8",
+          "sha256": null,
+          "observation": "MIT license text at the workflow-pinned commit."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-bytes-copied",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Executed by GitHub Actions; not currently copied into user artifacts."
+    },
+    {
+      "id": "lix-15.12.4",
+      "name": "Lix",
+      "version": "15.12.4",
+      "role": "haxe-toolchain-package-manager",
+      "repository": "https://github.com/lix-pm/lix.client",
+      "commit": null,
+      "tree": null,
+      "artifact": {
+        "name": "lix-15.12.4.tgz",
+        "url": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz",
+        "sha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "build-only-external-tool"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "artifact-metadata",
+          "locator": "https://registry.npmjs.org/lix/15.12.4",
+          "blob": null,
+          "sha256": null,
+          "observation": "npm package metadata declares MIT."
+        },
+        {
+          "kind": "artifact-license-text",
+          "locator": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz!/package/LICENSE",
+          "blob": null,
+          "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+          "observation": "The shipped LICENSE text is the Unlicense, conflicting with package metadata."
+        }
+      ],
+      "licenseConclusion": "conflict-pending-upstream-and-qualified-review",
+      "noticeStatus": "blocked-license-metadata-text-conflict",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Build-only today; the discrepancy still blocks treating the inventory as publication-complete."
+    },
+    {
+      "id": "reflaxe-php-port-origin",
+      "name": "reflaxe.php imported compiler origin",
+      "version": "wordpresshx-port@20b9c974",
+      "role": "copied-and-generalized-generic-php-compiler-source",
+      "repository": "https://github.com/fullofcaffeine/wordpresshx-port",
+      "commit": "20b9c974f141375b6cf191db6f25b115812e282c",
+      "tree": "1de1d4869f8cea49ebebc9e54295057c62dee011",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": true,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "preserve-gpl-origin-copyright-and-file-provenance"
+      },
+      "declaredLicense": "GPL-2.0-or-later",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/fullofcaffeine/wordpresshx-port/blob/20b9c974f141375b6cf191db6f25b115812e282c/LICENSE",
+          "blob": "b2ae8cdd47e13ec2d20d566d8a64cd329713f6d0",
+          "sha256": "e23f0691c0099420d74e4c0a66a8581d5994d07277d219597aec890ec0b0c2ed",
+          "observation": "GPL-2.0-or-later grant at the exact origin commit."
+        },
+        {
+          "kind": "file-level-provenance",
+          "locator": "compiler/reflaxe.php/provenance.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Imported symbols, excluded WordPress adapter, transformations, and source digests are recorded."
+        }
+      ],
+      "licenseConclusion": "verified-origin-grant-pending-final-repository-treatment",
+      "noticeStatus": "repository-and-future-package-notice-required",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "The current internal haxelib manifest says GPL and version 0.0.0; publication remains false."
+    },
+    {
+      "id": "repository-original-work",
+      "name": "WordPressHx repository-original work",
+      "version": "unreleased",
+      "role": "sdk-cli-docs-examples-build-source-and-generated-catalogs",
+      "repository": "https://github.com/fullofcaffeine/wordpresshx",
+      "commit": null,
+      "tree": null,
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": true,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "candidate-gpl-2.0-or-later-after-rights-and-qualified-review"
+      },
+      "declaredLicense": "LicenseRef-No-License-Grant",
+      "licenseEvidence": [
+        {
+          "kind": "repository-observation",
+          "locator": "LICENSES/README.md",
+          "blob": null,
+          "sha256": null,
+          "observation": "No root LICENSE exists and this review packet is expressly not a license grant."
+        }
+      ],
+      "licenseConclusion": "no-license-grant-candidate-only",
+      "noticeStatus": "blocked-root-license-and-contributor-rights",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "GPL-2.0-or-later is a conservative candidate recommendation, not an accepted grant."
+    },
+    {
+      "id": "tink-anon-0.7.0",
+      "name": "tink_anon",
+      "version": "0.7.0",
+      "role": "compile-time-hxx-parser-dependency",
+      "repository": "https://github.com/haxetink/tink_anon",
+      "commit": "ef441a73a41f9ae4ca0f060035ff2c188618df4c",
+      "tree": "3cb3e9d878355e22b8ab7d5ac89595f5aeb02f66",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-metadata",
+          "locator": "https://github.com/haxetink/tink_anon/blob/ef441a73a41f9ae4ca0f060035ff2c188618df4c/haxelib.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "The exact source manifest declares MIT."
+        },
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/haxetink/tink_anon/blob/ef441a73a41f9ae4ca0f060035ff2c188618df4c/LICENSE",
+          "blob": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657",
+          "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+          "observation": "The exact source LICENSE is the Unlicense, conflicting with haxelib metadata."
+        }
+      ],
+      "licenseConclusion": "conflict-pending-upstream-and-qualified-review",
+      "noticeStatus": "blocked-license-metadata-text-conflict",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Parser dependency is prohibited from the generated runtime by ADR-011."
+    },
+    {
+      "id": "tink-core-2.1.1",
+      "name": "tink_core",
+      "version": "2.1.1",
+      "role": "compile-time-hxx-parser-dependency",
+      "repository": "https://lib.haxe.org/p/tink_core/2.1.1/",
+      "commit": null,
+      "tree": null,
+      "artifact": {
+        "name": "tink_core-2,1,1.zip",
+        "url": "https://lib.haxe.org/files/3.0/tink_core-2,1,1.zip",
+        "sha256": "c64ef5d0055ad861c4dd44a4f633bbaafd41dea6d0f70cb61e4a81652835e22d"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "artifact-metadata-and-inspection",
+          "locator": "packages/hxx/dependency-lock.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Haxelib metadata declares MIT; the inspected archive omits a license text."
+        }
+      ],
+      "licenseConclusion": "metadata-only-license-text-missing",
+      "noticeStatus": "pending-license-text-resolution-if-distributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Parser dependency is prohibited from the generated runtime by ADR-011."
+    },
+    {
+      "id": "tink-hxx-0.25.1",
+      "name": "tink_hxx",
+      "version": "0.25.1",
+      "role": "compile-time-hxx-parser-authority",
+      "repository": "https://github.com/haxetink/tink_hxx",
+      "commit": "75ef63c78851fcd7c1846d74959cbd4cea0b4ced",
+      "tree": "ef1ae3be1574e745c7877f5567d9b76ea36dca47",
+      "artifact": {
+        "name": "tink_hxx-0,25,1.zip",
+        "url": "https://lib.haxe.org/files/3.0/tink_hxx-0,25,1.zip",
+        "sha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e"
+      },
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "artifact-metadata-and-inspection",
+          "locator": "packages/hxx/dependency-lock.json",
+          "blob": null,
+          "sha256": null,
+          "observation": "Haxelib metadata declares MIT and the release archive omits a LICENSE file."
+        },
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/haxetink/tink_hxx/blob/75ef63c78851fcd7c1846d74959cbd4cea0b4ced/LICENSE",
+          "blob": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b",
+          "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+          "observation": "The exact source LICENSE is the Unlicense, conflicting with haxelib metadata."
+        }
+      ],
+      "licenseConclusion": "conflict-pending-upstream-and-qualified-review",
+      "noticeStatus": "blocked-license-metadata-text-conflict",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Only parser and positioned syntax types are used; no tink HXX runtime may ship."
+    },
+    {
+      "id": "tink-macro-0.23.0",
+      "name": "tink_macro",
+      "version": "0.23.0",
+      "role": "compile-time-hxx-parser-dependency",
+      "repository": "https://github.com/haxetink/tink_macro",
+      "commit": "40d7c2fbde362ed8273698626a31cfe35c001101",
+      "tree": "8c5951c9b4e6228d2e9344c4abf777d30704e03c",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/haxetink/tink_macro/blob/40d7c2fbde362ed8273698626a31cfe35c001101/LICENSE",
+          "blob": "57331a82fc65e3383b498e9954b2c692dbc8ebab",
+          "sha256": "b8052642804072a766dc178e75de2a5e166726a0c3163a008af0a447f1223264",
+          "observation": "MIT license text agrees with exact source metadata."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-pending-qualified-review",
+      "noticeStatus": "build-provenance-only-unless-bytes-copied",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Parser dependency is prohibited from the generated runtime by ADR-011."
+    },
+    {
+      "id": "tink-parse-0.4.1",
+      "name": "tink_parse",
+      "version": "0.4.1",
+      "role": "compile-time-hxx-parser-dependency",
+      "repository": "https://github.com/haxetink/tink_parse",
+      "commit": "d32c955ec5e51978cb9fa31b3fe568f94e1c62c9",
+      "tree": "8eb6ca4877f103da920d898d1faa768dbb251091",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "compile-time-only-dependency"
+      },
+      "declaredLicense": "MIT",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-metadata-and-tree-inspection",
+          "locator": "https://github.com/haxetink/tink_parse/tree/d32c955ec5e51978cb9fa31b3fe568f94e1c62c9",
+          "blob": null,
+          "sha256": null,
+          "observation": "The exact source manifest declares MIT, but no standalone license file was found in the source tree."
+        }
+      ],
+      "licenseConclusion": "metadata-only-source-license-text-missing",
+      "noticeStatus": "pending-license-text-resolution-if-distributed",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Parser dependency is prohibited from the generated runtime by ADR-011."
+    },
+    {
+      "id": "wordpress-7.0",
+      "name": "WordPress",
+      "version": "7.0.0",
+      "role": "vanilla-profile-source-and-runtime-authority",
+      "repository": "https://github.com/WordPress/wordpress-develop",
+      "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "tree": "f3ad96f2357d2309f64a8d42a5808be502639c70",
+      "artifact": null,
+      "distribution": {
+        "sourceCopiedIntoRepository": false,
+        "bundledInCurrentPublicArtifact": false,
+        "plannedTreatment": "derive-facts-identifiers-and-contract-metadata-with-provenance"
+      },
+      "declaredLicense": "GPL-2.0-or-later",
+      "licenseEvidence": [
+        {
+          "kind": "exact-source-license",
+          "locator": "https://github.com/WordPress/wordpress-develop/blob/26b68024931348d267b70e2a29910e1320d0094f/src/license.txt",
+          "blob": "2d9ed1ab7973bd961ba9463cb6b254416ee97cc0",
+          "sha256": null,
+          "observation": "WordPress license text at the exact 7.0 source commit."
+        },
+        {
+          "kind": "official-project-licensing-statement",
+          "locator": "https://wordpress.org/about/license/",
+          "blob": null,
+          "sha256": null,
+          "observation": "WordPress identifies its license as GPL version 2 or later and states its project position on plugin/theme derivation."
+        }
+      ],
+      "licenseConclusion": "verified-declaration-derived-data-treatment-pending",
+      "noticeStatus": "profile-provenance-and-future-package-notice-required",
+      "reviewStatus": "pending-qualified-review",
+      "notes": "Vanilla WordPress runtime bytes are test inputs and are not currently redistributed by WordPressHx."
+    }
+  ],
+  "unresolvedFindings": [
+    {
+      "id": "derived-catalog-treatment-pending",
+      "components": [
+        "gutenberg-23.4.0",
+        "gutenberg-wp70-embedded",
+        "repository-original-work",
+        "wordpress-7.0"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Qualified review must confirm the characterization, license, attribution, and distribution treatment of generated profiles and contracts."
+    },
+    {
+      "id": "generated-runtime-boundary-not-inventoried",
+      "components": [
+        "genes-ts-1.33.0",
+        "haxe-4.3.7-stdlib",
+        "reflaxe-php-port-origin",
+        "repository-original-work"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Each public artifact must classify and hash user-derived bytes, emitter boilerplate, copied runtime/standard-library bytes, templates, and third-party bytes."
+    },
+    {
+      "id": "haxelib-artifacts-missing-license-text",
+      "components": [
+        "genes-ts-1.33.0",
+        "helder-set-0.3.1",
+        "html-entities-1.0.0",
+        "tink-core-2.1.1"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Resolve exact license texts from authoritative sources and generate complete notices before redistributing affected packages or copied bytes."
+    },
+    {
+      "id": "lix-license-metadata-text-conflict",
+      "components": [
+        "lix-15.12.4"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Obtain an authoritative upstream resolution for the npm metadata/LICENSE discrepancy and have the treatment reviewed."
+    },
+    {
+      "id": "root-original-work-no-license-grant",
+      "components": [
+        "repository-original-work"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Confirm contributor rights, obtain owner and qualified approval, and add the accepted root license grant."
+    },
+    {
+      "id": "tink-anon-license-metadata-text-conflict",
+      "components": [
+        "tink-anon-0.7.0"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Obtain an authoritative upstream resolution for the exact manifest/LICENSE discrepancy and have the treatment reviewed."
+    },
+    {
+      "id": "tink-hxx-license-metadata-text-conflict",
+      "components": [
+        "tink-hxx-0.25.1"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Obtain an authoritative upstream resolution for the release metadata/source LICENSE discrepancy and have the treatment reviewed."
+    },
+    {
+      "id": "tink-parse-no-source-license-file",
+      "components": [
+        "tink-parse-0.4.1"
+      ],
+      "blocksPublication": true,
+      "resolutionRequired": "Locate authoritative license text or obtain upstream clarification before redistribution or notice generation."
+    }
+  ]
+}

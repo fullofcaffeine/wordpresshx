@@ -41,3 +41,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
 - [ADR-021: Release and support policy](021-release-and-support-policy.md)
+
+## Proposed records
+
+- [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — qualified review and owner approval pending; no license grant or publication authorization.

@@ -4,5 +4,9 @@
 *.db
 .beads-credential-key
 
+# Python validation caches
+__pycache__/
+*.pyc
+
 # Local compiler test output
 compiler/reflaxe.php/build/

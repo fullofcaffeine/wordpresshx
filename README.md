@@ -84,7 +84,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the working agreement and [docs/](doc
 - [Security](SECURITY.md)
 - [Support](SUPPORT.md)
 - [Contribution workflow](CONTRIBUTING.md)
-- [Licensing status](LICENSES/README.md)
+- [Provisional licensing review packet](LICENSES/README.md)
 - [Release status](docs/release/README.md)
 
-No license or public distribution grant has been selected yet. Public package or release publication remains blocked on the dedicated licensing review.
+No repository-wide license or public distribution grant exists. ADR-020 now has
+a provenance-bound provisional GPL-2.0-or-later recommendation, generated-output
+origin model, component inventory, and machine-checked publication blocker; it
+remains proposed pending a named qualified reviewer, product-owner approval, and
+SDK-002 artifact/notice proof. Run `python3 scripts/licenses/test-license-policy.py`
+to verify that the inventory is complete and publication still exits closed.

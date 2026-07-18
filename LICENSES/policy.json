@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "policyId": "wordpresshx-licensing-provisional-v1",
+  "decision": "ADR-020",
+  "status": "provisional-no-license-grant",
+  "legalAdvice": false,
+  "publication": {
+    "allowed": false,
+    "registryPublicationAllowed": false,
+    "releaseArchivePublicationAllowed": false,
+    "wordpressDirectorySubmissionAllowed": false,
+    "promotedPublicDownloadAllowed": false,
+    "localEvidenceBuildAllowed": true,
+    "gateExitCode": 3,
+    "blockingConditions": [
+      "artifact-notice-generation-not-implemented",
+      "contributor-rights-confirmation",
+      "derived-contract-and-catalog-review",
+      "generated-output-runtime-boundary-review",
+      "hxx-and-lix-license-metadata-resolution",
+      "qualified-license-review",
+      "root-license-grant"
+    ]
+  },
+  "qualifiedReview": {
+    "required": true,
+    "status": "pending",
+    "reviewer": null,
+    "qualification": null,
+    "reviewedAt": null,
+    "ownerApproval": null,
+    "scope": [
+      "candidate-license-grants-and-compatibility",
+      "contributor-and-copied-source-rights",
+      "derived-profile-and-contract-data",
+      "generated-output-and-copied-runtime-boundaries",
+      "package-zip-and-registry-notice-obligations",
+      "third-party-metadata-and-license-text-discrepancies"
+    ]
+  },
+  "candidateRecommendation": {
+    "notFinal": true,
+    "repositoryOriginalWork": "GPL-2.0-or-later",
+    "publicSdkHaxelib": "GPL-2.0-or-later",
+    "publicCli": "GPL-2.0-or-later",
+    "genericPhpCompiler": "GPL-2.0-or-later",
+    "documentationExamplesScaffoldsTemplates": "GPL-2.0-or-later",
+    "derivedWordPressGutenbergCatalogs": "GPL-2.0-or-later-with-provenance",
+    "defaultGeneratedWordPressPackage": "GPL-2.0-or-later",
+    "generatedApplicationOutput": "origin-sensitive-no-automatic-relicense",
+    "reason": "Conservative alignment with WordPress GPL-2.0-or-later and the imported compiler source while preserving per-origin treatment for user input and copied support code."
+  },
+  "artifactClasses": [
+    {
+      "id": "build-ci-tools",
+      "currentPresence": "exact-external-inputs-and-workflow-references",
+      "candidateLicense": "per-component",
+      "distribution": "not-bundled-in-user-artifacts",
+      "outputRule": "tool-license-alone-does-not-classify-output",
+      "noticeRule": "record-in-build-provenance-not-runtime-notice-unless-copied",
+      "status": "provisional"
+    },
+    {
+      "id": "derived-profile-and-contract-data",
+      "currentPresence": "generated-exact-profile-catalogs",
+      "candidateLicense": "GPL-2.0-or-later-with-provenance",
+      "distribution": "planned-inside-public-sdk",
+      "outputRule": "facts-identifiers-and-citations-only-no-unreviewed-source-excerpts",
+      "noticeRule": "name-each-upstream-license-exact-source-and-extraction-receipt",
+      "status": "blocked-qualified-review"
+    },
+    {
+      "id": "documentation-and-requirements",
+      "currentPresence": "repository-maintained",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "planned-source-and-sdk-documentation",
+      "outputRule": "examples-and-snippets-follow-the-containing-work-unless-marked",
+      "noticeRule": "root-grant-and-third-party-attribution-required",
+      "status": "blocked-root-license-grant"
+    },
+    {
+      "id": "examples-scaffolds-and-templates",
+      "currentPresence": "documentation-and-placeholder-only",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "planned-inside-public-sdk-and-generated-projects",
+      "outputRule": "copied-template-bytes-retain-template-license-and-notices",
+      "noticeRule": "generated-project-manifest-must-identify-each-copied-template",
+      "status": "blocked-qualified-review"
+    },
+    {
+      "id": "generated-application-output",
+      "currentPresence": "test-evidence-only",
+      "candidateLicense": "NOASSERTION",
+      "distribution": "future-user-owned-php-js-ts-css-json-and-markup",
+      "outputRule": "derive-from-user-input-except-separately-tracked-copied-portions",
+      "noticeRule": "artifact-manifest-separates-user-derived-emitter-boilerplate-runtime-and-third-party-bytes",
+      "status": "blocked-output-boundary-review"
+    },
+    {
+      "id": "generated-runtime-support-and-boilerplate",
+      "currentPresence": "not-yet-admitted",
+      "candidateLicense": "per-origin",
+      "distribution": "future-generated-or-bundled-application-support",
+      "outputRule": "substantial-copied-bytes-retain-source-license-and-obligations",
+      "noticeRule": "content-hash-source-path-license-expression-and-notice-must-ship",
+      "status": "blocked-inventory-and-qualified-review"
+    },
+    {
+      "id": "generic-php-compiler",
+      "currentPresence": "private-version-0.0.0-workspace-source",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "not-publishable-currently",
+      "outputRule": "compiler-license-alone-does-not-classify-output-copied-runtime-does",
+      "noticeRule": "preserve-wordpresshx-port-copyright-license-and-exact-provenance",
+      "status": "blocked-qualified-review"
+    },
+    {
+      "id": "public-cli",
+      "currentPresence": "declared-future-artifact",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "planned-npm-package",
+      "outputRule": "orchestration-does-not-erase-input-template-runtime-or-dependency-licenses",
+      "noticeRule": "packed-artifact-license-notices-sbom-and-provenance-required",
+      "status": "blocked-not-implemented-or-reviewed"
+    },
+    {
+      "id": "public-sdk-haxelib",
+      "currentPresence": "declared-future-artifact",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "planned-haxelib-package",
+      "outputRule": "source-package-license-does-not-by-itself-classify-compiler-output",
+      "noticeRule": "packed-artifact-root-license-third-party-notices-sbom-and-provenance-required",
+      "status": "blocked-not-implemented-or-reviewed"
+    },
+    {
+      "id": "repository-operations-files",
+      "currentPresence": "repository-owned-and-beads-managed-files",
+      "candidateLicense": "mixed-gpl-2.0-or-later-and-mit",
+      "distribution": "source-archive-only-not-runtime",
+      "outputRule": "managed-copied-sections-retain-upstream-license",
+      "noticeRule": "attribute-beads-managed-hooks-and-instruction-blocks",
+      "status": "provisional"
+    },
+    {
+      "id": "wordpress-plugin-theme-site-artifacts",
+      "currentPresence": "future-generated-installable-artifacts",
+      "candidateLicense": "GPL-2.0-or-later",
+      "distribution": "wordpress-zip-or-site-source",
+      "outputRule": "package-owner-confirms-rights-for-user-assets-code-and-all-copied-support",
+      "noticeRule": "plugin-theme-headers-full-license-third-party-notices-sbom-and-source-offer-as-applicable",
+      "status": "blocked-qualified-review-and-package-evidence"
+    }
+  ],
+  "outputPolicy": {
+    "compilerLicenseAutomaticallyAppliesToAllOutput": false,
+    "userInputCopyrightAutomaticallyTransferred": false,
+    "copiedRuntimeOrBoilerplateMayCarrySourceLicense": true,
+    "generatedManifestMustClassifyOrigins": true,
+    "generatedManifestOrigins": [
+      "compiler-emitted-original-boilerplate",
+      "third-party-or-upstream-derived",
+      "toolchain-runtime-or-standard-library",
+      "user-authored-or-user-configured"
+    ],
+    "rawLicenseOverrideAllowed": false,
+    "projectOwnerResponsibleForFinalPackage": true,
+    "wordPressOrgCompatibilityReviewRequired": true
+  },
+  "noticePolicy": {
+    "fullApplicableLicenseTextsRequiredInFinalArtifact": true,
+    "copyrightNoticesPreserved": true,
+    "componentVersionAndSourceRequired": true,
+    "sbomRequired": true,
+    "provenanceRequired": true,
+    "licenseMetadataConflictFailsPublication": true,
+    "missingLicenseEvidenceFailsPublication": true,
+    "buildOnlyToolNoticeInRuntimeArtifact": "only-if-bytes-are-copied",
+    "trademarkRightsGranted": false
+  },
+  "changeControl": {
+    "newDependencyRequiresInventoryEntry": true,
+    "newCopiedSourceRequiresFileLevelProvenance": true,
+    "newGeneratedRuntimeRequiresOutputBoundaryReview": true,
+    "newPublicManifestRequiresPublicationGate": true,
+    "silentLicenseConclusionUpgradeAllowed": false,
+    "acceptanceRequiresAdrStatus": "accepted",
+    "acceptanceRequiresQualifiedReviewer": true,
+    "acceptanceRequiresOwnerApproval": true
+  },
+  "claims": {
+    "repositoryLicenseGrant": "not-granted",
+    "candidatePolicy": "proposed",
+    "componentInventory": "inventoried",
+    "generatedOutputGuidance": "provisional",
+    "qualifiedReview": "not-tested",
+    "publicPackagePublication": "unsupported",
+    "productionSupport": "not-tested"
+  }
+}
