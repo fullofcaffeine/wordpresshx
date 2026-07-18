@@ -1531,7 +1531,7 @@ assert sdk032_local["sourceMaps"]["machinePathLeaks"] == 0
 sdk032_hosted = sdk032_receipt["repositoryHostedVerification"]
 assert sdk032_hosted["workflow"] == "Repository bootstrap"
 assert sdk032_hosted["required"] is True
-assert len(sdk032_hosted["attempts"]) >= 1
+assert len(sdk032_hosted["attempts"]) >= 2
 sdk032_failed_attempt = sdk032_hosted["attempts"][0]
 assert sdk032_failed_attempt["runId"] == 29637826116
 assert sdk032_failed_attempt["url"] == (
@@ -1542,6 +1542,17 @@ assert sdk032_failed_attempt["haxeJobId"] == 88063151337
 assert sdk032_failed_attempt["status"] == "failed"
 assert sdk032_failed_attempt["failedStep"] == (
     "Test typed React and Gutenberg HXX"
+)
+sdk032_transient_attempt = sdk032_hosted["attempts"][1]
+assert sdk032_transient_attempt["runId"] == 29637982843
+assert sdk032_transient_attempt["attempt"] == 1
+assert sdk032_transient_attempt["commit"] == (
+    "49b21ae54a699bd50f2afeca7c9e3bbc69af235c"
+)
+assert sdk032_transient_attempt["haxeJobId"] == 88063565710
+assert sdk032_transient_attempt["status"] == "failed"
+assert sdk032_transient_attempt["failedStep"] == (
+    "Install exact scoped HXX toolchain"
 )
 if sdk032_receipt["status"] == "implemented-hosted-pending":
     assert sdk032_hosted["status"] == "pending-rerun-after-lix-global-root-fix"
@@ -1556,8 +1567,14 @@ else:
         f"{sdk032_hosted['runId']}"
     )
     assert sha1.fullmatch(sdk032_hosted["commit"])
+    assert sdk032_hosted["attempt"] == 2
+    assert sdk032_hosted["jobCount"] == 10
+    assert sdk032_hosted["allJobsPassed"] is True
     assert sdk032_hosted["haxeJob"] == "passed"
-    assert isinstance(sdk032_hosted["haxeJobId"], int)
+    assert sdk032_hosted["haxeJobId"] == 88063705086
+    assert sdk032_hosted["haxeJobUrl"] == (
+        sdk032_hosted["url"] + f"/job/{sdk032_hosted['haxeJobId']}"
+    )
     assert sdk032_hosted["sdk032Step"] == "passed"
     assert sdk032_hosted["hostedArtifactHashesMatched"] is True
     assert browser_architecture["evidence"]["gutenbergHxxFixture"] == (

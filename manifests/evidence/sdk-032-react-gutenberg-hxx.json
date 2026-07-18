@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-032-REACT-GUTENBERG-HXX",
   "bead": "wordpresshx-sdk-032",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-18T08:10:44Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T08:49:48Z",
   "subject": {
     "package": "packages/gutenberg",
     "profileId": "wp70-release",
@@ -305,19 +305,42 @@
     "buildInput": false
   },
   "repositoryHostedVerification": {
-    "status": "pending-rerun-after-lix-global-root-fix",
+    "status": "passed",
     "workflow": "Repository bootstrap",
     "required": true,
+    "runId": 29637982843,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637982843",
+    "attempt": 2,
+    "commit": "49b21ae54a699bd50f2afeca7c9e3bbc69af235c",
+    "jobCount": 10,
+    "allJobsPassed": true,
+    "haxeJob": "passed",
+    "haxeJobId": 88063705086,
+    "haxeJobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637982843/job/88063705086",
+    "sdk032Step": "passed",
+    "hostedArtifactHashesMatched": true,
     "attempts": [
       {
         "runId": 29637826116,
         "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637826116",
+        "attempt": 1,
         "commit": "c204f8b8521c9a2178c74ae186caa06969c16027",
         "haxeJobId": 88063151337,
         "status": "failed",
         "failedStep": "Test typed React and Gutenberg HXX",
         "reason": "the SDK-032 gate inferred the Lix package root from realpath(command -v lix), which is not stable across global npm shim layouts",
         "resolution": "derive the exact package manifest and Haxe shim from npm root --global and npm prefix --global, matching the already-hosted SDK-031 and SDK-080 pattern"
+      },
+      {
+        "runId": 29637982843,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29637982843",
+        "attempt": 1,
+        "commit": "49b21ae54a699bd50f2afeca7c9e3bbc69af235c",
+        "haxeJobId": 88063565710,
+        "status": "failed",
+        "failedStep": "Install exact scoped HXX toolchain",
+        "reason": "the official Haxe 4.3.7 download returned HTTP 500 before any repository HXX gate ran",
+        "resolution": "rerun only the failed Haxe job on the same immutable commit; no source change"
       }
     ]
   },

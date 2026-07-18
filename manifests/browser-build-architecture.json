@@ -309,7 +309,7 @@
     "architectureAccepted": true,
     "genesReleaseGatePassed": true,
     "sdkStrictFixture": "verified-by-sdk-031-strict-browser-profile",
-    "gutenbergHxxFixture": "implemented-by-sdk-032-hosted-verification-pending",
+    "gutenbergHxxFixture": "verified-by-sdk-032-react-gutenberg-hxx",
     "wordpressBundleAndAssetParity": "owned-by-wordpresshx-sdk-033",
     "classicDifferential": "owned-by-wordpresshx-sdk-035",
     "sourceMaps": "owned-by-wordpresshx-sdk-034",
