@@ -1260,14 +1260,23 @@ assert all(
 assert sdk031_local["harnessPortability"]["genesSymlinkTraversalGuardRelaxed"] is False
 
 sdk031_repository_hosted = sdk031_receipt["repositoryHostedVerification"]
-if sdk031_receipt["status"] == "implemented-hosted-pending":
-    assert sdk031_repository_hosted == {
-        "workflow": "Repository bootstrap",
-        "runId": None,
-        "commit": None,
-        "status": "pending",
-        "haxeJob": "pending",
+assert sdk031_repository_hosted["workflow"] == "Repository bootstrap"
+assert sdk031_repository_hosted["discardedAttempts"] == [
+    {
+        "runId": 29634010485,
+        "commit": "24f32ca12a76c7e95ad8a715051f20728da7c004",
+        "outcome": "failed-before-sdk031-compile",
+        "reason": (
+            "the gate invoked setup-haxe instead of the Lix shim after scoped "
+            "dependencies were downloaded; all other hosted jobs passed"
+        ),
     }
+]
+if sdk031_receipt["status"] == "implemented-hosted-pending":
+    assert sdk031_repository_hosted["runId"] is None
+    assert sdk031_repository_hosted["commit"] is None
+    assert sdk031_repository_hosted["status"] == "pending"
+    assert sdk031_repository_hosted["haxeJob"] == "pending"
     assert sdk031_receipt["claims"]["deterministicGeneratedOutput"] == (
         "locally-tested"
     )

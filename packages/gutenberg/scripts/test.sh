@@ -12,21 +12,16 @@ for command_name in docker git haxe haxelib lix node npm python3; do
   fi
 done
 
-lix_package_path="$({
-  python3 - "$(command -v lix)" <<'PY'
-from pathlib import Path
-import sys
-
-print(Path(sys.argv[1]).resolve().parents[1] / "package.json")
-PY
-} )"
+lix_package_path="$(npm root --global)/lix/package.json"
+lix_haxe="$(npm prefix --global)/bin/haxe"
 if [[ ! -f "${lix_package_path}" ]] \
+  || [[ ! -x "${lix_haxe}" ]] \
   || [[ "$(node -p 'require(process.argv[1]).version' "${lix_package_path}")" != "15.12.4" ]] \
   || [[ "$(lix --version)" != "15.12.2" ]]; then
   echo "SDK-031 browser gate requires npm package Lix 15.12.4 (CLI reports 15.12.2)" >&2
   exit 1
 fi
-if [[ "$(cd "${package_root}" && haxe --version)" != "4.3.7" ]]; then
+if [[ "$(cd "${package_root}" && "${lix_haxe}" --version)" != "4.3.7" ]]; then
   echo "SDK-031 browser gate requires Lix-scoped Haxe 4.3.7" >&2
   exit 1
 fi
@@ -80,15 +75,15 @@ generate_root() {
     "${output_root}/default"
   (
     cd "${package_root}"
-    haxe \
+    "${lix_haxe}" \
       profiles/strict.hxml \
       -js "${output_root}/strict/src-gen/index.ts" \
       -D "wordpress_hx_browser_export_manifest=${output_root}/strict/browser-exports.json"
-    haxe \
+    "${lix_haxe}" \
       profiles/classic.hxml \
       -js "${output_root}/classic/src-gen/index.js" \
       -D "wordpress_hx_browser_export_manifest=${output_root}/classic/browser-exports.json"
-    haxe \
+    "${lix_haxe}" \
       profiles/default-dce.hxml \
       -js "${output_root}/default/index.js"
   )
@@ -104,7 +99,7 @@ expect_compile_failure() {
   local expected_diagnostic="$2"
   shift 2
   local output="${tooling_root}/negative-${label}.txt"
-  if (cd "${package_root}" && haxe "$@") >"${output}" 2>&1; then
+  if (cd "${package_root}" && "${lix_haxe}" "$@") >"${output}" 2>&1; then
     echo "negative browser fixture unexpectedly compiled: ${label}" >&2
     exit 1
   fi

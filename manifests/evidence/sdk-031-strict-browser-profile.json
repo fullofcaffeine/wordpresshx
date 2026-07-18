@@ -179,7 +179,7 @@
     "gate": {
       "command": "bash packages/gutenberg/scripts/test.sh",
       "outcome": "passed",
-      "finalDurationSeconds": 16.16,
+      "finalDurationSeconds": 17.53,
       "secondCleanCompileMatched": true
     },
     "verifiers": {
@@ -196,7 +196,7 @@
       },
       "gateScript": {
         "path": "packages/gutenberg/scripts/test.sh",
-        "sha256": "44b97008fa87a0e8d9eec18db0358921ee29f676a5c0b23fc1e33e75fe9903d2"
+        "sha256": "caa6addb4468ff23feef8c97780ea672cfb24571f09fbd2b3593e9a6f42470f4"
       }
     },
     "generatedArtifacts": {
@@ -243,7 +243,10 @@
       "finding": "macOS exposes the temporary directory through the /var -> /private/var symlink",
       "resolution": "canonicalize the temporary parent before output selection",
       "genesSymlinkTraversalGuardRelaxed": false,
-      "linuxBehaviorChanged": false
+      "linuxBehaviorChanged": false,
+      "hostedCompilerFinding": "setup-haxe and Lix provided different haxe commands; only the Lix shim owns the scoped dependency graph",
+      "hostedCompilerResolution": "invoke the exact npm-installed Lix Haxe shim for every positive and negative compile",
+      "hostedCompilerGuardRelaxed": false
     }
   },
   "repositoryHostedVerification": {
@@ -251,7 +254,15 @@
     "runId": null,
     "commit": null,
     "status": "pending",
-    "haxeJob": "pending"
+    "haxeJob": "pending",
+    "discardedAttempts": [
+      {
+        "runId": 29634010485,
+        "commit": "24f32ca12a76c7e95ad8a715051f20728da7c004",
+        "outcome": "failed-before-sdk031-compile",
+        "reason": "the gate invoked setup-haxe instead of the Lix shim after scoped dependencies were downloaded; all other hosted jobs passed"
+      }
+    ]
   },
   "claims": {
     "immutableCompilerAdmission": "verified",
