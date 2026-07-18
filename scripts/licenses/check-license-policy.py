@@ -808,8 +808,13 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
         'readonly formatter_version="1.18.0"' in formatter,
         "Formatter version must match the inventory",
     )
-    beads_version = audit.read_text(".beads/.local_version").strip()
-    audit.check(beads_version == "1.0.4", "Beads managed version must remain 1.0.4")
+    for hook_path in (".beads/hooks/pre-commit", ".beads/hooks/pre-push"):
+        hook = audit.read_text(hook_path)
+        audit.check(
+            "# --- BEGIN BEADS INTEGRATION v1.0.4 ---" in hook
+            and "# --- END BEADS INTEGRATION v1.0.4 ---" in hook,
+            f"{hook_path} must retain the tracked Beads 1.0.4 managed section",
+        )
 
     publish_patterns = {
         "Haxelib publication": re.compile(r"\bhaxelib\s+submit\b"),
