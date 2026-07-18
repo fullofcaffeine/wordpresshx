@@ -1417,6 +1417,10 @@ if sdk025_hosted["status"] == "passed":
     assert sdk025_receipt["status"] == "verified"
     assert sha1.fullmatch(sdk025_hosted["commit"])
     assert isinstance(sdk025_hosted["runId"], int)
+    assert sdk025_hosted["fullMatrixStatus"] == "passed"
+    assert sdk025_hosted["jobCount"] == 10
+    assert sdk025_hosted["haxeJobId"] == 88081445092
+    assert sdk025_hosted["cliStep"] == "Test Haxe and Genes PHP trace CLI"
 else:
     assert sdk025_hosted["commit"] is None
     assert sdk025_hosted["runId"] is None

@@ -136,8 +136,18 @@ def main() -> int:
     )
     def invent_hosted_proof(root: Path) -> None:
         def mutate(value: dict) -> None:
+            invented_commit = "0" * 40
             value["status"] = "verified"
             value["claims"]["g0ProductAuthorityAndBaseline"] = "verified"
+            value["implementation"]["commit"] = invented_commit
+            value["hostedWorkflow"] = {
+                "workflow": "repository.yml",
+                "runId": None,
+                "commit": invented_commit,
+                "status": "passed",
+                "fullMatrixStatus": "passed",
+                "jobCount": 10,
+            }
 
         mutate_json(root, "manifests/evidence/g0-product-baseline.json", mutate)
 

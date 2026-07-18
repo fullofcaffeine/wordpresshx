@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-025-PHP-SOURCE-CORRELATION",
   "bead": "wordpresshx-sdk-025",
-  "status": "implemented-local-verified",
-  "observedAt": "2026-07-18T12:06:37Z",
+  "status": "verified",
+  "observedAt": "2026-07-18T12:48:23Z",
   "subject": {
     "architecture": "manifests/source-correlation-architecture.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -57,7 +57,7 @@
     "mariadb": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b"
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "3fc02d0168d929993e42226db6e419a229b50267",
     "genericCompiler": {
       "exactSourceIdentity": true,
       "contentAuthenticatedSources": true,
@@ -303,10 +303,14 @@
     "debugCompanionBoundToProductionPhp": true
   },
   "hostedVerification": {
-    "status": "pending-rerun-after-lix-shim-fix",
+    "status": "passed",
     "workflow": "Repository bootstrap",
-    "commit": null,
-    "runId": null,
+    "commit": "3fc02d0168d929993e42226db6e419a229b50267",
+    "runId": 29644917228,
+    "fullMatrixStatus": "passed",
+    "jobCount": 10,
+    "haxeJobId": 88081445092,
+    "cliStep": "Test Haxe and Genes PHP trace CLI",
     "discardedAttempts": [
       {
         "runId": 29644579049,
