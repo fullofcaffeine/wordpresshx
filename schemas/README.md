@@ -30,6 +30,20 @@ relinquish operations to private stage and backup paths. It enables hash-inferre
 finalize or rollback after interruption; it is not the SDK-041 production
 transaction implementation.
 
+[`project.schema.json`](project.schema.json) and
+[`project-lock.schema.json`](project-lock.schema.json) are the accepted ADR-016
+bootstrap and exact generated project-lock contracts. The bootstrap is limited
+to pre-Haxe discovery; typed site modules and development services remain Haxe
+semantic-plan authority. The lock binds exact profile, SDK/CLI, compiler,
+runtime, package-manager, build-tool, manifest, and lockfile identities.
+
+[`effective-inputs.schema.json`](effective-inputs.schema.json) closes the
+content-addressed source/discovery/tool/environment graph shared by bounded
+builds and watch mode. [`cli-event.schema.json`](cli-event.schema.json) closes
+the canonical JSONL command/stage/diagnostic/service event vocabulary. Their
+contract fixture proves deterministic state transitions only; SDK-043/044
+still own the production CLI, watcher, server, and process implementation.
+
 [`php-haxe-map.schema.json`](php-haxe-map.schema.json) and
 [`source-correlation-index.schema.json`](source-correlation-index.schema.json)
 are the accepted ADR-014 contracts. The PHP format binds half-open UTF-8 byte

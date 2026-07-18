@@ -35,6 +35,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   recovery, clean, and adoption lock. Its temporary-filesystem harness validates
   the contract; SDK-041 still owns the production Haxe/CLI implementation and
   broader platform evidence.
+- `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
+  effective-input, `wphx` command/stage/event, isolated compiler-server, and
+  one-command development-loop lock. Its synthetic transcript proves dry-run,
+  last-good, reload-order, and shutdown semantics; SDK-043/044 still own real
+  CLI/watch/process/WordPress/Next.js evidence.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
@@ -95,6 +100,12 @@ manifest-only clean, explicit relinquishment, 11 positive filesystem scenarios,
 17 fail-closed filesystem cases, and 25 schema/journal mutations. It is contract evidence only;
 SDK-041, power-loss/Windows behavior, real site trees, packaging, and production
 support remain untested.
+
+Receipt `ADR-016-PROJECT-CLI-CONFIGURATION` records four closed schemas, a
+synthetic Haxe-only consumer, an exact generated project lock, nine effective
+files, five discovery roots, eight toolchain components, 22 dry-run events,
+23 development events, and 28 fail-closed mutations. It establishes no real
+watcher, service, browser reload, installed-consumer, or production claim.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

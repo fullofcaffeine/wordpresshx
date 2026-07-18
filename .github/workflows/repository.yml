@@ -140,6 +140,9 @@ jobs:
         run: haxelib install formatter 1.18.0 --quiet
       - name: Check Haxe formatting
         run: bash scripts/lint/hx-format-guard.sh
+      - name: Type the ADR-016 Haxe-only project contract
+        working-directory: fixtures/project-cli/project
+        run: haxe .wphx/bootstrap/project.hxml
       - name: Test exact profile Haxe contracts and compile failures
         run: bash scripts/profiles/test-profile-haxe.sh
       - name: Test generic PHP compiler package

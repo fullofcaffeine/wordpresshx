@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-016-PROJECT-CLI-CONFIGURATION",
+  "bead": "wordpresshx-adr-016",
+  "observedAt": "2026-07-18T19:55:00Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/016-project-and-cli-configuration.md",
+      "sha256": "c6d731f9615da38ca8f3e45e8860d372dfd0ecd4ff938969b808aa1f35571dbe"
+    },
+    "architecture": {
+      "path": "manifests/project-cli-architecture.json",
+      "sha256": "9103cd4c3d92baa2e77401df134a8033e00af3a15320e5ebc868295f234b88ae"
+    },
+    "projectSchema": {
+      "path": "schemas/project.schema.json",
+      "sha256": "dbce06ce7a336e159e1b551b17120ce3c958b2545730da2b24fac6614d98b920"
+    },
+    "projectLockSchema": {
+      "path": "schemas/project-lock.schema.json",
+      "sha256": "f232581d27a192631a15864d5cfa29fc6343858c171d537c4a177b6cc442c831"
+    },
+    "effectiveInputsSchema": {
+      "path": "schemas/effective-inputs.schema.json",
+      "sha256": "403ffd1f0c112c726b3de47009acae05dad4f631a75d28d95c304dd989878d1a"
+    },
+    "cliEventSchema": {
+      "path": "schemas/cli-event.schema.json",
+      "sha256": "a9025459637adf399794e7f4d1f743eca7070da6a51cc88cfdb38cc05faf76fd"
+    },
+    "validator": {
+      "path": "scripts/project-cli/test-contract.py",
+      "sha256": "243bfeb3e0dcef7b7d34dd5cf13e4ab81a239970c30a8df13e0e4020917308ee"
+    },
+    "gate": {
+      "path": "scripts/project-cli/test.sh",
+      "sha256": "e96d93856a2e65c6a0afa224d736444e98b05ba8711644f0ce9a5522e9ce1d5f"
+    },
+    "projectFixture": {
+      "path": "fixtures/project-cli/project/wordpress-hx.json",
+      "sha256": "5cf302324ffb5618fe2410b5547d93a74326f3e5c0e812dc48afa5062470c36f"
+    },
+    "haxeSiteFixture": {
+      "path": "fixtures/project-cli/project/src/acme/site/Site.hx",
+      "sha256": "f573acf774fa9b2f6894dac036ba0b8a9cde76a5c2f1f6ac1e3a982296fad87c"
+    },
+    "haxeBootstrapFixture": {
+      "path": "fixtures/project-cli/project/.wphx/bootstrap/project.hxml",
+      "sha256": "fe27f404f38bc0ad79e2eca234d95c370f97c464e4b64c9db553c05d5da2c360"
+    },
+    "projectLockFixture": {
+      "path": "fixtures/project-cli/project/.wphx/project.lock.json",
+      "sha256": "d200cd7ee8e1f84c6763e461dc8f7429aeb735c243466344265196e2c74cdc83"
+    },
+    "effectiveInputsFixture": {
+      "path": "fixtures/project-cli/valid/effective-inputs.json",
+      "sha256": "e32b65f3ab61e7acab6e3a27348d12648b18f434b918851d74e4c0c02ffd8e7d"
+    },
+    "dryRunEventsFixture": {
+      "path": "fixtures/project-cli/valid/build-dry-run.events.jsonl",
+      "sha256": "d563b1282fe33922a225177be026a159e3dcab3f83599a5613e6cfc98f3b455d"
+    },
+    "devEventsFixture": {
+      "path": "fixtures/project-cli/valid/dev.events.jsonl",
+      "sha256": "d1186b313b9a8401ef010dba745bff6fb27bf7033b18804e654395e42e5416e7"
+    }
+  },
+  "contract": {
+    "projectSchema": "wordpress-hx.project.v1",
+    "projectLockSchema": "wordpress-hx.project-lock.v1",
+    "effectiveInputsSchema": "wordpress-hx.effective-inputs.v1",
+    "cliEventSchema": "wordpress-hx.cli-event.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "binary": "wphx",
+    "developmentCommand": "wphx dev",
+    "compileWatchOnly": "wphx dev --services=none",
+    "packageManager": "npm@10.9.2",
+    "projectConfigSemanticSha256": "df18cceedf89682510cd191c6d8551e9b0401c30fc16c81852051ce11b7e8c6c",
+    "projectLockDigest": "18a0c4d77672842deca9937100f7daa1e43deb5c9ba118eaa4cfb2a8ca02fe5a",
+    "effectiveInputsFingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "compileServerCompatibilityDigest": "1aaf21272446d929ae6decffd2f2e8db87b530a36667f124fb5efc6725be931b"
+  },
+  "verification": {
+    "command": "bash scripts/project-cli/test.sh",
+    "schemaCount": 4,
+    "effectiveFileCount": 9,
+    "discoveryRootCount": 5,
+    "toolchainComponentCount": 8,
+    "dryRunEventCount": 22,
+    "devEventCount": 23,
+    "negativeMutationCount": 28,
+    "haxeCommand": "(cd fixtures/project-cli/project && haxe .wphx/bootstrap/project.hxml)",
+    "haxeVersion": "4.3.7",
+    "haxeFixtureTyping": "passed",
+    "deterministicReplay": "passed",
+    "buildEnvironmentInvalidation": "passed",
+    "runtimeSecretExclusion": "passed",
+    "newSourceDiscovery": "passed",
+    "generatedOutputExclusion": "passed",
+    "dryRunNonMutation": "passed",
+    "failedRebuildRetainsExactLastGood": "passed",
+    "reloadOnlyAfterCompletePublish": "passed",
+    "ownedProcessesStopInReverseOrder": "passed",
+    "linkAndSpecialFileRejection": "passed",
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repository": "haxe.elixir.codex",
+    "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+    "exactCommitPathBlobAndSha256Recorded": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "jobs": {
+      "contract": {
+        "name": "repository",
+        "jobId": null
+      },
+      "haxeTyping": {
+        "name": "haxe",
+        "jobId": null
+      }
+    },
+    "runId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "limitations": [
+    "The corpus is a deterministic architecture fixture, not the production Haxe/Genes CLI.",
+    "No real filesystem watcher, Haxe wait server, child process, port, readiness probe, WordPress service, Next.js service, or browser reload is executed.",
+    "The synthetic co-located SDK lock identity is not a registry publication or clean installed-consumer proof.",
+    "Windows watcher/process behavior, abrupt host failure, and production support remain untested."
+  ],
+  "claims": {
+    "architectureDecision": "accepted",
+    "schemaAndFixtureContract": "validated",
+    "sdk043ProductionCli": "not-tested",
+    "sdk044RealWatchAndProcessSupervisor": "not-tested",
+    "haxeServerRuntimeBehavior": "not-tested",
+    "cleanInstalledConsumer": "not-tested",
+    "wordpressDevelopmentService": "not-tested",
+    "nextjsDevelopmentService": "not-tested",
+    "automaticBrowserReload": "not-tested",
+    "windowsWatcherAndProcessBehavior": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

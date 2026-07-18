@@ -33,3 +33,9 @@ PHP range maps offline, preserves native frames, emits stable text or canonical
 JSON, and consumes separately retained debug companions. Browser trace
 correlation remains SDK-034 work. No Genes source change, sibling checkout, or
 WordPress-specific compiler branch was required.
+
+ADR-016 selects `wphx` as that package's final project-local binary and defines
+the project bootstrap, exact lock, effective inputs, stable stages/events, and
+`wphx dev` lifecycle. The existing trace-only prototype still uses the private
+`wphx-sdk` bin until SDK-043 migrates it; SDK-044 owns the real watcher and
+service supervisor.

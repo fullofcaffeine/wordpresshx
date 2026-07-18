@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/project.schema.json",
+  "title": "WordPressHx project bootstrap configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "projectId",
+    "entryPoint",
+    "profile",
+    "paths",
+    "toolchain",
+    "environment"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.project.v1"
+    },
+    "projectId": {
+      "$ref": "#/$defs/stableId"
+    },
+    "entryPoint": {
+      "$ref": "#/$defs/haxeType"
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "paths": {
+      "$ref": "#/$defs/paths"
+    },
+    "toolchain": {
+      "$ref": "#/$defs/toolchain"
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "haxeType": {
+      "type": "string",
+      "pattern": "^(?:[a-z][A-Za-z0-9_]*\\.)+[A-Z][A-Za-z0-9_]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "environmentName": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "outputRoot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRoots",
+        "testRoots",
+        "assetRoots",
+        "outputRoots",
+        "distributionRoot",
+        "stateRoot"
+      ],
+      "properties": {
+        "sourceRoots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "testRoots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "assetRoots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "outputRoots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/outputRoot"
+          }
+        },
+        "distributionRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "stateRoot": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "packageManager": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "manifest",
+        "lockfile"
+      ],
+      "properties": {
+        "kind": {
+          "const": "npm"
+        },
+        "manifest": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "lockfile": {
+          "$ref": "#/$defs/relativePath"
+        }
+      }
+    },
+    "toolchain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lock",
+        "packageManager"
+      ],
+      "properties": {
+        "lock": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "packageManager": {
+          "$ref": "#/$defs/packageManager"
+        }
+      }
+    },
+    "buildEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "required",
+        "classification"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/environmentName"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "classification": {
+          "const": "public-build"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    },
+    "runtimeEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "required",
+        "classification",
+        "services"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/environmentName"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "classification": {
+          "enum": [
+            "public-runtime",
+            "secret-runtime"
+          ]
+        },
+        "services": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "build",
+        "runtime"
+      ],
+      "properties": {
+        "build": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/buildEnvironment"
+          }
+        },
+        "runtime": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/runtimeEnvironment"
+          }
+        }
+      }
+    }
+  }
+}

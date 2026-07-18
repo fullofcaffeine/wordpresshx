@@ -1,0 +1,59 @@
+{
+  "schema": "wordpress-hx.project.v1",
+  "projectId": "acme-observatory",
+  "entryPoint": "acme.site.Site",
+  "profile": {
+    "id": "wp70-release"
+  },
+  "paths": {
+    "sourceRoots": [
+      "src"
+    ],
+    "testRoots": [
+      "test"
+    ],
+    "assetRoots": [
+      "assets"
+    ],
+    "outputRoots": [
+      {
+        "id": "nextjs",
+        "path": "build/nextjs"
+      },
+      {
+        "id": "wordpress",
+        "path": "build/wordpress"
+      }
+    ],
+    "distributionRoot": "dist",
+    "stateRoot": ".wphx"
+  },
+  "toolchain": {
+    "lock": ".wphx/project.lock.json",
+    "packageManager": {
+      "kind": "npm",
+      "manifest": "npm-manifest.json",
+      "lockfile": "npm-lock.json"
+    }
+  },
+  "environment": {
+    "build": [
+      {
+        "name": "SITE_LOCALE",
+        "required": false,
+        "classification": "public-build",
+        "default": "en_US"
+      }
+    ],
+    "runtime": [
+      {
+        "name": "WP_DB_PASSWORD",
+        "required": false,
+        "classification": "secret-runtime",
+        "services": [
+          "wordpress"
+        ]
+      }
+    ]
+  }
+}

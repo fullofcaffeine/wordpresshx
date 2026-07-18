@@ -6,6 +6,13 @@ browser Source Map v3 correlation. Its application logic is Haxe and Genes
 emits the Node ESM executable; there is no handwritten JavaScript implementation
 and no dependency on a sibling Genes checkout.
 
+ADR-016 selects `wphx` as the generated-project binary and `wphx dev` as the
+one-command development loop. This package is still a private trace-only
+prototype whose checked launcher is named `wphx-sdk`; SDK-043 must add and
+migrate the final command without invalidating the existing correlation
+evidence, and SDK-044 must prove real watch/process behavior. No released user
+depends on the prototype spelling.
+
 The package is internal and publication remains blocked. Its exact build closure
 is recorded in [`dependency-lock.json`](dependency-lock.json): Haxe 4.3.7,
 Lix package 15.12.4 (reported CLI 15.12.2),

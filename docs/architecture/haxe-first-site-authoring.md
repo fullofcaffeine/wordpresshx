@@ -195,7 +195,12 @@ wphx inspect
 wphx package
 ```
 
-Command names remain provisional until the CLI ADR. `dev` may coordinate normal file watching, browser bundling, and page reload. It must not introduce a production application kernel or proprietary PHP hot-reload protocol.
+[ADR-016](../adr/016-project-and-cli-configuration.md) accepts these `wphx`
+names and makes `dev` the one-command initial-build, effective-input watch,
+WordPress/Next service, readiness, and reload loop. Typed service declarations
+stay in Haxe; a small generated bootstrap exists only for pre-Haxe discovery.
+`dev` retains the last complete ownership generation on failure and introduces
+no production application kernel or proprietary PHP hot-reload protocol.
 
 ## Native artifact mapping
 

@@ -29,3 +29,10 @@ journal, and exact artifact bytes. Its reference-only harness exercises real
 temporary filesystem publication, rollback, crash recovery, clean, adoption,
 links, collisions, edits, and malformed state. It is not SDK-041 production
 code or a runtime/platform support claim.
+
+`project-cli/` contains the ADR-016 synthetic Haxe-only consumer, generated
+bootstrap/lock, deterministic effective-input graph, bounded dry-run events,
+and development-loop JSONL transcript. Its contract harness exercises input
+discovery, environment separation, last-good retention, reload ordering, and
+owned shutdown. It is not the SDK-043 CLI, SDK-044 watcher/process supervisor,
+or WordPress/Next.js runtime evidence.

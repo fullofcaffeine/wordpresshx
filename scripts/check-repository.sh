@@ -36,6 +36,7 @@ required_files=(
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/014-source-maps-and-php-trace-correlation.md
+  docs/adr/016-project-and-cli-configuration.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
@@ -256,6 +257,10 @@ required_files=(
   schemas/semantic-plan.schema.json
   schemas/generated-files.schema.json
   schemas/ownership-transaction-journal.schema.json
+  schemas/project.schema.json
+  schemas/project-lock.schema.json
+  schemas/effective-inputs.schema.json
+  schemas/cli-event.schema.json
   schemas/source-correlation-index.schema.json
   scripts/source-correlation/validate-contracts.py
   scripts/source-correlation/validate-sdk025.py
@@ -263,6 +268,8 @@ required_files=(
   scripts/semantic-plan/test.sh
   scripts/ownership/test-contract.py
   scripts/ownership/test.sh
+  scripts/project-cli/test-contract.py
+  scripts/project-cli/test.sh
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -279,6 +286,19 @@ required_files=(
   fixtures/ownership/valid/current.generated-files.json
   fixtures/ownership/valid/next.generated-files.json
   fixtures/ownership/valid/prepared.journal.json
+  fixtures/project-cli/README.md
+  fixtures/project-cli/project/.haxerc
+  fixtures/project-cli/project/.wphx/bootstrap/project.hxml
+  fixtures/project-cli/project/.wphx/project.lock.json
+  fixtures/project-cli/project/assets/brand.txt
+  fixtures/project-cli/project/npm-lock.json
+  fixtures/project-cli/project/npm-manifest.json
+  fixtures/project-cli/project/src/acme/site/Site.hx
+  fixtures/project-cli/project/test/acme/site/SiteTest.hx
+  fixtures/project-cli/project/wordpress-hx.json
+  fixtures/project-cli/valid/build-dry-run.events.jsonl
+  fixtures/project-cli/valid/dev.events.jsonl
+  fixtures/project-cli/valid/effective-inputs.json
   fixtures/profiles/README.md
   fixtures/profiles/valid/gutenberg-forward-23.4.json
   fixtures/profiles/valid/wp70-release.json
@@ -315,6 +335,7 @@ required_files=(
   manifests/source-correlation-architecture.json
   manifests/semantic-plan-architecture.json
   manifests/generated-artifact-ownership.json
+  manifests/project-cli-architecture.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -325,6 +346,7 @@ required_files=(
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
+  manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -652,6 +674,14 @@ ownership_architecture = json.loads(
 ownership_receipt = json.loads(
     Path(
         "manifests/evidence/adr-007-generated-artifact-ownership.json"
+    ).read_text(encoding="utf-8")
+)
+project_cli_architecture = json.loads(
+    Path("manifests/project-cli-architecture.json").read_text(encoding="utf-8")
+)
+project_cli_receipt = json.loads(
+    Path(
+        "manifests/evidence/adr-016-project-cli-configuration.json"
     ).read_text(encoding="utf-8")
 )
 cli_dependency_lock = json.loads(
@@ -1533,6 +1563,256 @@ for unproven_ownership_receipt_claim in (
 ):
     assert ownership_receipt["claims"][
         unproven_ownership_receipt_claim
+    ] == "not-tested"
+
+assert project_cli_architecture["schemaVersion"] == 1
+assert project_cli_architecture["decision"] == "ADR-016"
+assert project_cli_architecture["status"] == (
+    "accepted-contract-not-sdk043-or-sdk044-production-implementation"
+)
+project_cli_contracts = project_cli_architecture["contracts"]
+for project_cli_contract_name in (
+    "project",
+    "projectLock",
+    "effectiveInputs",
+    "events",
+):
+    project_cli_contract = project_cli_contracts[project_cli_contract_name]
+    assert hashlib.sha256(
+        Path(project_cli_contract["schemaPath"]).read_bytes()
+    ).hexdigest() == project_cli_contract["schemaSha256"]
+for contract_name, fixture_fields in (
+    ("project", ("fixturePath",)),
+    ("projectLock", ("fixturePath",)),
+    ("effectiveInputs", ("fixturePath",)),
+    ("events", ("dryRunFixturePath", "devFixturePath")),
+):
+    contract = project_cli_contracts[contract_name]
+    for fixture_field in fixture_fields:
+        fixture_digest_field = fixture_field.replace("Path", "Sha256")
+        assert hashlib.sha256(Path(contract[fixture_field]).read_bytes()).hexdigest() == (
+            contract[fixture_digest_field]
+        )
+project_cli_config_fixture = json.loads(
+    Path(project_cli_contracts["project"]["fixturePath"]).read_text(
+        encoding="utf-8"
+    )
+)
+project_cli_lock_fixture = json.loads(
+    Path(project_cli_contracts["projectLock"]["fixturePath"]).read_text(
+        encoding="utf-8"
+    )
+)
+project_cli_effective_fixture = json.loads(
+    Path(project_cli_contracts["effectiveInputs"]["fixturePath"]).read_text(
+        encoding="utf-8"
+    )
+)
+assert project_cli_config_fixture["schema"] == "wordpress-hx.project.v1"
+assert project_cli_lock_fixture["schema"] == "wordpress-hx.project-lock.v1"
+assert project_cli_lock_fixture["lockDigest"] == (
+    project_cli_contracts["projectLock"]["lockDigest"]
+)
+assert project_cli_effective_fixture["schema"] == (
+    "wordpress-hx.effective-inputs.v1"
+)
+assert project_cli_effective_fixture["fingerprint"] == (
+    project_cli_contracts["effectiveInputs"]["fingerprint"]
+)
+assert project_cli_contracts["events"]["identity"] == (
+    "wordpress-hx.cli-event.v1"
+)
+project_cli_configuration = project_cli_architecture["configurationAuthority"]
+assert project_cli_configuration["bootstrapPath"] == "wordpress-hx.json"
+assert project_cli_configuration["bootstrapGeneratedByCli"] is True
+assert project_cli_configuration["bootstrapIsApplicationModuleGraph"] is False
+assert project_cli_configuration["typedDevelopmentServices"] is True
+assert project_cli_configuration["handwrittenHxmlRequired"] is False
+assert project_cli_configuration[
+    "handwrittenPhpJsTsJsonOrCssRequiredForGreenfield"
+] is False
+assert project_cli_configuration["implicitLockMigrationDuringBuild"] is False
+project_cli_commands = project_cli_architecture["commandContract"]
+assert project_cli_commands["package"] == "@wordpress-hx/cli"
+assert project_cli_commands["binary"] == "wphx"
+assert project_cli_commands["legacyPrototypeBinary"] == "wphx-sdk"
+assert project_cli_commands["legacyPrototypePublicCompatibilityGuaranteed"] is False
+assert project_cli_commands["watchCommand"] is None
+assert project_cli_commands["compileWatchOnly"] == "wphx dev --services=none"
+assert project_cli_commands["ciDefault"] == "direct-bounded-build"
+assert project_cli_commands["machineOutput"] == "canonical-json-lines"
+assert project_cli_architecture["buildStages"] == [
+    "configuration",
+    "profile-resolution",
+    "haxe-typing-and-plan",
+    "php-emission",
+    "browser-emission",
+    "metadata-emission",
+    "format-and-static-check",
+    "asset-build",
+    "artifact-validation",
+    "ownership-publish",
+]
+project_cli_package_manager = project_cli_architecture["packageManager"]
+assert project_cli_package_manager["supportedV1"] == "npm"
+assert project_cli_package_manager["exactVersion"] == "10.9.2"
+assert project_cli_package_manager["lockfileVersion"] == 3
+assert project_cli_package_manager["implicitInstallDuringBuildCheckOrDev"] is False
+assert project_cli_package_manager["pnpmYarnOrBunSupportClaimed"] is False
+project_cli_inputs = project_cli_architecture["effectiveInputs"]
+assert project_cli_inputs["contentDigestsRequired"] is True
+assert project_cli_inputs["directoryDiscoveryRulesIncluded"] is True
+assert project_cli_inputs["macroExternalInputsMustBeDeclared"] is True
+assert project_cli_inputs["publicBuildEnvironmentValueDigestsIncluded"] is True
+assert project_cli_inputs["runtimeAndSecretValuesIncluded"] is False
+assert project_cli_inputs["absoluteCheckoutPathsIncluded"] is False
+assert project_cli_inputs["mtimesPortsPidsOrClocksIncluded"] is False
+assert project_cli_inputs["symlinksOrSpecialFilesAllowed"] is False
+assert project_cli_inputs["incrementalPublication"] == (
+    "complete-next-staging-through-adr-007"
+)
+project_cli_dev_loop = project_cli_architecture["developmentLoop"]
+assert project_cli_dev_loop["command"] == "wphx dev"
+assert project_cli_dev_loop["initialAtomicBuildBeforeArtifactDependentServices"] is True
+assert project_cli_dev_loop["defaultDebounceMs"] == 100
+assert project_cli_dev_loop["parallelBuildOrPublication"] is False
+assert project_cli_dev_loop["failedRebuild"] == (
+    "retain-exact-last-good-manifest-and-do-not-reload"
+)
+assert project_cli_dev_loop["reloadOnlyAfterManifestCommit"] is True
+assert project_cli_dev_loop["productionReloadOrWatcherRuntime"] is False
+assert project_cli_dev_loop["sigintExitCode"] == 130
+project_cli_server = project_cli_architecture["compileServer"]
+assert project_cli_server["defaultForDev"] == "managed-project-local-haxe-wait"
+assert project_cli_server["defaultForBoundedCommands"] == "direct"
+assert project_cli_server["compatibilityDigest"] == (
+    project_cli_effective_fixture["compileServer"]["compatibilityDigest"]
+)
+assert project_cli_server["absoluteProjectRootPersisted"] is False
+assert project_cli_server["arbitraryReachableServerAttach"] is False
+assert project_cli_server["ownedServerStoppedOnShutdown"] is True
+assert project_cli_server["attachedServerKilledByClient"] is False
+assert project_cli_server["cacheMayChangeSemantics"] is False
+project_cli_services = project_cli_architecture["developmentServices"]
+assert project_cli_services["authority"] == "typed-haxe-semantic-plan"
+assert project_cli_services["implicitShellCommands"] is False
+assert project_cli_services["environmentAllowlistRequired"] is True
+assert project_cli_services["secretValuesDurablyRecorded"] is False
+assert project_cli_services["unrelatedPortOccupantKilled"] is False
+assert project_cli_services["defaultReadinessTimeoutMs"] == 60000
+assert project_cli_services["ownedProcessGroups"] is True
+project_cli_references = project_cli_architecture["referencePatterns"]
+assert len(project_cli_references) == 6
+for project_cli_reference in project_cli_references:
+    assert project_cli_reference["repository"] == "haxe.elixir.codex"
+    assert project_cli_reference["commit"] == (
+        "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+    )
+    assert sha1.fullmatch(project_cli_reference["blob"])
+    assert sha256.fullmatch(project_cli_reference["sha256"])
+    assert project_cli_reference["copiedBytes"] is False
+    assert project_cli_reference["dependencyCreated"] is False
+project_cli_verification = project_cli_architecture["verification"]
+assert project_cli_verification["schemaCount"] == 4
+assert project_cli_verification["effectiveFileCount"] == 9
+assert project_cli_verification["discoveryRootCount"] == 5
+assert project_cli_verification["toolchainComponentCount"] == 8
+assert project_cli_verification["dryRunEventCount"] == 22
+assert project_cli_verification["devEventCount"] == 23
+assert project_cli_verification["negativeMutationCount"] == 28
+assert project_cli_verification["haxeCommand"] == (
+    "(cd fixtures/project-cli/project && haxe .wphx/bootstrap/project.hxml)"
+)
+assert project_cli_verification["haxeVersion"] == "4.3.7"
+assert project_cli_verification["haxeFixtureTyping"] == "passed"
+assert project_cli_verification["outcome"] == "passed"
+assert hashlib.sha256(
+    Path(project_cli_verification["validatorPath"]).read_bytes()
+).hexdigest() == project_cli_verification["validatorSha256"]
+assert project_cli_architecture["claims"]["architectureDecision"] == "accepted"
+assert project_cli_architecture["claims"]["schemaAndFixtureContract"] == (
+    "validated"
+)
+for unproven_project_cli_claim in (
+    "sdk043ProductionCli",
+    "sdk044RealWatchAndProcessSupervisor",
+    "haxeServerRuntimeBehavior",
+    "cleanInstalledConsumer",
+    "wordpressDevelopmentService",
+    "nextjsDevelopmentService",
+    "automaticBrowserReload",
+    "windowsWatcherAndProcessBehavior",
+    "productionSupport",
+):
+    assert project_cli_architecture["claims"][unproven_project_cli_claim] == (
+        "not-tested"
+    )
+
+assert project_cli_receipt["schemaVersion"] == 1
+assert project_cli_receipt["receiptId"] == (
+    "ADR-016-PROJECT-CLI-CONFIGURATION"
+)
+assert project_cli_receipt["bead"] == "wordpresshx-adr-016"
+for project_cli_subject in project_cli_receipt["subject"].values():
+    assert hashlib.sha256(Path(project_cli_subject["path"]).read_bytes()).hexdigest() == (
+        project_cli_subject["sha256"]
+    )
+assert project_cli_receipt["contract"]["binary"] == "wphx"
+assert project_cli_receipt["contract"]["developmentCommand"] == "wphx dev"
+assert project_cli_receipt["contract"]["projectLockDigest"] == (
+    project_cli_contracts["projectLock"]["lockDigest"]
+)
+assert project_cli_receipt["contract"]["effectiveInputsFingerprint"] == (
+    project_cli_contracts["effectiveInputs"]["fingerprint"]
+)
+assert project_cli_receipt["contract"]["compileServerCompatibilityDigest"] == (
+    project_cli_server["compatibilityDigest"]
+)
+assert project_cli_receipt["verification"]["schemaCount"] == 4
+assert project_cli_receipt["verification"]["effectiveFileCount"] == 9
+assert project_cli_receipt["verification"]["devEventCount"] == 23
+assert project_cli_receipt["verification"]["negativeMutationCount"] == 28
+assert project_cli_receipt["verification"]["haxeCommand"] == (
+    project_cli_verification["haxeCommand"]
+)
+assert project_cli_receipt["verification"]["haxeVersion"] == "4.3.7"
+assert project_cli_receipt["verification"]["haxeFixtureTyping"] == "passed"
+assert project_cli_receipt["verification"]["outcome"] == "passed"
+assert project_cli_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert project_cli_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert project_cli_receipt["referenceReview"]["genesSourceChanged"] is False
+project_cli_hosted = project_cli_receipt["hostedWorkflow"]
+assert project_cli_hosted["workflow"] == "Repository bootstrap"
+assert project_cli_hosted["jobs"]["contract"]["name"] == "repository"
+assert project_cli_hosted["jobs"]["haxeTyping"]["name"] == "haxe"
+assert project_cli_hosted["required"] is True
+if project_cli_hosted["status"] == "pending-first-hosted-main-run":
+    assert project_cli_hosted["runId"] is None
+    assert project_cli_hosted["jobs"]["contract"]["jobId"] is None
+    assert project_cli_hosted["jobs"]["haxeTyping"]["jobId"] is None
+    assert project_cli_hosted["commit"] is None
+elif project_cli_hosted["status"] == "passed":
+    assert isinstance(project_cli_hosted["runId"], int)
+    assert isinstance(project_cli_hosted["jobs"]["contract"]["jobId"], int)
+    assert isinstance(project_cli_hosted["jobs"]["haxeTyping"]["jobId"], int)
+    assert sha1.fullmatch(project_cli_hosted["commit"])
+else:
+    raise AssertionError("project CLI hosted status is invalid")
+assert project_cli_receipt["claims"]["architectureDecision"] == "accepted"
+assert project_cli_receipt["claims"]["schemaAndFixtureContract"] == "validated"
+for unproven_project_cli_receipt_claim in (
+    "sdk043ProductionCli",
+    "sdk044RealWatchAndProcessSupervisor",
+    "haxeServerRuntimeBehavior",
+    "cleanInstalledConsumer",
+    "wordpressDevelopmentService",
+    "nextjsDevelopmentService",
+    "automaticBrowserReload",
+    "windowsWatcherAndProcessBehavior",
+    "productionSupport",
+):
+    assert project_cli_receipt["claims"][
+        unproven_project_cli_receipt_claim
     ] == "not-tested"
 
 assert source_correlation_architecture["schemaVersion"] == 1
@@ -5152,6 +5432,7 @@ python3 scripts/php/test-emission-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/ownership/test-contract.py
+python3 scripts/project-cli/test-contract.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only

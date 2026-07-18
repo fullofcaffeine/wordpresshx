@@ -45,6 +45,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-014: Source maps and PHP trace correlation](014-source-maps-and-php-trace-correlation.md)
+- [ADR-016: Project and CLI configuration](016-project-and-cli-configuration.md)
 - [ADR-021: Release and support policy](021-release-and-support-policy.md)
 
 ## Proposed records
