@@ -142,6 +142,7 @@ required_files=(
   manifests/upstream.lock.json
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
+  manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
   manifests/evidence/sdk-011-gutenberg-forward-23.4.json
@@ -179,6 +180,7 @@ required_files=(
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
   scripts/beads/push-safe.sh
+  scripts/ci/check-checkout-action.py
   scripts/ci/check-security-tooling.sh
   scripts/ci/install-gitleaks.sh
   scripts/docker/check-image-lock.py

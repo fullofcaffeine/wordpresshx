@@ -29,6 +29,12 @@ packet, deterministic blocked-publication diagnostic, and negative mutations.
 It deliberately records no license grant or qualified acceptance; ADR-020 and
 SDK-002 remain open and all public publication remains blocked.
 
+Receipt `CI-CHECKOUT-NODE24` records the official `actions/checkout` v7.0.0
+release, exact verified commit/tree/license evidence, Node 24 runtime declaration,
+all ten immutable workflow pins, and preservation of full Git history only for
+the security lane. Its hosted claim is limited to the exact GitHub-hosted
+Ubuntu 24.04 workflow run; it creates no SDK or generated-artifact claim.
+
 Receipt `SDK-090-WORDPRESS-HARNESS` records the exact WordPress 7.0 container distribution proof and fresh installed runtime lanes over MySQL 8.4.10 and MariaDB 11.4.5. It advances only the vanilla harness and named environment evidence. SDK behavior, browser compatibility, packaged plugin/theme installation, PHP 7.4 WordPress hosting, and production support remain untested.
 
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

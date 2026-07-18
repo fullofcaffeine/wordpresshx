@@ -11,7 +11,7 @@
     },
     "components": {
       "path": "LICENSES/components.json",
-      "sha256": "07909c701affdc99a0dbc561473179bb96c5270d10dfe498fe5bed5ae53b0cfc"
+      "sha256": "60186086bfa747865ee40b0fad814c56819767209a7492fafcab675ab40c0b85"
     },
     "generatedOutput": {
       "path": "LICENSES/GENERATED_OUTPUT.md",
@@ -35,7 +35,7 @@
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "47f039e8645eb0987bc2be63c567f48f0018ea617a384a7e969b400fa81a7044"
+      "sha256": "716c13e5c5f22e89105ea32d344dea739bb8bfefd907f078de8a1f89b8674a81"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",

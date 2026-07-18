@@ -5,13 +5,13 @@
   "scope": "Repository source, generated catalogs, pinned compiler inputs, HXX parser closure, CI/build tools, and exact runtime test inputs present before ADR-020 acceptance.",
   "components": [
     {
-      "id": "actions-checkout-4.2.2",
+      "id": "actions-checkout-7.0.0",
       "name": "actions/checkout",
-      "version": "4.2.2",
+      "version": "7.0.0",
       "role": "hosted-ci-source-checkout",
       "repository": "https://github.com/actions/checkout",
-      "commit": "11bd71901bbe5b1630ceea73d27597364c9af683",
-      "tree": "eae7c53f2f38f74f97aa0d04fed48ece50437a1b",
+      "commit": "9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+      "tree": "2ddbcfc53840ba99a608fb2a72dd13c3ea7cb8dc",
       "artifact": null,
       "distribution": {
         "sourceCopiedIntoRepository": false,
@@ -22,7 +22,7 @@
       "licenseEvidence": [
         {
           "kind": "exact-source-license",
-          "locator": "https://github.com/actions/checkout/blob/11bd71901bbe5b1630ceea73d27597364c9af683/LICENSE",
+          "locator": "https://github.com/actions/checkout/blob/9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0/LICENSE",
           "blob": "a67dca8b4f65d6bd351f6b1e333ce2cd84d843a5",
           "sha256": null,
           "observation": "MIT license text at the workflow-pinned commit."
@@ -31,7 +31,7 @@
       "licenseConclusion": "verified-declaration-pending-qualified-review",
       "noticeStatus": "build-provenance-only-unless-bytes-copied",
       "reviewStatus": "pending-qualified-review",
-      "notes": "Executed by GitHub Actions; not currently copied into an SDK or generated WordPress artifact."
+      "notes": "Official v7.0.0 lightweight tag at a GitHub-verified commit; package metadata declares Node >=24 and action.yml selects node24. Executed by GitHub Actions and not copied into an SDK or generated WordPress artifact."
     },
     {
       "id": "beads-1.0.4",

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "CI-CHECKOUT-NODE24",
+  "bead": "wordpresshx-88h",
+  "status": "implemented-hosted-pending",
+  "source": {
+    "repository": "https://github.com/actions/checkout",
+    "release": "v7.0.0",
+    "publishedAt": "2026-06-18T13:53:05Z",
+    "releaseUrl": "https://github.com/actions/checkout/releases/tag/v7.0.0",
+    "tagObjectType": "commit",
+    "commit": "9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+    "tree": "2ddbcfc53840ba99a608fb2a72dd13c3ea7cb8dc",
+    "commitSignatureVerified": true,
+    "packageVersion": "7.0.0",
+    "packageLicense": "MIT",
+    "packageNodeEngine": ">=24",
+    "actionRuntime": "node24",
+    "licenseBlob": "a67dca8b4f65d6bd351f6b1e333ce2cd84d843a5"
+  },
+  "subject": {
+    "validator": {
+      "path": "scripts/ci/check-checkout-action.py",
+      "sha256": "85ab005a09439f49d3582a8bec71008bbe957092fd9bf7454c7f5f8c6a87edfc"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "4b32be44dd589225b6896bb46045b963f812aeb1d4b26b292d4429b4a2c76402"
+    }
+  },
+  "change": {
+    "workflowUseCount": 10,
+    "fullCommitPins": true,
+    "securityFetchDepth": 0,
+    "otherCheckoutFetchDepth": "default-1",
+    "unsafePullRequestOverrideEnabled": false
+  },
+  "localVerification": {
+    "commands": [
+      "bash scripts/ci/check-security-tooling.sh",
+      "bash scripts/check-repository.sh",
+      "bash scripts/hooks/test.sh"
+    ],
+    "outcome": "passed"
+  },
+  "implementation": {
+    "baseCommit": "baa03043421a194155953cd59ad06cbffd39bfbd",
+    "commit": null
+  },
+  "hostedWorkflow": {
+    "workflow": "repository.yml",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending",
+    "jobCount": 10,
+    "checkoutNode20DeprecationWarningCount": null
+  },
+  "claims": {
+    "checkoutActionRuntime": "inventoried",
+    "warningRemoval": "not-tested",
+    "sdkCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "github-hosted-ubuntu-24.04-only",
+    "no-container-action-authentication-coverage",
+    "no-sdk-or-generated-artifact-claim"
+  ]
+}

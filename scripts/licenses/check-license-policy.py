@@ -23,7 +23,7 @@ SHA1 = re.compile(r"[0-9a-f]{40}")
 SHA256 = re.compile(r"[0-9a-f]{64}")
 
 EXPECTED_COMPONENT_IDS = [
-    "actions-checkout-4.2.2",
+    "actions-checkout-7.0.0",
     "beads-1.0.4",
     "docker-test-image-set",
     "genes-ts-1.33.0",
@@ -780,9 +780,18 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
     workflow = audit.read_text(".github/workflows/repository.yml")
     checkout_pins = re.findall(r"uses:\s+actions/checkout@([^\s]+)", workflow)
     audit.check(
-        len(checkout_pins) > 0
-        and set(checkout_pins) == {components.get("actions-checkout-4.2.2", {}).get("commit")},
-        "all checkout actions must use the inventoried exact commit",
+        len(checkout_pins) == 10
+        and set(checkout_pins) == {components.get("actions-checkout-7.0.0", {}).get("commit")},
+        "all ten checkout actions must use the inventoried exact commit",
+    )
+    audit.check(
+        workflow.count("fetch-depth: 0") == 1
+        and re.search(
+            r"(?ms)^  security:\n.*?uses: actions/checkout@[^\n]+\n\s+with:\n\s+fetch-depth: 0",
+            workflow,
+        )
+        is not None,
+        "the security job must be the only explicit full-history checkout",
     )
     setup_pins = re.findall(r"uses:\s+krdlab/setup-haxe@([^\s]+)", workflow)
     audit.check(

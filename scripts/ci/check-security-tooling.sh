@@ -45,11 +45,29 @@ grep -Fq 'scripts/security/run-gitleaks.sh' scripts/hooks/pre-commit
 grep -Fq 'scripts/security/run-gitleaks.sh' scripts/hooks/pre-push
 grep -Fq 'scripts/security/run-beads-gitleaks.sh' scripts/beads/push-safe.sh
 
+readonly checkout_action="actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0"
+checkout_action_lines="$(grep -E '^[[:space:]]*uses:[[:space:]]+actions/checkout@' .github/workflows/*.yml || true)"
+checkout_action_count="$(printf '%s\n' "${checkout_action_lines}" | awk 'NF { count += 1 } END { print count + 0 }')"
+if [[ "${checkout_action_count}" != "10" ]]; then
+  echo "[security-policy] ERROR: expected 10 reviewed checkout action uses, found ${checkout_action_count}." >&2
+  exit 1
+fi
+if printf '%s\n' "${checkout_action_lines}" | grep -Fv "${checkout_action}" >/dev/null; then
+  echo "[security-policy] ERROR: every checkout action must use the reviewed v7.0.0 commit." >&2
+  exit 1
+fi
+if [[ "$(grep -Fc 'fetch-depth: 0' .github/workflows/repository.yml)" != "1" ]]; then
+  echo "[security-policy] ERROR: the security checkout must be the only full-history checkout." >&2
+  exit 1
+fi
+
 unlocked_actions="$(awk '/^[[:space:]]*uses:/ {print $2}' .github/workflows/*.yml | grep -Ev '^\./|^[^@]+@[0-9a-f]{40}$' || true)"
 if [[ -n "${unlocked_actions}" ]]; then
   echo "[security-policy] ERROR: workflow actions must use full commit SHAs:" >&2
   printf '%s\n' "${unlocked_actions}" >&2
   exit 1
 fi
+
+python3 scripts/ci/check-checkout-action.py
 
 echo "[security-policy] OK"

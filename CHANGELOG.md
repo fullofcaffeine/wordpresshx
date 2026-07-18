@@ -14,6 +14,9 @@ All notable project changes will be recorded here once versioning policy is acce
 - Provisional ADR-020 licensing review packet with an exact component/origin
   inventory, generated-output guidance, third-party discrepancy ledger, qualified
   review handoff, and a publication gate that remains deliberately blocked.
+- Immutable `actions/checkout` v7.0.0 upgrade using its Node 24 action runtime,
+  with the security lane's full-history checkout preserved and every other lane
+  retaining the action's default shallow checkout.
 
 ### Release status
 
