@@ -30,6 +30,7 @@ required_files=(
   docs/adr/003-package-topology-and-lockstep-versioning.md
   docs/adr/004-generic-php-compiler-home.md
   docs/adr/005-public-versus-private-php-emission.md
+  docs/adr/006-semantic-plan-and-emitter-contract.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
@@ -248,12 +249,23 @@ required_files=(
   schemas/profile.schema.json
   schemas/profile-diff.schema.json
   schemas/php-haxe-map.schema.json
+  schemas/semantic-emission.schema.json
+  schemas/semantic-nodes/hook.schema.json
+  schemas/semantic-nodes/module.schema.json
+  schemas/semantic-plan.schema.json
   schemas/source-correlation-index.schema.json
   scripts/source-correlation/validate-contracts.py
   scripts/source-correlation/validate-sdk025.py
+  scripts/semantic-plan/test-contract.py
+  scripts/semantic-plan/test.sh
   tools/README.md
   examples/README.md
   fixtures/README.md
+  fixtures/semantic-plan/README.md
+  fixtures/semantic-plan/expected/acme-observatory.php.txt
+  fixtures/semantic-plan/src/SemanticPlanFixture.hx
+  fixtures/semantic-plan/valid/minimal-plugin.emission.json
+  fixtures/semantic-plan/valid/minimal-plugin.json
   fixtures/profiles/README.md
   fixtures/profiles/valid/gutenberg-forward-23.4.json
   fixtures/profiles/valid/wp70-release.json
@@ -288,6 +300,7 @@ required_files=(
   manifests/browser-build-architecture.json
   manifests/hxx-architecture.json
   manifests/source-correlation-architecture.json
+  manifests/semantic-plan-architecture.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -296,6 +309,7 @@ required_files=(
   manifests/evidence/g0-product-baseline.json
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
+  manifests/evidence/adr-006-semantic-plan-contract.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -602,6 +616,16 @@ browser_architecture = json.loads(
 )
 source_correlation_architecture = json.loads(
     Path("manifests/source-correlation-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+semantic_plan_architecture = json.loads(
+    Path("manifests/semantic-plan-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+semantic_plan_receipt = json.loads(
+    Path("manifests/evidence/adr-006-semantic-plan-contract.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1122,6 +1146,149 @@ for scoped_hxml in Path("packages/hxx/haxe_libraries").glob("*.hxml"):
     scoped_content = scoped_hxml.read_text(encoding="utf-8")
     assert "=dev" not in scoped_content
     assert "../" not in scoped_content
+
+assert semantic_plan_architecture["schemaVersion"] == 1
+assert semantic_plan_architecture["decision"] == "ADR-006"
+assert semantic_plan_architecture["status"] == (
+    "accepted-contract-not-collector-implementation"
+)
+semantic_contracts = semantic_plan_architecture["contracts"]
+semantic_plan_contract = semantic_contracts["plan"]
+semantic_emission_contract = semantic_contracts["emission"]
+assert semantic_plan_contract["identity"] == "wordpress-hx.semantic-plan.v1"
+assert semantic_emission_contract["identity"] == (
+    "wordpress-hx.semantic-emission.v1"
+)
+for contract in (semantic_plan_contract, semantic_emission_contract):
+    schema_bytes = Path(contract["schemaPath"]).read_bytes()
+    fixture_bytes = Path(contract["fixturePath"]).read_bytes()
+    assert hashlib.sha256(schema_bytes).hexdigest() == contract["schemaSha256"]
+    assert hashlib.sha256(fixture_bytes).hexdigest() == contract["fixtureSha256"]
+semantic_plan_fixture = json.loads(
+    Path(semantic_plan_contract["fixturePath"]).read_text(encoding="utf-8")
+)
+semantic_emission_fixture = json.loads(
+    Path(semantic_emission_contract["fixturePath"]).read_text(encoding="utf-8")
+)
+assert semantic_plan_fixture["planDigest"] == semantic_plan_contract["planDigest"]
+assert semantic_emission_fixture["resultDigest"] == semantic_emission_contract[
+    "resultDigest"
+]
+assert semantic_emission_fixture["planDigest"] == semantic_plan_fixture[
+    "planDigest"
+]
+semantic_canonicalization = semantic_plan_architecture["canonicalization"]
+assert semantic_canonicalization["identity"] == (
+    "wordpress-hx.canonical-json.v1"
+)
+assert semantic_canonicalization["encoding"] == "utf-8"
+assert semantic_canonicalization["unicodeNormalization"] == "NFC"
+assert semantic_canonicalization["duplicateKeys"] == "fail"
+assert semantic_canonicalization["floatingPointNumbers"] == (
+    "forbidden-use-integer-or-domain-string"
+)
+assert semantic_plan_architecture["sourceLocations"]["absolutePathsAllowed"] is False
+assert semantic_plan_architecture["sourceLocations"]["sourceDigestRequired"] is True
+assert semantic_plan_architecture["extensions"]["networkSchemaResolution"] is False
+assert semantic_plan_architecture["extensions"]["silentIgnore"] is False
+assert semantic_plan_architecture["extensions"]["runtimePluginRegistry"] is False
+semantic_emitter_boundary = semantic_plan_architecture["emitterBoundary"]
+assert semantic_emitter_boundary["liveOutputWrites"] is False
+assert semantic_emitter_boundary["targetTextPatching"] is False
+assert semantic_emitter_boundary["projectionCoverage"] == (
+    "requested-equals-emitted-or-fail"
+)
+assert semantic_emitter_boundary["publicationOwner"] == (
+    "adr-007-transaction-layer"
+)
+for registry_item in semantic_plan_architecture["nodeSchemas"]["coreRegistry"]:
+    assert hashlib.sha256(Path(registry_item["path"]).read_bytes()).hexdigest() == (
+        registry_item["sha256"]
+    )
+semantic_references = semantic_plan_architecture["referencePatterns"]
+assert {reference["repository"] for reference in semantic_references} == {
+    "haxe.rust",
+    "haxe.ruby",
+    "haxe.go",
+    "genes",
+}
+for reference in semantic_references:
+    assert sha1.fullmatch(reference["commit"])
+    assert sha1.fullmatch(reference["blob"])
+    assert sha256.fullmatch(reference["sha256"])
+    assert reference["copiedBytes"] is False
+semantic_verification = semantic_plan_architecture["verification"]
+assert semantic_verification["canonicalVectorCount"] == 6
+assert semantic_verification["negativeMutationCount"] == 21
+assert semantic_verification["nodeSchemaCount"] == 2
+assert semantic_verification["nodeCount"] == 2
+assert semantic_verification["projectionCount"] == 2
+assert semantic_verification["artifactCount"] == 1
+assert semantic_verification["outcome"] == "passed"
+assert hashlib.sha256(
+    Path(semantic_verification["validatorPath"]).read_bytes()
+).hexdigest() == semantic_verification["validatorSha256"]
+assert semantic_plan_architecture["claims"]["architectureDecision"] == "accepted"
+assert semantic_plan_architecture["claims"]["schemaAndFixtureContract"] == (
+    "validated"
+)
+for unproven_semantic_claim in (
+    "sdk040MacroCollector",
+    "productionEmitterIntegration",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "productionSupport",
+):
+    assert semantic_plan_architecture["claims"][unproven_semantic_claim] == (
+        "not-tested"
+    )
+assert semantic_plan_receipt["schemaVersion"] == 1
+assert semantic_plan_receipt["receiptId"] == (
+    "ADR-006-SEMANTIC-PLAN-CONTRACT"
+)
+assert semantic_plan_receipt["bead"] == "wordpresshx-adr-006"
+for semantic_subject in semantic_plan_receipt["subject"].values():
+    assert hashlib.sha256(Path(semantic_subject["path"]).read_bytes()).hexdigest() == (
+        semantic_subject["sha256"]
+    )
+assert semantic_plan_receipt["contract"]["planDigest"] == (
+    semantic_plan_contract["planDigest"]
+)
+assert semantic_plan_receipt["contract"]["emissionResultDigest"] == (
+    semantic_emission_contract["resultDigest"]
+)
+assert semantic_plan_receipt["verification"]["canonicalVectorCount"] == 6
+assert semantic_plan_receipt["verification"]["negativeMutationCount"] == 21
+assert semantic_plan_receipt["verification"]["projectionCoverage"] == "complete"
+assert semantic_plan_receipt["verification"]["outcome"] == "passed"
+assert semantic_plan_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert semantic_plan_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert semantic_plan_receipt["referenceReview"]["genesSourceChanged"] is False
+semantic_hosted = semantic_plan_receipt["hostedWorkflow"]
+assert semantic_hosted["workflow"] == "Repository bootstrap"
+assert semantic_hosted["job"] == "semantic-plan"
+assert semantic_hosted["required"] is True
+if semantic_hosted["status"] == "pending-first-hosted-main-run":
+    assert semantic_hosted["runId"] is None
+    assert semantic_hosted["jobId"] is None
+    assert semantic_hosted["commit"] is None
+elif semantic_hosted["status"] == "passed":
+    assert isinstance(semantic_hosted["runId"], int)
+    assert isinstance(semantic_hosted["jobId"], int)
+    assert sha1.fullmatch(semantic_hosted["commit"])
+else:
+    raise AssertionError("semantic-plan hosted status is invalid")
+assert semantic_plan_receipt["claims"]["architectureDecision"] == "accepted"
+assert semantic_plan_receipt["claims"]["schemaAndFixtureContract"] == "validated"
+for unproven_receipt_claim in (
+    "sdk040MacroCollector",
+    "productionEmitterIntegration",
+    "generatedFilePublicationSafety",
+    "wordpressRuntimeCompatibility",
+    "nextjsRuntimeCompatibility",
+    "productionSupport",
+):
+    assert semantic_plan_receipt["claims"][unproven_receipt_claim] == "not-tested"
 
 assert source_correlation_architecture["schemaVersion"] == 1
 assert source_correlation_architecture["decision"] == "ADR-014"
@@ -4738,6 +4905,7 @@ python3 scripts/release/test-governance.py
 python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
 python3 scripts/source-correlation/validate-contracts.py
+python3 scripts/semantic-plan/test-contract.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only

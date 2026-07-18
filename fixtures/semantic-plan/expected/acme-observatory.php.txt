@@ -1,0 +1,9 @@
+<?php
+/**
+ * Plugin Name: Acme Observatory
+ * Version: 0.1.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+add_action( 'init', 'Acme\\Observatory\\registerVisits', 10, 0 );

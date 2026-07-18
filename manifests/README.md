@@ -25,6 +25,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   contract through the exact SDK-033 entry and official development/production
   commands into a private debug companion; none of these bounded receipts is
   general production support.
+- `semantic-plan-architecture.json` is the accepted ADR-006 canonical plan,
+  content-addressed node-schema registry, stable identity/source-span,
+  build-time extension, and staged-emitter boundary. Its two-node contract
+  fixture proves schema/canonicalization/traceability rules only; SDK-040 still
+  owns macro collection and production emitter integration.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
@@ -71,6 +76,13 @@ contract difference is admitted. The receipt is bounded to this corpus and
 does not make classic output the default or claim arbitrary same-source
 switching.
 
+Receipt `ADR-006-SEMANTIC-PLAN-CONTRACT` records the closed plan/emission
+schemas, content-addressed node schemas, canonical fixture digests, source and
+artifact traceability, sibling-pattern provenance, six canonicalization
+vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
+SDK-040, ADR-007/SDK-041, real emitters, and runtime compatibility remain
+unproven.
+
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 
 The exact `gutenberg-forward-23.4` authority is a separate lock entry and profile tree. Receipt `SDK-011-GUTENBERG-FORWARD-23.4` records direct source/release materialization, compile-admission negatives, and final-artifact leak scans. It remains experimental; WordPress 7.0 compatibility is forbidden and runtime/production claims are `not-tested`.
@@ -91,7 +103,7 @@ SDK-002 remain open and all public publication remains blocked.
 
 Receipt `CI-CHECKOUT-NODE24` records the official `actions/checkout` v7.0.0
 release, exact verified commit/tree/license evidence, Node 24 runtime declaration,
-all ten immutable workflow pins, and preservation of full Git history only for
+all eleven immutable workflow pins, and preservation of full Git history only for
 the security lane. Its hosted claim is limited to the exact GitHub-hosted
 Ubuntu 24.04 workflow run; it creates no SDK or generated-artifact claim.
 

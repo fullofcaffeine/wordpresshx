@@ -6,6 +6,19 @@ Reserved for versioned project, profile, semantic-plan, generated-ownership, ado
 
 [`profile-diff.schema.json`](profile-diff.schema.json) is the closed SDK-014 report schema. It separates upstream-profile changes from direct SDK catalog corrections, records exact endpoints and before/after values, carries conservative impact and migration actions, and fixes policy fields to exact-catalog advisory output with no inferred range or source rewrite.
 
+[`semantic-plan.schema.json`](semantic-plan.schema.json) is the accepted ADR-006
+immutable build-plan envelope. Its one delegated `payload` object is valid only
+after the exact content-addressed schema named by the node registry passes; the
+first closed examples live under `semantic-nodes/`. Stable node/projection IDs,
+exact-profile capabilities, content-bound source spans, acyclic dependencies,
+and canonical plan digests are mandatory before emission.
+
+[`semantic-emission.schema.json`](semantic-emission.schema.json) is the matching
+staged-emitter result. It binds a validated plan and exact emitter to complete
+projection coverage, artifact bytes, owner/source nodes, source spans, and
+required validators. It grants no permission to write live files; ADR-007 owns
+publication and recovery.
+
 [`php-haxe-map.schema.json`](php-haxe-map.schema.json) and
 [`source-correlation-index.schema.json`](source-correlation-index.schema.json)
 are the accepted ADR-014 contracts. The PHP format binds half-open UTF-8 byte

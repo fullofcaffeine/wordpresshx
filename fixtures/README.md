@@ -17,3 +17,9 @@ truthfully records no license grant; it does not authorize publication.
 Source Map v3 chain fixtures. Its validator authenticates exact bytes, hashes,
 UTF-8 coordinates, source roots, map-layer continuity, retention, and
 fail-closed mutations. It is not PHP/browser runtime or trace-CLI evidence.
+
+`semantic-plan/` contains the ADR-006 canonical plan and staged-emission
+contract fixtures. The validator binds exact node schemas, profile
+capabilities, UTF-8 source spans, projection coverage, and expected artifact
+bytes, then exercises canonicalization and fail-closed mutations. It is not the
+SDK-040 macro collector or a production PHP emitter.

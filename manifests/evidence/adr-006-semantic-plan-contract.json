@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-006-SEMANTIC-PLAN-CONTRACT",
+  "bead": "wordpresshx-adr-006",
+  "observedAt": "2026-07-18T18:07:37Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/006-semantic-plan-and-emitter-contract.md",
+      "sha256": "eb0f49ce3ac1f799301a79d4cbbfcc83e3e774ca3fdbba94eb348790ba61f06c"
+    },
+    "architecture": {
+      "path": "manifests/semantic-plan-architecture.json",
+      "sha256": "e417b642dc3a726f0f3c98307f7207d2330a1a7e3c129275af3a8b9513b2708d"
+    },
+    "planSchema": {
+      "path": "schemas/semantic-plan.schema.json",
+      "sha256": "b603c99448ae81c4be78649730e6e90938cd408847fa3cb11263d87015a58c33"
+    },
+    "emissionSchema": {
+      "path": "schemas/semantic-emission.schema.json",
+      "sha256": "217ea910fa326bfb4a47476b785be4646b5c22791f0700562bad2fd797ff11ba"
+    },
+    "hookNodeSchema": {
+      "path": "schemas/semantic-nodes/hook.schema.json",
+      "sha256": "f9adbb92bd3023c60cf32ec67e0c09a5645f3072f78ec3dd1ff0452d772a6695"
+    },
+    "moduleNodeSchema": {
+      "path": "schemas/semantic-nodes/module.schema.json",
+      "sha256": "f4921d090f5d06acd41d37bd3d43314df39661b6629cb3dc0b7b73da9df873b0"
+    },
+    "validator": {
+      "path": "scripts/semantic-plan/test-contract.py",
+      "sha256": "26034632f567bdffc14aaff15f014b9277ae798b9c5843f25396175082b906aa"
+    },
+    "gate": {
+      "path": "scripts/semantic-plan/test.sh",
+      "sha256": "1896e869e8eb5d7f5eb5ef356924602e5dc96d2465ced9b4730e345c7970f98f"
+    },
+    "sourceFixture": {
+      "path": "fixtures/semantic-plan/src/SemanticPlanFixture.hx",
+      "sha256": "462105433b9a20dde949d7749c9897de0da223f86d6029d0b62fbc32ec71dd54"
+    },
+    "planFixture": {
+      "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
+      "sha256": "511822d880d688b1ba88ba855782f423d1157dcd67461abac3884ed05aa8822f"
+    },
+    "emissionFixture": {
+      "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
+      "sha256": "5b23c7a5aa4da0a902953d01bdc9afbd27600410ea71cb78f91e22d829353767"
+    },
+    "artifactFixture": {
+      "path": "fixtures/semantic-plan/expected/acme-observatory.php.txt",
+      "sha256": "fd3c0a65fa3faed4890ea18d1b887e99435f50d71783accfa58152deec6441be"
+    }
+  },
+  "contract": {
+    "planSchema": "wordpress-hx.semantic-plan.v1",
+    "emissionSchema": "wordpress-hx.semantic-emission.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "planDigest": "2ea71f20d6322d86045cd872f4badddddb4a3056e5321a96e2ba58e3d22c9011",
+    "emissionResultDigest": "89d5382169ec33cd6d0c9d2191159047300c961eee3c3a3c0671faced4b738e4",
+    "exactProfile": "wp70-release",
+    "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61"
+  },
+  "verification": {
+    "command": "bash scripts/semantic-plan/test.sh",
+    "canonicalVectorCount": 6,
+    "negativeMutationCount": 21,
+    "nodeSchemaCount": 2,
+    "nodeCount": 2,
+    "projectionCount": 2,
+    "artifactCount": 1,
+    "sourceSpanModel": "half-open-utf8-byte-one-based-line-zero-based-byte-column",
+    "projectionCoverage": "complete",
+    "schemaPayloadValidation": "passed",
+    "sourceAndArtifactContentBinding": "passed",
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repositories": [
+      "haxe.rust",
+      "haxe.ruby",
+      "haxe.go",
+      "genes"
+    ],
+    "exactCommitPathBlobAndSha256Recorded": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "semantic-plan",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "claims": {
+    "architectureDecision": "accepted",
+    "schemaAndFixtureContract": "validated",
+    "sdk040MacroCollector": "not-tested",
+    "productionEmitterIntegration": "not-tested",
+    "generatedFilePublicationSafety": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "nextjsRuntimeCompatibility": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

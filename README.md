@@ -28,6 +28,13 @@ validated semantic build plan
 unmodified vanilla WordPress and Gutenberg
 ```
 
+[ADR-006](docs/adr/006-semantic-plan-and-emitter-contract.md) now fixes the
+versioned, canonical semantic-plan and staged-emitter boundary behind this
+flow. Its passing contract fixture validates identity, exact-profile binding,
+source spans, schema extensions, and complete artifact traceability; macro
+collection and production emission remain dependency-gated implementation
+work.
+
 The product is not a WordPress fork, a replacement runtime, a generic CMS abstraction, or a proprietary site builder. The SDK and the separate full `wordpress-hx` port may share released generic compiler packages and public contracts, but neither project may import the other's unpublished implementation internals or merge its compatibility claims.
 
 The longer-term architecture should compose with the maintainer's broader Haxe compiler and framework family through portable Haxe contracts, versioned semantic-plan/artifact schemas, immutable compiler packages, and independent evidence receipts. It must not acquire floating dependencies on sibling repositories merely to simulate that future integration.
@@ -87,11 +94,12 @@ SDK-032 now layers typed Haxe inline markup over that boundary for the exact
 exercises Button, Notice, hooks, state, context, DOM refs, mouse and keyboard
 events, fragments, conditions, loops, and closed spreads, then verifies the
 generated TSX, real React runtime, accessibility structure, visual bundle, and
-source maps. SDK-033 adds exact dependency/asset/translation output, and SDK-034
+source maps. SDK-033 adds exact dependency/asset/translation output, SDK-034
 adds a real-Chromium browser trace CLI with exact esbuild composition and an
-authenticated two-stage fallback. Source correlation through the final official
-`@wordpress/scripts` entry (`wordpresshx-g2.4`) and the classic differential
-remain separately gated, so G2 is not yet closed.
+authenticated two-stage fallback, and SDK-035 proves the bounded strict/classic
+Genes differential. Source correlation through the final official
+`@wordpress/scripts` entry also passes; remaining G2 follow-ups stay separately
+tracked, so G2 is not yet closed.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the working agreement and [docs/](docs/) for the documentation map.
 

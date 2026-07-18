@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/semantic-plan.schema.json",
+  "title": "WordPressHx semantic plan envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "planDigestAlgorithm",
+    "planDigest",
+    "generator",
+    "profile",
+    "project",
+    "nodeSchemas",
+    "nodes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.semantic-plan.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "planDigestAlgorithm": {
+      "const": "sha256-canonical-json-without-planDigest-v1"
+    },
+    "planDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "generator": {
+      "$ref": "#/$defs/generator"
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "nodeSchemas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/nodeSchema"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "schemaId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z0-9-]+)+\\.v[1-9][0-9]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sdkVersion",
+        "collectorId",
+        "collectorVersion",
+        "collectorSourceSha256",
+        "toolchainSha256"
+      ],
+      "properties": {
+        "sdkVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "collectorId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "collectorVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "collectorSourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "toolchainSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "catalogRevision",
+        "catalogSha256"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]*/catalog-v[1-9][0-9]*$"
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectId",
+        "projectVersion",
+        "sourceTreeSha256"
+      ],
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "projectVersion": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourceTreeSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "nodeSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaId",
+        "kind",
+        "version",
+        "authority",
+        "schemaSha256",
+        "consumerEmitters"
+      ],
+      "properties": {
+        "schemaId": {
+          "$ref": "#/$defs/schemaId"
+        },
+        "kind": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authority": {
+          "enum": [
+            "core",
+            "extension"
+          ]
+        },
+        "extensionId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "schemaSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "consumerEmitters": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offset",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sourceSha256",
+        "start",
+        "end",
+        "symbol"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "start": {
+          "$ref": "#/$defs/point"
+        },
+        "end": {
+          "$ref": "#/$defs/point"
+        },
+        "symbol": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectionId",
+        "emitterId",
+        "artifactKind"
+      ],
+      "properties": {
+        "projectionId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "emitterId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "artifactKind": {
+          "$ref": "#/$defs/stableId"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "schemaId",
+        "source",
+        "relatedSources",
+        "dependsOn",
+        "profileCapabilities",
+        "projections",
+        "payload"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "kind": {
+          "$ref": "#/$defs/stableId"
+        },
+        "schemaId": {
+          "$ref": "#/$defs/schemaId"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        },
+        "relatedSources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          }
+        },
+        "dependsOn": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "profileCapabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "projections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/projection"
+          }
+        },
+        "payload": {
+          "type": "object",
+          "description": "Validated by the exact content-addressed node schema named by schemaId.",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

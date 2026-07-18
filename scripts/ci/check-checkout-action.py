@@ -43,8 +43,8 @@ def main() -> int:
         workflow,
         re.MULTILINE,
     )
-    assert len(checkout_lines) == 10
-    assert checkout_lines == [(PIN, VERSION)] * 10
+    assert len(checkout_lines) == 11
+    assert checkout_lines == [(PIN, VERSION)] * 11
     assert workflow.count("fetch-depth: 0") == 1
     assert re.search(
         r"(?ms)^  security:\n.*?uses: actions/checkout@[^\n]+\n\s+with:\n\s+fetch-depth: 0",
@@ -142,7 +142,7 @@ def main() -> int:
         "checkout receipt change",
     )
     assert change == {
-        "workflowUseCount": 10,
+        "workflowUseCount": 11,
         "fullCommitPins": True,
         "securityFetchDepth": 0,
         "otherCheckoutFetchDepth": "default-1",
@@ -186,7 +186,7 @@ def main() -> int:
             "commit": None,
             "status": "pending",
             "fullMatrixStatus": "pending",
-            "jobCount": 10,
+            "jobCount": 11,
             "checkoutNode20DeprecationWarningCount": None,
         }
         expected_claims = {
@@ -201,7 +201,7 @@ def main() -> int:
         assert isinstance(hosted["commit"], str) and SHA1.fullmatch(hosted["commit"])
         assert hosted["status"] == "passed"
         assert hosted["fullMatrixStatus"] == "passed"
-        assert hosted["jobCount"] == 10
+        assert hosted["jobCount"] == 11
         assert hosted["checkoutNode20DeprecationWarningCount"] == 0
         expected_claims = {
             "checkoutActionRuntime": "runtime-tested",

@@ -35,7 +35,7 @@
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "33a4a10a2bf58a866b7a4b25e87f672c8e3ff64e6378e1aff83a32d6fab1d3aa"
+      "sha256": "fab9e9113db5ed3071b7e60b77f7d0fac45e3e9f1c74de54ace72b7d24c2ea86"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",

@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/semantic-emission.schema.json",
+  "title": "WordPressHx staged emitter result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "resultDigestAlgorithm",
+    "resultDigest",
+    "planDigest",
+    "emitter",
+    "coverage",
+    "artifacts",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.semantic-emission.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "resultDigestAlgorithm": {
+      "const": "sha256-canonical-json-without-resultDigest-v1"
+    },
+    "resultDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "planDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "emitter": {
+      "$ref": "#/$defs/emitter"
+    },
+    "coverage": {
+      "$ref": "#/$defs/coverage"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offset",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sourceSha256",
+        "start",
+        "end",
+        "symbol"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "start": {
+          "$ref": "#/$defs/point"
+        },
+        "end": {
+          "$ref": "#/$defs/point"
+        },
+        "symbol": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "emitter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "emitterId",
+        "version",
+        "sourceSha256"
+      ],
+      "properties": {
+        "emitterId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestedProjectionIds",
+        "emittedProjectionIds"
+      ],
+      "properties": {
+        "requestedProjectionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "emittedProjectionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "kind",
+        "ownerNodeId",
+        "contentSha256",
+        "sizeBytes",
+        "sourceNodeIds",
+        "sourceSpans",
+        "validators"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "kind": {
+          "$ref": "#/$defs/stableId"
+        },
+        "ownerNodeId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "contentSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sourceNodeIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "sourceSpans": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          }
+        },
+        "validators": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "code",
+        "message",
+        "nodeId",
+        "source"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "warning",
+            "error"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        },
+        "message": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "nodeId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        }
+      }
+    }
+  }
+}

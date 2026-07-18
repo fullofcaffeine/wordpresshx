@@ -796,13 +796,13 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
     workflow = audit.read_text(".github/workflows/repository.yml")
     checkout_pins = action_pins(workflow, "actions/checkout")
     audit.check(
-        len(checkout_pins) == 10
+        len(checkout_pins) == 11
         and every_action_use_is_exact(
             workflow,
             "actions/checkout",
             components.get("actions-checkout-7.0.0", {}).get("commit"),
         ),
-        "all ten checkout actions must use the inventoried exact commit",
+        "all eleven checkout actions must use the inventoried exact commit",
     )
     audit.check(
         workflow.count("fetch-depth: 0") == 1

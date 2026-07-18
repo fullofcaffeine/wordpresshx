@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wordpress-hx.semantic-node.wordpress.hook.v1",
+  "title": "WordPressHx hook semantic node payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hookName",
+    "hookType",
+    "callbackSymbol",
+    "priority",
+    "acceptedArgs"
+  ],
+  "properties": {
+    "hookName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_./:-]*$"
+    },
+    "hookType": {
+      "enum": [
+        "action",
+        "filter"
+      ]
+    },
+    "callbackSymbol": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_\\\\:]*$"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "acceptedArgs": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}
