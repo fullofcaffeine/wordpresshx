@@ -10,15 +10,19 @@
 
 ## Implementation status
 
-SDK-025 now implements the PHP half of this decision. The generic compiler emits
+SDK-025 implements the PHP half of this decision. The generic compiler emits
 authenticated declaration/member/statement ranges and unique trace anchors; the
 WordPress build layer writes the v1 map/index; and the Haxe/Genes CLI provides
 offline stable text/JSON lookup while preserving native frames. Exact PHP
 7.4/8.4, development/debug-companion packaging, and real WordPress 7.0
-MySQL/MariaDB failure lanes pass. This is bounded runtime and package evidence,
-not a general production-support or publication claim. SDK-034 still owns the
-browser half, and the optional WordPress development handler remains
-unimplemented.
+MySQL/MariaDB failure lanes pass. SDK-034 now implements the shared browser
+index/trace path, validates the Genes layer independently, proves exact esbuild
+development/minified composition and the authenticated two-stage fallback in
+real Chromium, and keeps maps/index/source content out of the production ZIP.
+These are bounded runtime and package receipts, not general production-support
+or publication claims. Correlation through the exact official
+`@wordpress/scripts` lane remains `wordpresshx-g2.4`; the optional WordPress
+development handler remains unimplemented.
 
 ## Context
 
@@ -48,9 +52,12 @@ Haxe tokens with zero machine-path leaks. It does not deliberately throw through
 both development and minified production stacks, and it is not proof for every
 WordPress build adapter. SDK-033 proves the exact official
 `@wordpress/scripts` asset lane, but deliberately leaves end-to-end source
-correlation to SDK-034. In particular, that lane removed the Genes first-layer
-map because the official loader could otherwise seek a host Haxe path. None of
-these receipts supports a general “full source maps work” statement.
+correlation pending. In particular, that lane removed the Genes first-layer map
+because the official loader could otherwise seek a host Haxe path. SDK-034
+proves the complete lookup contract against a separately pinned esbuild fixture;
+it does not retroactively prove webpack, `@wordpress/scripts`, Next.js, or an
+unrelated entry. None of these receipts supports a general “full source maps
+work” statement.
 
 The full-port reference contains useful bounded examples of normalized native
 PHP traces, stock-Haxe source comments, and original-path shell segment records.
@@ -446,6 +453,7 @@ bash compiler/reflaxe.php/scripts/test.sh
 bash compiler/wordpress/scripts/test.sh
 bash compiler/wordpress/scripts/test-wordpress.sh
 bash packages/cli/scripts/test.sh
+bash packages/cli/scripts/test-browser-source-correlation.sh
 bash scripts/check-repository.sh
 ```
 
@@ -468,7 +476,16 @@ closed runtime indexes/maps, 13 mappings and four trace anchors per profile,
 eight stable development/packaged CLI traces, deliberate hook/REST/render/private
 failures on clean WordPress over both database lanes, deterministic PHP-only
 production and map/index-only debug ZIPs, and fail-closed tamper/path tests. The
-receipt deliberately leaves browser correlation and production support pending.
+receipt originally left browser correlation and production support pending.
+
+`SDK-034-BROWSER-SOURCE-CORRELATION` adds an independently validated Genes
+Source Map v3 layer, deterministic esbuild development/production bundles, an
+explicit two-stage chain, six replay-stable real-Chromium deliberate failures,
+canonical JSON and stable text traces, production/debug package replay, and
+fail-closed integrity/path/VLQ/continuity negatives. All three modes resolve to
+the same Haxe line 12, byte column 8 token while preserving the native frame.
+The receipt is exact to this adapter, entry, and mode set. Official WordPress
+webpack correlation and general production support remain unclaimed.
 
 ### Compiler-family and full-port review provenance
 
@@ -507,10 +524,14 @@ public/private WordPress failures, package index, trace snapshots, and privacy
 negatives are retained as regression gates. A regression can still omit the map
 and report native/unmapped frames without changing PHP runtime bytes.
 
-SDK-034 must project existing SDK-032 evidence into the index, add deliberate
-development/minified failures, and independently prove the official
-`@wordpress/scripts` lane. An entry whose composition proof regresses rolls back
-to `browser-two-stage-v3`; runtime bundle bytes need not change. A PHP map
+SDK-034 projects the Genes layer into the shared index and adds deliberate
+development/minified failures, exact composed lookup, and independently
+validated two-stage fallback for its pinned esbuild fixture. Gate G2 follow-up
+`wordpresshx-g2.4` must separately project this contract through the exact
+SDK-033 `@wordpress/scripts` entry without treating SDK-034 as webpack evidence.
+Future NextJsHx adapters follow the same per-adapter/entry/mode admission rule.
+An entry whose composition proof regresses rolls back to
+`browser-two-stage-v3`; runtime bundle bytes need not change. A PHP map
 regression can omit the map and report native/unmapped frames without changing
 native exception behavior. A debug-companion privacy problem withdraws that
 companion without changing the install artifact.
@@ -523,7 +544,7 @@ old evidence.
 
 ## Follow-up beads
 
-- `wordpresshx-sdk-034`: implement exact browser composition admission,
-  two-stage lookup, and development/minified runtime throws.
+- `wordpresshx-g2.4`: prove the exact official `@wordpress/scripts` development
+  and production entry through the SDK-034 lookup and retention contract.
 - `wordpresshx-adr-019`: finish the general unsafe-boundary/waiver policy used by
   distributed source-content and debug-handler review.

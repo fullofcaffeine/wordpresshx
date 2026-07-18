@@ -87,8 +87,11 @@ SDK-032 now layers typed Haxe inline markup over that boundary for the exact
 exercises Button, Notice, hooks, state, context, DOM refs, mouse and keyboard
 events, fragments, conditions, loops, and closed spreads, then verifies the
 generated TSX, real React runtime, accessibility structure, visual bundle, and
-source maps. Dependency extraction, translations, full browser trace evidence,
-and the classic differential remain separately gated, so G2 is not yet closed.
+source maps. SDK-033 adds exact dependency/asset/translation output, and SDK-034
+adds a real-Chromium browser trace CLI with exact esbuild composition and an
+authenticated two-stage fallback. Source correlation through the final official
+`@wordpress/scripts` entry (`wordpresshx-g2.4`) and the classic differential
+remain separately gated, so G2 is not yet closed.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the working agreement and [docs/](docs/) for the documentation map.
 

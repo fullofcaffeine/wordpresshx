@@ -64,6 +64,30 @@ def main() -> None:
         "packageVersion": "15.12.4",
         "cliVersion": "15.12.2",
     }
+    assert lock["browserCorrelation"] == {
+        "genesMapFormat": "source-map-v3",
+        "bundler": {
+            "name": "esbuild",
+            "version": "0.27.2",
+            "npmIntegrity": "sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw==",
+        },
+        "browserDriver": {
+            "name": "playwright-core",
+            "version": "1.58.2",
+            "npmIntegrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==",
+        },
+        "browserRuntime": {
+            "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+            "node": "24.13.0",
+            "npm": "11.6.2",
+            "chromium": "145.0.7632.0",
+        },
+        "npmClosure": {
+            "manifest": "packages/cli/browser-tooling/package.json",
+            "lock": "packages/cli/browser-tooling/package-lock.json",
+            "install": "npm ci --ignore-scripts --no-audit --no-fund",
+        },
+    }
 
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
     assert package["name"] == "@wordpress-hx/cli"
@@ -71,9 +95,75 @@ def main() -> None:
     assert package["engines"] == {"node": "22.17.0"}
     assert package["bin"] == {"wphx-sdk": "build/index.js"}
 
+    browser_manifest = json.loads(
+        (ROOT / "browser-tooling/package.json").read_text(encoding="utf-8")
+    )
+    browser_lock = json.loads(
+        (ROOT / "browser-tooling/package-lock.json").read_text(encoding="utf-8")
+    )
+    assert browser_manifest["name"] == "@wordpress-hx/sdk-034-browser-tooling"
+    assert browser_manifest["private"] is True
+    assert browser_manifest["engines"] == {
+        "node": "22.17.0",
+        "npm": "10.9.2",
+    }
+    assert browser_manifest["packageManager"] == "npm@10.9.2"
+    assert browser_manifest["devDependencies"] == {
+        "esbuild": "0.27.2",
+        "playwright-core": "1.58.2",
+    }
+    assert browser_lock["lockfileVersion"] == 3
+    assert browser_lock["requires"] is True
+    assert browser_lock["packages"][""]["devDependencies"] == browser_manifest[
+        "devDependencies"
+    ]
+    assert browser_lock["packages"]["node_modules/esbuild"] == {
+        "version": "0.27.2",
+        "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.27.2.tgz",
+        "integrity": "sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw==",
+        "dev": True,
+        "hasInstallScript": True,
+        "license": "MIT",
+        "bin": {"esbuild": "bin/esbuild"},
+        "engines": {"node": ">=18"},
+        "optionalDependencies": {
+            name.removeprefix("node_modules/"): entry["version"]
+            for name, entry in browser_lock["packages"].items()
+            if name.startswith("node_modules/@esbuild/")
+        },
+    }
+    assert browser_lock["packages"]["node_modules/playwright-core"] == {
+        "version": "1.58.2",
+        "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.58.2.tgz",
+        "integrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==",
+        "dev": True,
+        "license": "Apache-2.0",
+        "bin": {"playwright-core": "cli.js"},
+        "engines": {"node": ">=18"},
+    }
+    npm_integrity = "sha512-"
+    for package_path, entry in browser_lock["packages"].items():
+        if not package_path:
+            continue
+        assert entry["resolved"].startswith("https://registry.npmjs.org/")
+        assert entry["integrity"].startswith(npm_integrity)
+        assert "file:" not in entry["resolved"]
+
+    playwright_image = json.loads(
+        (REPOSITORY_ROOT / "docker/images.lock.json").read_text(encoding="utf-8")
+    )["images"]["playwright"]
+    assert playwright_image == {
+        "tag": "mcr.microsoft.com/playwright:v1.58.2-noble",
+        "reference": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+        "indexDigest": "sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+        "requiredPlatforms": ["linux/amd64", "linux/arm64"],
+        "purpose": "exact SDK-034 Chromium source-correlation runtime",
+        "evidenceStatus": "runtime-tested",
+    }
+
     print(
         "CLI dependency lock passed: Genes 1.36.3, hxnodejs 10.0.0, "
-        "Node 22.17.0"
+        "Node 22.17.0, esbuild 0.27.2, Playwright/Chromium 1.58.2"
     )
 
 

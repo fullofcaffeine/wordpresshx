@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-034-BROWSER-SOURCE-CORRELATION",
+  "bead": "wordpresshx-sdk-034",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-18T13:50:54Z",
+  "subject": {
+    "architecture": "manifests/source-correlation-architecture.json",
+    "cliPackage": "packages/cli",
+    "fixture": "packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx",
+    "profile": "packages/cli/profiles/browser-correlation.hxml",
+    "profileId": "wp70-release",
+    "buildAdapter": "sdk-034-esbuild-fixture",
+    "entries": [
+      "development",
+      "production",
+      "two-stage"
+    ]
+  },
+  "scope": {
+    "admitted": "exact Genes 1.36.3 + esbuild 0.27.2 fixture entry and mode only",
+    "genesLayerValidatedIndependently": true,
+    "composedModes": [
+      "development",
+      "production"
+    ],
+    "twoStageMode": "two-stage",
+    "officialWordpressScriptsCorrelation": "not-tested-follow-up-wordpresshx-g2.4",
+    "nextJsCorrelation": "not-tested-owned-by-sdk-113-per-adapter-entry-mode",
+    "generalProductionSupport": false,
+    "publicationAuthorized": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "nodeBuild": {
+      "version": "22.17.0",
+      "npm": "10.9.2",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "bundler": {
+      "name": "esbuild",
+      "version": "0.27.2",
+      "npmIntegrity": "sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw=="
+    },
+    "browser": {
+      "driver": "playwright-core@1.58.2",
+      "driverIntegrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==",
+      "engine": "Chromium 145.0.7632.0",
+      "node": "24.13.0",
+      "npm": "11.6.2",
+      "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d"
+    },
+    "integrityLockedNpmPackageCount": 28
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "sourceMapReader": {
+      "format": "closed regular Source Map v3",
+      "base64Vlq": true,
+      "lookup": "exact generated line with greatest-lower-bound column",
+      "sectionsSupported": false,
+      "sourcesContentAllowed": false,
+      "layerContinuityAuthenticated": true
+    },
+    "sourceIndex": {
+      "sharedByPhpAndBrowser": true,
+      "exactLogicalPathIdentity": true,
+      "contentAndMapIntegrityBeforeLookup": true,
+      "absoluteOrTraversalPathsRejected": true,
+      "basenameOrSuffixGuessing": false
+    },
+    "browserTraceCli": {
+      "applicationLanguage": "Haxe",
+      "javascriptCompiler": "Genes",
+      "runtime": "Node ESM",
+      "command": "wphx-sdk trace browser <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]",
+      "offline": true,
+      "readOnly": true,
+      "networkLookup": false,
+      "nativeFrameTextPreserved": true,
+      "canonicalJson": true,
+      "stableText": true,
+      "exitCodes": {
+        "processed": 0,
+        "usageOrStackInput": 2,
+        "integrityOrSchema": 3,
+        "ambiguousContract": 4
+      }
+    },
+    "changeDecision": {
+      "genesSourceChanged": false,
+      "genesPullRequest": null,
+      "wordpressSpecificGenesBranch": false,
+      "reason": "Genes 1.36.3 emitted a valid deterministic first-layer map; duplicate and unreferenced bundler source entries were normalized in the SDK build adapter without changing compiler semantics"
+    }
+  },
+  "authenticatedInputs": [
+    {
+      "path": "packages/cli/src/wordpresshx/cli/Main.hx",
+      "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+      "sha256": "c76ccb96ee3ea72703e790ffa4f2293077c8318bb28d39fbd2a9d11ad3c8efdf"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+      "sha256": "b5f958e8df3cd6d8c9bb0a24666ab13b3cfddc3c6828e2d12c578ce67dcce987"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+      "sha256": "35c86091410cf6ae994dcd971bb88731422f6b05a848bf309d2ad68d315a46e9"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+      "sha256": "fc3022e6ae3c47bacc89067950549e9ade2d5bc8c48e81051bb4b87c67bd5d7e"
+    },
+    {
+      "path": "packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx",
+      "sha256": "3e4c1545e765656784c6788c39553188d17e4c566de3e0a4527f32e15930acb6"
+    },
+    {
+      "path": "packages/cli/profiles/browser-correlation.hxml",
+      "sha256": "8f99e0fd7b85943427863d7960899904e8dd7191725b8d85daa960a022aba826"
+    },
+    {
+      "path": "packages/cli/browser-tooling/package.json",
+      "sha256": "f37ea1927b35c1ea37071a60d9fcd6c734ff0c7d64757c61443a3d4015c1fd85"
+    },
+    {
+      "path": "packages/cli/browser-tooling/package-lock.json",
+      "sha256": "9aa6dfb868de55f1e7941aa3ece99eb4c1780d0c831f22d34cb24a08c28e55e4"
+    },
+    {
+      "path": "packages/cli/browser-tooling/build.mjs",
+      "sha256": "1daf80e91db43f1aec9dbe43ebc1524b84e34b266668dedda337be232f5de9dd"
+    },
+    {
+      "path": "packages/cli/browser-tooling/runtime.mjs",
+      "sha256": "240734d7343003742134cfe1e44d0ebf65d38e2c8058b1fb5adb2a0725faed36"
+    },
+    {
+      "path": "packages/cli/scripts/package-browser-source-correlation.py",
+      "sha256": "d9e1660eb52c8c5a4e12bd5eb82f86e2c00179e1c8a9464ac04c829bd77aff24"
+    },
+    {
+      "path": "packages/cli/scripts/verify-browser-source-correlation.py",
+      "sha256": "f506aa406f5e771a4d891c3d3a5ef0932f21aa48973d2abb19f228f741d01c5b"
+    },
+    {
+      "path": "packages/cli/scripts/create-browser-trace-mutations.py",
+      "sha256": "0681a2e3fb6c9ee4cb832e58e1a59615cc57a16407764c8585b46288abeb12d2"
+    },
+    {
+      "path": "packages/cli/scripts/test-browser-source-correlation.sh",
+      "sha256": "65ab01e1021841550df4b86ff3009e5834cb41fee5cff842a39a3f222694c0cc"
+    },
+    {
+      "path": "packages/cli/test/expected/browser-development.text",
+      "sha256": "093f693a89f8edfd1a51d0313189c093c2b63fbdc5b793e032c9c417ef539d4f"
+    },
+    {
+      "path": "packages/cli/test/expected/browser-production.text",
+      "sha256": "fd8f80d89ee17c0df48101d846ab9b0d946e37dea6f1578b0083d2c78e264217"
+    },
+    {
+      "path": "packages/cli/test/expected/browser-two-stage.text",
+      "sha256": "16ad33d1eb9b9e8054f13dcb12cb52b017059e1bc8c6b266818b386d7dfe2c84"
+    },
+    {
+      "path": "packages/cli/dependency-lock.json",
+      "sha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139"
+    },
+    {
+      "path": "packages/cli/scripts/verify-dependency-lock.py",
+      "sha256": "f45324a03804c4a462eac47612aa10a442a56ae5051aa93feca589b4aa923c9c"
+    },
+    {
+      "path": "schemas/source-correlation-index.schema.json",
+      "sha256": "90b30232f638d3ec999aaab45a007c8a63a48d6cfba7425f2f6fea2060290b3d"
+    },
+    {
+      "path": "docker/images.lock.json",
+      "sha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069"
+    }
+  ],
+  "fixtureEvidence": {
+    "deliberateToken": "SDK034_DELIBERATE_BROWSER_FAILURE",
+    "expectedSource": {
+      "rootId": "project",
+      "path": "packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx",
+      "line": 12,
+      "column": 8
+    },
+    "sourceIndexSha256": "8861bb2d9eb120f55eb0010536fa30b7124d3a3934ca6e1117a993647f8543c1",
+    "artifactSetSha256": "e301aa3d7ca11335366bd09eb67e0c70918cabd2f72d24bcf9c01a517d6b8675",
+    "indexedFileCount": 15,
+    "browserReceiptSha256": "dd45eb299c51f0fc61f19982f4437fa0e201d84c318b442bfd5aaf8e14ee80b7",
+    "modes": {
+      "development": {
+        "nativeFrame": "runtime/development.js:319:11",
+        "status": "mapped-composed",
+        "runtimeByteLength": 10802,
+        "runtimeSha256": "bd5f2d355f81ac2620c39e495cc14a1c364de6ac3e2a87fa290582559762f490",
+        "mapByteLength": 3006,
+        "mapSha256": "717940c1f048e5ef521a70366c2d97504a5fe283925a575c773b8fd030606aee",
+        "stackSha256": "546cd66394b7f76feb0bdf11d0cc22191c2de57c8d5157b9d657c7eb1b9e5fb3",
+        "traceJsonSha256": "bd54c2c168f94e9a6ab98841d31673c813e6696f75194f18329193456bb09b1f"
+      },
+      "production": {
+        "nativeFrame": "runtime/production.js:1:2976",
+        "status": "mapped-composed",
+        "runtimeByteLength": 3147,
+        "runtimeSha256": "5cdbd484531b22eef4b3924181159af8bb17008a1fc36f908b41aa01414f686c",
+        "mapByteLength": 2986,
+        "mapSha256": "1425da8d85ebf33a6629c238cfb89d1a6f15e80fc1f02e6241f6728991cdd73a",
+        "stackSha256": "f795ac3d4f751df83595774037d687d13ecad635f5b078f3c78fe6a9f830c332",
+        "traceJsonSha256": "81137046d18ed71b9b77100d6ef4efb5c32e7b2c6873531ddc6fa513b86c67a9"
+      },
+      "two-stage": {
+        "nativeFrame": "runtime/two-stage.js:1:2976",
+        "intermediateFrame": "generated/sdk034/fixture/Main.ts:11:8",
+        "status": "mapped-two-stage",
+        "runtimeByteLength": 3147,
+        "runtimeSha256": "5cdbd484531b22eef4b3924181159af8bb17008a1fc36f908b41aa01414f686c",
+        "bundleMapByteLength": 4445,
+        "bundleMapSha256": "4297bcc11f8ac006a28b18b5e9a7fa5b5192a90b6e868919e756907966e6e43b",
+        "genesMapByteLength": 336,
+        "genesMapSha256": "3186d73ae9bc8e4d9d99ee078c0770ce0738c9d3f4374cc73f86e402acd8d3de",
+        "stackSha256": "80841be1320fcd820ed87e0b8836eb7c7b373b329690bc23fd2490bfcc0f2123",
+        "traceJsonSha256": "3d5ba48ada5e63e2541a2423e328dd39476c53fc38cd350e890f43481dbca658"
+      }
+    }
+  },
+  "verification": {
+    "browserGate": {
+      "command": "bash packages/cli/scripts/test-browser-source-correlation.sh",
+      "outcome": "passed",
+      "cleanGenesCompiles": 2,
+      "cleanCliCompiles": 2,
+      "deterministicBundleBuilds": 2,
+      "deterministicPackageBuilds": 2,
+      "realChromiumFailureRuns": 6,
+      "browserFailuresReplayStable": true,
+      "nativeStackTextPreservedByteForByte": true,
+      "canonicalJsonReplay": true,
+      "stableTextSnapshots": true
+    },
+    "phpCliRegression": {
+      "command": "bash packages/cli/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "negativeCases": {
+      "integrityOrSchemaExit3": [
+        "stale-runtime",
+        "stale-map",
+        "stale-generated",
+        "stale-source",
+        "absolute-map-source",
+        "escaping-map-source",
+        "invalid-vlq",
+        "sources-content",
+        "wrong-map-file",
+        "unknown-map-field",
+        "unknown-index-field",
+        "absolute-index-path",
+        "dishonest-continuity"
+      ],
+      "ambiguousContractExit4": [
+        "ambiguous-correlation",
+        "ambiguous-file-path"
+      ],
+      "usageOrInputExit2": [
+        "out-of-range-frame",
+        "empty-stack",
+        "missing-index",
+        "unknown-source-root",
+        "invalid-format"
+      ],
+      "honestUnmapped": {
+        "basename-only": "unmapped-no-layer",
+        "unknown-path": "unmapped-no-layer",
+        "missing-column": "native-unmapped"
+      },
+      "nearestOrBasenameGuessing": false,
+      "machinePathLeakCount": 0
+    }
+  },
+  "packaging": {
+    "productionZipSha256": "38801355dfb6a8afb84102c3c4f2f8226f983ec6e9a7c22eb0caac0e01674a80",
+    "productionZipByteLength": 3287,
+    "productionEntries": [
+      "runtime/production.js"
+    ],
+    "debugCompanionZipSha256": "39e1046bc293d4aa38ddd7c49764c34af90e1b0a726b4f5402fb24e8b58112b3",
+    "debugCompanionZipByteLength": 46590,
+    "debugCompanionEntries": [
+      "generated/genes/Register.ts",
+      "generated/index.ts",
+      "generated/sdk034/fixture/Main.ts",
+      "maps/development.js.map",
+      "maps/generated-main.ts.map",
+      "maps/production.js.map",
+      "maps/two-stage.js.map",
+      "runtime/development.js",
+      "runtime/two-stage.js",
+      "source-index.json"
+    ],
+    "deterministicReplay": "passed",
+    "mapsInProduction": false,
+    "sourceIndexInProduction": false,
+    "sourceContentIncluded": false,
+    "haxeSourceIncluded": false,
+    "inlineSourceMapCommentInRuntime": false,
+    "debugCompanionBoundToProductionRuntime": true
+  },
+  "hostedVerification": {
+    "status": "pending-main-push",
+    "workflow": "Repository bootstrap",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "fullMatrixStatus": null,
+    "cliStep": "Test real browser source-map composition and trace CLI"
+  },
+  "claims": {
+    "genesSourceMapLayer": "independently-validated",
+    "browserTraceCli": "controlled-runtime-tested",
+    "developmentComposition": "exact-fixture-runtime-tested",
+    "productionComposition": "exact-fixture-runtime-tested",
+    "twoStageFallback": "exact-fixture-runtime-tested",
+    "nativeFramePreservation": "controlled-runtime-tested",
+    "debugCompanionRetention": "package-tested",
+    "officialWordpressScriptsCorrelation": "not-tested-wordpresshx-g2.4",
+    "nextJsCorrelation": "not-tested-sdk-113",
+    "arbitraryBrowserEntryCorrelation": "not-claimed",
+    "productionSupport": "not-tested",
+    "publicPackagePublication": "blocked"
+  }
+}

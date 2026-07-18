@@ -148,6 +148,8 @@ jobs:
           haxelib install formatter 1.18.0 --quiet
       - name: Test Haxe and Genes PHP trace CLI
         run: bash packages/cli/scripts/test.sh
+      - name: Test real browser source-map composition and trace CLI
+        run: bash packages/cli/scripts/test-browser-source-correlation.sh
       - name: Test typed compile-time HXX parser prototype
         run: bash packages/hxx/scripts/test.sh
       - name: Test strict Gutenberg browser compiler profile

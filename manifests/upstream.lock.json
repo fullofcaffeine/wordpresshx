@@ -28,7 +28,8 @@
       "testReceiptIds": [
         "SDK-010-WP70-RELEASE-SOURCE",
         "SDK-032-REACT-GUTENBERG-HXX",
-        "SDK-033-WORDPRESS-ASSET-METADATA"
+        "SDK-033-WORDPRESS-ASSET-METADATA",
+        "SDK-034-BROWSER-SOURCE-CORRELATION"
       ],
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",
       "rollback": null

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "resolvedAt": "2026-07-17T10:55:00-06:00",
+  "resolvedAt": "2026-07-18T00:00:00-06:00",
   "images": {
     "mariadb": {
       "tag": "docker.io/library/mariadb:11.4.5",
@@ -58,15 +58,15 @@
       "evidenceStatus": "runtime-tested"
     },
     "playwright": {
-      "tag": "mcr.microsoft.com/playwright:v1.58.0-noble",
-      "reference": "mcr.microsoft.com/playwright@sha256:35c7d48b4ccaf3aca5018f5f1bf7f50c7da7d61d176c530741f4f2e9ca336c34",
-      "indexDigest": "sha256:35c7d48b4ccaf3aca5018f5f1bf7f50c7da7d61d176c530741f4f2e9ca336c34",
+      "tag": "mcr.microsoft.com/playwright:v1.58.2-noble",
+      "reference": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+      "indexDigest": "sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
       "requiredPlatforms": [
         "linux/amd64",
         "linux/arm64"
       ],
-      "purpose": "future exact Chromium/Firefox/WebKit harness",
-      "evidenceStatus": "inventoried"
+      "purpose": "exact SDK-034 Chromium source-correlation runtime",
+      "evidenceStatus": "runtime-tested"
     },
     "wordpress70Php84": {
       "tag": "docker.io/library/wordpress:7.0.0-php8.4-apache",

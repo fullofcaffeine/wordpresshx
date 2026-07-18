@@ -144,15 +144,19 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "dd0cd5d7ba02328366957e3120102ee707c82b4dd406e3777eb69f7ea08de852"
+      "sha256": "cbccb4c6b202a672226c83a196d84bff91fb780b98e0bf321b1eaf20ffbaa139"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/Main.hx",
-      "sha256": "e34972ad127ad008447374487e7171c0512e0004ffd062cbe9d3c467b789bc73"
+      "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
-      "sha256": "2b0cf04c027405fcc5fa7e402620bf4716c62a187ff316ccf8e40808965075c9"
+      "sha256": "c76ccb96ee3ea72703e790ffa4f2293077c8318bb28d39fbd2a9d11ad3c8efdf"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+      "sha256": "35c86091410cf6ae994dcd971bb88731422f6b05a848bf309d2ad68d315a46e9"
     },
     {
       "path": "packages/cli/scripts/test.sh",
@@ -160,7 +164,7 @@
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "5dcf6943b1b9b976ae5687d180dfd35d9e89ea455ceb7c7618e60997d069754b"
+      "sha256": "f45324a03804c4a462eac47612aa10a442a56ae5051aa93feca589b4aa923c9c"
     },
     {
       "path": "packages/cli/scripts/verify-php-trace.py",
@@ -327,7 +331,7 @@
     "nativeFramePreservation": "controlled-and-wordpress-runtime-tested",
     "representativeWordpressFailures": "runtime-tested-on-two-database-lanes",
     "debugCompanionRetention": "package-tested",
-    "browserTraceCorrelation": "not-implemented-sdk-034",
+    "browserTraceCorrelation": "implemented-by-sdk-034-not-part-of-sdk-025-hosted-claim",
     "wordpressDevelopmentHandler": "not-implemented-optional",
     "arbitraryHaxePhpCompilation": "not-claimed",
     "productionSupport": "not-tested",

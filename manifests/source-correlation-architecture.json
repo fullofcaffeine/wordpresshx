@@ -3,7 +3,7 @@
   "decision": "ADR-014",
   "status": "accepted-architecture",
   "acceptedAt": "2026-07-18",
-  "claim": "sdk-025-php-runtime-and-cli-verified-browser-pending",
+  "claim": "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-official-wordpress-adapter-pending",
   "publicContract": {
     "phpMapFormat": "wordpresshx.php-haxe-range-map.v1",
     "phpMapSchema": "schemas/php-haxe-map.schema.json",
@@ -212,7 +212,7 @@
       "declarationRangeFoundationReceiptId": "SDK-021-PHP-IR-PRINTER",
       "implementationReceiptId": "SDK-025-PHP-SOURCE-CORRELATION",
       "serializedMapRuntime": "bounded-development-packaged-and-wordpress-passed",
-      "traceCli": "php-implemented-browser-pending-sdk-034",
+      "traceCli": "php-and-browser-implemented-sdk-025-sdk-034",
       "contractFixture": "runtime-validated",
       "exactPhp74": "lint-and-four-native-failures-passed",
       "exactPhp84": "lint-and-four-native-failures-passed",
@@ -225,11 +225,16 @@
     "browser": {
       "genesCompilerVersion": "1.36.3",
       "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "implementationReceiptId": "SDK-034-BROWSER-SOURCE-CORRELATION",
+      "genesLayerValidation": "independently-validated-regular-source-map-v3",
       "boundedEsbuildCompositionReceiptId": "SDK-032-REACT-GUTENBERG-HXX",
       "boundedEsbuildComposition": "map-token-correlation-passed-not-deliberate-stack-throw",
+      "exactEsbuildTraceGate": "development-and-minified-composition-plus-two-stage-fallback-runtime-passed",
+      "traceCli": "implemented-offline-stable-text-and-canonical-json",
+      "productionPackageRetention": "runtime-js-only-map-index-and-source-content-absent",
       "officialWordpressScriptsLaneReceiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
-      "officialWordpressScriptsCorrelation": "not-tested",
-      "deliberateDevelopmentAndProductionThrows": "not-tested"
+      "officialWordpressScriptsCorrelation": "not-tested-follow-up-wordpresshx-g2.4",
+      "deliberateDevelopmentAndProductionThrows": "passed-for-exact-sdk-034-esbuild-fixture"
     },
     "productionSupport": "not-tested",
     "boundedProductionPackageEvidence": "passed-not-a-production-support-claim",
@@ -378,7 +383,7 @@
     "schema": "retain-v1-reader-and-emit-new-version-with-explicit-migration"
   },
   "followUpBeads": [
-    "wordpresshx-sdk-034",
+    "wordpresshx-g2.4",
     "wordpresshx-adr-019"
   ],
   "stopConditions": [

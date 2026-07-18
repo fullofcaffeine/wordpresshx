@@ -496,8 +496,10 @@ disabling DCE.
   props, events, hooks, refs, styles, and package externs.
 - wordpresshx-sdk-033: run normal WordPress builds and prove import,
   externalization, final asset PHP, enqueue, version, and translation parity.
-- wordpresshx-sdk-034: prove source maps through generated TSX and the final
-  bundle.
+- wordpresshx-sdk-034: prove the authenticated browser lookup contract through
+  an exact development/minified bundler fixture and two-stage fallback.
+- wordpresshx-g2.4: project that contract through the final exact
+  `@wordpress/scripts` bundle.
 - wordpresshx-sdk-035: establish the representative classic Genes semantic
   differential.
 - wordpresshx-sdk-113: consume the versioned public browser/NextJsHx adapter

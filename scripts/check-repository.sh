@@ -56,18 +56,34 @@ required_files=(
   packages/cli/haxe_libraries/hxnodejs.hxml
   packages/cli/package-lock.json
   packages/cli/package.json
+  packages/cli/browser-tooling/build.mjs
+  packages/cli/browser-tooling/package-lock.json
+  packages/cli/browser-tooling/package.json
+  packages/cli/browser-tooling/runtime.mjs
+  packages/cli/profiles/browser-correlation.hxml
   packages/cli/profiles/classic.hxml
   packages/cli/scripts/add-node-shebang.py
+  packages/cli/scripts/create-browser-trace-mutations.py
+  packages/cli/scripts/package-browser-source-correlation.py
+  packages/cli/scripts/test-browser-source-correlation.sh
   packages/cli/scripts/test.sh
+  packages/cli/scripts/verify-browser-source-correlation.py
   packages/cli/scripts/verify-dependency-lock.py
   packages/cli/scripts/verify-php-trace.py
+  packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx
   packages/cli/src/wordpresshx/cli/CanonicalJson.hx
   packages/cli/src/wordpresshx/cli/Content.hx
   packages/cli/src/wordpresshx/cli/Contract.hx
   packages/cli/src/wordpresshx/cli/Main.hx
   packages/cli/src/wordpresshx/cli/NodeGlobals.hx
   packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx
+  packages/cli/src/wordpresshx/cli/SourceIndex.hx
+  packages/cli/src/wordpresshx/cli/SourceMapV3.hx
   packages/cli/src/wordpresshx/cli/TraceFailure.hx
+  packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
+  packages/cli/test/expected/browser-development.text
+  packages/cli/test/expected/browser-production.text
+  packages/cli/test/expected/browser-two-stage.text
   packages/cli/test/expected/private.text
   packages/core/README.md
   packages/core/test.hxml
@@ -281,6 +297,7 @@ required_files=(
   manifests/evidence/sdk-031-strict-browser-profile.json
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
+  manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
@@ -479,6 +496,11 @@ sdk025_receipt = json.loads(
         "manifests/evidence/sdk-025-php-source-correlation.json"
     ).read_text(encoding="utf-8")
 )
+sdk034_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-034-browser-source-correlation.json"
+    ).read_text(encoding="utf-8")
+)
 haxelib = json.loads(
     Path("compiler/reflaxe.php/haxelib.json").read_text(encoding="utf-8")
 )
@@ -567,6 +589,13 @@ source_correlation_architecture = json.loads(
 )
 cli_dependency_lock = json.loads(
     Path("packages/cli/dependency-lock.json").read_text(encoding="utf-8")
+)
+sdk034_profile_path = Path("packages/cli/profiles/browser-correlation.hxml")
+sdk034_tooling_manifest_path = Path(
+    "packages/cli/browser-tooling/package.json"
+)
+sdk034_tooling_lock_path = Path(
+    "packages/cli/browser-tooling/package-lock.json"
 )
 gutenberg_dependency_lock_path = Path("packages/gutenberg/dependency-lock.json")
 gutenberg_dependency_lock = json.loads(
@@ -1070,7 +1099,8 @@ assert source_correlation_architecture["decision"] == "ADR-014"
 assert source_correlation_architecture["status"] == "accepted-architecture"
 assert source_correlation_architecture["acceptedAt"] == "2026-07-18"
 assert source_correlation_architecture["claim"] == (
-    "sdk-025-php-runtime-and-cli-verified-browser-pending"
+    "sdk-025-php-and-sdk-034-browser-runtime-cli-implemented-"
+    "official-wordpress-adapter-pending"
 )
 source_contract = source_correlation_architecture["publicContract"]
 assert source_contract["phpMapFormat"] == (
@@ -1223,7 +1253,7 @@ assert source_evidence["php"]["serializedMapRuntime"] == (
     "bounded-development-packaged-and-wordpress-passed"
 )
 assert source_evidence["php"]["traceCli"] == (
-    "php-implemented-browser-pending-sdk-034"
+    "php-and-browser-implemented-sdk-025-sdk-034"
 )
 assert source_evidence["php"]["contractFixture"] == "runtime-validated"
 assert source_evidence["php"]["exactPhp74"] == (
@@ -1246,11 +1276,30 @@ assert source_evidence["browser"]["genesCommit"] == (
 assert source_evidence["browser"]["boundedEsbuildCompositionReceiptId"] == (
     sdk032_receipt["receiptId"]
 )
+assert source_evidence["browser"]["implementationReceiptId"] == (
+    sdk034_receipt["receiptId"]
+)
+assert source_evidence["browser"]["genesLayerValidation"] == (
+    "independently-validated-regular-source-map-v3"
+)
+assert source_evidence["browser"]["exactEsbuildTraceGate"] == (
+    "development-and-minified-composition-plus-two-stage-fallback-"
+    "runtime-passed"
+)
+assert source_evidence["browser"]["traceCli"] == (
+    "implemented-offline-stable-text-and-canonical-json"
+)
+assert source_evidence["browser"]["productionPackageRetention"] == (
+    "runtime-js-only-map-index-and-source-content-absent"
+)
 assert source_evidence["browser"]["officialWordpressScriptsLaneReceiptId"] == (
     sdk033_receipt["receiptId"]
 )
 assert source_evidence["browser"]["officialWordpressScriptsCorrelation"] == (
-    "not-tested"
+    "not-tested-follow-up-wordpresshx-g2.4"
+)
+assert source_evidence["browser"]["deliberateDevelopmentAndProductionThrows"] == (
+    "passed-for-exact-sdk-034-esbuild-fixture"
 )
 assert source_evidence["productionSupport"] == "not-tested"
 assert source_evidence["boundedProductionPackageEvidence"] == (
@@ -1425,10 +1474,252 @@ else:
     assert sdk025_hosted["commit"] is None
     assert sdk025_hosted["runId"] is None
 assert sdk025_receipt["claims"]["browserTraceCorrelation"] == (
-    "not-implemented-sdk-034"
+    "implemented-by-sdk-034-not-part-of-sdk-025-hosted-claim"
 )
 assert sdk025_receipt["claims"]["productionSupport"] == "not-tested"
 assert sdk025_receipt["claims"]["publicPackagePublication"] == "blocked"
+
+assert sdk034_receipt["schemaVersion"] == 1
+assert sdk034_receipt["receiptId"] == (
+    "SDK-034-BROWSER-SOURCE-CORRELATION"
+)
+assert sdk034_receipt["bead"] == "wordpresshx-sdk-034"
+assert sdk034_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+sdk034_subject = sdk034_receipt["subject"]
+assert sdk034_subject["profileId"] == "wp70-release"
+assert sdk034_subject["buildAdapter"] == "sdk-034-esbuild-fixture"
+assert sdk034_subject["entries"] == [
+    "development",
+    "production",
+    "two-stage",
+]
+
+sdk034_scope = sdk034_receipt["scope"]
+assert sdk034_scope["genesLayerValidatedIndependently"] is True
+assert sdk034_scope["composedModes"] == ["development", "production"]
+assert sdk034_scope["twoStageMode"] == "two-stage"
+assert sdk034_scope["officialWordpressScriptsCorrelation"] == (
+    "not-tested-follow-up-wordpresshx-g2.4"
+)
+assert sdk034_scope["nextJsCorrelation"] == (
+    "not-tested-owned-by-sdk-113-per-adapter-entry-mode"
+)
+assert sdk034_scope["generalProductionSupport"] is False
+assert sdk034_scope["publicationAuthorized"] is False
+
+sdk034_toolchain = sdk034_receipt["toolchain"]
+assert sdk034_toolchain["haxe"] == cli_dependency_lock["haxe"]["version"]
+assert sdk034_toolchain["lixPackage"] == (
+    cli_dependency_lock["lix"]["packageVersion"]
+)
+assert sdk034_toolchain["lixReportedCli"] == (
+    cli_dependency_lock["lix"]["cliVersion"]
+)
+assert sdk034_toolchain["genes"]["version"] == (
+    cli_dependency_lock["compiler"]["version"]
+)
+assert sdk034_toolchain["genes"]["commit"] == (
+    cli_dependency_lock["compiler"]["commit"]
+)
+assert sdk034_toolchain["genes"]["tree"] == (
+    cli_dependency_lock["compiler"]["tree"]
+)
+browser_correlation_lock = cli_dependency_lock["browserCorrelation"]
+assert sdk034_toolchain["bundler"]["version"] == (
+    browser_correlation_lock["bundler"]["version"]
+)
+assert sdk034_toolchain["bundler"]["npmIntegrity"] == (
+    browser_correlation_lock["bundler"]["npmIntegrity"]
+)
+assert sdk034_toolchain["browser"]["image"] == (
+    image_lock["images"]["playwright"]["reference"]
+)
+assert sdk034_toolchain["browser"]["image"] == (
+    browser_correlation_lock["browserRuntime"]["image"]
+)
+
+sdk034_inputs = sdk034_receipt["authenticatedInputs"]
+assert len({record["path"] for record in sdk034_inputs}) == len(
+    sdk034_inputs
+)
+for record in sdk034_inputs:
+    assert sha256.fullmatch(record["sha256"])
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+sdk034_implementation = sdk034_receipt["implementation"]
+assert sdk034_implementation["sourceMapReader"] == {
+    "format": "closed regular Source Map v3",
+    "base64Vlq": True,
+    "lookup": "exact generated line with greatest-lower-bound column",
+    "sectionsSupported": False,
+    "sourcesContentAllowed": False,
+    "layerContinuityAuthenticated": True,
+}
+assert sdk034_implementation["sourceIndex"]["sharedByPhpAndBrowser"] is True
+assert sdk034_implementation["sourceIndex"]["exactLogicalPathIdentity"] is True
+assert sdk034_implementation["sourceIndex"]["basenameOrSuffixGuessing"] is False
+assert sdk034_implementation["browserTraceCli"]["applicationLanguage"] == (
+    "Haxe"
+)
+assert sdk034_implementation["browserTraceCli"]["javascriptCompiler"] == (
+    "Genes"
+)
+assert sdk034_implementation["browserTraceCli"]["offline"] is True
+assert sdk034_implementation["browserTraceCli"]["readOnly"] is True
+assert sdk034_implementation["browserTraceCli"]["networkLookup"] is False
+assert sdk034_implementation["browserTraceCli"]["exitCodes"] == (
+    trace_cli["exitCodes"]
+)
+assert sdk034_implementation["changeDecision"]["genesSourceChanged"] is False
+assert sdk034_implementation["changeDecision"]["genesPullRequest"] is None
+
+sdk034_fixture = sdk034_receipt["fixtureEvidence"]
+assert sdk034_fixture["expectedSource"] == {
+    "rootId": "project",
+    "path": (
+        "packages/cli/test/browser-source-correlation/src/"
+        "sdk034/fixture/Main.hx"
+    ),
+    "line": 12,
+    "column": 8,
+}
+assert sdk034_fixture["indexedFileCount"] == 15
+assert sha256.fullmatch(sdk034_fixture["sourceIndexSha256"])
+assert sha256.fullmatch(sdk034_fixture["artifactSetSha256"])
+assert sha256.fullmatch(sdk034_fixture["browserReceiptSha256"])
+sdk034_modes = sdk034_fixture["modes"]
+assert set(sdk034_modes) == {"development", "production", "two-stage"}
+assert sdk034_modes["development"]["status"] == "mapped-composed"
+assert sdk034_modes["production"]["status"] == "mapped-composed"
+assert sdk034_modes["two-stage"]["status"] == "mapped-two-stage"
+for mode in sdk034_modes.values():
+    for key, value in mode.items():
+        if key.endswith("Sha256"):
+            assert sha256.fullmatch(value)
+
+sdk034_verification = sdk034_receipt["verification"]
+assert sdk034_verification["browserGate"]["outcome"] == "passed"
+assert sdk034_verification["browserGate"]["realChromiumFailureRuns"] == 6
+assert sdk034_verification["browserGate"]["browserFailuresReplayStable"] is True
+assert sdk034_verification["browserGate"]["nativeStackTextPreservedByteForByte"] is True
+assert sdk034_verification["browserGate"]["canonicalJsonReplay"] is True
+assert sdk034_verification["phpCliRegression"]["outcome"] == "passed"
+sdk034_negatives = sdk034_verification["negativeCases"]
+assert len(sdk034_negatives["integrityOrSchemaExit3"]) == 13
+assert len(sdk034_negatives["ambiguousContractExit4"]) == 2
+assert len(sdk034_negatives["usageOrInputExit2"]) == 5
+assert sdk034_negatives["nearestOrBasenameGuessing"] is False
+assert sdk034_negatives["machinePathLeakCount"] == 0
+
+sdk034_packaging = sdk034_receipt["packaging"]
+assert sdk034_packaging["productionEntries"] == ["runtime/production.js"]
+assert sdk034_packaging["debugCompanionEntries"] == [
+    "generated/genes/Register.ts",
+    "generated/index.ts",
+    "generated/sdk034/fixture/Main.ts",
+    "maps/development.js.map",
+    "maps/generated-main.ts.map",
+    "maps/production.js.map",
+    "maps/two-stage.js.map",
+    "runtime/development.js",
+    "runtime/two-stage.js",
+    "source-index.json",
+]
+for forbidden_sdk034_retention in (
+    "mapsInProduction",
+    "sourceIndexInProduction",
+    "sourceContentIncluded",
+    "haxeSourceIncluded",
+    "inlineSourceMapCommentInRuntime",
+):
+    assert sdk034_packaging[forbidden_sdk034_retention] is False
+assert sdk034_packaging["debugCompanionBoundToProductionRuntime"] is True
+assert sdk034_packaging["deterministicReplay"] == "passed"
+
+sdk034_tooling_manifest = json.loads(
+    sdk034_tooling_manifest_path.read_text(encoding="utf-8")
+)
+sdk034_tooling_lock = json.loads(
+    sdk034_tooling_lock_path.read_text(encoding="utf-8")
+)
+assert sdk034_tooling_manifest["private"] is True
+assert sdk034_tooling_manifest["engines"] == {
+    "node": "22.17.0",
+    "npm": "10.9.2",
+}
+assert sdk034_tooling_manifest["devDependencies"] == {
+    "esbuild": "0.27.2",
+    "playwright-core": "1.58.2",
+}
+assert sdk034_toolchain["integrityLockedNpmPackageCount"] == (
+    len(sdk034_tooling_lock["packages"]) - 1
+)
+sdk034_graph = next(
+    graph
+    for graph in toolchain_lock["dependencyGraphs"]["npm"]["externalGraphs"]
+    if graph["id"] == "sdk-034-browser-source-correlation-verification-graph"
+)
+assert sdk034_graph["receiptId"] == sdk034_receipt["receiptId"]
+assert sdk034_graph["profilePath"] == sdk034_profile_path.as_posix()
+assert sdk034_graph["profileSha256"] == hashlib.sha256(
+    sdk034_profile_path.read_bytes()
+).hexdigest()
+assert sdk034_graph["manifestPath"] == sdk034_tooling_manifest_path.as_posix()
+assert sdk034_graph["manifestSha256"] == hashlib.sha256(
+    sdk034_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk034_graph["lockPath"] == sdk034_tooling_lock_path.as_posix()
+assert sdk034_graph["lockSha256"] == hashlib.sha256(
+    sdk034_tooling_lock_path.read_bytes()
+).hexdigest()
+assert sdk034_graph["dependencyLockSha256"] == hashlib.sha256(
+    Path(sdk034_graph["dependencyLockPath"]).read_bytes()
+).hexdigest()
+assert set(sdk034_graph["directPackages"]) == {
+    f"{name}@{version}"
+    for name, version in sdk034_tooling_manifest["devDependencies"].items()
+}
+assert sdk034_graph["buildImage"] == image_lock["images"]["node"]["reference"]
+assert sdk034_graph["runtimeImage"] == (
+    image_lock["images"]["playwright"]["reference"]
+)
+assert sdk034_graph["lifecycleScriptsAllowed"] is False
+assert sdk034_graph["officialWordpressScriptsFollowUp"] == "wordpresshx-g2.4"
+assert sdk034_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+
+sdk034_hosted = sdk034_receipt["hostedVerification"]
+assert sdk034_hosted["status"] in {"pending-main-push", "passed"}
+if sdk034_hosted["status"] == "passed":
+    assert sdk034_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk034_implementation["implementationCommit"])
+    assert sha1.fullmatch(sdk034_hosted["commit"])
+    assert isinstance(sdk034_hosted["runId"], int)
+    assert isinstance(sdk034_hosted["jobId"], int)
+    assert sdk034_hosted["fullMatrixStatus"] == "passed"
+    assert sdk034_hosted["cliStep"] == (
+        "Test real browser source-map composition and trace CLI"
+    )
+else:
+    assert sdk034_receipt["status"] == "implemented-hosted-pending"
+    assert sdk034_implementation["implementationCommit"] is None
+    assert sdk034_hosted["commit"] is None
+    assert sdk034_hosted["runId"] is None
+    assert sdk034_hosted["jobId"] is None
+assert sdk034_receipt["claims"]["officialWordpressScriptsCorrelation"] == (
+    "not-tested-wordpresshx-g2.4"
+)
+assert sdk034_receipt["claims"]["nextJsCorrelation"] == (
+    "not-tested-sdk-113"
+)
+assert sdk034_receipt["claims"]["productionSupport"] == "not-tested"
+assert sdk034_receipt["claims"]["publicPackagePublication"] == "blocked"
 
 reference_review = source_correlation_architecture["referenceReview"]
 assert {reference["repository"] for reference in reference_review} == {
@@ -1450,7 +1741,7 @@ for reference in reference_review:
         assert sha1.fullmatch(reviewed_path["blob"])
 
 assert set(source_correlation_architecture["followUpBeads"]) == {
-    "wordpresshx-sdk-034",
+    "wordpresshx-g2.4",
     "wordpresshx-adr-019",
 }
 assert len(source_correlation_architecture["stopConditions"]) == 5
@@ -3680,12 +3971,13 @@ for image_key in (
     "mysql",
     "php74Floor",
     "php84Cli",
+    "playwright",
     "wordpress70Php84",
 ):
     assert image_lock["images"][image_key]["evidenceStatus"] == (
         "runtime-tested"
     )
-for image_key in ("node", "playwright"):
+for image_key in ("node",):
     assert image_lock["images"][image_key]["evidenceStatus"] == (
         "inventoried"
     )
@@ -3753,7 +4045,9 @@ for lane_name, expected_version in (
         assert lane[check] == "passed"
 
 assert sdk090_receipt["matrixBoundaries"]["node22170"] == "inventoried"
-assert sdk090_receipt["matrixBoundaries"]["playwright1580"] == "inventoried"
+assert sdk090_receipt["matrixBoundaries"]["playwright1582"] == (
+    "runtime-tested-by-sdk-034-not-sdk-090"
+)
 assert sdk090_receipt["matrixBoundaries"]["sdkPluginOrThemeInstalled"] is False
 assert sdk090_receipt["hostedWorkflow"]["job"] == "wordpress-runtime"
 assert sdk090_receipt["hostedWorkflow"]["runId"] == 29605790579

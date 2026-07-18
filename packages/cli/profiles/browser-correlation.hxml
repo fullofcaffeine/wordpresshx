@@ -1,0 +1,8 @@
+-lib genes-ts
+-cp test/browser-source-correlation/src
+-main sdk034.fixture.Main
+-D genes.ts
+-D genes.ts.no_extension
+-D js-source-map
+-D js-es=6
+-dce full

@@ -181,7 +181,11 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(nested(formatter, "artifact", "sha256") == "2d29c9b56e54b2643e07ee64003c3fc30a5bc133bdcb4cc15c48f09acda7a047", "Haxe Formatter artifact changed")
 
     runtime = toolchain.get("runtimeImages", {})
-    audit.exact_keys(runtime, {"lock", "node", "php"}, "runtime image lock projection")
+    audit.exact_keys(
+        runtime,
+        {"lock", "node", "playwright", "php"},
+        "runtime image lock projection",
+    )
     image_lock_ref = runtime.get("lock", {}) if isinstance(runtime, dict) else {}
     audit.exact_keys(image_lock_ref, {"path", "sha256"}, "runtime image source lock")
     audit.check(image_lock_ref.get("path") == "docker/images.lock.json", "runtime image lock path changed")
@@ -190,6 +194,34 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.exact_keys(node, {"version", "imageKey", "reference", "evidenceStatus"}, "Node runtime lock")
     audit.check(node.get("version") == "22.17.0", "Node runtime must be exactly 22.17.0")
     audit.check(node.get("reference") == "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0", "Node must use the reviewed digest reference")
+    playwright = runtime.get("playwright", {}) if isinstance(runtime, dict) else {}
+    audit.exact_keys(
+        playwright,
+        {
+            "version",
+            "imageKey",
+            "reference",
+            "nodeVersion",
+            "npmVersion",
+            "chromiumVersion",
+            "evidenceStatus",
+        },
+        "Playwright runtime lock",
+    )
+    audit.check(
+        playwright.get("version") == "1.58.2",
+        "Playwright runtime must be exactly 1.58.2",
+    )
+    audit.check(
+        playwright.get("nodeVersion") == "24.13.0"
+        and playwright.get("npmVersion") == "11.6.2"
+        and playwright.get("chromiumVersion") == "145.0.7632.0",
+        "Playwright runtime-reported Node/npm/Chromium tuple changed",
+    )
+    audit.check(
+        playwright.get("evidenceStatus") == "runtime-tested",
+        "Playwright runtime evidence must remain runtime-tested",
+    )
     php_images = runtime.get("php", {}) if isinstance(runtime, dict) else {}
     audit.exact_keys(php_images, {"syntaxFloor", "primaryCli", "wordpressRuntime"}, "PHP runtime locks")
 
@@ -203,6 +235,12 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         audit.check(projection.get("imageKey") == expected_key, f"{projection_name} image key changed")
         audit.check(projection.get("reference") == nested(images, expected_key, "reference"), f"{projection_name} image projection differs from docker lock")
     audit.check(node.get("reference") == nested(images, "node", "reference"), "Node image projection differs from docker lock")
+    audit.check(
+        playwright.get("imageKey") == "playwright"
+        and playwright.get("reference")
+        == nested(images, "playwright", "reference"),
+        "Playwright image projection differs from docker lock",
+    )
 
     graphs = toolchain.get("dependencyGraphs", {})
     audit.exact_keys(graphs, {"composer", "npm", "haxelib"}, "dependency graph locks")
@@ -222,7 +260,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
     external_graphs = npm.get("externalGraphs", [])
     audit.check(
-        isinstance(external_graphs, list) and len(external_graphs) == 5,
+        isinstance(external_graphs, list) and len(external_graphs) == 6,
         "npm external graph set changed",
     )
     genes_graph = (
@@ -245,9 +283,14 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         if isinstance(external_graphs, list) and len(external_graphs) > 3
         else {}
     )
-    sdk025_graph = (
+    sdk034_graph = (
         external_graphs[4]
         if isinstance(external_graphs, list) and len(external_graphs) > 4
+        else {}
+    )
+    sdk025_graph = (
+        external_graphs[5]
+        if isinstance(external_graphs, list) and len(external_graphs) > 5
         else {}
     )
     audit.check(
@@ -302,6 +345,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/hxx-tooling/package.json",
                 "packages/gutenberg/build-tooling/package.json",
                 "packages/cli/package.json",
+                "packages/cli/browser-tooling/package.json",
             ]
         ),
         "unlocked package.json found",
@@ -317,6 +361,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/hxx-tooling/package-lock.json",
                 "packages/gutenberg/build-tooling/package-lock.json",
                 "packages/cli/package-lock.json",
+                "packages/cli/browser-tooling/package-lock.json",
             ]
         ),
         "unlocked package-manager lock found",
@@ -538,6 +583,110 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         "SDK-033 npm graph receipt changed",
     )
     audit.exact_keys(
+        sdk034_graph,
+        {
+            "id",
+            "authority",
+            "profilePath",
+            "profileSha256",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "dependencyLockPath",
+            "dependencyLockSha256",
+            "directPackages",
+            "buildImage",
+            "runtimeImage",
+            "lifecycleScriptsAllowed",
+            "buildInputOnly",
+            "publicationAuthorized",
+            "officialWordpressScriptsFollowUp",
+            "receiptId",
+        },
+        "SDK-034 browser correlation npm graph",
+    )
+    audit.check(
+        sdk034_graph.get("id")
+        == "sdk-034-browser-source-correlation-verification-graph",
+        "SDK-034 npm graph ID changed",
+    )
+    audit.check(
+        sdk034_graph.get("authority")
+        == "exact-genes-map-esbuild-lock-and-real-chromium-runtime",
+        "SDK-034 npm graph authority changed",
+    )
+    sdk034_profile = sdk034_graph.get("profilePath")
+    sdk034_manifest = sdk034_graph.get("manifestPath")
+    sdk034_lock = sdk034_graph.get("lockPath")
+    sdk034_dependency_lock = sdk034_graph.get("dependencyLockPath")
+    audit.check(
+        sdk034_profile == "packages/cli/profiles/browser-correlation.hxml",
+        "SDK-034 browser correlation profile path changed",
+    )
+    audit.check(
+        sdk034_manifest == "packages/cli/browser-tooling/package.json",
+        "SDK-034 npm manifest path changed",
+    )
+    audit.check(
+        sdk034_lock == "packages/cli/browser-tooling/package-lock.json",
+        "SDK-034 npm lock path changed",
+    )
+    audit.check(
+        sdk034_dependency_lock == "packages/cli/dependency-lock.json",
+        "SDK-034 Haxe dependency lock path changed",
+    )
+    for path, digest, label in (
+        (sdk034_profile, sdk034_graph.get("profileSha256"), "profile"),
+        (sdk034_manifest, sdk034_graph.get("manifestSha256"), "manifest"),
+        (sdk034_lock, sdk034_graph.get("lockSha256"), "npm lock"),
+        (
+            sdk034_dependency_lock,
+            sdk034_graph.get("dependencyLockSha256"),
+            "Haxe dependency lock",
+        ),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-034 {label} digest changed",
+            )
+    audit.check(
+        sdk034_graph.get("directPackages")
+        == ["esbuild@0.27.2", "playwright-core@1.58.2"],
+        "SDK-034 direct npm package set changed",
+    )
+    audit.check(
+        sdk034_graph.get("buildImage") == node.get("reference"),
+        "SDK-034 build image differs from the Node lock",
+    )
+    audit.check(
+        sdk034_graph.get("runtimeImage") == playwright.get("reference"),
+        "SDK-034 runtime image differs from the Playwright lock",
+    )
+    audit.check(
+        sdk034_graph.get("lifecycleScriptsAllowed") is False,
+        "SDK-034 npm lifecycle scripts must remain disabled",
+    )
+    audit.check(
+        sdk034_graph.get("buildInputOnly") is True,
+        "SDK-034 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk034_graph.get("publicationAuthorized") is False,
+        "SDK-034 npm graph must not authorize publication",
+    )
+    audit.check(
+        sdk034_graph.get("officialWordpressScriptsFollowUp")
+        == "wordpresshx-g2.4",
+        "SDK-034 official WordPress source-map follow-up changed",
+    )
+    audit.check(
+        sdk034_graph.get("receiptId")
+        == "SDK-034-BROWSER-SOURCE-CORRELATION",
+        "SDK-034 npm graph receipt changed",
+    )
+    audit.exact_keys(
         sdk025_graph,
         {
             "id",
@@ -715,6 +864,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             wp_receipt.get("receiptId"),
             "SDK-032-REACT-GUTENBERG-HXX",
             "SDK-033-WORDPRESS-ASSET-METADATA",
+            "SDK-034-BROWSER-SOURCE-CORRELATION",
         ],
         "wp70 upstream/source receipt link changed",
     )

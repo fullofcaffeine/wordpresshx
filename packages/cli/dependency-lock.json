@@ -32,5 +32,29 @@
   "lix": {
     "packageVersion": "15.12.4",
     "cliVersion": "15.12.2"
+  },
+  "browserCorrelation": {
+    "genesMapFormat": "source-map-v3",
+    "bundler": {
+      "name": "esbuild",
+      "version": "0.27.2",
+      "npmIntegrity": "sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw=="
+    },
+    "browserDriver": {
+      "name": "playwright-core",
+      "version": "1.58.2",
+      "npmIntegrity": "sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg=="
+    },
+    "browserRuntime": {
+      "image": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+      "node": "24.13.0",
+      "npm": "11.6.2",
+      "chromium": "145.0.7632.0"
+    },
+    "npmClosure": {
+      "manifest": "packages/cli/browser-tooling/package.json",
+      "lock": "packages/cli/browser-tooling/package-lock.json",
+      "install": "npm ci --ignore-scripts --no-audit --no-fund"
+    }
   }
 }

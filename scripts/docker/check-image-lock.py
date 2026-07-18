@@ -47,8 +47,8 @@ EXPECTED_IMAGES = {
         "platforms": ["linux/amd64", "linux/arm64/v8"],
     },
     "playwright": {
-        "tag": "mcr.microsoft.com/playwright:v1.58.0-noble",
-        "digest": "sha256:35c7d48b4ccaf3aca5018f5f1bf7f50c7da7d61d176c530741f4f2e9ca336c34",
+        "tag": "mcr.microsoft.com/playwright:v1.58.2-noble",
+        "digest": "sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
         "platforms": ["linux/amd64", "linux/arm64"],
     },
     "wordpress70Php84": {
@@ -101,6 +101,7 @@ def validate_closed_lock() -> dict[str, Any]:
         "mysql",
         "php74Floor",
         "php84Cli",
+        "playwright",
         "wordpress70Php84",
     }
     for key, expected in EXPECTED_IMAGES.items():

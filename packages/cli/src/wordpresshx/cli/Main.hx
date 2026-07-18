@@ -19,15 +19,10 @@ class Main {
 	}
 
 	static function run(arguments:Array<String>):Void {
-		if (arguments.length < 2 || arguments[0] != "trace") {
+		if (arguments.length < 3 || arguments[0] != "trace" || (arguments[1] != "php" && arguments[1] != "browser")) {
 			usage();
 		}
-		if (arguments[1] == "browser") {
-			throw new TraceFailure("browser trace correlation is owned by SDK-034 and is not available in this build", 2);
-		}
-		if (arguments[1] != "php" || arguments.length < 3) {
-			usage();
-		}
+		final target = arguments[1];
 		final stackPath = existingFile(arguments[2], "stack file");
 		var indexPath:Null<String> = null;
 		var outputFormat = "text";
@@ -75,15 +70,17 @@ class Main {
 			index += 2;
 		}
 		if (indexPath == null) {
-			throw new TraceFailure("trace php requires --index <source-index>", 2);
+			throw new TraceFailure("trace " + target + " requires --index <source-index>", 2);
 		}
 		final stack:String = cast Fs.readFileSync(stackPath, "utf8");
 		if (StringTools.trim(stack).length == 0) {
 			throw new TraceFailure("stack file is empty", 2);
 		}
 		final resolvedIndex = existingFile(indexPath, "source index");
-		final result = new PhpTraceEngine(resolvedIndex, sourceRoots).trace(stack);
-		NodeGlobals.process().stdout.write(outputFormat == "json" ? CanonicalJson.encode(result) + "\n" : PhpTraceEngine.text(result));
+		final result = target == "php" ? new PhpTraceEngine(resolvedIndex,
+			sourceRoots).trace(stack) : new BrowserTraceEngine(resolvedIndex, sourceRoots).trace(stack);
+		final text = target == "php" ? PhpTraceEngine.text(result) : BrowserTraceEngine.text(result);
+		NodeGlobals.process().stdout.write(outputFormat == "json" ? CanonicalJson.encode(result) + "\n" : text);
 	}
 
 	static function existingFile(path:String, label:String):String {
@@ -95,6 +92,6 @@ class Main {
 	}
 
 	static function usage():Dynamic {
-		throw new TraceFailure("usage: wphx-sdk trace php <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]", 2);
+		throw new TraceFailure("usage: wphx-sdk trace <php|browser> <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]", 2);
 	}
 }

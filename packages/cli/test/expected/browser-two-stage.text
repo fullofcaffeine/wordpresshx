@@ -1,0 +1,3 @@
+Error: SDK034_DELIBERATE_BROWSER_FAILURE
+    at deliberateFailure (http://127.0.0.1:41734/runtime/two-stage.js:1:2976)
+  => mapped-two-stage project:packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx:12:8 correlation=correlation:browser:two-stage

@@ -51,9 +51,12 @@ ADR-014 keeps each Genes/bundler layer in standard Source Map v3, but requires
 the SDK package index to authenticate the exact files and layer order. A final
 JS-to-Haxe map is admitted only for the exact entry/mode after deliberate
 development and minified throws pass; otherwise the supported result is an
-explicit JS-to-TS/TSX-to-Haxe two-stage chain. SDK-032 is bounded composition
-evidence, while SDK-034 owns the general trace gate and official WordPress build
-proof.
+explicit JS-to-TS/TSX-to-Haxe two-stage chain. SDK-034 now proves that contract
+for its exact Genes 1.36.3/esbuild 0.27.2 fixture in real Chromium, including
+the two-stage fallback and production retention. That receipt is not evidence
+for webpack or Next.js. `wordpresshx-g2.4` owns the exact official
+`@wordpress/scripts` projection, and SDK-113 must admit each future NextJsHx
+adapter/entry/mode independently.
 
 If SDK work exposes a generic compiler defect:
 

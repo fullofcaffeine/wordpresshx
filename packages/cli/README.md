@@ -1,16 +1,19 @@
 # WordPressHx CLI
 
 `@wordpress-hx/cli` is the version-matched host executable for WordPressHx.
-The SDK-025 slice implements offline PHP stack correlation. Its application
-logic is Haxe and Genes emits the Node ESM executable; there is no handwritten
-JavaScript implementation and no dependency on a sibling Genes checkout.
+SDK-025 implements offline PHP stack correlation and SDK-034 adds authenticated
+browser Source Map v3 correlation. Its application logic is Haxe and Genes
+emits the Node ESM executable; there is no handwritten JavaScript implementation
+and no dependency on a sibling Genes checkout.
 
 The package is internal and publication remains blocked. Its exact build closure
 is recorded in [`dependency-lock.json`](dependency-lock.json): Haxe 4.3.7,
 Lix package 15.12.4 (reported CLI 15.12.2),
 Genes 1.36.3 at commit
 `c59ecb361fd91418584487c2138bae8d3d3a3961`, hxnodejs 10.0.0, and Node
-22.17.0. The test harness authenticates and invokes the Haxe shim adjacent to
+22.17.0. The SDK-034 browser evidence closure additionally pins esbuild 0.27.2,
+playwright-core 1.58.2, and Chromium 145.0.7632.0 in its checksum-locked runtime
+image. The test harness authenticates and invokes the Haxe shim adjacent to
 the active Lix executable, so scoped libraries do not depend on whichever
 system Haxe happens to appear first on `PATH`. SDK-025 required no Genes source
 change or pull request.
@@ -46,16 +49,39 @@ Exit codes are stable:
 - `3`: schema or integrity failure; and
 - `4`: ambiguous correlation contract.
 
-`trace browser` is intentionally unavailable in this slice. SDK-034 owns its
-Source Map v3 stack parser, composed/two-stage lookup, and deliberate
-development/minified runtime evidence.
+## Browser trace command
+
+Correlate a captured Chromium stack against the source index from the same
+browser build:
+
+```bash
+wphx-sdk trace browser browser.stack \
+  --index debug-companion/source-index.json \
+  --source-root project=/absolute/path/to/checkout \
+  --source-root genes=/absolute/path/to/genes/source \
+  --format text
+```
+
+The closed regular Source Map v3 reader validates Base64 VLQ segments and every
+generated, intermediate, map, and resolved source hash before lookup. A proven
+composed entry reports `mapped-composed`; an authenticated JS-to-TS/TSX-to-Haxe
+chain reports `mapped-two-stage`. Unknown files, missing columns, and valid
+unmapped segments retain their exact native frame without basename, suffix, or
+nearest-line guessing. URL origins are transport details; the complete decoded
+pathname is the file identity.
+
+The current receipt admits only the exact Genes 1.36.3/esbuild 0.27.2 fixture
+entry in development, minified production, and two-stage modes. Correlation
+through the official `@wordpress/scripts` bundle is tracked separately by
+`wordpresshx-g2.4`; future NextJsHx adapters must be proven per entry and mode.
 
 ## Development and packaging
 
 Development builds may keep an index, external map, and allowlisted local source
-copy. A production install ZIP contains readable PHP only. The separately
-generated debug companion contains the exact map and index but no PHP or Haxe
-source, and is content-bound to the production PHP. Operators provide source
+copy. A production install ZIP contains readable PHP or runtime JavaScript only,
+according to the target package. A separately generated debug companion contains
+the exact maps/index and generated TypeScript needed for correlation but no Haxe
+source; it is content-bound to the production runtime. Operators provide source
 roots locally when investigating a failure.
 
 Run the complete deterministic compile, locked Node/PHP runtime, output snapshot,
@@ -63,8 +89,10 @@ package replay, path-privacy, and tamper suite from the repository root:
 
 ```bash
 bash packages/cli/scripts/test.sh
+bash packages/cli/scripts/test-browser-source-correlation.sh
 ```
 
 The bounded implementation and non-claims are recorded by
-`SDK-025-PHP-SOURCE-CORRELATION` in
-[`manifests/evidence`](../../manifests/evidence/sdk-025-php-source-correlation.json).
+[`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json)
+and
+[`SDK-034-BROWSER-SOURCE-CORRELATION`](../../manifests/evidence/sdk-034-browser-source-correlation.json).

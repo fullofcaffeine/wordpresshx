@@ -112,6 +112,25 @@ def main() -> int:
         add_unlocked_npm_graph,
         "unlocked package.json found",
     )
+
+    def change_sdk034_bundler(root: Path) -> None:
+        def mutate(value: dict) -> None:
+            graphs = value["dependencyGraphs"]["npm"]["externalGraphs"]
+            graph = next(
+                item
+                for item in graphs
+                if item["id"]
+                == "sdk-034-browser-source-correlation-verification-graph"
+            )
+            graph["directPackages"][0] = "esbuild@latest"
+
+        mutate_json(root, "manifests/toolchain.lock.json", mutate)
+
+    negative_case(
+        "floating-sdk034-bundler",
+        change_sdk034_bundler,
+        "SDK-034 direct npm package set changed",
+    )
     negative_case(
         "missing-decision",
         lambda root: mutate_json(
@@ -168,7 +187,7 @@ def main() -> int:
         "G0 licensing/publication boundary changed",
     )
 
-    print("G0 baseline tests passed: 1 positive and 8 fail-closed mutations")
+    print("G0 baseline tests passed: 1 positive and 9 fail-closed mutations")
     return 0
 
 

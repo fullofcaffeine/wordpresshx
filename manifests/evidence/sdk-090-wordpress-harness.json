@@ -5,7 +5,7 @@
   "observedAt": "2026-07-17T11:40:00-06:00",
   "subject": {
     "imageLockPath": "docker/images.lock.json",
-    "imageLockSha256": "a3236e2342b82766945471c858505e44b211763529e0493d139cfb0613461ffb",
+    "imageLockSha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069",
     "composePath": "docker/wordpress/compose.yml",
     "composeSha256": "df4cbc9c4f89f67addfd0efdbf2875e52580a3f434cb7f85a3d3e28057b08896",
     "installPath": "docker/wordpress/install.php",
@@ -13,7 +13,7 @@
     "healthPath": "docker/wordpress/health.php",
     "healthSha256": "8ad0d2eafcd80c77221531d76a88fb8b2fd1527884df882732eabbf69f76f8fb",
     "lockCheckerPath": "scripts/docker/check-image-lock.py",
-    "lockCheckerSha256": "dd7f9ce68ff6d83c6e9aafcd470a9113cf695e336f820270addc0ed0d4b0397d",
+    "lockCheckerSha256": "37f5487f37b558458e51549d5c61c493f2aeef8d73b44c05d04f0a084476d5a2",
     "distributionVerifierPath": "scripts/wordpress/verify-distribution.py",
     "distributionVerifierSha256": "22963ec0abe225a2808448cb39fb6442c575b5a58b6468e7bb13a4fb81953341",
     "resetPath": "scripts/wordpress/reset-harness.sh",
@@ -90,7 +90,7 @@
     "php74CliSyntaxAndRuntimeFloor": "runtime-tested-by-sdk-021",
     "wordpress70OnPhp74": "not-tested-no-official-wordpress-7.0-php7.4-image",
     "node22170": "inventoried",
-    "playwright1580": "inventoried",
+    "playwright1582": "runtime-tested-by-sdk-034-not-sdk-090",
     "sdkPluginOrThemeInstalled": false,
     "browserExecuted": false,
     "productionConfigurationClaimed": false
