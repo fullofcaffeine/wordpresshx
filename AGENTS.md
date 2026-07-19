@@ -30,6 +30,13 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - Use a pull request only when the user explicitly requests one or for unusually hard, isolated upstream work in another project (for example, a generalized change to `../genes`). Follow that project's contribution workflow.
 - If a pull request is created, do not leave it closed without merging: make its gates pass and merge it unless the user explicitly directs otherwise.
 
+## Strictly Typed Haxe
+
+- Do not use `Dynamic`, `Any`, `cast`, `Reflect`, or `untyped` in Haxe code. Leverage concrete types, typedefs, enums, abstracts, generics, typed adapters/codecs, and compiler-checked pattern matching instead.
+- Treat decoded configuration, JSON, macro expressions, foreign-runtime values, and generated data as typed boundaries. Validate and convert them immediately into concrete project types; never propagate an untyped value through domain or compiler logic.
+- An exception is allowed only when an external or compiler API makes a typed implementation genuinely impossible after typed alternatives have been exhausted. Keep it to the smallest expression or boundary adapter, convert immediately to a concrete type, and add an inline comment that explains why it is unavoidable and states the invariant that makes it safe.
+- Existing untyped code is not precedent. Remove violations in any code being touched, and do not add or expand suppressions to bypass this rule.
+
 ## Non-Interactive Shell Commands
 
 **ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
