@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -64,6 +65,32 @@ def main() -> None:
         "packageVersion": "15.12.4",
         "cliVersion": "15.12.2",
     }
+    browser_reload = lock["browserReload"]
+    assert browser_reload == {
+        "authoringLanguage": "Haxe",
+        "source": "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
+        "sourceSha256": "831e61717840f82756aff0449fe23aec8af8b2e3c004e4f25a2b80da6f95d946",
+        "profile": "packages/cli/profiles/development-reload-client.hxml",
+        "profileSha256": "4367bb6fe0daedb754b37258d2a259225362e01dca7f7584026d0006f1c9f341",
+        "compiler": "genes-ts@1.36.3",
+        "bundler": "esbuild@0.27.2",
+        "asset": "packages/cli/assets/development-reload-client.js",
+        "assetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
+        "transport": "loopback-capability-sse",
+        "productionArtifact": False,
+    }
+    for path_field, digest_field in (
+        ("source", "sourceSha256"),
+        ("profile", "profileSha256"),
+        ("asset", "assetSha256"),
+    ):
+        payload = (REPOSITORY_ROOT / browser_reload[path_field]).read_bytes()
+        assert hashlib.sha256(payload).hexdigest() == browser_reload[digest_field]
+    reload_profile = (REPOSITORY_ROOT / browser_reload["profile"]).read_text(
+        encoding="utf-8"
+    )
+    assert "-lib genes-ts" in reload_profile
+    assert "../genes" not in reload_profile
     assert lock["browserCorrelation"] == {
         "genesMapFormat": "source-map-v3",
         "bundler": {

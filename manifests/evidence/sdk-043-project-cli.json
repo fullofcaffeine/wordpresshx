@@ -7,7 +7,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "a778be53ea99300741b90f9cbc076a9732967e870cd0db8b27396626a1de578e"
+      "sha256": "115cf2606318014ba5f10ceca854de923536b71f371587a55bb254c81e0b2581"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -39,7 +39,7 @@
     },
     "profile": {
       "path": "packages/cli/profiles/wphx.hxml",
-      "sha256": "22c26e0bc60d4813b0d634ef924459cdc14878af192009cbc1ab0b52c0fbe369"
+      "sha256": "4a0d7fcdbcbe48283914ec631ce818abdcfbdc73212a2e5ef8af262f5e64507f"
     },
     "packageManifest": {
       "path": "packages/cli/package.json",
@@ -51,7 +51,7 @@
     },
     "dependencyVerifier": {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "dabe093c104d1554caed21b9d3a0c0b32148c6cdb2e305320830ba046ac1aa10"
+      "sha256": "5b6f5a143b76276aef627fc6c38c944c607a83831f4945c9664270e656f04404"
     },
     "validator": {
       "path": "scripts/project-cli/test-production.py",
@@ -67,7 +67,7 @@
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "408262e6a24e405a8d7ee8433795676d0e3263829038a44e95273a89c5cf3b32"
+      "sha256": "fbfb1526c8789a241f2e0945b2f51209f5557d9b757fdcadcc5bf074c7d3712c"
     },
     "semanticPlanValidator": {
       "path": "scripts/semantic-plan/test-contract.py",
@@ -75,11 +75,11 @@
     },
     "semanticPlanFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "sha256": "6806f2615f140c4cd0ab754beea6a07855ac0f4059f4631be4517b13277ea4a5"
+      "sha256": "4adb47d62401a5fbb8b1eebbcbbba79d8a1a5653dfa28aabd093423e2b926bbc"
     },
     "semanticEmissionFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "sha256": "4b6a702f49c4a72b8ee009e76e9129992d8035c94f003bfbeab425c438966685"
+      "sha256": "26e26b22854c9b86e6c2ab6cfd53ed8199aee0d307790ee000259f9c60120d9c"
     },
     "ownershipContractValidator": {
       "path": "scripts/ownership/test-contract.py",
@@ -87,15 +87,15 @@
     },
     "ownershipCurrentFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "f761721d50903fc859b04c004286d17bbcd814583f07b23a70444361d935be08"
+      "sha256": "c81c3d91b38567cfa5515987dc466498c646790266fa17c030e34478f607581c"
     },
     "ownershipNextFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "bfa1287a338db989458053576ef3e6a00f803b9aec1efd20f429842ae61512af"
+      "sha256": "3bb89180c354bb1766317492f78154d7d6f876c7e5b503a3b85bed122ea6195c"
     },
     "ownershipJournalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "e1e92c47f31ddf11b7bca3f9c427ecd513314b2afb35d021472cde6e6c457d77"
+      "sha256": "220c886e3ccccf417759c27c3a3dfb3329dba16dcbe71d66c703b1dd40a3de3c"
     },
     "schemas": [
       {

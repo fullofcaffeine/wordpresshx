@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in docker haxe haxelib lix node python3 realpath; do
+for command_name in docker haxe haxelib lix node npm php python3 realpath; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-044 production development-loop gate requires ${command_name}" >&2
     exit 1
@@ -37,8 +37,10 @@ fi
   lix --silent download
 )
 haxelib run formatter --check -s "${package_root}/src"
+haxelib run formatter --check -s "${package_root}/dev-reload-client/src"
 
 strict_haxe_paths=(
+	"${package_root}/dev-reload-client/src"
   "${package_root}/src/wordpresshx/cli/closedjson"
   "${package_root}/src/wordpresshx/cli/project/DevEngine.hx"
   "${package_root}/src/wordpresshx/cli/project/development"
@@ -66,6 +68,39 @@ then
 	exit 1
 fi
 
+reload_build_a="${test_root}/reload-build-a"
+reload_build_b="${test_root}/reload-build-b"
+reload_tooling="${test_root}/reload-tooling"
+mkdir -p "${reload_build_a}" "${reload_build_b}" "${reload_tooling}"
+(
+	cd "${package_root}"
+	"${lix_haxe}" profiles/development-reload-client.hxml -js "${reload_build_a}/development-reload-client.js"
+	"${lix_haxe}" profiles/development-reload-client.hxml -js "${reload_build_b}/development-reload-client.js"
+)
+diff -ru "${reload_build_a}" "${reload_build_b}"
+cp -f "${package_root}/browser-tooling/package.json" "${reload_tooling}/package.json"
+cp -f "${package_root}/browser-tooling/package-lock.json" "${reload_tooling}/package-lock.json"
+cp -f "${repository_root}/scripts/dev-loop/test-browser-reload.mjs" "${reload_tooling}/test-browser-reload.mjs"
+docker run --rm \
+	--user "$(id -u):$(id -g)" \
+	-e npm_config_cache=/tmp/npm-cache \
+	--mount "type=bind,src=${reload_build_a},dst=/generated-a,readonly" \
+	--mount "type=bind,src=${reload_build_b},dst=/generated-b,readonly" \
+	--mount "type=bind,src=${reload_tooling},dst=/tooling" \
+	-w /tooling \
+	docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0 \
+	sh -eu -c '
+		npm ci --ignore-scripts --no-audit --no-fund
+		for generated in /generated-a /generated-b; do
+			node_modules/.bin/esbuild "${generated}/development-reload-client.js" \
+				--bundle --format=iife --platform=browser --target=es2022 \
+				--minify --charset=utf8 --legal-comments=none \
+				--outfile="/tooling/$(basename "${generated}").js"
+		done
+	'
+cmp "${reload_tooling}/generated-a.js" "${reload_tooling}/generated-b.js"
+cmp "${reload_tooling}/generated-a.js" "${package_root}/assets/development-reload-client.js"
+
 mkdir -p "${test_root}/runtime-a" "${test_root}/runtime-b"
 (
   cd "${package_root}"
@@ -80,4 +115,4 @@ docker run --rm --network none \
   docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0 \
   node --version | grep -Fx 'v22.17.0' >/dev/null
 
-python3 "${repository_root}/scripts/dev-loop/test-production.py" "${test_root}/runtime-a"
+python3 "${repository_root}/scripts/dev-loop/test-production.py" "${test_root}/runtime-a" "${reload_tooling}"

@@ -56,8 +56,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   also records the Haxe-derived `wp70-release` provider's exact image lock,
   private generated Compose configuration, secret interpolation, and bounded
   lifecycle. Its controlled process/configuration proof is distinct from a real
-  `wphx dev` WordPress-container run. The optional Next.js adapter and browser
-  reload transport remain explicit non-claims.
+  `wphx dev` WordPress-container run. It also records the Haxe-authored,
+  Genes-emitted embedded reload client, capability-protected loopback stream,
+  private development MU-plugin, and controlled-boundary real-Chromium proof.
+  The optional Next.js adapter remains an explicit non-claim.
 - `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
   reproducibility report, fixed-representation unsigned ZIP writer, complete
   owned-generation comparator, two-fresh-root gate, and safe additive
@@ -142,11 +144,16 @@ non-propagation, and reverse shutdown. Its built-in WordPress provider case
 additionally proves exact locked image selection, private canonical mode-`0600`
 Compose generation, real Compose v2 syntax validation, placeholder-only secret
 configuration, no restart for an unchanged service graph, post-publication
-reload-request ordering, and normal process/config cleanup. SDK-090 separately
-runtime proves the exact WordPress/MariaDB image pair. The receipt does not claim
-that SDK-044 starts that real pair, mounts a generated site, implements the
-optional Next.js adapter or browser reload transport, or supports
-Windows/network filesystems, package publication, or production use.
+reload-request ordering, and normal process/config cleanup. Its strictly typed
+Haxe reload client is compiled twice by pinned Genes, deterministically bundled
+and embedded, then exercised in real Chromium against the controlled WordPress
+boundary. The runtime proves five endpoint-security mutations, no navigation
+after a failed build, exactly one full-page navigation after the repaired
+manifest-last publication, and absence from production-owned artifacts.
+SDK-090 separately runtime proves the exact WordPress/MariaDB image pair. The
+receipt does not claim that SDK-044 starts that real pair, mounts a generated
+site, implements the optional Next.js adapter/native HMR, or supports Windows/
+network filesystems, package publication, or production use.
 
 Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated
 fresh roots, byte-identical Genes output and complete owned generations, a

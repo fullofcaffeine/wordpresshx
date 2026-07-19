@@ -34,6 +34,19 @@
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b"
   },
+  "browserReload": {
+    "authoringLanguage": "Haxe",
+    "source": "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
+    "sourceSha256": "831e61717840f82756aff0449fe23aec8af8b2e3c004e4f25a2b80da6f95d946",
+    "profile": "packages/cli/profiles/development-reload-client.hxml",
+    "profileSha256": "4367bb6fe0daedb754b37258d2a259225362e01dca7f7584026d0006f1c9f341",
+    "compiler": "genes-ts@1.36.3",
+    "bundler": "esbuild@0.27.2",
+    "asset": "packages/cli/assets/development-reload-client.js",
+    "assetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
+    "transport": "loopback-capability-sse",
+    "productionArtifact": false
+  },
   "haxe": {
     "version": "4.3.7"
   },

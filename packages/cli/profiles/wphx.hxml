@@ -2,5 +2,6 @@
 -lib hxnodejs
 -cp src
 -main wordpresshx.cli.WphxMain
+-resource assets/development-reload-client.js@wordpresshx-development-reload-client
 -D js-es=6
 -dce full

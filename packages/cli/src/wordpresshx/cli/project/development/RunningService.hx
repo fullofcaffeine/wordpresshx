@@ -37,14 +37,14 @@ class RunningService {
 	var stopReason = "stopped";
 	var stopTimer:Null<Timer>;
 
-	public static function start(project:DevelopmentProject, service:DevelopmentService, port:Int, events:DevelopmentEvents,
-			onFailure:RunningService->CliFailure->Void):RunningService {
+	public static function start(project:DevelopmentProject, service:DevelopmentService, port:Int, reload:Null<WordPressReloadAdapter>,
+			events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void):RunningService {
 		final environment = environmentFor(project, service, port);
 		final workingDirectory = service.workingDirectory == "." ? project.root : ProjectFiles.requireDirectory(project.root, service.workingDirectory,
 			"development service working directory", "service-start");
 		final launch = switch service.kind {
 			case External: externalLaunch(service, port, workingDirectory, environment);
-			case WordPress: WordPressProvider.launch(project, service, port, workingDirectory, environment);
+			case WordPress: WordPressProvider.launch(project, service, port, workingDirectory, environment, reload);
 		};
 		final child = ChildProcess.spawn(launch.executable, launch.arguments, {
 			cwd: launch.workingDirectory,

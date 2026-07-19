@@ -26,6 +26,10 @@ NODE_IMAGE = (
     "docker.io/library/node@sha256:"
     "b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
 )
+PLAYWRIGHT_IMAGE = (
+    "mcr.microsoft.com/playwright@sha256:"
+    "6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d"
+)
 OWNED_PATHS = (
     Path("build/nextjs/_GeneratedFiles.json"),
     Path("build/nextjs/.wphx/effective-inputs.json"),
@@ -264,19 +268,73 @@ const wordpress = config.services.wordpress;
 if (database.image !== 'docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b') process.exit(65);
 if (wordpress.image !== 'docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161') process.exit(66);
 if (wordpress.environment.WORDPRESS_DB_PASSWORD !== '${WPHX_INTERNAL_WORDPRESS_DB_PASSWORD:?required}') process.exit(67);
+if (wordpress.environment.WPHX_DEV_RELOAD_CLIENT !== '${WPHX_INTERNAL_WORDPRESS_RELOAD_CLIENT:?required}') process.exit(67);
+if (wordpress.environment.WPHX_DEV_RELOAD_EVENTS !== '${WPHX_INTERNAL_WORDPRESS_RELOAD_EVENTS:?required}') process.exit(67);
 const mapping = wordpress.ports[0];
 const match = /^127\\.0\\.0\\.1:([0-9]+):80$/.exec(mapping);
 if (!match) process.exit(68);
 const port = Number(match[1]);
+const origin = `http://127.0.0.1:${port}`;
+const reloadClient = process.env.WPHX_INTERNAL_WORDPRESS_RELOAD_CLIENT;
+const reloadEvents = process.env.WPHX_INTERNAL_WORDPRESS_RELOAD_EVENTS;
+if (typeof reloadClient !== 'string' || typeof reloadEvents !== 'string') process.exit(69);
+const clientUrl = new URL(reloadClient);
+const eventsUrl = new URL(reloadEvents);
+const clientMatch = /^\\/wordpresshx\\/reload\\/([0-9a-f]{64})\\/client\\.js$/.exec(clientUrl.pathname);
+const eventsMatch = /^\\/wordpresshx\\/reload\\/([0-9a-f]{64})\\/events$/.exec(eventsUrl.pathname);
+if (clientUrl.protocol !== 'http:' || clientUrl.hostname !== '127.0.0.1') process.exit(69);
+if (clientUrl.origin !== eventsUrl.origin || !clientMatch || !eventsMatch || clientMatch[1] !== eventsMatch[1]) process.exit(69);
+if (!Array.isArray(wordpress.volumes) || wordpress.volumes.length !== 1) process.exit(69);
+const reloadVolume = wordpress.volumes[0];
+if (reloadVolume.type !== 'bind' || reloadVolume.read_only !== true) process.exit(69);
+if (reloadVolume.target !== '/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php') process.exit(69);
+const reloadPlugin = fs.readFileSync(reloadVolume.source, 'utf8');
+if (!reloadPlugin.includes("add_action('wp_footer'") || !reloadPlugin.includes('WPHX_DEV_RELOAD_EVENTS')) process.exit(69);
+if (reloadPlugin.includes(clientMatch[1])) process.exit(69);
+const pageTrace = path.join(path.dirname(composePath), 'browser-page-loads.jsonl');
 record('up', {
   composePath,
   declaredPresent: process.env.WP_DB_PASSWORD !== undefined,
   internalPresent: typeof process.env.WPHX_INTERNAL_WORDPRESS_DB_PASSWORD === 'string',
   port,
+  reloadClientPresent: true,
   secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined
 });
+function requestStatus(target, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const request = http.get(target, {headers}, response => {
+      resolve(response.statusCode);
+      response.destroy();
+    });
+    request.once('error', reject);
+  });
+}
+async function probeReloadSecurity() {
+  const invalid = new URL(reloadClient);
+  invalid.pathname = '/wordpresshx/reload/invalid/client.js';
+  const results = {
+    allowedClient: await requestStatus(reloadClient, {referer: `${origin}/`}),
+    allowedEvents: await requestStatus(reloadEvents, {origin}),
+    badReferer: await requestStatus(reloadClient, {referer: 'http://127.0.0.1:1/'}),
+    invalidCapability: await requestStatus(invalid),
+    wrongOrigin: await requestStatus(reloadEvents, {origin: 'http://127.0.0.1:1'})
+  };
+  record('reload-security', results);
+  if (JSON.stringify(results) !== JSON.stringify({allowedClient: 200, allowedEvents: 200, badReferer: 403, invalidCapability: 404, wrongOrigin: 403})) process.exit(69);
+}
 const server = http.createServer((request, response) => {
-  response.statusCode = request.url === '/wp-json/' ? 200 : 404;
+  if (request.url === '/wp-json/') {
+    response.statusCode = 200;
+    response.end();
+    return;
+  }
+  if (request.url === '/') {
+    fs.appendFileSync(pageTrace, JSON.stringify({event: 'page-load'}) + '\\n');
+    response.writeHead(200, {'cache-control': 'no-store', 'content-type': 'text/html; charset=utf-8'});
+    response.end(`<!doctype html><html><head><meta charset="utf-8"><title>WordPressHx reload fixture</title><script>const key='wordpresshx-page-loads';const loads=Number(sessionStorage.getItem(key)||'0')+1;sessionStorage.setItem(key,String(loads));document.documentElement.dataset.wordpresshxPageLoads=String(loads);</script></head><body><main>WordPressHx reload fixture</main><script src="${reloadClient}" data-wordpresshx-reload-events="${reloadEvents}" async></script></body></html>`);
+    return;
+  }
+  response.statusCode = 404;
   response.end();
 });
 let stopped = false;
@@ -291,7 +349,9 @@ function stop(signal) {
 }
 process.on('SIGTERM', () => stop('SIGTERM'));
 process.on('SIGINT', () => stop('SIGINT'));
-server.listen(port, '127.0.0.1');
+server.listen(port, '127.0.0.1', () => {
+  probeReloadSecurity().catch(() => process.exit(69));
+});
 """
     )
     docker.chmod(0o755)
@@ -616,6 +676,38 @@ def docker_trace(project: Path) -> list[dict[str, object]]:
     return [json.loads(line) for line in path.read_text().splitlines()]
 
 
+def browser_page_loads(project: Path) -> int:
+    path = project / ".wphx/runtime/browser-page-loads.jsonl"
+    if not path.exists():
+        return 0
+    return len(path.read_text().splitlines())
+
+
+def wait_for_path(path: Path, process: subprocess.Popen[str], timeout: float) -> None:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if path.exists():
+            return
+        if process.poll() is not None:
+            stdout, stderr = process.communicate()
+            raise AssertionError(
+                f"browser exited {process.returncode} before {path.name}\n"
+                f"stdout:{stdout}\nstderr:{stderr}"
+            )
+        time.sleep(0.05)
+    raise AssertionError(f"timed out waiting for browser marker {path}")
+
+
+def wait_for_docker_event(project: Path, event: str, timeout: float = 5.0) -> dict[str, object]:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        for value in docker_trace(project):
+            if value["event"] == event:
+                return value
+        time.sleep(0.05)
+    raise AssertionError(f"timed out waiting for controlled Docker event {event}")
+
+
 def service_ids(events: list[dict[str, object]], event_name: str) -> list[object]:
     return [
         event["payload"]["serviceId"]
@@ -642,6 +734,12 @@ def validate_wordpress_compose(path: Path) -> None:
             "WP_DB_PASSWORD": "compose-validation-only",
             "WPHX_INTERNAL_WORDPRESS_DB_PASSWORD": "compose-validation-only",
             "WPHX_INTERNAL_WORDPRESS_DB_ROOT_PASSWORD": "compose-validation-root-only",
+            "WPHX_INTERNAL_WORDPRESS_RELOAD_CLIENT": "http://127.0.0.1:45000/wordpresshx/reload/"
+            + "a" * 64
+            + "/client.js",
+            "WPHX_INTERNAL_WORDPRESS_RELOAD_EVENTS": "http://127.0.0.1:45000/wordpresshx/reload/"
+            + "a" * 64
+            + "/events",
         }
     )
     result = subprocess.run(
@@ -676,14 +774,25 @@ def run_healthy_service_case(runtime: Path, parent: Path) -> dict[str, object]:
         session.wait_for("watch-ready")
         assert service_ids(session.events, "service-starting") == ["api", "frontend"]
         assert service_ids(session.events, "service-ready") == ["api", "frontend"]
-        assert api["payload"]["url"] == "http://127.0.0.1:44100/"
-        assert frontend["payload"]["url"] == "http://127.0.0.1:44101/"
+        api_port = int(
+            str(api["payload"]["url"])
+            .removeprefix("http://127.0.0.1:")
+            .removesuffix("/")
+        )
+        frontend_port = int(
+            str(frontend["payload"]["url"])
+            .removeprefix("http://127.0.0.1:")
+            .removesuffix("/")
+        )
+        assert 44100 <= api_port <= 44200
+        assert 44100 <= frontend_port <= 44200
+        assert api_port != frontend_port
 
         running = [
             value for value in service_trace(project) if value["event"] == "started"
         ]
         assert [value["serviceId"] for value in running] == ["api", "frontend"]
-        assert [value["port"] for value in running] == [44100, 44101]
+        assert [value["port"] for value in running] == [api_port, frontend_port]
         assert all(value["secretPresent"] is False for value in running)
 
         session.stop()
@@ -704,7 +813,8 @@ def run_healthy_service_case(runtime: Path, parent: Path) -> dict[str, object]:
         session.assert_container_removed()
         return {
             "readyOrder": ["api", "frontend"],
-            "ports": [44100, 44101],
+            "distinctLoopbackPorts": 2,
+            "portSearchRange": [44100, 44200],
             "shutdownOrder": ["frontend", "api", "compiler"],
         }
     finally:
@@ -829,11 +939,15 @@ def run_timeout_service_case(runtime: Path, parent: Path) -> dict[str, object]:
         session.force_cleanup()
 
 
-def run_wordpress_service_case(runtime: Path, parent: Path) -> dict[str, object]:
+def run_wordpress_service_case(
+    runtime: Path, parent: Path, browser_tooling: Path
+) -> dict[str, object]:
     evidence, project, tools = prepare_service_case(parent, "services-wordpress")
     session = DevSession(
         runtime, evidence, project, tools, service_mode="wordpress"
     )
+    browser_name = session.name + "-browser"
+    browser: subprocess.Popen[str] | None = None
     try:
         _, ready = session.wait_for(
             "service-ready",
@@ -855,19 +969,101 @@ def run_wordpress_service_case(runtime: Path, parent: Path) -> dict[str, object]
         assert compose_bytes == canonical(compose, newline=True)
         assert stat.S_IMODE(compose_files[0].stat().st_mode) == 0o600
         assert b"declared-test-only" not in compose_bytes
+        assert b"/wordpresshx/reload/" not in compose_bytes
+        plugin_directories = list(
+            (project / ".wphx/runtime").glob("wphx-*.mu-plugins")
+        )
+        assert len(plugin_directories) == 1
+        plugin_path = plugin_directories[0] / "wordpresshx-dev-reload.php"
+        assert stat.S_IMODE(plugin_directories[0].stat().st_mode) == 0o700
+        assert stat.S_IMODE(plugin_path.stat().st_mode) == 0o600
+        plugin_source = plugin_path.read_text()
+        assert "add_action('wp_footer'" in plugin_source
+        assert "WPHX_DEV_RELOAD_CLIENT" in plugin_source
+        assert "/wordpresshx/reload/" not in plugin_source
+        plugin_lint = subprocess.run(
+            ["php", "-l", str(plugin_path)],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert plugin_lint.returncode == 0, plugin_lint.stderr
         validate_wordpress_compose(compose_files[0])
 
-        started = docker_trace(project)
+        started = [
+            value for value in docker_trace(project) if value["event"] == "up"
+        ]
         assert [value["event"] for value in started] == ["up"], started
         assert started[0]["port"] == 44200
         assert started[0]["declaredPresent"] is False
         assert started[0]["internalPresent"] is True
+        assert started[0]["reloadClientPresent"] is True
         assert started[0]["secretPresent"] is False
+        security = wait_for_docker_event(project, "reload-security")
+        assert {
+            key: security[key]
+            for key in (
+                "allowedClient",
+                "allowedEvents",
+                "badReferer",
+                "invalidCapability",
+                "wrongOrigin",
+            )
+        } == {
+            "allowedClient": 200,
+            "allowedEvents": 200,
+            "badReferer": 403,
+            "invalidCapability": 404,
+            "wrongOrigin": 403,
+        }
+
+        browser_evidence = evidence / "browser"
+        browser_evidence.mkdir()
+        browser = subprocess.Popen(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--name",
+                browser_name,
+                "--network",
+                f"container:{session.name}",
+                "--ipc=host",
+                "--mount",
+                f"type=bind,src={browser_tooling.resolve()},dst=/tooling,readonly",
+                "--mount",
+                f"type=bind,src={browser_evidence.resolve()},dst=/browser",
+                "-w",
+                "/tooling",
+                PLAYWRIGHT_IMAGE,
+                "node",
+                "test-browser-reload.mjs",
+                "http://127.0.0.1:44200/",
+                "/browser",
+            ],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        wait_for_path(browser_evidence / "browser-ready", browser, 15)
+        assert browser_page_loads(project) == 1
+
+        failed_start = len(session.events)
+        session.run_node(
+            "const fs=require('fs');"
+            "fs.appendFileSync('src/acme/site/Site.hx','\\n// BROKEN_HAXE\\n');"
+        )
+        session.wait_for("diagnostic", after=failed_start)
+        session.wait_for("build-retained", after=failed_start)
+        time.sleep(0.75)
+        assert browser_page_loads(project) == 1
+        assert browser.poll() is None
 
         rebuild_start = len(session.events)
         session.run_node(
             "const fs=require('fs');"
-            "fs.appendFileSync('src/acme/site/Site.hx','\\n// wordpress reload\\n');"
+            "const path='src/acme/site/Site.hx';"
+            "fs.writeFileSync(path,fs.readFileSync(path,'utf8').replace('// BROKEN_HAXE\\n','// wordpress reload\\n'));"
         )
         published_index, _ = session.wait_for(
             "build-published",
@@ -883,9 +1079,32 @@ def run_wordpress_service_case(runtime: Path, parent: Path) -> dict[str, object]
         assert reload_event["payload"]["reason"] == (
             "complete ownership transaction published"
         )
+        browser_status = browser.wait(timeout=20)
+        browser_stdout, browser_stderr = browser.communicate()
+        assert browser_status == 0, (
+            f"browser reload proof exited {browser_status}\n"
+            f"stdout:{browser_stdout}\nstderr:{browser_stderr}"
+        )
+        browser_result = json.loads(
+            (browser_evidence / "browser-result.json").read_text()
+        )
+        assert browser_result["loads"] == 2
+        assert browser_result["navigation"] == "reload"
+        assert browser_page_loads(project) == 2
         assert service_ids(session.events, "service-starting") == ["wordpress"]
         assert service_ids(session.events, "service-stopped") == []
-        assert [value["event"] for value in docker_trace(project)] == ["up"]
+        assert [value["event"] for value in docker_trace(project)] == [
+            "up",
+            "reload-security",
+        ]
+        assert all(
+            b"wordpresshx/reload" not in payload
+            and b"WPHX_DEV_RELOAD" not in payload
+            for payload in owned_bytes(project).values()
+        )
+        assert all(
+            "/wordpresshx/reload/" not in line for line in session.stdout_lines
+        )
 
         session.stop()
         session.wait_for("command-completed", timeout=2)
@@ -896,31 +1115,45 @@ def run_wordpress_service_case(runtime: Path, parent: Path) -> dict[str, object]
         ]
         assert [value["event"] for value in docker_trace(project)] == [
             "up",
+            "reload-security",
             "stopped",
             "down",
         ]
         assert not list((project / ".wphx/runtime").glob("wphx-*.compose.json"))
+        assert not list((project / ".wphx/runtime").glob("wphx-*.mu-plugins"))
         assert not session.stderr_lines
         session.assert_container_removed()
         return {
             "provider": "docker-compose-v2",
+            "browser": browser_result,
+            "failedBuildReloads": 0,
             "reloadAfterGeneration": 2,
             "serviceRestartsOnSourceEdit": 0,
         }
     finally:
+        if browser is not None and browser.poll() is None:
+            subprocess.run(
+                ["docker", "kill", browser_name],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            browser.wait(timeout=10)
         session.force_cleanup()
 
 
-def run_service_cases(runtime: Path, parent: Path) -> dict[str, object]:
+def run_service_cases(
+    runtime: Path, parent: Path, browser_tooling: Path
+) -> dict[str, object]:
     return {
         "healthy": run_healthy_service_case(runtime, parent),
         "restart": run_restart_service_case(runtime, parent),
         "timeout": run_timeout_service_case(runtime, parent),
-        "wordpress": run_wordpress_service_case(runtime, parent),
+        "wordpress": run_wordpress_service_case(runtime, parent, browser_tooling),
     }
 
 
-def run(runtime: Path) -> dict[str, object]:
+def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
     temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
     with tempfile.TemporaryDirectory(
         prefix="wordpresshx-sdk044-production-", dir=temporary_parent
@@ -1135,7 +1368,7 @@ def run(runtime: Path) -> dict[str, object]:
             run_bounded(runtime, evidence, "clean")
             assert owned_bytes(clean) == final_owned
 
-            service_cases = run_service_cases(runtime, evidence)
+            service_cases = run_service_cases(runtime, evidence, browser_tooling)
 
             return {
                 "schema": "wordpress-hx.sdk044-production-summary.v1",
@@ -1154,9 +1387,11 @@ def run(runtime: Path) -> dict[str, object]:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: test-production.py <compiled-runtime-root>")
-    summary = run(Path(sys.argv[1]))
+    if len(sys.argv) != 3:
+        raise SystemExit(
+            "usage: test-production.py <compiled-runtime-root> <browser-tooling-root>"
+        )
+    summary = run(Path(sys.argv[1]), Path(sys.argv[2]))
     print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
 
 

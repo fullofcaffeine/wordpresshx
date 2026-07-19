@@ -43,9 +43,10 @@ named entries. Recovery either finalizes a complete committed generation or
 walks operations backward and restores exact prior hashes; unexpected live,
 backup, lock, journal, or manifest bytes stop recovery without a force path.
 
-This is the safety primitive used by `wphx build` and `wphx clean`, and the
-future `wphx dev` last-known-good loop. SDK-044 still owns the long-running
-watcher, compiler server, services, readiness, reload, and shutdown engine.
+This is the safety primitive used by `wphx build`, `wphx clean`, and the
+implemented `wphx dev` last-known-good loop. SDK-044 supplies the long-running
+watcher, compiler server, typed services, readiness, WordPress reload, and
+shutdown engine.
 
 ## Project commands
 
@@ -83,8 +84,23 @@ producers land. A skipped producer is never represented as a site build.
 project-bound Haxe wait cache when its lease is safe, watches the authenticated
 effective-input graph, and serializes coalesced rebuilds. Failed rebuilds keep
 the exact last-good manifest live. `wphx dev --services=none` is the explicit
-compile/watch-only form. Typed WordPress/Next.js processes, readiness, and
-reload adapters are not registered yet and therefore report `stage-skipped`.
+compile/watch-only form. The ordinary service declaration is only:
+
+```haxe
+Dev.wordpress();
+```
+
+Haxe derives its typed defaults, locked Compose provider, loopback port,
+readiness, and automatic full-page reload. The reload client is authored in
+strictly typed Haxe, emitted by pinned Genes, embedded in the CLI, and connected
+through a fresh capability-protected loopback event stream plus a private
+development-only MU-plugin. Developers do not author PHP, JavaScript, Compose,
+ports, or tokens for this path. Local real-Chromium evidence proves no reload
+after a failed generation and exactly one reload after the next complete
+publication. `Dev.service({...})` remains the admitted no-shell external-service
+escape hatch. The optional Next.js provider/HMR adapter is not registered, and
+the current producer graph still cannot build or install a deployable WordPress
+site into the provider.
 
 Use `--json` for canonical JSONL lifecycle events and closed diagnostics. Human
 errors include a stable `WPHXnnnn` code, failing stage, safe project-relative

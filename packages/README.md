@@ -39,7 +39,9 @@ the project bootstrap, exact lock, effective inputs, stable stages/events, and
 `wphx dev` lifecycle. SDK-043 now provides the bounded final command while the
 existing trace-only prototype remains available as the private `wphx-sdk`
 compatibility bin. SDK-044 now provides the real compile/watch and managed
-compiler core; its typed service supervisor and reload adapters remain open.
+compiler core, typed service supervisor, Haxe-derived WordPress provider, and
+automatic development full-page reload. A deployable WordPress site producer
+and optional Next.js provider/HMR adapter remain open.
 
 SDK-040 establishes the [`build`](build/README.md) compile-time module. Typed
 module, hook, resource, and public-environment declarations are recovered from

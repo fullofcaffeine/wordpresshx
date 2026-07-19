@@ -23,6 +23,8 @@ class WordPressProvider {
 	static inline final DATABASE_IMAGE = "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b";
 	static inline final INTERNAL_PASSWORD = "WPHX_INTERNAL_WORDPRESS_DB_PASSWORD";
 	static inline final INTERNAL_ROOT_PASSWORD = "WPHX_INTERNAL_WORDPRESS_DB_ROOT_PASSWORD";
+	static inline final INTERNAL_RELOAD_CLIENT = "WPHX_INTERNAL_WORDPRESS_RELOAD_CLIENT";
+	static inline final INTERNAL_RELOAD_EVENTS = "WPHX_INTERNAL_WORDPRESS_RELOAD_EVENTS";
 	static inline final CLEANUP_TIMEOUT_MS = 10000;
 	static final EXECUTOR_ENVIRONMENT = [
 		"DOCKER_CERT_PATH",
@@ -35,7 +37,7 @@ class WordPressProvider {
 	];
 
 	public static function launch(project:DevelopmentProject, service:DevelopmentService, port:Int, workingDirectory:String,
-			environment:DynamicAccess<String>):DevelopmentProcessLaunch {
+			environment:DynamicAccess<String>, reload:Null<WordPressReloadAdapter>):DevelopmentProcessLaunch {
 		if (project.profileId != "wp70-release") {
 			return invalid("the built-in WordPress provider has no exact image mapping for profile " + project.profileId);
 		}
@@ -50,6 +52,11 @@ class WordPressProvider {
 		environment.set(INTERNAL_PASSWORD, configuredPassword == null
 			|| configuredPassword.length == 0 ? randomPassword() : configuredPassword);
 		environment.set(INTERNAL_ROOT_PASSWORD, randomPassword());
+		if (reload == null) {
+			return invalid("requires its derived browser reload adapter");
+		}
+		environment.set(INTERNAL_RELOAD_CLIENT, reload.clientUrl);
+		environment.set(INTERNAL_RELOAD_EVENTS, reload.eventsUrl);
 		final hostEnvironment = NodeGlobals.process().env;
 		for (name in EXECUTOR_ENVIRONMENT) {
 			final value = hostEnvironment.get(name);
@@ -60,13 +67,22 @@ class WordPressProvider {
 		final processIdentity = project.toolchainSha256.substr(0, 12) + "-" + Std.string(NodeGlobals.process().pid);
 		final projectName = "wphx-" + processIdentity + "-" + safeName(service.id).substr(0, 24);
 		final composePath = Path.join(project.root, ".wphx/runtime/" + projectName + ".compose.json");
+		final pluginDirectory = Path.join(project.root, ".wphx/runtime/" + projectName + ".mu-plugins");
+		final pluginPath = Path.join(pluginDirectory, "wordpresshx-dev-reload.php");
 		try {
-			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment)) + "\n", {
+			Fs.mkdirSync(pluginDirectory, 448);
+			Fs.writeFileSync(pluginPath, WordPressReloadAdapter.pluginSource(), {
+				encoding: "utf8",
+				mode: 384,
+				flag: "wx"
+			});
+			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginPath)) + "\n", {
 				encoding: "utf8",
 				mode: 384,
 				flag: "wx"
 			});
 		} catch (_:Exception) {
+			removeRuntimeFiles(composePath, pluginPath, pluginDirectory);
 			return invalid("could not create its private generated Compose configuration");
 		}
 
@@ -84,17 +100,19 @@ class WordPressProvider {
 			arguments: commonArguments.concat(["up", "--abort-on-container-exit", "--force-recreate", "--remove-orphans"]),
 			workingDirectory: workingDirectory,
 			environment: environment,
-			cleanup: done -> cleanup(commonArguments, workingDirectory, environment, composePath, done)
+			cleanup: done -> cleanup(commonArguments, workingDirectory, environment, composePath, pluginPath, pluginDirectory, done)
 		};
 	}
 
-	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>):JsonValue {
+	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>, pluginPath:String):JsonValue {
 		final wordpressEnvironment:Array<JsonField> = [
 			field("WORDPRESS_DB_HOST", text("database:3306")),
 			field("WORDPRESS_DB_NAME", text("wordpresshx")),
 			field("WORDPRESS_DB_PASSWORD", interpolation(INTERNAL_PASSWORD)),
 			field("WORDPRESS_DB_USER", text("wordpresshx")),
-			field("WORDPRESS_DEBUG", text("1"))
+			field("WORDPRESS_DEBUG", text("1")),
+			field("WPHX_DEV_RELOAD_CLIENT", interpolation(INTERNAL_RELOAD_CLIENT)),
+			field("WPHX_DEV_RELOAD_EVENTS", interpolation(INTERNAL_RELOAD_EVENTS))
 		];
 		for (name in service.environment) {
 			if (environment.get(name) != null) {
@@ -139,14 +157,22 @@ class WordPressProvider {
 					field("image", text(WORDPRESS_IMAGE)),
 					field("labels", labels),
 					field("ports", array([text("127.0.0.1:" + Std.string(port) + ":80")])),
-					field("stop_grace_period", text("3s"))
+					field("stop_grace_period", text("3s")),
+					field("volumes", array([
+						object([
+							field("read_only", BoolValue(true)),
+							field("source", text(pluginPath)),
+							field("target", text("/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php")),
+							field("type", text("bind"))
+						])
+					]))
 				]))
 			]))
 		]);
 	}
 
-	static function cleanup(commonArguments:Array<String>, workingDirectory:String, environment:DynamicAccess<String>, composePath:String,
-			done:Void->Void):Void {
+	static function cleanup(commonArguments:Array<String>, workingDirectory:String, environment:DynamicAccess<String>, composePath:String, pluginPath:String,
+			pluginDirectory:String, done:Void->Void):Void {
 		var child:Null<NodeChildProcess> = null;
 		var timer:Null<Timer> = null;
 		var settled = false;
@@ -158,7 +184,7 @@ class WordPressProvider {
 			if (timer != null) {
 				timer.stop();
 			}
-			removeCompose(composePath);
+			removeRuntimeFiles(composePath, pluginPath, pluginDirectory);
 			done();
 		};
 		try {
@@ -181,10 +207,20 @@ class WordPressProvider {
 		}
 	}
 
-	static function removeCompose(path:String):Void {
+	static function removeRuntimeFiles(composePath:String, pluginPath:String, pluginDirectory:String):Void {
 		try {
-			if (Fs.existsSync(path)) {
-				Fs.unlinkSync(path);
+			if (Fs.existsSync(composePath)) {
+				Fs.unlinkSync(composePath);
+			}
+		} catch (_:Exception) {}
+		try {
+			if (Fs.existsSync(pluginPath)) {
+				Fs.unlinkSync(pluginPath);
+			}
+		} catch (_:Exception) {}
+		try {
+			if (Fs.existsSync(pluginDirectory)) {
+				Fs.rmdirSync(pluginDirectory);
 			}
 		} catch (_:Exception) {}
 	}
@@ -200,6 +236,8 @@ class WordPressProvider {
 	static function reservedEnvironment(name:String):Bool {
 		return name == INTERNAL_PASSWORD
 			|| name == INTERNAL_ROOT_PASSWORD
+			|| name == INTERNAL_RELOAD_CLIENT
+			|| name == INTERNAL_RELOAD_EVENTS
 			|| StringTools.startsWith(name, "WORDPRESS_")
 			|| StringTools.startsWith(name, "MARIADB_")
 			|| StringTools.startsWith(name, "DOCKER_")

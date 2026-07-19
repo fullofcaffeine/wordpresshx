@@ -11,6 +11,7 @@ import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
 class ServiceSupervisor {
 	final events:DevelopmentEvents;
 	final allocator = new PortAllocator();
+	final reloads = new BrowserReloadServer();
 	final onFatal:CliFailure->Void;
 	final running:Array<RunningService> = [];
 	final restartCounts:Map<String, Int> = [];
@@ -53,6 +54,7 @@ class ServiceSupervisor {
 		}
 		for (service in running) {
 			if (service.service.reload == FullPage) {
+				reloads.broadcast(service.service.id);
 				events.reload(service.service, service.url);
 			}
 		}
@@ -68,8 +70,10 @@ class ServiceSupervisor {
 		transitioning = false;
 		transitionCallback = null;
 		stopAll("development loop shutdown", () -> {
-			activeDigest = null;
-			callback();
+			reloads.shutdown(() -> {
+				activeDigest = null;
+				callback();
+			});
 		});
 	}
 
@@ -124,30 +128,44 @@ class ServiceSupervisor {
 				abortTransition(token, portFailure == null ? failure("port allocation returned no result") : portFailure);
 				return;
 			}
-			events.starting(service);
-			var started:RunningService;
-			try {
-				started = RunningService.start(currentProject, service, port, events, serviceFailure);
-			} catch (failure:CliFailure) {
-				allocator.release(port);
-				abortTransition(token, failure);
-				return;
-			} catch (error:Exception) {
-				allocator.release(port);
-				abortTransition(token, failure("could not start an admitted development process"));
-				return;
-			}
-			running.push(started);
-			ReadinessProbe.wait(started, readinessFailure -> {
+			reloads.prepare(service, port, (reload, reloadFailure) -> {
 				if (!currentTransition(token)) {
+					reloads.remove(service.id);
+					allocator.release(port);
 					return;
 				}
-				if (readinessFailure != null) {
-					abortTransition(token, readinessFailure);
+				if (reloadFailure != null) {
+					allocator.release(port);
+					abortTransition(token, reloadFailure);
 					return;
 				}
-				events.ready(service, started.url);
-				startAt(token, currentProject, currentPlan, ordered, index + 1);
+				events.starting(service);
+				var started:RunningService;
+				try {
+					started = RunningService.start(currentProject, service, port, reload, events, serviceFailure);
+				} catch (failure:CliFailure) {
+					reloads.remove(service.id);
+					allocator.release(port);
+					abortTransition(token, failure);
+					return;
+				} catch (error:Exception) {
+					reloads.remove(service.id);
+					allocator.release(port);
+					abortTransition(token, failure("could not start an admitted development process"));
+					return;
+				}
+				running.push(started);
+				ReadinessProbe.wait(started, readinessFailure -> {
+					if (!currentTransition(token)) {
+						return;
+					}
+					if (readinessFailure != null) {
+						abortTransition(token, readinessFailure);
+						return;
+					}
+					events.ready(service, started.url);
+					startAt(token, currentProject, currentPlan, ordered, index + 1);
+				});
 			});
 		});
 	}
@@ -209,6 +227,7 @@ class ServiceSupervisor {
 		}
 		final service = running[index];
 		service.stop(reason, () -> {
+			reloads.remove(service.service.id);
 			allocator.release(service.port);
 			stopAt(index - 1, reason, callback);
 		});

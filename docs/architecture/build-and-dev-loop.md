@@ -10,8 +10,10 @@ service supervisor. Dependency ordering, collision-safe loopback ports, bounded
 readiness, redacted environments, bounded graph restarts, and reverse shutdown
 are locally runtime verified. The SDK-owned `wp70-release` WordPress process
 provider is implemented and locally controlled-process verified, including its
-generated Docker Compose v2 configuration. Next.js is an optional integration
-boundary rather than a core service dependency.
+generated Docker Compose v2 configuration. Its zero-configuration development
+adapter and Haxe-authored browser client now provide automatic full-page reload;
+the controlled provider boundary is locally proven in real Chromium. Next.js is
+an optional integration boundary rather than a core service dependency.
 
 ## Developer surface
 
@@ -86,8 +88,21 @@ mode-`0600` Compose configuration from the authenticated Haxe plan, the exact
 secrets through required environment interpolation, never embeds secret values
 in that file, consumes the provider password without forwarding its public name,
 passes only a closed Docker CLI host-environment allowlist, runs Compose without
-a shell, and removes its generated configuration after bounded shutdown. The
-exact WordPress 7.0/PHP 8.4 and
+a shell, and removes its generated configuration after bounded shutdown.
+
+The same `Dev.wordpress()` declaration derives automatic development reload.
+The CLI embeds a browser client authored in strictly typed Haxe, compiled by the
+pinned Genes 1.36.3 profile, and bundled deterministically by pinned esbuild
+0.27.2. It serves that asset and an event stream from a loopback-only endpoint
+guarded by a fresh 256-bit capability and the exact admitted WordPress origin.
+A private mode-`0600` development MU-plugin adds the client at the WordPress
+footer boundary; its URLs arrive only through required runtime interpolation,
+not generated source or Compose bytes. A failed build sends nothing. A complete
+manifest-last publication sends one reload. Shutdown closes the stream and
+removes the private adapter. None of the client, endpoint, capability, or
+adapter enters a production-owned artifact.
+
+The exact WordPress 7.0/PHP 8.4 and
 MariaDB 11.4.5 images are runtime proven separately by SDK-090; the SDK-044
 provider corpus controls the process boundary and validates the generated file
 with Docker Compose v2 but does not start those real containers through
@@ -95,12 +110,12 @@ with Docker Compose v2 but does not start those real containers through
 
 `Dev.service({...})` is the explicit, no-shell external-process escape hatch:
 Haxe derives an admitted executable from its exact lock component and defaults
-omitted argv to `[]`. The CLI reports service and reload execution as skipped
-when no admitted service or reload adapter exists. For admitted services it
-authenticates the current compiler generation, starts processes without a shell
-in dependency order, waits for typed bounded readiness, and owns their complete
-lifecycle. It does not invent commands or infer an executable outside the
-closed component mapping.
+omitted argv to `[]`. For admitted services the CLI authenticates the current
+compiler generation, starts processes without a shell in dependency order,
+waits for typed bounded readiness, and owns their complete lifecycle. It does
+not invent commands or infer an executable outside the closed component
+mapping. Generic external services receive no automatic browser injection;
+their reload behavior remains an explicit typed integration boundary.
 
 ## Deterministic clean-build oracle
 
@@ -156,12 +171,15 @@ leaked container process. The built-in WordPress path additionally proves
 private canonical generated configuration, exact image-lock selection, secret
 placeholder transport, Compose v2 syntax, normal teardown, and that an ordinary
 Haxe source edit does not restart an unchanged service graph. Reload requests
-are emitted only after publication; a real browser reload transport remains
-unimplemented. The current metadata-only producer graph also has no deployable
-site output for the provider to mount or install. When isolation is not proven,
-every change takes the full atomic path. An optional Next.js package must bring
-its own typed adapter and evidence; core does not hard-code a Next provider or
-native-HMR claim.
+are emitted only after publication. The Haxe/Genes browser client, capability-
+protected loopback stream, derived WordPress adapter, failed-build suppression,
+and exactly one successful full-page navigation are locally runtime proven in
+real Chromium against the controlled provider boundary. The current metadata-
+only producer graph still has no deployable site output for the provider to
+mount or install, and this proof does not claim a real `wphx dev` WordPress image
+pair. When isolation is not proven, every change takes the full atomic path. An
+optional Next.js package must bring its own typed adapter and evidence; core does
+not hard-code a Next provider or native-HMR claim.
 
 CI and one-shot `wphx build` use bounded direct compilation. They never start an
 unbounded watcher or inherit a developer's compilation server.

@@ -2573,9 +2573,11 @@ assert dev_loop_implementation["status"] in {
     "implemented-sdk044-core-hosted-verified",
     "implemented-sdk044-services-local-verified",
     "implemented-sdk044-services-hosted-verified",
+    "implemented-sdk044-reload-local-verified",
+    "implemented-sdk044-reload-hosted-verified",
 }
 assert dev_loop_implementation["scope"] == (
-    "managed-compiler-effective-watch-atomic-publish-and-typed-development-service-supervision"
+    "managed-compiler-effective-watch-atomic-publish-typed-development-service-supervision-and-wordpress-browser-reload"
 )
 sdk044_command = dev_loop_implementation["command"]
 assert sdk044_command["default"] == "wphx dev"
@@ -2597,6 +2599,11 @@ for sdk044_code_path in (
     "serviceSupervisor",
     "developmentProcessLaunch",
     "wordpressProvider",
+    "browserReloadServer",
+    "wordpressReloadAdapter",
+    "browserReloadClientSource",
+    "browserReloadClientProfile",
+    "browserReloadClientAsset",
     "closedJsonBoundary",
     "eventStream",
     "publisher",
@@ -2625,7 +2632,7 @@ assert sdk044_publication["manifestPublishedLast"] is True
 assert sdk044_publication["generationAdvancesOnlyAfterPublish"] is True
 assert sdk044_publication["incrementalEqualsCleanOracle"] is True
 assert sdk044_publication["reloadOnlyAfterCompletePublish"] is True
-assert sdk044_publication["reloadAdapterImplemented"] is False
+assert sdk044_publication["reloadAdapterImplemented"] is True
 sdk044_server = dev_loop_implementation["compileServer"]
 assert sdk044_server["kind"] == "managed-project-local-haxe-wait"
 assert sdk044_server["leasePath"] == ".wphx/runtime/compiler-server.json"
@@ -2653,10 +2660,10 @@ for sdk044_implemented_service_part in (
     "runtimeEnvironmentAllowlistImplemented",
     "wordpressProviderImplemented",
     "postPublishReloadRequestImplemented",
+    "wordpressReloadImplemented",
 ):
     assert sdk044_services[sdk044_implemented_service_part] is True
 for sdk044_unimplemented_service_part in (
-    "wordpressReloadImplemented",
     "nextjsReloadImplemented",
 ):
     assert sdk044_services[sdk044_unimplemented_service_part] is False
@@ -2680,9 +2687,35 @@ assert sdk044_wordpress == {
     "secretTransport": "required-environment-interpolation",
     "hostExecutorEnvironment": "closed-docker-cli-allowlist",
     "publishedPortBinding": "127.0.0.1-only",
+    "reloadTransport": "loopback-capability-sse",
+    "reloadCapabilityEntropyBits": 256,
+    "reloadOriginPolicy": "exact-admitted-wordpress-service-origin",
+    "reloadClient": "haxe-authored-genes-1.36.3-esbuild-0.27.2-embedded-asset",
+    "reloadAdapter": "private-mode-0600-development-only-mu-plugin",
+    "reloadProductionArtifact": False,
     "shellExecution": False,
-    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-and-config-removal",
+    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-reload-client-close-and-private-runtime-file-removal",
     "exactImageRuntimeEvidence": "SDK-090-WORDPRESS-HARNESS",
+}
+sdk044_browser_reload_lock = cli_dependency_lock["browserReload"]
+assert sdk044_browser_reload_lock == {
+    "authoringLanguage": "Haxe",
+    "source": sdk044_code["browserReloadClientSource"],
+    "sourceSha256": hashlib.sha256(
+        Path(sdk044_code["browserReloadClientSource"]).read_bytes()
+    ).hexdigest(),
+    "profile": sdk044_code["browserReloadClientProfile"],
+    "profileSha256": hashlib.sha256(
+        Path(sdk044_code["browserReloadClientProfile"]).read_bytes()
+    ).hexdigest(),
+    "compiler": "genes-ts@1.36.3",
+    "bundler": "esbuild@0.27.2",
+    "asset": sdk044_code["browserReloadClientAsset"],
+    "assetSha256": hashlib.sha256(
+        Path(sdk044_code["browserReloadClientAsset"]).read_bytes()
+    ).hexdigest(),
+    "transport": "loopback-capability-sse",
+    "productionArtifact": False,
 }
 sdk044_wordpress_source = Path(sdk044_code["wordpressProvider"]).read_text(
     encoding="utf-8"
@@ -2731,6 +2764,9 @@ for sdk044_passed_proof in (
     "wordpressSecretPlaceholder",
     "wordpressUnchangedServiceRetention",
     "postPublishReloadRequest",
+    "wordpressChromiumFullPageReload",
+    "failedBuildBrowserReloadSuppression",
+    "reloadProductionArtifactAbsence",
     "strictHaxeBoundaryGuard",
     "sigintCleanup",
     "durablePathPrivacy",
@@ -2739,6 +2775,13 @@ for sdk044_passed_proof in (
 assert sdk044_verification["incrementalAndCleanOwnedBytes"] == (
     "byte-identical"
 )
+assert sdk044_verification["browserReloadClientCompileReplay"] == (
+    "byte-identical"
+)
+assert sdk044_verification["browserReloadClientAssetSha256"] == (
+    sdk044_browser_reload_lock["assetSha256"]
+)
+assert sdk044_verification["reloadEndpointSecurityMutations"] == 5
 assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["externalDevelopmentService"] == (
     "controlled-process-runtime-tested-hosted"
@@ -2796,7 +2839,6 @@ for sdk044_reference in dev_loop_implementation["referencePatterns"]:
 for sdk044_unproven_claim in (
     "wordpressDevelopmentService",
     "nextjsDevelopmentService",
-    "automaticBrowserReload",
     "windowsWatcherAndProcessBehavior",
     "networkFilesystemBehavior",
     "productionSupport",
@@ -2849,6 +2891,12 @@ assert sdk044_receipt["verification"] == {
     "wordpressSecretPlaceholder": "passed",
     "wordpressUnchangedServiceRetention": "passed",
     "postPublishReloadRequest": "passed",
+    "browserReloadClientCompileReplay": "byte-identical",
+    "browserReloadClientAssetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
+    "realChromiumFullPageReload": "passed",
+    "failedBuildBrowserReloadSuppression": "passed",
+    "reloadEndpointSecurityMutations": 5,
+    "reloadProductionArtifactAbsence": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
     "failedBuildRetainedExactOwnedBytes": "passed",
@@ -2867,7 +2915,13 @@ assert sdk044_hosted["required"] is True
 if sdk044_hosted["status"] == "pending-first-main-run":
     assert sdk044_receipt["status"] == "implemented-hosted-pending"
     assert dev_loop_implementation["status"] == (
-        "implemented-sdk044-services-local-verified"
+        "implemented-sdk044-reload-local-verified"
+    )
+    assert dev_loop_implementation["claims"]["automaticBrowserReload"] == (
+        "controlled-wordpress-boundary-real-chromium-runtime-tested-local"
+    )
+    assert sdk044_receipt["claims"]["automaticBrowserReload"] == (
+        "controlled-wordpress-boundary-real-chromium-runtime-tested-local"
     )
     assert sdk044_receipt["implementationCommit"] is None
     assert sdk044_hosted["runId"] is None
@@ -2876,7 +2930,13 @@ if sdk044_hosted["status"] == "pending-first-main-run":
 elif sdk044_hosted["status"] == "passed":
     assert sdk044_receipt["status"] == "verified"
     assert dev_loop_implementation["status"] == (
-        "implemented-sdk044-services-hosted-verified"
+        "implemented-sdk044-reload-hosted-verified"
+    )
+    assert dev_loop_implementation["claims"]["automaticBrowserReload"] == (
+        "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted"
+    )
+    assert sdk044_receipt["claims"]["automaticBrowserReload"] == (
+        "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted"
     )
     assert sha1.fullmatch(sdk044_receipt["implementationCommit"])
     assert isinstance(sdk044_hosted["runId"], int)

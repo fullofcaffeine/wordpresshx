@@ -59,15 +59,15 @@
     "ownershipFixtures": [
       {
         "path": "fixtures/ownership/valid/current.generated-files.json",
-        "sha256": "f761721d50903fc859b04c004286d17bbcd814583f07b23a70444361d935be08"
+        "sha256": "c81c3d91b38567cfa5515987dc466498c646790266fa17c030e34478f607581c"
       },
       {
         "path": "fixtures/ownership/valid/next.generated-files.json",
-        "sha256": "bfa1287a338db989458053576ef3e6a00f803b9aec1efd20f429842ae61512af"
+        "sha256": "3bb89180c354bb1766317492f78154d7d6f876c7e5b503a3b85bed122ea6195c"
       },
       {
         "path": "fixtures/ownership/valid/prepared.journal.json",
-        "sha256": "e1e92c47f31ddf11b7bca3f9c427ecd513314b2afb35d021472cde6e6c457d77"
+        "sha256": "220c886e3ccccf417759c27c3a3dfb3329dba16dcbe71d66c703b1dd40a3de3c"
       }
     ],
     "workflow": {
@@ -76,7 +76,7 @@
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
+      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
     }
   },
   "implementation": {

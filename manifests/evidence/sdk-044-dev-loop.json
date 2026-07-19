@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "verified",
-  "observedAt": "2026-07-19T04:57:35Z",
-  "implementationCommit": "ff869ff092ea8680e62c930592db31ee360db856",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T00:00:00Z",
+  "implementationCommit": null,
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "02ec99f7a3e7cd8b9292e868b6c79636a481bd9b204a825db52fd4308c248d98"
+      "sha256": "5979feb3fe396ae769cdca41150e5682ae7994b9a15a98ffabe74166e7ad0dc1"
     },
     "implementationFiles": [
       {
@@ -101,28 +101,64 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
-        "sha256": "a7a6dc72ae7390bf2110ac6884f96f072716452b99029182a9d062e896206b01"
+        "sha256": "ddb0d5653112a11ceb86581a04f0c4921925cef0e9a5adfe48c83b8495f13faa"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
-        "sha256": "5006a39f172053369bb99644d6b753c6a3c07b833747576c1a5863008b069ef2"
+        "sha256": "53fdfd250796b93a12d3e3159f3674b945e05f395d62440dc2085a57f67799c8"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
-        "sha256": "6dd5f1c95f0ad26d5bcc7e32b9d49ee10dd27877ca69050ae9f31f61ab050605"
+        "sha256": "cf27e241ba8c018109df9777274702f8cc594b72447f20be07cd53c07d15b154"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
+        "sha256": "b9d0ba866a3668d853f3f981eab1eac1a0c799ed74041228248c3588fd87ade7"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
+        "sha256": "23f032c0becd2a42f8e908293394a429d27a4e128405075ecf0d97cdcde817f7"
+      },
+      {
+        "path": "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
+        "sha256": "831e61717840f82756aff0449fe23aec8af8b2e3c004e4f25a2b80da6f95d946"
+      },
+      {
+        "path": "packages/cli/profiles/development-reload-client.hxml",
+        "sha256": "4367bb6fe0daedb754b37258d2a259225362e01dca7f7584026d0006f1c9f341"
+      },
+      {
+        "path": "packages/cli/assets/development-reload-client.js",
+        "sha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694"
+      },
+      {
+        "path": "packages/cli/profiles/classic.hxml",
+        "sha256": "6f9466b6b96953490c6204d56bf56b0add71698ba18167e0f5d3d0cad7ceb1d6"
+      },
+      {
+        "path": "packages/cli/profiles/wphx.hxml",
+        "sha256": "4a0d7fcdbcbe48283914ec631ce818abdcfbdc73212a2e5ef8af262f5e64507f"
+      },
+      {
+        "path": "packages/cli/scripts/verify-dependency-lock.py",
+        "sha256": "5b6f5a143b76276aef627fc6c38c944c607a83831f4945c9664270e656f04404"
       }
     ],
     "dependencyLock": {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439"
+      "sha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b"
     },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "d63724cfc8127389c312157b9f62ecb6383354c50e63a9c6879ddd4b9730b204"
+      "sha256": "8ba174a958f8d24893417ab3e62bb4ddea5750a8b07ad0a8b0c9c128c7647e36"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",
-      "sha256": "f2c70a9a807605a1d6165382dae507736144866b69b8905939386a922174deee"
+      "sha256": "0a1d3e9f2bcd625769f7da1291bca4df52e08930e855b13d13ee18446903495b"
+    },
+    "browserValidator": {
+      "path": "scripts/dev-loop/test-browser-reload.mjs",
+      "sha256": "6cce8b3b62677a46efa7b6bf38d1a17796718c7a12d0412e4f412e1107196f8d"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -138,7 +174,7 @@
     },
     "architectureDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
+      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
     }
   },
   "implementation": {
@@ -151,6 +187,8 @@
     "servicePlanBoundary": "closed-canonical-json-to-concrete-haxe-types",
     "serviceLifecycle": "dependency-order-no-shell-readiness-restart-and-reverse-shutdown",
     "wordpressProvider": "haxe-derived-private-compose-v2-configuration-and-owned-process-lifecycle",
+    "browserReload": "haxe-owned-loopback-capability-sse-with-private-wordpress-development-adapter",
+    "browserReloadClient": "haxe-authored-genes-emitted-esbuild-bundled-embedded-asset",
     "genesSourceChanged": false,
     "genesPullRequest": null,
     "siblingDependencyCreated": false
@@ -175,6 +213,12 @@
     "wordpressSecretPlaceholder": "passed",
     "wordpressUnchangedServiceRetention": "passed",
     "postPublishReloadRequest": "passed",
+    "browserReloadClientCompileReplay": "byte-identical",
+    "browserReloadClientAssetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
+    "realChromiumFullPageReload": "passed",
+    "failedBuildBrowserReloadSuppression": "passed",
+    "reloadEndpointSecurityMutations": 5,
+    "reloadProductionArtifactAbsence": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
     "failedBuildRetainedExactOwnedBytes": "passed",
@@ -212,17 +256,17 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": 29673988838,
-    "jobId": 88157802027,
-    "commit": "ff869ff092ea8680e62c930592db31ee360db856",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "Post-publication reload requests are hosted tested, but a real browser reload transport and the optional Next.js adapter are not implemented.",
+    "The loopback WordPress reload transport is locally tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
@@ -235,7 +279,7 @@
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "not-tested",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",

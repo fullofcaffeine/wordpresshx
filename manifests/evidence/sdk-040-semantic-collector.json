@@ -42,7 +42,7 @@
     },
     "devLoopDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
+      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
     }
   },
   "contract": {

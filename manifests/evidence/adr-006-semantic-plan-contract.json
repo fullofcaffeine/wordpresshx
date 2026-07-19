@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/semantic-plan-architecture.json",
-      "sha256": "21c7eec9ce538d2d853f195747b0e176f971e5861301e6bf6ffdf28b3bd93490"
+      "sha256": "63f4937f70d45769ff6621ba1fb2b5075cc2fb6ca56426d307818ca9e80d1024"
     },
     "planSchema": {
       "path": "schemas/semantic-plan.schema.json",
@@ -42,11 +42,11 @@
     },
     "planFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "sha256": "6806f2615f140c4cd0ab754beea6a07855ac0f4059f4631be4517b13277ea4a5"
+      "sha256": "4adb47d62401a5fbb8b1eebbcbbba79d8a1a5653dfa28aabd093423e2b926bbc"
     },
     "emissionFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "sha256": "4b6a702f49c4a72b8ee009e76e9129992d8035c94f003bfbeab425c438966685"
+      "sha256": "26e26b22854c9b86e6c2ab6cfd53ed8199aee0d307790ee000259f9c60120d9c"
     },
     "artifactFixture": {
       "path": "fixtures/semantic-plan/expected/acme-observatory.php.txt",
@@ -57,8 +57,8 @@
     "planSchema": "wordpress-hx.semantic-plan.v1",
     "emissionSchema": "wordpress-hx.semantic-emission.v1",
     "canonicalization": "wordpress-hx.canonical-json.v1",
-    "planDigest": "b2811176dc608ebbbaa5a5869629288f794b933a5d5da2e35c6021660e88b61b",
-    "emissionResultDigest": "e297ff1e285e0b0ac6a5e09b9e64029cee7187c77e7e08909212b7978bbc0abf",
+    "planDigest": "3750a956c4d0734a92c40ee05b2b42c0e33ea4459acb535e24dee57367bb00c0",
+    "emissionResultDigest": "7c5e8ffe436b20666bdc3b7690a5c6d79c5e5757ce0e6e6071e8abdd591bb314",
     "exactProfile": "wp70-release",
     "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61"
   },
@@ -95,6 +95,14 @@
     "fixtureMeaningChanged": false,
     "localGate": "passed",
     "hostedEvidenceOwner": "SDK-043-PROJECT-CLI"
+  },
+  "sdk044ReloadToolchainRevision": {
+    "observedAt": "2026-07-19T05:37:58Z",
+    "reason": "The canonical plan and emission fixtures were redigested after the aggregate lock admitted the Haxe-authored WordPress reload client projection; nodes, projections, source spans, artifact bytes, and external tool identities are unchanged.",
+    "semanticContractChanged": false,
+    "fixtureMeaningChanged": false,
+    "localGate": "passed",
+    "hostedEvidenceOwner": "SDK-044-DEV-LOOP"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

@@ -144,7 +144,7 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439"
+      "sha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/Main.hx",
@@ -164,7 +164,7 @@
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "dabe093c104d1554caed21b9d3a0c0b32148c6cdb2e305320830ba046ac1aa10"
+      "sha256": "5b6f5a143b76276aef627fc6c38c944c607a83831f4945c9664270e656f04404"
     },
     {
       "path": "packages/cli/scripts/verify-php-trace.py",

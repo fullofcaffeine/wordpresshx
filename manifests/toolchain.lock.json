@@ -219,7 +219,7 @@
           "lockPath": "packages/cli/browser-tooling/package-lock.json",
           "lockSha256": "9aa6dfb868de55f1e7941aa3ece99eb4c1780d0c831f22d34cb24a08c28e55e4",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439",
+          "dependencyLockSha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b",
           "directPackages": [
             "esbuild@0.27.2",
             "playwright-core@1.58.2"
@@ -240,7 +240,7 @@
           "lockPath": "packages/cli/package-lock.json",
           "lockSha256": "57a6dc69e9bb4519cccfdddf2625c8a635831e45178b6ecae3c744d8c243d075",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439",
+          "dependencyLockSha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b",
           "directPackages": [],
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
           "lifecycleScriptsAllowed": false,

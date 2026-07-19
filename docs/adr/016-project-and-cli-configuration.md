@@ -474,11 +474,13 @@ Costs and limits:
 - Typed service declarations cannot be known until an initial Haxe plan exists,
   so fresh broken projects can watch but cannot start artifact-dependent
   services.
-- Automatic WordPress page reload needs an admitted development adapter; it is
-  not a PHP HMR claim.
-- The contract corpus proves architecture and deterministic state transitions,
-  not real watcher latency, process cleanup, Next.js, WordPress, Windows, or
-  production behavior.
+- The implemented automatic WordPress page reload uses an admitted development-
+  only adapter and normal full-page navigation; it is not a PHP HMR claim.
+- The historical contract corpus proves architecture and deterministic state
+  transitions. SDK-044 separately proves the watcher, process cleanup, typed
+  service runtime, and controlled WordPress-boundary reload in real Chromium;
+  it does not prove a real generated WordPress site, Next.js, Windows, network
+  filesystems, or production behavior.
 
 ## Evidence and commands
 
@@ -539,9 +541,9 @@ implementations may not drift in place.
   every build and rebuild.
 - `wordpresshx-sdk-043`: implement the Haxe/Genes `wphx` command foundation,
   project/lock validation, stages, diagnostics, JSONL, and dry-run.
-- `wordpresshx-sdk-044`: finish the typed service supervisor, ports, readiness,
-  and reload adapters on top of the implemented Haxe server, effective watcher,
-  last-good behavior, and compiler cleanup core.
+- `wordpresshx-sdk-044`: implement the Haxe server, effective watcher,
+  last-good publication, compiler cleanup, typed service supervisor, ports,
+  readiness, built-in WordPress provider, and automatic full-page reload.
 - `wordpresshx-sdk-112` through `wordpresshx-sdk-117`: consume the same contract
   in the landing, blog, commerce, and Next.js reference sites.
 
@@ -561,11 +563,20 @@ retention, edit-during-build retry, and clean compiler shutdown. The
 compile/watch-only form is production-gate tested on exact Linux Node 22.17.0.
 The semantic collector now accepts `Dev.wordpress()` and emits a closed,
 content-addressed service node with derived typed defaults; external services
-use the explicit locked/no-shell escape hatch. Service processes, readiness,
-ports, and reload execution are still non-claims and are reported as skipped.
-Optional Next.js support remains outside core. The exact SDK-043 implementation is in
+use the explicit locked/no-shell escape hatch. The CLI implements dependency-
+ordered service processes, collision-safe loopback ports, bounded readiness,
+restart policy, reverse shutdown, and the Haxe-derived locked WordPress
+provider. `Dev.wordpress()` also derives a private development MU-plugin and a
+capability-protected loopback event stream for a strictly typed Haxe browser
+client emitted by pinned Genes. Local real-Chromium evidence proves that a
+failed generation does not reload and the next complete manifest-last
+publication causes exactly one full-page reload without restarting WordPress.
+The proof uses the controlled provider boundary: target producers still do not
+create and install a deployable site, and the real WordPress image pair is not
+started through `wphx dev`. Optional Next.js support remains outside core. The
+exact SDK-043 implementation is in
 [`project-cli-implementation.json`](../../manifests/project-cli-implementation.json)
 and [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json);
-the SDK-044 core and its bounded non-claims are in
+the SDK-044 implementation and its bounded claims are in
 [`dev-loop-implementation.json`](../../manifests/dev-loop-implementation.json)
 and [`SDK-044-DEV-LOOP`](../../manifests/evidence/sdk-044-dev-loop.json).

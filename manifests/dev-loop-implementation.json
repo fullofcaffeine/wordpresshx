@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-sdk044-services-hosted-verified",
-  "scope": "managed-compiler-effective-watch-atomic-publish-and-typed-development-service-supervision",
+  "status": "implemented-sdk044-reload-local-verified",
+  "scope": "managed-compiler-effective-watch-atomic-publish-typed-development-service-supervision-and-wordpress-browser-reload",
   "command": {
     "default": "wphx dev",
     "compileWatchOnly": "wphx dev --services=none",
@@ -23,6 +23,11 @@
     "serviceSupervisor": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
     "developmentProcessLaunch": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
     "wordpressProvider": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
+    "browserReloadServer": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
+    "wordpressReloadAdapter": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
+    "browserReloadClientSource": "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
+    "browserReloadClientProfile": "packages/cli/profiles/development-reload-client.hxml",
+    "browserReloadClientAsset": "packages/cli/assets/development-reload-client.js",
     "closedJsonBoundary": "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
     "eventStream": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
     "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
@@ -60,7 +65,7 @@
     "generationAdvancesOnlyAfterPublish": true,
     "incrementalEqualsCleanOracle": true,
     "reloadOnlyAfterCompletePublish": true,
-    "reloadAdapterImplemented": false
+    "reloadAdapterImplemented": true
   },
   "compileServer": {
     "kind": "managed-project-local-haxe-wait",
@@ -90,9 +95,9 @@
     "runtimeEnvironmentAllowlistImplemented": true,
     "wordpressProviderImplemented": true,
     "postPublishReloadRequestImplemented": true,
-    "wordpressReloadImplemented": false,
+    "wordpressReloadImplemented": true,
     "nextjsReloadImplemented": false,
-    "currentBehavior": "derive-and-supervise-the-built-in-wordpress-provider-or-admitted-external-services-and-emit-reload-requests-after-publication"
+    "currentBehavior": "derive-and-supervise-the-built-in-wordpress-provider-or-admitted-external-services-and-reload-connected-wordpress-pages-after-publication"
   },
   "wordpressProvider": {
     "profile": "wp70-release",
@@ -107,8 +112,14 @@
     "secretTransport": "required-environment-interpolation",
     "hostExecutorEnvironment": "closed-docker-cli-allowlist",
     "publishedPortBinding": "127.0.0.1-only",
+    "reloadTransport": "loopback-capability-sse",
+    "reloadCapabilityEntropyBits": 256,
+    "reloadOriginPolicy": "exact-admitted-wordpress-service-origin",
+    "reloadClient": "haxe-authored-genes-1.36.3-esbuild-0.27.2-embedded-asset",
+    "reloadAdapter": "private-mode-0600-development-only-mu-plugin",
+    "reloadProductionArtifact": false,
     "shellExecution": false,
-    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-and-config-removal",
+    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-reload-client-close-and-private-runtime-file-removal",
     "exactImageRuntimeEvidence": "SDK-090-WORDPRESS-HARNESS"
   },
   "verification": {
@@ -142,6 +153,12 @@
     "wordpressSecretPlaceholder": "passed",
     "wordpressUnchangedServiceRetention": "passed",
     "postPublishReloadRequest": "passed",
+    "browserReloadClientCompileReplay": "byte-identical",
+    "browserReloadClientAssetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
+    "wordpressChromiumFullPageReload": "passed",
+    "failedBuildBrowserReloadSuppression": "passed",
+    "reloadEndpointSecurityMutations": 5,
+    "reloadProductionArtifactAbsence": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "sigintCleanup": "passed",
     "durablePathPrivacy": "passed",
@@ -202,7 +219,7 @@
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "not-tested",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",
@@ -212,7 +229,7 @@
     "The current producer graph emits only CLI metadata, its reproducibility report, and an unsigned evidence archive; PHP, browser, asset, and deployable site producers are not registered.",
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "Post-publication reload requests are hosted tested, but a real browser reload transport and the optional Next.js adapter are not implemented.",
+    "The loopback WordPress reload transport is locally tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

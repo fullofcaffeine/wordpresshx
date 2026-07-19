@@ -1,0 +1,5 @@
+-lib genes-ts
+-cp dev-reload-client/src
+-main wordpresshx.cli.development.browser.ReloadClient
+-D js-es=6
+-dce full

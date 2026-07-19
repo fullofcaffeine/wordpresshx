@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/generated-artifact-ownership.json",
-      "sha256": "0f649c3fb76e66db46b0f282ee0d003ca0a86e50d5f11bd2c762a18d659e2a24"
+      "sha256": "089b69387f0f214e8772a2d63ab4131b3f87e54c9806d8b61ed0f180ca7c1521"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -30,24 +30,24 @@
     },
     "currentManifestFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "f761721d50903fc859b04c004286d17bbcd814583f07b23a70444361d935be08"
+      "sha256": "c81c3d91b38567cfa5515987dc466498c646790266fa17c030e34478f607581c"
     },
     "nextManifestFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "bfa1287a338db989458053576ef3e6a00f803b9aec1efd20f429842ae61512af"
+      "sha256": "3bb89180c354bb1766317492f78154d7d6f876c7e5b503a3b85bed122ea6195c"
     },
     "journalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "e1e92c47f31ddf11b7bca3f9c427ecd513314b2afb35d021472cde6e6c457d77"
+      "sha256": "220c886e3ccccf417759c27c3a3dfb3329dba16dcbe71d66c703b1dd40a3de3c"
     }
   },
   "contract": {
     "manifestSchema": "wordpress-hx.generated-files.v1",
     "journalSchema": "wordpress-hx.ownership-journal.v1",
     "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
-    "currentManifestDigest": "2c3c511f5d5658499b68f331656ef18838de1550bebd6f8d175c716f5e03b85a",
-    "nextManifestDigest": "2bf0669601d8bb11b735ed27cbcd6b000059b4cce038e5ede75f2c24001bd9e8",
-    "preparedJournalDigest": "2b0993ba8a38d3fd20c074deee38bb83b711458ad71e76387d57a19e2c22aba4",
+    "currentManifestDigest": "48384e8915f4cb989ddcc1937b52fbb49e00423da61da59113f227556c848fae",
+    "nextManifestDigest": "7467354d0c8296cfb66e1a26b3d74dff7f9f5e99923b40e70d7864cc1bd80892",
+    "preparedJournalDigest": "759f732c84a38bf974f5823004cd4e327f57fcc1c3f2fbd82b07f45c94761252",
     "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
     "manifestPublication": "last-as-commit-marker",
     "forceOverwrite": false
@@ -105,6 +105,14 @@
     "operationSetChanged": false,
     "localGate": "passed",
     "hostedEvidenceOwner": "SDK-043-PROJECT-CLI"
+  },
+  "sdk044ReloadToolchainRevision": {
+    "observedAt": "2026-07-19T05:37:58Z",
+    "reason": "The canonical ownership vectors were regenerated after the aggregate lock and bound semantic-plan fixtures admitted the Haxe-authored WordPress reload client projection; file operations, source bindings, and artifact bytes are unchanged.",
+    "ownershipContractChanged": false,
+    "operationSetChanged": false,
+    "localGate": "passed",
+    "hostedEvidenceOwner": "SDK-044-DEV-LOOP"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
