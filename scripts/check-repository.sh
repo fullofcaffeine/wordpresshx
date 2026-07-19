@@ -2572,6 +2572,7 @@ assert dev_loop_implementation["status"] in {
     "implemented-sdk044-core-local-verified",
     "implemented-sdk044-core-hosted-verified",
     "implemented-sdk044-services-local-verified",
+    "implemented-sdk044-services-hosted-verified",
 }
 assert dev_loop_implementation["scope"] == (
     "managed-compiler-effective-watch-atomic-publish-and-typed-development-service-supervision"
@@ -2740,16 +2741,16 @@ assert sdk044_verification["incrementalAndCleanOwnedBytes"] == (
 )
 assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["externalDevelopmentService"] == (
-    "controlled-process-runtime-tested-local"
+    "controlled-process-runtime-tested-hosted"
 )
 assert dev_loop_implementation["claims"]["wordpressDevelopmentProvider"] == (
-    "controlled-process-and-compose-syntax-runtime-tested-local"
+    "controlled-process-and-compose-syntax-runtime-tested-hosted"
 )
 assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
     "runtime-tested-by-sdk090"
 )
 assert dev_loop_implementation["claims"]["postPublishReloadRequest"] == (
-    "controlled-event-runtime-tested-local"
+    "controlled-event-runtime-tested-hosted"
 )
 sdk044_reference_authorities = {
     ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (
@@ -2875,7 +2876,7 @@ if sdk044_hosted["status"] == "pending-first-main-run":
 elif sdk044_hosted["status"] == "passed":
     assert sdk044_receipt["status"] == "verified"
     assert dev_loop_implementation["status"] == (
-        "implemented-sdk044-core-hosted-verified"
+        "implemented-sdk044-services-hosted-verified"
     )
     assert sha1.fullmatch(sdk044_receipt["implementationCommit"])
     assert isinstance(sdk044_hosted["runId"], int)
