@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "ADR-018-RUNTIME-SUPPORT-PACKAGING",
   "bead": "wordpresshx-adr-018",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T12:50:40Z",
+  "status": "verified",
+  "observedAt": "2026-07-19T13:18:55Z",
   "subject": {
     "adr": {
       "path": "docs/adr/018-runtime-support-packaging.md",
@@ -242,25 +242,25 @@
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29688431413,
+    "commit": "8fe186a2026be81ae61b2b1012dbc64205cbafba",
+    "status": "passed",
     "required": true,
     "jobs": {
       "contract": {
         "name": "repository",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 88196757583,
+        "status": "passed"
       },
       "phpRuntime": {
         "name": "haxe",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 88196757565,
+        "status": "passed"
       },
       "wordpressRuntime": {
         "name": "wordpress-runtime",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 88196757555,
+        "status": "passed"
       }
     }
   },
