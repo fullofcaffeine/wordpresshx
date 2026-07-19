@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-045.3",
-  "status": "implemented-local-verified-pending-hosted",
+  "status": "implemented-hosted-verified",
   "scope": "consumer-explicit-committed-generated-output",
   "contract": {
     "policyIdentity": "wordpress-hx.generated-output-vcs-project.v1",
@@ -111,16 +111,26 @@
     "gitOnlyDeployment": "manifest-bound-generated-native-php-executed-without-build",
     "releaseDistributionTracked": false,
     "checkoutMutation": "none",
-    "outcome": "passed-local"
+    "outcome": "passed-hosted"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "runId": 29705613498,
+    "job": "haxe",
+    "jobId": 88241958950,
+    "step": "Test Haxe-first site scaffolding",
+    "commit": "b61e1cecf6e631469754849cf3bfee0102974c41",
+    "status": "passed",
+    "required": true
   },
   "claims": {
-    "productionWphxIntegration": "runtime-tested-local",
-    "realGitCleanHeadRegeneration": "runtime-tested-local",
-    "generatedPhpGitOnlyConsumer": "runtime-tested-local",
-    "defaultIgnoreAndRegenerate": "runtime-tested-local",
-    "generatedConsumerCi": "runtime-tested-local",
-    "cleanLocalTarballInstallation": "runtime-tested-local",
-    "hostedVerification": "pending",
+    "productionWphxIntegration": "runtime-tested-hosted",
+    "realGitCleanHeadRegeneration": "runtime-tested-hosted",
+    "generatedPhpGitOnlyConsumer": "runtime-tested-hosted",
+    "defaultIgnoreAndRegenerate": "runtime-tested-hosted",
+    "generatedConsumerCi": "runtime-tested-hosted",
+    "cleanLocalTarballInstallation": "runtime-tested-hosted",
+    "hostedVerification": "runtime-tested-hosted",
     "releaseIntegration": "not-implemented-sdk-101",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-claimed"
