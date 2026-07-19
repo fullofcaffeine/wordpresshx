@@ -5,7 +5,7 @@
   "status": "verified",
   "observedAt": "2026-07-19T14:38:25Z",
   "implementationCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
-  "evidenceCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
+  "evidenceCommit": "3c6c36f78c07bd9fc9f9876053aabf4e94eaae4c",
   "subject": {
     "implementationManifest": {
       "path": "manifests/private-runtime-implementation.json",
@@ -154,7 +154,7 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
+    "subjectCommit": "3c6c36f78c07bd9fc9f9876053aabf4e94eaae4c",
     "subjectContentSha256": "62d0bcab4231b87d0107d5d5c725171838cedc068132d0ffc491d9afef4202d5",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
