@@ -190,6 +190,15 @@ plugin reports are canonical, byte-bound to the emission and ownership
 manifest, and exercised on PHP 7.4/8.4 and clean WordPress 7.0. The tool graph
 is build-only and absent from generated runtime artifacts.
 
+Receipt `SDK-027-GENERIC-PHP-COMPILER-READINESS` records the co-located
+compiler's independently installable package seam. Two deterministic
+source-only archives are byte-identical; the exact archive installs into a
+disposable local Haxelib repository and a neutral external Haxe application
+emits, lints, and runs PHP without resolving WordPressHx or a checkout path.
+It also records generic-versus-WordPress issue routing and the trigger-based,
+history-preserving extraction procedure. No repository split or package
+publication is claimed.
+
 Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
 collector, four deterministic direct/server compilations, ten source-located
 compile failures, five schema/input mutations, exact effective inputs, and

@@ -1,0 +1,4 @@
+-cp src
+-lib reflaxe.php
+-main Main
+--interp

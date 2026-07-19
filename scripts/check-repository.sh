@@ -507,6 +507,7 @@ required_files=(
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
+  manifests/evidence/sdk-027-generic-php-compiler-readiness.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
   manifests/evidence/sdk-024-private-php-runtime.json
@@ -528,8 +529,13 @@ required_files=(
   packages/build/src/wordpress/hx/build/semantic/PublicEnvironmentOptions.hx
   packages/build/src/wordpress/hx/build/semantic/ResourceOptions.hx
   docs/architecture/build-and-dev-loop.md
+  compiler/reflaxe.php/CHANGELOG.md
+  compiler/reflaxe.php/EXTRACTION.md
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
+  compiler/reflaxe.php/scripts/build-package.py
+  compiler/reflaxe.php/scripts/test-package-builder.py
+  compiler/reflaxe.php/scripts/test-package.sh
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpClass.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpClassKind.hx
@@ -562,6 +568,9 @@ required_files=(
   compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapConfig.hx
   compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx
   compiler/reflaxe.php/test/fixtures/SourceFixture.hx
+  compiler/reflaxe.php/test/package-consumer/build.hxml
+  compiler/reflaxe.php/test/package-consumer/expected.stdout
+  compiler/reflaxe.php/test/package-consumer/src/Main.hx
   compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
@@ -743,6 +752,11 @@ sdk026_receipt = json.loads(
     Path("manifests/evidence/sdk-026-generated-php-quality.json").read_text(
         encoding="utf-8"
     )
+)
+sdk027_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-027-generic-php-compiler-readiness.json"
+    ).read_text(encoding="utf-8")
 )
 php_quality_toolchain = json.loads(
     Path("tooling/php-quality/toolchain.json").read_text(encoding="utf-8")
@@ -1231,7 +1245,7 @@ assert adr018_receipt["claims"]["productionSupport"] == "not-tested"
 assert adr018_receipt["claims"]["publicationAuthorized"] is False
 
 
-def verify_historical_package(subject, implementation_commit):
+def validate_package_subject(subject):
     package_root = Path(subject["path"])
     package_digest_input = bytearray()
     package_files = subject["packageFiles"]
@@ -1253,6 +1267,16 @@ def verify_historical_package(subject, implementation_commit):
     assert hashlib.sha256(package_digest_input).hexdigest() == (
         subject["packageContentSha256"]
     )
+    assert len(package_paths) == subject.get(
+        "packageFileCount", len(package_paths)
+    )
+    return package_paths
+
+
+def verify_historical_package(subject, implementation_commit):
+    package_root = Path(subject["path"])
+    package_paths = validate_package_subject(subject)
+    package_files = subject["packageFiles"]
 
     assert sha1.fullmatch(implementation_commit)
     historical_commit_available = subprocess.run(
@@ -7504,31 +7528,157 @@ assert repository_receipt["remoteVerification"]["githubSecretScanning"] == "enab
 assert repository_receipt["remoteVerification"]["githubPushProtection"] == "enabled"
 assert repository_receipt["claims"]["packagePublicationAuthorized"] is False
 
-package_root = Path("compiler/reflaxe.php")
-package_files = sorted(
-    (
-        path
-        for path in package_root.rglob("*")
-        if path.is_file() and "build" not in path.relative_to(package_root).parts
-    ),
-    key=lambda path: path.as_posix(),
-)
-package_digest_input = bytearray()
-for path in package_files:
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    package_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
-package_digest = hashlib.sha256(package_digest_input).hexdigest()
 assert php_ir_receipt["subject"]["packageContentSha256"] == (
     "cf0fc152f4fe09b8a9eb92f6b9f4c1f1591ab938531d6241c245ab11a75532f6"
 )
 assert sdk025_receipt["subject"]["genericCompilerPackageContentSha256"] == (
     "4d43afdc4f35cb45e55ab760e982d213a2c0749dc4f0c1b72790c30a64287294"
 )
-assert package_digest != sdk025_receipt["subject"][
-    "genericCompilerPackageContentSha256"
+assert sdk024_compiler["currentGenericPackageContentSha256"] == (
+    "6dd9674acefeab7ed0aa345dcd8d540f0c3abcdc9f230b0af9064e8b703d693b"
+)
+
+assert sdk027_receipt["schemaVersion"] == 1
+assert sdk027_receipt["receiptId"] == (
+    "SDK-027-GENERIC-PHP-COMPILER-READINESS"
+)
+assert sdk027_receipt["bead"] == "wordpresshx-sdk-027"
+assert sdk027_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+sdk027_subject = sdk027_receipt["subject"]
+assert sdk027_subject["package"] == haxelib["name"]
+assert sdk027_subject["path"] == "compiler/reflaxe.php"
+package_root = Path(sdk027_subject["path"])
+assert sdk027_subject["version"] == haxelib["version"]
+assert sdk027_subject["packageFileCount"] == 48
+assert sdk027_subject["packageContentSha256"] == (
+    "a8add1a4bc5bef5b5ec9a5ac99e05c4a2c6a0bc996be7bbe625daf55d06d082f"
+)
+sdk027_package_paths = validate_package_subject(sdk027_subject)
+sdk027_implementation_commit = sdk027_receipt["implementation"][
+    "implementationCommit"
 ]
-assert len(package_files) == sdk024_compiler["currentGenericPackageFileCount"]
-assert package_digest == sdk024_compiler["currentGenericPackageContentSha256"]
+if sdk027_implementation_commit is None:
+    tracked_package_paths = subprocess.run(
+        ["git", "ls-files", "--", sdk027_subject["path"]],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    tracked_package_paths = sorted(
+        path for path in tracked_package_paths if "/build/" not in path
+    )
+    assert tracked_package_paths == sdk027_package_paths
+    for package_file in sdk027_subject["packageFiles"]:
+        package_path = Path(package_file["path"])
+        assert package_path.is_file()
+        assert hashlib.sha256(package_path.read_bytes()).hexdigest() == (
+            package_file["sha256"]
+        )
+else:
+    verify_historical_package(sdk027_subject, sdk027_implementation_commit)
+
+sdk027_implementation = sdk027_receipt["implementation"]
+assert sdk027_implementation["dependencyDirection"] == (
+    "reflaxe.php <- compiler/wordpress <- WordPressHx SDK"
+)
+sdk027_artifact = sdk027_implementation["artifact"]
+assert sdk027_artifact["format"] == "deterministic-source-only-haxelib-zip"
+assert sdk027_artifact["archiveFile"] == "reflaxe.php-0.0.0.zip"
+assert sdk027_artifact["archiveSha256"] == (
+    "913e9501f6dcac2cfca8879266ccffa124bdd014f9ca5908ee6286312cce6f79"
+)
+assert sdk027_artifact["sourceContentSha256"] == (
+    "23cdce039ba7874750816311e46b77cbfffb40658a871acde4d73fe202189ea7"
+)
+assert sdk027_artifact["twoBuildsByteIdentical"] is True
+assert sdk027_artifact["embeddedPerFileHashes"] is True
+assert sdk027_artifact["sourceOnly"] is True
+assert sdk027_artifact["publicationAuthorized"] is False
+sdk027_consumer = sdk027_implementation["externalConsumer"]
+for sdk027_consumer_proof in (
+    "disposableLocalHaxelibRepository",
+    "preInstallResolutionRejected",
+    "checkoutResolutionRejected",
+    "installedArchiveCompiled",
+    "generatedPhpLinted",
+    "generatedPhpExecuted",
+):
+    assert sdk027_consumer[sdk027_consumer_proof] is True
+sdk027_release_policy = sdk027_implementation["releasePolicy"]
+for sdk027_release_guard in (
+    "exactHaxelibDependencyVersionsRequired",
+    "floatingSiblingPathsRejected",
+    "haxelibDevReleaseResolutionRejected",
+    "machineLocalPathsRejected",
+    "cleanWorktreeRequiredInCi",
+    "changelogRequired",
+):
+    assert sdk027_release_policy[sdk027_release_guard] is True
+
+assert set(sdk027_receipt["issueRouting"]) == {
+    "generic",
+    "wordpress",
+    "pressureRule",
+}
+assert sdk027_receipt["extraction"]["procedure"] == (
+    "compiler/reflaxe.php/EXTRACTION.md"
+)
+assert sdk027_receipt["extraction"]["triggerAccepted"] is False
+assert sdk027_receipt["extraction"]["physicalRepositorySplitPerformed"] is False
+assert sdk027_receipt["extraction"]["publicationPerformed"] is False
+sdk027_reference = sdk027_receipt["referenceReview"]
+assert sdk027_reference["repository"] == "haxe.ocaml"
+assert sdk027_reference["commit"] == (
+    "ef30eba09eff26c4ef09a8302f7cee84e23fc81c"
+)
+assert sdk027_reference["codeOrFixtureBytesCopied"] is False
+assert sdk027_reference["runtimeOrBuildDependencyCreated"] is False
+sdk027_verification = sdk027_receipt["verification"]
+assert sdk027_verification["genericPackageTest"]["outcome"] == "passed"
+assert sdk027_verification["packageReadinessTest"] == {
+    "command": "bash compiler/reflaxe.php/scripts/test-package.sh",
+    "outcome": "passed",
+    "marker": "REFLAXE_PHP_PACKAGE_READINESS:PASS",
+}
+assert sdk027_verification["exactPhpMatrix"]["outcome"] == "passed"
+assert sdk027_verification["downstreamWordPressProfile"]["outcome"] == (
+    "passed"
+)
+assert sdk027_verification["downstreamWordPressPhpMatrix"]["outcome"] == (
+    "passed"
+)
+assert sdk027_verification["repositoryInvariant"]["outcome"] == "passed"
+sdk027_hosted = sdk027_verification["hostedWorkflow"]
+assert sdk027_hosted["path"] == ".github/workflows/repository.yml"
+assert sdk027_hosted["job"] == "haxe"
+assert sdk027_hosted["cleanPackageArtifactRequired"] is True
+assert sdk027_hosted["exactPhpMatrixRequired"] is True
+assert sdk027_hosted["downstreamWordPressProfileRequired"] is True
+if sdk027_receipt["status"] == "implemented-hosted-pending":
+    assert sdk027_hosted["runId"] is None
+    assert sdk027_hosted["jobId"] is None
+    assert sdk027_hosted["commit"] is None
+    assert sdk027_hosted["status"] == "pending-first-main-run"
+else:
+    assert isinstance(sdk027_hosted["runId"], int)
+    assert isinstance(sdk027_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk027_hosted["commit"])
+    assert sdk027_hosted["status"] == "passed"
+assert "Test clean standalone PHP compiler package artifact" in workflow_text
+assert (
+    "bash compiler/reflaxe.php/scripts/test-package.sh --require-clean"
+    in workflow_text
+)
+assert sdk027_receipt["claims"]["arbitraryHaxePhpBackend"] == "unsupported"
+assert sdk027_receipt["claims"]["repositoryExtraction"] == (
+    "not-performed-no-trigger"
+)
+assert sdk027_receipt["claims"]["packagePublication"] == "blocked"
+assert sdk027_receipt["claims"]["php74And84"] == "runtime-tested-local"
+assert sdk027_receipt["claims"]["productionSupport"] == "not-tested"
 
 assert wordpress_php_receipt["schemaVersion"] == 1
 assert wordpress_php_receipt["receiptId"] == (

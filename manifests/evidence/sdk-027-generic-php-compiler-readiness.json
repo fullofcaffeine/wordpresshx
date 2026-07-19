@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-027-GENERIC-PHP-COMPILER-READINESS",
+  "bead": "wordpresshx-sdk-027",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T17:54:31Z",
+  "subject": {
+    "package": "reflaxe.php",
+    "path": "compiler/reflaxe.php",
+    "version": "0.0.0",
+    "packageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; Git-tracked files only; build/ excluded",
+    "packageFileCount": 48,
+    "packageContentSha256": "a8add1a4bc5bef5b5ec9a5ac99e05c4a2c6a0bc996be7bbe625daf55d06d082f",
+    "packageFiles": [
+      {
+        "path": "compiler/reflaxe.php/CHANGELOG.md",
+        "sha256": "f9e464a8f3b86165e405dda9aef6da0e133c5896664f5e6be79e7d81c4186ba9"
+      },
+      {
+        "path": "compiler/reflaxe.php/EXTRACTION.md",
+        "sha256": "3ef545c1744e6164ee2cdd4f694146fd6b3446542e388fcaaa8d37b106952920"
+      },
+      {
+        "path": "compiler/reflaxe.php/LICENSE.md",
+        "sha256": "5f2bc991f2be2982082ad309bd5045fbd61b7772021e54120408e3a49c25ecea"
+      },
+      {
+        "path": "compiler/reflaxe.php/README.md",
+        "sha256": "4c6518253ad1b4b85411f695648dc84dd36d0f6ef46a4d28d65d72fde9b429be"
+      },
+      {
+        "path": "compiler/reflaxe.php/haxelib.json",
+        "sha256": "e5f31c718ed5a683d7f90bd78aaf11e8244bdf9cfd1b5dd80020424a457aebcb"
+      },
+      {
+        "path": "compiler/reflaxe.php/provenance.json",
+        "sha256": "5a004b756b0481640fb37032e099efc9e696ed88587b9443242b166b9949a56e"
+      },
+      {
+        "path": "compiler/reflaxe.php/scripts/build-package.py",
+        "sha256": "31051d0cb444471bec2000e39167e9b0437a2cff745e82bb3f58e404d832bac3"
+      },
+      {
+        "path": "compiler/reflaxe.php/scripts/test-package-builder.py",
+        "sha256": "9f36636f13689779e098e786aff32e4eeef95f2f7d99bfb2fea5807cad7dabfb"
+      },
+      {
+        "path": "compiler/reflaxe.php/scripts/test-package.sh",
+        "sha256": "9fde62dc61d87837995265b49f754be47344fa734aed7847db792a8568f79c8b"
+      },
+      {
+        "path": "compiler/reflaxe.php/scripts/test-php-matrix.sh",
+        "sha256": "48a8f3b0f7083c76a8a783531ba9fa92bcad73a211407966a58788cd45de77cf"
+      },
+      {
+        "path": "compiler/reflaxe.php/scripts/test.sh",
+        "sha256": "a6d36623596f28d876f5efc29467e6ae9cea2f4c9bd1d46d996073565ab4919d"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx",
+        "sha256": "1fb115c1871f50847929d8c7a5147686341017f9b8e957b30e3888c77ccceb9b"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpClass.hx",
+        "sha256": "259d81b68c1f4891cf80bf32cf2679bf480823e456839e9a938acf7900f96de6"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpClassKind.hx",
+        "sha256": "c62c2dd77f71e83c81354ea56389b3dd1d138ec4b97ff4872085ce746fe12869"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpClosureCapture.hx",
+        "sha256": "ca5d042d420896ded714d476e9b7e517e4bec6f54e7346bdcb289d05015e8a5b"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpDeclaration.hx",
+        "sha256": "d1fc95c945e9c37262cb7755cbd35b94f388953aeb37fbab98260ea766768657"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocParameter.hx",
+        "sha256": "be22cc7d9946d30d80a19c40157f826921abd4bdf4df93dfbbe249e2f6f9795e"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocType.hx",
+        "sha256": "ca870577c58e4400b4bb1d105d84d000b40e1d736b921fb13762e03b60fc889f"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
+        "sha256": "acca81e619e7f609089ac9eeaa984052b498e286bb68a5e6577efba97789c3b5"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpFile.hx",
+        "sha256": "5db90fc2bd202a46282ceac7dccc7694cd6359a92910f500b837212430b9b8f1"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpFunction.hx",
+        "sha256": "9626ea9b9d0816b3b83e476cf04192936c12202a77780cc9abba2973a660b1b5"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpIdentifier.hx",
+        "sha256": "113d391d58bb474ec6d64589810d0178512d519967f6b7d3067f8e49c0df50fd"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethod.hx",
+        "sha256": "29f4d246c499e1c72e8c841d54e35f0428682788e2bb3733437bd92b9eba9217"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx",
+        "sha256": "c0f389aa60962aa7f5aed61a958d0cafca12b5a60d7c03a4d65caaaa4fd49ae6"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpParameter.hx",
+        "sha256": "471f67fa16619c66c51c06ca054d47e81447bcf2e4e4c666497af31b7db1ee55"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpProperty.hx",
+        "sha256": "3740d2333aaba2c837376b07815180d40655f496c707fb21bd77967c5eb7e8ec"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpQualifiedName.hx",
+        "sha256": "ff2a142ddeb9720d8a34c6d37c1d1ae3a5b37e1133827dd7d9b9ab831e150767"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceFile.hx",
+        "sha256": "5c4b5dd8c31c2020b3d40fd75b33fe766d2ef6fa5d9e636c13b53abbe6abff48"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceKind.hx",
+        "sha256": "b9aad6803ac3a48d0d3b2b23b60621d26cff15437f5de7d0af2d79650c010b30"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourcePosition.hx",
+        "sha256": "60f41191c15ef4ad32f4b93312c632ba614b4896a8288e7921c49502bad1fa6b"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceRange.hx",
+        "sha256": "9605a543a6698e4f5ff611340f6a3861a4af070668965899d09e5fa952bb8d46"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpStableId.hx",
+        "sha256": "a639350f5a661a00fad23346645be43f05a1111d9875dbf78c8bcdd1b77b7057"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpStmt.hx",
+        "sha256": "eec9b3e6f102134653dc272557bf7e9261ce334c7c01d41dd45ee0adce83c7bd"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpType.hx",
+        "sha256": "1ee5366bdaad49b421a05866a42516a2c09d212fe428b6f6e41bb32898e1e03b"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpVisibility.hx",
+        "sha256": "2f737bd1ff98e71441ab39aaa9e382420cd60b059591e70e22b3aafd1802d1fe"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpCanonicalJson.hx",
+        "sha256": "2358f362d30f12ad72ff1ee5b8acd12c7f90f0b32dc725a69fce98d0cc43f69a"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapConfig.hx",
+        "sha256": "7b40112dfaf21bac8578a1cd1e5842ea484411cad7cd0763a22da4e85f1b4b98"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx",
+        "sha256": "d3dbfc827855741b6ed986c51e1cc56d93516e5aee0f124f528d90a12c28fb7a"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+        "sha256": "7d7a03340da9bf73a1cd3154c33897113550fc5212ffe010b41c640d566bd189"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedDeclaration.hx",
+        "sha256": "b50497023803ed6bb81961f2ea8c5def1a3d7c6523c05221941cd47cee5e8b01"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedFile.hx",
+        "sha256": "d01921521c60dda349e9ab64c5da321deefbd57c62c9e110c2da18b00dcb29d2"
+      },
+      {
+        "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpRenderedMapping.hx",
+        "sha256": "78a4151d52c0c8c471a707aff6d402cd5e7438a911ebdc01ef1f1781453bce17"
+      },
+      {
+        "path": "compiler/reflaxe.php/test.hxml",
+        "sha256": "bf31ea9e8b573b3edb793dfa42713a7db47ef621af6d0a81c2d5b361d4b8aa90"
+      },
+      {
+        "path": "compiler/reflaxe.php/test/fixtures/SourceFixture.hx",
+        "sha256": "4fb32bd1480cdf3a481d0e29c7d023058d3d7779c23f49b95e3b4bdfe1fa6fbd"
+      },
+      {
+        "path": "compiler/reflaxe.php/test/package-consumer/build.hxml",
+        "sha256": "59fcf9f257333b66eb445d5cafb445ac64e779410a3e2a0da0c73c1377c773ac"
+      },
+      {
+        "path": "compiler/reflaxe.php/test/package-consumer/expected.stdout",
+        "sha256": "c2eb6af76a65b6475635fa7c5dc647204ba24fabe2590c36d97a7d12d29dafe4"
+      },
+      {
+        "path": "compiler/reflaxe.php/test/package-consumer/src/Main.hx",
+        "sha256": "c925f76454d1c0081bfa7e4b638d1419f16e2c13171ffc74caa3c108131f15de"
+      },
+      {
+        "path": "compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx",
+        "sha256": "e7889bbfcd026bbb70365654fabd5bcc9f2ccb898a51eb60dd2f471b136c269b"
+      }
+    ]
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "packageBoundary": "compiler/reflaxe.php owns generic PHP; compiler/wordpress and SDK modules own WordPress behavior",
+    "dependencyDirection": "reflaxe.php <- compiler/wordpress <- WordPressHx SDK",
+    "artifact": {
+      "format": "deterministic-source-only-haxelib-zip",
+      "archiveFile": "reflaxe.php-0.0.0.zip",
+      "archiveSha256": "913e9501f6dcac2cfca8879266ccffa124bdd014f9ca5908ee6286312cce6f79",
+      "archiveBytes": 100909,
+      "archiveFileCount": 38,
+      "sourceFileCount": 37,
+      "sourceContentSha256": "23cdce039ba7874750816311e46b77cbfffb40658a871acde4d73fe202189ea7",
+      "sourceDateEpoch": 315532800,
+      "twoBuildsByteIdentical": true,
+      "embeddedPerFileHashes": true,
+      "sourceOnly": true,
+      "publicationAuthorized": false
+    },
+    "externalConsumer": {
+      "fixture": "compiler/reflaxe.php/test/package-consumer",
+      "disposableLocalHaxelibRepository": true,
+      "preInstallResolutionRejected": true,
+      "checkoutResolutionRejected": true,
+      "installedArchiveCompiled": true,
+      "generatedPhpLinted": true,
+      "generatedPhpExecuted": true,
+      "runtimeOutput": "{\"package\":\"standalone\",\"answer\":42}"
+    },
+    "releasePolicy": {
+      "exactHaxelibDependencyVersionsRequired": true,
+      "floatingSiblingPathsRejected": true,
+      "haxelibDevReleaseResolutionRejected": true,
+      "machineLocalPathsRejected": true,
+      "cleanWorktreeRequiredInCi": true,
+      "changelogRequired": true
+    }
+  },
+  "issueRouting": {
+    "generic": "PHP language, Haxe lowering, IR, printer, source correlation, and portable markup behavior; minimized neutral fixture required",
+    "wordpress": "hooks, REST, blocks, themes, template hierarchy, WordPress ABI, and profile policy; WordPress fixture retained",
+    "pressureRule": "a WordPress fixture may expose pressure but cannot define generic compiler behavior"
+  },
+  "extraction": {
+    "procedure": "compiler/reflaxe.php/EXTRACTION.md",
+    "triggerAccepted": false,
+    "physicalRepositorySplitPerformed": false,
+    "publicationPerformed": false,
+    "futureRequirements": [
+      "history-preserving filtered transfer with audited file and commit mapping",
+      "complete provenance, license, secret, and machine-local-path audit",
+      "clean standalone package gates without the WordPressHx checkout",
+      "immutable version and artifact digest",
+      "exact WordPressHx downstream pin and compatibility receipt",
+      "documented immutable rollback pin",
+      "single writable source authority"
+    ]
+  },
+  "referenceReview": {
+    "repository": "haxe.ocaml",
+    "commit": "ef30eba09eff26c4ef09a8302f7cee84e23fc81c",
+    "reviewedSurfaces": [
+      "packages/reflaxe.ocaml",
+      "scripts/release/reflaxe-ocaml-package-artifact.js",
+      "scripts/ci/run-reflaxe-ocaml-package-install.js",
+      ".github/workflows/reflaxe-ocaml-package-matrix.yml",
+      "docs/00-project/REFLAXE_OCAML_REPOSITORY_EXTRACTION_GATE.md"
+    ],
+    "adaptedConcepts": [
+      "real in-monorepo package boundary",
+      "one canonical artifact consumed by isolated tests",
+      "neutral external application",
+      "same-monorepo product retained as downstream compatibility workload",
+      "technical readiness plus measured trigger before physical split"
+    ],
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false
+  },
+  "verification": {
+    "genericPackageTest": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "packageReadinessTest": {
+      "command": "bash compiler/reflaxe.php/scripts/test-package.sh",
+      "outcome": "passed",
+      "marker": "REFLAXE_PHP_PACKAGE_READINESS:PASS"
+    },
+    "exactPhpMatrix": {
+      "command": "bash compiler/reflaxe.php/scripts/test-php-matrix.sh",
+      "outcome": "passed"
+    },
+    "downstreamWordPressProfile": {
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "downstreamWordPressPhpMatrix": {
+      "command": "bash compiler/wordpress/scripts/test-php-matrix.sh",
+      "outcome": "passed"
+    },
+    "repositoryInvariant": {
+      "command": "bash scripts/check-repository.sh",
+      "outcome": "passed"
+    },
+    "hostedWorkflow": {
+      "path": ".github/workflows/repository.yml",
+      "job": "haxe",
+      "runId": null,
+      "jobId": null,
+      "commit": null,
+      "status": "pending-first-main-run",
+      "cleanPackageArtifactRequired": true,
+      "exactPhpMatrixRequired": true,
+      "downstreamWordPressProfileRequired": true
+    }
+  },
+  "claims": {
+    "genericPackageIndependentlyInstallable": "runtime-tested-local",
+    "deterministicSourceArtifact": "byte-identical-local",
+    "wordpressProfileCompatibility": "runtime-tested-local",
+    "php74And84": "runtime-tested-local",
+    "arbitraryHaxePhpBackend": "unsupported",
+    "repositoryExtraction": "not-performed-no-trigger",
+    "packagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

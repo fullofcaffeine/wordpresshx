@@ -31,4 +31,11 @@ build/macros inspect authoring layers but do not ship as runtime dependencies
 
 The SDK may consume the private `compiler/reflaxe.php` workspace package during 0.x and may later pin its extracted releases. It may not import full-port implementation paths, Core linker machinery, runtime state, or a mutable sibling compiler checkout.
 
+SDK-027 keeps this practical rather than ceremonial. The generic directory owns
+its deterministic source archive, isolated-install fixture, changelog,
+provenance, and extraction procedure. WordPress-specific lowering remains in
+`compiler/wordpress`, and the complete SDK remains the primary product and
+downstream compatibility workload. Physical extraction waits for an accepted
+ADR-004 trigger; package readiness alone is not a reason to split repositories.
+
 The same rule applies to the wider Haxe solution family: integration uses versioned public packages, schemas, CLIs, immutable identities, and independent receipts. Similar concepts in sibling repositories do not create a dependency until real consumers prove a shared contract.

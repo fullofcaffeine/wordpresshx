@@ -36,6 +36,26 @@ snapshots and rejected unsafe names/operators, emits a neutral multibyte
 source-correlation fixture, writes ignored PHP/map artifacts, runs `php -l`, and
 executes both fixtures.
 
+Prove the release-shaped package seam independently:
+
+```bash
+bash compiler/reflaxe.php/scripts/test-package.sh
+```
+
+That gate builds the source-only package twice and requires byte-identical ZIPs,
+installs the exact archive into a disposable Haxelib repository, first proves
+that the package cannot resolve before installation, and then compiles a neutral
+external Haxe application. The application emits ordinary PHP through the
+installed typed IR/printer and the gate lints and executes that PHP. Neither the
+consumer nor its generated output resolves the WordPress profile, SDK packages,
+this checkout, a sibling checkout, or `haxelib dev`.
+
+The generated `build/package-artifact/artifact-manifest.json` binds the archive
+to its source-tree hash, archive hash, Git commit, dirty state, fixed timestamp,
+and publication status. CI adds `--require-clean`; ordinary local development
+may exercise intentional uncommitted changes without turning them into release
+evidence.
+
 Run the exact PHP floor/current matrix after the package test has generated its fixture:
 
 ```bash
@@ -53,3 +73,6 @@ one-way consumers in `compiler/wordpress` and `packages/cli`.
 [`provenance.json`](provenance.json) records the exact `wordpresshx-port` source commit, tree, blobs, hashes, transformations, and exclusions. The imported source is GPL-2.0-or-later. Final SDK/compiler/generated-output licensing remains blocked on ADR-020; this package is version `0.0.0` and must not be published yet. Its Haxelib `url` identifies the canonical SDK monorepo established by SDK-004; that repository URL does not authorize package publication, and the source provenance URLs remain exact and independent of the destination.
 
 Package ownership and extraction triggers are defined by [ADR-004](../../docs/adr/004-generic-php-compiler-home.md).
+The package-owned [extraction procedure](EXTRACTION.md) defines defect routing,
+the maintained standalone seam, immutable downstream pins, and the steps that
+apply only after an ADR-004 trigger is accepted.

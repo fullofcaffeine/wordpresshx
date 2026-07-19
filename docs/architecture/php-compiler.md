@@ -23,6 +23,41 @@ The machine-readable [`provenance.json`](../../compiler/reflaxe.php/provenance.j
 
 For future registration, AST/lowering, printer, diagnostics, runtime, output-mode, fixture, and release decisions, consult the sibling `haxe.elixir.codex`, `haxe.ruby`, `haxe.go`, `haxe.rust`, `haxe.ocaml`, and `genes` compiler repositories. They are precedent, not dependencies or automatic copy sources. Any adapted implementation still needs a generalized rationale, exact provenance, and local regression evidence; repository-specific framework rules must not be copied into `reflaxe.php`.
 
+SDK-027 specifically reviewed `haxe.ocaml` commit
+`ef30eba09eff26c4ef09a8302f7cee84e23fc81c`. Its useful monorepo pattern is a
+real package boundary, one canonical source artifact consumed by isolated
+tests, and a large product in the same repository acting as a downstream
+workload. WordPressHx adopts that pattern proportionately; it does not copy the
+OCaml implementation, inherit its release system, or make `haxe.ocaml` a build
+dependency.
+
+## Package and extraction readiness
+
+The package is independently movable without being prematurely moved. Its
+package-owned gate constructs a deterministic source-only Haxelib ZIP twice,
+requires byte-identical archives and manifests, and installs the exact archive
+into a disposable local Haxelib repository. A neutral external Haxe
+application then imports only the installed `reflaxe.php` API, emits readable
+PHP, and executes that PHP. The negative half first proves the application
+cannot resolve the library before installation, preventing a global
+`haxelib dev` or checkout path from making the proof pass accidentally.
+
+The artifact manifest records the source identity, archive identity, source
+commit, dirty state, canonical timestamp, and explicit publication block. The
+builder admits regular source files and package documentation only, rejects
+machine-local paths and non-exact Haxelib dependencies, and includes a complete
+file/hash manifest in the archive. CI requires a clean package worktree; local
+development may test intentional edits but cannot call that result release
+evidence.
+
+This is deliberately not a repository split. WordPress-specific compiler work
+continues in `compiler/wordpress` and SDK modules, where it can evolve at the
+speed of the product. The generic package stays independently usable and owns
+portable PHP/compiler behavior. The package-owned
+[`EXTRACTION.md`](../../compiler/reflaxe.php/EXTRACTION.md) defines issue
+routing, triggers, history/provenance transfer, immutable pins, downstream
+receipts, and rollback for a later accepted ADR-004 extraction.
+
 ## First admitted slice
 
 The initial import contains typed statements and expressions for control flow, arrays, calls, construction, properties, closures, references, casts, and common statements. SDK-021 extends that foundation with structural files, namespaces, functions, classes/interfaces/traits, properties, methods, PHP 7.4-compatible signature types, typed parameters, callable arrays, immutable relative source ranges, and deterministic rendered declaration ranges. SDK-026 adds optional native property types plus closed structured PHPDoc refinements for typed arrays and PHP 7.4-inexpressible unions. These are generalized IR facilities, not WordPress strings: validated names and types are constructed structurally, arrays are defensively copied, unions are normalized, comment injection fails closed, and documentation parameters must match the method signature. The printer retains output-compatible formatting from the proven source where practical, with general boundary improvements:
@@ -148,7 +183,7 @@ The aggregate gate covers the five compiler areas that were directly stale in th
 
 The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
-The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The structural IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json), exact PHP source-correlation evidence is in [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json), and the staging quality gate is in [`SDK-026-GENERATED-PHP-QUALITY`](../../manifests/evidence/sdk-026-generated-php-quality.json).
+The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The structural IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json), exact PHP source-correlation evidence is in [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json), the staging quality gate is in [`SDK-026-GENERATED-PHP-QUALITY`](../../manifests/evidence/sdk-026-generated-php-quality.json), and the independently installed package seam is in [`SDK-027-GENERIC-PHP-COMPILER-READINESS`](../../manifests/evidence/sdk-027-generic-php-compiler-readiness.json).
 
 ## Current non-claims
 

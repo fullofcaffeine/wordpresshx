@@ -160,6 +160,8 @@ jobs:
         run: bash scripts/profiles/test-profile-haxe.sh
       - name: Test generic PHP compiler package
         run: bash compiler/reflaxe.php/scripts/test.sh
+      - name: Test clean standalone PHP compiler package artifact
+        run: bash compiler/reflaxe.php/scripts/test-package.sh --require-clean
       - name: Test exact PHP 7.4 and 8.4 runtime matrix
         run: bash compiler/reflaxe.php/scripts/test-php-matrix.sh
       - name: Test WordPress public PHP profile
