@@ -51,8 +51,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `dev-loop-implementation.json` records SDK-044's real compile/watch core:
   managed project-local compiler lifecycle, effective-graph subscriptions,
   coalesced serialized rebuilds, input-stability checks, last-good retention,
-  and clean compiler shutdown. Typed WordPress/Next.js services, readiness, and
-  reload adapters remain explicit non-claims.
+  clean compiler shutdown, and strictly typed external-service supervision with
+  bounded readiness, collision-safe ports, restart, and reverse shutdown. The
+  built-in WordPress provider, optional Next.js adapter, and browser reload
+  transport remain explicit non-claims.
 - `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
   reproducibility report, fixed-representation unsigned ZIP writer, complete
   owned-generation comparator, two-fresh-root gate, and safe additive
@@ -130,8 +132,11 @@ Receipt `SDK-044-DEV-LOOP` records the Haxe-authored compile/watch loop on exact
 Linux Node 22.17.0. Its controlled process corpus proves initial publication,
 burst coalescing, source failure retention, nested HXX create/rename/delete,
 lock repair, compiler-identity restart, edit-during-build follow-up, SIGINT
-cleanup, path privacy, and byte equality with a clean build. It does not claim
-typed application services, readiness, browser reload, Windows/network
+cleanup, path privacy, byte equality with a clean build, authenticated typed
+service-plan consumption, dependency-order external processes, HTTP/log/TCP
+readiness, collision recovery, bounded restart exhaustion, secret
+non-propagation, and reverse shutdown. It does not claim the built-in WordPress
+provider, optional Next.js adapter, browser reload transport, Windows/network
 filesystem behavior, package publication, or production support.
 
 Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated

@@ -2571,9 +2571,10 @@ assert dev_loop_implementation["bead"] == "wordpresshx-sdk-044"
 assert dev_loop_implementation["status"] in {
     "implemented-sdk044-core-local-verified",
     "implemented-sdk044-core-hosted-verified",
+    "implemented-sdk044-services-local-verified",
 }
 assert dev_loop_implementation["scope"] == (
-    "managed-compiler-effective-watch-and-atomic-incremental-publish-core"
+    "managed-compiler-effective-watch-atomic-publish-and-typed-external-service-supervision"
 )
 sdk044_command = dev_loop_implementation["command"]
 assert sdk044_command["default"] == "wphx dev"
@@ -2591,6 +2592,9 @@ for sdk044_code_path in (
     "watchGraph",
     "managedCompiler",
     "compilerRunner",
+    "servicePlanReader",
+    "serviceSupervisor",
+    "closedJsonBoundary",
     "eventStream",
     "publisher",
 ):
@@ -2636,10 +2640,18 @@ sdk044_services = dev_loop_implementation["services"]
 assert sdk044_services["authority"] == "validated-typed-haxe-semantic-plan"
 assert sdk044_services["implicitShellCommands"] is False
 assert sdk044_services["compileWatchOnlyImplemented"] is True
-for sdk044_unimplemented_service_part in (
+for sdk044_implemented_service_part in (
     "serviceSupervisorImplemented",
     "readinessImplemented",
     "servicePortReservationImplemented",
+    "dependencyOrderImplemented",
+    "boundedGraphRestartImplemented",
+    "reverseShutdownImplemented",
+    "runtimeEnvironmentAllowlistImplemented",
+):
+    assert sdk044_services[sdk044_implemented_service_part] is True
+for sdk044_unimplemented_service_part in (
+    "wordpressProviderImplemented",
     "wordpressReloadImplemented",
     "nextjsReloadImplemented",
 ):
@@ -2668,6 +2680,13 @@ for sdk044_passed_proof in (
     "invalidAndRepairedLock",
     "compilerIdentityRestart",
     "editDuringBuildFollowUp",
+    "typedPlanAuthentication",
+    "externalDependencyOrderAndPortCollision",
+    "httpLogAndTcpReadiness",
+    "runtimeSecretNonPropagation",
+    "boundedCrashRestartExhaustion",
+    "reverseServiceShutdown",
+    "strictHaxeBoundaryGuard",
     "sigintCleanup",
     "durablePathPrivacy",
 ):
@@ -2676,6 +2695,9 @@ assert sdk044_verification["incrementalAndCleanOwnedBytes"] == (
     "byte-identical"
 )
 assert sdk044_verification["outcome"] == "passed"
+assert dev_loop_implementation["claims"]["externalDevelopmentService"] == (
+    "controlled-process-runtime-tested-local"
+)
 for sdk044_reference in dev_loop_implementation["referencePatterns"]:
     assert sdk044_reference["repository"] == "haxe.elixir.codex"
     assert sdk044_reference["commit"] == (
@@ -2729,6 +2751,13 @@ assert sdk044_receipt["verification"] == {
     "containerNetwork": "none",
     "publishedGenerations": 7,
     "compilerStarts": 2,
+    "serviceScenarios": 3,
+    "externalServiceStarts": 6,
+    "portCollisionRecovery": "passed",
+    "httpLogAndTcpReadiness": "passed",
+    "restartExhaustionExitCode": 7,
+    "runtimeSecretNonPropagation": "passed",
+    "strictHaxeBoundaryGuard": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
     "failedBuildRetainedExactOwnedBytes": "passed",
     "compilerLeaseRemovedOnSigint": "passed",
@@ -2746,7 +2775,7 @@ assert sdk044_hosted["required"] is True
 if sdk044_hosted["status"] == "pending-first-main-run":
     assert sdk044_receipt["status"] == "implemented-hosted-pending"
     assert dev_loop_implementation["status"] == (
-        "implemented-sdk044-core-local-verified"
+        "implemented-sdk044-services-local-verified"
     )
     assert sdk044_receipt["implementationCommit"] is None
     assert sdk044_hosted["runId"] is None

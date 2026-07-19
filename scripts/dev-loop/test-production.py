@@ -56,6 +56,7 @@ def make_tools(evidence: Path) -> Path:
     haxe.write_text(
         """#!/usr/bin/env node
 'use strict';
+const crypto = require('crypto');
 const fs = require('fs');
 const net = require('net');
 const path = require('path');
@@ -63,6 +64,91 @@ const args = process.argv.slice(2);
 const trace = process.env.WPHX_FAKE_TRACE;
 function record(event, detail = {}) {
   if (trace) fs.appendFileSync(trace, JSON.stringify({event, pid: process.pid, ...detail}) + '\\n');
+}
+function canonical(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
+  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
+}
+function sha256(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+function serviceNode(sourceDigest, serviceId, dependsOn, readiness) {
+  const tracePath = '.wphx/runtime/service-trace.jsonl';
+  return {
+    dependsOn: dependsOn.map(id => 'service/' + id),
+    id: 'service/' + serviceId,
+    kind: 'development.service',
+    payload: {
+      command: {
+        arguments: ['src/dev-service.mjs', serviceId, '{port}', tracePath],
+        component: 'runtime.node',
+        executable: 'node'
+      },
+      dependsOn,
+      environment: [],
+      port: {preferred: 44100, strict: false},
+      readiness,
+      reload: 'none',
+      restart: {backoffMs: 50, maxAttempts: 1},
+      serviceId,
+      serviceKind: 'external',
+      url: {path: '/', scheme: 'http'},
+      workingDirectory: '.'
+    },
+    profileCapabilities: [],
+    projections: [{artifactKind: 'development.service', emitterId: 'wordpresshx.dev', projectionId: 'dev/service/' + serviceId}],
+    relatedSources: [],
+    schemaId: 'wordpress-hx.semantic-node.development.service.v1',
+    source: {
+      end: {column: 1, line: 1, offset: 1},
+      path: 'src/acme/site/Site.hx',
+      sourceSha256: sourceDigest,
+      start: {column: 0, line: 1, offset: 0},
+      symbol: 'acme.site.Site.' + serviceId
+    }
+  };
+}
+function writeServicePlan(mode, source) {
+  if (!mode) return;
+  const lockBytes = fs.readFileSync('.wphx/project.lock.json');
+  const lock = JSON.parse(lockBytes);
+  const sourceDigest = sha256(Buffer.from(source));
+  const nodes = mode === 'timeout'
+    ? [serviceNode(sourceDigest, 'timeout', [], {intervalMs: 50, kind: 'tcp', path: '/', text: '', timeoutMs: 300})]
+    : [
+        serviceNode(sourceDigest, 'api', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000}),
+        serviceNode(sourceDigest, 'frontend', ['api'], {intervalMs: 50, kind: 'log', path: '/', text: 'FRONTEND_READY', timeoutMs: 3000})
+      ];
+  const plan = {
+    canonicalization: 'wordpress-hx.canonical-json.v1',
+    generator: {
+      collectorId: 'wordpress-hx.build.semantic-plan',
+      collectorSourceSha256: '1'.repeat(64),
+      collectorVersion: '1.0.0',
+      sdkVersion: '0.0.0',
+      toolchainSha256: sha256(lockBytes)
+    },
+    nodeSchemas: [{
+      authority: 'core',
+      consumerEmitters: ['wordpresshx.dev'],
+      kind: 'development.service',
+      schemaId: 'wordpress-hx.semantic-node.development.service.v1',
+      schemaSha256: '0e344463d1316909a97a08a2381f9ee6c7cd5a57fd158952b0ac8cab9b911d57',
+      version: 1
+    }],
+    nodes,
+    planDigestAlgorithm: 'sha256-canonical-json-without-planDigest-v1',
+    profile: {
+      catalogRevision: lock.profile.catalogRevision,
+      catalogSha256: lock.profile.catalogSha256,
+      profileId: lock.profile.id
+    },
+    project: {projectId: lock.project.id, projectVersion: '0.1.0', sourceTreeSha256: sourceDigest},
+    schema: 'wordpress-hx.semantic-plan.v1'
+  };
+  plan.planDigest = sha256(Buffer.from(canonical(plan)));
+  fs.writeFileSync('.wphx/runtime/semantic-plan.next.json', canonical(plan) + '\\n');
 }
 function compile(hxml) {
   if (hxml !== '.wphx/bootstrap/project.hxml') process.exit(64);
@@ -78,6 +164,7 @@ function compile(hxml) {
     const hxmlSource = fs.readFileSync(hxml, 'utf8').split(/\\r?\\n/);
     if (!hxmlSource.includes('--no-output')) process.exit(65);
     record('compile', {hxml});
+    writeServicePlan(process.env.WPHX_FAKE_SERVICE_PLAN, source);
     process.exit(0);
   }, delay);
 }
@@ -130,13 +217,75 @@ if (args.length === 1 && args[0] === '--version') {
     return tools
 
 
+def install_service_fixture(project: Path) -> None:
+    (project / "src/dev-service.mjs").write_text(
+        """import fs from 'node:fs';
+import http from 'node:http';
+
+const [serviceId, portText, tracePath] = process.argv.slice(2);
+const port = Number(portText);
+function record(event) {
+  fs.appendFileSync(tracePath, JSON.stringify({
+    event,
+    pid: process.pid,
+    port,
+    secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined,
+    serviceId
+  }) + '\\n');
+}
+let server;
+let timer;
+function stop(signal) {
+  if (timer) clearInterval(timer);
+  if (server) {
+    server.close(() => {
+      record('stopped');
+      process.exit(0);
+    });
+    setTimeout(() => process.exit(0), 1000).unref();
+  } else {
+    record('stopped');
+    process.exit(0);
+  }
+}
+process.on('SIGTERM', () => stop('SIGTERM'));
+process.on('SIGINT', () => stop('SIGINT'));
+if (serviceId === 'timeout') {
+  record('started');
+  timer = setInterval(() => {}, 1000);
+} else {
+  server = http.createServer((request, response) => {
+    response.statusCode = request.url === '/health' ? 204 : 200;
+    response.end();
+  });
+  server.listen(port, '127.0.0.1', () => {
+    record('started');
+    if (serviceId === 'frontend') process.stdout.write('FRONTEND_READY\\n');
+  });
+}
+"""
+    )
+
+
 class DevSession:
-    def __init__(self, runtime: Path, evidence: Path, project: Path, tools: Path) -> None:
+    def __init__(
+        self,
+        runtime: Path,
+        evidence: Path,
+        project: Path,
+        tools: Path,
+        *,
+        service_mode: str | None = None,
+    ) -> None:
         self.name = "wordpresshx-sdk044-" + uuid.uuid4().hex[:12]
         self.events: list[dict[str, object]] = []
         self.stdout_lines: list[str] = []
         self.stderr_lines: list[str] = []
         self.updates: queue.Queue[None] = queue.Queue()
+        cli_arguments = ["node", "/runtime/index.js", "dev"]
+        if service_mode is None:
+            cli_arguments.append("--services=none")
+        cli_arguments.extend(["--project", "/evidence/project", "--json"])
         command = [
             "docker",
             "run",
@@ -155,17 +304,19 @@ class DevSession:
             "PATH=/evidence/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
             "--env",
             "WPHX_FAKE_TRACE=/evidence/compiler-events.jsonl",
+            "--env",
+            "WPHX_UNDECLARED_SECRET=must-not-reach-services",
+        ]
+        if service_mode is not None:
+            command.extend(["--env", f"WPHX_FAKE_SERVICE_PLAN={service_mode}"])
+        command.extend(
+            [
             "-w",
             "/evidence/project",
             NODE_IMAGE,
-            "node",
-            "/runtime/index.js",
-            "dev",
-            "--services=none",
-            "--project",
-            "/evidence/project",
-            "--json",
-        ]
+            *cli_arguments,
+            ]
+        )
         self.process = subprocess.Popen(
             command,
             text=True,
@@ -244,6 +395,46 @@ class DevSession:
         self.stderr_thread.join(timeout=2)
         assert status == 130, f"development container exited {status}"
 
+    def signal_pid(self, pid: int) -> None:
+        result = subprocess.run(
+            [
+                "docker",
+                "exec",
+                self.name,
+                "node",
+                "-e",
+                "process.kill(Number(process.argv[1]), 'SIGKILL')",
+                str(pid),
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"could not kill owned service {pid}: {result.stderr}"
+            )
+
+    def wait_exit(self, expected: int, timeout: float = 20.0) -> None:
+        status = self.process.wait(timeout=timeout)
+        self.stdout_thread.join(timeout=2)
+        self.stderr_thread.join(timeout=2)
+        assert status == expected, f"development container exited {status}"
+
+    def assert_container_removed(self, timeout: float = 5.0) -> None:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            result = subprocess.run(
+                ["docker", "inspect", self.name],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                return
+            time.sleep(0.05)
+        raise AssertionError(f"development container {self.name} was not removed")
+
     def run_node(self, source: str) -> None:
         result = subprocess.run(
             [
@@ -277,7 +468,9 @@ class DevSession:
             self.process.wait(timeout=10)
 
 
-def validate_event_stream(events: list[dict[str, object]]) -> None:
+def validate_event_stream(
+    events: list[dict[str, object]], *, expected_exit: int = 130
+) -> None:
     assert events
     assert [event["sequence"] for event in events] == list(range(1, len(events) + 1))
     assert len({event["runId"] for event in events}) == 1
@@ -291,7 +484,7 @@ def validate_event_stream(events: list[dict[str, object]]) -> None:
         assert isinstance(event["elapsedMs"], int) and event["elapsedMs"] >= 0
     assert events[0]["event"] == "command-started"
     assert events[-1]["event"] == "command-completed"
-    assert events[-1]["payload"]["exitCode"] == 130
+    assert events[-1]["payload"]["exitCode"] == expected_exit
 
 
 def run_bounded(runtime: Path, evidence: Path, project_name: str) -> None:
@@ -324,6 +517,211 @@ def run_bounded(runtime: Path, evidence: Path, project_name: str) -> None:
         raise AssertionError(
             f"clean oracle build exited {result.returncode}\n{result.stdout}\n{result.stderr}"
         )
+
+
+def service_trace(project: Path) -> list[dict[str, object]]:
+    path = project / ".wphx/runtime/service-trace.jsonl"
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text().splitlines()]
+
+
+def service_ids(events: list[dict[str, object]], event_name: str) -> list[object]:
+    return [
+        event["payload"]["serviceId"]
+        for event in events
+        if event["event"] == event_name
+    ]
+
+
+def prepare_service_case(
+    parent: Path, name: str
+) -> tuple[Path, Path, Path]:
+    evidence = parent / name
+    evidence.mkdir()
+    project = evidence / "project"
+    shutil.copytree(PROJECT_FIXTURE, project)
+    install_service_fixture(project)
+    return evidence, project, make_tools(evidence)
+
+
+def run_healthy_service_case(runtime: Path, parent: Path) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(parent, "services-healthy")
+    session = DevSession(
+        runtime, evidence, project, tools, service_mode="healthy"
+    )
+    try:
+        api_index, api = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId") == "api",
+        )
+        _, frontend = session.wait_for(
+            "service-ready",
+            after=api_index + 1,
+            predicate=lambda value: value["payload"].get("serviceId") == "frontend",
+        )
+        session.wait_for("watch-ready")
+        assert service_ids(session.events, "service-starting") == ["api", "frontend"]
+        assert service_ids(session.events, "service-ready") == ["api", "frontend"]
+        assert api["payload"]["url"] == "http://127.0.0.1:44100/"
+        assert frontend["payload"]["url"] == "http://127.0.0.1:44101/"
+
+        running = [
+            value for value in service_trace(project) if value["event"] == "started"
+        ]
+        assert [value["serviceId"] for value in running] == ["api", "frontend"]
+        assert [value["port"] for value in running] == [44100, 44101]
+        assert all(value["secretPresent"] is False for value in running)
+
+        session.stop()
+        session.wait_for("command-completed", timeout=2)
+        validate_event_stream(session.events)
+        assert service_ids(session.events, "service-stopped") == [
+            "frontend",
+            "api",
+            "compiler",
+        ]
+        stopped = [
+            value["serviceId"]
+            for value in service_trace(project)
+            if value["event"] == "stopped"
+        ]
+        assert stopped == ["frontend", "api"]
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {
+            "readyOrder": ["api", "frontend"],
+            "ports": [44100, 44101],
+            "shutdownOrder": ["frontend", "api", "compiler"],
+        }
+    finally:
+        session.force_cleanup()
+
+
+def run_restart_service_case(runtime: Path, parent: Path) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(parent, "services-restart")
+    session = DevSession(
+        runtime, evidence, project, tools, service_mode="healthy"
+    )
+    try:
+        _, first_api = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId") == "api",
+        )
+        first_frontend_index, _ = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId") == "frontend",
+        )
+        first_running = [
+            value for value in service_trace(project) if value["event"] == "started"
+        ]
+        session.signal_pid(
+            int(
+                next(
+                    value["pid"]
+                    for value in first_running
+                    if value["serviceId"] == "api"
+                )
+            )
+        )
+
+        second_api_index, second_api = session.wait_for(
+            "service-ready",
+            after=first_frontend_index + 1,
+            predicate=lambda value: value["payload"].get("serviceId") == "api",
+        )
+        session.wait_for(
+            "service-ready",
+            after=second_api_index + 1,
+            predicate=lambda value: value["payload"].get("serviceId") == "frontend",
+        )
+        assert first_api["payload"]["url"] == second_api["payload"]["url"]
+        restarted = [
+            value for value in service_trace(project) if value["event"] == "started"
+        ]
+        assert [value["serviceId"] for value in restarted] == [
+            "api",
+            "frontend",
+            "api",
+            "frontend",
+        ]
+        assert all(value["secretPresent"] is False for value in restarted)
+        session.signal_pid(
+            int(
+                [
+                    value["pid"]
+                    for value in restarted
+                    if value["serviceId"] == "api"
+                ][-1]
+            )
+        )
+
+        diagnostic_index, _ = session.wait_for(
+            "diagnostic",
+            predicate=lambda value: value["payload"]
+            .get("diagnostic", {})
+            .get("code")
+            == "WPHX2325",
+        )
+        session.wait_for("command-completed", after=diagnostic_index + 1)
+        session.wait_exit(7)
+        validate_event_stream(session.events, expected_exit=7)
+        assert service_ids(session.events, "service-stopped") == [
+            "frontend",
+            "api",
+            "frontend",
+            "api",
+            "compiler",
+        ]
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {"starts": 4, "restartAttempts": 1, "exitCode": 7}
+    finally:
+        session.force_cleanup()
+
+
+def run_timeout_service_case(runtime: Path, parent: Path) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(parent, "services-timeout")
+    session = DevSession(
+        runtime, evidence, project, tools, service_mode="timeout"
+    )
+    try:
+        session.wait_for(
+            "diagnostic",
+            predicate=lambda value: value["payload"]
+            .get("diagnostic", {})
+            .get("code")
+            == "WPHX2323",
+        )
+        session.wait_for("watch-ready")
+        timed_out = service_trace(project)
+        assert [value["event"] for value in timed_out] == ["started", "stopped"]
+        assert [value["serviceId"] for value in timed_out] == [
+            "timeout",
+            "timeout",
+        ]
+        assert timed_out[0]["secretPresent"] is False
+
+        session.stop()
+        session.wait_for("command-completed", timeout=2)
+        validate_event_stream(session.events)
+        assert service_ids(session.events, "service-stopped") == [
+            "timeout",
+            "compiler",
+        ]
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {"diagnostic": "WPHX2323", "exitCode": 130}
+    finally:
+        session.force_cleanup()
+
+
+def run_service_cases(runtime: Path, parent: Path) -> dict[str, object]:
+    return {
+        "healthy": run_healthy_service_case(runtime, parent),
+        "restart": run_restart_service_case(runtime, parent),
+        "timeout": run_timeout_service_case(runtime, parent),
+    }
 
 
 def run(runtime: Path) -> dict[str, object]:
@@ -541,6 +939,8 @@ def run(runtime: Path) -> dict[str, object]:
             run_bounded(runtime, evidence, "clean")
             assert owned_bytes(clean) == final_owned
 
+            service_cases = run_service_cases(runtime, evidence)
+
             return {
                 "schema": "wordpress-hx.sdk044-production-summary.v1",
                 "compilerStarts": len(starts),
@@ -551,6 +951,7 @@ def run(runtime: Path) -> dict[str, object]:
                 )["fingerprint"],
                 "nodeImage": NODE_IMAGE,
                 "outcome": "passed",
+                "serviceCases": service_cases,
             }
         finally:
             session.force_cleanup()

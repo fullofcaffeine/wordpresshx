@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-sdk044-core-hosted-verified",
-  "scope": "managed-compiler-effective-watch-and-atomic-incremental-publish-core",
+  "status": "implemented-sdk044-services-local-verified",
+  "scope": "managed-compiler-effective-watch-atomic-publish-and-typed-external-service-supervision",
   "command": {
     "default": "wphx dev",
     "compileWatchOnly": "wphx dev --services=none",
@@ -19,6 +19,9 @@
     "watchGraph": "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
     "managedCompiler": "packages/cli/src/wordpresshx/cli/project/ManagedCompiler.hx",
     "compilerRunner": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
+    "servicePlanReader": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
+    "serviceSupervisor": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
+    "closedJsonBoundary": "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
     "eventStream": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
     "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
     "genesSourceChanged": false,
@@ -76,12 +79,17 @@
     "authority": "validated-typed-haxe-semantic-plan",
     "implicitShellCommands": false,
     "compileWatchOnlyImplemented": true,
-    "serviceSupervisorImplemented": false,
-    "readinessImplemented": false,
-    "servicePortReservationImplemented": false,
+    "serviceSupervisorImplemented": true,
+    "readinessImplemented": true,
+    "servicePortReservationImplemented": true,
+    "dependencyOrderImplemented": true,
+    "boundedGraphRestartImplemented": true,
+    "reverseShutdownImplemented": true,
+    "runtimeEnvironmentAllowlistImplemented": true,
+    "wordpressProviderImplemented": false,
     "wordpressReloadImplemented": false,
     "nextjsReloadImplemented": false,
-    "currentBehavior": "explicit-stage-skipped-without-an-admitted-service-or-reload-adapter"
+    "currentBehavior": "supervise-admitted-external-services-and-explicitly-skip-when-no-service-or-reload-adapter-exists"
   },
   "verification": {
     "command": "bash scripts/dev-loop/test-production.sh",
@@ -102,6 +110,13 @@
     "invalidAndRepairedLock": "passed",
     "compilerIdentityRestart": "passed",
     "editDuringBuildFollowUp": "passed",
+    "typedPlanAuthentication": "passed",
+    "externalDependencyOrderAndPortCollision": "passed",
+    "httpLogAndTcpReadiness": "passed",
+    "runtimeSecretNonPropagation": "passed",
+    "boundedCrashRestartExhaustion": "passed",
+    "reverseServiceShutdown": "passed",
+    "strictHaxeBoundaryGuard": "passed",
     "sigintCleanup": "passed",
     "durablePathPrivacy": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
@@ -135,6 +150,7 @@
     "lastGoodRetention": "runtime-tested-hosted",
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "actualHaxeWaitCompilationParity": "runtime-tested-by-sdk040",
+    "externalDevelopmentService": "controlled-process-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
     "automaticBrowserReload": "not-tested",
@@ -146,7 +162,7 @@
   "limitations": [
     "The current producer graph emits only CLI metadata, its reproducibility report, and an unsigned evidence archive; PHP, browser, asset, and deployable site producers are not registered.",
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
-    "Typed WordPress and Next.js services, readiness, service ports, and reload adapters are not implemented.",
+    "The SDK-owned WordPress provider, optional Next.js adapter, and real browser reload transport are not implemented; the generic external-service lifecycle is locally runtime tested.",
     "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

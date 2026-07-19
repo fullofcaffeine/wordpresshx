@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-042",
-  "status": "implemented-sdk042-hosted-verified",
+  "status": "implemented-sdk042-local-verified",
   "scope": "reproducible-effective-input-generation-and-bounded-unsigned-archive",
   "contracts": {
     "effectiveInputs": {
@@ -162,11 +162,11 @@
     }
   ],
   "claims": {
-    "sdk042DeterministicBuild": "runtime-tested-hosted",
-    "effectiveInputFingerprint": "runtime-tested-hosted",
-    "ownedGenerationDeterminism": "runtime-tested-hosted",
-    "unsignedArchiveDeterminism": "runtime-tested-hosted",
-    "actionableDifferenceReport": "runtime-tested-hosted",
+    "sdk042DeterministicBuild": "runtime-tested-local",
+    "effectiveInputFingerprint": "runtime-tested-local",
+    "ownedGenerationDeterminism": "runtime-tested-local",
+    "unsignedArchiveDeterminism": "runtime-tested-local",
+    "actionableDifferenceReport": "runtime-tested-local",
     "targetEmitterIntegration": "not-tested",
     "deployableWordPressPackage": "not-tested",
     "deployableNextjsPackage": "not-tested",

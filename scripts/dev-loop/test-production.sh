@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in docker haxe haxelib lix node python3 realpath; do
+for command_name in docker haxe haxelib lix node python3 realpath rg; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-044 production development-loop gate requires ${command_name}" >&2
     exit 1
@@ -36,6 +36,16 @@ fi
   lix --silent download
 )
 haxelib run formatter --check -s "${package_root}/src"
+
+strict_haxe_paths=(
+  "${package_root}/src/wordpresshx/cli/closedjson"
+  "${package_root}/src/wordpresshx/cli/project/DevEngine.hx"
+  "${package_root}/src/wordpresshx/cli/project/development"
+)
+if rg -n '\b(Dynamic|Any|cast|Reflect|untyped)\b' "${strict_haxe_paths[@]}"; then
+  echo "SDK-044 service runtime must remain strictly typed" >&2
+  exit 1
+fi
 
 mkdir -p "${test_root}/runtime-a" "${test_root}/runtime-b"
 (

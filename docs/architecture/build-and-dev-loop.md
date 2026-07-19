@@ -5,9 +5,12 @@ deterministic packaging, and the SDK-043 bounded `wphx` command foundation are
 implemented and hosted verified. SDK-044's long-running compile/watch core,
 managed Haxe server, last-good publication, and clean compiler shutdown are
 implemented and locally production-gate verified. The typed Haxe development-
-service plan now includes the built-in WordPress declaration; process
-supervision, readiness, and reload execution remain SDK-044 work. Next.js is an
-optional integration boundary rather than a core service dependency.
+service plan now feeds a closed, strictly typed CLI decoder and generic external
+service supervisor. Dependency ordering, collision-safe loopback ports, bounded
+readiness, redacted environments, bounded graph restarts, and reverse shutdown
+are locally runtime verified. The SDK-owned WordPress process provider remains
+SDK-044 work. Next.js is an optional integration boundary rather than a core
+service dependency.
 
 ## Developer surface
 
@@ -77,9 +80,12 @@ The macro derives the stable ID, working directory, preferred port, bounded
 HTTP readiness probe, restart policy, URL, and full-page reload mode. Typed
 options override only what differs. `Dev.service({...})` is the explicit,
 no-shell external-process escape hatch: Haxe derives an admitted executable
-from its exact lock component and defaults omitted argv to `[]`. The CLI still reports service and
-reload execution as skipped until the supervisor consumes the validated plan;
-it does not invent commands or claim that child processes are running.
+from its exact lock component and defaults omitted argv to `[]`. The CLI reports
+service and reload execution as skipped when no admitted service or reload
+adapter exists. For admitted external services it authenticates the current
+compiler generation, starts processes without a shell in dependency order,
+waits for typed bounded readiness, and owns their complete lifecycle. It does
+not invent commands or infer an executable outside the closed component mapping.
 
 ## Deterministic clean-build oracle
 
@@ -127,12 +133,15 @@ The implemented core covers the initial atomic build, project-bound compiler
 lease, conservative full rebuild, 100 ms sorted/deduplicated coalescing,
 single-flight serialization, edit-during-build stability checks, exact
 last-good retention, manifest-last generation admission, and compiler cleanup.
-When isolation is not proven, every change takes the full atomic path. The
-typed semantic-plan producer is now implemented and fail-closed. Service
-processes, readiness probes, collision-safe service ports, and post-commit
-reload execution remain disabled until the CLI supervisor consumes that plan.
-An optional Next.js package must bring its own typed adapter and evidence; core
-does not hard-code a Next provider or native-HMR claim.
+The CLI consumes only a newly generated canonical semantic plan bound to the
+exact project, profile catalog, and project lock. Its external-service runtime
+proves dependency-order startup, HTTP/log/TCP readiness, collision recovery,
+bounded full-graph restart, environment allowlisting, reverse shutdown, and no
+leaked container process. Reload requests are emitted only after publication;
+the SDK-owned WordPress provider and a real browser reload transport remain
+unimplemented. When isolation is not proven, every change takes the full atomic
+path. An optional Next.js package must bring its own typed adapter and evidence;
+core does not hard-code a Next provider or native-HMR claim.
 
 CI and one-shot `wphx build` use bounded direct compilation. They never start an
 unbounded watcher or inherit a developer's compilation server.

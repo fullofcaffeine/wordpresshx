@@ -1,5 +1,6 @@
 package wordpresshx.cli.project;
 
+import haxe.Exception;
 import haxe.Timer;
 import js.node.events.EventEmitter.Event;
 import wordpresshx.cli.CliEventStream;
@@ -7,6 +8,10 @@ import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliInvocation;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.development.DevelopmentPlanReader;
+import wordpresshx.cli.project.development.DevelopmentProject;
+import wordpresshx.cli.project.development.EffectiveInputSnapshot;
+import wordpresshx.cli.project.development.ServiceSupervisor;
 
 /** Serialized development orchestrator: build, watch, retain, and cleanly stop. **/
 class DevEngine {
@@ -17,9 +22,10 @@ class DevEngine {
 	final events:CliEventStream;
 	final compiler:ManagedCompiler;
 	final watcher:WatchGraph;
+	final services:ServiceSupervisor;
 	final pending:Map<String, Bool> = [];
-	final sigintEvent:Event<Void->Void> = cast "SIGINT";
-	final sigtermEvent:Event<Void->Void> = cast "SIGTERM";
+	final sigintEvent:Event<Void->Void> = "SIGINT";
+	final sigtermEvent:Event<Void->Void> = "SIGTERM";
 	var context:ProjectContext;
 	var debounce:Null<Timer>;
 	var building = false;
@@ -43,6 +49,7 @@ class DevEngine {
 		this.events = events;
 		this.compiler = new ManagedCompiler(message -> warning(message));
 		this.watcher = new WatchGraph(context.bootstrap.root, path -> changed(path), message -> watcherProblem(message));
+		this.services = new ServiceSupervisor(events, failure -> serviceFatal(failure));
 	}
 
 	function begin():Void {
@@ -65,14 +72,20 @@ class DevEngine {
 		final attempt = context;
 		final buildId = nextBuildId();
 		try {
+			prepareServicePlan(attempt);
 			final result = ProjectBuild.run(attempt, events, "initial", buildId, compiler.typeProject, true, false, generation + 1);
 			if (result != null) {
 				generation++;
 				lastManifestDigest = result.manifestDigest;
+				reconcileServices(attempt, buildId, false, () -> {
+					activateWatcher(attempt);
+					finishAttempt(attempt);
+				});
+				return;
 			}
 		} catch (failure:CliFailure) {
 			retain(attempt, buildId, "initial", failure);
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			retain(attempt, buildId, "initial", internalFailure());
 		}
 		activateWatcher(attempt);
@@ -82,14 +95,17 @@ class DevEngine {
 	function activateWatcher(attempt:ProjectContext):Void {
 		try {
 			watcher.refresh(attempt);
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			watcherProblem("could not subscribe to the complete effective-input graph");
 		}
-		final serviceReason = invocation.services == "none" ? "development services disabled by --services=none" : "validated semantic plan contains no admitted development services";
-		events.stageSkipped("service-start", serviceReason, "initial");
+		if (invocation.services == "none") {
+			events.stageSkipped("service-start", "development services disabled by --services=none", "initial");
+		} else if (services.serviceCount() == 0) {
+			events.stageSkipped("service-start", "current compiler generation contains no admitted development services", "initial");
+		}
 		events.emit("watch-ready", "watching", "ready", OwnershipJson.object([
 			"reason" =>
-			invocation.services == "none" ? "effective input graph subscribed after the initial transaction; compile/watch-only mode" : "effective input graph subscribed after the initial transaction; no typed services were declared"
+			invocation.services == "none" ? "effective input graph subscribed after the initial transaction; compile/watch-only mode" : services.serviceCount() == 0 ? "effective input graph subscribed after the initial transaction; no typed services were declared" : "effective input graph subscribed after the initial transaction; typed services are ready"
 		]));
 	}
 
@@ -126,7 +142,7 @@ class DevEngine {
 			building = false;
 			schedulePending();
 			return;
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			emitChanges(observedPaths);
 			final failure = internalFailure();
 			events.diagnostic(failure, context.profileId(), buildId);
@@ -167,15 +183,17 @@ class DevEngine {
 
 	function rebuild(attempt:ProjectContext, buildId:String):Void {
 		try {
+			prepareServicePlan(attempt);
 			final result = ProjectBuild.run(attempt, events, "rebuild", buildId, compiler.typeProject, true, false, generation + 1);
 			if (result != null) {
 				generation++;
 				lastManifestDigest = result.manifestDigest;
-				events.stageSkipped("watching", "published generation has no admitted reload adapter", "rebuild");
+				reconcileServices(attempt, buildId, true, () -> finishAttempt(attempt));
+				return;
 			}
 		} catch (failure:CliFailure) {
 			retain(attempt, buildId, "rebuild", failure);
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			retain(attempt, buildId, "rebuild", internalFailure());
 		}
 		finishAttempt(attempt);
@@ -215,10 +233,10 @@ class DevEngine {
 			} else {
 				context = latest;
 			}
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			try {
 				watcher.refresh(attempt);
-			} catch (_:Dynamic) {}
+			} catch (_:Exception) {}
 		}
 		building = false;
 		schedulePending();
@@ -233,7 +251,7 @@ class DevEngine {
 	function drainPending():Array<String> {
 		final result = [for (path in pending.keys()) path];
 		pending.clear();
-		result.sort(Reflect.compare);
+		result.sort(compareText);
 		return result;
 	}
 
@@ -254,12 +272,12 @@ class DevEngine {
 	}
 
 	function emitCompilerReady(serverContext:ProjectContext):Void {
-		final server = ProjectContract.fieldObject(serverContext.effectiveInputs, "compileServer", "effective inputs");
+		final snapshot = EffectiveInputSnapshot.from(serverContext);
 		events.emit("compiler-server-ready", "compiler-server", "ready", OwnershipJson.object([
 			"serviceId" => "compiler",
 			"serviceKind" => "compiler",
 			"processOwnership" => "owned",
-			"serverCompatibilityDigest" => ProjectContract.string(server, "compatibilityDigest", "compile server")
+			"serverCompatibilityDigest" => snapshot.compilerCompatibilityDigest
 		]));
 	}
 
@@ -283,23 +301,25 @@ class DevEngine {
 		watcher.close();
 		events.emit("shutdown-started", "shutdown", "interrupted", OwnershipJson.object(["mode" => "shutdown", "reason" => signal]));
 		final ownedCompiler = compiler.ownsServer();
-		compiler.shutdown(() -> {
-			if (ownedCompiler) {
-				events.emit("service-stopped", "shutdown", "stopped", OwnershipJson.object([
-					"serviceId" => "compiler",
-					"serviceKind" => "compiler",
-					"processOwnership" => "owned"
+		services.shutdown(() -> {
+			compiler.shutdown(() -> {
+				if (ownedCompiler) {
+					events.emit("service-stopped", "shutdown", "stopped", OwnershipJson.object([
+						"serviceId" => "compiler",
+						"serviceKind" => "compiler",
+						"processOwnership" => "owned"
+					]));
+				}
+				events.emit("command-completed", "command", "interrupted", OwnershipJson.object([
+					"exitCode" => exitCode,
+					"reason" => signal + " handled; all owned development processes stopped"
 				]));
-			}
-			events.emit("command-completed", "command", "interrupted", OwnershipJson.object([
-				"exitCode" => exitCode,
-				"reason" => signal + " handled; all owned development processes stopped"
-			]));
-			final nodeProcess = NodeGlobals.process();
-			nodeProcess.removeListener(sigintEvent, onSigint);
-			nodeProcess.removeListener(sigtermEvent, onSigterm);
-			nodeProcess.exitCode = exitCode;
-			active = null;
+				final nodeProcess = NodeGlobals.process();
+				nodeProcess.removeListener(sigintEvent, onSigint);
+				nodeProcess.removeListener(sigtermEvent, onSigterm);
+				nodeProcess.exitCode = exitCode;
+				active = null;
+			});
 		});
 	}
 
@@ -311,14 +331,14 @@ class DevEngine {
 	static function safeManifestDigest(context:ProjectContext):Null<String> {
 		try {
 			return BuildPublisher.currentManifestDigest(context);
-		} catch (_:Dynamic) {
+		} catch (_:Exception) {
 			return null;
 		}
 	}
 
 	static function changedPaths(before:ProjectContext, after:ProjectContext, fallback:Bool = true):Array<String> {
-		final oldFiles = fileDigests(before.effectiveInputs);
-		final newFiles = fileDigests(after.effectiveInputs);
+		final oldFiles = EffectiveInputSnapshot.from(before).files;
+		final newFiles = EffectiveInputSnapshot.from(after).files;
 		final changed:Map<String, Bool> = [];
 		for (path => digest in oldFiles) {
 			if (!newFiles.exists(path) || newFiles.get(path) != digest) {
@@ -334,16 +354,53 @@ class DevEngine {
 			changed.set("wordpress-hx.json", true);
 		}
 		final result = [for (path in changed.keys()) path];
-		result.sort(Reflect.compare);
+		result.sort(compareText);
 		return result;
 	}
 
-	static function fileDigests(effectiveInputs:Dynamic):Map<String, String> {
-		final result:Map<String, String> = [];
-		for (file in ProjectContract.array(effectiveInputs, "files", "effective inputs")) {
-			result.set(ProjectContract.string(file, "path", "effective input file"), ProjectContract.string(file, "sha256", "effective input file"));
+	function prepareServicePlan(attempt:ProjectContext):Void {
+		if (invocation.services != "none") {
+			DevelopmentPlanReader.prepare(attempt);
 		}
-		return result;
+	}
+
+	function reconcileServices(attempt:ProjectContext, buildId:String, reload:Bool, callback:Void->Void):Void {
+		if (invocation.services == "none") {
+			if (reload) {
+				events.stageSkipped("watching", "published generation has no admitted reload adapter", "rebuild");
+			}
+			callback();
+			return;
+		}
+		try {
+			final project = DevelopmentProject.from(attempt);
+			final plan = DevelopmentPlanReader.load(attempt, project);
+			services.reconcile(project, plan, failure -> {
+				if (failure != null) {
+					events.diagnostic(failure, attempt.profileId(), buildId);
+				} else if (reload && services.serviceCount() > 0) {
+					services.requestReloads();
+				} else if (reload) {
+					events.stageSkipped("watching", "published generation has no admitted reload adapter", "rebuild");
+				}
+				callback();
+			});
+		} catch (failure:CliFailure) {
+			events.diagnostic(failure, attempt.profileId(), buildId);
+			callback();
+		} catch (_:Exception) {
+			events.diagnostic(internalFailure(), attempt.profileId(), buildId);
+			callback();
+		}
+	}
+
+	function serviceFatal(failure:CliFailure):Void {
+		events.diagnostic(failure, context.profileId(), null);
+		shutdown("service failure", failure.exitCode);
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 
 	static function internalFailure():CliFailure {

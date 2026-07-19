@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "receiptId": "SDK-042-DETERMINISTIC-BUILD",
   "bead": "wordpresshx-sdk-042",
-  "status": "verified",
+  "status": "implemented-hosted-pending",
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
-      "sha256": "2a69656f367d8ee5ce59863410524b4a90b7b1d109819964336b8b8d2a6d1dd2"
+      "sha256": "715458b57b8f7ea849e8a97f34217ae6c66d6bbccb1450dfae6e6eec977942b1"
     },
     "reportBuilder": {
       "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
@@ -76,11 +76,11 @@
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "c9b3ee7ddcf27318d74b201488a381cdae9ba18f7c1783c2c42b3a62e6fb08e9"
+      "sha256": "107c572ababf74daf4fff10123770b8b358f23509bd932128f40d2ee4bce1295"
     }
   },
   "implementation": {
-    "implementationCommit": "ee2391a615a2472a134f9585921b8a8d0e90b896",
+    "implementationCommit": null,
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -120,20 +120,18 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test deterministic build and unsigned archive replay",
-    "runId": 29666604583,
-    "jobId": 88137937687,
-    "commit": "ee2391a615a2472a134f9585921b8a8d0e90b896",
-    "status": "passed",
-    "jobCount": 11,
-    "allJobsPassed": true,
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "claims": {
-    "sdk042DeterministicBuild": "runtime-tested-hosted",
-    "effectiveInputFingerprint": "runtime-tested-hosted",
-    "ownedGenerationDeterminism": "runtime-tested-hosted",
-    "unsignedArchiveDeterminism": "runtime-tested-hosted",
-    "actionableDifferenceReport": "runtime-tested-hosted",
+    "sdk042DeterministicBuild": "runtime-tested-local",
+    "effectiveInputFingerprint": "runtime-tested-local",
+    "ownedGenerationDeterminism": "runtime-tested-local",
+    "unsignedArchiveDeterminism": "runtime-tested-local",
+    "actionableDifferenceReport": "runtime-tested-local",
     "targetEmitterIntegration": "not-tested",
     "deployableWordPressPackage": "not-tested",
     "deployableNextjsPackage": "not-tested",
