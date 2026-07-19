@@ -6,7 +6,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
-      "sha256": "715458b57b8f7ea849e8a97f34217ae6c66d6bbccb1450dfae6e6eec977942b1"
+      "sha256": "e5890c8f421f6ecdfaf17e628c95241f29b544eee1ad12858b53a84dc7a9499f"
     },
     "reportBuilder": {
       "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
@@ -72,7 +72,7 @@
     ],
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
+      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
@@ -101,8 +101,8 @@
     "archiveEntryCount": 2,
     "negativeComparisonCount": 3,
     "additiveRootMigrationCount": 1,
-    "fingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
-    "archiveSha256": "d21e566b819784bbfbdac6c0fc100f8d9edf83da18cd341600ffcb5ae3ad9f10",
+    "fingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
+    "archiveSha256": "e9da3d59015dece6282a1e180e6dfd338c5e63fd97681cfc69f632723e9f5471",
     "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
     "containerNetwork": "none",
     "genesCompileReplay": "byte-identical",

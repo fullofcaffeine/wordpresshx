@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-043",
-  "status": "implemented-sdk043-hosted-verified",
+  "status": "implemented-sdk043-local-verified",
   "scope": "bounded-project-command-foundation",
   "contracts": {
     "project": {
@@ -207,7 +207,7 @@
     "positiveCases": 15,
     "negativeCases": 15,
     "noWriteAssertions": 17,
-    "acceptedFixtureEffectiveFingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
+    "acceptedFixtureEffectiveFingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
     "effectiveFixtureByteEquality": "passed",
     "deterministicCompilerReplay": "passed",
     "eventContractValidation": "passed",
@@ -215,7 +215,7 @@
     "outcome": "passed"
   },
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-hosted",
+    "sdk043ProjectCli": "runtime-tested-local",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

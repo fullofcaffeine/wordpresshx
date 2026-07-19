@@ -46,6 +46,13 @@ to pre-Haxe discovery; typed site modules and development services remain Haxe
 semantic-plan authority. The lock binds exact profile, SDK/CLI, compiler,
 runtime, package-manager, build-tool, manifest, and lockfile identities.
 
+[`scaffold-plan.schema.json`](scaffold-plan.schema.json) is the SDK-045 typed
+mutation preview for `wphx new site` and `wphx init`. It enumerates every exact
+path, action, ownership class, mode, content digest, and byte size before any
+publication. The plan deliberately records unavailable native target producers
+and public package installation rather than turning a bootstrap scaffold into a
+deployable-site support claim.
+
 [`effective-inputs.schema.json`](effective-inputs.schema.json) closes the
 content-addressed source/discovery/tool/environment graph shared by bounded
 builds and watch mode. [`cli-event.schema.json`](cli-event.schema.json) closes

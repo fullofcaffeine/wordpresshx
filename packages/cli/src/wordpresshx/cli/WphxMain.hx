@@ -2,6 +2,7 @@ package wordpresshx.cli;
 
 import wordpresshx.cli.ownership.OwnershipJson;
 import wordpresshx.cli.project.ProjectCommands;
+import wordpresshx.cli.scaffold.ScaffoldCommands;
 
 /** Haxe-authored WordPressHx CLI entry point, emitted as Node ESM by Genes. **/
 class WphxMain {
@@ -22,13 +23,20 @@ class WphxMain {
 			} catch (failure:TraceFailure) {
 				nodeProcess.stderr.write("wphx: " + failure.message + "\n");
 				nodeProcess.exit(failure.exitCode);
-			} catch (_:Dynamic) {
+			} catch (_:haxe.Exception) {
 				nodeProcess.stderr.write("wphx: unexpected trace failure\n");
 				nodeProcess.exit(70);
 			}
 			return;
 		}
 		try {
+			if (arguments.length > 0 && (arguments[0] == "new" || arguments[0] == "init")) {
+				final status = ScaffoldCommands.run(arguments);
+				if (status != 0) {
+					nodeProcess.exit(status);
+				}
+				return;
+			}
 			final invocation = CliArguments.parse(arguments);
 			final status = ProjectCommands.run(invocation);
 			if (status != 0) {
@@ -37,7 +45,7 @@ class WphxMain {
 		} catch (failure:CliFailure) {
 			standaloneFailure(failure, arguments.indexOf("--json") >= 0);
 			nodeProcess.exit(failure.exitCode);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			final failure = new CliFailure("WPHX9000", "unexpected internal CLI failure", 70, "command", null, [
 				"Rerun with the exact locked CLI; if reproducible, report the command without secrets."
 			]);
@@ -69,6 +77,8 @@ class WphxMain {
 		NodeGlobals.process()
 			.stdout.write('WordPressHx CLI 0.0.0\n\n'
 				+ 'Usage: wphx <command> [options]\n\n'
+				+ '  new site <name>    Create a minimal Haxe-owned site project\n'
+				+ '  init [name]        Initialize the current existing directory\n'
 				+ '  build [--dry-run]  Type, validate, and atomically publish\n'
 				+ '  check              Run the complete no-publication gate\n'
 				+ '  inspect            Explain project, inputs, build, or provenance\n'

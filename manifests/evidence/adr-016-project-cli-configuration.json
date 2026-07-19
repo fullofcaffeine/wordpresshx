@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "ADR-016-PROJECT-CLI-CONFIGURATION",
   "bead": "wordpresshx-adr-016",
-  "observedAt": "2026-07-19T03:14:47Z",
+  "observedAt": "2026-07-19T06:44:51Z",
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",
-      "sha256": "0b97eee74b23bef8876200f069129ca37b807dcc3287246e4fa07c7a7fb770f4"
+      "sha256": "faac03025e53f2bcd0d454b746b5a7d714ed6e5e6d34a03c0925bc3bba438740"
     },
     "projectSchema": {
       "path": "schemas/project.schema.json",
@@ -46,7 +46,7 @@
     },
     "haxeBootstrapFixture": {
       "path": "fixtures/project-cli/project/.wphx/bootstrap/project.hxml",
-      "sha256": "fe27f404f38bc0ad79e2eca234d95c370f97c464e4b64c9db553c05d5da2c360"
+      "sha256": "35a52a8f3d0ec33f5eb228d6d0010f82ebd991f71812f2bcdd2f85ddc6fc4f4d"
     },
     "projectLockFixture": {
       "path": "fixtures/project-cli/project/.wphx/project.lock.json",
@@ -54,15 +54,15 @@
     },
     "effectiveInputsFixture": {
       "path": "fixtures/project-cli/valid/effective-inputs.json",
-      "sha256": "0ad8c20c7d1478306ec717b5b7f58789e6c789b0097ba8fe79aae07f57f121db"
+      "sha256": "0fb6ce6340fc42b9bdc5d9173c5e14d2c8016d5daa08d9af6192df6f8ce2af81"
     },
     "dryRunEventsFixture": {
       "path": "fixtures/project-cli/valid/build-dry-run.events.jsonl",
-      "sha256": "35639f3ad0a66bf35cbdfee0c9fd5f1df867df8385b6ce28090657c60ade43c3"
+      "sha256": "3689b47fbd2439aa0a9848a9adc27c38fc3ffd2b37bc3b620e831213e06918b9"
     },
     "devEventsFixture": {
       "path": "fixtures/project-cli/valid/dev.events.jsonl",
-      "sha256": "68e3b211471820f1c4eab908a9e35f8907ffa045b1e6a1ab9aabfc1ef8dda2d8"
+      "sha256": "176b9fde42b64282a75f6f55afe04bf5173cb621fb436b31606ad394059da90e"
     }
   },
   "contract": {
@@ -77,8 +77,8 @@
     "packageManager": "npm@10.9.2",
     "projectConfigSemanticSha256": "df18cceedf89682510cd191c6d8551e9b0401c30fc16c81852051ce11b7e8c6c",
     "projectLockDigest": "18a0c4d77672842deca9937100f7daa1e43deb5c9ba118eaa4cfb2a8ca02fe5a",
-    "effectiveInputsFingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
-    "compileServerCompatibilityDigest": "86c58f829a10c18f93314566c66af5479ff54da1b60576ad0d5fbbca0352105d"
+    "effectiveInputsFingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
+    "compileServerCompatibilityDigest": "b81db5fb9dddcf44e5994e2fe0f82d949750e135698df819171873fe7c3012e6"
   },
   "verification": {
     "command": "bash scripts/project-cli/test.sh",
@@ -126,21 +126,28 @@
     "fixtureBytesChanged": true,
     "evidenceOwner": "SDK-044-DEV-LOOP"
   },
+  "sdk045ContractRevision": {
+    "observedAt": "2026-07-19T06:44:51Z",
+    "reason": "The Haxe-derived bootstrap now includes every configured source and test root, and build/check reject drift from that exact projection.",
+    "architectureContractChanged": false,
+    "fixtureBytesChanged": true,
+    "evidenceOwner": "SDK-045-SCAFFOLD"
+  },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "jobs": {
       "contract": {
         "name": "repository",
-        "jobId": 88119101761
+        "jobId": null
       },
       "haxeTyping": {
         "name": "haxe",
-        "jobId": 88119101776
+        "jobId": null
       }
     },
-    "runId": 29659327926,
-    "commit": "bec4fb9e0181e6e4f3ca9ba3b04cec9fa109a7d7",
-    "status": "passed",
+    "runId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
     "required": true
   },
   "limitations": [

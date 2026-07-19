@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "verified",
-  "observedAt": "2026-07-19T06:00:14Z",
-  "implementationCommit": "2ef9d367d7803f4a885bf25144b87c791c894fcb",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T06:59:25Z",
+  "implementationCommit": null,
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "5f10e4f090b484158de184832859345bc0772fe9f40608a8307b2ce603070e61"
+      "sha256": "4b1a0455bbf98642685b7aac0c6946ef6f518b7c568b44c961e3c471bddcce55"
     },
     "implementationFiles": [
       {
@@ -33,7 +33,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
-        "sha256": "a3ce588f0e92a4bea0e633afb3f521ed12f3f6b3a4488430c2235a2a210951db"
+        "sha256": "9da6b4ed15a2056daee1d94c605ee11875181fadcf7a20324b524461b0ccace7"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
@@ -150,7 +150,7 @@
     },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "e3c08d7b6a330f7c371e58eb5c0dbb832f0f7c74b67aff2883656a96aaebf1c1"
+      "sha256": "f0036372b286428c7ce0b55702a4be8d58e82557be902d07cd157805b9161905"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",
@@ -162,7 +162,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
+      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     },
     "effectiveInputsSchema": {
       "path": "schemas/effective-inputs.schema.json",
@@ -170,7 +170,7 @@
     },
     "effectiveInputsFixture": {
       "path": "fixtures/project-cli/valid/effective-inputs.json",
-      "sha256": "0ad8c20c7d1478306ec717b5b7f58789e6c789b0097ba8fe79aae07f57f121db"
+      "sha256": "0fb6ce6340fc42b9bdc5d9173c5e14d2c8016d5daa08d9af6192df6f8ce2af81"
     },
     "architectureDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
@@ -200,10 +200,11 @@
     "nodeVersion": "22.17.0",
     "containerNetwork": "none",
     "publishedGenerations": 7,
-    "compilerStarts": 2,
+    "compilerStarts": 3,
     "serviceScenarios": 4,
     "externalServiceStarts": 6,
     "portCollisionRecovery": "passed",
+    "cliOwnedProjectionDriftRetention": "passed",
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
@@ -256,30 +257,31 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": 29675607870,
-    "jobId": 88162373506,
-    "commit": "2ef9d367d7803f4a885bf25144b87c791c894fcb",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
-    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
+    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are locally retested pending hosted confirmation, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
+    "The loopback WordPress reload transport is locally retested in real Chromium against the controlled provider boundary pending hosted confirmation; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-hosted",
-    "atomicIncrementalPublication": "runtime-tested-hosted",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
-    "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
-    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
+    "productionWphxDevCompileWatch": "runtime-tested-local",
+    "atomicIncrementalPublication": "runtime-tested-local",
+    "lastGoodRetention": "runtime-tested-local",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
+    "externalDevelopmentService": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
-    "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",

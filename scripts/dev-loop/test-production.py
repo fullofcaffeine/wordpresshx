@@ -1324,7 +1324,8 @@ def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
 
             restart_start = len(session.events)
             hxml = project / ".wphx/bootstrap/project.hxml"
-            hxml.write_text(hxml.read_text() + "# compiler identity change\n")
+            hxml_source = hxml.read_text()
+            hxml.write_text(hxml_source + "# compiler identity change\n")
             _, replacement_server = session.wait_for(
                 "compiler-server-ready", after=restart_start
             )
@@ -1332,8 +1333,34 @@ def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
                 "payload"
             ]["serverCompatibilityDigest"]
             session.wait_for(
-                "build-published",
+                "diagnostic",
                 after=restart_start,
+                predicate=lambda value: value["payload"]
+                .get("diagnostic", {})
+                .get("code")
+                == "WPHX3008",
+            )
+            projection_retained_index, _ = session.wait_for(
+                "build-retained", after=restart_start
+            )
+            assert not any(
+                value["event"] == "build-published"
+                for value in session.events[
+                    restart_start : projection_retained_index + 1
+                ]
+            )
+
+            projection_repair_start = len(session.events)
+            hxml.write_text(hxml_source)
+            _, restored_server = session.wait_for(
+                "compiler-server-ready", after=projection_repair_start
+            )
+            assert restored_server["payload"]["serverCompatibilityDigest"] == server_event[
+                "payload"
+            ]["serverCompatibilityDigest"]
+            session.wait_for(
+                "build-published",
+                after=projection_repair_start,
                 predicate=lambda value: value["payload"].get("generation") == 6,
             )
 

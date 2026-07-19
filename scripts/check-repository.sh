@@ -127,6 +127,18 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/ReproduciblePayload.hx
   packages/cli/src/wordpresshx/cli/project/ReproducibleProducts.hx
   packages/cli/src/wordpresshx/cli/project/WatchGraph.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldArguments.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldCommands.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldFile.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldIdentity.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldJson.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldMarker.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPlan.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldProjection.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPublisher.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRequest.hx
+  packages/cli/src/wordpresshx/cli/scaffold/ScaffoldToolchain.hx
   packages/cli/test/ownership/src/sdk041/fixture/Main.hx
   packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
   packages/cli/test/expected/browser-development.text
@@ -307,6 +319,7 @@ required_files=(
   schemas/ownership-transaction-journal.schema.json
   schemas/project.schema.json
   schemas/project-lock.schema.json
+  schemas/scaffold-plan.schema.json
   schemas/effective-inputs.schema.json
   schemas/cli-event.schema.json
   schemas/source-correlation-index.schema.json
@@ -329,6 +342,8 @@ required_files=(
   scripts/project-cli/test-production.py
   scripts/project-cli/test-production.sh
   scripts/project-cli/test.sh
+  scripts/scaffold/test-production.py
+  scripts/scaffold/test-production.sh
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -405,6 +420,7 @@ required_files=(
   manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
   manifests/project-cli-implementation.json
+  manifests/scaffold-implementation.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
   manifests/release-support-policy.json
@@ -420,6 +436,7 @@ required_files=(
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/sdk-043-project-cli.json
   manifests/evidence/sdk-044-dev-loop.json
+  manifests/evidence/sdk-045-scaffold.json
   manifests/evidence/sdk-042-deterministic-build.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -808,6 +825,16 @@ dev_loop_implementation = json.loads(
 )
 sdk044_receipt = json.loads(
     Path("manifests/evidence/sdk-044-dev-loop.json").read_text(
+        encoding="utf-8"
+    )
+)
+scaffold_implementation = json.loads(
+    Path("manifests/scaffold-implementation.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk045_receipt = json.loads(
+    Path("manifests/evidence/sdk-045-scaffold.json").read_text(
         encoding="utf-8"
     )
 )
@@ -2514,20 +2541,32 @@ assert sdk043_hosted["step"] == "Test production project CLI foundation"
 assert sdk043_hosted["required"] is True
 if sdk043_hosted["status"] == "pending-first-main-run":
     assert sdk043_receipt["status"] == "implemented-hosted-pending"
+    assert project_cli_implementation["status"] == (
+        "implemented-sdk043-local-verified"
+    )
     assert sdk043_receipt["implementation"]["implementationCommit"] is None
     assert sdk043_hosted["runId"] is None
     assert sdk043_hosted["jobId"] is None
     assert sdk043_hosted["commit"] is None
+    sdk043_evidence_level = "runtime-tested-local"
 elif sdk043_hosted["status"] == "passed":
     assert sdk043_receipt["status"] == "verified"
+    assert project_cli_implementation["status"] == (
+        "implemented-sdk043-hosted-verified"
+    )
     assert sha1.fullmatch(
         sdk043_receipt["implementation"]["implementationCommit"]
     )
     assert isinstance(sdk043_hosted["runId"], int)
     assert isinstance(sdk043_hosted["jobId"], int)
     assert sha1.fullmatch(sdk043_hosted["commit"])
+    sdk043_evidence_level = "runtime-tested-hosted"
 else:
     raise AssertionError("SDK-043 project CLI hosted status is invalid")
+assert project_cli_implementation["claims"]["sdk043ProjectCli"] == (
+    sdk043_evidence_level
+)
+assert sdk043_receipt["claims"]["sdk043ProjectCli"] == sdk043_evidence_level
 for sdk043_unproven_receipt_claim in (
     "productionWphxDevWatcher",
     "wordpressRuntimeCompatibility",
@@ -2743,7 +2782,7 @@ assert sdk044_verification["nodeImage"] == (
 assert sdk044_verification["containerNetwork"] == "none"
 assert sdk044_verification["watchFilesystem"] == "docker-bind-mount"
 assert sdk044_verification["publishedGenerations"] == 7
-assert sdk044_verification["compilerStarts"] == 2
+assert sdk044_verification["compilerStarts"] == 3
 for sdk044_passed_proof in (
     "initialBuildBeforeWatch",
     "sourceAndAssetBurst",
@@ -2751,6 +2790,7 @@ for sdk044_passed_proof in (
     "nestedHxxCreateRenameDelete",
     "invalidAndRepairedLock",
     "compilerIdentityRestart",
+    "cliOwnedProjectionDriftRetention",
     "editDuringBuildFollowUp",
     "typedPlanAuthentication",
     "externalDependencyOrderAndPortCollision",
@@ -2783,17 +2823,8 @@ assert sdk044_verification["browserReloadClientAssetSha256"] == (
 )
 assert sdk044_verification["reloadEndpointSecurityMutations"] == 5
 assert sdk044_verification["outcome"] == "passed"
-assert dev_loop_implementation["claims"]["externalDevelopmentService"] == (
-    "controlled-process-runtime-tested-hosted"
-)
-assert dev_loop_implementation["claims"]["wordpressDevelopmentProvider"] == (
-    "controlled-process-and-compose-syntax-runtime-tested-hosted"
-)
 assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
     "runtime-tested-by-sdk090"
-)
-assert dev_loop_implementation["claims"]["postPublishReloadRequest"] == (
-    "controlled-event-runtime-tested-hosted"
 )
 sdk044_reference_authorities = {
     ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (
@@ -2878,10 +2909,11 @@ assert sdk044_receipt["verification"] == {
     "nodeVersion": "22.17.0",
     "containerNetwork": "none",
     "publishedGenerations": 7,
-    "compilerStarts": 2,
+    "compilerStarts": 3,
     "serviceScenarios": 4,
     "externalServiceStarts": 6,
     "portCollisionRecovery": "passed",
+    "cliOwnedProjectionDriftRetention": "passed",
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
@@ -2917,33 +2949,340 @@ if sdk044_hosted["status"] == "pending-first-main-run":
     assert dev_loop_implementation["status"] == (
         "implemented-sdk044-reload-local-verified"
     )
-    assert dev_loop_implementation["claims"]["automaticBrowserReload"] == (
-        "controlled-wordpress-boundary-real-chromium-runtime-tested-local"
-    )
-    assert sdk044_receipt["claims"]["automaticBrowserReload"] == (
-        "controlled-wordpress-boundary-real-chromium-runtime-tested-local"
-    )
     assert sdk044_receipt["implementationCommit"] is None
     assert sdk044_hosted["runId"] is None
     assert sdk044_hosted["jobId"] is None
     assert sdk044_hosted["commit"] is None
+    sdk044_evidence_suffix = "local"
 elif sdk044_hosted["status"] == "passed":
     assert sdk044_receipt["status"] == "verified"
     assert dev_loop_implementation["status"] == (
         "implemented-sdk044-reload-hosted-verified"
     )
-    assert dev_loop_implementation["claims"]["automaticBrowserReload"] == (
-        "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted"
-    )
-    assert sdk044_receipt["claims"]["automaticBrowserReload"] == (
-        "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted"
-    )
     assert sha1.fullmatch(sdk044_receipt["implementationCommit"])
     assert isinstance(sdk044_hosted["runId"], int)
     assert isinstance(sdk044_hosted["jobId"], int)
     assert sha1.fullmatch(sdk044_hosted["commit"])
+    sdk044_evidence_suffix = "hosted"
 else:
     raise AssertionError("SDK-044 dev-loop hosted status is invalid")
+for sdk044_claim_record in (
+    dev_loop_implementation["claims"],
+    sdk044_receipt["claims"],
+):
+    for sdk044_runtime_claim in (
+        "productionWphxDevCompileWatch",
+        "atomicIncrementalPublication",
+        "lastGoodRetention",
+    ):
+        assert sdk044_claim_record[sdk044_runtime_claim] == (
+            "runtime-tested-" + sdk044_evidence_suffix
+        )
+    assert sdk044_claim_record["managedCompilerLifecycle"] == (
+        "controlled-process-runtime-tested-" + sdk044_evidence_suffix
+    )
+    assert sdk044_claim_record["externalDevelopmentService"] == (
+        "controlled-process-runtime-tested-" + sdk044_evidence_suffix
+    )
+    assert sdk044_claim_record["wordpressDevelopmentProvider"] == (
+        "controlled-process-and-compose-syntax-runtime-tested-"
+        + sdk044_evidence_suffix
+    )
+    assert sdk044_claim_record["postPublishReloadRequest"] == (
+        "controlled-event-runtime-tested-" + sdk044_evidence_suffix
+    )
+    assert sdk044_claim_record["automaticBrowserReload"] == (
+        "controlled-wordpress-boundary-real-chromium-runtime-tested-"
+        + sdk044_evidence_suffix
+    )
+
+assert scaffold_implementation["schemaVersion"] == 1
+assert scaffold_implementation["bead"] == "wordpresshx-sdk-045.1"
+assert scaffold_implementation["status"] in {
+    "implemented-sdk045-hosted-pending",
+    "implemented-sdk045-hosted-verified",
+}
+assert scaffold_implementation["scope"] == (
+    "haxe-first-site-project-scaffold-foundation"
+)
+sdk045_contract = scaffold_implementation["contract"]
+assert sdk045_contract == {
+    "identity": "wordpress-hx.scaffold-plan.v1",
+    "schema": "schemas/scaffold-plan.schema.json",
+    "commands": ["wphx new site <name>", "wphx init [name]"],
+    "defaultProfile": "wp70-release",
+    "machineEncoding": "canonical-json-with-final-lf",
+    "dryRunWrites": False,
+    "planCompleteness": (
+        "every-path-action-ownership-mode-sha256-and-byte-size"
+    ),
+}
+scaffold_schema = json.loads(
+    Path(sdk045_contract["schema"]).read_text(encoding="utf-8")
+)
+assert scaffold_schema["$schema"] == (
+    "https://json-schema.org/draft/2020-12/schema"
+)
+assert scaffold_schema["additionalProperties"] is False
+assert scaffold_schema["properties"]["schema"]["const"] == (
+    sdk045_contract["identity"]
+)
+assert scaffold_schema["properties"]["profile"]["const"] == (
+    "wp70-release"
+)
+sdk045_derivation = scaffold_implementation["haxeFirstDerivation"]
+assert sdk045_derivation["singleInput"] == (
+    "validated-lowercase-hyphenated-project-slug"
+)
+assert sdk045_derivation["authoredEntry"] == "Site.hx"
+assert sdk045_derivation["packageDerivation"] == (
+    "exact-project-slug-segments-with-keyword-safe-normalization"
+)
+for sdk045_native_authoring_requirement in (
+    "handwrittenPhpRequired",
+    "handwrittenJavascriptOrTypescriptRequired",
+    "handwrittenWordPressJsonOrCssRequired",
+    "cliOwnedProjectionHandEditingSupported",
+):
+    assert sdk045_derivation[sdk045_native_authoring_requirement] is False
+assert set(sdk045_derivation["derived"]) == {
+    "display-name",
+    "haxe-package",
+    "entry-type",
+    "source-and-test-paths",
+    "wordpress-hx-json",
+    "project-hxml",
+    "haxerc",
+    "npm-manifest-and-lock",
+    "self-digested-project-lock",
+    "readme-and-managed-ignores",
+}
+sdk045_publication = scaffold_implementation["publication"]
+assert sdk045_publication["freshProject"] == (
+    "complete-private-sibling-stage-then-one-directory-rename"
+)
+assert sdk045_publication["existingProject"] == (
+    "complete-private-sibling-stage-then-non-overwriting-hard-link-publication"
+)
+assert sdk045_publication["existingFileEdit"] == (
+    "one-exact-gitignore-marker-pair-only"
+)
+assert sdk045_publication["preflight"] == "complete-before-first-live-write"
+assert sdk045_publication["links"] == (
+    "live-and-dangling-links-rejected-with-lstat"
+)
+assert sdk045_publication["collisions"] == "never-overwritten"
+assert sdk045_publication["rollback"] == (
+    "remove-only-matching-published-bytes-and-restore-exact-backup"
+)
+assert sdk045_publication["rollbackFailure"] == (
+    "retain-private-recovery-bytes-and-stop"
+)
+assert scaffold_implementation["projection"] == {
+    "hxmlAuthority": "entry-type-plus-all-source-and-test-roots",
+    "haxeVersion": "4.3.7",
+    "haxercResolution": "scoped",
+    "buildAndCheckValidation": "exact-derived-bytes-before-haxe",
+    "driftDiagnostic": "WPHX3008",
+}
+sdk045_code = scaffold_implementation["implementation"]
+assert sdk045_code["language"] == "Haxe"
+assert sdk045_code["target"] == "Genes-emitted-Node-ESM"
+for sdk045_code_path in (
+    "entry",
+    "package",
+    "arguments",
+    "renderer",
+    "publisher",
+    "projectionValidator",
+    "compilerBoundary",
+):
+    assert Path(sdk045_code[sdk045_code_path]).exists()
+assert sdk045_code["strictHaxeBoundary"] is True
+assert sdk045_code["genesSourceChanged"] is False
+assert sdk045_code["genesPullRequest"] is None
+assert sdk045_code["siblingDependencyCreated"] is False
+assert sdk045_code["handwrittenJavascriptImplementation"] is False
+assert sdk045_code["exactToolchain"]["haxe"] == (
+    cli_dependency_lock["haxe"]["version"]
+)
+assert sdk045_code["exactToolchain"]["genesCommit"] == (
+    cli_dependency_lock["compiler"]["commit"]
+)
+assert sdk045_code["exactToolchain"]["nodeImage"] == (
+    cli_dependency_lock["runtime"]["image"]
+)
+sdk045_strict_paths = [
+    Path("packages/cli/src/wordpresshx/cli/WphxMain.hx"),
+    Path("packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx"),
+    *sorted(Path(sdk045_code["package"]).glob("*.hx")),
+]
+sdk045_forbidden = re.compile(r"\b(?:Dynamic|Any|cast|Reflect|untyped)\b")
+for sdk045_strict_path in sdk045_strict_paths:
+    assert sdk045_forbidden.search(
+        sdk045_strict_path.read_text(encoding="utf-8")
+    ) is None
+assert scaffold_implementation["unsupportedTargetKinds"] == sorted(
+    scaffold_implementation["unsupportedTargetKinds"]
+)
+assert scaffold_implementation["unsupportedTargetBehavior"] == (
+    "typed-WPHX3002-before-writes-until-real-native-producer-evidence"
+)
+sdk045_reference_authorities = {
+    ("haxe.elixir.codex", "src/reflaxe/elixir/generator/TemplateContext.hx"): (
+        "ff72901cdf22bdb98fc5406a8856a1bb1e18a9d6",
+        "d786139264f41bb2d7e3cae50e53347c077bca04",
+        "1d879705df895ec177b8473691ec60a5b792f54143bfa4f94f1978ab9bd76354",
+    ),
+    ("haxe.ruby", "test/generators/common_test.rb"): (
+        "d20f3520997616e07c870f91b867717f28216928",
+        "d7c0be79b9db1e2b6c12b2cc39584165cd409220",
+        "dec70b39c2bfcd2cf35c95b1659348d8184c2e5224c613f2736e1a87eb08e48f",
+    ),
+}
+for sdk045_reference in scaffold_implementation["referencePatterns"]:
+    sdk045_authority = sdk045_reference_authorities[
+        (sdk045_reference["repository"], sdk045_reference["path"])
+    ]
+    assert sdk045_reference["commit"] == sdk045_authority[0]
+    assert sdk045_reference["blob"] == sdk045_authority[1]
+    assert sdk045_reference["sha256"] == sdk045_authority[2]
+    assert sdk045_reference["copiedBytes"] is False
+    assert sdk045_reference["dependencyCreated"] is False
+assert len(scaffold_implementation["referencePatterns"]) == 2
+sdk045_verification = scaffold_implementation["verification"]
+assert sdk045_verification["command"] == (
+    "bash scripts/scaffold/test-production.sh"
+)
+assert sdk045_verification["summarySchema"] == (
+    "wordpress-hx.sdk045-scaffold-summary.v1"
+)
+assert sdk045_verification["compileReplayCount"] == 2
+assert sdk045_verification["actualGeneratedHaxeTyped"] is True
+assert sdk045_verification["containerNetwork"] == "none"
+assert sdk045_verification["generatedFileCount"] == 11
+assert sdk045_verification["positiveCases"] == 10
+assert sdk045_verification["negativeCases"] == 11
+assert sdk045_verification["noWriteAssertions"] == 16
+assert sdk045_verification["freshTreeReplay"] == "byte-identical"
+assert sdk045_verification["doctorCheckBuild"] == "passed"
+assert sdk045_verification["canonicalToolchainComponentParity"] == "passed"
+assert sdk045_verification["forcedMidPublicationRollback"] == (
+    "exact-prior-tree-restored"
+)
+assert sdk045_verification["outcome"] == "passed"
+assert "Test Haxe-first site scaffolding" in workflow_text
+assert "bash scripts/scaffold/test-production.sh" in workflow_text
+for sdk045_unproven_claim in (
+    "cleanInstalledConsumer",
+    "wordpressRuntimeCompatibility",
+    "productionSupport",
+):
+    assert scaffold_implementation["claims"][sdk045_unproven_claim] == (
+        "not-tested"
+    )
+assert scaffold_implementation["claims"]["nativeWordPressSiteProducer"] == (
+    "not-registered"
+)
+assert scaffold_implementation["claims"]["publicPackagePublication"] == (
+    "blocked"
+)
+
+assert sdk045_receipt["schemaVersion"] == 1
+assert sdk045_receipt["receiptId"] == "SDK-045-SCAFFOLD"
+assert sdk045_receipt["bead"] == "wordpresshx-sdk-045.1"
+assert sdk045_receipt["status"] in {"implemented-hosted-pending", "verified"}
+
+def verify_sdk045_subject(record):
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+for sdk045_subject in sdk045_receipt["subject"].values():
+    if isinstance(sdk045_subject, list):
+        for sdk045_subject_record in sdk045_subject:
+            verify_sdk045_subject(sdk045_subject_record)
+    else:
+        verify_sdk045_subject(sdk045_subject)
+assert sdk045_receipt["subject"]["implementationManifest"]["sha256"] == (
+    hashlib.sha256(
+        Path("manifests/scaffold-implementation.json").read_bytes()
+    ).hexdigest()
+)
+assert sdk045_receipt["implementation"]["applicationLanguage"] == "Haxe"
+assert sdk045_receipt["implementation"]["javascriptCompiler"] == "Genes"
+assert sdk045_receipt["implementation"]["strictHaxeBoundary"] is True
+assert sdk045_receipt["implementation"]["genesSourceChanged"] is False
+assert sdk045_receipt["implementation"]["genesPullRequest"] is None
+assert sdk045_receipt["verification"]["command"] == (
+    sdk045_verification["command"]
+)
+assert sdk045_receipt["verification"]["positiveCases"] == 10
+assert sdk045_receipt["verification"]["negativeCases"] == 11
+assert sdk045_receipt["verification"]["noWriteAssertions"] == 16
+assert sdk045_receipt["verification"]["canonicalToolchainComponentParity"] == (
+    "passed"
+)
+assert sdk045_receipt["verification"]["haxePackageDerivation"] == (
+    sdk045_derivation["packageDerivation"]
+)
+assert sdk045_receipt["verification"]["forcedRollback"] == (
+    "exact-prior-tree-restored"
+)
+assert sdk045_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert sdk045_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert sdk045_receipt["referenceReview"]["genesSourceChanged"] is False
+sdk045_hosted = sdk045_receipt["hostedWorkflow"]
+assert sdk045_hosted["workflow"] == "Repository bootstrap"
+assert sdk045_hosted["job"] == "haxe"
+assert sdk045_hosted["step"] == "Test Haxe-first site scaffolding"
+assert sdk045_hosted["required"] is True
+if sdk045_hosted["status"] == "pending-first-main-run":
+    assert sdk045_receipt["status"] == "implemented-hosted-pending"
+    assert scaffold_implementation["status"] == (
+        "implemented-sdk045-hosted-pending"
+    )
+    assert sdk045_receipt["implementationCommit"] is None
+    assert sdk045_hosted["runId"] is None
+    assert sdk045_hosted["jobId"] is None
+    assert sdk045_hosted["commit"] is None
+    for sdk045_local_claim in (
+        "newAndInitSiteFoundation",
+        "deterministicScaffold",
+        "currentDoctorCheckBuildConsumer",
+    ):
+        assert sdk045_receipt["claims"][sdk045_local_claim] == (
+            "runtime-tested-local"
+        )
+elif sdk045_hosted["status"] == "passed":
+    assert sdk045_receipt["status"] == "verified"
+    assert scaffold_implementation["status"] == (
+        "implemented-sdk045-hosted-verified"
+    )
+    assert sha1.fullmatch(sdk045_receipt["implementationCommit"])
+    assert isinstance(sdk045_hosted["runId"], int)
+    assert isinstance(sdk045_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk045_hosted["commit"])
+    for sdk045_hosted_claim in (
+        "newAndInitSiteFoundation",
+        "deterministicScaffold",
+        "currentDoctorCheckBuildConsumer",
+    ):
+        assert sdk045_receipt["claims"][sdk045_hosted_claim] == (
+            "runtime-tested-hosted"
+        )
+else:
+    raise AssertionError("SDK-045 scaffold hosted status is invalid")
+for sdk045_receipt_unproven_claim in (
+    "nativeWordPressSiteProducer",
+    "installedConsumer",
+    "wordpressRuntimeCompatibility",
+    "productionSupport",
+):
+    assert sdk045_receipt["claims"][sdk045_receipt_unproven_claim] == (
+        "not-tested"
+    )
+assert sdk045_receipt["claims"]["publicPackagePublication"] == "blocked"
 
 assert deterministic_build_implementation["schemaVersion"] == 1
 assert deterministic_build_implementation["bead"] == "wordpresshx-sdk-042"
@@ -3118,7 +3457,7 @@ assert sdk042_verification["fingerprint"] == (
     project_cli_contracts["effectiveInputs"]["fingerprint"]
 )
 assert sdk042_verification["archiveSha256"] == (
-    "d21e566b819784bbfbdac6c0fc100f8d9edf83da18cd341600ffcb5ae3ad9f10"
+    "e9da3d59015dece6282a1e180e6dfd338c5e63fd97681cfc69f632723e9f5471"
 )
 assert sdk042_verification["nodeImage"] == (
     cli_dependency_lock["runtime"]["image"]
@@ -6938,6 +7277,7 @@ python3 scripts/project-cli/test-contract.py
 python3 -m py_compile scripts/determinism/compare-builds.py
 python3 -m py_compile scripts/determinism/test-production.py
 python3 -m py_compile scripts/project-cli/test-production.py
+python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 packages/cli/scripts/verify-dependency-lock.py

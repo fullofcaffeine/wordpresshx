@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "SDK-043-PROJECT-CLI",
   "bead": "wordpresshx-sdk-043",
-  "status": "verified",
-  "observedAt": "2026-07-18T23:27:44Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T06:59:25Z",
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "115cf2606318014ba5f10ceca854de923536b71f371587a55bb254c81e0b2581"
+      "sha256": "3bb00a00c70ffb68c894d99cfe9ff48f5e19eab5af7e7a234ccfa2f2318e515b"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "sha256": "a72d1ed0f51a37249f0eedadaab9bc849f3c80fb001b9cb5149101e462bceb0a"
+      "sha256": "00704cefbec74a923ca6963930b77e6155c76822fb577af07dcabc0ec3a9500f"
     },
     "arguments": {
       "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
@@ -63,7 +63,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
+      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
@@ -127,7 +127,7 @@
     ]
   },
   "implementation": {
-    "implementationCommit": "4e2438391260afeb005e3960331ba31e6eb70839",
+    "implementationCommit": null,
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -175,7 +175,7 @@
     "positiveCases": 15,
     "negativeCases": 15,
     "noWriteAssertions": 17,
-    "effectiveFingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
+    "effectiveFingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
     "effectiveFixtureByteEquality": "passed",
     "deterministicGenesOutput": "passed",
     "eventContractValidation": "passed",
@@ -232,10 +232,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production project CLI foundation",
-    "runId": 29665127143,
-    "jobId": 88134179727,
-    "commit": "4e2438391260afeb005e3960331ba31e6eb70839",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
@@ -245,7 +245,7 @@
     "The package remains private and publication is blocked."
   ],
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-hosted",
+    "sdk043ProjectCli": "runtime-tested-local",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-sdk044-reload-hosted-verified",
+  "status": "implemented-sdk044-reload-local-verified",
   "scope": "managed-compiler-effective-watch-atomic-publish-typed-development-service-supervision-and-wordpress-browser-reload",
   "command": {
     "default": "wphx dev",
@@ -133,13 +133,14 @@
     "controlledCompilerProcess": "tcp-listening-haxe-protocol-test-double",
     "actualHaxeWaitParityEvidence": "SDK-040-SEMANTIC-COLLECTOR",
     "publishedGenerations": 7,
-    "compilerStarts": 2,
+    "compilerStarts": 3,
     "initialBuildBeforeWatch": "passed",
     "sourceAndAssetBurst": "passed",
     "failedTypingRetention": "passed",
     "nestedHxxCreateRenameDelete": "passed",
     "invalidAndRepairedLock": "passed",
     "compilerIdentityRestart": "passed",
+    "cliOwnedProjectionDriftRetention": "passed",
     "editDuringBuildFollowUp": "passed",
     "typedPlanAuthentication": "passed",
     "externalDependencyOrderAndPortCollision": "passed",
@@ -208,18 +209,18 @@
     }
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-hosted",
-    "atomicIncrementalPublication": "runtime-tested-hosted",
-    "lastGoodRetention": "runtime-tested-hosted",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
+    "productionWphxDevCompileWatch": "runtime-tested-local",
+    "atomicIncrementalPublication": "runtime-tested-local",
+    "lastGoodRetention": "runtime-tested-local",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
     "actualHaxeWaitCompilationParity": "runtime-tested-by-sdk040",
-    "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
-    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
+    "externalDevelopmentService": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
-    "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",
@@ -228,8 +229,8 @@
   "limitations": [
     "The current producer graph emits only CLI metadata, its reproducibility report, and an unsigned evidence archive; PHP, browser, asset, and deployable site producers are not registered.",
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
-    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
+    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are locally retested pending hosted confirmation, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
+    "The loopback WordPress reload transport is locally retested in real Chromium against the controlled provider boundary pending hosted confirmation; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-045.1",
+  "status": "implemented-sdk045-hosted-pending",
+  "scope": "haxe-first-site-project-scaffold-foundation",
+  "contract": {
+    "identity": "wordpress-hx.scaffold-plan.v1",
+    "schema": "schemas/scaffold-plan.schema.json",
+    "commands": [
+      "wphx new site <name>",
+      "wphx init [name]"
+    ],
+    "defaultProfile": "wp70-release",
+    "machineEncoding": "canonical-json-with-final-lf",
+    "dryRunWrites": false,
+    "planCompleteness": "every-path-action-ownership-mode-sha256-and-byte-size"
+  },
+  "haxeFirstDerivation": {
+    "singleInput": "validated-lowercase-hyphenated-project-slug",
+    "packageDerivation": "exact-project-slug-segments-with-keyword-safe-normalization",
+    "derived": [
+      "display-name",
+      "haxe-package",
+      "entry-type",
+      "source-and-test-paths",
+      "wordpress-hx-json",
+      "project-hxml",
+      "haxerc",
+      "npm-manifest-and-lock",
+      "self-digested-project-lock",
+      "readme-and-managed-ignores"
+    ],
+    "authoredEntry": "Site.hx",
+    "handwrittenPhpRequired": false,
+    "handwrittenJavascriptOrTypescriptRequired": false,
+    "handwrittenWordPressJsonOrCssRequired": false,
+    "cliOwnedProjectionHandEditingSupported": false
+  },
+  "publication": {
+    "freshProject": "complete-private-sibling-stage-then-one-directory-rename",
+    "existingProject": "complete-private-sibling-stage-then-non-overwriting-hard-link-publication",
+    "existingFileEdit": "one-exact-gitignore-marker-pair-only",
+    "preflight": "complete-before-first-live-write",
+    "links": "live-and-dangling-links-rejected-with-lstat",
+    "collisions": "never-overwritten",
+    "createdDirectories": "exactly-tracked-and-removed-if-empty-on-rollback",
+    "updatedFileBackup": "same-filesystem-private-stage",
+    "rollback": "remove-only-matching-published-bytes-and-restore-exact-backup",
+    "rollbackFailure": "retain-private-recovery-bytes-and-stop"
+  },
+  "projection": {
+    "hxmlAuthority": "entry-type-plus-all-source-and-test-roots",
+    "haxeVersion": "4.3.7",
+    "haxercResolution": "scoped",
+    "buildAndCheckValidation": "exact-derived-bytes-before-haxe",
+    "driftDiagnostic": "WPHX3008"
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "entry": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+    "package": "packages/cli/src/wordpresshx/cli/scaffold",
+    "arguments": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldArguments.hx",
+    "renderer": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
+    "publisher": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPublisher.hx",
+    "projectionValidator": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldProjection.hx",
+    "compilerBoundary": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
+    "exactToolchain": {
+      "haxe": "4.3.7",
+      "lixPackage": "15.12.4",
+      "lixReportedCli": "15.12.2",
+      "genes": "1.36.3",
+      "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "genesTree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "hxnodejs": "10.0.0",
+      "node": "22.17.0",
+      "npm": "10.9.2",
+      "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "strictHaxeBoundary": true,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false,
+    "handwrittenJavascriptImplementation": false
+  },
+  "unsupportedTargetKinds": [
+    "block",
+    "block-collection",
+    "island",
+    "mu-plugin",
+    "plugin",
+    "solution",
+    "theme"
+  ],
+  "unsupportedTargetBehavior": "typed-WPHX3002-before-writes-until-real-native-producer-evidence",
+  "referencePatterns": [
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "ff72901cdf22bdb98fc5406a8856a1bb1e18a9d6",
+      "path": "src/reflaxe/elixir/generator/TemplateContext.hx",
+      "blob": "d786139264f41bb2d7e3cae50e53347c077bca04",
+      "sha256": "1d879705df895ec177b8473691ec60a5b792f54143bfa4f94f1978ab9bd76354",
+      "concept": "closed-typed-template-context-instead-of-open-values",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "d20f3520997616e07c870f91b867717f28216928",
+      "path": "test/generators/common_test.rb",
+      "blob": "d7c0be79b9db1e2b6c12b2cc39584165cd409220",
+      "sha256": "dec70b39c2bfcd2cf35c95b1659348d8184c2e5224c613f2736e1a87eb08e48f",
+      "concept": "prevalidated-output-manifest-link-containment-and-exact-rollback",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    }
+  ],
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "summarySchema": "wordpress-hx.sdk045-scaffold-summary.v1",
+    "compileReplayCount": 2,
+    "actualGeneratedHaxeTyped": true,
+    "nodeVersion": "22.17.0",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "containerNetwork": "none",
+    "generatedFileCount": 11,
+    "positiveCases": 10,
+    "negativeCases": 11,
+    "noWriteAssertions": 16,
+    "freshTreeReplay": "byte-identical",
+    "doctorCheckBuild": "passed",
+    "canonicalToolchainComponentParity": "passed",
+    "markerPreservation": "passed",
+    "liveAndDanglingLinkRejection": "passed",
+    "projectionDrift": "passed",
+    "forcedMidPublicationRollback": "exact-prior-tree-restored",
+    "strictHaxeBoundaryGuard": "passed",
+    "outcome": "passed"
+  },
+  "claims": {
+    "newSiteFoundation": "runtime-tested-local",
+    "initSiteFoundation": "runtime-tested-local",
+    "deterministicScaffold": "runtime-tested-local",
+    "actualGeneratedHaxeTyping": "compile-tested-local",
+    "currentDoctorCheckBuildConsumer": "runtime-tested-local",
+    "nativeWordPressSiteProducer": "not-registered",
+    "themePluginBlockOrIslandScaffold": "not-implemented",
+    "cleanInstalledConsumer": "not-tested",
+    "wordpressRuntimeCompatibility": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The generated project proves the typed project, lock, ownership, doctor, check, and metadata-only build foundation; it does not emit or install a deployable WordPress site.",
+    "Theme, plugin, block, island, collection, and solution commands fail before writes until their native producers pass real consumers.",
+    "The package remains private, so the generated npm graph is a deterministic pre-release projection rather than a clean public-registry installation proof.",
+    "Windows, network filesystems, hostile concurrent mutation, WordPress runtime behavior, deployment, and production support remain untested."
+  ]
+}

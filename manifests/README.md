@@ -48,6 +48,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   last-good, reload-order, and shutdown semantics. The separate
   `project-cli-implementation.json` records SDK-043's real bounded Haxe/Genes
   command, exact input resolver, read-only modes, and ownership publication.
+- `scaffold-implementation.json` records SDK-045.1's Haxe-first `wphx new site`
+  and `wphx init` foundation: one-slug derivation, exact typed dry-runs,
+  same-filesystem staging, collision/link refusal, marker-bounded hand-owned
+  edits, and exact rollback. Native site/plugin/block producers and public
+  package installation remain explicit non-claims.
 - `dev-loop-implementation.json` records SDK-044's real compile/watch core:
   managed project-local compiler lifecycle, effective-graph subscriptions,
   coalesced serialized rebuilds, input-stability checks, last-good retention,
@@ -132,6 +137,14 @@ typing, no-write check/inspect/doctor/dry-run behavior, manifest-last build,
 provenance, exact clean, tamper rejection, and preservation of the frozen
 `wphx-sdk` trace entry. PHP/browser/asset emitters, real WordPress/Next.js
 runtimes, and production support remain explicit non-claims.
+
+Receipt `SDK-045-SCAFFOLD` records the Haxe-authored project-creation surface.
+Its exact Node corpus proves two fresh byte-identical trees, JSON and human
+plans, no-write dry-runs, bounded `.gitignore` marker replacement, collision,
+unsafe-name/profile/kind and live/dangling-link rejection, projection-drift
+diagnostics, a forced mid-publication rollback, actual Haxe typing, and the
+current doctor/check/build foundation. It does not claim a deployable WordPress
+site, native target emitters, installed public packages, or production support.
 
 Receipt `SDK-044-DEV-LOOP` records the Haxe-authored compile/watch loop on exact
 Linux Node 22.17.0. Its controlled process corpus proves initial publication,

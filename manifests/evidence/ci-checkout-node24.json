@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "CI-CHECKOUT-NODE24",
   "bead": "wordpresshx-88h",
-  "status": "verified",
+  "status": "implemented-hosted-pending",
   "source": {
     "repository": "https://github.com/actions/checkout",
     "release": "v7.0.0",
@@ -25,7 +25,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
+      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     }
   },
   "change": {
@@ -45,20 +45,20 @@
   },
   "implementation": {
     "baseCommit": "ccc64c437ee1caacca10e022c47f8429bf5047ae",
-    "commit": "5cb0485fbdc48d9c7afe70b655df2efb14336b34"
+    "commit": null
   },
   "hostedWorkflow": {
     "workflow": "repository.yml",
-    "runId": 29661461223,
-    "commit": "5cb0485fbdc48d9c7afe70b655df2efb14336b34",
-    "status": "passed",
-    "fullMatrixStatus": "passed",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "fullMatrixStatus": "pending",
     "jobCount": 11,
-    "checkoutNode20DeprecationWarningCount": 0
+    "checkoutNode20DeprecationWarningCount": null
   },
   "claims": {
-    "checkoutActionRuntime": "runtime-tested",
-    "warningRemoval": "runtime-tested",
+    "checkoutActionRuntime": "inventoried",
+    "warningRemoval": "not-tested",
     "sdkCompatibility": "not-tested",
     "productionSupport": "not-tested"
   },
