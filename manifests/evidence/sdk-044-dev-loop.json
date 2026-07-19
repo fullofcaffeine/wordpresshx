@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T06:59:25Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T07:16:33Z",
+  "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "4b1a0455bbf98642685b7aac0c6946ef6f518b7c568b44c961e3c471bddcce55"
+      "sha256": "b84b3e4e9613ae7f8753aaeb6cf4ec6e51875c52d1cef612232227954dd8a2c6"
     },
     "implementationFiles": [
       {
@@ -257,31 +257,31 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29677693742,
+    "jobId": 88168071123,
+    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "status": "passed",
     "required": true
   },
   "limitations": [
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
-    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are locally retested pending hosted confirmation, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "The loopback WordPress reload transport is locally retested in real Chromium against the controlled provider boundary pending hosted confirmation; the optional Next.js adapter and native HMR are not implemented.",
+    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
+    "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-local",
-    "atomicIncrementalPublication": "runtime-tested-local",
-    "lastGoodRetention": "runtime-tested-local",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
-    "externalDevelopmentService": "controlled-process-runtime-tested-local",
-    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
+    "productionWphxDevCompileWatch": "runtime-tested-hosted",
+    "atomicIncrementalPublication": "runtime-tested-hosted",
+    "lastGoodRetention": "runtime-tested-hosted",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
+    "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
-    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",

@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "receiptId": "SDK-042-DETERMINISTIC-BUILD",
   "bead": "wordpresshx-sdk-042",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
-      "sha256": "e5890c8f421f6ecdfaf17e628c95241f29b544eee1ad12858b53a84dc7a9499f"
+      "sha256": "8ef299c21c86218463028afa278eb1215e97ce05941c515410e39c4a99f0029f"
     },
     "reportBuilder": {
       "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
@@ -80,7 +80,7 @@
     }
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -120,18 +120,20 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test deterministic build and unsigned archive replay",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
-    "required": true
+    "runId": 29677693742,
+    "jobId": 88168071123,
+    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "status": "passed",
+    "required": true,
+    "jobCount": 11,
+    "allJobsPassed": true
   },
   "claims": {
-    "sdk042DeterministicBuild": "runtime-tested-local",
-    "effectiveInputFingerprint": "runtime-tested-local",
-    "ownedGenerationDeterminism": "runtime-tested-local",
-    "unsignedArchiveDeterminism": "runtime-tested-local",
-    "actionableDifferenceReport": "runtime-tested-local",
+    "sdk042DeterministicBuild": "runtime-tested-hosted",
+    "effectiveInputFingerprint": "runtime-tested-hosted",
+    "ownedGenerationDeterminism": "runtime-tested-hosted",
+    "unsignedArchiveDeterminism": "runtime-tested-hosted",
+    "actionableDifferenceReport": "runtime-tested-hosted",
     "targetEmitterIntegration": "not-tested",
     "deployableWordPressPackage": "not-tested",
     "deployableNextjsPackage": "not-tested",

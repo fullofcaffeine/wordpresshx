@@ -3254,6 +3254,7 @@ if sdk045_hosted["status"] == "pending-first-main-run":
         assert sdk045_receipt["claims"][sdk045_local_claim] == (
             "runtime-tested-local"
         )
+    sdk045_evidence_suffix = "local"
 elif sdk045_hosted["status"] == "passed":
     assert sdk045_receipt["status"] == "verified"
     assert scaffold_implementation["status"] == (
@@ -3271,8 +3272,24 @@ elif sdk045_hosted["status"] == "passed":
         assert sdk045_receipt["claims"][sdk045_hosted_claim] == (
             "runtime-tested-hosted"
         )
+    sdk045_evidence_suffix = "hosted"
 else:
     raise AssertionError("SDK-045 scaffold hosted status is invalid")
+for sdk045_manifest_runtime_claim in (
+    "newSiteFoundation",
+    "initSiteFoundation",
+    "deterministicScaffold",
+    "currentDoctorCheckBuildConsumer",
+):
+    assert scaffold_implementation["claims"][sdk045_manifest_runtime_claim] == (
+        "runtime-tested-" + sdk045_evidence_suffix
+    )
+assert scaffold_implementation["claims"]["actualGeneratedHaxeTyping"] == (
+    "compile-tested-" + sdk045_evidence_suffix
+)
+assert sdk045_receipt["claims"]["actualGeneratedHaxeTyping"] == (
+    "compile-tested-" + sdk045_evidence_suffix
+)
 for sdk045_receipt_unproven_claim in (
     "nativeWordPressSiteProducer",
     "installedConsumer",

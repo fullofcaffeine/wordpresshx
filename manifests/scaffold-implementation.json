@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-045.1",
-  "status": "implemented-sdk045-hosted-pending",
+  "status": "implemented-sdk045-hosted-verified",
   "scope": "haxe-first-site-project-scaffold-foundation",
   "contract": {
     "identity": "wordpress-hx.scaffold-plan.v1",
@@ -138,11 +138,11 @@
     "outcome": "passed"
   },
   "claims": {
-    "newSiteFoundation": "runtime-tested-local",
-    "initSiteFoundation": "runtime-tested-local",
-    "deterministicScaffold": "runtime-tested-local",
-    "actualGeneratedHaxeTyping": "compile-tested-local",
-    "currentDoctorCheckBuildConsumer": "runtime-tested-local",
+    "newSiteFoundation": "runtime-tested-hosted",
+    "initSiteFoundation": "runtime-tested-hosted",
+    "deterministicScaffold": "runtime-tested-hosted",
+    "actualGeneratedHaxeTyping": "compile-tested-hosted",
+    "currentDoctorCheckBuildConsumer": "runtime-tested-hosted",
     "nativeWordPressSiteProducer": "not-registered",
     "themePluginBlockOrIslandScaffold": "not-implemented",
     "cleanInstalledConsumer": "not-tested",

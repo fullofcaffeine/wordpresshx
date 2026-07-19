@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-045-SCAFFOLD",
   "bead": "wordpresshx-sdk-045.1",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T06:59:25Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T07:16:33Z",
+  "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
   "subject": {
     "implementationManifest": {
       "path": "manifests/scaffold-implementation.json",
-      "sha256": "2a4fcf9700b6549e19651890b765c6fb2e7efd8fe1851d18bde4b0f157033466"
+      "sha256": "93ae75ebf556ab68e30db1e227d02812158a826e14d367ad7fa2f37ecec80122"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -174,10 +174,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29677693742,
+    "jobId": 88168071123,
+    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "status": "passed",
     "required": true
   },
   "limitations": [
@@ -187,10 +187,10 @@
     "WordPress runtime behavior, Windows, network filesystems, deployment, and production support remain untested."
   ],
   "claims": {
-    "newAndInitSiteFoundation": "runtime-tested-local",
-    "deterministicScaffold": "runtime-tested-local",
-    "actualGeneratedHaxeTyping": "compile-tested-local",
-    "currentDoctorCheckBuildConsumer": "runtime-tested-local",
+    "newAndInitSiteFoundation": "runtime-tested-hosted",
+    "deterministicScaffold": "runtime-tested-hosted",
+    "actualGeneratedHaxeTyping": "compile-tested-hosted",
+    "currentDoctorCheckBuildConsumer": "runtime-tested-hosted",
     "nativeWordPressSiteProducer": "not-tested",
     "installedConsumer": "not-tested",
     "wordpressRuntimeCompatibility": "not-tested",
