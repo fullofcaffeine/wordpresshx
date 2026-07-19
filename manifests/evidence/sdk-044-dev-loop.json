@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T00:00:00Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T06:00:14Z",
+  "implementationCommit": "2ef9d367d7803f4a885bf25144b87c791c894fcb",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "5979feb3fe396ae769cdca41150e5682ae7994b9a15a98ffabe74166e7ad0dc1"
+      "sha256": "5f10e4f090b484158de184832859345bc0772fe9f40608a8307b2ce603070e61"
     },
     "implementationFiles": [
       {
@@ -256,17 +256,17 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29675607870,
+    "jobId": 88162373506,
+    "commit": "2ef9d367d7803f4a885bf25144b87c791c894fcb",
+    "status": "passed",
     "required": true
   },
   "limitations": [
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
-    "The loopback WordPress reload transport is locally tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
+    "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
@@ -279,7 +279,7 @@
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",
