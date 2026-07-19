@@ -106,7 +106,7 @@
     "nextjsCoreDependency": false,
     "typedJsonBoundary": true,
     "localVerification": "passed",
-    "hostedVerification": "pending-first-hosted-main-run"
+    "hostedVerification": "passed"
   },
   "sdk044ProviderDocumentationRevision": {
     "observedAt": "2026-07-19T00:00:00Z",
@@ -125,10 +125,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "semantic-plan",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29685883258,
+    "jobId": 88189926812,
+    "commit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "status": "passed",
     "required": true
   },
   "limitations": [

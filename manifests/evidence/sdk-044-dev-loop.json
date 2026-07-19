@@ -3,8 +3,8 @@
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
   "status": "verified",
-  "observedAt": "2026-07-19T07:16:33Z",
-  "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+  "observedAt": "2026-07-19T11:57:24Z",
+  "implementationCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
@@ -17,7 +17,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx",
-        "sha256": "0e1f09b0f2c45b2d53e53dc70d6a6ba2d7c4dca31d64f0632a25813f0f0a9173"
+        "sha256": "cd7257827476c6aef1cfe071b2145389f40e78a315f6464f38fcb33c5e229942"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/ProjectBuildResult.hx",
@@ -33,7 +33,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
-        "sha256": "9da6b4ed15a2056daee1d94c605ee11875181fadcf7a20324b524461b0ccace7"
+        "sha256": "892c925134753b32258f914aa8d4337f74c16e0608c2a622d025b9e6439823e2"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
@@ -73,11 +73,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlan.hx",
-        "sha256": "64b4c2a47608298a321d5da0f266f3b6d55b25c3b42b0c97f7da54356414fa65"
+        "sha256": "c88d7c4d25c4e1bd19a3de8bf02a7d219192bf268e709ab027a93c79bfb4781b"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
-        "sha256": "35969209f0e445e839da48eb379fde21ff9e7e465e61f2ba33a756e5be06b42f"
+        "sha256": "dc24ecc1912c25b98fd00820b1d2f8c311db206be570cbd308a080fd268dee2e"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
@@ -85,7 +85,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProject.hx",
-        "sha256": "64b6612610bfec3e4865b1cfbfc0fd95fc171152621eeb035a7d74c1291af7c8"
+        "sha256": "47757cd2e82567a5944ca3f1d256bc1c8dd52cbe6cf3ab159c7c9f74d48b0e99"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/EffectiveInputSnapshot.hx",
@@ -97,11 +97,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ReadinessProbe.hx",
-        "sha256": "648fd786ebe4277c1f60a725c47e9c51d88260c0041461c44e5c6ce5c59fbb2b"
+        "sha256": "dddfd0a4e59d7056d96f8a3a71cd8f25b0809e4acfd9688f54d70be355106679"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
-        "sha256": "ddb0d5653112a11ceb86581a04f0c4921925cef0e9a5adfe48c83b8495f13faa"
+        "sha256": "d6e874ea4632fbb8b730a3ae78f5780f6422b196d3ba5cdc1ccc0faffb15ad2b"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
@@ -109,7 +109,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
-        "sha256": "cf27e241ba8c018109df9777274702f8cc594b72447f20be07cd53c07d15b154"
+        "sha256": "e18fd0d9c8488b7b582ff79b63fa23f4ba3bf9300fca361946a06d79494edaec"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
@@ -117,7 +117,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
-        "sha256": "23f032c0becd2a42f8e908293394a429d27a4e128405075ecf0d97cdcde817f7"
+        "sha256": "60027b770830e08b179fd8de8c9a92afb3aa93695560e10bc5f3c6c644eac1a0"
       },
       {
         "path": "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
@@ -137,7 +137,7 @@
       },
       {
         "path": "packages/cli/profiles/wphx.hxml",
-        "sha256": "4a0d7fcdbcbe48283914ec631ce818abdcfbdc73212a2e5ef8af262f5e64507f"
+        "sha256": "3f07789bf0a57c8de1a377d722e429615f49fddd2876e56166f506e50aa9c5f1"
       },
       {
         "path": "packages/cli/scripts/verify-dependency-lock.py",
@@ -150,7 +150,7 @@
     },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "f0036372b286428c7ce0b55702a4be8d58e82557be902d07cd157805b9161905"
+      "sha256": "6b96e3f06a0efac6adbdd2e3c3106c318607f9e48f23f8b684ece8a74a38ff29"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",
@@ -162,7 +162,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
+      "sha256": "d49b10998ab2b2d91c6a56d8bc75b72b2e5abcb8302e8a4cc074b5044cb92e2e"
     },
     "effectiveInputsSchema": {
       "path": "schemas/effective-inputs.schema.json",
@@ -174,13 +174,13 @@
     },
     "architectureDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
+      "sha256": "c2c1bf33e792d286e682fba3c83152bf13e535cba42e89f219863062db9cd4b7"
     }
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "0b5aa37614b904139941151afb4dad9f03a6433b8e06747b7f05b5f9b455e2a9",
+    "subjectCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "subjectContentSha256": "9d75a6f9b4ac2f1f859a46a9f0c6826689169b1a6a295de825a73748a14c6a39",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -263,9 +263,9 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": 29677693742,
-    "jobId": 88168071123,
-    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "runId": 29685883258,
+    "jobId": 88189926843,
+    "commit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
     "status": "passed",
     "required": true
   },

@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-INFERRED-PLUGIN-DEVELOPMENT",
   "bead": "wordpresshx-sdk-044.3",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T09:27:24Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T11:57:24Z",
+  "implementationCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
-    "subjectContentSha256": "46382f9577151896b730c0a0e9ea1c668d3a84150433728360cd7c51baada620",
+    "subjectCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "subjectContentSha256": "bc08fbc172b56a49f59f52c0206233380eb664bff14eac6fbe7bb845019b9dc1",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-development-implementation.json",
-      "sha256": "40430ea6873776922a8692b95dfb04e7435cebc096423a6627a8ddadd62634cb"
+      "sha256": "2a06274fe77af50aaed1d3b0639b9c955f0ff1df99d6aae489d385b637d4ba43"
     },
     "compilerPlanBoundary": [
       {
@@ -92,7 +92,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "799797052ac25c6d48ee637f65def3610793481736df11dcfeab5fa2c0db294d"
+      "sha256": "540a9bcff8ddeee0539945646d9953285f16e83937f5fb63d51c691e7a8506d9"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -162,25 +162,25 @@
     "strictHaxeBoundaryGuard": "passed",
     "regressionCommand": "bash scripts/dev-loop/test-production.sh",
     "controlledServiceAndChromiumRegression": "passed",
-    "outcome": "passed-local"
+    "outcome": "passed-hosted"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29685883258,
+    "jobId": 88189926843,
+    "commit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "status": "passed",
     "required": true
   },
   "claims": {
-    "zeroAdditionalDeclarationPluginDevelopment": "runtime-tested-local",
-    "realWordPress70MariaDbDevelopment": "runtime-tested-local",
-    "activationBeforeReadiness": "runtime-tested-local",
-    "lastGoodPluginRetentionAndReload": "runtime-tested-local",
-    "completeOwnedResourceCleanup": "runtime-tested-local",
-    "explicitServicePlanPrecedence": "source-reviewed-and-explicit-plan-regression-local",
+    "zeroAdditionalDeclarationPluginDevelopment": "runtime-tested-hosted",
+    "realWordPress70MariaDbDevelopment": "runtime-tested-hosted",
+    "activationBeforeReadiness": "runtime-tested-hosted",
+    "lastGoodPluginRetentionAndReload": "runtime-tested-hosted",
+    "completeOwnedResourceCleanup": "runtime-tested-hosted",
+    "explicitServicePlanPrecedence": "source-reviewed-and-explicit-plan-regression-hosted",
     "nextjsDevelopmentService": "not-implemented",
     "completeGeneratedSiteDevelopment": "not-implemented",
     "publicPackagePublication": "blocked",

@@ -3,12 +3,12 @@
   "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
   "bead": "wordpresshx-sdk-045.2",
   "status": "verified",
-  "observedAt": "2026-07-19T08:43:05Z",
-  "implementationCommit": "574b1724942926541e4055a28e0c265cebebe927",
+  "observedAt": "2026-07-19T11:57:24Z",
+  "implementationCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-scaffold-implementation.json",
-      "sha256": "9eb1a530ae1a5895686e1838fb4a7b84d1df2025efa82e8e7bbb5ac15271f77c"
+      "sha256": "289cb17b6b73b2ba2c4b3d708680229ac78aa7791e809110cec2b8881404e0e5"
     },
     "projectApi": {
       "path": "packages/cli/project-api/wordpresshx/WordPress.hx",
@@ -24,8 +24,12 @@
         "sha256": "cd7257827476c6aef1cfe071b2145389f40e78a315f6464f38fcb33c5e229942"
       },
       {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginArtifactPermissions.hx",
+        "sha256": "45b85a27924e8dd21144296354837a5967dacd3cfc3a12b4231440dc998b7fa5"
+      },
+      {
         "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
-        "sha256": "3abff98aab821a7aa612fe61ab5d7ed84c3ad22d20c4655f46df7401f62c434d"
+        "sha256": "7eb77bbd6bf558f83b58d75481fc05d84f54951d61421d3f9347b4c8ad5e1e2c"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/PluginCompilationRegistry.hx",
@@ -91,7 +95,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
-        "sha256": "da5debed23c99f7f93100a4f8b275afb4b8797c10b448e0b42a63985b1b8e0db"
+        "sha256": "c335abd02fd7745dfa2cb11756cd991163f2e2ee398718d79826271c7751e3a3"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRequest.hx",
@@ -113,7 +117,7 @@
       },
       {
         "path": "scripts/scaffold/test-plugin-production.py",
-        "sha256": "78f5d28a1a78cc4a754c638e01afa90a21c7c41a3a7008e1b29bfb75fa7ba27e"
+        "sha256": "a03f90eddbb83026daf32afb4cd6c6730e4c9f93a6da83872f2999597069dd53"
       },
       {
         "path": "scripts/scaffold/test-plugin-wordpress.sh",
@@ -125,7 +129,7 @@
       },
       {
         "path": "scripts/scaffold/test-production.sh",
-        "sha256": "223c54453bc0644d21941cba973a0dec8f717e945828051ce3d9da11b7391d62"
+        "sha256": "3b4b2e435b2b8964556ef5143cb34ae82da0bb944516dc91807ec4e04ae5324e"
       }
     ],
     "compatibilityCorpora": [
@@ -135,7 +139,7 @@
       },
       {
         "path": "scripts/dev-loop/test-production.py",
-        "sha256": "79e063929a3ccb736efa960eafc4052974fe9a00d32b4010da4cb27aa652574f"
+        "sha256": "6b96e3f06a0efac6adbdd2e3c3106c318607f9e48f23f8b684ece8a74a38ff29"
       },
       {
         "path": "scripts/project-cli/test-production.py",
@@ -149,7 +153,7 @@
     "repositoryValidator": [
       {
         "path": "scripts/check-repository.sh",
-        "sha256": "02d5ec1f582cd07da9288668aabdf965d214a2f4836b6df3f1dc76fca44d75a2"
+        "sha256": "540a9bcff8ddeee0539945646d9953285f16e83937f5fb63d51c691e7a8506d9"
       },
       {
         "path": "scripts/ci/check-checkout-action.py",
@@ -159,22 +163,22 @@
     "documentation": [
       {
         "path": "docs/architecture/haxe-first-site-authoring.md",
-        "sha256": "f3be66ca2b5135e3500731acd25ba2ec50e7c7cc90860cae83a18e04aa1c8b18"
+        "sha256": "2c2d41bbdb30decf94f200ef5564bc0d46207c58d2e77896fa805977cbe467f9"
       },
       {
         "path": "manifests/README.md",
-        "sha256": "4b7a645647f3af19bcb011884de671936deb316d8e1c3cf7d17ea412d65a63b9"
+        "sha256": "f34ce70ab1465c6ae5d50043641842d2103c4bb50dd3bae0b804d10c6b2d798b"
       },
       {
         "path": "packages/cli/README.md",
-        "sha256": "12311290b3828104225ff380fec6743b8dd61f08d1f5b152aba9709ac0e214b3"
+        "sha256": "67e954085b3ef31eb5c8211aef65dbed742fee73d9996a98fd46f7db471ea11f"
       }
     ]
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "574b1724942926541e4055a28e0c265cebebe927",
-    "subjectContentSha256": "552bcee098e20cc2f3bfc199d7b02ca677bda2b4fb0be2a5c7ee0e63dcd55eec",
+    "subjectCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "subjectContentSha256": "4d8550ec1007b07bc5329a8e35ab0aab50c80d8ac03be0ce4a5d401da4a1f1d8",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -192,13 +196,14 @@
     "command": "bash scripts/scaffold/test-production.sh",
     "summarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
     "outcome": "passed",
-    "positiveCases": 10,
+    "positiveCases": 11,
     "negativeCases": 5,
     "noWriteAssertions": 8,
     "generatedFileCount": 11,
     "nativePhpFileCount": 3,
     "freshTreeReplay": "byte-identical",
     "buildReplay": "no-op-byte-identical",
+    "publicPluginFilesystemPermissions": "passed-0755-directories-0644-files-and-no-op-repair",
     "devReplay": "three-atomic-generations",
     "phpRuntimeMatrix": [
       "7.4",
@@ -218,9 +223,9 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
-    "runId": 29680082830,
-    "jobId": 88174533989,
-    "commit": "574b1724942926541e4055a28e0c265cebebe927",
+    "runId": 29685883258,
+    "jobId": 88189926843,
+    "commit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
     "status": "passed",
     "required": true
   },

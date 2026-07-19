@@ -3801,6 +3801,12 @@ assert sdk045_plugin_ownership["validation"] == (
 assert sdk045_plugin_ownership["identicalRebuild"] == (
     "no-op-byte-identical"
 )
+assert sdk045_plugin_ownership["publicFilesystemModes"] == (
+    "haxe-publisher-enforced-directory-0755-file-0644"
+)
+assert sdk045_plugin_ownership["identicalRebuildModeRepair"] == (
+    "restore-public-modes-with-ownership-no-op"
+)
 assert sdk045_plugin_ownership["freshProjectReplay"] == "byte-identical"
 assert sdk045_plugin_ownership["archive"] == "deterministic-zip32-stored-v1"
 
@@ -3813,6 +3819,7 @@ for sdk045_plugin_code_path in (
     "projectPackage",
     "emitter",
     "publisher",
+    "artifactPermissions",
 ):
     assert Path(sdk045_plugin_code[sdk045_plugin_code_path]).exists()
 assert sdk045_plugin_code["strictHaxeBoundary"] is True
@@ -3851,13 +3858,16 @@ assert sdk045_plugin_verification == {
     "command": "bash scripts/scaffold/test-production.sh",
     "summarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
     "outcome": "passed",
-    "positiveCases": 10,
+    "positiveCases": 11,
     "negativeCases": 5,
     "noWriteAssertions": 8,
     "generatedFileCount": 11,
     "nativePhpFileCount": 3,
     "freshTreeReplay": "byte-identical",
     "buildReplay": "no-op-byte-identical",
+    "publicPluginFilesystemPermissions": (
+        "passed-0755-directories-0644-files-and-no-op-repair"
+    ),
     "devReplay": "three-atomic-generations",
     "phpRuntimeMatrix": ["7.4", "8.4"],
     "wordpress": {
