@@ -291,8 +291,10 @@ if (clientUrl.origin !== eventsUrl.origin || !clientMatch || !eventsMatch || cli
 if (!Array.isArray(wordpress.volumes) || wordpress.volumes.length !== 1) process.exit(69);
 const reloadVolume = wordpress.volumes[0];
 if (reloadVolume.type !== 'bind' || reloadVolume.read_only !== true) process.exit(69);
-if (reloadVolume.target !== '/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php') process.exit(69);
-const reloadPlugin = fs.readFileSync(reloadVolume.source, 'utf8');
+if (reloadVolume.target !== '/var/www/html/wp-content/mu-plugins') process.exit(69);
+if (!reloadVolume.source.endsWith('.mu-plugins')) process.exit(69);
+const reloadPlugin = fs.readFileSync(path.join(reloadVolume.source, 'wordpresshx-dev-reload.php'), 'utf8');
+if (!reloadPlugin.includes('(static function (): void {') || !reloadPlugin.trimEnd().endsWith('})();')) process.exit(69);
 if (!reloadPlugin.includes("add_action('wp_footer'") || !reloadPlugin.includes('WPHX_DEV_RELOAD_EVENTS')) process.exit(69);
 if (reloadPlugin.includes(clientMatch[1])) process.exit(69);
 const pageTrace = path.join(path.dirname(composePath), 'browser-page-loads.jsonl');

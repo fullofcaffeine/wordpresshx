@@ -60,6 +60,7 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlugin.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentProject.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/ReadinessProbe.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/RunningService.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/WordPressBootstrapAdapter.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/WordPressProvider.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx" <<'PY'

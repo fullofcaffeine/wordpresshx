@@ -3146,10 +3146,19 @@ assert sdk044_plugin_provider["installation"] == (
     "fresh-native-wordpress-install"
 )
 assert sdk044_plugin_provider["bootstrapStartBarrier"] == (
-    "wordpress-healthcheck-complete-core-includes-and-plugin-entry"
+    "wordpress-healthcheck-complete-core-includes-reload-adapter-and-plugin-entry"
+)
+assert sdk044_plugin_provider["reloadAdapterMount"] == (
+    "private-mu-plugin-directory-read-only"
+)
+assert sdk044_plugin_provider["reloadAdapterScope"] == (
+    "private-static-closure-no-global-symbols"
 )
 assert sdk044_plugin_provider["activation"] == (
     "native-activate-plugin-before-readiness"
+)
+assert sdk044_plugin_provider["readiness"] == (
+    "bootstrap-ready-log-plus-two-hundred-range-wp-json-and-exact-active-plugin-header"
 )
 assert sdk044_plugin_provider["shellExecution"] is False
 assert sdk044_plugin_provider["productionRuntimeDependency"] is False
@@ -3176,6 +3185,7 @@ for sdk044_plugin_code_name in (
     "plan",
     "planReader",
     "provider",
+    "runningService",
     "bootstrapAdapter",
     "reloadAdapter",
     "readinessProbe",
@@ -3232,8 +3242,10 @@ for sdk044_plugin_passed_proof in (
     "servicesNoneAuthoritative",
     "freshInstall",
     "distributionCompletenessBeforeBootstrap",
+    "bootstrapSentinelAndPluginHeaderReadiness",
     "pluginActivationBeforeReadiness",
     "exactReadOnlyPluginMount",
+    "privateMuAdapterDirectoryAndScope",
     "privateConfigurationModes",
     "secretAndCapabilityExclusion",
     "failedBuildRetentionWithoutReload",

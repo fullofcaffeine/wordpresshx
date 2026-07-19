@@ -555,7 +555,7 @@ def real_wordpress_dev_cycle(
             assert response.status == 200
             assert response.headers["X-WordPressHx-Plugin"] == (
                 "typed-news/typed-news.php"
-            )
+            ), dict(response.headers.items())
             page = response.read().decode("utf-8")
         assert re.search(r"<title>typed-news(?:\s|&|<)", page) is not None
         reload_match = re.search(
@@ -572,16 +572,19 @@ def real_wordpress_dev_cycle(
         runtime_directory = project / ".wphx/runtime"
         compose_files = list(runtime_directory.glob("wphx-*.compose.json"))
         plugin_directories = list(runtime_directory.glob("wphx-*.mu-plugins"))
+        bootstrap_files = list(runtime_directory.glob("wphx-*.bootstrap.php"))
         assert len(compose_files) == 1
         assert len(plugin_directories) == 1
+        assert len(bootstrap_files) == 1
         compose_path = compose_files[0]
         private_directory = plugin_directories[0]
         reload_path = private_directory / "wordpresshx-dev-reload.php"
-        bootstrap_path = private_directory / "wordpresshx-dev-bootstrap.php"
+        bootstrap_path = bootstrap_files[0]
         assert stat.S_IMODE(compose_path.stat().st_mode) == 0o600
         assert stat.S_IMODE(private_directory.stat().st_mode) == 0o700
         assert stat.S_IMODE(reload_path.stat().st_mode) == 0o600
         assert stat.S_IMODE(bootstrap_path.stat().st_mode) == 0o600
+        assert reload_path.read_text().rstrip().endswith("})();")
         compose_bytes = compose_path.read_bytes()
         compose = json.loads(compose_bytes)
         assert compose_bytes == canonical(compose)
@@ -612,6 +615,7 @@ def real_wordpress_dev_cycle(
             "/var/www/html/wp-includes/version.php",
             "/var/www/html/wp-admin/includes/upgrade.php",
             "/var/www/html/wp-admin/includes/plugin.php",
+            "/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php",
             "/var/www/html/wp-content/plugins/typed-news/typed-news.php",
         ):
             assert required_path in wordpress_health_source
@@ -631,9 +635,14 @@ def real_wordpress_dev_cycle(
             "type": "bind",
         }
         assert bootstrap_mounts[plugin_target] == wordpress_mounts[plugin_target]
-        assert wordpress_mounts[
-            "/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php"
-        ]["read_only"] is True
+        reload_target = "/var/www/html/wp-content/mu-plugins"
+        assert wordpress_mounts[reload_target] == {
+            "read_only": True,
+            "source": str(private_directory.resolve()),
+            "target": reload_target,
+            "type": "bind",
+        }
+        assert bootstrap_mounts[reload_target] == wordpress_mounts[reload_target]
         assert bootstrap_mounts["/opt/wordpresshx/dev-bootstrap.php"][
             "read_only"
         ] is True

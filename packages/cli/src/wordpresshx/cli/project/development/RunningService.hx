@@ -23,6 +23,7 @@ class RunningService {
 	public final service:DevelopmentService;
 	public final port:Int;
 	public final url:String;
+	public final wordpressPluginEntry:Null<String>;
 	public var alive(default, null) = true;
 	public var stopping(default, null) = false;
 
@@ -52,17 +53,19 @@ class RunningService {
 			shell: false,
 			stdio: ["ignore", "pipe", "pipe"]
 		});
-		return new RunningService(service, port, child, events, onFailure, launch.cleanup);
+		final plugin = project.deployablePlugin;
+		return new RunningService(service, port, child, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
 	}
 
 	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void,
-			cleanup:Null<(Void->Void)->Void>) {
+			cleanup:Null<(Void->Void)->Void>, wordpressPluginEntry:Null<String>) {
 		this.service = service;
 		this.port = port;
 		this.child = child;
 		this.events = events;
 		this.onFailure = onFailure;
 		this.cleanup = cleanup;
+		this.wordpressPluginEntry = wordpressPluginEntry;
 		this.url = service.url.scheme + "://127.0.0.1:" + port + service.url.path;
 		capture(child.stdout);
 		capture(child.stderr);

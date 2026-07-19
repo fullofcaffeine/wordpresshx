@@ -80,7 +80,7 @@ class WordPressProvider {
 		final composePath = Path.join(project.root, ".wphx/runtime/" + projectName + ".compose.json");
 		final pluginDirectory = Path.join(project.root, ".wphx/runtime/" + projectName + ".mu-plugins");
 		final pluginPath = Path.join(pluginDirectory, "wordpresshx-dev-reload.php");
-		final bootstrapPath = Path.join(pluginDirectory, "wordpresshx-dev-bootstrap.php");
+		final bootstrapPath = Path.join(project.root, ".wphx/runtime/" + projectName + ".bootstrap.php");
 		try {
 			Fs.mkdirSync(pluginDirectory, 448);
 			Fs.writeFileSync(pluginPath, WordPressReloadAdapter.pluginSource(), {
@@ -95,7 +95,7 @@ class WordPressProvider {
 					flag: "wx"
 				});
 			}
-			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginPath, bootstrapPath)) + "\n", {
+			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginDirectory, bootstrapPath)) + "\n", {
 				encoding: "utf8",
 				mode: 384,
 				flag: "wx"
@@ -123,10 +123,10 @@ class WordPressProvider {
 		};
 	}
 
-	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>, pluginPath:String,
+	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>, reloadDirectory:String,
 			bootstrapPath:String):JsonValue {
 		if (project.deployablePlugin != null) {
-			return pluginCompose(project, service, port, pluginPath, bootstrapPath);
+			return pluginCompose(project, service, port, reloadDirectory, bootstrapPath);
 		}
 		final wordpressEnvironment:Array<JsonField> = [
 			field("WORDPRESS_DB_HOST", text("database:3306")),
@@ -184,8 +184,8 @@ class WordPressProvider {
 					field("volumes", array([
 						object([
 							field("read_only", BoolValue(true)),
-							field("source", text(pluginPath)),
-							field("target", text("/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php")),
+							field("source", text(reloadDirectory)),
+							field("target", text("/var/www/html/wp-content/mu-plugins")),
 							field("type", text("bind"))
 						])
 					]))
@@ -194,7 +194,7 @@ class WordPressProvider {
 		]);
 	}
 
-	static function pluginCompose(project:DevelopmentProject, service:DevelopmentService, port:Int, reloadPath:String, bootstrapPath:String):JsonValue {
+	static function pluginCompose(project:DevelopmentProject, service:DevelopmentService, port:Int, reloadDirectory:String, bootstrapPath:String):JsonValue {
 		final plugin = project.deployablePlugin;
 		if (plugin == null) {
 			return invalid("lost its compiler-derived plugin before composing the development provider");
@@ -238,8 +238,8 @@ class WordPressProvider {
 		]);
 		final reloadVolume = object([
 			field("read_only", BoolValue(true)),
-			field("source", text(reloadPath)),
-			field("target", text("/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php")),
+			field("source", text(reloadDirectory)),
+			field("target", text("/var/www/html/wp-content/mu-plugins")),
 			field("type", text("bind"))
 		]);
 		final pluginVolume = object([
@@ -266,6 +266,7 @@ class WordPressProvider {
 					+ "&& is_file('/var/www/html/wp-settings.php') && is_file('/var/www/html/wp-includes/version.php') "
 					+ "&& is_file('/var/www/html/wp-admin/includes/upgrade.php') "
 					+ "&& is_file('/var/www/html/wp-admin/includes/plugin.php') "
+					+ "&& is_file('/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php') "
 					+ "&& is_file('/var/www/html/wp-content/plugins/"
 					+ plugin.entry
 					+ "') ? 0 : 1);")
@@ -287,7 +288,7 @@ class WordPressProvider {
 					field("image", text(WORDPRESS_IMAGE)),
 					field("labels", labels),
 					field("stop_grace_period", text("1s")),
-					field("volumes", array([wordpressData, pluginVolume, bootstrapVolume]))
+					field("volumes", array([wordpressData, reloadVolume, pluginVolume, bootstrapVolume]))
 				])),
 				field("database", object([
 					field("environment", databaseEnvironment),
@@ -316,7 +317,7 @@ class WordPressProvider {
 					field("labels", labels),
 					field("ports", array([text("127.0.0.1:" + Std.string(port) + ":80")])),
 					field("stop_grace_period", text("3s")),
-					field("volumes", array([reloadVolume, wordpressData, pluginVolume]))
+					field("volumes", array([wordpressData, reloadVolume, pluginVolume]))
 				]))
 			])),
 			field("volumes", object([field("wordpress-data", object([field("labels", labels)]))]))

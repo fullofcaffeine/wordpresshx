@@ -133,7 +133,7 @@ class DevelopmentPlan {
 					{name: "intervalMs", value: NumberValue("100")},
 					{name: "kind", value: StringValue("http")},
 					{name: "path", value: StringValue("/wp-json/")},
-					{name: "text", value: StringValue("")},
+					{name: "text", value: StringValue("WORDPRESSHX_DEV_READY")},
 					{name: "timeoutMs", value: NumberValue("240000")}
 				])
 			},
@@ -162,7 +162,7 @@ class DevelopmentPlan {
 		}, {
 			kind: Http,
 			path: "/wp-json/",
-			text: "",
+			text: "WORDPRESSHX_DEV_READY",
 			timeoutMs: 240000,
 			intervalMs: 100
 		}, {

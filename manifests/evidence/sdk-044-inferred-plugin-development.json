@@ -8,18 +8,18 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": null,
-    "subjectContentSha256": "e51074629b1edb6224402263776483ca116ec53dd396a29071a531006baedac6",
+    "subjectContentSha256": "6c9bea2e1dc88e7b4093f1861c1d0d32a489d2bc9e1edef8b8f621952465b4b1",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-development-implementation.json",
-      "sha256": "e8d3effa9e11863641bbee10f3e5418155a3e2de0196b5a11f54ca063682a0da"
+      "sha256": "a2bfa929b13301c4a611b1ab206bbca9f6492bf35a894543bb0d55638d08f3fe"
     },
     "compilerPlanBoundary": [
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlan.hx",
-        "sha256": "01b61cb24ba319f967ee4301c235e204051987ee0d9b540645db128ad0d86011"
+        "sha256": "c88d7c4d25c4e1bd19a3de8bf02a7d219192bf268e709ab027a93c79bfb4781b"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
@@ -37,19 +37,23 @@
     "developmentRuntime": [
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ReadinessProbe.hx",
-        "sha256": "333c22052a04884635037d871f151137086317c318f74a8d0a78fd717edb0cdf"
+        "sha256": "7db0ae30c5b4c8bc29c63a2866b50014704087e114b3b130bf606b46198593b6"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
+        "sha256": "d6e874ea4632fbb8b730a3ae78f5780f6422b196d3ba5cdc1ccc0faffb15ad2b"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressBootstrapAdapter.hx",
-        "sha256": "ba604f190fa6cb6a120badedd7b2ed3c5330d5e99c60766145943391d4fbaf90"
+        "sha256": "83c2adf822777970b7c5ab3df677e7593a8356446df99e7f5cbc54960866bba5"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
-        "sha256": "8ab2d34fa69ebe7a605278cee81affc881833f2dd8661bc8a59acb92e738646e"
+        "sha256": "17d2b19cb1f6dec14279e813849a0239fcc1c90fd83000ff77fa3ec680558827"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
-        "sha256": "787c68f0ff5d964bfc0e8368abe379d68e5130d14619001ec5f0ae9a537bdf66"
+        "sha256": "36c2eb27eb628e60e628f137cf7b5e094f1362a9a438f036c7ad222f515ce594"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
@@ -59,17 +63,17 @@
     "consumerGate": [
       {
         "path": "scripts/scaffold/test-plugin-production.py",
-        "sha256": "021531668aeb6eaf4cce7b80b8da2e3c520fa6d2433193292b811a4912f1f57c"
+        "sha256": "9f2751f2a5533c7861477a3bab55a5e5ecfd7249a0d8b7d6d581e012abbfdf8e"
       },
       {
         "path": "scripts/scaffold/test-production.sh",
-        "sha256": "3b63961273a652da362bd631a3e4c4223e40f70a9020e9111c19960fbca3f0c6"
+        "sha256": "5ec7d6c29cf7256380aba123b98f53b68e2c4aa09fc7fe58a035fec5c46f1f34"
       }
     ],
     "controlledRegressionGate": [
       {
         "path": "scripts/dev-loop/test-production.py",
-        "sha256": "79e063929a3ccb736efa960eafc4052974fe9a00d32b4010da4cb27aa652574f"
+        "sha256": "04576bff10fa8f636bb6598a066c533965161b23f5e4c87847dc8f1ab40699e1"
       },
       {
         "path": "scripts/dev-loop/test-production.sh",
@@ -78,7 +82,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "5fa6b20496ee3a0aa457b9cc139992cd347a688403ad72e35552755a49fdafe4"
+      "sha256": "6ff0e3c24bc6448466d6a1995caf431191ba7f5ab6e7b85734f0c6bd34342e53"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -95,7 +99,7 @@
       },
       {
         "path": "docs/architecture/build-and-dev-loop.md",
-        "sha256": "ca1db22e4a6547f5e579d5f9c4c4f1785e1eef25e5ac19ef417b3768a5c37a67"
+        "sha256": "6f37a8e3fb30695e1056cedcfd8ae12d71a9cbdcd561d660550f5b2722fabe83"
       },
       {
         "path": "docs/architecture/haxe-first-site-authoring.md",
@@ -107,7 +111,7 @@
       },
       {
         "path": "packages/cli/README.md",
-        "sha256": "2fa4fa7e221bf7f03a7c2539ceeee98c7a00344386979a8e6f42a5d996a689c8"
+        "sha256": "f8ec579c513778f22077b92073559b99f760e0f0926d3f27a358e5a935105d33"
       }
     ]
   },
@@ -134,8 +138,10 @@
     "extraPluginEntryRejectedBeforeServiceStart": "passed-WPHX2332",
     "freshInstall": "passed",
     "distributionCompletenessBeforeBootstrap": "passed",
+    "bootstrapSentinelAndPluginHeaderReadiness": "passed",
     "pluginActivationBeforeReadiness": "passed",
     "exactReadOnlyPluginMount": "passed",
+    "privateMuAdapterDirectoryAndScope": "passed",
     "privateConfigurationModes": "passed",
     "secretAndCapabilityExclusion": "passed",
     "failedBuildRetentionWithoutReload": "passed",

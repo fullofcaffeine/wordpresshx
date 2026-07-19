@@ -100,14 +100,19 @@ Docker image choice is part of the common path: the CLI derives a private
 canonical mode-`0600` Compose configuration from typed compiler authority, the
 exact `wp70-release` image lock, and its allocated loopback port. For a plugin,
 the graph shares a named WordPress volume with a private installer, bind-mounts
-only the exact generated plugin read-only, installs WordPress, and activates the
-plugin before readiness can pass. The installer starts only after an exec-form
-healthcheck proves the pinned image has completed the required WordPress core,
-include, configuration, and plugin-entry files in that shared volume. It passes
+only the exact generated plugin read-only, and mounts the one-file development
+MU adapter through its own private read-only directory. It installs WordPress
+and activates the plugin before readiness can pass. The installer starts only
+after an exec-form healthcheck proves the pinned image has completed the
+required WordPress core, include, configuration, MU-adapter, and plugin-entry
+files in that shared volume. It passes
 database and administrator secrets through required environment interpolation,
 never embeds secret values in the file, passes only a closed Docker CLI
 host-environment allowlist, runs Compose without a shell, and removes its
 generated files, containers, network, and volumes after bounded shutdown.
+The inferred readiness probe additionally waits for the private installer's
+flushed completion sentinel, an HTTP `2xx`, and the exact active-plugin response
+header, so an install-page response cannot publish a premature ready event.
 
 Both the inferred plugin path and `Dev.wordpress()` derive automatic
 development reload.
@@ -116,7 +121,9 @@ pinned Genes 1.36.3 profile, and bundled deterministically by pinned esbuild
 0.27.2. It serves that asset and an event stream from a loopback-only endpoint
 guarded by a fresh 256-bit capability and the exact admitted WordPress origin.
 A private mode-`0600` development MU-plugin adds the client at the WordPress
-footer boundary; its URLs arrive only through required runtime interpolation,
+footer boundary. Its PHP body runs in a private static closure so the adapter
+cannot leak or overwrite WordPress/plugin globals; its URLs arrive only through
+required runtime interpolation,
 not generated source or Compose bytes. A failed build sends nothing. A complete
 manifest-last publication sends one reload. Shutdown closes the stream and
 removes the private adapter. None of the client, endpoint, capability, or

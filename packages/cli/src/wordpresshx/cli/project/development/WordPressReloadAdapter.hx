@@ -15,6 +15,7 @@ class WordPressReloadAdapter {
 			"<?php",
 			"declare(strict_types=1);",
 			"",
+			"(static function (): void {",
 			"if (!defined('ABSPATH')) {",
 			"\texit;",
 			"}",
@@ -51,6 +52,7 @@ class WordPressReloadAdapter {
 			"add_action('wp_footer', $wordpresshx_render_reload, PHP_INT_MAX);",
 			"add_action('admin_footer', $wordpresshx_render_reload, PHP_INT_MAX);",
 			"add_action('login_footer', $wordpresshx_render_reload, PHP_INT_MAX);",
+			"})();",
 			""
 		].join("\n");
 	}

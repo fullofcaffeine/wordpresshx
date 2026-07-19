@@ -63,8 +63,15 @@ class ReadinessProbe {
 			path: service.service.readiness.path
 		}, response -> {
 			final status = response.statusCode;
+			final pluginEntry = service.wordpressPluginEntry;
+			final pluginHeader = response.headers.get("x-wordpresshx-plugin");
+			final statusReady = status >= 200 && status < (service.service.kind == WordPress ? 300 : 400);
+			final bootstrapReady = service.service.kind != WordPress
+				|| service.service.readiness.text.length == 0
+				|| service.containsLog(service.service.readiness.text);
+			final pluginReady = pluginEntry == null || pluginHeader == pluginEntry;
 			response.resume();
-			complete(status >= 200 && status < (service.service.kind == WordPress ? 300 : 400));
+			complete(statusReady && bootstrapReady && pluginReady);
 		});
 		request.once(WritableEvent.Error, (_:Error) -> complete(false));
 		request.setTimeout(probeTimeout(service), () -> {

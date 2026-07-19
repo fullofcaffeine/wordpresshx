@@ -36,6 +36,7 @@ class WordPressBootstrapAdapter {
 			"	'/var/www/html/wp-includes/version.php',",
 			"	'/var/www/html/wp-admin/includes/upgrade.php',",
 			"	'/var/www/html/wp-admin/includes/plugin.php',",
+			"	'/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php',",
 			"	'/var/www/html/wp-content/plugins/' . $wordpresshx_plugin,",
 			"];",
 			"$wordpresshx_deadline = microtime(true) + 120.0;",
@@ -74,6 +75,7 @@ class WordPressBootstrapAdapter {
 			"	throw new RuntimeException('generated plugin was not active after activation');",
 			"}",
 			"fwrite(STDOUT, \"WORDPRESSHX_DEV_READY\\n\");",
+			"fflush(STDOUT);",
 			"while (true) { sleep(3600); }",
 			""
 		].join("\n");
