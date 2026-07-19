@@ -4825,6 +4825,14 @@ assert sdk026_receipt["verification"]["standalonePolicy"] == {
     "negativeMutations": 5,
     "privatePathLeaks": 0,
 }
+assert sdk026_receipt["verification"]["traceCliRegression"] == {
+    "command": "bash packages/cli/scripts/test.sh",
+    "outcome": "passed",
+    "nativePhpFramesPreserved": True,
+    "privateHumanSnapshot": (
+        "regenerated-for-structured-phpdoc-line-shift"
+    ),
+}
 sdk026_integrated = sdk026_receipt["verification"]["integratedCli"]
 assert sdk026_integrated["command"] == "bash scripts/scaffold/test-production.sh"
 assert sdk026_integrated["outcome"] == "passed"
@@ -4841,7 +4849,7 @@ sdk026_input_records = {
     for record in sdk026_receipt["authenticatedInputs"]
 }
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
-assert len(sdk026_input_records) == 16
+assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
     assert sha256.fullmatch(sdk026_input_sha256)
     assert hashlib.sha256(Path(sdk026_input_path).read_bytes()).hexdigest() == (
@@ -4850,6 +4858,14 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
 assert sdk026_hosted["job"] == "haxe"
+assert sdk026_hosted["precedingFailure"] == {
+    "runId": 29695150919,
+    "jobId": 88214513059,
+    "commit": "cb87b6a25e405445c61408f29cbcff9f329e18c4",
+    "sdk026Steps": "passed",
+    "failedStep": "Test Haxe and Genes PHP trace CLI",
+    "cause": "private-human-trace-snapshot-retained-pre-phpdoc-native-lines",
+}
 assert sdk026_hosted["steps"] == [
     "Install exact generated-PHP quality toolchain",
     "Test pinned generated-PHP quality policy",

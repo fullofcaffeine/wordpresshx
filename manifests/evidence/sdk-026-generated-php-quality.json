@@ -105,6 +105,10 @@
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginProjectBuild.hx",
       "sha256": "a2a8c30d19a159dd204b94944b431d1d49f352f89d037396a7302a488871c136"
+    },
+    {
+      "path": "packages/cli/test/expected/private.text",
+      "sha256": "2b0c8d396d74427bca6154c33231bb75ddc31ae85ec8bebcc6c026280a4709b6"
     }
   ],
   "verification": {
@@ -121,6 +125,12 @@
       "outcome": "passed",
       "publicFixtures": 3,
       "structuredArrayAndUnionPhpDoc": "passed"
+    },
+    "traceCliRegression": {
+      "command": "bash packages/cli/scripts/test.sh",
+      "outcome": "passed",
+      "nativePhpFramesPreserved": true,
+      "privateHumanSnapshot": "regenerated-for-structured-phpdoc-line-shift"
     },
     "standalonePolicy": {
       "command": "bash scripts/php-quality/test-production.sh",
@@ -158,6 +168,14 @@
       "Test pinned generated-PHP quality policy",
       "Test Haxe-first site scaffolding"
     ],
+    "precedingFailure": {
+      "runId": 29695150919,
+      "jobId": 88214513059,
+      "commit": "cb87b6a25e405445c61408f29cbcff9f329e18c4",
+      "sdk026Steps": "passed",
+      "failedStep": "Test Haxe and Genes PHP trace CLI",
+      "cause": "private-human-trace-snapshot-retained-pre-phpdoc-native-lines"
+    },
     "commit": null,
     "runId": null,
     "jobId": null
@@ -174,7 +192,7 @@
     "productionSupport": "not-tested"
   },
   "limitations": [
-    "Hosted verification is pending the first pushed implementation commit.",
+    "Hosted verification is pending a passing implementation commit; the first run passed the SDK-026 steps and exposed one stale native-line trace snapshot.",
     "The private stock-Haxe lane retains its separately documented pre-1.0 migration status and narrower static-analysis level.",
     "The exact matrix does not establish Windows, multisite, deployment, upgrades, arbitrary handwritten PHP, or production support.",
     "Public package publication remains blocked independently by licensing and release gates."
