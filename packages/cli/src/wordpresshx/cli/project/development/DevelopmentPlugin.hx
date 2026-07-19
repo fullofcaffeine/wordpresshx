@@ -26,7 +26,7 @@ class DevelopmentPlugin {
 		}
 		final relativeDirectory = wordpressRoot + "/" + plan.slug;
 		ProjectFiles.requireDirectory(context.bootstrap.root, relativeDirectory, "generated development plugin", "service-start");
-		final emission = PluginEmitter.emit(plan);
+		final emission = PluginEmitter.emit(context, plan);
 		final expectedFiles = [for (file in emission.files) relativeDirectory + "/" + file.relativePath];
 		final actualFiles = ProjectFiles.discover(context.bootstrap.root, relativeDirectory, null, "generated development plugin");
 		if (actualFiles.join("\n") != expectedFiles.join("\n")) {

@@ -1,6 +1,5 @@
 package reflaxe.php.tests;
 
-import haxe.Json;
 import haxe.crypto.Sha256;
 import haxe.io.Bytes;
 import reflaxe.php.ir.PhpArrayEntry;
@@ -56,6 +55,10 @@ class PrinterTest {
 				[PhpReturn(PhpBinop(".", PhpVar("prefix"), PhpCastString(PhpVar("value"))))], false, PhpStringType)),
 			"typed closure");
 		assertEquals("array( Scaler::class, 'double' )", printer.printExpr(PhpCallableArray(PhpClassConst("Scaler", "class"), id("double"))), "callable array");
+		assertEquals("require __DIR__ . '/classmap.php'",
+			printer.printExpr(PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/classmap.php")), false)), "required data projection");
+		assertEquals("require_once __DIR__ . '/autoload.php'",
+			printer.printExpr(PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/autoload.php")), true)), "required-once projection");
 	}
 
 	static function testStatements():Void {
@@ -128,14 +131,14 @@ class PrinterTest {
 			Sha256.encode(content).toLowerCase()));
 		final map = writer.write(rendered);
 		assertEquals(map, writer.write(rendered), "exact range-map determinism");
-		final document:Dynamic = Json.parse(map);
-		assertEquals("reflaxe.php-range-map.v1", document.format, "neutral range-map format");
-		assertEquals(sourceFile.sha256, document.sources[0].sha256, "source content hash");
-		assertEquals("1", Std.string(document.traceAnchors.length), "trace anchor count");
-		assertEquals("source-fixture:fail:throw", document.traceAnchors[0].mappingId, "trace anchor mapping ID");
-		final throwMapping = mappingById(document, "source-fixture:fail:throw");
-		assertEquals("2", Std.string(throwMapping.origin.sourceSpan.start.columnUtf8), "UTF-8 source column");
-		assertEquals("2", Std.string(throwMapping.generatedSpan.start.columnUtf8), "UTF-8 generated column");
+		assertContains(map, '"format":"reflaxe.php-range-map.v1"', "neutral range-map format");
+		assertContains(map, '"sha256":"' + sourceFile.sha256 + '"', "source content hash");
+		assertContains(map, '"traceAnchors":[{"generatedLine":9,"mappingId":"source-fixture:fail:throw"', "trace anchor mapping");
+		assertContains(map,
+			'"id":"source-fixture:fail:throw","nodeKind":"statement","origin":{"kind":"haxe-source","semanticNodeId":"source-fixture:fail:throw"',
+			"statement mapping identity");
+		assertContains(map, '"sourceSpan":{"end":{"columnUtf8":61,"line":5},"endByte":152,"start":{"columnUtf8":2,"line":5}', "UTF-8 source column");
+		assertContains(map, '"generatedSpan":{"end":{"columnUtf8":67,"line":9},"endByte":206,"start":{"columnUtf8":2,"line":9}', "UTF-8 generated column");
 
 		final accentCharacter = content.indexOf("é");
 		final accentByte = Bytes.ofString(content.substr(0, accentCharacter)).length;
@@ -254,15 +257,6 @@ class PrinterTest {
 		return source.exactRange(startByte, startByte + Bytes.ofString(needle).length);
 	}
 
-	static function mappingById(document:Dynamic, mappingId:String):Dynamic {
-		for (mapping in cast(document.mappings, Array<Dynamic>)) {
-			if (mapping.id == mappingId) {
-				return mapping;
-			}
-		}
-		throw "missing fixture mapping: " + mappingId;
-	}
-
 	static function exactDelimited(source:PhpSourceFile, startNeedle:String, endCharacter:Int):PhpSourceRange {
 		final start = source.content.indexOf(startNeedle);
 		if (start < 0 || endCharacter <= start || endCharacter > source.content.length) {
@@ -285,11 +279,17 @@ class PrinterTest {
 		}
 	}
 
-	static function assertThrows(run:() -> Dynamic, label:String):Void {
+	static function assertContains(value:String, expected:String, label:String):Void {
+		if (value.indexOf(expected) < 0) {
+			throw label + " missing\nexpected fragment:\n" + expected + "\nactual:\n" + value;
+		}
+	}
+
+	static function assertThrows<T>(run:() -> T, label:String):Void {
 		var threw = false;
 		try {
 			run();
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			threw = true;
 		}
 		if (!threw) {

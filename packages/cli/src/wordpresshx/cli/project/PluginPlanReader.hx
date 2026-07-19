@@ -12,6 +12,8 @@ class PluginPlanReader {
 	static final VERSION = ~/^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/;
 	static final NAMESPACE = ~/^[A-Z_][A-Za-z0-9_]*(?:\\[A-Z_][A-Za-z0-9_]*)*$/;
 	static final SOURCE_PATH = ~/^[A-Za-z0-9._@+\/-]+$/;
+	static final HAXE_TYPE = ~/^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+	static final HAXE_FIELD = ~/^[A-Za-z_][A-Za-z0-9_]*$/;
 
 	public static function decode(source:String, context:ProjectContext):PluginPlan {
 		try {
@@ -28,6 +30,7 @@ class PluginPlanReader {
 				"license",
 				"name",
 				"namespace",
+				"privateTitleFilter",
 				"profile",
 				"schema",
 				"slug",
@@ -36,7 +39,7 @@ class PluginPlanReader {
 				"startLine",
 				"version"
 			]);
-			expect(text(fields, "schema"), "wordpress-hx.plugin-plan.v1", "plugin plan schema");
+			expect(text(fields, "schema"), "wordpress-hx.plugin-plan.v2", "plugin plan schema");
 			expect(text(fields, "kind"), "plugin", "plugin plan kind");
 			final slug = text(fields, "slug");
 			final projectId = configuredProjectId(context);
@@ -70,11 +73,60 @@ class PluginPlanReader {
 			if (endLine < startLine || (endLine == startLine && endColumn < startColumn)) {
 				return invalid("plugin source range is reversed");
 			}
+			final privateTitleFilter = titleFilter(fields, context);
 			return new PluginPlan(slug, profile, name, description, version, author, license, namespace, sourcePath, startLine, startColumn, endLine,
-				endColumn);
+				endColumn, privateTitleFilter);
 		} catch (error:JsonParseError) {
 			return invalid("plugin compiler plan is malformed: " + error.message);
 		}
+	}
+
+	static function titleFilter(fields:Array<JsonField>, context:ProjectContext):Null<PluginPrivateTitleFilter> {
+		return switch field(fields, "privateTitleFilter") {
+			case NullValue: null;
+			case ObjectValue(values):
+				exact(values, [
+					"className",
+					"endColumn",
+					"endLine",
+					"methodName",
+					"sourcePath",
+					"startColumn",
+					"startLine"
+				]);
+				final className = text(values, "className");
+				final methodName = text(values, "methodName");
+				if (!HAXE_TYPE.match(className) || !HAXE_FIELD.match(methodName)) {
+					return invalid("private title filter symbol is not a closed Haxe static method identity");
+				}
+				final sourcePath = text(values, "sourcePath");
+				if (!validSourcePath(sourcePath) || !belongsToSourceRoot(sourcePath, context.bootstrap.sourceRoots)) {
+					return invalid("private title filter must belong to a project source root");
+				}
+				final startLine = positive(values, "startLine");
+				final startColumn = positive(values, "startColumn");
+				final endLine = positive(values, "endLine");
+				final endColumn = positive(values, "endColumn");
+				if (endLine < startLine || (endLine == startLine && endColumn < startColumn)) {
+					return invalid("private title filter source range is reversed");
+				}
+				new PluginPrivateTitleFilter(className, methodName, sourcePath, startLine, startColumn, endLine, endColumn);
+			case _:
+				invalid("plugin compiler plan privateTitleFilter must be an object or null");
+		};
+	}
+
+	static function validSourcePath(value:String):Bool {
+		return SOURCE_PATH.match(value) && !StringTools.startsWith(value, "/") && value.split("/").indexOf("..") < 0;
+	}
+
+	static function belongsToSourceRoot(value:String, roots:Array<String>):Bool {
+		for (root in roots) {
+			if (value == root || StringTools.startsWith(value, root + "/")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static function configuredProjectId(context:ProjectContext):String {

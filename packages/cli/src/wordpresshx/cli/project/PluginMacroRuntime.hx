@@ -18,10 +18,7 @@ class PluginMacroRuntime {
 		final sourceRoot = Path.join(temporaryRoot, "source");
 		final sourcePath = Path.join(sourceRoot, SOURCE_PATH);
 		ensureDirectory(Path.dirname(sourcePath));
-		final source = Resource.getString(RESOURCE_ID);
-		if (source == null || source.length == 0) {
-			throw new CliFailure("WPHX3300", "packaged Haxe project API resource is missing", 70, "haxe-typing-and-plan");
-		}
+		final source = projectApiSource();
 		Fs.writeFileSync(sourcePath, source, {flag: "wx", mode: 0x1a4});
 		return {
 			temporaryRoot: temporaryRoot,
@@ -30,6 +27,14 @@ class PluginMacroRuntime {
 			projectId: PluginPlanReader.configuredProjectId(context),
 			profileId: context.profileId()
 		};
+	}
+
+	public static function projectApiSource():String {
+		final source = Resource.getString(RESOURCE_ID);
+		if (source == null || source.length == 0) {
+			throw new CliFailure("WPHX3300", "packaged Haxe project API resource is missing", 70, "haxe-typing-and-plan");
+		}
+		return source;
 	}
 
 	public static function compilerArguments(invocation:PluginMacroInvocation):Array<String> {

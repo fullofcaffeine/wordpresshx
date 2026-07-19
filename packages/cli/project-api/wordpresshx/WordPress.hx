@@ -4,10 +4,11 @@ package wordpresshx;
 import haxe.Json;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type.TypedExpr;
 import sys.io.File;
 #end
 
-/** Optional metadata; identity and compatibility requirements are derived. */
+/** Optional behavior and metadata; identity and packaging remain derived. */
 typedef PluginOptions = {
 	@:optional final name:String;
 	@:optional final description:String;
@@ -15,6 +16,7 @@ typedef PluginOptions = {
 	@:optional final author:String;
 	@:optional final license:String;
 	@:optional final namespace:String;
+	@:optional final titleFilter:(title:String, postId:Int) -> String;
 }
 
 enum abstract WordPressTarget(String) {
@@ -26,6 +28,16 @@ typedef PluginDefinition = {
 }
 
 #if macro
+private typedef CollectedTitleFilter = {
+	final className:String;
+	final methodName:String;
+	final sourcePath:String;
+	final startLine:Int;
+	final startColumn:Int;
+	final endLine:Int;
+	final endColumn:Int;
+}
+
 private typedef CollectedPlugin = {
 	final slug:String;
 	final profile:String;
@@ -40,6 +52,7 @@ private typedef CollectedPlugin = {
 	final startColumn:Int;
 	final endLine:Int;
 	final endColumn:Int;
+	final titleFilter:Null<CollectedTitleFilter>;
 }
 #end
 
@@ -77,9 +90,7 @@ final class WordPress {
 			"license" => "GPL-2.0-or-later",
 			"namespace" => phpNamespace(slug)
 		];
-		if (options != null) {
-			readOptions(options, values);
-		}
+		final titleFilter = options == null ? null : readOptions(options, values);
 		validate(values, position);
 		final location = sourceLocation(position);
 		collected = {
@@ -95,17 +106,26 @@ final class WordPress {
 			startLine: location.startLine,
 			startColumn: location.startColumn,
 			endLine: location.endLine,
-			endColumn: location.endColumn
+			endColumn: location.endColumn,
+			titleFilter: titleFilter
 		};
 		registerWriter(position);
 		return macro({target: wordpresshx.WordPress.WordPressTarget.Plugin} : wordpresshx.WordPress.PluginDefinition);
 	}
 
 	#if macro
-	static function readOptions(options:ExprOf<PluginOptions>, values:Map<String, String>):Void {
-		switch options.expr {
+	static function readOptions(options:ExprOf<PluginOptions>, values:Map<String, String>):Null<CollectedTitleFilter> {
+		return switch options.expr {
 			case EObjectDecl(fields):
+				var titleFilter:Null<CollectedTitleFilter> = null;
 				for (field in fields) {
+					if (field.field == "titleFilter") {
+						if (titleFilter != null) {
+							Context.error("WordPress.plugin titleFilter may be declared once", field.expr.pos);
+						}
+						titleFilter = collectTitleFilter(field.expr);
+						continue;
+					}
 					if (!values.exists(field.field)) {
 						Context.error("Unknown WordPress.plugin option " + field.field, field.expr.pos);
 					}
@@ -115,10 +135,50 @@ final class WordPress {
 					};
 					values.set(field.field, value);
 				}
+				titleFilter;
 			case EConst(CIdent("null")):
+				null;
 			case _:
 				Context.error("WordPress.plugin options must be an inline typed object", options.pos);
-		}
+		};
+	}
+
+	static function collectTitleFilter(expression:Expr):CollectedTitleFilter {
+		final expected:ComplexType = macro :(String, Int) -> String;
+		final typed = Context.typeExpr({expr: ECheckType(expression, expected), pos: expression.pos});
+		return staticTitleFilter(typed, expression.pos);
+	}
+
+	static function staticTitleFilter(expression:TypedExpr, position:Position):CollectedTitleFilter {
+		return switch expression.expr {
+			case TParenthesis(inner) | TMeta(_, inner) | TCast(inner, null):
+				staticTitleFilter(inner, position);
+			case TField(_, FStatic(ownerReference, fieldReference)):
+				final owner = ownerReference.get();
+				final field = fieldReference.get();
+				final className = owner.pack.concat([owner.name]).join(".");
+				if (owner.module != className || owner.isPrivate || owner.isExtern || owner.params.length != 0 || !field.isPublic
+					|| field.params.length != 0 || owner.meta.has(":native") || field.meta.has(":native")) {
+					Context.error("WordPress.plugin titleFilter requires a public static method on a primary project class", position);
+				}
+				switch field.kind {
+					case FMethod(MethNormal):
+					case _:
+						Context.error("WordPress.plugin titleFilter requires a normal static method", position);
+				}
+				final location = sourceLocation(field.pos);
+				{
+					className: className,
+					methodName: field.name,
+					sourcePath: location.path,
+					startLine: location.startLine,
+					startColumn: location.startColumn,
+					endLine: location.endLine,
+					endColumn: location.endColumn
+				};
+			case _:
+				Context.error("WordPress.plugin titleFilter must be a typed static method reference", position);
+		};
 	}
 
 	static function validate(values:Map<String, String>, position:Position):Void {
@@ -165,10 +225,19 @@ final class WordPress {
 	static function encode(plugin:CollectedPlugin):String {
 		return "{" + '"author":' + Json.stringify(plugin.author) + ',"description":' + Json.stringify(plugin.description) + ',"endColumn":'
 			+ plugin.endColumn + ',"endLine":' + plugin.endLine + ',"kind":"plugin"' + ',"license":' + Json.stringify(plugin.license) + ',"name":'
-			+ Json.stringify(plugin.name) + ',"namespace":' + Json.stringify(plugin.namespace) + ',"profile":' + Json.stringify(plugin.profile)
-			+ ',"schema":"wordpress-hx.plugin-plan.v1"' + ',"slug":' + Json.stringify(plugin.slug) + ',"sourcePath":'
-			+ Json.stringify(plugin.sourcePath.split("\\").join("/")) + ',"startColumn":' + plugin.startColumn + ',"startLine":' + plugin.startLine
-			+ ',"version":' + Json.stringify(plugin.version) + "}";
+			+ Json.stringify(plugin.name) + ',"namespace":' + Json.stringify(plugin.namespace) + ',"privateTitleFilter":'
+			+ encodeTitleFilter(plugin.titleFilter) + ',"profile":' + Json.stringify(plugin.profile) + ',"schema":"wordpress-hx.plugin-plan.v2"' + ',"slug":'
+			+ Json.stringify(plugin.slug) + ',"sourcePath":' + Json.stringify(plugin.sourcePath.split("\\").join("/")) + ',"startColumn":'
+			+ plugin.startColumn + ',"startLine":' + plugin.startLine + ',"version":' + Json.stringify(plugin.version) + "}";
+	}
+
+	static function encodeTitleFilter(filter:Null<CollectedTitleFilter>):String {
+		if (filter == null) {
+			return "null";
+		}
+		return "{" + '"className":' + Json.stringify(filter.className) + ',"endColumn":' + filter.endColumn + ',"endLine":' + filter.endLine
+			+ ',"methodName":' + Json.stringify(filter.methodName) + ',"sourcePath":' + Json.stringify(filter.sourcePath.split("\\").join("/"))
+			+ ',"startColumn":' + filter.startColumn + ',"startLine":' + filter.startLine + "}";
 	}
 
 	static function sourceLocation(position:Position):{

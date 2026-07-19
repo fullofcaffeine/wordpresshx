@@ -53,6 +53,12 @@ class PluginBuildPublisher {
 					run: root -> validatePluginStage(root, generation.pluginBase, emission)
 				}
 			];
+			if (emission.plan.privateTitleFilter != null) {
+				validators.push({
+					validatorId: "wphx.plugin-private-php",
+					run: root -> validatePluginStage(root, generation.pluginBase, emission)
+				});
+			}
 			final owner = new ArtifactOwner(context.bootstrap.root, generation.paths.layout);
 			final outcome:OwnershipResult = owner.publish(manifestPath, stageRoot, validators);
 			PluginArtifactPermissions.enforce(context.bootstrap.root, generation.pluginBase, emission.files);
@@ -85,14 +91,18 @@ class PluginBuildPublisher {
 		];
 		final reproducible = ReproducibleBuild.create(context, packagePayloads);
 		final commonValidators = ["wphx.deterministic-archive", "wphx.plugin-public-php"];
+		if (emission.plan.privateTitleFilter != null) {
+			commonValidators.push("wphx.plugin-private-php");
+		}
+		commonValidators.sort(compareText);
 		final artifacts:Array<PreparedArtifact> = [
 			for (file in emission.files)
 				{
 					path: pluginBase + "/" + file.relativePath,
 					rootId: wordpressRoot.id,
 					bytes: file.bytes,
-					kind: "wordpress.plugin.public-php." + file.role,
-					projectionIds: ["php/plugin/" + file.role],
+					kind: file.artifactKind(),
+					projectionIds: [projectionId(file)],
 					validatorIds: commonValidators
 				}
 		];
@@ -173,6 +183,16 @@ class PluginBuildPublisher {
 					"validatorIds" => artifact.validatorIds
 				])
 		];
+		final validators = [
+			validator("wphx.deterministic-archive", "@wordpress-hx/cli deterministic ZIP32 validator", "zip32-stored-v1", lock, context,
+				"complete-staged-tree"),
+			validator("wphx.effective-inputs", "@wordpress-hx/cli effective-input validator", "v1", lock, context, "complete-staged-tree")
+		];
+		if (emission.plan.privateTitleFilter != null) {
+			validators.push(validator("wphx.plugin-private-php", "WordPressHx dependency-closed private PHP packager", "sdk-024-v1", lock, context,
+				"complete-staged-tree"));
+		}
+		validators.push(validator("wphx.plugin-public-php", "WordPressHx structured public-PHP profile", "sdk-022-v1", lock, context, "complete-staged-tree"));
 		final manifest = OwnershipJson.object([
 			"schema" => OwnershipContract.MANIFEST_SCHEMA,
 			"canonicalization" => OwnershipContract.CANONICALIZATION,
@@ -204,12 +224,7 @@ class PluginBuildPublisher {
 				])
 			]),
 			"outputRoots" => OwnershipPaths.manifestRoots(context.bootstrap, paths),
-			"validators" => [
-				validator("wphx.deterministic-archive", "@wordpress-hx/cli deterministic ZIP32 validator", "zip32-stored-v1", lock, context,
-					"complete-staged-tree"),
-				validator("wphx.effective-inputs", "@wordpress-hx/cli effective-input validator", "v1", lock, context, "complete-staged-tree"),
-				validator("wphx.plugin-public-php", "WordPressHx structured public-PHP profile", "sdk-022-v1", lock, context, "complete-staged-tree")
-			],
+			"validators" => validators,
 			"files" => files
 		]);
 		final result = OwnershipContract.withDigest(manifest, "manifestDigest");
@@ -227,6 +242,10 @@ class PluginBuildPublisher {
 			"scope" => scope,
 			"outcome" => "passed"
 		]);
+	}
+
+	static function projectionId(file:PluginEmittedFile):String {
+		return file.lane == PublicNative ? "php/plugin/" + file.role : "php/plugin/private/" + wordpresshx.cli.Content.digest(file.relativePath).substr(0, 24);
 	}
 
 	static function requiredRoot(context:ProjectContext, id:String):ProjectOutputRoot {

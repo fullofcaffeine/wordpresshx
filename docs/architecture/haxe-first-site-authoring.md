@@ -209,6 +209,30 @@ kinds and advanced overrides.
 `dev` retains the last complete ownership generation on failure and introduces
 no production application kernel or proprietary PHP hot-reload protocol.
 
+The first private behavior surface keeps the callback beside the plugin
+definition and asks for no PHP, namespace, adapter, autoloader, or package
+configuration:
+
+```haxe
+final class Site {
+    public static final definition = WordPress.plugin({
+        titleFilter: filterTitle
+    });
+
+    public static function filterTitle(title:String, postId:Int):String {
+        return postId > 0 ? title + " · Typed" : title;
+    }
+}
+```
+
+Haxe checks the callback signature and static method identity at compile time.
+The build derives a stable private prefix, compiles only the reachable PHP
+closure, discards the stock front controller, generates an exact package-local
+class map and native `string, int -> string` WordPress adapter, and publishes
+everything through the existing ownership transaction. Omitting `titleFilter`
+omits the entire private lane. General hooks and lifecycle APIs remain separate
+typed surfaces to add only as their runtime boundaries pass evidence.
+
 ## Native artifact mapping
 
 | Haxe authority | Native generated artifacts | Runtime authority |

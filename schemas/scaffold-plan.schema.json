@@ -75,7 +75,7 @@
         },
         {
           "const": [
-            "plugin-bootstrap-only",
+            "general-plugin-apis-dependency-gated",
             "public-package-installation-blocked"
           ]
         }
@@ -101,7 +101,7 @@
           },
           "limitations": {
             "const": [
-              "plugin-bootstrap-only",
+              "general-plugin-apis-dependency-gated",
               "public-package-installation-blocked"
             ]
           }

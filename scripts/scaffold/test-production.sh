@@ -44,6 +44,7 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/project/CompilerRunner.hx" \
 	"${package_root}/src/wordpresshx/cli/project/ProjectBuild.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginArtifactPermissions.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginArtifactLane.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginBuildPublisher.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginCompilationRegistry.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginEmission.hx" \
@@ -56,6 +57,11 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlan.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlanReader.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginProjectBuild.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPrivatePhpProfile.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPrivateRuntime.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPrivateRuntimeCompiler.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPrivateRuntimeIdentity.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPrivateTitleFilter.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlan.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx" \
 	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlugin.hx" \

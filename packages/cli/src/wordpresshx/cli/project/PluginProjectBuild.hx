@@ -9,7 +9,7 @@ class PluginProjectBuild {
 			generation:Int):Null<ProjectBuildResult> {
 		final payload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
 		events.stageStarted(ProjectBuild.STAGES[1], payload());
-		final emission = PluginEmitter.emit(plan);
+		final emission = PluginEmitter.emit(context, plan);
 		events.stageCompleted(ProjectBuild.STAGES[1], OwnershipJson.object([
 			"mode" => mode,
 			"buildId" => buildId,

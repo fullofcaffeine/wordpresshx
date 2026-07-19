@@ -26,6 +26,10 @@ enum PhpExpr {
 	PhpObjectProperty(target:PhpExpr, property:String);
 	PhpDynamicObjectProperty(target:PhpExpr, property:PhpExpr);
 	PhpFunctionCall(name:String, args:Array<PhpExpr>);
+
+	/** Include a PHP projection and use its returned value. */
+	PhpRequire(path:PhpExpr, once:Bool);
+
 	PhpInvoke(callable:PhpExpr, args:Array<PhpExpr>);
 	PhpCallableArray(target:PhpExpr, method:PhpIdentifier);
 	PhpBinop(op:String, left:PhpExpr, right:PhpExpr);

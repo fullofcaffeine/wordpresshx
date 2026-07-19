@@ -65,7 +65,7 @@ class ScaffoldPlan {
 	public function limitations():Array<String> {
 		return switch kind {
 			case Site: ["native-target-producers-not-registered", "public-package-installation-blocked"];
-			case Plugin: ["plugin-bootstrap-only", "public-package-installation-blocked"];
+			case Plugin: ["general-plugin-apis-dependency-gated", "public-package-installation-blocked"];
 		};
 	}
 

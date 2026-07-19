@@ -15,9 +15,10 @@ class PluginPlan {
 	public final startColumn:Int;
 	public final endLine:Int;
 	public final endColumn:Int;
+	public final privateTitleFilter:Null<PluginPrivateTitleFilter>;
 
 	public function new(slug:String, profile:String, name:String, description:String, version:String, author:String, license:String, namespace:String,
-			sourcePath:String, startLine:Int, startColumn:Int, endLine:Int, endColumn:Int) {
+			sourcePath:String, startLine:Int, startColumn:Int, endLine:Int, endColumn:Int, privateTitleFilter:Null<PluginPrivateTitleFilter>) {
 		this.slug = slug;
 		this.profile = profile;
 		this.name = name;
@@ -31,5 +32,6 @@ class PluginPlan {
 		this.startColumn = startColumn;
 		this.endLine = endLine;
 		this.endColumn = endColumn;
+		this.privateTitleFilter = privateTitleFilter;
 	}
 }

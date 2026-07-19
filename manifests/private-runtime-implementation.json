@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-024",
+  "status": "implemented-sdk024-hosted-pending",
+  "scope": "bounded-stock-haxe-private-php-production-lane",
+  "architectureAuthority": {
+    "decisionManifest": "manifests/runtime-support-packaging.json",
+    "decisionReceipt": "ADR-018-RUNTIME-SUPPORT-PACKAGING",
+    "publicPhpProfileReceipt": "SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE",
+    "publicAdapterReceipt": "SDK-023-WORDPRESS-PUBLIC-PHP-ADAPTERS"
+  },
+  "haxeFirstErgonomics": {
+    "maintainedAuthority": "Site.hx",
+    "zeroArgumentDeclaration": "WordPress.plugin()",
+    "zeroArgumentPrivateRuntime": "omitted",
+    "typedBehaviorDeclaration": "WordPress.plugin({titleFilter: Site.filterTitle})",
+    "callbackSignature": "(title:String, postId:Int) -> String",
+    "callbackForm": "public-static-primary-project-class-method-reference",
+    "callbackIdentityResolution": "typed-Haxe-AST-at-compile-time",
+    "callbackSourceRangeRecorded": true,
+    "inlineLambdaDisposition": "compile-time-rejected-WPHX2002",
+    "derivedWithoutUserConfiguration": [
+      "authoritative-classmap",
+      "autoload-root",
+      "native-public-adapter",
+      "private-module-identity",
+      "private-php-prefix",
+      "runtime-dependency-closure",
+      "runtime-manifest",
+      "sbom-inventory"
+    ],
+    "handwrittenPhpRequired": false,
+    "handwrittenAutoloadConfigurationRequired": false,
+    "handwrittenComposerConfigurationRequired": false,
+    "privateNamespaceSelectionRequired": false
+  },
+  "semanticHandoff": {
+    "pluginPlan": "wordpress-hx.plugin-plan.v2",
+    "pluginEmission": "wordpress-hx.plugin-emission.v2",
+    "runtimeManifest": "wordpress-hx.private-runtime-manifest.v1",
+    "closedPlanReader": true,
+    "exactCallbackClassMethodAndSourceRange": true,
+    "sourceRootOwnershipValidated": true
+  },
+  "compilerIntegration": {
+    "genericPhpIr": "compiler/reflaxe.php",
+    "genericIrAddition": "PhpRequire(path, once)",
+    "currentGenericPackageFileCount": 37,
+    "currentGenericPackageContentSha256": "7f6ed2fc19f9123e3966dee4591e94567c371c3448a9fcd3f1caa7c922e26c2b",
+    "wordpressKnowledgeAddedToGenericCompiler": false,
+    "stockCompiler": "Haxe 4.3.7 PHP target",
+    "dce": "full-derived-single-callback-entry",
+    "reachabilityEntry": "generated-private-temporary-input-discarded-after-compilation",
+    "stockFrontController": "audited-and-discarded",
+    "positionMode": "real-position-with-local-path-leak-rejection",
+    "runtimeCompilerDependency": false,
+    "runtimeNodeDependency": false,
+    "runtimeHaxeDependency": false,
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "sourceChanged": false,
+      "pullRequest": null,
+      "siblingDependencyCreated": false
+    }
+  },
+  "privatePackaging": {
+    "identitySchema": "wordpress-hx.private-runtime-identity.v1",
+    "identityInput": "wordpress-hx.private-runtime.v1\\0<project-slug>\\0plugin",
+    "digest": "sha256",
+    "prefixBitsRetained": 96,
+    "prefixForm": "wphx_internal.p<24-lowercase-hex>",
+    "scope": "per-deployable-plugin",
+    "sharedSiteRuntime": false,
+    "classmap": "generated-package-local-authoritative-exact-map",
+    "processIncludePathMutation": false,
+    "autoloadPrepend": false,
+    "runtimeComposerGraph": "absent-no-runtime-dependencies",
+    "stockRuntimePhpFiles": 15,
+    "classmapEntries": 14,
+    "privatePhpFilesIncludingClassmap": 16,
+    "stockFrontPackaged": false,
+    "generatedReachabilityEntryPackaged": false,
+    "globalPolyfill": {
+      "functions": [
+        "mb_chr",
+        "mb_ord",
+        "mb_scrub",
+        "str_starts_with"
+      ],
+      "sha256": "80f6c2172d93b501328e2c4fa131b81a186ff850e6a437e9068f9e842a6b3237",
+      "compatibilityMarker": "WORDPRESSHX_PRIVATE_POLYFILLS_V1_SHA256",
+      "differentHashDisposition": "reject-before-private-boot-WPHX5201"
+    },
+    "artifactInventory": "per-file-sha256-size-component-license-and-reason",
+    "publicationLicenseGate": "blocked-pending-qualified-review"
+  },
+  "publicBoundary": {
+    "adapter": "generated-native-WordPress-PHP",
+    "method": "filterTitle(string,int):string",
+    "registration": "add_filter(the_title, generated-static-callback, 10, 2)",
+    "privateNamesAllowedInPublicSignature": false,
+    "privateTypesReachableOnlyInsideAdapterBody": true,
+    "rawPhpSegments": 0
+  },
+  "ownershipAndPublication": {
+    "publisher": "existing-manifest-last-ownership-transaction",
+    "privateLaneClassification": "wphx.plugin-private-php",
+    "privateProjectionIds": "sha256-derived-from-owned-relative-path",
+    "completeStageValidationBeforeLiveWrite": true,
+    "sameIdentityReplay": "byte-identical-no-op",
+    "differentPluginPrefixes": "distinct",
+    "packageTotalPhpCeilingBytes": 409600
+  },
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "directFocusedCommand": "python3 scripts/scaffold/test-plugin-production.py <compiled-runtime-root>",
+    "summarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
+    "privateResultSchema": "wordpress-hx.sdk024-private-runtime-result.v1",
+    "outcome": "passed",
+    "positiveCases": 16,
+    "negativeCases": 10,
+    "noWriteAssertions": 13,
+    "sameIdentityReplay": "byte-identical",
+    "privatePhpBytes": 64602,
+    "privatePhpFiles": 16,
+    "classmapEntries": 14,
+    "phpMatrix": [
+      {
+        "version": "7.4.33",
+        "image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+        "coldBootP50Nanoseconds": 1818417,
+        "samples": 25
+      },
+      {
+        "version": "8.4.7",
+        "image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+        "coldBootP50Nanoseconds": 4014583,
+        "samples": 25
+      }
+    ],
+    "coldBootP50CeilingNanoseconds": 20000000,
+    "coexistence": "two-distinct-generated-plugins-passed",
+    "polyfillMismatch": "rejected-before-private-boot-WPHX5201",
+    "wordpress": {
+      "version": "7.0",
+      "database": "mariadb",
+      "freshInstall": "passed",
+      "twoPluginActivation": "passed",
+      "typedBehavior": "seed:news:pages"
+    },
+    "publicAbiLeakScan": "passed",
+    "localPathLeakScan": "passed",
+    "strictHaxeBoundaryGuard": "passed"
+  },
+  "migrationAndRemovalTrigger": {
+    "reviewGate": "G8",
+    "retainThroughReviewOnlyIf": [
+      "exact-PHP-matrix-remains-green",
+      "multiple-generated-plugins-coexist",
+      "private-closure-remains-below-160-KiB-review-threshold",
+      "package-PHP-remains-below-400-KiB-ceiling",
+      "no-private-type-crosses-public-ABI",
+      "polyfill-contract-remains-exact-and-fail-closed"
+    ],
+    "migrateToNativeReflaxePhpWhen": "the-generic-compiler-supports-the-used-callback-closure-with-equal-or-better-density-and-runtime-evidence",
+    "removeStockLaneWhen": [
+      "budget-or-coexistence-fails-repeatedly",
+      "an-unexplained-global-helper-or-process-wide-side-effect-appears",
+      "a-private-type-crosses-public-ABI",
+      "the-exact-supported-compiler-or-PHP-matrix-cannot-be-maintained"
+    ],
+    "postOneDotZeroGuarantee": "none-until-G8-retention-decision"
+  },
+  "claims": {
+    "typedPrivateTitleFilter": "runtime-tested-local",
+    "dependencyClosedPrivatePackaging": "runtime-tested-local",
+    "deterministicPrivatePackaging": "runtime-tested-local",
+    "multiplePluginCoexistence": "runtime-tested-local",
+    "php74And84Compatibility": "runtime-tested-local",
+    "wordpress70Compatibility": "runtime-tested-local",
+    "nativePublicAbiIsolation": "runtime-tested-local",
+    "runtimeComposerDependencies": "not-admitted",
+    "qualifiedLicenseApproval": "blocked",
+    "generalTypedWordPressHooks": "not-implemented",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "Generated Haxe standard-library bytes are inventoried, but artifact publication remains blocked until qualified licensing review is complete.",
+    "Runtime Composer dependencies remain absent and require the separate wordpresshx-18b admission path.",
+    "The exact runtime matrix is PHP 7.4 and 8.4 plus WordPress 7.0 with MariaDB; upgrades, multisite, Windows, network filesystems, and production operations remain untested.",
+    "The production lane is intentionally bounded to one typed the_title callback surface and does not claim arbitrary Haxe-to-PHP support."
+  ]
+}

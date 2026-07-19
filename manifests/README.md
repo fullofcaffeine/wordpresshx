@@ -16,6 +16,15 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   graph empty, and forbids a shared site runtime. Its executable prototype does
   not implement SDK-024, admit runtime Composer packages, retain the stock-Haxe
   lane after `1.0`, or claim production support.
+- `private-runtime-implementation.json` records SDK-024's production
+  integration of that contract. A single typed Haxe static method reference
+  selects a dependency-closed stock-Haxe PHP closure; the CLI derives its
+  per-plugin 96-bit prefix, exact class map, guarded polyfill boundary, native
+  public adapter, artifact inventory, and ownership metadata. The zero-argument
+  plugin declaration still packages no private runtime. This bounded title
+  filter proof does not claim arbitrary Haxe-to-PHP coverage, admitted runtime
+  Composer packages, qualified license approval, post-`1.0` retention, or
+  production support.
 - `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
 - `browser-build-architecture.json` is the accepted ADR-013 strict TS/TSX
   primary lane, bounded classic Genes differential, exact project
@@ -154,6 +163,17 @@ remain below the review ceilings, coexist on PHP 7.4/8.4 and clean WordPress
 graph. SDK-024 production integration, runtime Composer packages, independent
 PHP readability review, final ZIP/SBOM, post-`1.0` retention, and production
 support remain explicit non-claims.
+
+Receipt `SDK-024-PRIVATE-PHP-RUNTIME` records the corresponding production CLI
+path. The compile-time plugin plan retains the exact typed callback identity and
+source range, full DCE packages only its reachable closure, and a generated
+native adapter exposes only `string, int -> string`. Two independently built
+plugins are byte-deterministic, use distinct derived prefixes, coexist on PHP
+7.4/8.4 and clean WordPress 7.0, reject an incompatible process-wide polyfill
+before private boot, and remain below the recorded size and cold-boot ceilings.
+The receipt remains bounded to `titleFilter`; general hooks, runtime Composer
+dependencies, qualified license approval, post-`1.0` retention, and production
+support are explicit non-claims.
 
 Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
 collector, four deterministic direct/server compilations, ten source-located

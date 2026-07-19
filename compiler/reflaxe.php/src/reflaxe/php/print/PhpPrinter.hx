@@ -40,7 +40,7 @@ class PhpPrinter {
 		}
 
 		final declarations = file.declarations.copy();
-		declarations.sort((left, right) -> Reflect.compare(stableDeclarationName(file, left), stableDeclarationName(file, right)));
+		declarations.sort((left, right) -> compareText(stableDeclarationName(file, left), stableDeclarationName(file, right)));
 		final renderedDeclarations = [];
 		final declaredSymbols:Map<String, String> = [];
 		for (declaration in declarations) {
@@ -416,6 +416,7 @@ class PhpPrinter {
 				printDynamicObjectProperty(target, property, depth);
 			case PhpFunctionCall(name, args):
 				qualifiedName(name, "function") + printCallArgs(args, depth);
+			case PhpRequire(path, once): (once ? "require_once " : "require ") + printExpr(path, depth);
 			case PhpInvoke(callable, args):
 				printExpr(callable, depth) + printCallArgs(args, depth);
 			case PhpCallableArray(target, method):
@@ -445,6 +446,10 @@ class PhpPrinter {
 			case PhpCastInt(inner): "(int) " + printExpr(inner, depth);
 			case PhpCastString(inner): "(string) " + printExpr(inner, depth);
 		}
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 
 	function printFunction(declaration:PhpFunction):String {

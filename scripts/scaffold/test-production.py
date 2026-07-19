@@ -204,7 +204,7 @@ def validate_plan(plan: dict[str, object]) -> None:
     assert plan["target"] == plan["projectId"]
     assert plan["status"] == ("planned" if plan["dryRun"] else "published")
     expected_limitations = (
-        ["plugin-bootstrap-only", "public-package-installation-blocked"]
+        ["general-plugin-apis-dependency-gated", "public-package-installation-blocked"]
         if plan["kind"] == "plugin"
         else [
             "native-target-producers-not-registered",

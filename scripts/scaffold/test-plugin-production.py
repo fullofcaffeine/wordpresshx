@@ -11,6 +11,7 @@ import re
 import shutil
 import signal
 import stat
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -360,6 +361,315 @@ def php_matrix(plugin: Path, bootstrap_class: str) -> None:
         "class": bootstrap_class,
         "methods": ["boot", "isBooted"],
         "outputBytes": 0,
+    }
+
+
+def private_site_source(source: str, marker: str) -> str:
+    result = source.replace(
+        "WordPress.plugin();",
+        "WordPress.plugin({titleFilter: filterTitle});\n\n"
+        "\tpublic static function filterTitle(title:String, postId:Int):String {\n"
+        f'\t\treturn postId > 0 ? title + ":{marker}" : title;\n'
+        "\t}",
+    )
+    assert result != source
+    return result
+
+
+def expected_private_prefix(slug: str) -> tuple[str, str]:
+    identity = b"wordpress-hx.private-runtime.v1\0" + slug.encode() + b"\0plugin"
+    digest = hashlib.sha256(identity).hexdigest()
+    return "wphx_internal.p" + digest[:24], digest
+
+
+def private_php_matrix(
+    first_plugin: Path,
+    second_plugin: Path,
+    first_bridge: str,
+    second_bridge: str,
+    first_private: str,
+    second_private: str,
+    expected_title: str,
+) -> list[dict[str, object]]:
+    results: list[dict[str, object]] = []
+    for image in PHP_IMAGES:
+        subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--mount",
+                f"type=bind,src={first_plugin},dst=/first,readonly",
+                "--mount",
+                f"type=bind,src={second_plugin},dst=/second,readonly",
+                image,
+                "sh",
+                "-euc",
+                "find /first /second -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l >/dev/null",
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        probe = subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--mount",
+                f"type=bind,src={ROOT},dst=/repo,readonly",
+                "--mount",
+                f"type=bind,src={first_plugin},dst=/first,readonly",
+                "--mount",
+                f"type=bind,src={second_plugin},dst=/second,readonly",
+                image,
+                "php",
+                "/repo/scripts/scaffold/plugin-private-caller.php",
+                f"/first/{first_plugin.name}.php",
+                f"/second/{second_plugin.name}.php",
+                first_bridge,
+                second_bridge,
+                first_private,
+                second_private,
+                expected_title,
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        payload = json.loads(probe.stdout)
+        signature = {"parameters": ["string", "int"], "return": "string"}
+        assert payload == {
+            "expectedMatched": True,
+            "filterCount": 2,
+            "filteredTitle": expected_title,
+            "firstPrivateLoaded": True,
+            "firstSignature": signature,
+            "outputBytes": 0,
+            "prefixesDistinct": True,
+            "secondPrivateLoaded": True,
+            "secondSignature": signature,
+        }
+        conflict = subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--mount",
+                f"type=bind,src={ROOT},dst=/repo,readonly",
+                "--mount",
+                f"type=bind,src={first_plugin},dst=/first,readonly",
+                image,
+                "php",
+                "/repo/scripts/scaffold/plugin-private-conflict.php",
+                f"/first/{first_plugin.name}.php",
+                first_bridge,
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        assert json.loads(conflict.stdout) == {
+            "bridgeLoaded": False,
+            "filterCount": 0,
+            "outputBytes": 0,
+        }
+        assert "WPHX5201" in conflict.stderr
+        samples = subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--mount",
+                f"type=bind,src={ROOT},dst=/repo,readonly",
+                "--mount",
+                f"type=bind,src={first_plugin},dst=/first,readonly",
+                image,
+                "sh",
+                "-euc",
+                'for sample in $(seq 1 25); do php -d opcache.enable_cli=0 /repo/scripts/scaffold/plugin-private-cold-boot.php "$1" "$2" "$3"; done',
+                "private-cold-boot",
+                f"/first/{first_plugin.name}.php",
+                first_bridge,
+                "seed:news",
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        observations = [json.loads(line) for line in samples.stdout.splitlines()]
+        assert len(observations) == 25
+        assert all(
+            value["expectedMatched"] is True
+            and value["filterCount"] == 1
+            and value["result"] == "seed:news"
+            and isinstance(value["elapsedNanoseconds"], int)
+            and value["elapsedNanoseconds"] > 0
+            for value in observations
+        )
+        median = int(statistics.median(value["elapsedNanoseconds"] for value in observations))
+        assert median < 20_000_000
+        results.append(
+            {
+                "image": image,
+                "coldBootP50Nanoseconds": median,
+                "sampleCount": 25,
+                "coexistence": "passed",
+                "polyfillMismatch": "WPHX5201-rejected-before-private-boot",
+            }
+        )
+    return results
+
+
+def exercise_private_runtime(
+    runtime: Runtime,
+    first: Path,
+    second: Path,
+    source: str,
+    third_parent: Path,
+) -> dict[str, object]:
+    first_source = first / "src/typed/news/Site.hx"
+    second_source = second / "src/typed/news/Site.hx"
+    private_site = private_site_source(source, "news")
+    first_source.write_text(private_site)
+    second_source.write_text(private_site)
+    runtime.command(first, "build")
+    runtime.command(second, "build")
+    assert output_snapshot(first) == output_snapshot(second)
+    first_replay = output_snapshot(first)
+    replay = runtime.command(first, "build")
+    ownership = next(
+        value
+        for value in replay
+        if value.get("event") == "stage-completed"
+        and value.get("stage") == "ownership-publish"
+    )
+    assert ownership["payload"]["reason"] == "no-op"
+    assert output_snapshot(first) == first_replay
+
+    third_plan = runtime.scaffold(
+        ["new", "plugin", "typed-pages", "--project", str(third_parent)]
+    )
+    third = third_parent / "typed-pages"
+    third_source = third / "src/typed/pages/Site.hx"
+    third_source.write_text(private_site_source(third_source.read_text(), "pages"))
+    runtime.command(third, "build")
+
+    first_plugin = first / "build/wordpress/typed-news"
+    third_plugin = third / "build/wordpress/typed-pages"
+    first_emission = json.loads(
+        (first / "build/wordpress/.wphx/plugin-emission.json").read_text()
+    )
+    third_emission = json.loads(
+        (third / "build/wordpress/.wphx/plugin-emission.json").read_text()
+    )
+    first_runtime = first_emission["privateRuntime"]
+    third_runtime = third_emission["privateRuntime"]
+    assert first_emission["schema"] == "wordpress-hx.plugin-emission.v2"
+    assert first_emission["stockHaxePhpFiles"] == 15
+    assert first_runtime["classmapEntries"] == 14
+    assert first_runtime["privatePhpFileCount"] == 16
+    assert first_runtime["privatePhpBytes"] < 163_840
+    assert first_runtime["stockFrontPackaged"] is False
+    for slug, value in (("typed-news", first_runtime), ("typed-pages", third_runtime)):
+        prefix, digest = expected_private_prefix(slug)
+        assert value["prefix"] == prefix
+        assert value["derivationSha256"] == digest
+    assert first_runtime["prefix"] != third_runtime["prefix"]
+
+    expected_private_files = 22
+    for project, plugin, emission in (
+        (first, first_plugin, first_emission),
+        (third, third_plugin, third_emission),
+    ):
+        files = sorted(path for path in plugin.rglob("*") if path.is_file())
+        assert len(files) == expected_private_files
+        assert len(emission["files"]) == expected_private_files
+        assert not any(
+            path.name in {"stock-front.php", "composer.json", "composer.lock"}
+            or "vendor" in path.parts
+            or path.name == "Entry.php"
+            for path in files
+        )
+        root_bytes = str(project).encode()
+        assert all(root_bytes not in path.read_bytes() for path in files)
+        manifest = json.loads(
+            (plugin / "private/wordpresshx/runtime-manifest.v1.json").read_text()
+        )
+        assert manifest["schema"] == "wordpress-hx.private-runtime-manifest.v1"
+        assert manifest["composer"]["status"] == "absent-no-runtime-dependencies"
+        assert manifest["autoload"]["processIncludePathMutation"] is False
+        assert manifest["sbom"]["publicationBlocked"] is True
+        assert {component["id"] for component in manifest["sbom"]["components"]} == {
+            "haxe-4.3.7-stdlib",
+            "project-private-haxe",
+            "repository-original-work",
+        }
+        assert sum(
+            path.stat().st_size for path in files if path.suffix == ".php"
+        ) < 409_600
+        bridge = (plugin / "includes/PrivateBridge.php").read_text()
+        signature_line = next(line for line in bridge.splitlines() if "function filterTitle" in line)
+        assert "wphx_internal" not in signature_line
+        assert "public static function filterTitle(string $title, int $postId): string" in signature_line
+        loader = (plugin / "includes/autoload.php").read_text()
+        assert "WPHX5202 WordPressHx private runtime rejected its class map." in loader
+        assert "WPHX5202 WordPressHx private runtime could not register its class map." in loader
+
+    first_bridge = "Typed\\News\\PrivateBridge"
+    third_bridge = "Typed\\Pages\\PrivateBridge"
+    expected_title = "seed:news:pages"
+    matrix = private_php_matrix(
+        first_plugin,
+        third_plugin,
+        first_bridge,
+        third_bridge,
+        first_runtime["privateClass"],
+        third_runtime["privateClass"],
+        expected_title,
+    )
+    wordpress = subprocess.run(
+        [
+            "bash",
+            str(ROOT / "scripts/scaffold/test-plugin-private-wordpress.sh"),
+            str(first_plugin),
+            "typed-news",
+            "Typed\\News\\Bootstrap",
+            first_bridge,
+            first_runtime["privateClass"],
+            str(third_plugin),
+            "typed-pages",
+            "Typed\\Pages\\Bootstrap",
+            third_bridge,
+            third_runtime["privateClass"],
+            expected_title,
+        ],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    wordpress_summary = json.loads(wordpress.stdout.splitlines()[-1])
+    assert wordpress_summary["outcome"] == "passed"
+    assert third_plan["kind"] == "plugin"
+    return {
+        "schema": "wordpress-hx.sdk024-private-runtime-result.v1",
+        "classmapEntries": first_runtime["classmapEntries"],
+        "deterministicSameIdentity": "byte-identical",
+        "privatePhpBytes": first_runtime["privatePhpBytes"],
+        "privatePhpFiles": first_runtime["privatePhpFileCount"],
+        "phpMatrix": matrix,
+        "prefixesDistinct": True,
+        "stockFrontPackaged": False,
+        "wordpress": wordpress_summary,
+        "outcome": "passed",
     }
 
 
@@ -779,9 +1089,11 @@ def run(runtime_root: Path) -> dict[str, object]:
         runtime = Runtime(runtime_root, environment)
         first_parent = evidence / "first"
         second_parent = evidence / "second"
+        third_parent = evidence / "third"
         dry_parent = evidence / "dry"
         first_parent.mkdir()
         second_parent.mkdir()
+        third_parent.mkdir()
         dry_parent.mkdir()
 
         dry_before = snapshot(dry_parent)
@@ -791,7 +1103,7 @@ def run(runtime_root: Path) -> dict[str, object]:
         assert dry_plan["kind"] == "plugin"
         assert dry_plan["operation"] == "new-plugin"
         assert dry_plan["limitations"] == [
-            "plugin-bootstrap-only",
+            "general-plugin-apis-dependency-gated",
             "public-package-installation-blocked",
         ]
         assert snapshot(dry_parent) == dry_before
@@ -904,6 +1216,39 @@ def run(runtime_root: Path) -> dict[str, object]:
             source.replace("WordPress.plugin();", 'WordPress.plugin({unknown: "no"});'),
             source.replace("WordPress.plugin();", 'WordPress.plugin({version: "latest"});'),
             source.replace(
+                "WordPress.plugin();",
+                "WordPress.plugin({titleFilter: (title, postId) -> title});",
+            ),
+            source.replace(
+                "\tpublic static final definition = WordPress.plugin();",
+                "\tpublic static final definition = WordPress.plugin({titleFilter: invalidFilter});\n\n"
+                "\tstatic function invalidFilter(title:String, postId:Int):String {\n"
+                "\t\treturn title;\n"
+                "\t}",
+            ),
+            source.replace(
+                "\tpublic static final definition = WordPress.plugin();",
+                "\tpublic static final definition = WordPress.plugin({titleFilter: invalidFilter});\n\n"
+                "\tpublic static function invalidFilter<T>(title:String, postId:Int):String {\n"
+                "\t\treturn title;\n"
+                "\t}",
+            ),
+            source.replace(
+                "\tpublic static final definition = WordPress.plugin();",
+                "\tpublic static final definition = WordPress.plugin({titleFilter: invalidFilter});\n\n"
+                "\tpublic static function invalidFilter(title:String):String {\n"
+                "\t\treturn title;\n"
+                "\t}",
+            ),
+            source.replace(
+                "\tpublic static final definition = WordPress.plugin();",
+                "\tpublic static final definition = WordPress.plugin({titleFilter: invalidFilter});\n\n"
+                "\t@:native(\"renamed\")\n"
+                "\tpublic static function invalidFilter(title:String, postId:Int):String {\n"
+                "\t\treturn title;\n"
+                "\t}",
+            ),
+            source.replace(
                 "\tpublic static final definition = WordPress.plugin();",
                 "\tpublic static final definition = WordPress.plugin();\n"
                 "\tpublic static final duplicate = WordPress.plugin();",
@@ -964,6 +1309,13 @@ def run(runtime_root: Path) -> dict[str, object]:
         )
         wordpress_summary = json.loads(wordpress_result.stdout.splitlines()[-1])
         assert wordpress_summary["outcome"] == "passed"
+        private_runtime = exercise_private_runtime(
+            runtime,
+            first,
+            second,
+            source,
+            third_parent,
+        )
         strict_haxe_scan()
         return {
             "schema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
@@ -977,6 +1329,7 @@ def run(runtime_root: Path) -> dict[str, object]:
             "devReplay": "three-atomic-generations",
             "devWordPress": "inferred-install-activate-reload-cleanup",
             "phpMatrix": ["7.4", "8.4"],
+            "privateRuntime": private_runtime,
             "wordpress": "7.0-mariadb-clean-activation",
             "strictHaxe": "passed",
             "outcome": "passed",
