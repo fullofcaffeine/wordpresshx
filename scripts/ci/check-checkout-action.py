@@ -44,8 +44,8 @@ def main() -> int:
         workflow,
         re.MULTILINE,
     )
-    assert len(checkout_lines) == 11
-    assert checkout_lines == [(PIN, VERSION)] * 11
+    assert len(checkout_lines) == 12
+    assert checkout_lines == [(PIN, VERSION)] * 12
     assert workflow.count("fetch-depth: 0") == 1
     assert re.search(
         r"(?ms)^  security:\n.*?uses: actions/checkout@[^\n]+\n\s+with:\n\s+fetch-depth: 0",

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-017-GENERATED-OUTPUT-VCS-POLICY",
+  "bead": "wordpresshx-adr-017",
+  "observedAt": "2026-07-19T19:46:35Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/017-generated-output-version-control-policy.md",
+      "sha256": "a316ff3fcf3d67a4ce78c8e9f91152e151a9d082d917b46541fb6862138bb894"
+    },
+    "policy": {
+      "path": "manifests/generated-output-vcs-policy.json",
+      "sha256": "e46c62ba73f525afc1de368f9d75fcce1abeed9f8892df36825e9b331ce3af49"
+    },
+    "checker": {
+      "path": "scripts/generated-output-vcs/check-policy.py",
+      "sha256": "7b0672c6d70d530a5995f863ce886b7c01ac15c9a3c856ab179672b139121127"
+    },
+    "validator": {
+      "path": "scripts/generated-output-vcs/test-policy.py",
+      "sha256": "2dab07c7b84a21c542c2421c25b2ddccffcff714b5c8835d0f8da49592590a6b"
+    },
+    "fixtureReadme": {
+      "path": "fixtures/generated-output-vcs/README.md",
+      "sha256": "9dc5265779c5d292f0ab638d59f78e27629ed69f8281ec0bef9f09989d547568"
+    },
+    "committedOutputPolicy": {
+      "path": "fixtures/generated-output-vcs/committed-output-policy.json",
+      "sha256": "9623bb9038bfeaa35a845bdef00746eba1945de63e7f762691e00f292694cf37"
+    },
+    "fixtureSource": {
+      "path": "fixtures/generated-output-vcs/project/src/acme/site/Site.hx",
+      "sha256": "26eba717eb2da5500bfac64e6cf306b26d3753edadbf26f5718ab32e6b500124"
+    },
+    "fixtureLock": {
+      "path": "fixtures/generated-output-vcs/project/wordpress-hx.fixture-lock.json",
+      "sha256": "527d8949d43da6b59b0dbac69d47a78e8f3191af0f561bb082993e26e82466ef"
+    }
+  },
+  "contract": {
+    "policyId": "wordpress-hx.generated-output-vcs.v1",
+    "ownershipContract": "wordpress-hx.generated-files.v1",
+    "consumerDefault": "ignore-and-regenerate",
+    "consumerCommittedOutput": "explicit-per-root-opt-in",
+    "sdkCommittedOutput": "review-contract-or-required-build-input-only",
+    "handEditGeneratedOutputAllowed": false,
+    "releaseTrustsCommittedOrWorkingOutput": false,
+    "releaseRegenerationRuns": 2,
+    "releaseArchiveBuilds": 2,
+    "publicationAuthorized": false
+  },
+  "verification": {
+    "command": "python3 scripts/generated-output-vcs/test-policy.py",
+    "policyMutationCount": 19,
+    "receiptMutationCount": 4,
+    "repositoryModeCount": 3,
+    "generatedArtifactCount": 2,
+    "gitRepositoryCount": 13,
+    "releaseCloneCount": 7,
+    "releaseScenarioCount": 5,
+    "explicitRootPolicyNegativeCount": 4,
+    "defaultConsumerIgnoreAndRegenerate": "passed",
+    "sdkGoldenDrift": "passed",
+    "consumerOptInDriftAndProvenance": "passed",
+    "cleanReleaseDoubleReplay": "passed",
+    "dirtyReleaseRejection": "passed",
+    "ambientCacheIsolation": "passed",
+    "checkoutNonMutation": "passed",
+    "committedDeploymentOutputIgnored": "passed",
+    "committedBuildInputFreshComparison": "passed",
+    "staleCommittedBuildInputRejection": "passed",
+    "releaseProvenanceBinding": "passed",
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repositoryCount": 3,
+    "repositories": [
+      "haxe.elixir.codex",
+      "haxe.ocaml",
+      "haxe.ruby"
+    ],
+    "exactCommitPathBlobAndSha256Recorded": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false
+  },
+  "freshEyesReview": {
+    "reviewer": "Codex fresh-eyes subagent",
+    "modelFamilyIndependenceClaimed": false,
+    "initialBlockingFindingCount": 5,
+    "initialLowerRiskFindingCount": 3,
+    "blockingFindingsResolvedBeforeCommit": true,
+    "scope": [
+      "acceptance-and-stop-condition",
+      "evidence-and-overclaim-boundaries",
+      "policy-and-test-consistency",
+      "release-and-version-control-security"
+    ]
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "generated-output-vcs",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "limitations": [
+    "The Git corpus uses synthetic deterministic PHP and JavaScript carriers; it does not execute the production PHP compiler, Genes, WordPress, a browser, or generated target code.",
+    "The fixture manifest proves the VCS and provenance behavior around exact paths, sizes, and hashes; ADR-007 and SDK-041 separately own and test the production generated-files schema and transaction.",
+    "The deterministic fixture ZIP is not a WordPress package and proves no package layout, installation, activation, SBOM, license, signature, registry, or runtime property.",
+    "Production wphx integration, Windows Git and filesystem behavior, actual publication, and production support remain untested."
+  ],
+  "claims": {
+    "architectureDecision": "proposed-hosted-evidence-pending",
+    "closedPolicyContract": "validated",
+    "gitFixtureReplay": "runtime-tested",
+    "productionWphxIntegration": "not-tested",
+    "deterministicWordPressZip": "not-tested",
+    "registryRelease": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

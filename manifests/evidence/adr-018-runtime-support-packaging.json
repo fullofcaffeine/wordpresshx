@@ -71,7 +71,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "2d8b2306d9c054d177a366e638f62bc949294f673bbccd56e1be89d2fd015aba"
+      "sha256": "d980ca844bd74a38e1e55ae6b3c7c01ce56286009d0dd946ad38449135fbbcee"
     },
     "imageLock": {
       "path": "docker/images.lock.json",
@@ -263,6 +263,13 @@
         "status": "passed"
       }
     }
+  },
+  "adr017WorkflowRevision": {
+    "observedAt": "2026-07-19T19:32:00Z",
+    "reason": "ADR-017 adds an independent generated-output VCS policy job while preserving every ADR-018 runtime-support job and command.",
+    "runtimeSupportContractChanged": false,
+    "runtimeSupportFixtureOrEvidenceChanged": false,
+    "evidenceOwner": "ADR-017-GENERATED-OUTPUT-VCS-POLICY"
   },
   "limitations": [
     "The package builder is an executable architecture harness, not the SDK-024 semantic-plan/emitter/owner integration.",

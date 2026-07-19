@@ -65,6 +65,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   the historical contract. `ownership-implementation.json` records the SDK-041
   Haxe/Genes implementation, its exact runtime profile, and its bounded locked
   Linux filesystem evidence; target emitters remain later work.
+- `generated-output-vcs-policy.json` is ADR-017's proposed role-based policy for
+  SDK goldens, default regenerated consumer output, explicit per-root consumer
+  commit opt-in, drift review, and invariant clean release regeneration. Its
+  Git/ZIP rehearsal is synthetic policy evidence; SDK-101 remains responsible
+  for production WordPress packaging, SBOM, provenance, and installation.
 - `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
   effective-input, `wphx` command/stage/event, isolated compiler-server, and
   one-command development-loop lock. Its synthetic transcript proves dry-run,
@@ -287,6 +292,18 @@ files, five discovery roots, eight toolchain components, 22 dry-run events,
 23 development events, and 28 fail-closed mutations. It establishes no real
 watcher, service, browser reload, installed-consumer, or production claim.
 
+Receipt `ADR-017-GENERATED-OUTPUT-VCS-POLICY` records the proposed closed
+three-mode policy, 19 policy and four receipt mutations, default ignored
+consumer output, reviewed SDK golden drift, a closed explicit-root consumer
+policy with four root-admission negatives, committed output/provenance drift,
+13 temporary Git repositories, seven release clones, stale committed deployment
+output exclusion, exact generated build-input comparison and stale rejection,
+two-artifact generation/archive byte equality, complete provenance binding,
+ambient-cache isolation, dirty-source rejection, and checkout non-mutation.
+Hosted acceptance remains pending. The generated PHP, JavaScript, manifest, and
+ZIP are synthetic carriers; production `wphx`, WordPress packaging, SBOM,
+registry, and support claims remain untested.
+
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 
 The exact `gutenberg-forward-23.4` authority is a separate lock entry and profile tree. Receipt `SDK-011-GUTENBERG-FORWARD-23.4` records direct source/release materialization, compile-admission negatives, and final-artifact leak scans. It remains experimental; WordPress 7.0 compatibility is forbidden and runtime/production claims are `not-tested`.
@@ -307,8 +324,9 @@ SDK-002 remain open and all public publication remains blocked.
 
 Receipt `CI-CHECKOUT-NODE24` records the official `actions/checkout` v7.0.0
 release, exact verified commit/tree/license evidence, Node 24 runtime declaration,
-all eleven immutable workflow pins, and preservation of full Git history only for
-the security lane. Its hosted claim is limited to the exact GitHub-hosted
+the immutable action pin across its recorded workflow, and preservation of full
+Git history only for the security lane. The current validator checks every use;
+its hosted claim is limited to the exact GitHub-hosted
 Ubuntu 24.04 workflow run; it creates no SDK or generated-artifact claim.
 
 Receipt `G0-PRODUCT-AUTHORITY-BASELINE` closes the independent product,

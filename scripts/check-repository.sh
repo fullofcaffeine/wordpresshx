@@ -37,6 +37,7 @@ required_files=(
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/014-source-maps-and-php-trace-correlation.md
   docs/adr/016-project-and-cli-configuration.md
+  docs/adr/017-generated-output-version-control-policy.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
@@ -351,6 +352,8 @@ required_files=(
   scripts/semantic-plan/test.sh
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
+  scripts/generated-output-vcs/check-policy.py
+  scripts/generated-output-vcs/test-policy.py
   scripts/ownership/test-adr-contract.sh
   scripts/ownership/test-contract.py
   scripts/ownership/test-production.py
@@ -395,6 +398,11 @@ required_files=(
   fixtures/semantic-collector/config.json
   fixtures/semantic-collector/src/fixtures/semanticcollector/InvalidFixture.hx
   fixtures/semantic-collector/src/fixtures/semanticcollector/ValidFixture.hx
+  fixtures/generated-output-vcs/README.md
+  fixtures/generated-output-vcs/committed-output-policy.json
+  fixtures/generated-output-vcs/project/.gitignore
+  fixtures/generated-output-vcs/project/src/acme/site/Site.hx
+  fixtures/generated-output-vcs/project/wordpress-hx.fixture-lock.json
   fixtures/ownership/README.md
   fixtures/ownership/artifacts/initial/acme-observatory.php.txt
   fixtures/ownership/artifacts/initial/stale.php.txt
@@ -459,6 +467,7 @@ required_files=(
   manifests/semantic-plan-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
+  manifests/generated-output-vcs-policy.json
   manifests/deterministic-build-implementation.json
   manifests/dev-loop-implementation.json
   manifests/plugin-development-implementation.json
@@ -482,6 +491,7 @@ required_files=(
   manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
+  manifests/evidence/adr-017-generated-output-vcs-policy.json
   manifests/evidence/sdk-041-ownership-transaction.json
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/sdk-043-project-cli.json
@@ -9117,6 +9127,7 @@ python3 scripts/runtime-support/test-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/ownership/test-contract.py
+python3 scripts/generated-output-vcs/test-policy.py
 python3 scripts/project-cli/test-contract.py
 python3 -m py_compile scripts/determinism/compare-builds.py
 python3 -m py_compile scripts/determinism/test-production.py

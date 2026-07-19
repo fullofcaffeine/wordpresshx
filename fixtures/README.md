@@ -44,6 +44,14 @@ CLI against isolated copies of the same consumer while preserving the original
 contract vectors. It is not the SDK-044 watcher/process supervisor or
 WordPress/Next.js runtime evidence.
 
+`generated-output-vcs/` contains ADR-017's source-only Haxe consumer and exact
+synthetic tool identities. Its harness creates temporary Git repositories to
+prove default ignored output, reviewed SDK goldens, explicit committed-output
+drift/provenance, clean immutable release inputs, cache isolation, deterministic
+double generation and archive assembly, and checkout non-mutation. Its PHP,
+JavaScript, manifest, and ZIP bytes are policy carriers, not production compiler,
+Genes, WordPress, browser, package, or release evidence.
+
 `runtime-support-packaging/` contains ADR-018's strict Haxe private-logic
 fixture. The evidence harness compiles it under two automatically derived PHP
 prefixes and constructs temporary dependency-closed WordPress plugins to test

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "policyId": "wordpress-hx.generated-output-vcs.v1",
+  "decision": "ADR-017",
+  "status": "proposed-hosted-evidence-pending",
+  "authority": {
+    "authoredApplicationSource": "haxe",
+    "generatedOutputRole": "derived-inspectable-non-authoritative",
+    "ownershipContract": "wordpress-hx.generated-files.v1",
+    "canonicalization": "wordpress-hx.canonical-json.v1",
+    "exactProjectLockRequired": true,
+    "generatedBytesMaySupersedeAuthoredSource": false,
+    "handEditGeneratedOutputAllowed": false,
+    "sameBytesGrantOwnership": false
+  },
+  "artifactClasses": [
+    {
+      "id": "authored-haxe-and-hand-owned-assets",
+      "vcsDefault": "commit",
+      "authority": "authored",
+      "examples": [
+        "assets",
+        "haxe-source",
+        "tests"
+      ]
+    },
+    {
+      "id": "exact-toolchain-bootstrap-and-locks",
+      "vcsDefault": "commit",
+      "authority": "derived-input",
+      "examples": [
+        "bootstrap-projections",
+        "dependency-locks",
+        "profile-locks",
+        "toolchain-locks"
+      ]
+    },
+    {
+      "id": "private-stage-cache-and-transaction-state",
+      "vcsDefault": "ignore",
+      "authority": "ephemeral",
+      "examples": [
+        "compiler-cache",
+        "ownership-journals",
+        "private-stages"
+      ]
+    },
+    {
+      "id": "release-archives-and-debug-companions",
+      "vcsDefault": "ignore",
+      "authority": "release-artifact",
+      "examples": [
+        "deployment-zips",
+        "provenance-bundles",
+        "source-map-companions"
+      ]
+    },
+    {
+      "id": "reviewed-contract-snapshots-and-required-build-inputs",
+      "vcsDefault": "conditional-sdk",
+      "authority": "derived-review-contract",
+      "examples": [
+        "bootstrap-snapshots",
+        "catalogs",
+        "goldens",
+        "receipts"
+      ]
+    },
+    {
+      "id": "runtime-and-deployment-output",
+      "vcsDefault": "ignore-consumer-default",
+      "authority": "derived-deployment",
+      "examples": [
+        "css",
+        "javascript",
+        "metadata",
+        "php",
+        "typescript"
+      ]
+    }
+  ],
+  "repositoryModes": [
+    {
+      "id": "consumer-committed-output-opt-in",
+      "selectedByDefault": false,
+      "commits": [
+        "authored-haxe-and-hand-owned-assets",
+        "exact-toolchain-bootstrap-and-locks",
+        "runtime-and-deployment-output"
+      ],
+      "ignores": [
+        "private-stage-cache-and-transaction-state",
+        "release-archives-and-debug-companions"
+      ],
+      "requiredMetadata": [
+        "exact-generated-manifest",
+        "explicit-output-root-policy"
+      ],
+      "generatedOutputAdmission": "explicit-per-output-root-with-adr007-manifest",
+      "requiredGate": "fresh-regenerate-and-byte-compare"
+    },
+    {
+      "id": "consumer-default",
+      "selectedByDefault": true,
+      "commits": [
+        "authored-haxe-and-hand-owned-assets",
+        "exact-toolchain-bootstrap-and-locks"
+      ],
+      "ignores": [
+        "private-stage-cache-and-transaction-state",
+        "release-archives-and-debug-companions",
+        "runtime-and-deployment-output"
+      ],
+      "requiredMetadata": [],
+      "generatedOutputAdmission": "none",
+      "requiredGate": "clean-regenerate-and-test"
+    },
+    {
+      "id": "sdk",
+      "selectedByDefault": true,
+      "commits": [
+        "authored-haxe-and-hand-owned-assets",
+        "exact-toolchain-bootstrap-and-locks",
+        "reviewed-contract-snapshots-and-required-build-inputs"
+      ],
+      "ignores": [
+        "private-stage-cache-and-transaction-state",
+        "release-archives-and-debug-companions",
+        "runtime-and-deployment-output"
+      ],
+      "requiredMetadata": [
+        "declared-generated-artifact-role",
+        "provenance-record"
+      ],
+      "generatedOutputAdmission": "review-contract-or-required-build-input-with-provenance",
+      "requiredGate": "fresh-regenerate-and-byte-compare"
+    }
+  ],
+  "driftWorkflow": {
+    "committedOutputChangeUnit": "same-change-as-source-generator-policy-or-lock",
+    "steps": [
+      "resolve-exact-source-tool-profile-and-generator-identities",
+      "regenerate-into-new-private-stage",
+      "validate-complete-adr007-manifest-and-artifacts",
+      "compare-path-set-byte-size-sha256-and-bytes",
+      "review-authored-and-generated-diffs-together",
+      "publish-manifest-last-when-requested-or-succeed-validation-only-without-live-mutation"
+    ],
+    "failureConditions": [
+      "committed-output-without-declared-role",
+      "generated-diff-without-corresponding-authority-change",
+      "manual-generated-file-edit",
+      "missing-extra-or-byte-different-regeneration",
+      "stale-or-mismatched-source-tool-profile-or-generator-identity"
+    ],
+    "reviewRequirements": [
+      "generated-diff-is-evidence-never-authority",
+      "review-source-generator-lock-and-output-diff-together",
+      "unexplained-or-out-of-scope-generated-diff-fails"
+    ],
+    "manualEditRemediation": "edit-haxe-or-generator-then-regenerate"
+  },
+  "releaseProtocol": {
+    "sourceIdentity": "immutable-clean-commit-or-tag",
+    "workingTreeGeneratedOutputTrusted": false,
+    "committedGeneratedOutputTrustedWithoutRegeneration": false,
+    "ambientCacheTrusted": false,
+    "privateStageOutsideSourceCheckout": true,
+    "regenerationRuns": 2,
+    "generatedTreeComparison": "exact-path-size-sha256-and-bytes",
+    "archiveBuilds": 2,
+    "archiveComparison": "byte-for-byte",
+    "checkoutMustRemainUnchanged": true,
+    "provenanceBinds": [
+      "archive-digest",
+      "generated-manifest-digest",
+      "generator-identity",
+      "profile-identity",
+      "source-commit",
+      "toolchain-lock"
+    ],
+    "committedGeneratedBuildInputRule": "fresh-regeneration-must-compare-exactly",
+    "publicationAuthorization": "separate-adr020-and-adr021-gates"
+  },
+  "changeControl": {
+    "consumerDefaultChangeRequires": "superseding-adr-and-scaffold-migration",
+    "generatedArtifactClassExpansionRequiresReview": true,
+    "releaseRegenerationMayBeRelaxed": false,
+    "ownershipMeaningChangeRequires": "new-adr007-contract-major"
+  },
+  "referencePatterns": [
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "a4897cd3106f916c26f813388215f69699e742cc",
+      "path": "test/AGENTS.md",
+      "blob": "f66aa0813a96f356684ec040572ae1de3d525e5b",
+      "sha256": "bf4bee56b022503fb50449ddb419d6c33ea5f952f7fb2bea4cfab445339af397",
+      "concept": "committed-goldens-are-reviewed-contracts-while-fresh-output-is-disposable",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.ocaml",
+      "commit": "945a0a2896fa8cc2e47b1a375df319d4acce32d8",
+      "path": "docs/02-user-guide/SOURCE_NATIVE_RUNTIME_PACKAGING_STRATEGY.md",
+      "blob": "27028808e9ac7c14b58fcc6d73e545ef8a877430",
+      "sha256": "1959eb2a6c9755e6632662655e07d25522949c9761017b916336acd408f05c77",
+      "concept": "exceptional-bootstrap-snapshots-are-script-generated-build-inputs-and-never-hand-edited",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a647b11055bde552823c4e7cede31ecf9f5d0bc5",
+      "path": "docs/railshx-generated-artifact-ownership.md",
+      "blob": "d4b0a998a9bcbf2286f8d78b9bae902458f5098f",
+      "sha256": "5faf4040863ed189b6a8907cb0930026ed7bb52d4cee8e78e0fa3b83d7a4e761",
+      "concept": "explicit-source-authority-and-snapshots-do-not-make-generated-output-an-api",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    }
+  ],
+  "claims": {
+    "architectureDecision": "proposed-hosted-evidence-pending",
+    "closedPolicyContract": "validated",
+    "gitFixtureReplay": "runtime-tested",
+    "productionWphxIntegration": "not-tested",
+    "deterministicWordPressZip": "not-tested",
+    "registryRelease": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

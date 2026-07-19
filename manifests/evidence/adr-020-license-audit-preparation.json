@@ -43,7 +43,7 @@
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "ad470c592947e0d5c54d9718250f283a6bcf8ab98f987fb04dac4092d7750b7d"
+      "sha256": "327488c89db5f94872b899386613c16dccad8b0aba9b46752c6c53dbde9bdf81"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",
@@ -89,6 +89,14 @@
     "commit": "e4855dc398c9c9ea16ee97d9e4152e52eb355432",
     "status": "passed",
     "fullMatrixStatus": "passed"
+  },
+  "adr017WorkflowRevision": {
+    "observedAt": "2026-07-19T19:39:00Z",
+    "reason": "ADR-017 adds one exact-pinned checkout use for its independent policy job.",
+    "licensePolicyChanged": false,
+    "componentInventoryChanged": false,
+    "publicationStateChanged": false,
+    "evidenceOwner": "ADR-017-GENERATED-OUTPUT-VCS-POLICY"
   },
   "claims": {
     "componentInventory": "inventoried",

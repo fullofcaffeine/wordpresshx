@@ -848,13 +848,13 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
     workflow = audit.read_text(".github/workflows/repository.yml")
     checkout_pins = action_pins(workflow, "actions/checkout")
     audit.check(
-        len(checkout_pins) == 11
+        len(checkout_pins) == 12
         and every_action_use_is_exact(
             workflow,
             "actions/checkout",
             components.get("actions-checkout-7.0.0", {}).get("commit"),
         ),
-        "all eleven checkout actions must use the inventoried exact commit",
+        "all twelve checkout actions must use the inventoried exact commit",
     )
     audit.check(
         workflow.count("fetch-depth: 0") == 1
@@ -976,6 +976,7 @@ def validate_receipt(audit: Audit) -> None:
             "review",
             "implementation",
             "hostedWorkflow",
+            "adr017WorkflowRevision",
             "claims",
             "limitations",
         },
@@ -991,6 +992,43 @@ def validate_receipt(audit: Audit) -> None:
     audit.check(
         receipt.get("status") == "prepared-review-pending",
         "ADR-020 receipt must remain prepared-review-pending",
+    )
+
+    workflow_revision = receipt.get("adr017WorkflowRevision", {})
+    audit.keys(
+        workflow_revision,
+        {
+            "observedAt",
+            "reason",
+            "licensePolicyChanged",
+            "componentInventoryChanged",
+            "publicationStateChanged",
+            "evidenceOwner",
+        },
+        "receipt.adr017WorkflowRevision",
+    )
+    audit.check(
+        workflow_revision.get("observedAt") == "2026-07-19T19:39:00Z",
+        "ADR-017 workflow revision observation time must remain exact",
+    )
+    audit.check(
+        workflow_revision.get("reason")
+        == "ADR-017 adds one exact-pinned checkout use for its independent policy job.",
+        "ADR-017 workflow revision reason differs",
+    )
+    for field in (
+        "licensePolicyChanged",
+        "componentInventoryChanged",
+        "publicationStateChanged",
+    ):
+        audit.check(
+            workflow_revision.get(field) is False,
+            f"receipt.adr017WorkflowRevision.{field} must be false",
+        )
+    audit.check(
+        workflow_revision.get("evidenceOwner")
+        == "ADR-017-GENERATED-OUTPUT-VCS-POLICY",
+        "ADR-017 workflow revision evidence owner differs",
     )
 
     subjects = receipt.get("subject", {})

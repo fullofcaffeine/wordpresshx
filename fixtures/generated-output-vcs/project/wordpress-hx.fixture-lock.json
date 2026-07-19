@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "fixtureOnly": true,
+  "sdkIdentity": "adr-017-synthetic-sdk@1",
+  "generatorIdentity": "adr-017-synthetic-generator@1",
+  "profileIdentity": "adr-017-synthetic-profile@1"
+}

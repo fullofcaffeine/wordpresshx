@@ -51,4 +51,5 @@ Decisions involving licensing, security, public support, or compatibility claims
 
 ## Proposed records
 
+- [ADR-017: Generated output version-control policy](017-generated-output-version-control-policy.md) — local contract evidence passed; required hosted policy replay pending.
 - [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — qualified review and owner approval pending; no license grant or publication authorization.

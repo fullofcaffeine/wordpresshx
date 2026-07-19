@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "policyId": "wordpress-hx.generated-output-vcs-project.v1",
+  "mode": "consumer-committed-output-opt-in",
+  "outputRoots": [
+    "generated"
+  ],
+  "manifestPath": "generated/generated-files.fixture.json",
+  "authority": "haxe-and-exact-locks",
+  "handEditsAllowed": false,
+  "fixtureOnly": true
+}
