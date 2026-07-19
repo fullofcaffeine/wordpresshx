@@ -343,7 +343,7 @@
           "const": "project-isolated-compatible-attach-v1"
         },
         "compatibilityDigestAlgorithm": {
-          "const": "sha256-project-lock-config-compiler-and-build-env-v1"
+          "const": "sha256-project-lock-config-compiler-inputs-and-build-env-v2"
         },
         "compatibilityDigest": {
           "$ref": "#/$defs/sha256"

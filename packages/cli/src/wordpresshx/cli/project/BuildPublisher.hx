@@ -19,6 +19,11 @@ typedef BuildPublication = {
 
 /** Foundation metadata emitter plus the sole live-tree publication boundary. **/
 class BuildPublisher {
+	public static function currentManifestDigest(context:ProjectContext):Null<String> {
+		final manifest = OwnershipPreflight.inspect(context);
+		return manifest == null ? null : ProjectContract.string(manifest, "manifestDigest", "ownership manifest");
+	}
+
 	public static function recover(context:ProjectContext):String {
 		final paths = OwnershipPaths.resolve(context.bootstrap);
 		try {

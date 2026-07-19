@@ -6,7 +6,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
-      "sha256": "f128b9f5afc06c64022b1af700b0a82ea36be88d7994b7d4999113dca5c7f480"
+      "sha256": "2a69656f367d8ee5ce59863410524b4a90b7b1d109819964336b8b8d2a6d1dd2"
     },
     "reportBuilder": {
       "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
@@ -18,7 +18,7 @@
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
-      "sha256": "e03696c4d3aacd8c17fb0f31bf8aeafddde7f06fdb317b22b2f58ece65857b77"
+      "sha256": "1b912e545f882c1a883df616c4563f4f1f00ab809a234742bc983e8ae37c4232"
     },
     "ownershipPaths": {
       "path": "packages/cli/src/wordpresshx/cli/project/OwnershipPaths.hx",
@@ -50,7 +50,7 @@
     },
     "projectCliCorpus": {
       "path": "scripts/project-cli/test-production.py",
-      "sha256": "950395b4ae335fae8e12d893e32b7734605d13c68c502b6100bcc5ecc7db1628"
+      "sha256": "ccf25a8f756b6829870a58370481bd20001f3c76571192b229641c79c2d8318f"
     },
     "ownershipContract": {
       "path": "scripts/ownership/test-contract.py",
@@ -72,11 +72,11 @@
     ],
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "a501a89cfeda577f6a32cc73e00becf234ab7711330e05f03ac51d592532647a"
+      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "dd0bfd77d5308ff82f9c9b73073bf1f8733ccd27b261ffddca78b8b2df78c184"
+      "sha256": "1c80f0f7299926fdce4090934790ce346ee6e17a1fa3c3607f205fc35c0543c7"
     }
   },
   "implementation": {
@@ -101,8 +101,8 @@
     "archiveEntryCount": 2,
     "negativeComparisonCount": 3,
     "additiveRootMigrationCount": 1,
-    "fingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
-    "archiveSha256": "7d05200b86caccee66bc37d74259aef6d6452c15d913aa1ab69551bb00fdad4f",
+    "fingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
+    "archiveSha256": "d21e566b819784bbfbdac6c0fc100f8d9edf83da18cd341600ffcb5ae3ad9f10",
     "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
     "containerNetwork": "none",
     "genesCompileReplay": "byte-identical",

@@ -6,6 +6,26 @@ import wordpresshx.cli.CliFailure;
 /** Direct, bounded Haxe typing for build/check; SDK-044 alone owns --wait. **/
 class CompilerRunner {
 	public static function typeProject(context:ProjectContext):Void {
+		validateBootstrap(context);
+		run(context, [".wphx/bootstrap/project.hxml"]);
+	}
+
+	public static function typeProjectWithServer(context:ProjectContext, port:Int):Void {
+		validateBootstrap(context);
+		run(context, ["--connect", Std.string(port), ".wphx/bootstrap/project.hxml"]);
+	}
+
+	public static function probeServer(context:ProjectContext, port:Int):Bool {
+		final result:Dynamic = ChildProcess.spawnSync("haxe", ["--connect", Std.string(port), "-version"], {
+			cwd: context.bootstrap.root,
+			encoding: "utf8",
+			timeout: 1000,
+			stdio: ["ignore", "pipe", "pipe"]
+		});
+		return Reflect.field(result, "error") == null && Reflect.field(result, "status") == 0;
+	}
+
+	static function validateBootstrap(context:ProjectContext):Void {
 		final hxmlPath = ".wphx/bootstrap/project.hxml";
 		final hxml = ProjectFiles.read(context.bootstrap.root, hxmlPath, "Haxe bootstrap").toString("utf8");
 		if (hxml.split("\n").map(StringTools.trim).indexOf("--no-output") < 0) {
@@ -14,7 +34,11 @@ class CompilerRunner {
 					"Regenerate .wphx/bootstrap/project.hxml with the exact CLI instead of adding a live output flag."
 				]);
 		}
-		final result:Dynamic = ChildProcess.spawnSync("haxe", [hxmlPath], {
+	}
+
+	static function run(context:ProjectContext, arguments:Array<String>):Void {
+		final hxmlPath = ".wphx/bootstrap/project.hxml";
+		final result:Dynamic = ChildProcess.spawnSync("haxe", arguments, {
 			cwd: context.bootstrap.root,
 			encoding: "utf8",
 			timeout: 120000,

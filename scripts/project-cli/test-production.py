@@ -390,15 +390,6 @@ def run(runtime_root: Path) -> dict[str, object]:
         assert snapshot(broken_haxe) == broken_snapshot
         runtime.no_write += 1
 
-        dev_snapshot = snapshot(broken_haxe)
-        _, dev_documents = runtime.invoke_project(broken_haxe, "dev", "--services=none", expected=7)
-        assert any(
-            value.get("event") == "diagnostic" and value.get("payload", {}).get("diagnostic", {}).get("code") == "WPHX4000"
-            for value in dev_documents
-        )
-        assert snapshot(broken_haxe) == dev_snapshot
-        runtime.no_write += 1
-
         def negative(name: str, mutate, expected: int = 3) -> None:
             candidate = evidence / ("negative-" + name)
             shutil.copytree(PROJECT_FIXTURE, candidate)

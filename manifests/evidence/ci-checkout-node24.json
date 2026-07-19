@@ -25,7 +25,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "a501a89cfeda577f6a32cc73e00becf234ab7711330e05f03ac51d592532647a"
+      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
     }
   },
   "change": {

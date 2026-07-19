@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-044-DEV-LOOP",
+  "bead": "wordpresshx-sdk-044",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T01:09:28Z",
+  "implementationCommit": null,
+  "subject": {
+    "implementationManifest": {
+      "path": "manifests/dev-loop-implementation.json",
+      "sha256": "c89560e0b677ab6526748935e05560818a02f25dd30719300a533b370dd852de"
+    },
+    "implementationFiles": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/DevEngine.hx",
+        "sha256": "20d78df951dc2629d932cdfa844125916faeabc81cad5e5120ecddcdf10e2379"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx",
+        "sha256": "0e1f09b0f2c45b2d53e53dc70d6a6ba2d7c4dca31d64f0632a25813f0f0a9173"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ProjectBuildResult.hx",
+        "sha256": "04a6faddc81947035ab29b81ab2d317e929de0443023d9d3cd1ff65487f261dd"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
+        "sha256": "096a33205582be6ceaf43353c138a7f6a09958f7eeef778b2519eb87c26ff91d"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ManagedCompiler.hx",
+        "sha256": "3edee3b541df600a078917b2d85299728cc2cbe66ce2704c975ab8dcbc448c44"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
+        "sha256": "a3ce588f0e92a4bea0e633afb3f521ed12f3f6b3a4488430c2235a2a210951db"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
+        "sha256": "267bdeabd0b0cfa71e4e6f4fc4ec8c36a2133609c7a75fcb1b170d6d2423ccce"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
+        "sha256": "05e0060f9208ed2c5c731151972641501ee0a257f07cbb1d6d650b79b8886b86"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+        "sha256": "1b8b50774f8cc5d39b43498500fff884f421b50c18e2fa148ead2245adfd1ee6"
+      }
+    ],
+    "validator": {
+      "path": "scripts/dev-loop/test-production.py",
+      "sha256": "35f3ec385330728903b8917998c457e0bc83cc43f78b9fd723ae0474e93c38c7"
+    },
+    "gate": {
+      "path": "scripts/dev-loop/test-production.sh",
+      "sha256": "00cb806410a53d21619024cd580a90b32e3910886bf687fffcf6d6f97b7e0dc4"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
+    },
+    "effectiveInputsSchema": {
+      "path": "schemas/effective-inputs.schema.json",
+      "sha256": "0e4a2933658d389a808e6e330225d8a483506fb1f8170fa1cb32c2cc645415c2"
+    },
+    "effectiveInputsFixture": {
+      "path": "fixtures/project-cli/valid/effective-inputs.json",
+      "sha256": "0ad8c20c7d1478306ec717b5b7f58789e6c789b0097ba8fe79aae07f57f121db"
+    },
+    "architectureDocument": {
+      "path": "docs/architecture/build-and-dev-loop.md",
+      "sha256": "1c80f0f7299926fdce4090934790ce346ee6e17a1fa3c3607f205fc35c0543c7"
+    }
+  },
+  "implementation": {
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "managedCompiler": "project-local-haxe-wait-with-direct-fallback",
+    "watchAuthority": "authenticated-effective-input-graph",
+    "publication": "complete-transaction-manifest-last",
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false
+  },
+  "verification": {
+    "command": "bash scripts/dev-loop/test-production.sh",
+    "outcome": "passed",
+    "compileReplayCount": 2,
+    "nodeVersion": "22.17.0",
+    "containerNetwork": "none",
+    "publishedGenerations": 7,
+    "compilerStarts": 2,
+    "incrementalAndCleanOwnedBytes": "byte-identical",
+    "failedBuildRetainedExactOwnedBytes": "passed",
+    "compilerLeaseRemovedOnSigint": "passed",
+    "durablePathPrivacy": "passed"
+  },
+  "referenceReview": {
+    "repository": "haxe.elixir.codex",
+    "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+    "concepts": [
+      "single-effective-input-and-watch-root-graph",
+      "debounced-single-flight-rebuild",
+      "owned-compatible-haxe-wait-lifecycle",
+      "bounded-direct-compilation-fallback"
+    ],
+    "exactPathBlobAndSha256RecordedInImplementation": true,
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test production compile and watch development loop",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true
+  },
+  "limitations": [
+    "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
+    "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
+    "Typed WordPress and Next.js service supervision, readiness, service ports, and reload adapters are not implemented.",
+    "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
+  ],
+  "claims": {
+    "productionWphxDevCompileWatch": "runtime-tested-local",
+    "atomicIncrementalPublication": "runtime-tested-local",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentService": "not-tested",
+    "nextjsDevelopmentService": "not-tested",
+    "automaticBrowserReload": "not-tested",
+    "windowsWatcherAndProcessBehavior": "not-tested",
+    "networkFilesystemBehavior": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

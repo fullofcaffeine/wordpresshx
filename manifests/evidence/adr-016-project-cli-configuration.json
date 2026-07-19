@@ -6,11 +6,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
-      "sha256": "8214b0d7961ec8f9ba5e0d8d5918289919a7569ba4e5088d9087fb2a2a2a7ba9"
+      "sha256": "f35828af5124637ea2418b29f6b6d9eb637548c443f2c25bcfc3884f70e58bd7"
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",
-      "sha256": "9103cd4c3d92baa2e77401df134a8033e00af3a15320e5ebc868295f234b88ae"
+      "sha256": "0b97eee74b23bef8876200f069129ca37b807dcc3287246e4fa07c7a7fb770f4"
     },
     "projectSchema": {
       "path": "schemas/project.schema.json",
@@ -22,7 +22,7 @@
     },
     "effectiveInputsSchema": {
       "path": "schemas/effective-inputs.schema.json",
-      "sha256": "403ffd1f0c112c726b3de47009acae05dad4f631a75d28d95c304dd989878d1a"
+      "sha256": "0e4a2933658d389a808e6e330225d8a483506fb1f8170fa1cb32c2cc645415c2"
     },
     "cliEventSchema": {
       "path": "schemas/cli-event.schema.json",
@@ -30,7 +30,7 @@
     },
     "validator": {
       "path": "scripts/project-cli/test-contract.py",
-      "sha256": "243bfeb3e0dcef7b7d34dd5cf13e4ab81a239970c30a8df13e0e4020917308ee"
+      "sha256": "82f90af2300d0f37c62ef1811455fa319a5187d81d28a26c849546b0205ac3c8"
     },
     "gate": {
       "path": "scripts/project-cli/test.sh",
@@ -54,15 +54,15 @@
     },
     "effectiveInputsFixture": {
       "path": "fixtures/project-cli/valid/effective-inputs.json",
-      "sha256": "e32b65f3ab61e7acab6e3a27348d12648b18f434b918851d74e4c0c02ffd8e7d"
+      "sha256": "0ad8c20c7d1478306ec717b5b7f58789e6c789b0097ba8fe79aae07f57f121db"
     },
     "dryRunEventsFixture": {
       "path": "fixtures/project-cli/valid/build-dry-run.events.jsonl",
-      "sha256": "d563b1282fe33922a225177be026a159e3dcab3f83599a5613e6cfc98f3b455d"
+      "sha256": "35639f3ad0a66bf35cbdfee0c9fd5f1df867df8385b6ce28090657c60ade43c3"
     },
     "devEventsFixture": {
       "path": "fixtures/project-cli/valid/dev.events.jsonl",
-      "sha256": "d1186b313b9a8401ef010dba745bff6fb27bf7033b18804e654395e42e5416e7"
+      "sha256": "68e3b211471820f1c4eab908a9e35f8907ffa045b1e6a1ab9aabfc1ef8dda2d8"
     }
   },
   "contract": {
@@ -77,8 +77,8 @@
     "packageManager": "npm@10.9.2",
     "projectConfigSemanticSha256": "df18cceedf89682510cd191c6d8551e9b0401c30fc16c81852051ce11b7e8c6c",
     "projectLockDigest": "18a0c4d77672842deca9937100f7daa1e43deb5c9ba118eaa4cfb2a8ca02fe5a",
-    "effectiveInputsFingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
-    "compileServerCompatibilityDigest": "1aaf21272446d929ae6decffd2f2e8db87b530a36667f124fb5efc6725be931b"
+    "effectiveInputsFingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
+    "compileServerCompatibilityDigest": "86c58f829a10c18f93314566c66af5479ff54da1b60576ad0d5fbbca0352105d"
   },
   "verification": {
     "command": "bash scripts/project-cli/test.sh",
@@ -118,6 +118,13 @@
     "architectureContractChanged": false,
     "fixtureBytesChanged": false,
     "evidenceOwner": "SDK-043-PROJECT-CLI"
+  },
+  "sdk044ContractRevision": {
+    "observedAt": "2026-07-19T01:09:28Z",
+    "reason": "The compiler compatibility identity now includes every restart-role file, and the authenticated documentation records the separately proven SDK-044 compile/watch core.",
+    "architectureContractChanged": true,
+    "fixtureBytesChanged": true,
+    "evidenceOwner": "SDK-044-DEV-LOOP"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

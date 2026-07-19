@@ -1,25 +1,13 @@
 package wordpresshx.cli.project;
 
-import js.node.Path;
 import wordpresshx.cli.CliEventStream;
 import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliInvocation;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.ownership.OwnershipJson;
 
-/** Stable bounded commands; the SDK-044 engine will reuse this build pipeline. **/
+/** Stable bounded commands plus the long-running development entry. **/
 class ProjectCommands {
-	static final BUILD_STAGES = [
-		"haxe-typing-and-plan",
-		"php-emission",
-		"browser-emission",
-		"metadata-emission",
-		"format-and-static-check",
-		"asset-build",
-		"artifact-validation",
-		"ownership-publish"
-	];
-
 	public static function run(invocation:CliInvocation):Int {
 		final events = new CliEventStream(invocation.command, invocation.json);
 		var profile = "unresolved";
@@ -35,6 +23,11 @@ class ProjectCommands {
 			profile = context.profileId();
 			events.stageCompleted("profile-resolution", OwnershipJson.object(["fingerprint" => context.fingerprint()]));
 
+			if (invocation.command == "dev") {
+				DevEngine.start(context, invocation, events);
+				return 0;
+			}
+
 			final exitCode = switch (invocation.command) {
 				case "build": runBuild(context, invocation, events, false);
 				case "check": runBuild(context, invocation, events, true);
@@ -44,12 +37,6 @@ class ProjectCommands {
 					0;
 				case "clean": runClean(context, events);
 				case "doctor": runDoctor(context, invocation.json);
-				case "dev":
-					OwnershipPreflight.inspect(context);
-					throw new CliFailure("WPHX4000",
-						"the stable wphx dev entry is configured, but the SDK-044 long-running watcher/supervisor is not installed yet", 7, "watching", null, [
-							"Use wphx build for bounded work while SDK-044 adds watch, services, readiness, reload, and clean shutdown."
-						]);
 				case _:
 					throw new CliFailure("WPHX0001", "unsupported command", 2, "command");
 			};
@@ -68,60 +55,7 @@ class ProjectCommands {
 		final dryRun = invocation.dryRun;
 		final mode = dryRun ? "dry-run" : "initial";
 		final buildId = (dryRun ? "dry-run/" : check ? "check/" : "build/") + context.fingerprint().substr(0, 16);
-		if (!check && !dryRun) {
-			BuildPublisher.recover(context);
-		}
-		final diagnosis = Doctor.inspect(context);
-		if (!diagnosis.passed) {
-			final checks:Array<Dynamic> = cast Reflect.field(diagnosis.report, "checks");
-			final failed = checks.filter(check -> Reflect.field(check, "status") == "failed")[0];
-			throw new CliFailure("WPHX1200",
-				"toolchain/ownership preflight failed at "
-				+ Reflect.field(failed, "id")
-				+ ": found "
-				+ Reflect.field(failed, "actual")
-				+ ", expected "
-				+ Reflect.field(failed, "expected"),
-				7, "configuration", null, [cast Reflect.field(failed, "remediation")]);
-		}
-		OwnershipPreflight.inspect(context);
-		final stagePayload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
-		events.stageStarted(BUILD_STAGES[0], stagePayload());
-		CompilerRunner.typeProject(context);
-		events.stageCompleted(BUILD_STAGES[0], stagePayload());
-		events.stageSkipped(BUILD_STAGES[1], "no PHP target producer is registered in the SDK-043 foundation", mode);
-		events.stageSkipped(BUILD_STAGES[2], "no browser target producer is registered in the SDK-043 foundation", mode);
-		events.stageStarted(BUILD_STAGES[3], stagePayload());
-		final plannedManifest = BuildPublisher.plan(context);
-		events.stageCompleted(BUILD_STAGES[3], stagePayload());
-		events.stageStarted(BUILD_STAGES[4], stagePayload());
-		events.stageCompleted(BUILD_STAGES[4], stagePayload());
-		events.stageSkipped(BUILD_STAGES[5], "no asset target producer is registered in the SDK-043 foundation", mode);
-		events.stageStarted(BUILD_STAGES[6], stagePayload());
-		events.stageCompleted(BUILD_STAGES[6], stagePayload());
-		if (dryRun) {
-			events.emit("dry-run-planned", BUILD_STAGES[6], "passed", OwnershipJson.object([
-				"mode" => "dry-run",
-				"buildId" => buildId,
-				"fingerprint" => context.fingerprint(),
-				"reason" => "complete staged action plan validated; live tree unchanged"
-			]));
-			events.stageSkipped(BUILD_STAGES[7], "dry-run has no publication authority", "dry-run");
-			return 0;
-		}
-		if (check) {
-			events.stageSkipped(BUILD_STAGES[7], "check validates the complete stage without publication authority", null);
-			return 0;
-		}
-		events.stageStarted(BUILD_STAGES[7], stagePayload());
-		final publication = BuildPublisher.publish(context);
-		events.stageCompleted(BUILD_STAGES[7], OwnershipJson.object(["mode" => mode, "buildId" => buildId, "reason" => publication.outcome]));
-		events.emit("build-published", BUILD_STAGES[7], "passed", OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"fingerprint" => context.fingerprint(),
-			"manifestDigest" => ProjectContract.string(plannedManifest, "manifestDigest", "planned ownership manifest")
-		]));
+		ProjectBuild.run(context, events, mode, buildId, CompilerRunner.typeProject, !check && !dryRun, dryRun, 1);
 		return 0;
 	}
 

@@ -1,0 +1,90 @@
+package wordpresshx.cli.project;
+
+import wordpresshx.cli.CliEventStream;
+import wordpresshx.cli.CliFailure;
+import wordpresshx.cli.ownership.OwnershipJson;
+
+/** One complete, input-stable build transaction shared by bounded and watch commands. **/
+class ProjectBuild {
+	public static final STAGES = [
+		"haxe-typing-and-plan",
+		"php-emission",
+		"browser-emission",
+		"metadata-emission",
+		"format-and-static-check",
+		"asset-build",
+		"artifact-validation",
+		"ownership-publish"
+	];
+
+	public static function run(context:ProjectContext, events:CliEventStream, mode:String, buildId:String, compile:ProjectContext->Void, publish:Bool,
+			dryRun:Bool, generation:Int):Null<ProjectBuildResult> {
+		if (publish) {
+			BuildPublisher.recover(context);
+		}
+		final diagnosis = Doctor.inspect(context);
+		if (!diagnosis.passed) {
+			final checks:Array<Dynamic> = cast Reflect.field(diagnosis.report, "checks");
+			final failed = checks.filter(check -> Reflect.field(check, "status") == "failed")[0];
+			throw new CliFailure("WPHX1200",
+				"toolchain/ownership preflight failed at "
+				+ Reflect.field(failed, "id")
+				+ ": found "
+				+ Reflect.field(failed, "actual")
+				+ ", expected "
+				+ Reflect.field(failed, "expected"),
+				7, "configuration", null, [cast Reflect.field(failed, "remediation")]);
+		}
+		OwnershipPreflight.inspect(context);
+		final stagePayload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
+		events.stageStarted(STAGES[0], stagePayload());
+		compile(context);
+		events.stageCompleted(STAGES[0], stagePayload());
+		events.stageSkipped(STAGES[1], "no PHP target producer is registered in the current build graph", mode);
+		events.stageSkipped(STAGES[2], "no browser target producer is registered in the current build graph", mode);
+		events.stageStarted(STAGES[3], stagePayload());
+		final plannedManifest = BuildPublisher.plan(context);
+		events.stageCompleted(STAGES[3], stagePayload());
+		events.stageStarted(STAGES[4], stagePayload());
+		events.stageCompleted(STAGES[4], stagePayload());
+		events.stageSkipped(STAGES[5], "no asset target producer is registered in the current build graph", mode);
+		events.stageStarted(STAGES[6], stagePayload());
+		assertInputsStable(context);
+		events.stageCompleted(STAGES[6], stagePayload());
+		if (dryRun) {
+			events.emit("dry-run-planned", STAGES[6], "passed", OwnershipJson.object([
+				"mode" => "dry-run",
+				"buildId" => buildId,
+				"fingerprint" => context.fingerprint(),
+				"reason" => "complete staged action plan validated; live tree unchanged"
+			]));
+			events.stageSkipped(STAGES[7], "dry-run has no publication authority", "dry-run");
+			return null;
+		}
+		if (!publish) {
+			events.stageSkipped(STAGES[7], "check validates the complete stage without publication authority", mode);
+			return null;
+		}
+		events.stageStarted(STAGES[7], stagePayload());
+		final publication = BuildPublisher.publish(context);
+		final manifestDigest = ProjectContract.string(publication.manifest, "manifestDigest", "published ownership manifest");
+		events.stageCompleted(STAGES[7], OwnershipJson.object(["mode" => mode, "buildId" => buildId, "reason" => publication.outcome]));
+		events.emit("build-published", STAGES[7], "passed", OwnershipJson.object([
+			"mode" => mode,
+			"buildId" => buildId,
+			"fingerprint" => context.fingerprint(),
+			"generation" => generation,
+			"manifestDigest" => manifestDigest
+		]));
+		return {manifestDigest: manifestDigest, outcome: publication.outcome};
+	}
+
+	static function assertInputsStable(context:ProjectContext):Void {
+		final latest = ProjectLoader.resolve(ProjectLoader.discover(context.bootstrap.root), context.profileId());
+		if (latest.fingerprint() != context.fingerprint()) {
+			throw new CliFailure("WPHX2200", "effective inputs changed while the build was running", 5, "artifact-validation", null, [
+				"Save the remaining edits; wphx dev will coalesce them into the next complete generation."
+			]);
+		}
+	}
+}

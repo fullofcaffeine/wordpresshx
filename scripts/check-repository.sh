@@ -103,6 +103,7 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx
   packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx
   packages/cli/src/wordpresshx/cli/project/DeterministicZipEntry.hx
+  packages/cli/src/wordpresshx/cli/project/DevEngine.hx
   packages/cli/src/wordpresshx/cli/project/Doctor.hx
   packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx
   packages/cli/src/wordpresshx/cli/project/Inspector.hx
@@ -110,6 +111,9 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx
   packages/cli/src/wordpresshx/cli/project/PreparedArtifact.hx
   packages/cli/src/wordpresshx/cli/project/PreparedGeneration.hx
+  packages/cli/src/wordpresshx/cli/project/ManagedCompiler.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx
+  packages/cli/src/wordpresshx/cli/project/ProjectBuildResult.hx
   packages/cli/src/wordpresshx/cli/project/ProjectBootstrap.hx
   packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx
   packages/cli/src/wordpresshx/cli/project/ProjectContext.hx
@@ -122,6 +126,7 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx
   packages/cli/src/wordpresshx/cli/project/ReproduciblePayload.hx
   packages/cli/src/wordpresshx/cli/project/ReproducibleProducts.hx
+  packages/cli/src/wordpresshx/cli/project/WatchGraph.hx
   packages/cli/test/ownership/src/sdk041/fixture/Main.hx
   packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
   packages/cli/test/expected/browser-development.text
@@ -318,6 +323,8 @@ required_files=(
   scripts/determinism/compare-builds.py
   scripts/determinism/test-production.py
   scripts/determinism/test-production.sh
+  scripts/dev-loop/test-production.py
+  scripts/dev-loop/test-production.sh
   scripts/project-cli/test-contract.py
   scripts/project-cli/test-production.py
   scripts/project-cli/test-production.sh
@@ -394,6 +401,7 @@ required_files=(
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/deterministic-build-implementation.json
+  manifests/dev-loop-implementation.json
   manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
   manifests/project-cli-implementation.json
@@ -411,6 +419,7 @@ required_files=(
   manifests/evidence/sdk-041-ownership-transaction.json
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/sdk-043-project-cli.json
+  manifests/evidence/sdk-044-dev-loop.json
   manifests/evidence/sdk-042-deterministic-build.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -789,6 +798,16 @@ project_cli_implementation = json.loads(
 )
 sdk043_receipt = json.loads(
     Path("manifests/evidence/sdk-043-project-cli.json").read_text(
+        encoding="utf-8"
+    )
+)
+dev_loop_implementation = json.loads(
+    Path("manifests/dev-loop-implementation.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk044_receipt = json.loads(
+    Path("manifests/evidence/sdk-044-dev-loop.json").read_text(
         encoding="utf-8"
     )
 )
@@ -2371,15 +2390,13 @@ for sdk043_no_write_command in (
 assert sdk043_side_effects["forcePath"] is False
 sdk043_dev_handoff = project_cli_implementation["devHandoff"]
 assert sdk043_dev_handoff["commandParsed"] is True
-assert sdk043_dev_handoff["missingEngineDiagnostic"] == "WPHX4000"
-assert sdk043_dev_handoff["sideEffectsBeforeEngine"] is False
-for sdk043_unimplemented_dev_part in (
-    "watcherImplemented",
-    "compilerServerImplemented",
-    "servicesImplemented",
-    "reloadImplemented",
-):
-    assert sdk043_dev_handoff[sdk043_unimplemented_dev_part] is False
+assert sdk043_dev_handoff["implementationManifest"] == (
+    "manifests/dev-loop-implementation.json"
+)
+assert sdk043_dev_handoff["watcherImplemented"] is True
+assert sdk043_dev_handoff["compilerServerImplemented"] is True
+assert sdk043_dev_handoff["servicesImplemented"] is False
+assert sdk043_dev_handoff["reloadImplemented"] is False
 for sdk043_preserved in project_cli_implementation["compatibility"].values():
     if not isinstance(sdk043_preserved, dict) or "path" not in sdk043_preserved:
         continue
@@ -2400,8 +2417,8 @@ assert sdk043_verification["command"] == (
 )
 assert sdk043_verification["compileReplayCount"] == 2
 assert sdk043_verification["positiveCases"] == 15
-assert sdk043_verification["negativeCases"] == 16
-assert sdk043_verification["noWriteAssertions"] == 18
+assert sdk043_verification["negativeCases"] == 15
+assert sdk043_verification["noWriteAssertions"] == 17
 assert sdk043_verification["acceptedFixtureEffectiveFingerprint"] == (
     project_cli_contracts["effectiveInputs"]["fingerprint"]
 )
@@ -2428,7 +2445,6 @@ for sdk043_adoption_invariant in (
 ):
     assert sdk043_adoption[sdk043_adoption_invariant] is False
 for sdk043_unproven_claim in (
-    "productionWphxDevWatcher",
     "wordpressRuntimeCompatibility",
     "nextjsRuntimeCompatibility",
     "targetEmitterIntegration",
@@ -2437,6 +2453,9 @@ for sdk043_unproven_claim in (
     assert project_cli_implementation["claims"][sdk043_unproven_claim] == (
         "not-tested"
     )
+assert project_cli_implementation["claims"]["productionWphxDevWatcher"] == (
+    "runtime-tested-local"
+)
 
 assert sdk043_receipt["schemaVersion"] == 1
 assert sdk043_receipt["receiptId"] == "SDK-043-PROJECT-CLI"
@@ -2468,8 +2487,8 @@ assert sdk043_receipt["implementation"]["genesSourceChanged"] is False
 assert sdk043_receipt["implementation"]["genesPullRequest"] is None
 assert sdk043_receipt["verification"]["outcome"] == "passed"
 assert sdk043_receipt["verification"]["positiveCases"] == 15
-assert sdk043_receipt["verification"]["negativeCases"] == 16
-assert sdk043_receipt["verification"]["noWriteAssertions"] == 18
+assert sdk043_receipt["verification"]["negativeCases"] == 15
+assert sdk043_receipt["verification"]["noWriteAssertions"] == 17
 assert sdk043_receipt["verification"]["effectiveFingerprint"] == (
     project_cli_contracts["effectiveInputs"]["fingerprint"]
 )
@@ -2527,8 +2546,8 @@ assert sdk043_receipt["sdk042CompatibilityReverification"] == {
         "dist/wordpress-hx.zip",
     ],
     "positiveCases": 15,
-    "negativeCases": 16,
-    "noWriteAssertions": 18,
+    "negativeCases": 15,
+    "noWriteAssertions": 17,
     "command": "bash scripts/project-cli/test-production.sh",
     "outcome": "passed-local",
     "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD",
@@ -2546,6 +2565,204 @@ for sdk043_compatibility_receipt in (sdk025_receipt, sdk034_receipt):
     assert sdk043_compatibility["hostedEvidenceOwner"] == (
         sdk043_receipt["receiptId"]
     )
+
+assert dev_loop_implementation["schemaVersion"] == 1
+assert dev_loop_implementation["bead"] == "wordpresshx-sdk-044"
+assert dev_loop_implementation["status"] in {
+    "implemented-sdk044-core-local-verified",
+    "implemented-sdk044-core-hosted-verified",
+}
+assert dev_loop_implementation["scope"] == (
+    "managed-compiler-effective-watch-and-atomic-incremental-publish-core"
+)
+sdk044_command = dev_loop_implementation["command"]
+assert sdk044_command["default"] == "wphx dev"
+assert sdk044_command["compileWatchOnly"] == "wphx dev --services=none"
+assert sdk044_command["boundedCi"] == "wphx build"
+assert sdk044_command["defaultDebounceMs"] == 100
+assert sdk044_command["sigintExitCode"] == 130
+assert sdk044_command["sigtermExitCode"] == 143
+sdk044_code = dev_loop_implementation["implementation"]
+assert sdk044_code["language"] == "Haxe"
+assert sdk044_code["target"] == "Genes-emitted-Node-ESM"
+for sdk044_code_path in (
+    "entry",
+    "buildTransaction",
+    "watchGraph",
+    "managedCompiler",
+    "compilerRunner",
+    "eventStream",
+    "publisher",
+):
+    assert Path(sdk044_code[sdk044_code_path]).is_file()
+assert sdk044_code["genesSourceChanged"] is False
+assert sdk044_code["genesPullRequest"] is None
+assert sdk044_code["siblingDependencyCreated"] is False
+assert sdk044_code["handwrittenJavascriptImplementation"] is False
+sdk044_watch = dev_loop_implementation["watch"]
+assert sdk044_watch["authority"] == "wordpress-hx.effective-inputs.v1"
+assert sdk044_watch["criticalIdentityRoles"] == (
+    project_cli_effective_fixture["compileServer"]["restartFileRoles"]
+)
+assert sdk044_watch["ignoredRootsFromEffectiveGraph"] is True
+assert sdk044_watch["sortedDeduplicatedChanges"] is True
+assert sdk044_watch["burstCoalescing"] is True
+assert sdk044_watch["parallelBuilds"] is False
+assert sdk044_watch["unknownImpact"] == "full-atomic-rebuild"
+assert sdk044_watch["partialTargetPublish"] is False
+sdk044_publication = dev_loop_implementation["publication"]
+assert sdk044_publication["initialCompleteBuildBeforeWatchReady"] is True
+assert sdk044_publication["inputStabilityRecheckedBeforePublish"] is True
+assert sdk044_publication["unstableInputDiagnostic"] == "WPHX2200"
+assert sdk044_publication["manifestPublishedLast"] is True
+assert sdk044_publication["generationAdvancesOnlyAfterPublish"] is True
+assert sdk044_publication["incrementalEqualsCleanOracle"] is True
+assert sdk044_publication["reloadOnlyAfterCompletePublish"] is True
+assert sdk044_publication["reloadAdapterImplemented"] is False
+sdk044_server = dev_loop_implementation["compileServer"]
+assert sdk044_server["kind"] == "managed-project-local-haxe-wait"
+assert sdk044_server["leasePath"] == ".wphx/runtime/compiler-server.json"
+assert sdk044_server["projectRootRecordedAsDigestOnly"] is True
+assert sdk044_server["compatibilityAlgorithm"] == (
+    project_cli_effective_fixture["compileServer"][
+        "compatibilityDigestAlgorithm"
+    ]
+)
+assert sdk044_server["arbitraryServerAttach"] is False
+assert sdk044_server["semanticDifferenceOnFallback"] is False
+assert sdk044_server["compatibilityChangeRestartsOwnedServer"] is True
+assert sdk044_server["ownedServerStoppedOnShutdown"] is True
+sdk044_services = dev_loop_implementation["services"]
+assert sdk044_services["authority"] == "validated-typed-haxe-semantic-plan"
+assert sdk044_services["implicitShellCommands"] is False
+assert sdk044_services["compileWatchOnlyImplemented"] is True
+for sdk044_unimplemented_service_part in (
+    "serviceSupervisorImplemented",
+    "readinessImplemented",
+    "servicePortReservationImplemented",
+    "wordpressReloadImplemented",
+    "nextjsReloadImplemented",
+):
+    assert sdk044_services[sdk044_unimplemented_service_part] is False
+sdk044_verification = dev_loop_implementation["verification"]
+assert sdk044_verification["command"] == (
+    "bash scripts/dev-loop/test-production.sh"
+)
+assert sdk044_verification["summarySchema"] == (
+    "wordpress-hx.sdk044-production-summary.v1"
+)
+assert sdk044_verification["compileReplayCount"] == 2
+assert sdk044_verification["nodeVersion"] == "22.17.0"
+assert sdk044_verification["nodeImage"] == (
+    cli_dependency_lock["runtime"]["image"]
+)
+assert sdk044_verification["containerNetwork"] == "none"
+assert sdk044_verification["watchFilesystem"] == "docker-bind-mount"
+assert sdk044_verification["publishedGenerations"] == 7
+assert sdk044_verification["compilerStarts"] == 2
+for sdk044_passed_proof in (
+    "initialBuildBeforeWatch",
+    "sourceAndAssetBurst",
+    "failedTypingRetention",
+    "nestedHxxCreateRenameDelete",
+    "invalidAndRepairedLock",
+    "compilerIdentityRestart",
+    "editDuringBuildFollowUp",
+    "sigintCleanup",
+    "durablePathPrivacy",
+):
+    assert sdk044_verification[sdk044_passed_proof] == "passed"
+assert sdk044_verification["incrementalAndCleanOwnedBytes"] == (
+    "byte-identical"
+)
+assert sdk044_verification["outcome"] == "passed"
+for sdk044_reference in dev_loop_implementation["referencePatterns"]:
+    assert sdk044_reference["repository"] == "haxe.elixir.codex"
+    assert sdk044_reference["commit"] == (
+        "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+    )
+    assert sha1.fullmatch(sdk044_reference["blob"])
+    assert sha256.fullmatch(sdk044_reference["sha256"])
+    assert sdk044_reference["copiedBytes"] is False
+    assert sdk044_reference["dependencyCreated"] is False
+for sdk044_unproven_claim in (
+    "wordpressDevelopmentService",
+    "nextjsDevelopmentService",
+    "automaticBrowserReload",
+    "windowsWatcherAndProcessBehavior",
+    "networkFilesystemBehavior",
+    "productionSupport",
+):
+    assert dev_loop_implementation["claims"][sdk044_unproven_claim] == (
+        "not-tested"
+    )
+assert dev_loop_implementation["claims"]["publicPackagePublication"] == (
+    "blocked"
+)
+
+assert sdk044_receipt["schemaVersion"] == 1
+assert sdk044_receipt["receiptId"] == "SDK-044-DEV-LOOP"
+assert sdk044_receipt["bead"] == "wordpresshx-sdk-044"
+assert sdk044_receipt["status"] in {"implemented-hosted-pending", "verified"}
+
+def verify_sdk044_subject(record):
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+for sdk044_subject in sdk044_receipt["subject"].values():
+    if isinstance(sdk044_subject, list):
+        for sdk044_subject_record in sdk044_subject:
+            verify_sdk044_subject(sdk044_subject_record)
+    else:
+        verify_sdk044_subject(sdk044_subject)
+assert sdk044_receipt["subject"]["implementationManifest"]["sha256"] == (
+    hashlib.sha256(
+        Path("manifests/dev-loop-implementation.json").read_bytes()
+    ).hexdigest()
+)
+assert sdk044_receipt["verification"] == {
+    "command": "bash scripts/dev-loop/test-production.sh",
+    "outcome": "passed",
+    "compileReplayCount": 2,
+    "nodeVersion": "22.17.0",
+    "containerNetwork": "none",
+    "publishedGenerations": 7,
+    "compilerStarts": 2,
+    "incrementalAndCleanOwnedBytes": "byte-identical",
+    "failedBuildRetainedExactOwnedBytes": "passed",
+    "compilerLeaseRemovedOnSigint": "passed",
+    "durablePathPrivacy": "passed",
+}
+assert "Test production compile and watch development loop" in workflow_text
+assert "bash scripts/dev-loop/test-production.sh" in workflow_text
+sdk044_hosted = sdk044_receipt["hostedWorkflow"]
+assert sdk044_hosted["workflow"] == "Repository bootstrap"
+assert sdk044_hosted["job"] == "haxe"
+assert sdk044_hosted["step"] == (
+    "Test production compile and watch development loop"
+)
+assert sdk044_hosted["required"] is True
+if sdk044_hosted["status"] == "pending-first-main-run":
+    assert sdk044_receipt["status"] == "implemented-hosted-pending"
+    assert dev_loop_implementation["status"] == (
+        "implemented-sdk044-core-local-verified"
+    )
+    assert sdk044_receipt["implementationCommit"] is None
+    assert sdk044_hosted["runId"] is None
+    assert sdk044_hosted["jobId"] is None
+    assert sdk044_hosted["commit"] is None
+elif sdk044_hosted["status"] == "passed":
+    assert sdk044_receipt["status"] == "verified"
+    assert dev_loop_implementation["status"] == (
+        "implemented-sdk044-core-hosted-verified"
+    )
+    assert sha1.fullmatch(sdk044_receipt["implementationCommit"])
+    assert isinstance(sdk044_hosted["runId"], int)
+    assert isinstance(sdk044_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk044_hosted["commit"])
+else:
+    raise AssertionError("SDK-044 dev-loop hosted status is invalid")
 
 assert deterministic_build_implementation["schemaVersion"] == 1
 assert deterministic_build_implementation["bead"] == "wordpresshx-sdk-042"
@@ -2720,7 +2937,7 @@ assert sdk042_verification["fingerprint"] == (
     project_cli_contracts["effectiveInputs"]["fingerprint"]
 )
 assert sdk042_verification["archiveSha256"] == (
-    "7d05200b86caccee66bc37d74259aef6d6452c15d913aa1ab69551bb00fdad4f"
+    "d21e566b819784bbfbdac6c0fc100f8d9edf83da18cd341600ffcb5ae3ad9f10"
 )
 assert sdk042_verification["nodeImage"] == (
     cli_dependency_lock["runtime"]["image"]

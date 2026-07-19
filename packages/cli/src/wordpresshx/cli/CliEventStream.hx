@@ -44,6 +44,16 @@ class CliEventStream {
 				NodeGlobals.process().stdout.write("– " + stage + ": " + Reflect.field(payload, "reason") + "\n");
 			case "build-published":
 				NodeGlobals.process().stdout.write("✓ published generation " + Reflect.field(payload, "manifestDigest") + "\n");
+			case "build-retained":
+				NodeGlobals.process().stdout.write("! rebuild failed; last-good generation retained\n");
+			case "compiler-server-ready":
+				NodeGlobals.process().stdout.write("✓ project compiler cache ready\n");
+			case "change-detected":
+				NodeGlobals.process().stdout.write("↻ " + Reflect.field(payload, "coalescedChanges") + " changed path(s)\n");
+			case "watch-ready":
+				NodeGlobals.process().stdout.write("✓ watching effective inputs\n");
+			case "shutdown-started":
+				NodeGlobals.process().stdout.write("→ shutting down development services\n");
 			case "dry-run-planned":
 				NodeGlobals.process().stdout.write("✓ dry-run validated; project files unchanged\n");
 			case _:
@@ -67,26 +77,37 @@ class CliEventStream {
 	}
 
 	public function failure(failure:CliFailure, profile:String):Void {
+		diagnostic(failure, profile);
+		if (json) {
+			emit("command-completed", "command", "failed", OwnershipJson.object([
+				"exitCode" => failure.exitCode,
+				"reason" => failure.code + ": " + failure.message
+			]));
+		}
+	}
+
+	public function diagnostic(failure:CliFailure, profile:String, ?buildId:String, severity:String = "error"):Void {
 		final path = diagnosticPath(failure.relativePath);
 		final remediations = failure.remediations.length == 0 ? ["Run wphx doctor for the exact failing contract."] : failure.remediations;
 		if (json) {
 			final diagnostic = OwnershipJson.object([
 				"code" => failure.code,
-				"severity" => "error",
+				"severity" => severity,
 				"message" => failure.message,
 				"profile" => profile,
 				"source" => OwnershipJson.object(["path" => path, "line" => 1, "column" => 0]),
 				"remediations" => remediations,
 				"reference" => "wphx doctor"
 			]);
-			emit("diagnostic", failure.stage, "failed", OwnershipJson.object(["diagnostic" => diagnostic]));
-			emit("command-completed", "command", "failed", OwnershipJson.object([
-				"exitCode" => failure.exitCode,
-				"reason" => failure.code + ": " + failure.message
-			]));
+			final payload:Map<String, Dynamic> = ["diagnostic" => diagnostic];
+			if (buildId != null) {
+				payload.set("buildId", buildId);
+			}
+			emit("diagnostic", failure.stage, severity == "error" ? "failed" : "running", OwnershipJson.object(payload));
 			return;
 		}
-		NodeGlobals.process().stderr.write("wphx " + failure.code + " [" + failure.stage + "]: " + failure.message + "\n");
+		final label = severity == "error" ? "wphx" : "wphx warning";
+		NodeGlobals.process().stderr.write(label + " " + failure.code + " [" + failure.stage + "]: " + failure.message + "\n");
 		if (failure.relativePath != null) {
 			NodeGlobals.process().stderr.write("  at " + failure.relativePath + "\n");
 		}

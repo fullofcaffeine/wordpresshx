@@ -2,8 +2,10 @@
 
 Status: SDK-040 collection, SDK-041 fail-closed publication, SDK-042
 deterministic packaging, and the SDK-043 bounded `wphx` command foundation are
-implemented and hosted verified. SDK-044 owns the long-running watcher,
-compiler-server, service, readiness, reload, and shutdown engine.
+implemented and hosted verified. SDK-044's long-running compile/watch core,
+managed Haxe server, last-good publication, and clean compiler shutdown are
+implemented and locally production-gate verified. Typed WordPress/Next.js
+service supervision, readiness, and reload adapters remain SDK-044 work.
 
 ## Developer surface
 
@@ -15,8 +17,8 @@ wphx dev
 
 The developer does not maintain HXML, PHP scripts, npm orchestration scripts,
 or a second watcher configuration. `wphx build`, `wphx check`, `wphx inspect`,
-`wphx clean`, and `wphx doctor` are the bounded one-shot companions. To run the
-same incremental compiler loop without WordPress or Next.js services, use:
+`wphx clean`, and `wphx doctor` are the bounded one-shot companions. The
+compile/watch-only form is:
 
 ```text
 wphx dev --services=none
@@ -33,14 +35,19 @@ digests, exact profile catalog, exact node schemas, collector implementation,
 and every generated project-lock tool identity. Runtime secrets are absent.
 
 SDK-041 provides the exact-hash, complete-stage, journaled manifest-last
-transaction that preserves the last good generation. SDK-043 now constructs
+transaction that preserves the last good generation. SDK-043 constructs
 ADR-016's project, HXML/classpath, package, discovery, public-environment, and
 tool graph from the strict generated bootstrap and lock. Its production corpus
 reproduces the accepted fixture fingerprint exactly, including nested source
-discovery and runtime-secret exclusion. SDK-044 will watch this same graph;
-there is no separate
-handwritten list of directories that can silently omit a macro, lock, resource,
-or newly discovered Haxe source.
+discovery and runtime-secret exclusion. SDK-044 now watches this same graph;
+there is no separate handwritten list of directories that can silently omit a
+macro, lock, resource, or newly discovered Haxe/HXX source.
+
+Recursive source, HXX, and asset discovery uses portable non-recursive native
+directory subscriptions. The small set of compiler-identity files is also
+polled by content identity so edits remain visible on bind mounts whose native
+file events are incomplete. Output, transaction, runtime, dependency, and VCS
+roots are excluded by the authenticated graph.
 
 ## Implemented bounded lifecycle
 
@@ -54,10 +61,13 @@ The current generation is intentionally limited to CLI effective-input
 metadata plus its reproducibility report and unsigned archive. Missing PHP,
 browser, and asset producers appear as explicit skipped stages; the archive is
 therefore deterministic build evidence, not a deployable site package. The
-stable `wphx dev` entry validates project and ownership state, then exits
-`WPHX4000` without starting children or writing files until SDK-044's engine is
-present. The transcript in ADR-016 remains a contract fixture, not a claim that
-the watcher already runs.
+stable `wphx dev` entry now performs an initial complete transaction, starts an
+owned project-local Haxe wait server when its exact identity is safe, and stays
+alive watching the effective graph. `--services=none` is a real
+compile/watch-only mode. The default command currently reports service and
+reload stages as skipped because no validated typed service plan or admitted
+reload adapter is registered; it does not invent shell commands or claim that
+WordPress/Next.js children are running.
 
 ## Deterministic clean-build oracle
 
@@ -100,6 +110,15 @@ The stable lifecycle is:
    metadata.
 8. On Ctrl-C, child failure, or watcher restart, stop owned processes in reverse
    order and leave no repository-local Haxe server or stale child behind.
+
+The implemented core covers the initial atomic build, project-bound compiler
+lease, conservative full rebuild, 100 ms sorted/deduplicated coalescing,
+single-flight serialization, edit-during-build stability checks, exact
+last-good retention, manifest-last generation admission, and compiler cleanup.
+When isolation is not proven, every change takes the full atomic path. Service
+processes, readiness probes, collision-safe service ports, and post-commit
+WordPress/Next.js reload adapters remain disabled until they are produced by a
+validated typed Haxe semantic plan.
 
 CI and one-shot `wphx build` use bounded direct compilation. They never start an
 unbounded watcher or inherit a developer's compilation server.

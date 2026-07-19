@@ -79,9 +79,12 @@ that contains the report plus its declared payload. The archive is deliberately
 bounded build evidence, not yet a deployable site package: PHP, browser, asset,
 and target-package stages report `stage-skipped` until their registered
 producers land. A skipped producer is never represented as a site build.
-`wphx dev` is a stable parsed command but currently exits with `WPHX4000`
-without modifying the project, because SDK-044 must supply and prove the real
-long-running engine.
+`wphx dev` now runs the same complete transaction initially, starts a
+project-bound Haxe wait cache when its lease is safe, watches the authenticated
+effective-input graph, and serializes coalesced rebuilds. Failed rebuilds keep
+the exact last-good manifest live. `wphx dev --services=none` is the explicit
+compile/watch-only form. Typed WordPress/Next.js processes, readiness, and
+reload adapters are not registered yet and therefore report `stage-skipped`.
 
 Use `--json` for canonical JSONL lifecycle events and closed diagnostics. Human
 errors include a stable `WPHXnnnn` code, failing stage, safe project-relative

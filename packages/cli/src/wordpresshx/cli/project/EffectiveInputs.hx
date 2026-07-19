@@ -15,6 +15,14 @@ class EffectiveInputs {
 		"sdk.wordpress-hx",
 		"tool.lix"
 	];
+	static final RESTART_FILE_ROLES = [
+		"haxe-config",
+		"hxml",
+		"package-lock",
+		"package-manifest",
+		"project-config",
+		"project-lock"
+	];
 
 	public static function build(bootstrap:ProjectBootstrap, lock:Dynamic, lockBytes:Buffer):Dynamic {
 		final resolvedEnvironment = resolveBuildEnvironment(bootstrap.config);
@@ -66,6 +74,17 @@ class EffectiveInputs {
 		toolchain.sort((left, right) -> Reflect.compare(Reflect.field(left, "id"), Reflect.field(right, "id")));
 
 		final projectLock = ProjectContract.fieldObject(lock, "project", "project lock");
+		final compatibilityFiles:Array<Dynamic> = [];
+		for (record in records) {
+			final role:String = cast Reflect.field(record, "role");
+			if (RESTART_FILE_ROLES.indexOf(role) >= 0) {
+				compatibilityFiles.push(object([
+					"path" => Reflect.field(record, "path"),
+					"role" => role,
+					"sha256" => Reflect.field(record, "sha256")
+				]));
+			}
+		}
 		final compatibilityTools:Array<Dynamic> = [];
 		for (id in COMPATIBILITY_COMPONENTS) {
 			final component = componentById.get(id);
@@ -80,6 +99,7 @@ class EffectiveInputs {
 			"configSemanticSha256" => ProjectContract.string(projectLock, "configSemanticSha256", "project lock.project", "profile-resolution"),
 			"lockDigest" => ProjectContract.string(lock, "lockDigest", "project lock", "profile-resolution"),
 			"components" => compatibilityTools,
+			"restartFiles" => compatibilityFiles,
 			"buildEnvironment" => resolvedEnvironment
 		]);
 
@@ -180,17 +200,10 @@ class EffectiveInputs {
 			"environment" => object(["build" => resolvedEnvironment, "runtimeExcluded" => runtimeExcluded]),
 			"compileServer" => object([
 				"policy" => "project-isolated-compatible-attach-v1",
-				"compatibilityDigestAlgorithm" => "sha256-project-lock-config-compiler-and-build-env-v1",
+				"compatibilityDigestAlgorithm" => "sha256-project-lock-config-compiler-inputs-and-build-env-v2",
 				"compatibilityDigest" => OwnershipJson.digestValue(compatibilityPayload),
 				"compatibilityComponents" => COMPATIBILITY_COMPONENTS,
-				"restartFileRoles" => [
-					"haxe-config",
-					"hxml",
-					"package-lock",
-					"package-manifest",
-					"project-config",
-					"project-lock"
-				],
+				"restartFileRoles" => RESTART_FILE_ROLES,
 				"directBuildDefault" => true
 			])
 		]);

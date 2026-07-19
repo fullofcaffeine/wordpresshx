@@ -677,6 +677,23 @@ def build_effective(
             }
             for component_id in COMPILER_COMPATIBILITY_COMPONENTS
         ],
+        "restartFiles": [
+            {
+                "path": record["path"],
+                "role": record["role"],
+                "sha256": record["sha256"],
+            }
+            for record in records
+            if record["role"]
+            in {
+                "haxe-config",
+                "hxml",
+                "package-lock",
+                "package-manifest",
+                "project-config",
+                "project-lock",
+            }
+        ],
         "buildEnvironment": resolved_build,
     }
     lock_relative = str(toolchain["lock"])
@@ -759,7 +776,7 @@ def build_effective(
         "compileServer": {
             "policy": "project-isolated-compatible-attach-v1",
             "compatibilityDigestAlgorithm": (
-                "sha256-project-lock-config-compiler-and-build-env-v1"
+                "sha256-project-lock-config-compiler-inputs-and-build-env-v2"
             ),
             "compatibilityDigest": sha256(canonical(compatibility_payload)),
             "compatibilityComponents": COMPILER_COMPATIBILITY_COMPONENTS,
@@ -1902,6 +1919,17 @@ def main() -> None:
         if added_graph["fingerprint"] == baseline["fingerprint"]:
             raise ContractError("new source discovered under a watch root did not change fingerprint")
         added.unlink()
+
+        hxml = temporary_project / ".wphx" / "bootstrap" / "project.hxml"
+        original_hxml = hxml.read_bytes()
+        hxml.write_bytes(original_hxml + b"\n")
+        hxml_graph = build_effective(temporary_project, config, lock)
+        if (
+            hxml_graph["compileServer"]["compatibilityDigest"]
+            == baseline["compileServer"]["compatibilityDigest"]
+        ):
+            raise ContractError("HXML change did not invalidate compiler-server compatibility")
+        hxml.write_bytes(original_hxml)
 
         output = temporary_project / "build" / "wordpress" / "ignored.php"
         output.parent.mkdir(parents=True)

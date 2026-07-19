@@ -7,7 +7,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "5cfb51054e79a52d319642ca77782ded568893e5991cc104b24e32a6b5faf67f"
+      "sha256": "aa463fda86356b286f62c315dba2788eca0aa3de2d71209b7ab5b6604e616fdf"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -19,7 +19,7 @@
     },
     "events": {
       "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
-      "sha256": "29856d6c045395f63e0e47badb6c81381a894f3231d73a685cf0c5827916d2ef"
+      "sha256": "1b8b50774f8cc5d39b43498500fff884f421b50c18e2fa148ead2245adfd1ee6"
     },
     "resolver": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
@@ -27,15 +27,15 @@
     },
     "effectiveInputs": {
       "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
-      "sha256": "657ba3e78c6c99166e4dccc11eb4ca46709e84dae6b49403e75b27df9bf2b046"
+      "sha256": "267bdeabd0b0cfa71e4e6f4fc4ec8c36a2133609c7a75fcb1b170d6d2423ccce"
     },
     "commands": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
-      "sha256": "54821653f8730909a7d5352e9e1a244378e3e34f2408598109086841c365af46"
+      "sha256": "05e0060f9208ed2c5c731151972641501ee0a257f07cbb1d6d650b79b8886b86"
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
-      "sha256": "e03696c4d3aacd8c17fb0f31bf8aeafddde7f06fdb317b22b2f58ece65857b77"
+      "sha256": "1b912e545f882c1a883df616c4563f4f1f00ab809a234742bc983e8ae37c4232"
     },
     "profile": {
       "path": "packages/cli/profiles/wphx.hxml",
@@ -55,7 +55,7 @@
     },
     "validator": {
       "path": "scripts/project-cli/test-production.py",
-      "sha256": "950395b4ae335fae8e12d893e32b7734605d13c68c502b6100bcc5ecc7db1628"
+      "sha256": "ccf25a8f756b6829870a58370481bd20001f3c76571192b229641c79c2d8318f"
     },
     "gate": {
       "path": "scripts/project-cli/test-production.sh",
@@ -63,7 +63,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "a501a89cfeda577f6a32cc73e00becf234ab7711330e05f03ac51d592532647a"
+      "sha256": "8c2a5a564ae84f4ec36a58f3febc94d28779d579de549294af836e53a5215ca8"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
@@ -108,7 +108,7 @@
       },
       {
         "path": "schemas/effective-inputs.schema.json",
-        "sha256": "403ffd1f0c112c726b3de47009acae05dad4f631a75d28d95c304dd989878d1a"
+        "sha256": "0e4a2933658d389a808e6e330225d8a483506fb1f8170fa1cb32c2cc645415c2"
       },
       {
         "path": "schemas/cli-event.schema.json",
@@ -173,9 +173,9 @@
     "actualHaxeFixtureTyped": true,
     "containerNetwork": "none",
     "positiveCases": 15,
-    "negativeCases": 16,
-    "noWriteAssertions": 18,
-    "effectiveFingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "negativeCases": 15,
+    "noWriteAssertions": 17,
+    "effectiveFingerprint": "c6e2e90d003f22a60b594688f2ab67660c98aeefe9889a1ad0565fa8cf0e72a3",
     "effectiveFixtureByteEquality": "passed",
     "deterministicGenesOutput": "passed",
     "eventContractValidation": "passed",
@@ -204,8 +204,8 @@
       "dist/wordpress-hx.zip"
     ],
     "positiveCases": 15,
-    "negativeCases": 16,
-    "noWriteAssertions": 18,
+    "negativeCases": 15,
+    "noWriteAssertions": 17,
     "command": "bash scripts/project-cli/test-production.sh",
     "outcome": "passed-local",
     "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD"
@@ -221,6 +221,13 @@
     "codeOrFixtureBytesCopied": false,
     "runtimeOrBuildDependencyCreated": false
   },
+  "sdk044CompatibilityReverification": {
+    "command": "bash scripts/dev-loop/test-production.sh",
+    "outcome": "passed-local",
+    "boundedProjectCommandsPreserved": true,
+    "historicalTraceCompatibilityPreserved": true,
+    "evidenceOwner": "SDK-044-DEV-LOOP"
+  },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
@@ -233,7 +240,7 @@
   },
   "limitations": [
     "The only produced artifact is CLI-owned effective-input metadata; PHP, browser, asset, and site-package producers are not registered.",
-    "The stable dev command exits WPHX4000 without side effects until SDK-044 supplies the watcher and process supervisor.",
+    "At the SDK-043 implementation commit, the stable dev command exited WPHX4000; the current compile/watch behavior is superseded and evidenced by SDK-044-DEV-LOOP.",
     "The runtime corpus uses exact Linux Node 22.17.0; Windows, network filesystems, WordPress, Next.js, and production deployment are not tested.",
     "The package remains private and publication is blocked."
   ],

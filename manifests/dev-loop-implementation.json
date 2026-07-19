@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-044",
+  "status": "implemented-sdk044-core-local-verified",
+  "scope": "managed-compiler-effective-watch-and-atomic-incremental-publish-core",
+  "command": {
+    "default": "wphx dev",
+    "compileWatchOnly": "wphx dev --services=none",
+    "boundedCi": "wphx build",
+    "defaultDebounceMs": 100,
+    "sigintExitCode": 130,
+    "sigtermExitCode": 143
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "entry": "packages/cli/src/wordpresshx/cli/project/DevEngine.hx",
+    "buildTransaction": "packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx",
+    "watchGraph": "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
+    "managedCompiler": "packages/cli/src/wordpresshx/cli/project/ManagedCompiler.hx",
+    "compilerRunner": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
+    "eventStream": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+    "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false,
+    "handwrittenJavascriptImplementation": false
+  },
+  "watch": {
+    "authority": "wordpress-hx.effective-inputs.v1",
+    "recursiveInputs": "portable-non-recursive-directory-subscriptions-refreshed-from-the-effective-graph",
+    "criticalIdentityFiles": "native-exact-file-watch-plus-200ms-content-identity-poll-fallback",
+    "criticalIdentityRoles": [
+      "haxe-config",
+      "hxml",
+      "package-lock",
+      "package-manifest",
+      "project-config",
+      "project-lock"
+    ],
+    "ignoredRootsFromEffectiveGraph": true,
+    "sortedDeduplicatedChanges": true,
+    "burstCoalescing": true,
+    "parallelBuilds": false,
+    "changeDuringBuild": "one-follow-up-build-from-latest-recomputed-graph",
+    "unknownImpact": "full-atomic-rebuild",
+    "partialTargetPublish": false
+  },
+  "publication": {
+    "initialCompleteBuildBeforeWatchReady": true,
+    "inputStabilityRecheckedBeforePublish": true,
+    "unstableInputDiagnostic": "WPHX2200",
+    "manifestPublishedLast": true,
+    "failedBuild": "retain-exact-last-good-manifest",
+    "generationAdvancesOnlyAfterPublish": true,
+    "incrementalEqualsCleanOracle": true,
+    "reloadOnlyAfterCompletePublish": true,
+    "reloadAdapterImplemented": false
+  },
+  "compileServer": {
+    "kind": "managed-project-local-haxe-wait",
+    "loopbackPort": "os-reserved-ephemeral",
+    "leasePath": ".wphx/runtime/compiler-server.json",
+    "leaseSchema": "wordpress-hx.compiler-server-lease.v1",
+    "projectRootRecordedAsDigestOnly": true,
+    "compatibilityAlgorithm": "sha256-project-lock-config-compiler-inputs-and-build-env-v2",
+    "arbitraryServerAttach": false,
+    "otherLiveOwner": "diagnosed-direct-compilation",
+    "staleOwnedLease": "authenticated-cleanup-before-start",
+    "unavailableOrUnresponsive": "diagnosed-direct-compilation",
+    "semanticDifferenceOnFallback": false,
+    "compatibilityChangeRestartsOwnedServer": true,
+    "ownedServerStoppedOnShutdown": true
+  },
+  "services": {
+    "authority": "validated-typed-haxe-semantic-plan",
+    "implicitShellCommands": false,
+    "compileWatchOnlyImplemented": true,
+    "serviceSupervisorImplemented": false,
+    "readinessImplemented": false,
+    "servicePortReservationImplemented": false,
+    "wordpressReloadImplemented": false,
+    "nextjsReloadImplemented": false,
+    "currentBehavior": "explicit-stage-skipped-without-an-admitted-service-or-reload-adapter"
+  },
+  "verification": {
+    "command": "bash scripts/dev-loop/test-production.sh",
+    "summarySchema": "wordpress-hx.sdk044-production-summary.v1",
+    "compileReplayCount": 2,
+    "nodeVersion": "22.17.0",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "containerNetwork": "none",
+    "watchFilesystem": "docker-bind-mount",
+    "controlledCompilerProcess": "tcp-listening-haxe-protocol-test-double",
+    "actualHaxeWaitParityEvidence": "SDK-040-SEMANTIC-COLLECTOR",
+    "publishedGenerations": 7,
+    "compilerStarts": 2,
+    "initialBuildBeforeWatch": "passed",
+    "sourceAndAssetBurst": "passed",
+    "failedTypingRetention": "passed",
+    "nestedHxxCreateRenameDelete": "passed",
+    "invalidAndRepairedLock": "passed",
+    "compilerIdentityRestart": "passed",
+    "editDuringBuildFollowUp": "passed",
+    "sigintCleanup": "passed",
+    "durablePathPrivacy": "passed",
+    "incrementalAndCleanOwnedBytes": "byte-identical",
+    "outcome": "passed"
+  },
+  "referencePatterns": [
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_watcher.ex",
+      "blob": "7a54b03b3c2fdf03caf53c7ac9e1aeba5cb0c418",
+      "sha256": "b5243f3279859d6d9fa50184af5e5450bc54fb34996725699bc5bcd1fe6c08b0",
+      "concept": "debounced-effective-input-watcher",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "path": "lib/haxe_server.ex",
+      "blob": "db684a03e104cdaaa2e1fe23b07d7a99b64d1581",
+      "sha256": "1419b50305b80ae229cf441c4b9764b87732917c911740565a1c1f2c7352110c",
+      "concept": "owned-compatible-haxe-wait-lifecycle",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    }
+  ],
+  "claims": {
+    "productionWphxDevCompileWatch": "runtime-tested-local",
+    "atomicIncrementalPublication": "runtime-tested-local",
+    "lastGoodRetention": "runtime-tested-local",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
+    "actualHaxeWaitCompilationParity": "runtime-tested-by-sdk040",
+    "wordpressDevelopmentService": "not-tested",
+    "nextjsDevelopmentService": "not-tested",
+    "automaticBrowserReload": "not-tested",
+    "windowsWatcherAndProcessBehavior": "not-tested",
+    "networkFilesystemBehavior": "not-tested",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The current producer graph emits only CLI metadata, its reproducibility report, and an unsigned evidence archive; PHP, browser, asset, and deployable site producers are not registered.",
+    "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
+    "Typed WordPress and Next.js services, readiness, service ports, and reload adapters are not implemented.",
+    "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
+  ]
+}

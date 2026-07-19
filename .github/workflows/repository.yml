@@ -170,6 +170,8 @@ jobs:
         run: bash scripts/ownership/test.sh
       - name: Test production project CLI foundation
         run: bash scripts/project-cli/test-production.sh
+      - name: Test production compile and watch development loop
+        run: bash scripts/dev-loop/test-production.sh
       - name: Test deterministic build and unsigned archive replay
         run: bash scripts/determinism/test-production.sh
       - name: Test real browser source-map composition and trace CLI

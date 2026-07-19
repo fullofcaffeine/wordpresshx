@@ -47,8 +47,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   one-command development-loop lock. Its synthetic transcript proves dry-run,
   last-good, reload-order, and shutdown semantics. The separate
   `project-cli-implementation.json` records SDK-043's real bounded Haxe/Genes
-  command, exact input resolver, read-only modes, and ownership publication;
-  SDK-044 still owns real watch/process/WordPress/Next.js evidence.
+  command, exact input resolver, read-only modes, and ownership publication.
+- `dev-loop-implementation.json` records SDK-044's real compile/watch core:
+  managed project-local compiler lifecycle, effective-graph subscriptions,
+  coalesced serialized rebuilds, input-stability checks, last-good retention,
+  and clean compiler shutdown. Typed WordPress/Next.js services, readiness, and
+  reload adapters remain explicit non-claims.
 - `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
   reproducibility report, fixed-representation unsigned ZIP writer, complete
   owned-generation comparator, two-fresh-root gate, and safe additive
@@ -112,16 +116,23 @@ collector, four deterministic direct/server compilations, ten source-located
 compile failures, five schema/input mutations, exact effective inputs, and
 full-DCE runtime absence. It emits intermediate plan/input artifacts only;
 the SDK-041 owner is implemented separately, while target emitter integration
-and SDK-044 watch services remain unproven.
+and SDK-044 application services remain unproven.
 
 Receipt `SDK-043-PROJECT-CLI` records the Haxe-authored, Genes-emitted `wphx`
 command foundation. Its exact Node corpus covers strict discovery and lock
 validation, parity with ADR-016's effective-input fingerprint, direct Haxe
 typing, no-write check/inspect/doctor/dry-run behavior, manifest-last build,
 provenance, exact clean, tamper rejection, and preservation of the frozen
-`wphx-sdk` trace entry. PHP/browser/asset emitters, the SDK-044 watcher and
-services, real WordPress/Next.js runtimes, and production support remain
-explicit non-claims.
+`wphx-sdk` trace entry. PHP/browser/asset emitters, real WordPress/Next.js
+runtimes, and production support remain explicit non-claims.
+
+Receipt `SDK-044-DEV-LOOP` records the Haxe-authored compile/watch loop on exact
+Linux Node 22.17.0. Its controlled process corpus proves initial publication,
+burst coalescing, source failure retention, nested HXX create/rename/delete,
+lock repair, compiler-identity restart, edit-during-build follow-up, SIGINT
+cleanup, path privacy, and byte equality with a clean build. It does not claim
+typed application services, readiness, browser reload, Windows/network
+filesystem behavior, package publication, or production support.
 
 Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated
 fresh roots, byte-identical Genes output and complete owned generations, a

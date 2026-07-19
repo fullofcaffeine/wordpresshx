@@ -40,10 +40,10 @@ here because ADR-007 supplies the stronger complete transaction. This decision
 adapts the concepts only. It copies no source or fixture bytes and creates no
 dependency on that checkout.
 
-This ADR fixes the contract. `wordpresshx-sdk-043` and
-`wordpresshx-sdk-044` still own the production Haxe/Genes CLI and real watch,
-process, port, readiness, and reload evidence. The Python corpus here is a
-closed architecture fixture, not the shipped watcher.
+This ADR fixes the contract. Production Haxe/Genes CLI and development-loop
+evidence is recorded separately by `wordpresshx-sdk-043` and
+`wordpresshx-sdk-044`. The Python corpus attached to this ADR remains a closed
+architecture fixture, not evidence for the shipped watcher or services.
 
 ## Decision
 
@@ -525,13 +525,13 @@ implementations may not drift in place.
   every build and rebuild.
 - `wordpresshx-sdk-043`: implement the Haxe/Genes `wphx` command foundation,
   project/lock validation, stages, diagnostics, JSONL, and dry-run.
-- `wordpresshx-sdk-044`: implement and prove the Haxe server, effective watcher,
-  service supervisor, ports, readiness, last-good behavior, reload ordering, and
-  cleanup matrix.
+- `wordpresshx-sdk-044`: finish the typed service supervisor, ports, readiness,
+  and reload adapters on top of the implemented Haxe server, effective watcher,
+  last-good behavior, and compiler cleanup core.
 - `wordpresshx-sdk-112` through `wordpresshx-sdk-117`: consume the same contract
   in the landing, blog, commerce, and Next.js reference sites.
 
-## SDK-043 implementation status
+## SDK-043 and SDK-044 implementation status
 
 The bounded command foundation is implemented in Haxe and emitted as Node ESM
 by immutable Genes 1.36.3. It validates the generated bootstrap and exact lock,
@@ -541,9 +541,15 @@ Build publication uses the SDK-041 manifest-last owner; all read-only commands
 and dry-run are proven not to publish. The original trace entry and ownership
 JSON implementation remain byte-identical to their earlier receipts.
 
-This does not complete the development transcript above. Until SDK-044 lands,
-`wphx dev` validates the project and exits with `WPHX4000` without writing or
-starting children. The exact implementation and bounded non-claims are in
+SDK-044 now supplies the initial atomic build, managed project-local Haxe wait
+server, effective-input watcher, conservative serialized rebuild, last-good
+retention, edit-during-build retry, and clean compiler shutdown. The
+compile/watch-only form is production-gate tested on exact Linux Node 22.17.0.
+Typed WordPress/Next.js service processes, readiness, service ports, and reload
+adapters are still non-claims and are reported as skipped rather than inferred
+from shell configuration. The exact SDK-043 implementation is in
 [`project-cli-implementation.json`](../../manifests/project-cli-implementation.json)
-and
-[`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json).
+and [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json);
+the SDK-044 core and its bounded non-claims are in
+[`dev-loop-implementation.json`](../../manifests/dev-loop-implementation.json)
+and [`SDK-044-DEV-LOOP`](../../manifests/evidence/sdk-044-dev-loop.json).

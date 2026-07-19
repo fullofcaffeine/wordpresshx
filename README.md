@@ -50,8 +50,10 @@ events, compatible isolated Haxe server, last-good publication, and typed
 WordPress/Next service contract keep watch mode reproducible. The contract
 fixture passes, and SDK-043 now implements the bounded build/check/inspect/
 clean/doctor command foundation with exact project discovery and fail-closed
-publication. SDK-044 still owns the real watcher, compiler server, service,
-readiness, reload, shutdown, and runtime evidence.
+publication. SDK-044 now implements and locally production-gate verifies the
+real compile/watch core, isolated compiler lifecycle, last-good rebuilds, and
+clean compiler shutdown. Typed WordPress/Next.js services, readiness, and
+reload adapters remain SDK-044 work.
 
 The product is not a WordPress fork, a replacement runtime, a generic CMS abstraction, or a proprietary site builder. The SDK and the separate full `wordpress-hx` port may share released generic compiler packages and public contracts, but neither project may import the other's unpublished implementation internals or merge its compatibility claims.
 
