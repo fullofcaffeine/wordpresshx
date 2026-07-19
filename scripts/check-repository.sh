@@ -7594,6 +7594,8 @@ assert sdk027_artifact["sourceContentSha256"] == (
     "23cdce039ba7874750816311e46b77cbfffb40658a871acde4d73fe202189ea7"
 )
 assert sdk027_artifact["twoBuildsByteIdentical"] is True
+assert sdk027_artifact["cleanWorktreeProvenancePassed"] is True
+assert sdk027_artifact["artifactManifestWorkingTreeDirty"] is False
 assert sdk027_artifact["embeddedPerFileHashes"] is True
 assert sdk027_artifact["sourceOnly"] is True
 assert sdk027_artifact["publicationAuthorized"] is False

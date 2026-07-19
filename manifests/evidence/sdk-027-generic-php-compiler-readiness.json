@@ -207,7 +207,7 @@
     ]
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "c56b926d812bba75dc04c5cdde30e0008b9e10a7",
     "packageBoundary": "compiler/reflaxe.php owns generic PHP; compiler/wordpress and SDK modules own WordPress behavior",
     "dependencyDirection": "reflaxe.php <- compiler/wordpress <- WordPressHx SDK",
     "artifact": {
@@ -220,6 +220,8 @@
       "sourceContentSha256": "23cdce039ba7874750816311e46b77cbfffb40658a871acde4d73fe202189ea7",
       "sourceDateEpoch": 315532800,
       "twoBuildsByteIdentical": true,
+      "cleanWorktreeProvenancePassed": true,
+      "artifactManifestWorkingTreeDirty": false,
       "embeddedPerFileHashes": true,
       "sourceOnly": true,
       "publicationAuthorized": false
