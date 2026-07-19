@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "receiptId": "ADR-016-PROJECT-CLI-CONFIGURATION",
   "bead": "wordpresshx-adr-016",
-  "observedAt": "2026-07-18T20:18:29Z",
+  "observedAt": "2026-07-19T03:14:47Z",
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
-      "sha256": "bcf5e74949da908d5989e1609583f4d7f2cf83594bb3959a10cceb63d72a63f2"
+      "sha256": "37da300ad1a770c8abdd318abdbe9e2d9ee1548215b135bf6df59dfb3cacce96"
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",

@@ -76,7 +76,8 @@ Dev.wordpress();
 The macro derives the stable ID, working directory, preferred port, bounded
 HTTP readiness probe, restart policy, URL, and full-page reload mode. Typed
 options override only what differs. `Dev.service({...})` is the explicit,
-no-shell external-process escape hatch. The CLI still reports service and
+no-shell external-process escape hatch: Haxe derives an admitted executable
+from its exact lock component and defaults omitted argv to `[]`. The CLI still reports service and
 reload execution as skipped until the supervisor consumes the validated plan;
 it does not invent commands or claim that child processes are running.
 

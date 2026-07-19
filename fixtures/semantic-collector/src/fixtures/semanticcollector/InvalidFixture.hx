@@ -109,9 +109,14 @@ class InvalidFixture {
 			id: "search",
 			command: {
 				component: "tool.unlocked",
-				executable: "search-server",
 				arguments: ["--port", "{port}"]
 			}
+		});
+		#end
+		#if unadmitted_external_component
+		Dev.service({
+			id: "unsupported",
+			command: {component: "compiler.genes"}
 		});
 		#end
 		#if service_cycle
@@ -120,18 +125,13 @@ class InvalidFixture {
 			dependsOn: ["worker"],
 			command: {
 				component: "tool.npm",
-				executable: "npm",
 				arguments: ["run", "api", "--", "--port", "{port}"]
 			}
 		});
 		Dev.service({
 			id: "worker",
 			dependsOn: ["api"],
-			command: {
-				component: "tool.npm",
-				executable: "npm",
-				arguments: ["run", "worker"]
-			}
+			command: {component: "tool.npm"}
 		});
 		#end
 	}

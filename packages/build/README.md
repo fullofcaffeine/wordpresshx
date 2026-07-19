@@ -28,8 +28,9 @@ Dev.wordpress();
 
 Typed `WordPressDevelopmentOptions` override only non-default behavior. Services
 without a dedicated SDK adapter use the explicit `Dev.service({...})` escape
-hatch, whose component must exist in the exact project lock and whose command
-is argv-based rather than an implicit shell string.
+hatch. Name an SDK-admitted component from the exact project lock; Haxe derives
+its executable and defaults omitted arguments to `[]`. Commands remain argv-
+based rather than implicit shell strings.
 
 The generated HXML installs `SemanticPlan.install(...)`. Declarations expand
 to `null` markers and are removed by normal DCE; the collector writes only a

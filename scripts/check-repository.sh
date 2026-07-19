@@ -1535,7 +1535,7 @@ collector_verification = semantic_collector_architecture["verification"]
 assert collector_verification["haxeVersion"] == "4.3.7"
 assert collector_verification["directBuildCount"] == 2
 assert collector_verification["serverBuildCount"] == 2
-assert collector_verification["negativeCompileCount"] == 17
+assert collector_verification["negativeCompileCount"] == 18
 assert collector_verification["negativeSchemaMutationCount"] == 5
 assert collector_verification["collectorSourceCount"] == 24
 assert collector_verification["effectiveFileCount"] == 32

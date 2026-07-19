@@ -122,6 +122,7 @@ run_negative invalid_service_environment WPHX4187
 run_negative invalid_service_port WPHX4191
 run_negative invalid_service_readiness WPHX4195
 run_negative unlocked_external_service WPHX4188
+run_negative unadmitted_external_component WPHX4189
 run_negative service_cycle WPHX4203
 
 if rg -n '(sys\.net|haxe\.Http|curl|wget|Socket)' packages/build/src; then
@@ -139,4 +140,4 @@ if rg -n '(wordpress[._]hx[._]build|SemanticCollector|ModuleDeclaration|HookDecl
   exit 1
 fi
 
-echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":17,\"outcome\":\"passed\",\"serverBuildCount\":2}"
+echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":18,\"outcome\":\"passed\",\"serverBuildCount\":2}"

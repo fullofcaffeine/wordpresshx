@@ -73,7 +73,7 @@
     "missingDependencies": "fail-before-plan-write",
     "developmentServiceGraph": "stable-id-closed-dag-with-duplicate-missing-and-cycle-rejection",
     "wordpressServiceErgonomics": "zero-argument-sdk-owned-provider-with-typed-literal-overrides",
-    "externalServiceEscapeHatch": "exact-lock-component-and-no-implicit-shell"
+    "externalServiceEscapeHatch": "exact-lock-component-with-haxe-derived-admitted-executable-optional-argv-and-no-implicit-shell"
   },
   "effectiveInputs": {
     "fileRoles": [
@@ -179,7 +179,7 @@
     "haxeVersion": "4.3.7",
     "directBuildCount": 2,
     "serverBuildCount": 2,
-    "negativeCompileCount": 17,
+    "negativeCompileCount": 18,
     "negativeSchemaMutationCount": 5,
     "collectorSourceCount": 24,
     "effectiveFileCount": 32,
@@ -187,9 +187,9 @@
     "nodeCount": 3,
     "resourceCount": 1,
     "environmentCount": 1,
-    "collectorSourceSha256": "2bab0f2cf981116954d44426f38193e949c083d95b50c942d60d3e5174957556",
-    "effectiveInputsFingerprint": "444d8c9a1c4d7c962bb6987be43609a2078a14979cc1927a979b54aeec99a464",
-    "planDigest": "a2f5815f77941c272f7e4da3c958296c391d1155a1e0870aaafa633667be3fbc",
+    "collectorSourceSha256": "291b617628b543393cdd004a7e5403970a85cf918d9ad5c1a264aad9612021f4",
+    "effectiveInputsFingerprint": "b5d21f7128af586cd7742cc8e7cc31eee99acbd9674305c208b318783cc89834",
+    "planDigest": "69e2a65aa8ad9bbfa02ecb1d0bb12c01ede52aa1bc380bda9238c903af7585b3",
     "jsonBoundaryVectorCount": 8,
     "directVsServerByteEquality": "passed",
     "sourceLocatedDiagnostics": "passed",

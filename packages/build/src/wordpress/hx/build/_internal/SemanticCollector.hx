@@ -743,16 +743,17 @@ class SemanticCollector {
 		final command:Null<DevelopmentCommand> = switch serviceKind {
 			case WordPressService: null;
 			case ExternalService:
-				final commandFields = objectFields(fields.get("command"), ["arguments", "component", "executable"]);
+				final commandFields = objectFields(fields.get("command"), ["component"], ["arguments"]);
 				final component = literalString(commandFields.get("component"), "WPHX4188", "development command component");
 				requirePattern(STABLE_ID, component, "WPHX4188", "development command component is not stable", commandFields.get("component").pos);
-				final executable = literalString(commandFields.get("executable"), "WPHX4189", "development command executable");
-				requirePattern(EXECUTABLE_NAME, executable, "WPHX4189", "development command executable must be a portable basename",
-					commandFields.get("executable").pos);
+				if (!toolExists(session.tools, component)) {
+					fail("WPHX4188", "development command component is absent from the exact project lock: " + component, commandFields.get("component").pos);
+				}
 				{
 					component: component,
-					executable: executable,
-					arguments: literalStringArray(commandFields.get("arguments"), "WPHX4190", "development command arguments")
+					executable: developmentExecutable(component, commandFields.get("component").pos),
+					arguments: commandFields.exists("arguments") ? literalStringArray(commandFields.get("arguments"), "WPHX4190",
+						"development command arguments") : []
 				};
 		};
 
@@ -918,6 +919,10 @@ class SemanticCollector {
 					fail("WPHX4188", "development command component is absent from the exact project lock: " + command.component, position);
 				}
 				requirePattern(EXECUTABLE_NAME, command.executable, "WPHX4189", "development command executable must be a portable basename", position);
+				final expectedExecutable = developmentExecutable(command.component, position);
+				if (command.executable != expectedExecutable) {
+					fail("WPHX4189", "development command executable contradicts the SDK mapping for " + command.component, position);
+				}
 				var portTokens = 0;
 				for (argument in command.arguments) {
 					if (argument.indexOf("{port}") >= 0) {
@@ -1634,6 +1639,18 @@ class SemanticCollector {
 			}
 		}
 		return false;
+	}
+
+	static function developmentExecutable(component:String, position:Position):String {
+		return switch component {
+			case "compiler.haxe": "haxe";
+			case "runtime.node": "node";
+			case "tool.lix": "lix";
+			case "tool.npm": "npm";
+			case "tool.wordpress-scripts": "wp-scripts";
+			case _:
+				fail("WPHX4189", "development command component has no SDK-admitted executable mapping: " + component, position);
+		};
 	}
 
 	static function underAnyRoot(path:String, roots:Array<String>):Bool {

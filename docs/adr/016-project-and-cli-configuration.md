@@ -331,8 +331,9 @@ Haxe derives its stable `wordpress` ID, project working directory, preferred
 port 8888, bounded `/wp-json/` HTTP readiness probe, restart policy, root URL,
 and full-page reload behavior. A typed `WordPressDevelopmentOptions` object
 overrides only values that differ. Core also exposes `Dev.service({...})` as an
-explicit external-process escape hatch with a locked component identity and
-argv; it never accepts an implicit shell command.
+explicit external-process escape hatch. Its component identity must be present
+in the exact project lock, Haxe derives the SDK-admitted executable, and omitted
+argv defaults to `[]`; it never accepts an implicit shell command.
 
 Every service node carries dependency IDs, working directory, runtime-
 environment allowlist, port policy, readiness probe, restart policy, URL
