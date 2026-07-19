@@ -200,9 +200,12 @@ wphx package
 names and makes `dev` the one-command initial-build, effective-input watch,
 WordPress/Next service, readiness, and reload loop. Typed service declarations
 stay in Haxe; a small generated bootstrap exists only for pre-Haxe discovery.
-For the built-in path, `Dev.wordpress()` derives the provider, readiness, and
-development-only full-page reload adapter without user-authored PHP, JavaScript,
-Compose, ports, or capability configuration.
+For a generated plugin, its existing `WordPress.plugin()` declaration also
+derives the provider, fresh install and activation, readiness, and development-
+only full-page reload adapter. No `Dev.wordpress()` call or user-authored PHP,
+JavaScript, Compose, ports, or capability configuration is required.
+`Dev.wordpress()` remains the explicit typed service surface for other project
+kinds and advanced overrides.
 `dev` retains the last complete ownership generation on failure and introduces
 no production application kernel or proprietary PHP hot-reload protocol.
 

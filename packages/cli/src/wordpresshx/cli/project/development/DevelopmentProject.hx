@@ -10,6 +10,7 @@ import wordpresshx.cli.closedjson.JsonReader;
 import wordpresshx.cli.closedjson.JsonReader.JsonReadError;
 import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.PluginCompilationRegistry;
 import wordpresshx.cli.project.ProjectContext;
 
 typedef RuntimeEnvironmentRule = {
@@ -29,6 +30,7 @@ class DevelopmentProject {
 	public final catalogRevision:String;
 	public final catalogSha256:String;
 	public final toolchainSha256:String;
+	public final deployablePlugin:Null<DevelopmentPlugin>;
 
 	final components:Map<String, Bool>;
 	final environmentRules:Map<String, RuntimeEnvironmentRule>;
@@ -37,7 +39,12 @@ class DevelopmentProject {
 		try {
 			final config = parseDocument(context.bootstrap.configBytes, "wordpress-hx.json", false);
 			final lock = parseDocument(context.lockBytes, context.bootstrap.lockPath, true);
-			return decode(context.bootstrap.root, config, lock, OwnershipJson.digest(context.lockBytes));
+			final project = decode(context.bootstrap.root, config, lock, OwnershipJson.digest(context.lockBytes));
+			final plan = PluginCompilationRegistry.get(context.bootstrap.root);
+			if (plan == null || DevelopmentPlanReader.hasExplicit(context)) {
+				return project;
+			}
+			return project.withDeployablePlugin(DevelopmentPlugin.from(context, plan));
 		} catch (error:JsonParseError) {
 			return invalid("WPHX2300", "development project JSON is malformed: " + error.message);
 		} catch (error:JsonReadError) {
@@ -48,7 +55,7 @@ class DevelopmentProject {
 	}
 
 	function new(root:String, projectId:String, profileId:String, catalogRevision:String, catalogSha256:String, toolchainSha256:String,
-			components:Map<String, Bool>, environmentRules:Map<String, RuntimeEnvironmentRule>) {
+			components:Map<String, Bool>, environmentRules:Map<String, RuntimeEnvironmentRule>, deployablePlugin:Null<DevelopmentPlugin>) {
 		this.root = root;
 		this.projectId = projectId;
 		this.profileId = profileId;
@@ -57,6 +64,11 @@ class DevelopmentProject {
 		this.toolchainSha256 = toolchainSha256;
 		this.components = components;
 		this.environmentRules = environmentRules;
+		this.deployablePlugin = deployablePlugin;
+	}
+
+	function withDeployablePlugin(plugin:DevelopmentPlugin):DevelopmentProject {
+		return new DevelopmentProject(root, projectId, profileId, catalogRevision, catalogSha256, toolchainSha256, components, environmentRules, plugin);
 	}
 
 	public function hasComponent(id:String):Bool {
@@ -119,7 +131,7 @@ class DevelopmentProject {
 			previousComponent = id;
 			components.set(id, true);
 		}
-		return new DevelopmentProject(root, projectId, profileId, catalogRevision, catalogSha256, toolchainSha256, components, environmentRules);
+		return new DevelopmentProject(root, projectId, profileId, catalogRevision, catalogSha256, toolchainSha256, components, environmentRules, null);
 	}
 
 	static function decodeEnvironment(environment:JsonReader):Map<String, RuntimeEnvironmentRule> {

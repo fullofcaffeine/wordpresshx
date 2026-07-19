@@ -54,7 +54,15 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/project/PluginMacroRuntime.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlan.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlanReader.hx" \
-	"${package_root}/src/wordpresshx/cli/project/PluginProjectBuild.hx" <<'PY'
+	"${package_root}/src/wordpresshx/cli/project/PluginProjectBuild.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlan.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentPlugin.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/DevelopmentProject.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/ReadinessProbe.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/WordPressBootstrapAdapter.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/WordPressProvider.hx" \
+	"${package_root}/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx" <<'PY'
 import re
 import sys
 from pathlib import Path

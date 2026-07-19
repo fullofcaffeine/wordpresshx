@@ -42,7 +42,7 @@
     },
     "devLoopDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
+      "sha256": "ca1db22e4a6547f5e579d5f9c4c4f1785e1eef25e5ac19ef417b3768a5c37a67"
     }
   },
   "contract": {
@@ -114,6 +114,13 @@
     "collectorContractChanged": false,
     "collectorRuntimeReverificationRequired": false,
     "evidenceOwner": "SDK-044-DEV-LOOP"
+  },
+  "sdk044PluginDevelopmentDocumentationRevision": {
+    "observedAt": "2026-07-19T09:27:24Z",
+    "reason": "The shared development-loop document now records SDK-044.3's compiler-inferred real generated-plugin path while preserving SDK-040 as the declaration and collection evidence owner.",
+    "collectorContractChanged": false,
+    "collectorRuntimeReverificationRequired": false,
+    "evidenceOwner": "SDK-044-INFERRED-PLUGIN-DEVELOPMENT"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

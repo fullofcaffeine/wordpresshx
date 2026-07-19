@@ -6,7 +6,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
-      "sha256": "169a2ece8beed854fa553374018108f52b9075771a770ba2486e6e7c216afefe"
+      "sha256": "6ab4e5ea051a3ed7f83831f7fa78f6b5bb4bc8485dcdfc44a422a891dfa1b496"
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",
@@ -132,6 +132,13 @@
     "architectureContractChanged": false,
     "fixtureBytesChanged": true,
     "evidenceOwner": "SDK-045-SCAFFOLD"
+  },
+  "sdk044PluginDevelopmentContractRevision": {
+    "observedAt": "2026-07-19T09:27:24Z",
+    "reason": "Generated native plugins now infer the built-in WordPress service from their current typed compiler plan, while explicit Haxe service plans retain precedence.",
+    "architectureContractChanged": true,
+    "fixtureBytesChanged": false,
+    "evidenceOwner": "SDK-044-INFERRED-PLUGIN-DEVELOPMENT"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

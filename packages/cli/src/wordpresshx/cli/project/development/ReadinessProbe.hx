@@ -8,6 +8,7 @@ import js.node.net.Socket.SocketEvent;
 import js.node.stream.Writable.WritableEvent;
 import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentReadinessKind;
+import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentServiceKind;
 
 /** Bounded readiness polling for one owned service process. */
 class ReadinessProbe {
@@ -63,7 +64,7 @@ class ReadinessProbe {
 		}, response -> {
 			final status = response.statusCode;
 			response.resume();
-			complete(status >= 200 && status < 400);
+			complete(status >= 200 && status < (service.service.kind == WordPress ? 300 : 400));
 		});
 		request.once(WritableEvent.Error, (_:Error) -> complete(false));
 		request.setTimeout(probeTimeout(service), () -> {

@@ -71,6 +71,14 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   Genes-emitted embedded reload client, capability-protected loopback stream,
   private development MU-plugin, and controlled-boundary real-Chromium proof.
   The optional Next.js adapter remains an explicit non-claim.
+- `plugin-development-implementation.json` records SDK-044.3's ceremony-free
+  generated-plugin development path. The current compiler `PluginPlan` is the
+  sole inference authority; plain `wphx dev` revalidates the exact emitted
+  plugin tree, mounts it read-only, performs a fresh WordPress install and
+  native activation before readiness, retains the active last-good generation,
+  reloads only after a complete publication, and removes all owned Docker and
+  private runtime resources. It does not broaden this bounded plugin proof into
+  a complete generated-site, Next.js, or production-support claim.
 - `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
   reproducibility report, fixed-representation unsigned ZIP writer, complete
   owned-generation comparator, two-fresh-root gate, and safe additive
@@ -173,6 +181,17 @@ SDK-090 separately runtime proves the exact WordPress/MariaDB image pair. The
 receipt does not claim that SDK-044 starts that real pair, mounts a generated
 site, implements the optional Next.js adapter/native HMR, or supports Windows/
 network filesystems, package publication, or production use.
+
+Receipt `SDK-044-INFERRED-PLUGIN-DEVELOPMENT` records the additive SDK-044.3
+proof. A freshly scaffolded plugin uses only its existing
+`WordPress.plugin()` declaration and plain `wphx dev`; the SDK derives the real
+WordPress 7.0/MariaDB service from the typed compiler plan, rejects extra plugin
+tree entries before service start, installs and activates the native plugin,
+gates readiness on active-plugin HTTP success, suppresses reload after failure,
+reloads the next committed generation without restarting WordPress, and removes
+containers, network, named and anonymous volumes, compiler state, and private
+files on shutdown. Complete site generation, Next.js, publication, and
+production support remain separate work.
 
 Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated
 fresh roots, byte-identical Genes output and complete owned generations, a

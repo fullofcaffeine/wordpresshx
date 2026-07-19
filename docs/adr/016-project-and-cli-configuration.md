@@ -321,7 +321,10 @@ stale state before cleanup.
 ### Development services are typed Haxe declarations
 
 The Haxe site definition supplies a closed service DAG after plan validation.
-The ordinary WordPress path deliberately requires one expression:
+For a generated plugin, the ordinary WordPress path requires no additional
+expression: the compiler's current `WordPress.plugin()` plan is sufficient to
+infer the exact built-in service after the native generation is published.
+Other project kinds and advanced overrides retain the explicit expression:
 
 ```haxe
 Dev.wordpress();
@@ -571,9 +574,12 @@ capability-protected loopback event stream for a strictly typed Haxe browser
 client emitted by pinned Genes. Local real-Chromium evidence proves that a
 failed generation does not reload and the next complete manifest-last
 publication causes exactly one full-page reload without restarting WordPress.
-The proof uses the controlled provider boundary: target producers still do not
-create and install a deployable site, and the real WordPress image pair is not
-started through `wphx dev`. Optional Next.js support remains outside core. The
+The generated-plugin path now derives the same service without a
+`Dev.wordpress()` call and locally proves the exact real WordPress/MariaDB pair,
+fresh installation, activation-before-readiness, read-only exact plugin mount,
+last-good retention, post-commit reload, and complete owned-resource cleanup.
+The generic site lane still has no deployable native site producer. Optional
+Next.js support remains outside core. The
 exact SDK-043 implementation is in
 [`project-cli-implementation.json`](../../manifests/project-cli-implementation.json)
 and [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json);

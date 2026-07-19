@@ -433,6 +433,7 @@ required_files=(
   manifests/generated-artifact-ownership.json
   manifests/deterministic-build-implementation.json
   manifests/dev-loop-implementation.json
+  manifests/plugin-development-implementation.json
   manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
   manifests/project-cli-implementation.json
@@ -453,6 +454,7 @@ required_files=(
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/sdk-043-project-cli.json
   manifests/evidence/sdk-044-dev-loop.json
+  manifests/evidence/sdk-044-inferred-plugin-development.json
   manifests/evidence/sdk-045-scaffold.json
   manifests/evidence/sdk-045-plugin-scaffold.json
   manifests/evidence/sdk-042-deterministic-build.json
@@ -845,6 +847,16 @@ sdk044_receipt = json.loads(
     Path("manifests/evidence/sdk-044-dev-loop.json").read_text(
         encoding="utf-8"
     )
+)
+plugin_development_implementation = json.loads(
+    Path("manifests/plugin-development-implementation.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk044_plugin_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-044-inferred-plugin-development.json"
+    ).read_text(encoding="utf-8")
 )
 scaffold_implementation = json.loads(
     Path("manifests/scaffold-implementation.json").read_text(
@@ -3083,6 +3095,272 @@ for sdk044_claim_record in (
         "controlled-wordpress-boundary-real-chromium-runtime-tested-"
         + sdk044_evidence_suffix
     )
+
+assert plugin_development_implementation["schemaVersion"] == 1
+assert plugin_development_implementation["bead"] == "wordpresshx-sdk-044.3"
+assert plugin_development_implementation["status"] in {
+    "implemented-sdk044-plugin-development-hosted-pending",
+    "implemented-sdk044-plugin-development-hosted-verified",
+}
+assert plugin_development_implementation["scope"] == (
+    "compiler-inferred-generated-plugin-wordpress-development"
+)
+sdk044_plugin_ergonomics = plugin_development_implementation[
+    "haxeFirstErgonomics"
+]
+assert sdk044_plugin_ergonomics == {
+    "maintainedAuthority": "WordPress.plugin()",
+    "additionalDevelopmentDeclarations": 0,
+    "defaultCommand": "wphx dev",
+    "compileWatchOnlyOptOut": "wphx dev --services=none",
+    "handwrittenPhpRequired": False,
+    "handwrittenJavascriptOrTypescriptRequired": False,
+    "handwrittenComposeRequired": False,
+    "handwrittenWordPressConfigurationRequired": False,
+}
+sdk044_plugin_inference = plugin_development_implementation["inference"]
+assert sdk044_plugin_inference == {
+    "authority": "process-local-typed-compiler-PluginPlan",
+    "timing": "after-successful-manifest-last-plugin-publication",
+    "filenameOrScaffoldKindInference": False,
+    "explicitGeneratedServicePlanPrecedence": True,
+    "missingPlanBehavior": "no-inferred-service",
+    "incompleteOrExtraPluginTreeDiagnostic": "WPHX2332",
+    "pluginValidation": (
+        "re-derive-current-emission-and-compare-exact-file-set-and-sha256-bytes"
+    ),
+    "mount": "exact-validated-plugin-directory-read-only",
+}
+sdk044_plugin_provider = plugin_development_implementation["provider"]
+assert sdk044_plugin_provider["profile"] == "wp70-release"
+assert sdk044_plugin_provider["executor"] == (
+    "docker-compose-v2-host-capability"
+)
+assert sdk044_plugin_provider["wordpressImage"] == (
+    sdk044_wordpress_lock["wordpressImage"]
+)
+assert sdk044_plugin_provider["databaseImage"] == (
+    sdk044_wordpress_lock["databaseImage"]
+)
+assert sdk044_plugin_provider["installation"] == (
+    "fresh-native-wordpress-install"
+)
+assert sdk044_plugin_provider["bootstrapStartBarrier"] == (
+    "wordpress-healthcheck-complete-core-includes-and-plugin-entry"
+)
+assert sdk044_plugin_provider["activation"] == (
+    "native-activate-plugin-before-readiness"
+)
+assert sdk044_plugin_provider["shellExecution"] is False
+assert sdk044_plugin_provider["productionRuntimeDependency"] is False
+sdk044_plugin_shutdown = plugin_development_implementation["shutdown"]
+for sdk044_plugin_cleanup in (
+    "ownedContainersRemoved",
+    "ownedNetworkRemoved",
+    "ownedNamedAndAnonymousVolumesRemoved",
+    "privateComposeBootstrapAndReloadFilesRemoved",
+    "compilerLeaseRemoved",
+):
+    assert sdk044_plugin_shutdown[sdk044_plugin_cleanup] is True
+
+sdk044_plugin_code = plugin_development_implementation["implementation"]
+assert sdk044_plugin_code["language"] == "Haxe"
+assert sdk044_plugin_code["target"] == "Genes-emitted-Node-ESM"
+sdk044_plugin_code_paths = []
+sdk044_plugin_forbidden = re.compile(
+    r"\b(?:Dynamic|Any|cast|Reflect|untyped)\b"
+)
+for sdk044_plugin_code_name in (
+    "deployablePlugin",
+    "developmentProject",
+    "plan",
+    "planReader",
+    "provider",
+    "bootstrapAdapter",
+    "reloadAdapter",
+    "readinessProbe",
+):
+    sdk044_plugin_code_path = Path(
+        sdk044_plugin_code[sdk044_plugin_code_name]
+    )
+    assert sdk044_plugin_code_path.is_file()
+    sdk044_plugin_code_paths.append(sdk044_plugin_code_path)
+    assert sdk044_plugin_forbidden.search(
+        sdk044_plugin_code_path.read_text(encoding="utf-8")
+    ) is None
+assert sdk044_plugin_code["strictHaxeBoundary"] is True
+assert sdk044_plugin_code["genesSourceChanged"] is False
+assert sdk044_plugin_code["genesPullRequest"] is None
+assert sdk044_plugin_code["siblingDependencyCreated"] is False
+sdk044_plugin_plan_reader_source = Path(
+    sdk044_plugin_code["planReader"]
+).read_text(encoding="utf-8")
+sdk044_plugin_project_source = Path(
+    sdk044_plugin_code["developmentProject"]
+).read_text(encoding="utf-8")
+assert "plan == null || DevelopmentPlanReader.hasExplicit(context)" in (
+    sdk044_plugin_project_source
+)
+sdk044_plugin_explicit_branch = sdk044_plugin_plan_reader_source.index(
+    "if (!hasExplicit(context))"
+)
+sdk044_plugin_inferred_branch = sdk044_plugin_plan_reader_source.index(
+    "DevelopmentPlan.forPlugin", sdk044_plugin_explicit_branch
+)
+sdk044_plugin_decode_branch = sdk044_plugin_plan_reader_source.index(
+    "return decode(value, project);", sdk044_plugin_inferred_branch
+)
+assert sdk044_plugin_explicit_branch < sdk044_plugin_inferred_branch
+assert sdk044_plugin_inferred_branch < sdk044_plugin_decode_branch
+
+sdk044_plugin_verification = plugin_development_implementation[
+    "verification"
+]
+assert sdk044_plugin_verification["command"] == (
+    "bash scripts/scaffold/test-production.sh"
+)
+assert sdk044_plugin_verification["summarySchema"] == (
+    "wordpress-hx.sdk045-plugin-scaffold-summary.v1"
+)
+assert sdk044_plugin_verification["summaryResult"] == (
+    "inferred-install-activate-reload-cleanup"
+)
+assert sdk044_plugin_verification["wordpressVersion"] == "7.0"
+assert sdk044_plugin_verification["database"] == "mariadb"
+for sdk044_plugin_passed_proof in (
+    "plainDevInference",
+    "servicesNoneAuthoritative",
+    "freshInstall",
+    "distributionCompletenessBeforeBootstrap",
+    "pluginActivationBeforeReadiness",
+    "exactReadOnlyPluginMount",
+    "privateConfigurationModes",
+    "secretAndCapabilityExclusion",
+    "failedBuildRetentionWithoutReload",
+    "postCommitReload",
+    "ownedResourceCleanup",
+    "strictHaxeBoundaryGuard",
+    "controlledServiceAndChromiumRegression",
+):
+    assert sdk044_plugin_verification[sdk044_plugin_passed_proof] == (
+        "passed"
+    )
+assert sdk044_plugin_verification[
+    "extraPluginEntryRejectedBeforeServiceStart"
+] == "passed-WPHX2332"
+assert sdk044_plugin_verification["serviceRestartsOnSourceEdit"] == 0
+assert sdk044_plugin_verification["regressionCommand"] == (
+    "bash scripts/dev-loop/test-production.sh"
+)
+
+assert sdk044_plugin_receipt["schemaVersion"] == 1
+assert sdk044_plugin_receipt["receiptId"] == (
+    "SDK-044-INFERRED-PLUGIN-DEVELOPMENT"
+)
+assert sdk044_plugin_receipt["bead"] == "wordpresshx-sdk-044.3"
+assert sdk044_plugin_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+assert set(sdk044_plugin_receipt["subject"]) == {
+    "implementationManifest",
+    "compilerPlanBoundary",
+    "developmentRuntime",
+    "consumerGate",
+    "controlledRegressionGate",
+    "repositoryValidator",
+    "workflow",
+    "documentation",
+}
+verify_versioned_subject(sdk044_plugin_receipt)
+assert sdk044_plugin_receipt["subject"]["implementationManifest"][
+    "sha256"
+] == hashlib.sha256(
+    Path("manifests/plugin-development-implementation.json").read_bytes()
+).hexdigest()
+assert sdk044_plugin_receipt["verification"] == (
+    sdk044_plugin_verification
+)
+assert sdk044_plugin_receipt["implementation"] == {
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "commonDeclaration": "WordPress.plugin()",
+    "additionalDevelopmentDeclarations": 0,
+    "inferenceAuthority": "typed compiler PluginPlan",
+    "strictHaxeBoundary": True,
+    "genesSourceChanged": False,
+    "genesPullRequest": None,
+    "siblingDependencyCreated": False,
+}
+sdk044_plugin_hosted = sdk044_plugin_receipt["hostedWorkflow"]
+assert sdk044_plugin_hosted["workflow"] == "Repository bootstrap"
+assert sdk044_plugin_hosted["job"] == "haxe"
+assert sdk044_plugin_hosted["step"] == "Test Haxe-first site scaffolding"
+assert sdk044_plugin_hosted["required"] is True
+if sdk044_plugin_hosted["status"] == "pending-first-main-run":
+    assert sdk044_plugin_receipt["status"] == "implemented-hosted-pending"
+    assert plugin_development_implementation["status"] == (
+        "implemented-sdk044-plugin-development-hosted-pending"
+    )
+    assert sdk044_plugin_receipt["implementationCommit"] is None
+    assert sdk044_plugin_receipt["historicalVerification"][
+        "subjectCommit"
+    ] is None
+    assert sdk044_plugin_hosted["runId"] is None
+    assert sdk044_plugin_hosted["jobId"] is None
+    assert sdk044_plugin_hosted["commit"] is None
+    sdk044_plugin_evidence_suffix = "local"
+elif sdk044_plugin_hosted["status"] == "passed":
+    assert sdk044_plugin_receipt["status"] == "verified"
+    assert plugin_development_implementation["status"] == (
+        "implemented-sdk044-plugin-development-hosted-verified"
+    )
+    assert sha1.fullmatch(sdk044_plugin_receipt["implementationCommit"])
+    assert sdk044_plugin_receipt["historicalVerification"][
+        "subjectCommit"
+    ] == sdk044_plugin_receipt["implementationCommit"]
+    assert isinstance(sdk044_plugin_hosted["runId"], int)
+    assert isinstance(sdk044_plugin_hosted["jobId"], int)
+    assert sdk044_plugin_hosted["commit"] == (
+        sdk044_plugin_receipt["implementationCommit"]
+    )
+    sdk044_plugin_evidence_suffix = "hosted"
+else:
+    raise AssertionError(
+        "SDK-044 inferred plugin development hosted status is invalid"
+    )
+assert sdk044_plugin_verification["outcome"] == (
+    "passed-" + sdk044_plugin_evidence_suffix
+)
+for sdk044_plugin_claim_record in (
+    plugin_development_implementation["claims"],
+    sdk044_plugin_receipt["claims"],
+):
+    for sdk044_plugin_runtime_claim in (
+        "zeroAdditionalDeclarationPluginDevelopment",
+        "realWordPress70MariaDbDevelopment",
+        "activationBeforeReadiness",
+        "lastGoodPluginRetentionAndReload",
+        "completeOwnedResourceCleanup",
+    ):
+        assert sdk044_plugin_claim_record[sdk044_plugin_runtime_claim] == (
+            "runtime-tested-" + sdk044_plugin_evidence_suffix
+        )
+    assert sdk044_plugin_claim_record["explicitServicePlanPrecedence"] == (
+        "source-reviewed-and-explicit-plan-regression-"
+        + sdk044_plugin_evidence_suffix
+    )
+    assert sdk044_plugin_claim_record["nextjsDevelopmentService"] == (
+        "not-implemented"
+    )
+    assert sdk044_plugin_claim_record[
+        "completeGeneratedSiteDevelopment"
+    ] == "not-implemented"
+    assert sdk044_plugin_claim_record["publicPackagePublication"] == (
+        "blocked"
+    )
+    assert sdk044_plugin_claim_record["productionSupport"] == "not-tested"
 
 assert scaffold_implementation["schemaVersion"] == 1
 assert scaffold_implementation["bead"] == "wordpresshx-sdk-045.1"

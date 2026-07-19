@@ -25,6 +25,10 @@ class WordPressProvider {
 	static inline final INTERNAL_ROOT_PASSWORD = "WPHX_INTERNAL_WORDPRESS_DB_ROOT_PASSWORD";
 	static inline final INTERNAL_RELOAD_CLIENT = "WPHX_INTERNAL_WORDPRESS_RELOAD_CLIENT";
 	static inline final INTERNAL_RELOAD_EVENTS = "WPHX_INTERNAL_WORDPRESS_RELOAD_EVENTS";
+	static inline final INTERNAL_ADMIN_PASSWORD = "WPHX_INTERNAL_WORDPRESS_ADMIN_PASSWORD";
+	static inline final INTERNAL_PLUGIN_ENTRY = "WPHX_INTERNAL_WORDPRESS_PLUGIN_ENTRY";
+	static inline final INTERNAL_SITE_TITLE = "WPHX_INTERNAL_WORDPRESS_SITE_TITLE";
+	static inline final INTERNAL_SITE_URL = "WPHX_INTERNAL_WORDPRESS_SITE_URL";
 	static inline final CLEANUP_TIMEOUT_MS = 10000;
 	static final EXECUTOR_ENVIRONMENT = [
 		"DOCKER_CERT_PATH",
@@ -57,6 +61,13 @@ class WordPressProvider {
 		}
 		environment.set(INTERNAL_RELOAD_CLIENT, reload.clientUrl);
 		environment.set(INTERNAL_RELOAD_EVENTS, reload.eventsUrl);
+		final deployablePlugin = project.deployablePlugin;
+		if (deployablePlugin != null) {
+			environment.set(INTERNAL_ADMIN_PASSWORD, randomPassword());
+			environment.set(INTERNAL_PLUGIN_ENTRY, deployablePlugin.entry);
+			environment.set(INTERNAL_SITE_TITLE, project.projectId);
+			environment.set(INTERNAL_SITE_URL, "http://127.0.0.1:" + Std.string(port));
+		}
 		final hostEnvironment = NodeGlobals.process().env;
 		for (name in EXECUTOR_ENVIRONMENT) {
 			final value = hostEnvironment.get(name);
@@ -69,6 +80,7 @@ class WordPressProvider {
 		final composePath = Path.join(project.root, ".wphx/runtime/" + projectName + ".compose.json");
 		final pluginDirectory = Path.join(project.root, ".wphx/runtime/" + projectName + ".mu-plugins");
 		final pluginPath = Path.join(pluginDirectory, "wordpresshx-dev-reload.php");
+		final bootstrapPath = Path.join(pluginDirectory, "wordpresshx-dev-bootstrap.php");
 		try {
 			Fs.mkdirSync(pluginDirectory, 448);
 			Fs.writeFileSync(pluginPath, WordPressReloadAdapter.pluginSource(), {
@@ -76,13 +88,20 @@ class WordPressProvider {
 				mode: 384,
 				flag: "wx"
 			});
-			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginPath)) + "\n", {
+			if (deployablePlugin != null) {
+				Fs.writeFileSync(bootstrapPath, WordPressBootstrapAdapter.source(), {
+					encoding: "utf8",
+					mode: 384,
+					flag: "wx"
+				});
+			}
+			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginPath, bootstrapPath)) + "\n", {
 				encoding: "utf8",
 				mode: 384,
 				flag: "wx"
 			});
 		} catch (_:Exception) {
-			removeRuntimeFiles(composePath, pluginPath, pluginDirectory);
+			removeRuntimeFiles(composePath, pluginPath, bootstrapPath, pluginDirectory);
 			return invalid("could not create its private generated Compose configuration");
 		}
 
@@ -100,11 +119,15 @@ class WordPressProvider {
 			arguments: commonArguments.concat(["up", "--abort-on-container-exit", "--force-recreate", "--remove-orphans"]),
 			workingDirectory: workingDirectory,
 			environment: environment,
-			cleanup: done -> cleanup(commonArguments, workingDirectory, environment, composePath, pluginPath, pluginDirectory, done)
+			cleanup: done -> cleanup(commonArguments, workingDirectory, environment, composePath, pluginPath, bootstrapPath, pluginDirectory, done)
 		};
 	}
 
-	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>, pluginPath:String):JsonValue {
+	static function compose(project:DevelopmentProject, service:DevelopmentService, port:Int, environment:DynamicAccess<String>, pluginPath:String,
+			bootstrapPath:String):JsonValue {
+		if (project.deployablePlugin != null) {
+			return pluginCompose(project, service, port, pluginPath, bootstrapPath);
+		}
 		final wordpressEnvironment:Array<JsonField> = [
 			field("WORDPRESS_DB_HOST", text("database:3306")),
 			field("WORDPRESS_DB_NAME", text("wordpresshx")),
@@ -171,8 +194,137 @@ class WordPressProvider {
 		]);
 	}
 
+	static function pluginCompose(project:DevelopmentProject, service:DevelopmentService, port:Int, reloadPath:String, bootstrapPath:String):JsonValue {
+		final plugin = project.deployablePlugin;
+		if (plugin == null) {
+			return invalid("lost its compiler-derived plugin before composing the development provider");
+		}
+		final labels = object([
+			field("dev.wordpresshx.owned", text("true")),
+			field("dev.wordpresshx.profile", text(project.profileId)),
+			field("dev.wordpresshx.project", text(project.projectId)),
+			field("dev.wordpresshx.service", text(service.id))
+		]);
+		final databaseEnvironment = object([
+			field("MARIADB_DATABASE", text("wordpresshx")),
+			field("MARIADB_PASSWORD", interpolation(INTERNAL_PASSWORD)),
+			field("MARIADB_ROOT_PASSWORD", interpolation(INTERNAL_ROOT_PASSWORD)),
+			field("MARIADB_USER", text("wordpresshx"))
+		]);
+		final wordpressEnvironment = object([
+			field("WORDPRESS_DB_HOST", text("database:3306")),
+			field("WORDPRESS_DB_NAME", text("wordpresshx")),
+			field("WORDPRESS_DB_PASSWORD", interpolation(INTERNAL_PASSWORD)),
+			field("WORDPRESS_DB_USER", text("wordpresshx")),
+			field("WORDPRESS_DEBUG", text("1")),
+			field("WPHX_DEV_PLUGIN_ENTRY", interpolation(INTERNAL_PLUGIN_ENTRY)),
+			field("WPHX_DEV_RELOAD_CLIENT", interpolation(INTERNAL_RELOAD_CLIENT)),
+			field("WPHX_DEV_RELOAD_EVENTS", interpolation(INTERNAL_RELOAD_EVENTS))
+		]);
+		final bootstrapEnvironment = object([
+			field("WORDPRESS_DB_HOST", text("database:3306")),
+			field("WORDPRESS_DB_NAME", text("wordpresshx")),
+			field("WORDPRESS_DB_PASSWORD", interpolation(INTERNAL_PASSWORD)),
+			field("WORDPRESS_DB_USER", text("wordpresshx")),
+			field("WPHX_INTERNAL_WORDPRESS_ADMIN_PASSWORD", interpolation(INTERNAL_ADMIN_PASSWORD)),
+			field("WPHX_INTERNAL_WORDPRESS_PLUGIN_ENTRY", interpolation(INTERNAL_PLUGIN_ENTRY)),
+			field("WPHX_INTERNAL_WORDPRESS_SITE_TITLE", interpolation(INTERNAL_SITE_TITLE)),
+			field("WPHX_INTERNAL_WORDPRESS_SITE_URL", interpolation(INTERNAL_SITE_URL))
+		]);
+		final wordpressData = object([
+			field("source", text("wordpress-data")),
+			field("target", text("/var/www/html")),
+			field("type", text("volume"))
+		]);
+		final reloadVolume = object([
+			field("read_only", BoolValue(true)),
+			field("source", text(reloadPath)),
+			field("target", text("/var/www/html/wp-content/mu-plugins/wordpresshx-dev-reload.php")),
+			field("type", text("bind"))
+		]);
+		final pluginVolume = object([
+			field("read_only", BoolValue(true)),
+			field("source", text(Path.resolve(project.root, plugin.relativeDirectory))),
+			field("target", text("/var/www/html/wp-content/plugins/" + plugin.slug)),
+			field("type", text("bind"))
+		]);
+		final bootstrapVolume = object([
+			field("read_only", BoolValue(true)),
+			field("source", text(bootstrapPath)),
+			field("target", text("/opt/wordpresshx/dev-bootstrap.php")),
+			field("type", text("bind"))
+		]);
+		final wordpressHealthcheck = object([
+			field("interval", text("1s")),
+			field("retries", number(120)),
+			field("start_period", text("1s")),
+			field("test", array([
+				text("CMD"),
+				text("php"),
+				text("-r"),
+				text("exit(is_file('/var/www/html/wp-load.php') && is_file('/var/www/html/wp-config.php') "
+					+ "&& is_file('/var/www/html/wp-settings.php') && is_file('/var/www/html/wp-includes/version.php') "
+					+ "&& is_file('/var/www/html/wp-admin/includes/upgrade.php') "
+					+ "&& is_file('/var/www/html/wp-admin/includes/plugin.php') "
+					+ "&& is_file('/var/www/html/wp-content/plugins/"
+					+ plugin.entry
+					+ "') ? 0 : 1);")
+			])),
+			field("timeout", text("2s"))
+		]);
+		return object([
+			field("networks", object([field("default", object([field("labels", labels)]))])),
+			field("services", object([
+				field("bootstrap", object([
+					field("command", array([text("/opt/wordpresshx/dev-bootstrap.php")])),
+					field("depends_on",
+						object([
+							field("database", object([field("condition", text("service_healthy"))])),
+							field("wordpress", object([field("condition", text("service_healthy"))]))
+						])),
+					field("entrypoint", array([text("php")])),
+					field("environment", bootstrapEnvironment),
+					field("image", text(WORDPRESS_IMAGE)),
+					field("labels", labels),
+					field("stop_grace_period", text("1s")),
+					field("volumes", array([wordpressData, pluginVolume, bootstrapVolume]))
+				])),
+				field("database", object([
+					field("environment", databaseEnvironment),
+					field("healthcheck", object([
+						field("interval", text("1s")),
+						field("retries", number(120)),
+						field("start_period", text("2s")),
+						field("test",
+							array([
+								text("CMD"),
+								text("healthcheck.sh"),
+								text("--connect"),
+								text("--innodb_initialized")
+							])),
+						field("timeout", text("2s"))
+					])),
+					field("image", text(DATABASE_IMAGE)),
+					field("labels", labels),
+					field("stop_grace_period", text("3s"))
+				])),
+				field("wordpress", object([
+					field("depends_on", object([field("database", object([field("condition", text("service_healthy"))]))])),
+					field("environment", wordpressEnvironment),
+					field("healthcheck", wordpressHealthcheck),
+					field("image", text(WORDPRESS_IMAGE)),
+					field("labels", labels),
+					field("ports", array([text("127.0.0.1:" + Std.string(port) + ":80")])),
+					field("stop_grace_period", text("3s")),
+					field("volumes", array([reloadVolume, wordpressData, pluginVolume]))
+				]))
+			])),
+			field("volumes", object([field("wordpress-data", object([field("labels", labels)]))]))
+		]);
+	}
+
 	static function cleanup(commonArguments:Array<String>, workingDirectory:String, environment:DynamicAccess<String>, composePath:String, pluginPath:String,
-			pluginDirectory:String, done:Void->Void):Void {
+			bootstrapPath:String, pluginDirectory:String, done:Void->Void):Void {
 		var child:Null<NodeChildProcess> = null;
 		var timer:Null<Timer> = null;
 		var settled = false;
@@ -184,11 +336,11 @@ class WordPressProvider {
 			if (timer != null) {
 				timer.stop();
 			}
-			removeRuntimeFiles(composePath, pluginPath, pluginDirectory);
+			removeRuntimeFiles(composePath, pluginPath, bootstrapPath, pluginDirectory);
 			done();
 		};
 		try {
-			child = ChildProcess.spawn("docker", commonArguments.concat(["down", "--remove-orphans", "--timeout", "3"]), {
+			child = ChildProcess.spawn("docker", commonArguments.concat(["down", "--remove-orphans", "--timeout", "3", "--volumes"]), {
 				cwd: workingDirectory,
 				env: environment,
 				shell: false,
@@ -207,10 +359,15 @@ class WordPressProvider {
 		}
 	}
 
-	static function removeRuntimeFiles(composePath:String, pluginPath:String, pluginDirectory:String):Void {
+	static function removeRuntimeFiles(composePath:String, pluginPath:String, bootstrapPath:String, pluginDirectory:String):Void {
 		try {
 			if (Fs.existsSync(composePath)) {
 				Fs.unlinkSync(composePath);
+			}
+		} catch (_:Exception) {}
+		try {
+			if (Fs.existsSync(bootstrapPath)) {
+				Fs.unlinkSync(bootstrapPath);
 			}
 		} catch (_:Exception) {}
 		try {
@@ -238,6 +395,10 @@ class WordPressProvider {
 			|| name == INTERNAL_ROOT_PASSWORD
 			|| name == INTERNAL_RELOAD_CLIENT
 			|| name == INTERNAL_RELOAD_EVENTS
+			|| name == INTERNAL_ADMIN_PASSWORD
+			|| name == INTERNAL_PLUGIN_ENTRY
+			|| name == INTERNAL_SITE_TITLE
+			|| name == INTERNAL_SITE_URL
 			|| StringTools.startsWith(name, "WORDPRESS_")
 			|| StringTools.startsWith(name, "MARIADB_")
 			|| StringTools.startsWith(name, "DOCKER_")

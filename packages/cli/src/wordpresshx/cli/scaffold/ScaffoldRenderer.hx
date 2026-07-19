@@ -224,7 +224,7 @@ class ScaffoldRenderer {
 			case Site:
 				"Pre-release limitation: native site/plugin/block producers and public package installation are not registered yet, so the current build proves only the typed project and deterministic ownership foundation.\n";
 			case Plugin:
-				"The zero-argument `WordPress.plugin()` declaration derives conventional plugin metadata from the project identity. Pass an inline typed options object only for metadata you need to override. This pre-release slice emits and packages the native bootstrap only; hooks, lifecycle behavior beyond bootstrap, and public package installation remain dependency-gated.\n";
+				"The zero-argument `WordPress.plugin()` declaration derives conventional plugin metadata from the project identity. Pass an inline typed options object only for metadata you need to override. Plain `wphx dev` also derives a fresh WordPress runtime, installs and activates the generated plugin, and reloads only after complete builds; use `wphx dev --services=none` for compile/watch-only work. This pre-release slice emits and packages the native bootstrap only; hooks, lifecycle behavior beyond bootstrap, and public package installation remain dependency-gated.\n";
 		};
 		return "# "
 			+ ScaffoldIdentity.displayName(projectId)

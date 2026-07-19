@@ -12,8 +12,12 @@ are locally runtime verified. The SDK-owned `wp70-release` WordPress process
 provider is implemented and locally controlled-process verified, including its
 generated Docker Compose v2 configuration. Its zero-configuration development
 adapter and Haxe-authored browser client now provide automatic full-page reload;
-the controlled provider boundary is locally proven in real Chromium. Next.js is
-an optional integration boundary rather than a core service dependency.
+the controlled provider boundary is locally proven in real Chromium. The native
+plugin lane additionally infers that provider directly from its compiler
+`PluginPlan`, mounts the exact generated tree, performs a fresh real WordPress
+install and activation, and is locally production-gate verified through failed-
+build retention, successful reload, and complete Docker cleanup. Next.js is an
+optional integration boundary rather than a core service dependency.
 
 ## Developer surface
 
@@ -65,32 +69,48 @@ silently inheriting a developer compilation server. `build` stages a complete
 generation privately and publishes through the SDK-041 owner; `check`,
 `doctor`, `inspect`, and `build --dry-run` have no publication authority.
 
-The current generation is intentionally limited to CLI effective-input
-metadata plus its reproducibility report and unsigned archive. Missing PHP,
-browser, and asset producers appear as explicit skipped stages; the archive is
-therefore deterministic build evidence, not a deployable site package. The
-stable `wphx dev` entry now performs an initial complete transaction, starts an
-owned project-local Haxe wait server when its exact identity is safe, and stays
-alive watching the effective graph. `--services=none` is a real
-compile/watch-only mode. A site can now declare the built-in service with one
-typed Haxe expression:
+The generic site generation remains intentionally limited to CLI effective-
+input metadata plus its reproducibility report and unsigned archive. Missing
+PHP, browser, and asset producers remain explicit skipped stages. The generated
+plugin lane has a registered structured PHP producer and ordinary installable
+ZIP. The stable `wphx dev` entry performs an initial complete transaction,
+starts an owned project-local Haxe wait server when its exact identity is safe,
+and stays alive watching the effective graph. `--services=none` is a real
+compile/watch-only mode.
+
+For a generated plugin, its existing typed declaration is sufficient:
+
+```haxe
+WordPress.plugin();
+```
+
+After publication, the CLI reads the process-local compiler `PluginPlan`,
+re-derives and validates the exact native emission, and infers the built-in
+WordPress service only when no explicit service plan exists. A non-plugin site
+or an advanced override can still declare the service explicitly:
 
 ```haxe
 Dev.wordpress();
 ```
 
-The macro derives the stable ID, working directory, preferred port, bounded
-HTTP readiness probe, restart policy, URL, and full-page reload mode. Typed
-options override only what differs. No handwritten Compose file or Docker image
-choice is part of this common path: the CLI derives a private canonical
-mode-`0600` Compose configuration from the authenticated Haxe plan, the exact
-`wp70-release` image lock, and its allocated loopback port. It passes database
-secrets through required environment interpolation, never embeds secret values
-in that file, consumes the provider password without forwarding its public name,
-passes only a closed Docker CLI host-environment allowlist, runs Compose without
-a shell, and removes its generated configuration after bounded shutdown.
+Both paths derive the stable ID, working directory, preferred port, bounded HTTP
+readiness probe, restart policy, URL, and full-page reload mode. Typed options
+override only what differs on the explicit path. No handwritten Compose file or
+Docker image choice is part of the common path: the CLI derives a private
+canonical mode-`0600` Compose configuration from typed compiler authority, the
+exact `wp70-release` image lock, and its allocated loopback port. For a plugin,
+the graph shares a named WordPress volume with a private installer, bind-mounts
+only the exact generated plugin read-only, installs WordPress, and activates the
+plugin before readiness can pass. The installer starts only after an exec-form
+healthcheck proves the pinned image has completed the required WordPress core,
+include, configuration, and plugin-entry files in that shared volume. It passes
+database and administrator secrets through required environment interpolation,
+never embeds secret values in the file, passes only a closed Docker CLI
+host-environment allowlist, runs Compose without a shell, and removes its
+generated files, containers, network, and volumes after bounded shutdown.
 
-The same `Dev.wordpress()` declaration derives automatic development reload.
+Both the inferred plugin path and `Dev.wordpress()` derive automatic
+development reload.
 The CLI embeds a browser client authored in strictly typed Haxe, compiled by the
 pinned Genes 1.36.3 profile, and bundled deterministically by pinned esbuild
 0.27.2. It serves that asset and an event stream from a loopback-only endpoint
@@ -102,11 +122,10 @@ manifest-last publication sends one reload. Shutdown closes the stream and
 removes the private adapter. None of the client, endpoint, capability, or
 adapter enters a production-owned artifact.
 
-The exact WordPress 7.0/PHP 8.4 and
-MariaDB 11.4.5 images are runtime proven separately by SDK-090; the SDK-044
-provider corpus controls the process boundary and validates the generated file
-with Docker Compose v2 but does not start those real containers through
-`wphx dev` yet.
+The exact WordPress 7.0/PHP 8.4 and MariaDB 11.4.5 images are runtime proven
+independently by SDK-090 and now also run together through plain `wphx dev` for
+the generated-plugin lane. That proof is bounded to a fresh plugin development
+install; it is not a complete generated-site or production-hosting claim.
 
 `Dev.service({...})` is the explicit, no-shell external-process escape hatch:
 Haxe derives an admitted executable from its exact lock component and defaults
@@ -174,12 +193,14 @@ Haxe source edit does not restart an unchanged service graph. Reload requests
 are emitted only after publication. The Haxe/Genes browser client, capability-
 protected loopback stream, derived WordPress adapter, failed-build suppression,
 and exactly one successful full-page navigation are locally runtime proven in
-real Chromium against the controlled provider boundary. The current metadata-
-only producer graph still has no deployable site output for the provider to
-mount or install, and this proof does not claim a real `wphx dev` WordPress image
-pair. When isolation is not proven, every change takes the full atomic path. An
-optional Next.js package must bring its own typed adapter and evidence; core does
-not hard-code a Next provider or native-HMR claim.
+real Chromium against the controlled provider boundary. The generated-plugin
+corpus additionally runs the exact image pair, proves install and activation
+before HTTP readiness, observes the same post-commit reload stream, retains the
+last-good mounted bytes after a failed Haxe generation, and removes all owned
+runtime resources on shutdown. The generic metadata-only site lane still has no
+deployable site output. When isolation is not proven, every change takes the
+full atomic path. An optional Next.js package must bring its own typed adapter
+and evidence; core does not hard-code a Next provider or native-HMR claim.
 
 CI and one-shot `wphx build` use bounded direct compilation. They never start an
 unbounded watcher or inherit a developer's compilation server.

@@ -51,8 +51,11 @@ class DevelopmentPlanReader {
 	}
 
 	public static function load(context:ProjectContext, project:DevelopmentProject):DevelopmentPlan {
+		if (!hasExplicit(context)) {
+			return project.deployablePlugin == null ? DevelopmentPlan.empty(project.toolchainSha256) : DevelopmentPlan.forPlugin(project.toolchainSha256);
+		}
 		if (!ProjectFiles.existsRegular(context.bootstrap.root, PLAN_PATH)) {
-			return DevelopmentPlan.empty(project.toolchainSha256);
+			return invalid("WPHX2310", "generated development plan path is not a regular file");
 		}
 		try {
 			final buffer = ProjectFiles.read(context.bootstrap.root, PLAN_PATH, "generated development plan", "service-start");
@@ -69,6 +72,10 @@ class DevelopmentPlanReader {
 		} catch (error:CanonicalJsonError) {
 			return invalid("WPHX2310", error.message);
 		}
+	}
+
+	public static function hasExplicit(context:ProjectContext):Bool {
+		return ProjectFiles.exists(context.bootstrap.root, PLAN_PATH);
 	}
 
 	static function decode(value:JsonValue, project:DevelopmentProject):DevelopmentPlan {

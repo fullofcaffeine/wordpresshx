@@ -115,6 +115,66 @@ class DevelopmentPlan {
 		return new DevelopmentPlan(digestServices(projectLockSha256, []), []);
 	}
 
+	public static function forPlugin(projectLockSha256:String):DevelopmentPlan {
+		final payload = ObjectValue([
+			{name: "command", value: NullValue},
+			{name: "dependsOn", value: ArrayValue([])},
+			{name: "environment", value: ArrayValue([])},
+			{
+				name: "port",
+				value: ObjectValue([
+					{name: "preferred", value: NumberValue("8888")},
+					{name: "strict", value: BoolValue(false)}
+				])
+			},
+			{
+				name: "readiness",
+				value: ObjectValue([
+					{name: "intervalMs", value: NumberValue("100")},
+					{name: "kind", value: StringValue("http")},
+					{name: "path", value: StringValue("/wp-json/")},
+					{name: "text", value: StringValue("")},
+					{name: "timeoutMs", value: NumberValue("240000")}
+				])
+			},
+			{name: "reload", value: StringValue("full-page")},
+			{
+				name: "restart",
+				value: ObjectValue([
+					{name: "backoffMs", value: NumberValue("250")},
+					{name: "maxAttempts", value: NumberValue("1")}
+				])
+			},
+			{name: "serviceId", value: StringValue("wordpress")},
+			{name: "serviceKind", value: StringValue("wordpress")},
+			{
+				name: "url",
+				value: ObjectValue([
+					{name: "path", value: StringValue("/")},
+					{name: "scheme", value: StringValue("http")}
+				])
+			},
+			{name: "workingDirectory", value: StringValue(".")}
+		]);
+		final service = new DevelopmentService("wordpress", WordPress, [], ".", null, [], {
+			preferred: 8888,
+			strict: false
+		}, {
+			kind: Http,
+			path: "/wp-json/",
+			text: "",
+			timeoutMs: 240000,
+			intervalMs: 100
+		}, {
+			maxAttempts: 1,
+			backoffMs: 250
+		}, {
+			scheme: "http",
+			path: "/"
+		}, FullPage);
+		return new DevelopmentPlan(digestServices(projectLockSha256, [payload]), [service]);
+	}
+
 	public static function digestServices(projectLockSha256:String, payloads:Array<JsonValue>):String {
 		return CanonicalJson.digest(ObjectValue([
 			{name: "projectLockSha256", value: StringValue(projectLockSha256)},

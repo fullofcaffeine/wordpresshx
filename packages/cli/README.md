@@ -72,12 +72,15 @@ WordPress/PHP requirements, version, author, and license from the authenticated
 project identity and exact profile. An inline typed options object overrides
 only metadata that differs from convention. `check` validates the complete
 private generation without writing; `build` atomically publishes three
-readable PHP files plus a deterministic plugin ZIP; and `dev
---services=none` reuses the same transaction through the managed Haxe compile
-server. No maintained PHP, JavaScript, WordPress JSON, or raw target segment is
-required. This pre-release slice is deliberately limited to the plugin
-bootstrap; typed hooks and lifecycle behavior beyond bootstrap remain later
-work, and the CLI package is not publicly installable.
+readable PHP files plus a deterministic plugin ZIP; and plain `dev` reuses the
+same transaction through the managed Haxe compile server, starts a fresh exact
+WordPress 7.0/MariaDB development runtime, and installs and activates the
+plugin. No additional service declaration or maintained PHP, JavaScript,
+WordPress JSON, Compose, or raw target segment is required. `dev
+--services=none` is the explicit compile/watch-only opt-out. This pre-release
+slice is deliberately limited to the plugin bootstrap; typed hooks and
+lifecycle behavior beyond bootstrap remain later work, and the CLI package is
+not publicly installable.
 
 ```bash
 wphx build
@@ -97,33 +100,35 @@ manifest-last artifact owner. `check`, `doctor`, every `inspect` topic, and
 `build --dry-run` are read-only. `clean` removes only current manifest entries
 whose exact bytes still match and retains every unowned file.
 
-The SDK-042/043 slice emits three CLI-owned artifacts: the effective-input
-metadata, a canonical reproducibility report, and a deterministic unsigned ZIP
-that contains the report plus its declared payload. The archive is deliberately
-bounded build evidence, not yet a deployable site package: PHP, browser, asset,
-and target-package stages report `stage-skipped` until their registered
-producers land. A skipped producer is never represented as a site build.
+The generic site lane still emits only effective-input metadata, a canonical
+reproducibility report, and a deterministic unsigned evidence ZIP; missing
+native producers remain explicit skipped stages. The generated plugin lane now
+registers its structured PHP producer and emits an ordinary installable plugin
+ZIP. A skipped producer is never represented as a site build.
 `wphx dev` now runs the same complete transaction initially, starts a
 project-bound Haxe wait cache when its lease is safe, watches the authenticated
 effective-input graph, and serializes coalesced rebuilds. Failed rebuilds keep
 the exact last-good manifest live. `wphx dev --services=none` is the explicit
-compile/watch-only form. The ordinary service declaration is only:
+compile/watch-only form. For a generated plugin, the already-required
+declaration is the complete common path:
 
 ```haxe
-Dev.wordpress();
+WordPress.plugin();
 ```
 
-Haxe derives its typed defaults, locked Compose provider, loopback port,
-readiness, and automatic full-page reload. The reload client is authored in
-strictly typed Haxe, emitted by pinned Genes, embedded in the CLI, and connected
-through a fresh capability-protected loopback event stream plus a private
-development-only MU-plugin. Developers do not author PHP, JavaScript, Compose,
-ports, or tokens for this path. Local real-Chromium evidence proves no reload
-after a failed generation and exactly one reload after the next complete
-publication. `Dev.service({...})` remains the admitted no-shell external-service
-escape hatch. The optional Next.js provider/HMR adapter is not registered, and
-the current producer graph still cannot build or install a deployable WordPress
-site into the provider.
+The CLI derives the typed WordPress defaults from the current compiler
+`PluginPlan`, validates the complete published plugin tree against the same
+emission, mounts it read-only, performs a private fresh install and activation,
+and exposes readiness only after the plugin is active. A generated healthcheck
+also gates the installer on the complete pinned-image core and plugin file set,
+so process creation alone is never treated as distribution readiness. Haxe also
+derives the locked Compose provider, loopback port, and automatic full-page
+reload. Failed generations retain the active last-good bytes and send no reload;
+the next complete ownership commit reloads without restarting WordPress.
+`Dev.wordpress()` remains the explicit typed service declaration for non-plugin
+projects and advanced overrides, while `Dev.service({...})` remains the admitted
+no-shell external-service escape hatch. The optional Next.js provider/HMR adapter
+and a complete native site producer are not registered.
 
 Use `--json` for canonical JSONL lifecycle events and closed diagnostics. Human
 errors include a stable `WPHXnnnn` code, failing stage, safe project-relative
