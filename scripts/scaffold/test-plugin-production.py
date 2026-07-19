@@ -908,6 +908,8 @@ def exercise_private_runtime(
 def strict_haxe_scan() -> None:
     paths = [
         ROOT / "packages/cli/project-api",
+        ROOT / "packages/cli/src/wordpresshx/cli/closedjson/JsonDocument.hx",
+        ROOT / "packages/cli/src/wordpresshx/cli/generatedoutput",
         ROOT / "packages/cli/src/wordpresshx/cli/scaffold",
         ROOT / "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
         ROOT / "packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx",

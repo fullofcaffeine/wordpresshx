@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpress-hx.dev/schemas/generated-output-vcs-result.schema.json",
+  "title": "WordPressHx generated-output VCS result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "operation",
+    "status",
+    "projectId",
+    "policy",
+    "source",
+    "generator",
+    "profile",
+    "manifest",
+    "continuousIntegration",
+    "roots",
+    "comparison",
+    "checkoutUnchanged",
+    "releaseRegenerationRequired"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.generated-output-vcs-result.v1"
+    },
+    "operation": {
+      "enum": [
+        "enable",
+        "check"
+      ]
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "enabled",
+        "already-enabled",
+        "passed"
+      ]
+    },
+    "projectId": {
+      "$ref": "#/$defs/stableId"
+    },
+    "policy": {
+      "$ref": "#/$defs/boundFile"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "fingerprint"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "fingerprint": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "toolchainSha256"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "wordpress-hx.cli.build",
+            "wordpress-hx.cli.plugin-build"
+          ]
+        },
+        "toolchainSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "catalogRevision",
+        "catalogSha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "manifest": {
+      "$ref": "#/$defs/boundFile"
+    },
+    "continuousIntegration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "path",
+        "sha256",
+        "command"
+      ],
+      "properties": {
+        "provider": {
+          "const": "github-actions"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^\\.github/workflows/wordpresshx-generated-output-[0-9a-f]{24}\\.yml$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "command": {
+          "const": [
+            "./node_modules/.bin/wphx",
+            "generated-output",
+            "check",
+            "--project",
+            ".",
+            "--json"
+          ]
+        }
+      }
+    },
+    "roots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path",
+          "fileCount",
+          "treeSha256"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/stableId"
+          },
+          "path": {
+            "$ref": "#/$defs/relativePath"
+          },
+          "fileCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "treeSha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        }
+      }
+    },
+    "comparison": {
+      "const": "exact-path-size-sha256-and-bytes"
+    },
+    "checkoutUnchanged": {
+      "type": "boolean"
+    },
+    "releaseRegenerationRequired": {
+      "const": true
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)[ -~]+$"
+    },
+    "boundFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-045.3",
+  "status": "implemented-local-verified-pending-hosted",
+  "scope": "consumer-explicit-committed-generated-output",
+  "contract": {
+    "policyIdentity": "wordpress-hx.generated-output-vcs-project.v1",
+    "policySchema": "schemas/generated-output-vcs-project.schema.json",
+    "resultIdentity": "wordpress-hx.generated-output-vcs-result.v1",
+    "resultSchema": "schemas/generated-output-vcs-result.schema.json",
+    "ownershipManifest": "wordpress-hx.generated-files.v1",
+    "defaultConsumerMode": "ignore-and-regenerate",
+    "optInMode": "consumer-committed-output-opt-in",
+    "rootAdmission": "explicit-configured-id-and-path-only",
+    "metadataRootRequired": true,
+    "policyDigest": "sha256-canonical-json-without-policyDigest-v1",
+    "consumerCi": "content-bound-github-actions-workflow",
+    "handEditsAllowed": false,
+    "releaseRegenerationRequired": true
+  },
+  "commands": {
+    "enable": "wphx generated-output enable --root <id> [--root <id>...] [--project <path>] [--dry-run] [--json]",
+    "check": "wphx generated-output check [--project <path>] [--json]",
+    "policyPublicationWrites": [
+      ".wphx/generated-output-vcs.json",
+      "one-separate-exact-gitignore-marker",
+      "one-repository-root-content-bound-github-actions-workflow"
+    ],
+    "dryRun": "build-in-private-clean-head-clone-with-no-live-write",
+    "gitMutation": "never-adds-or-commits-files"
+  },
+  "authority": {
+    "application": "haxe",
+    "exactInputs": [
+      "project-config",
+      "project-lock",
+      "package-lock",
+      "profile",
+      "generator-identity",
+      "haxe-source",
+      "hand-owned-assets"
+    ],
+    "generatedOutput": "derived-inspectable-non-authoritative",
+    "manualRemediation": "change-haxe-generator-or-lock-then-regenerate"
+  },
+  "verificationDesign": {
+    "source": "clean-local-git-head",
+    "isolation": "local-clone-without-hard-links",
+    "liveCheckoutMutation": false,
+    "selectedRootDeletion": "private-clone-only",
+    "rebuild": "ordinary-exact-wphx-build",
+    "comparison": [
+      "complete-path-set",
+      "size-bytes",
+      "sha256",
+      "byte-for-byte"
+    ],
+    "provenance": [
+      "source-fingerprint",
+      "git-commit",
+      "project-lock-digest",
+      "sdk-generator-source",
+      "sdk-and-cli-version",
+      "profile-id-revision-and-digest",
+      "ownership-manifest-digest"
+    ],
+    "selectedRootTree": "exact-manifest-files-plus-manifest-no-unowned-files",
+    "freshCompleteOwnerValidation": true
+  },
+  "versionControl": {
+    "policyPath": ".wphx/generated-output-vcs.json",
+    "managedDefault": "/build/*",
+    "selectedRootMarker": "# BEGIN wordpress-hx committed generated output",
+    "consumerCiWorkflow": "repository-root-project-specific-and-policy-digested",
+    "consumerCiCommand": "./node_modules/.bin/wphx generated-output check --project . --json",
+    "ancestorPolicy": "trie-ordered-unignore-then-reignore-siblings",
+    "unselectedConfiguredRootsTracked": false,
+    "transactionStateTracked": false,
+    "distributionRootTracked": false,
+    "releaseArchivesTracked": false
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "entry": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+    "package": "packages/cli/src/wordpresshx/cli/generatedoutput",
+    "typedJsonBoundary": "packages/cli/src/wordpresshx/cli/closedjson/JsonDocument.hx",
+    "sharedPublisher": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPublisher.hx",
+    "strictHaxeBoundary": true,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false,
+    "handwrittenJavascriptImplementation": false
+  },
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "focusedCommand": "python3 scripts/generated-output-vcs/test-production-integration.py <compiled-runtime-root>",
+    "summarySchema": "wordpress-hx.sdk0453-generated-output-summary.v1",
+    "positiveCases": 8,
+    "negativeCases": 16,
+    "negativeCorpusCases": 13,
+    "noWriteAssertions": 7,
+    "explicitNestedRoot": "passed-with-unselected-siblings-ignored",
+    "missingMetadataRoot": "rejected-before-build",
+    "dryRun": "private-clone-build-live-tree-unchanged",
+    "freshRegeneration": "exact-path-size-sha256-and-bytes",
+    "sourceToolProfilePathManualPolicyAndTransactionDrift": "rejected",
+    "consumerCiWorkflowDrift": "rejected",
+    "consumerCi": "generated-tracked-content-bound-and-command-executed",
+    "cleanInstalledConsumer": "repository-package-manifest-local-npm-tarball-installed-without-repository-runtime-path",
+    "gitOnlyDeployment": "manifest-bound-generated-native-php-executed-without-build",
+    "releaseDistributionTracked": false,
+    "checkoutMutation": "none",
+    "outcome": "passed-local"
+  },
+  "claims": {
+    "productionWphxIntegration": "runtime-tested-local",
+    "realGitCleanHeadRegeneration": "runtime-tested-local",
+    "generatedPhpGitOnlyConsumer": "runtime-tested-local",
+    "defaultIgnoreAndRegenerate": "runtime-tested-local",
+    "generatedConsumerCi": "runtime-tested-local",
+    "cleanLocalTarballInstallation": "runtime-tested-local",
+    "hostedVerification": "pending",
+    "releaseIntegration": "not-implemented-sdk-101",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-claimed"
+  },
+  "limitations": [
+    "The Git-only consumer executes the real generated native plugin through the PHP caller; the existing plugin gate separately owns clean WordPress 7.0 activation, so this receipt does not claim a second clean WordPress installation from the deployment clone.",
+    "The verifier uses the local Git executable and filesystem; Windows, network filesystems, hostile global Git filters, and concurrent external mutation are not covered by this bounded corpus.",
+    "Release archives remain ignored; SDK-101 must regenerate them independently, and this mode grants no publication, signing, SBOM, license, registry, or production-support authority.",
+    "A clean local npm tarball installation is exercised, but the package remains private, so clean public-registry installation remains untested."
+  ]
+}

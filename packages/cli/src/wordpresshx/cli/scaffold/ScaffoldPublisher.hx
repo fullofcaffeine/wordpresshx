@@ -32,19 +32,30 @@ class ScaffoldPublisher {
 					collision(null, "new site target already exists");
 				}
 			case ExistingProject:
-				for (file in plan.files) {
-					validateParents(plan.targetRoot, file.relativePath, true);
-					final absolute = Path.resolve(plan.targetRoot, file.relativePath);
-					switch file.action {
-						case Create:
-							if (entryStats(absolute) != null) {
-								collision(file.relativePath, "scaffold-owned path already exists");
-							}
-						case UpdateMarker(beforeSha256):
-							validateExistingFile(absolute, file.relativePath, beforeSha256);
-					}
-				}
+				preflightFiles(plan.targetRoot, plan.files);
 		}
+	}
+
+	/** Publish a bounded set of create/marker mutations into an existing project. */
+	public static function preflightFiles(targetRoot:String, files:Array<ScaffoldFile>):Void {
+		validateExistingRoot(targetRoot);
+		for (file in files) {
+			validateParents(targetRoot, file.relativePath, true);
+			final absolute = Path.resolve(targetRoot, file.relativePath);
+			switch file.action {
+				case Create:
+					if (entryStats(absolute) != null) {
+						collision(file.relativePath, "CLI-owned path already exists");
+					}
+				case UpdateMarker(beforeSha256):
+					validateExistingFile(absolute, file.relativePath, beforeSha256);
+			}
+		}
+	}
+
+	public static function publishFiles(targetRoot:String, files:Array<ScaffoldFile>):Void {
+		preflightFiles(targetRoot, files);
+		publishExistingFiles(targetRoot, files);
 	}
 
 	public static function publish(plan:ScaffoldPlan):Void {
@@ -73,20 +84,24 @@ class ScaffoldPublisher {
 	}
 
 	static function publishExisting(plan:ScaffoldPlan):Void {
-		final parent = Path.dirname(plan.targetRoot);
+		publishExistingFiles(plan.targetRoot, plan.files);
+	}
+
+	static function publishExistingFiles(targetRoot:String, files:Array<ScaffoldFile>):Void {
+		final parent = Path.dirname(targetRoot);
 		final stageRoot = Fs.mkdtempSync(Path.join(parent, ".wordpresshx-init-"));
 		final commits:Array<ScaffoldCommit> = [];
 		final createdDirectories:Array<String> = [];
 		Fs.chmodSync(stageRoot, PRIVATE_DIRECTORY_MODE);
 		try {
-			stageFiles(stageRoot, plan.files);
-			preflight(plan);
-			for (file in plan.files) {
-				ensureDestinationDirectories(plan.targetRoot, file.relativePath, createdDirectories);
-				commitFile(plan.targetRoot, stageRoot, file, commits);
+			stageFiles(stageRoot, files);
+			preflightFiles(targetRoot, files);
+			for (file in files) {
+				ensureDestinationDirectories(targetRoot, file.relativePath, createdDirectories);
+				commitFile(targetRoot, stageRoot, file, commits);
 			}
 		} catch (failure:haxe.Exception) {
-			if (!rollback(plan.targetRoot, commits, createdDirectories)) {
+			if (!rollback(targetRoot, commits, createdDirectories)) {
 				throw new CliFailure("WPHX3010",
 					"scaffold publication failed and exact rollback could not complete; private recovery bytes were retained beside the project", 70,
 					"scaffold-rollback", null, [
@@ -200,6 +215,10 @@ class ScaffoldPublisher {
 			case NewProject: Path.dirname(plan.targetRoot);
 			case ExistingProject: plan.targetRoot;
 		};
+		validateExistingRoot(root);
+	}
+
+	static function validateExistingRoot(root:String):Void {
 		final stats = entryStats(root);
 		if (stats == null) {
 			throw new CliFailure("WPHX3006", "scaffold root disappeared before publication", 5, "scaffold-preflight");

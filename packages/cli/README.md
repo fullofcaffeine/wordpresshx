@@ -94,6 +94,32 @@ wphx doctor
 wphx clean
 ```
 
+Git-only hosts can opt in to carrying generated deployment bytes for exact
+configured roots. The command never discovers roots from existing files:
+
+```bash
+wphx generated-output enable --root wordpress --json
+git add .gitignore .wphx/generated-output-vcs.json \
+  .github/workflows/wordpresshx-generated-output-*.yml build/wordpress
+git commit -m "Review generated deployment output"
+./node_modules/.bin/wphx generated-output check --json
+```
+
+`enable` requires a clean commit containing the Haxe source, bootstrap, assets,
+and exact locks. It performs one ordinary build, writes a self-digested static
+policy, changes only a separate bounded `.gitignore` marker, and creates one
+project-specific, content-bound GitHub Actions workflow at the repository root.
+That workflow installs the exact project dependencies and Node/Haxe versions,
+then invokes the same read-only check. `check` requires the policy, marker,
+workflow, manifest, and every selected file to be committed; it clones the
+local clean HEAD without hard links, removes only the selected roots in that
+private clone, regenerates with the running exact CLI, and compares complete
+paths, sizes, SHA-256 identities, and bytes. Unselected output roots,
+transaction state, `dist`, and release ZIPs remain ignored.
+Generated output remains a derived deployment projection: change Haxe, the
+generator, or the exact lock and regenerate instead of editing PHP or browser
+files by hand. Release packaging continues to regenerate independently.
+
 `build` types the configured Haxe entry directly with the exact locked
 toolchain, validates the complete staged generation, and commits it through the
 manifest-last artifact owner. `check`, `doctor`, every `inspect` topic, and

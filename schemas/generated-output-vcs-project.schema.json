@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpress-hx.dev/schemas/generated-output-vcs-project.schema.json",
+  "title": "WordPressHx committed generated-output policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "policyDigestAlgorithm",
+    "policyDigest",
+    "mode",
+    "projectId",
+    "authority",
+    "outputRoots",
+    "manifestSchema",
+    "continuousIntegration",
+    "verification"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.generated-output-vcs-project.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "policyDigestAlgorithm": {
+      "const": "sha256-canonical-json-without-policyDigest-v1"
+    },
+    "policyDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "mode": {
+      "const": "consumer-committed-output-opt-in"
+    },
+    "projectId": {
+      "$ref": "#/$defs/stableId"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applicationSource",
+        "exactProjectLockRequired",
+        "generatedOutputRole",
+        "handEditsAllowed",
+        "releaseRegenerationRequired"
+      ],
+      "properties": {
+        "applicationSource": {
+          "const": "haxe"
+        },
+        "exactProjectLockRequired": {
+          "const": true
+        },
+        "generatedOutputRole": {
+          "const": "derived-inspectable-non-authoritative"
+        },
+        "handEditsAllowed": {
+          "const": false
+        },
+        "releaseRegenerationRequired": {
+          "const": true
+        }
+      }
+    },
+    "outputRoots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/stableId"
+          },
+          "path": {
+            "$ref": "#/$defs/relativePath"
+          }
+        }
+      }
+    },
+    "manifestSchema": {
+      "const": "wordpress-hx.generated-files.v1"
+    },
+    "continuousIntegration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "workflowPath",
+        "workflowSha256",
+        "command"
+      ],
+      "properties": {
+        "provider": {
+          "const": "github-actions"
+        },
+        "workflowPath": {
+          "type": "string",
+          "pattern": "^\\.github/workflows/wordpresshx-generated-output-[0-9a-f]{24}\\.yml$"
+        },
+        "workflowSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "command": {
+          "const": [
+            "./node_modules/.bin/wphx",
+            "generated-output",
+            "check",
+            "--project",
+            ".",
+            "--json"
+          ]
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "comparison",
+        "freshSource"
+      ],
+      "properties": {
+        "command": {
+          "const": [
+            "wphx",
+            "generated-output",
+            "check",
+            "--json"
+          ]
+        },
+        "comparison": {
+          "const": "exact-path-size-sha256-and-bytes"
+        },
+        "freshSource": {
+          "const": "clean-head-local-clone"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)[ -~]+$"
+    }
+  }
+}

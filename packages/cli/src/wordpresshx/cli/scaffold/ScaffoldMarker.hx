@@ -12,7 +12,7 @@ class ScaffoldMarker {
 			BEGIN,
 			"/.wphx/runtime/",
 			"/.wphx/transactions/",
-			"/build/",
+			"/build/*",
 			"/dist/",
 			"/node_modules/",
 			END

@@ -40,6 +40,8 @@ haxelib run formatter --check -s "${package_root}/src" -s "${package_root}/proje
 
 if ! python3 - \
 	"${package_root}/project-api" \
+	"${package_root}/src/wordpresshx/cli/closedjson/JsonDocument.hx" \
+	"${package_root}/src/wordpresshx/cli/generatedoutput" \
 	"${package_root}/src/wordpresshx/cli/scaffold" \
 	"${package_root}/src/wordpresshx/cli/WphxMain.hx" \
 	"${package_root}/src/wordpresshx/cli/project/CompilerRunner.hx" \
@@ -120,4 +122,5 @@ docker run --rm --network none \
 
 python3 "${repository_root}/scripts/scaffold/test-production.py" "${test_root}/runtime-a"
 python3 "${repository_root}/scripts/scaffold/test-plugin-production.py" "${test_root}/runtime-a"
+python3 "${repository_root}/scripts/generated-output-vcs/test-production-integration.py" "${test_root}/runtime-a"
 echo "SDK-045 Haxe-first scaffold gate passed"

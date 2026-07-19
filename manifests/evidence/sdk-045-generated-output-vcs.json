@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-045-3-GENERATED-OUTPUT-VCS",
+  "bead": "wordpresshx-sdk-045.3",
+  "status": "verified-local-pending-hosted",
+  "observedAt": "2026-07-19T21:16:34Z",
+  "subject": {
+    "digestAlgorithm": "sha256-file-bytes-v1",
+    "implementationManifest": {
+      "path": "manifests/generated-output-vcs-implementation.json",
+      "sha256": "c0d22511abbdde6bb9cf8409e93c86c15b966cb93c6089acaa46bd67ab2e024f"
+    },
+    "commandBoundary": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+        "sha256": "b9c8a65f14a53906ca29f07877d40daea4c936f4bec9468a1921fe3d690a8eaf"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonDocument.hx",
+        "sha256": "f79e57ded04d54b241c6b50b393ebabedebb5024a20b97a940ac1ff48b08dc5a"
+      }
+    ],
+    "packageBoundary": [
+      {
+        "path": "packages/cli/package.json",
+        "sha256": "18d7909224a2db4293836261f0dc1f0e8311a6a5fb9857fbb76ccb42ffcbc164"
+      },
+      {
+        "path": "packages/cli/.npmignore",
+        "sha256": "368e7dd966978eaf197cbc41e83ec6555186ecfa6eb8a22f337fb7066fb40ba9"
+      }
+    ],
+    "generatedOutputImplementation": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputArguments.hx",
+        "sha256": "7a18c7a8222853cf4ff020d7d878ac0c2cad73280c10ab262b0a71ec97fe0ef5"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputCommands.hx",
+        "sha256": "9ec54169611c3c064136c75880a218a4fd1d38146a410b0bfdfa2c2870f6e837"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputFile.hx",
+        "sha256": "b868730029103648dd0c961b3fa78ab6ec91adbe8b3916ef06613e8744266970"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputGit.hx",
+        "sha256": "fe9d672c3a64d87d3953cb4a76c4f97a17899ca3e1a1f05d7f0cbe1b46bcd49c"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputIgnore.hx",
+        "sha256": "c7cfc0f5540a6b5b57192bcb3c2a75dd290ab49d6bbfa67053323f3f7f7301a6"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputLockIdentity.hx",
+        "sha256": "19a4dc8f38fd9a60a56b64caa1aa0dbdff82e53923a1d7af823d2221935220a8"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputManifest.hx",
+        "sha256": "18d4af9fbba920c31212b66689ac622ce7c84f302d7dd341db357e8b7ad780c3"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputPolicy.hx",
+        "sha256": "c407801c61c054a140cc5c4bf2b893701b70308959eb0a51d7f5cd80d7fc6e2c"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputProcess.hx",
+        "sha256": "e2cbd39e205f7957241e1725aa10e2012ebfdbc28979d0c14e989703b6638c00"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputProject.hx",
+        "sha256": "8dcbe54c2ecc272d4ec8df9bc1f49c8674cfcbb821b04eeb50ef8a87f9c8d2a7"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputReceipt.hx",
+        "sha256": "1a6400324b5846c22272fb55f6abad5a5b276b6ea69e5dff6afaa838668ff551"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputRequest.hx",
+        "sha256": "593a7ba6df8bb1a6ba705e2be34c48e67e567d1e1d1ef6eac2eddef39d4ecdce"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputRoot.hx",
+        "sha256": "09e83466407508d2730d700b44c3d1c95fd6c23cf9bb0543e98df93fd69d5609"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputTree.hx",
+        "sha256": "3c1bc29372235d3081a4908180c507cc1858840cda27915089744f937e6f8e15"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputWorkflow.hx",
+        "sha256": "41b9746d0a95cc9a6bc68d3b0f223938bee5fbb2972b069f2e35cb8aa16463a6"
+      }
+    ],
+    "publicationBoundary": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldMarker.hx",
+        "sha256": "5bff72d09be95efe60853a3ce2a143b422c039e0224b445ddf7952ef7f17bc1f"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPublisher.hx",
+        "sha256": "0096fbf4725c5f9efcc00cc80e776bdf6b7ad772368d634eeeea665a67491112"
+      }
+    ],
+    "schemas": [
+      {
+        "path": "schemas/generated-output-vcs-project.schema.json",
+        "sha256": "6fb4b641ebb5d65b441091244da06f6454b6ac90fda06fa6615dbc49f0e7dbdf"
+      },
+      {
+        "path": "schemas/generated-output-vcs-result.schema.json",
+        "sha256": "dbd92215604aa6edb172423affd5f531944f4aa268156c6f6697246853d96f72"
+      }
+    ],
+    "consumerGates": [
+      {
+        "path": "scripts/generated-output-vcs/test-production-integration.py",
+        "sha256": "1b3f5473f1626725274d5e88857a801d9e71928c212b31c96397305e5fbeca20"
+      },
+      {
+        "path": "scripts/scaffold/test-production.py",
+        "sha256": "d2d82684f8e0250ab08ce89f5275ddfacdb8f493905219ead035ee8b5108a20a"
+      },
+      {
+        "path": "scripts/scaffold/test-plugin-production.py",
+        "sha256": "70afe363f8799a83b329f3d1de007423be3982547948b64f90f900d1ac20b7d7"
+      },
+      {
+        "path": "scripts/scaffold/test-production.sh",
+        "sha256": "4803db556c1a472c6b30690a665f15def65b7e71997336b894e13489c651164f"
+      }
+    ],
+    "repositoryValidator": {
+      "path": "scripts/check-repository.sh",
+      "sha256": "d421596f434ad48e19257abd243ea34e64b0d21f457ad56a67906b343e4a2eee"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "d980ca844bd74a38e1e55ae6b3c7c01ce56286009d0dd946ad38449135fbbcee"
+    },
+    "documentation": [
+      {
+        "path": "manifests/README.md",
+        "sha256": "20c33e5618ec136698545908dfa1a44c10310fffeb77653ad3e19168c966c155"
+      },
+      {
+        "path": "packages/cli/README.md",
+        "sha256": "28f8868f2e476149f9189fe8f8e24d85e1923daa01adfa10dd55808c83660069"
+      }
+    ]
+  },
+  "contract": {
+    "defaultConsumerMode": "ignore-and-regenerate",
+    "optInAdmission": "explicit-configured-root-id-and-path-only",
+    "metadataRootRequired": true,
+    "authority": "haxe-source-plus-exact-project-tool-profile-and-generator-locks",
+    "policy": "static-canonical-self-digested-and-tracked",
+    "consumerCi": "content-bound-project-specific-repository-root-github-actions-workflow",
+    "regenerationIsolation": "clean-local-git-head-clone-without-hard-links",
+    "comparison": "complete-selected-path-size-sha256-and-bytes",
+    "provenance": "source-tool-profile-generator-lock-and-owner-manifest-bound",
+    "gitOnlyDeployment": "complete-manifest-bound-selected-generation-only",
+    "releaseRegeneration": "independent-and-required",
+    "handEditsAllowed": false
+  },
+  "implementation": {
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "strictHaxeBoundary": true,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false,
+    "handwrittenJavascriptImplementation": false
+  },
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "repositoryCommand": "bash scripts/check-repository.sh",
+    "focusedCommand": "python3 scripts/generated-output-vcs/test-production-integration.py <compiled-runtime-root>",
+    "summarySchema": "wordpress-hx.sdk0453-generated-output-summary.v1",
+    "outcome": "passed-local",
+    "positiveCases": 8,
+    "negativeCases": 16,
+    "negativeCorpusCases": 13,
+    "noWriteAssertions": 7,
+    "defaultIgnoreAndRegenerate": "passed",
+    "explicitNestedRoot": "passed-with-unselected-siblings-ignored",
+    "missingMetadataRoot": "rejected-before-build",
+    "dryRun": "private-clone-build-live-tree-unchanged",
+    "freshRegeneration": "exact-path-size-sha256-and-bytes",
+    "sourceToolProfilePathManualPolicyAndTransactionDrift": "rejected",
+    "consumerCiWorkflowDrift": "rejected",
+    "consumerCi": "generated-tracked-content-bound-and-command-executed",
+    "cleanInstalledConsumer": "repository-package-manifest-local-npm-tarball-installed-without-repository-runtime-path",
+    "gitOnlyDeployment": "manifest-bound-generated-native-php-executed-without-build",
+    "releaseDistributionTracked": false,
+    "checkoutMutation": "none",
+    "repositoryGate": "passed-local",
+    "completeScaffoldAndPluginGate": "passed-local",
+    "strictHaxeBoundaryGuard": "passed"
+  },
+  "review": {
+    "reviewer": "Codex self-review",
+    "modelFamilyIndependenceClaimed": false,
+    "initialBlockingFindingCount": 2,
+    "resolvedFindings": [
+      {
+        "id": "SDK-045-3-REVIEW-001",
+        "finding": "A clean Git-only clone intentionally omits ignored release distribution bytes that remain listed by the complete ownership manifest.",
+        "resolution": "Validate only selected manifest-bound roots in the live clone, then require complete ADR-007 owner validation, including independently regenerated distribution bytes, after the fresh private-clone build."
+      },
+      {
+        "id": "SDK-045-3-REVIEW-002",
+        "finding": "Flat ancestor unignore rules exposed unselected siblings beneath a selected nested root.",
+        "resolution": "Generate a depth-ordered ancestor trie that re-ignores children at every level before admitting exact selected leaf roots."
+      }
+    ],
+    "freshReview": {
+      "reviewer": "Codex fresh-eyes reviewer",
+      "modelFamily": "GPT-5",
+      "modelFamilyIndependenceClaimed": false,
+      "blockingFindingCount": 2,
+      "mediumFindingCount": 3,
+      "resolved": [
+        "generated and authenticated a project-specific consumer CI workflow, including monorepo placement and execution",
+        "installed a locally packed CLI into clean npm hosts and exercised the complete corpus through the installed entry",
+        "removed premature hosted wording and added repository-gate command evidence",
+        "narrowed release evidence to excluded distribution bytes and an SDK-101 integration non-claim"
+      ]
+    },
+    "remainingBlockingFindings": 0
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test Haxe-first site scaffolding",
+    "status": "pending",
+    "required": true
+  },
+  "claims": {
+    "productionWphxIntegration": "runtime-tested-local",
+    "realGitCleanHeadRegeneration": "runtime-tested-local",
+    "generatedPhpGitOnlyConsumer": "runtime-tested-local",
+    "defaultIgnoreAndRegenerate": "runtime-tested-local",
+    "generatedConsumerCi": "runtime-tested-local",
+    "cleanLocalTarballInstallation": "runtime-tested-local",
+    "hostedVerification": "pending",
+    "releaseIntegration": "not-implemented-sdk-101",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-claimed"
+  },
+  "limitations": [
+    "The Git-only consumer executes the real generated native plugin through the PHP caller; the existing plugin gate separately owns clean WordPress 7.0 activation, so this receipt does not claim a second clean WordPress installation from the deployment clone.",
+    "The verifier uses the local Git executable and filesystem; Windows, network filesystems, hostile global Git filters, and concurrent external mutation are not covered by this bounded corpus.",
+    "Release archives remain ignored; SDK-101 must regenerate them independently, and this mode grants no publication, signing, SBOM, license, registry, or production-support authority.",
+    "A clean local npm tarball installation is exercised, but the package remains private, so clean public-registry installation remains untested."
+  ]
+}

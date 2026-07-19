@@ -1,6 +1,7 @@
 package wordpresshx.cli;
 
 import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.generatedoutput.GeneratedOutputCommands;
 import wordpresshx.cli.project.ProjectCommands;
 import wordpresshx.cli.scaffold.ScaffoldCommands;
 
@@ -30,6 +31,13 @@ class WphxMain {
 			return;
 		}
 		try {
+			if (arguments.length > 0 && arguments[0] == "generated-output") {
+				final status = GeneratedOutputCommands.run(arguments);
+				if (status != 0) {
+					nodeProcess.exit(status);
+				}
+				return;
+			}
 			if (arguments.length > 0 && (arguments[0] == "new" || arguments[0] == "init")) {
 				final status = ScaffoldCommands.run(arguments);
 				if (status != 0) {
@@ -46,10 +54,10 @@ class WphxMain {
 			standaloneFailure(failure, arguments.indexOf("--json") >= 0);
 			nodeProcess.exit(failure.exitCode);
 		} catch (_:haxe.Exception) {
-			final failure = new CliFailure("WPHX9000", "unexpected internal CLI failure", 70, "command", null, [
+			final diagnostic = new CliFailure("WPHX9000", "unexpected internal CLI failure", 70, "command", null, [
 				"Rerun with the exact locked CLI; if reproducible, report the command without secrets."
 			]);
-			standaloneFailure(failure, arguments.indexOf("--json") >= 0);
+			standaloneFailure(diagnostic, arguments.indexOf("--json") >= 0);
 			nodeProcess.exit(70);
 		}
 	}
@@ -86,6 +94,7 @@ class WphxMain {
 				+ '  clean              Remove only exact manifest-owned files\n'
 				+ '  doctor             Diagnose exact pins without mutation\n'
 				+ '  dev                One-command development loop (SDK-044 engine)\n'
+				+ '  generated-output   Explicit per-root Git deployment policy\n'
 				+ '  trace              Correlate PHP or browser stacks to Haxe\n\n'
 				+ 'Options: --project <path> --profile <id> --json\n');
 	}

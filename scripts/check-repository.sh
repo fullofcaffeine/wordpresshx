@@ -54,6 +54,7 @@ required_files=(
   docs/release/rollback-checklist.md
   packages/README.md
   packages/cli/.haxerc
+  packages/cli/.npmignore
   packages/cli/README.md
   packages/cli/dependency-lock.json
   packages/cli/haxe_libraries/genes-ts.hxml
@@ -94,6 +95,22 @@ required_files=(
   packages/cli/src/wordpresshx/cli/TraceCommand.hx
   packages/cli/src/wordpresshx/cli/TraceFailure.hx
   packages/cli/src/wordpresshx/cli/WphxMain.hx
+  packages/cli/src/wordpresshx/cli/closedjson/JsonDocument.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputArguments.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputCommands.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputFile.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputGit.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputIgnore.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputLockIdentity.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputManifest.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputPolicy.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputProcess.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputProject.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputReceipt.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputRequest.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputRoot.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputTree.hx
+  packages/cli/src/wordpresshx/cli/generatedoutput/GeneratedOutputWorkflow.hx
   packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx
@@ -338,6 +355,8 @@ required_files=(
   schemas/semantic-collector-config.schema.json
   schemas/semantic-collector-inputs.schema.json
   schemas/generated-files.schema.json
+  schemas/generated-output-vcs-project.schema.json
+  schemas/generated-output-vcs-result.schema.json
   schemas/reproducible-build.schema.json
   schemas/ownership-transaction-journal.schema.json
   schemas/project.schema.json
@@ -353,6 +372,7 @@ required_files=(
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
   scripts/generated-output-vcs/check-policy.py
+  scripts/generated-output-vcs/test-production-integration.py
   scripts/generated-output-vcs/test-policy.py
   scripts/ownership/test-adr-contract.sh
   scripts/ownership/test-contract.py
@@ -468,6 +488,7 @@ required_files=(
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/generated-output-vcs-policy.json
+  manifests/generated-output-vcs-implementation.json
   manifests/deterministic-build-implementation.json
   manifests/dev-loop-implementation.json
   manifests/plugin-development-implementation.json
@@ -499,6 +520,7 @@ required_files=(
   manifests/evidence/sdk-044-inferred-plugin-development.json
   manifests/evidence/sdk-045-scaffold.json
   manifests/evidence/sdk-045-plugin-scaffold.json
+  manifests/evidence/sdk-045-generated-output-vcs.json
   manifests/evidence/sdk-042-deterministic-build.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
@@ -2818,6 +2840,9 @@ assert cli_package_manifest["bin"] == {
     "wphx": "build/wphx.js",
     "wphx-sdk": "build/index.js",
 }
+assert Path("packages/cli/.npmignore").read_text(encoding="utf-8") == (
+    "/*\n!/build/\n!/build/**\n"
+)
 assert project_cli_implementation["stages"] == (
     project_cli_architecture["buildStages"]
 )

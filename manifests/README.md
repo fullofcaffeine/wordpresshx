@@ -70,6 +70,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   commit opt-in, drift review, and invariant clean release regeneration. Its
   Git/ZIP rehearsal is synthetic policy evidence; SDK-101 remains responsible
   for production WordPress packaging, SBOM, provenance, and installation.
+- `generated-output-vcs-implementation.json` records SDK-045.3's production
+  `wphx generated-output enable/check` path. It admits only exact configured
+  root IDs, keeps Haxe and locks authoritative, commits a static self-digested
+  policy plus project-specific CI workflow, and compares selected
+  manifest-bound trees after rebuilding a clean local Git HEAD clone.
+  Distribution archives and release trust stay outside this consumer option.
 - `project-cli-architecture.json` is the accepted ADR-016 bootstrap, exact-lock,
   effective-input, `wphx` command/stage/event, isolated compiler-server, and
   one-command development-loop lock. Its synthetic transcript proves dry-run,
@@ -305,6 +311,18 @@ and the complete matrix passed for implementation commit
 `13a38799d58ab2be1459e9b3f3367bab4464a4b5`. The generated PHP, JavaScript,
 manifest, and ZIP remain synthetic carriers; production `wphx`, WordPress
 packaging, SBOM, registry, and support claims remain untested.
+
+Receipt `SDK-045-3-GENERATED-OUTPUT-VCS` records the production
+`wphx generated-output enable/check` implementation. Its bounded corpus
+deliberately selects exact configured roots, installs a local npm tarball into
+a clean host, emits and executes the content-bound consumer CI command,
+rebuilds a clean Git HEAD clone without hard links, compares the complete
+selected manifest-bound tree by path, size, SHA-256, and bytes, executes
+generated native PHP from a clean Git-only deployment clone, and rejects
+source, tool, profile, path, manual, workflow, policy, and transaction drift.
+Release distributions remain ignored and SDK-101 must regenerate them
+independently; the receipt grants no publication or production support
+authority.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

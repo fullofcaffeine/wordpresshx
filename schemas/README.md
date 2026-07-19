@@ -53,6 +53,17 @@ publication. The plan deliberately records unavailable native target producers
 and public package installation rather than turning a bootstrap scaffold into a
 deployable-site support claim.
 
+[`generated-output-vcs-project.schema.json`](generated-output-vcs-project.schema.json)
+closes the optional per-output-root Git deployment policy. It fixes Haxe and
+the exact project lock as authority, binds the named configured roots with a
+self-digest, binds a project-specific repository-root GitHub Actions drift
+workflow, and keeps hand edits and release trust disabled.
+[`generated-output-vcs-result.schema.json`](generated-output-vcs-result.schema.json)
+is the deterministic enable/check receipt. A passing check binds clean Git
+HEAD, source fingerprint, toolchain, profile, ADR-007 manifest, exact CI
+workflow, and complete path/size/hash/byte comparison from a private local
+clone.
+
 [`effective-inputs.schema.json`](effective-inputs.schema.json) closes the
 content-addressed source/discovery/tool/environment graph shared by bounded
 builds and watch mode. [`cli-event.schema.json`](cli-event.schema.json) closes
