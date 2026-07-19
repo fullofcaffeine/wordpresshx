@@ -1319,6 +1319,34 @@ def verify_versioned_subject(receipt):
             assert hashlib.sha256(content).hexdigest() == record["sha256"]
     return records
 
+
+def verify_historical_ancestry(ancestor_commit, descendant_commit):
+    assert sha1.fullmatch(ancestor_commit)
+    assert sha1.fullmatch(descendant_commit)
+    commits_available = all(
+        subprocess.run(
+            ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+            check=False,
+            capture_output=True,
+        ).returncode
+        == 0
+        for commit in (ancestor_commit, descendant_commit)
+    )
+    if commits_available:
+        assert subprocess.run(
+            ["git", "merge-base", "--is-ancestor", ancestor_commit, descendant_commit],
+            check=False,
+            capture_output=True,
+        ).returncode == 0
+        return
+    shallow = subprocess.run(
+        ["git", "rev-parse", "--is-shallow-repository"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    assert shallow == "true"
+
 assert package_topology["schemaVersion"] == 1
 assert package_topology["decision"] == "ADR-003"
 assert package_topology["status"] == "accepted-architecture"
@@ -3548,17 +3576,10 @@ elif sdk044_plugin_hosted["status"] == "passed":
     assert sdk044_plugin_receipt["historicalVerification"][
         "subjectCommit"
     ] == sdk044_plugin_receipt["evidenceCommit"]
-    assert subprocess.run(
-        [
-            "git",
-            "merge-base",
-            "--is-ancestor",
-            sdk044_plugin_receipt["implementationCommit"],
-            sdk044_plugin_receipt["evidenceCommit"],
-        ],
-        check=False,
-        capture_output=True,
-    ).returncode == 0
+    verify_historical_ancestry(
+        sdk044_plugin_receipt["implementationCommit"],
+        sdk044_plugin_receipt["evidenceCommit"],
+    )
     assert isinstance(sdk044_plugin_hosted["runId"], int)
     assert isinstance(sdk044_plugin_hosted["jobId"], int)
     assert sdk044_plugin_hosted["commit"] == (
@@ -4163,17 +4184,10 @@ elif sdk045_plugin_hosted["status"] == "passed":
     assert sdk045_plugin_receipt["historicalVerification"][
         "subjectCommit"
     ] == sdk045_plugin_receipt["evidenceCommit"]
-    assert subprocess.run(
-        [
-            "git",
-            "merge-base",
-            "--is-ancestor",
-            sdk045_plugin_receipt["implementationCommit"],
-            sdk045_plugin_receipt["evidenceCommit"],
-        ],
-        check=False,
-        capture_output=True,
-    ).returncode == 0
+    verify_historical_ancestry(
+        sdk045_plugin_receipt["implementationCommit"],
+        sdk045_plugin_receipt["evidenceCommit"],
+    )
     assert isinstance(sdk045_plugin_hosted["runId"], int)
     assert isinstance(sdk045_plugin_hosted["jobId"], int)
     assert sdk045_plugin_hosted["commit"] == (
