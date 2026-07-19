@@ -7654,8 +7654,16 @@ assert sdk027_verification["downstreamWordPressPhpMatrix"]["outcome"] == (
 )
 assert sdk027_verification["repositoryInvariant"]["outcome"] == "passed"
 sdk027_hosted = sdk027_verification["hostedWorkflow"]
+assert sdk027_hosted["workflow"] == "Repository bootstrap"
 assert sdk027_hosted["path"] == ".github/workflows/repository.yml"
 assert sdk027_hosted["job"] == "haxe"
+assert sdk027_hosted["steps"] == [
+    "Test generic PHP compiler package",
+    "Test clean standalone PHP compiler package artifact",
+    "Test exact PHP 7.4 and 8.4 runtime matrix",
+    "Test WordPress public PHP profile",
+    "Test public PHP on exact PHP 7.4 and 8.4",
+]
 assert sdk027_hosted["cleanPackageArtifactRequired"] is True
 assert sdk027_hosted["exactPhpMatrixRequired"] is True
 assert sdk027_hosted["downstreamWordPressProfileRequired"] is True
@@ -7665,10 +7673,24 @@ if sdk027_receipt["status"] == "implemented-hosted-pending":
     assert sdk027_hosted["commit"] is None
     assert sdk027_hosted["status"] == "pending-first-main-run"
 else:
-    assert isinstance(sdk027_hosted["runId"], int)
-    assert isinstance(sdk027_hosted["jobId"], int)
-    assert sha1.fullmatch(sdk027_hosted["commit"])
+    assert sdk027_hosted["runId"] == 29698338371
+    assert sdk027_hosted["jobId"] == 88222834621
+    assert sdk027_hosted["attempt"] == 1
+    assert sdk027_hosted["commit"] == (
+        "586baedef4fb3499be8127022be01759f4389181"
+    )
+    assert sdk027_hosted["completedAt"] == "2026-07-19T18:22:05Z"
+    assert sdk027_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        "29698338371"
+    )
+    assert sdk027_hosted["jobUrl"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        "29698338371/job/88222834621"
+    )
     assert sdk027_hosted["status"] == "passed"
+    assert sdk027_hosted["fullMatrixStatus"] == "passed"
+    assert sdk027_hosted["jobCount"] == 11
 assert "Test clean standalone PHP compiler package artifact" in workflow_text
 assert (
     "bash compiler/reflaxe.php/scripts/test-package.sh --require-clean"
@@ -7679,7 +7701,16 @@ assert sdk027_receipt["claims"]["repositoryExtraction"] == (
     "not-performed-no-trigger"
 )
 assert sdk027_receipt["claims"]["packagePublication"] == "blocked"
-assert sdk027_receipt["claims"]["php74And84"] == "runtime-tested-local"
+assert sdk027_receipt["claims"]["genericPackageIndependentlyInstallable"] == (
+    "runtime-tested-hosted"
+)
+assert sdk027_receipt["claims"]["deterministicSourceArtifact"] == (
+    "byte-identical-hosted"
+)
+assert sdk027_receipt["claims"]["wordpressProfileCompatibility"] == (
+    "runtime-tested-hosted"
+)
+assert sdk027_receipt["claims"]["php74And84"] == "runtime-tested-hosted"
 assert sdk027_receipt["claims"]["productionSupport"] == "not-tested"
 
 assert wordpress_php_receipt["schemaVersion"] == 1
