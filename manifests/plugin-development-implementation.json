@@ -33,9 +33,11 @@
     "bootstrapStartBarrier": "wordpress-healthcheck-complete-core-includes-reload-adapter-and-plugin-entry",
     "reloadAdapterMount": "private-mu-plugin-directory-read-only",
     "reloadAdapterScope": "private-static-closure-no-global-symbols",
+    "activePluginHeader": "wordpress-send-headers-hook-after-active-plugin-gate",
     "installation": "fresh-native-wordpress-install",
     "activation": "native-activate-plugin-before-readiness",
     "readiness": "bootstrap-ready-log-plus-two-hundred-range-wp-json-and-exact-active-plugin-header",
+    "readinessTimeoutDiagnostics": "redacted-http-status-sentinel-and-header-state",
     "secretTransport": "required-child-environment-interpolation",
     "shellExecution": false,
     "productionRuntimeDependency": false

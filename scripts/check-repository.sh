@@ -3154,11 +3154,17 @@ assert sdk044_plugin_provider["reloadAdapterMount"] == (
 assert sdk044_plugin_provider["reloadAdapterScope"] == (
     "private-static-closure-no-global-symbols"
 )
+assert sdk044_plugin_provider["activePluginHeader"] == (
+    "wordpress-send-headers-hook-after-active-plugin-gate"
+)
 assert sdk044_plugin_provider["activation"] == (
     "native-activate-plugin-before-readiness"
 )
 assert sdk044_plugin_provider["readiness"] == (
     "bootstrap-ready-log-plus-two-hundred-range-wp-json-and-exact-active-plugin-header"
+)
+assert sdk044_plugin_provider["readinessTimeoutDiagnostics"] == (
+    "redacted-http-status-sentinel-and-header-state"
 )
 assert sdk044_plugin_provider["shellExecution"] is False
 assert sdk044_plugin_provider["productionRuntimeDependency"] is False

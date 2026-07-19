@@ -112,7 +112,10 @@ host-environment allowlist, runs Compose without a shell, and removes its
 generated files, containers, network, and volumes after bounded shutdown.
 The inferred readiness probe additionally waits for the private installer's
 flushed completion sentinel, an HTTP `2xx`, and the exact active-plugin response
-header, so an install-page response cannot publish a premature ready event.
+header emitted at WordPress's native `send_headers` boundary, so an install-page
+response cannot publish a premature ready event. A timeout reports only the
+last status and whether the sentinel/header were observed; it never reports
+header values, capabilities, secrets, or private paths.
 
 Both the inferred plugin path and `Dev.wordpress()` derive automatic
 development reload.
@@ -123,8 +126,8 @@ guarded by a fresh 256-bit capability and the exact admitted WordPress origin.
 A private mode-`0600` development MU-plugin adds the client at the WordPress
 footer boundary. Its PHP body runs in a private static closure so the adapter
 cannot leak or overwrite WordPress/plugin globals; its URLs arrive only through
-required runtime interpolation,
-not generated source or Compose bytes. A failed build sends nothing. A complete
+required runtime interpolation, not generated source or Compose bytes. A failed
+build sends nothing. A complete
 manifest-last publication sends one reload. Shutdown closes the stream and
 removes the private adapter. None of the client, endpoint, capability, or
 adapter enters a production-owned artifact.

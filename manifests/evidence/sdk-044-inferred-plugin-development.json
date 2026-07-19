@@ -8,13 +8,13 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": null,
-    "subjectContentSha256": "6c9bea2e1dc88e7b4093f1861c1d0d32a489d2bc9e1edef8b8f621952465b4b1",
+    "subjectContentSha256": "2c67dd0266713cf5c4ee301dd4cad099a96496604f16e121d0d6e07db518b143",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-development-implementation.json",
-      "sha256": "a2bfa929b13301c4a611b1ab206bbca9f6492bf35a894543bb0d55638d08f3fe"
+      "sha256": "3266ce1cab70fcf17da875b33423261e32d45e4e1a296458941b64f5c5360bce"
     },
     "compilerPlanBoundary": [
       {
@@ -37,7 +37,7 @@
     "developmentRuntime": [
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ReadinessProbe.hx",
-        "sha256": "7db0ae30c5b4c8bc29c63a2866b50014704087e114b3b130bf606b46198593b6"
+        "sha256": "946a194a967105c06a3f32f8b967bb5870861a6ca8f48d45b53554490e723cf2"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
@@ -53,7 +53,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
-        "sha256": "36c2eb27eb628e60e628f137cf7b5e094f1362a9a438f036c7ad222f515ce594"
+        "sha256": "60027b770830e08b179fd8de8c9a92afb3aa93695560e10bc5f3c6c644eac1a0"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
@@ -63,7 +63,7 @@
     "consumerGate": [
       {
         "path": "scripts/scaffold/test-plugin-production.py",
-        "sha256": "9f2751f2a5533c7861477a3bab55a5e5ecfd7249a0d8b7d6d581e012abbfdf8e"
+        "sha256": "d0bd26e04ff8aad57328a69375fe1ae5c116cb27431e1c5992f440b2a54c3757"
       },
       {
         "path": "scripts/scaffold/test-production.sh",
@@ -73,7 +73,7 @@
     "controlledRegressionGate": [
       {
         "path": "scripts/dev-loop/test-production.py",
-        "sha256": "04576bff10fa8f636bb6598a066c533965161b23f5e4c87847dc8f1ab40699e1"
+        "sha256": "aa50f19f6d34d004add70003777fedb7c881a091cff0c26844d37789d4bc8cf1"
       },
       {
         "path": "scripts/dev-loop/test-production.sh",
@@ -82,7 +82,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "6ff0e3c24bc6448466d6a1995caf431191ba7f5ab6e7b85734f0c6bd34342e53"
+      "sha256": "fd219f473932ff2a3fc2da5aa4d8bef53de696bd95249af3ec6e5a21eaa18ae5"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -99,7 +99,7 @@
       },
       {
         "path": "docs/architecture/build-and-dev-loop.md",
-        "sha256": "6f37a8e3fb30695e1056cedcfd8ae12d71a9cbdcd561d660550f5b2722fabe83"
+        "sha256": "d405222e496ef2285c0d0547602c1793f2be606a38276b6d6c5a290dcac4d5f2"
       },
       {
         "path": "docs/architecture/haxe-first-site-authoring.md",
@@ -111,7 +111,7 @@
       },
       {
         "path": "packages/cli/README.md",
-        "sha256": "f8ec579c513778f22077b92073559b99f760e0f0926d3f27a358e5a935105d33"
+        "sha256": "b212d4fea43ea765f163d293814619815dbb3bdea94c7011a76b9fede25eb9df"
       }
     ]
   },

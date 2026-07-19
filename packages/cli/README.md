@@ -122,13 +122,14 @@ emission, mounts it read-only, mounts the generated development MU adapter as a
 private read-only directory, performs a private fresh install and activation,
 and exposes readiness only after the plugin is active. A generated healthcheck
 also gates the installer on the complete pinned-image core, MU-adapter, and
-plugin file set,
-so process creation alone is never treated as distribution readiness. The ready
+plugin file set, so process creation alone is never treated as distribution
+readiness. The ready
 event then requires the flushed installer sentinel, HTTP `2xx`, and the exact
-active-plugin response header. Haxe also derives the locked Compose provider,
-loopback port, and automatic full-page reload. Failed generations retain the
-active last-good bytes and send no reload; the next complete ownership commit
-reloads without restarting WordPress.
+active-plugin response header at WordPress's `send_headers` boundary. Timeout
+diagnostics report only redacted condition state. Haxe also derives the locked
+Compose provider, loopback port, and automatic full-page reload. Failed
+generations retain the active last-good bytes and send no reload; the next
+complete ownership commit reloads without restarting WordPress.
 `Dev.wordpress()` remains the explicit typed service declaration for non-plugin
 projects and advanced overrides, while `Dev.service({...})` remains the admitted
 no-shell external-service escape hatch. The optional Next.js provider/HMR adapter

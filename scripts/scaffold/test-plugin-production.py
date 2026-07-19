@@ -585,6 +585,7 @@ def real_wordpress_dev_cycle(
         assert stat.S_IMODE(reload_path.stat().st_mode) == 0o600
         assert stat.S_IMODE(bootstrap_path.stat().st_mode) == 0o600
         assert reload_path.read_text().rstrip().endswith("})();")
+        assert "add_action('send_headers'" in reload_path.read_text()
         compose_bytes = compose_path.read_bytes()
         compose = json.loads(compose_bytes)
         assert compose_bytes == canonical(compose)
