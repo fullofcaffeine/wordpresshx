@@ -43,11 +43,11 @@
     },
     "policyChecker": {
       "path": "scripts/runtime-support/check-policy.py",
-      "sha256": "cbc1590ad3ebbee7ba801b327e8cd79eff20a0b959f073ae145ba8db016af84e"
+      "sha256": "51fd2a6616a71d0905def9acf9118321bb7ea888560fa8b3895d5a038ee3dedc"
     },
     "policyTests": {
       "path": "scripts/runtime-support/test-policy.py",
-      "sha256": "443717903f2979a2a401e2b3150d3fa49b1ee9101117e2cfcb2c2080e2ebb222"
+      "sha256": "d8f1ae370dc1c94b9f893a5df1d9ff51f9ac493c140d616967b301efbba42f42"
     },
     "runtimeVerifier": {
       "path": "scripts/runtime-support/test-runtime.py",
@@ -71,7 +71,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "9d9d6018acc717bce80fb7680606d2fb955be0dac87c0413336474ee8bc48883"
+      "sha256": "adc8ad7101415af216598221ec0424de864c532cd012399b97170d38919c396f"
     },
     "imageLock": {
       "path": "docker/images.lock.json",
@@ -101,7 +101,7 @@
     "haxeVersion": "4.3.7",
     "policyCases": {
       "positive": 1,
-      "negative": 17,
+      "negative": 19,
       "outcome": "passed"
     },
     "determinism": {

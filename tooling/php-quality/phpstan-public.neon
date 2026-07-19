@@ -1,0 +1,7 @@
+parameters:
+    level: 6
+    phpVersion: 70433
+    treatPhpDocTypesAsCertain: true
+    reportUnmatchedIgnoredErrors: true
+    scanFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

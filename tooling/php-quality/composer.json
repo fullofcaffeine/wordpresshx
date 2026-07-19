@@ -1,0 +1,26 @@
+{
+  "name": "wordpress-hx/php-quality-toolchain",
+  "description": "Exact build-only PHP validation tools for generated WordPressHx artifacts.",
+  "type": "project",
+  "license": "proprietary",
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "1.2.1",
+    "php-stubs/wordpress-stubs": "v7.0.0",
+    "phpcompatibility/phpcompatibility-wp": "2.1.8",
+    "phpstan/phpstan": "2.2.5",
+    "squizlabs/php_codesniffer": "3.13.5",
+    "wp-coding-standards/wpcs": "3.4.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "audit": {
+      "abandoned": "fail"
+    },
+    "platform": {
+      "php": "7.4.33"
+    },
+    "sort-packages": true
+  }
+}

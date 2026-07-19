@@ -15,16 +15,16 @@
       "schemaPath": "schemas/semantic-plan.schema.json",
       "schemaSha256": "b603c99448ae81c4be78649730e6e90938cd408847fa3cb11263d87015a58c33",
       "fixturePath": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "fixtureSha256": "4adb47d62401a5fbb8b1eebbcbbba79d8a1a5653dfa28aabd093423e2b926bbc",
-      "planDigest": "3750a956c4d0734a92c40ee05b2b42c0e33ea4459acb535e24dee57367bb00c0"
+      "fixtureSha256": "cffedf1c0311cd0e947c6ccc1b3bbb5fde74608ac901ec00a10ee91fac63d298",
+      "planDigest": "0621827123468331801bca72daec8cbaa948b4a7b836115679b5cee3ad63e431"
     },
     "emission": {
       "identity": "wordpress-hx.semantic-emission.v1",
       "schemaPath": "schemas/semantic-emission.schema.json",
       "schemaSha256": "217ea910fa326bfb4a47476b785be4646b5c22791f0700562bad2fd797ff11ba",
       "fixturePath": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "fixtureSha256": "26e26b22854c9b86e6c2ab6cfd53ed8199aee0d307790ee000259f9c60120d9c",
-      "resultDigest": "7c5e8ffe436b20666bdc3b7690a5c6d79c5e5757ce0e6e6071e8abdd591bb314"
+      "fixtureSha256": "f475efe2fd1519894961466081f1fb893439624ccc2ec15885e24e995a399a4f",
+      "resultDigest": "ae1d21afbb8d0455beaeb4aa52571d294502b6d37ca2b37cea853c3c2dfd8d10"
     }
   },
   "canonicalization": {
@@ -152,7 +152,7 @@
   "verification": {
     "command": "bash scripts/semantic-plan/test.sh",
     "validatorPath": "scripts/semantic-plan/test-contract.py",
-    "validatorSha256": "21b9ec138bfd0bf1bde1f41c09b89f4c105c76aee735510852c3432f024a0570",
+    "validatorSha256": "3a848b6bbe8278efdb2e220e5f879446c90cdad60090f472cf6a422cea53ab5d",
     "canonicalVectorCount": 6,
     "negativeMutationCount": 21,
     "nodeSchemaCount": 2,

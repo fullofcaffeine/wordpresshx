@@ -13,19 +13,19 @@
   "subject": {
     "toolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "fbfb1526c8789a241f2e0945b2f51209f5557d9b757fdcadcc5bf074c7d3712c"
+      "sha256": "626ce605e87ea3e1c9e9c690bea851360cf74126d7f41b676bd56ac351e69f35"
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",
-      "sha256": "4d1852b983e82c227969329bf58f3e3fa15f95e5cf351560fe11f138da1ad696"
+      "sha256": "4864edf6dcab3abfc718be7e58932d7282b87f73cb2210379912a4d9ec77353d"
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",
-      "sha256": "82795eeecad3819e253b04a8dc0004d4e837149587acb21007ae3161192c046b"
+      "sha256": "6362839df280da71eae5da6e62c6f4df56f420922bcdd7a974540f49032a7c4b"
     },
     "review": {
       "path": "docs/gates/g0-product-authority-and-baseline.md",
-      "sha256": "08e5e372d36e85fabfdace3edf0fea32a7ab0d4adf2c299361b3f3414364dab7"
+      "sha256": "6288e708885b1d9416b202516b42dd6bf36b83302d803096957c18a036de9a2c"
     }
   },
   "acceptance": {
@@ -71,7 +71,7 @@
         "reflaxe.php",
         "node-image",
         "php-images",
-        "composer-empty-graph",
+        "composer-runtime-empty-sdk-026-build-graph",
         "npm-build-inputs",
         "haxelib-build-inputs"
       ]

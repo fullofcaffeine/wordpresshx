@@ -1,8 +1,11 @@
 package fixtures;
 
 import haxe.io.Bytes;
+import reflaxe.php.ir.PhpDocParameter;
+import reflaxe.php.ir.PhpDocType;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
+import reflaxe.php.ir.PhpMethodDoc;
 import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpQualifiedName;
 import reflaxe.php.ir.PhpSourceFile;
@@ -51,16 +54,23 @@ class SourceCorrelationFixture {
 			new PhpMethod(PhpPublic, true, false, id("failHook"), [], methodRange(source, "failHook"), PhpVoidType,
 				[mappedThrow(source, "hook failure", "hook")], "fixture:source-correlation:method:hook"),
 			new PhpMethod(PhpPublic, true, false, id("allowRest"), [parameter("request", namedType("\\WP_REST_Request"))], methodRange(source, "allowRest"),
-				PhpBoolType, [PhpReturn(PhpBool(true))], "fixture:source-correlation:method:rest-permission"),
+				PhpBoolType, [PhpUnset(PhpVar("request")), PhpReturn(PhpBool(true))], "fixture:source-correlation:method:rest-permission"),
 			new PhpMethod(PhpPublic, true, false, id("failRest"), [parameter("request", namedType("\\WP_REST_Request"))], methodRange(source, "failRest"),
-				null, [mappedThrow(source, "rest failure", "rest")], "fixture:source-correlation:method:rest"),
+				PhpObjectType, [PhpUnset(PhpVar("request")), mappedThrow(source, "rest failure", "rest")], "fixture:source-correlation:method:rest"),
 			new PhpMethod(PhpPublic, true, false, id("failRender"), [
 				parameter("attributes", PhpArrayType),
 				parameter("content", PhpStringType),
 				parameter("block", namedType("\\WP_Block"))
-			],
-				methodRange(source, "failRender"), PhpStringType, [mappedThrow(source, "render failure", "render")],
-				"fixture:source-correlation:method:render"),
+			], methodRange(source, "failRender"), PhpStringType, [
+				PhpUnset(PhpVar("attributes")),
+				PhpUnset(PhpVar("content")),
+				PhpUnset(PhpVar("block")),
+				mappedThrow(source, "render failure", "render")
+			], "fixture:source-correlation:method:render",
+				new PhpMethodDoc("Raise the typed block-render fixture failure.",
+					[
+						new PhpDocParameter(id("attributes"), PhpDocType.array(PhpDocType.string(), PhpDocType.mixed()), "Block attributes keyed by name.")
+					])),
 			new PhpMethod(PhpPublic, true, false, id("failPrivate"), [], methodRange(source, "failPrivate"), PhpVoidType,
 				[PhpExprStmt(PhpStaticCall("self", "privateFailure", []))], "fixture:source-correlation:method:private-entry"),
 			new PhpMethod(PhpPrivate, true, false, id("privateFailure"), [], methodRange(source, "privateFailure"), PhpVoidType,

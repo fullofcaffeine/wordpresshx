@@ -25,6 +25,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   filter proof does not claim arbitrary Haxe-to-PHP coverage, admitted runtime
   Composer packages, qualified license approval, post-`1.0` retention, or
   production support.
+- `php-quality-implementation.json` records SDK-026's Haxe-inferred,
+  complete-stage generated-PHP gate. The CLI authenticates an exact Composer,
+  PHPCS/WPCS, PHPCompatibility, PHPStan, and WordPress-stub graph, applies
+  versioned public/private policies before publication, and owns a canonical
+  report bound to every emitted plugin artifact. Projects maintain no PHP tool
+  configuration; a failed or tampered policy has no publication authority.
 - `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
 - `browser-build-architecture.json` is the accepted ADR-013 strict TS/TSX
   primary lane, bounded classic Genes differential, exact project
@@ -105,7 +111,8 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
 - `toolchain.lock.json` is the closed G0 aggregate projection over the exact
   Haxe, formatter, Genes, co-located PHP compiler, Node/PHP images, Lix, and HXX
-  inputs. It also records inactive Composer/root npm graphs explicitly. The
+  inputs. It also records the SDK-026 build-only Composer graph and inactive
+  root npm graph explicitly. The
   aggregate does not make a package publishable and later gates must add or
   supersede an entry before admitting a new input.
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
@@ -174,6 +181,14 @@ before private boot, and remain below the recorded size and cold-boot ceilings.
 The receipt remains bounded to `titleFilter`; general hooks, runtime Composer
 dependencies, qualified license approval, post-`1.0` retention, and production
 support are explicit non-claims.
+
+Receipt `SDK-026-GENERATED-PHP-QUALITY` records the exact generated-PHP policy
+and its Haxe CLI transaction. Three compiler fixtures produce deterministic
+receipts; syntax, formatter, WPCS security, PHPStan, symbol, installed-policy,
+and private-classmap mutations fail before publication. Public and private
+plugin reports are canonical, byte-bound to the emission and ownership
+manifest, and exercised on PHP 7.4/8.4 and clean WordPress 7.0. The tool graph
+is build-only and absent from generated runtime artifacts.
 
 Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
 collector, four deterministic direct/server compilations, ten source-located

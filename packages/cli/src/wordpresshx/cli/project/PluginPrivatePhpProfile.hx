@@ -63,8 +63,8 @@ class PluginPrivatePhpProfile {
 	static function rootSource(plan:PluginBootstrapPlan):String {
 		final statements:Array<PhpStmt> = [
 			PhpIf(PhpNot(PhpFunctionCall("defined", [PhpString("ABSPATH")])), [PhpReturnVoid]),
-			PhpLocal("autoloadStatus", PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/" + plan.autoloadPath)), true)),
-			PhpIf(PhpBinop("||", PhpBinop("!==", PhpVar("autoloadStatus"), PhpBool(true)),
+			PhpLocal("autoload_status", PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/" + plan.autoloadPath)), true)),
+			PhpIf(PhpBinop("||", PhpBinop("!==", PhpBool(true), PhpVar("autoload_status")),
 				PhpNot(PhpFunctionCall("class_exists", [PhpString(plan.absoluteBootstrapClass), PhpBool(false)]))),
 				[PhpReturnVoid]),
 			PhpExprStmt(PhpStaticCall(plan.absoluteBootstrapClass, "boot", []))
@@ -90,52 +90,52 @@ class PluginPrivatePhpProfile {
 			PhpReturn(PhpBool(false))
 		];
 		final statements:Array<PhpStmt> = [
-			PhpLocal("polyfillSha256", PhpString(runtime.polyfillSha256)),
-			PhpLocal("ownedPolyfill", PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/../private/wordpresshx/runtime/" + requiredPolyfillPath(runtime)))),
-			PhpLocal("ownedPolyfillSha256",
-				PhpTernary(PhpFunctionCall("is_file", [PhpVar("ownedPolyfill")]),
-					PhpFunctionCall("hash_file", [PhpString("sha256"), PhpVar("ownedPolyfill")]), PhpBool(false))),
-			PhpIf(PhpBinop("!==", PhpVar("ownedPolyfillSha256"), PhpVar("polyfillSha256")), rejectOwned),
+			PhpLocal("polyfill_sha256", PhpString(runtime.polyfillSha256)),
+			PhpLocal("owned_polyfill", PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/../private/wordpresshx/runtime/" + requiredPolyfillPath(runtime)))),
+			PhpLocal("owned_polyfill_sha256",
+				PhpTernary(PhpFunctionCall("is_file", [PhpVar("owned_polyfill")]),
+					PhpFunctionCall("hash_file", [PhpString("sha256"), PhpVar("owned_polyfill")]), PhpBool(false))),
+			PhpIf(PhpBinop("!==", PhpVar("owned_polyfill_sha256"), PhpVar("polyfill_sha256")), rejectOwned),
 			PhpIf(PhpFunctionCall("defined", [PhpString(POLYFILL_CONSTANT)]), [
-				PhpLocal("activePolyfillSha256", PhpFunctionCall("constant", [PhpString(POLYFILL_CONSTANT)])),
-				PhpIf(PhpBinop("!==", PhpVar("activePolyfillSha256"), PhpVar("polyfillSha256")), rejectMarker)
+				PhpLocal("active_polyfill_sha256", PhpFunctionCall("constant", [PhpString(POLYFILL_CONSTANT)])),
+				PhpIf(PhpBinop("!==", PhpVar("active_polyfill_sha256"), PhpVar("polyfill_sha256")), rejectMarker)
 			]),
-			PhpLocal("polyfillFunctions", PhpLongArray(polyfillFunctions)),
-			PhpForeach(PhpVar("polyfillFunctions"), "polyfillFunction", [
-				PhpIf(PhpNot(PhpFunctionCall("function_exists", [PhpVar("polyfillFunction")])), [PhpContinue]),
-				PhpLocal("reflection", PhpNew("\\ReflectionFunction", [PhpVar("polyfillFunction")])),
+			PhpLocal("polyfill_functions", PhpLongArray(polyfillFunctions)),
+			PhpForeach(PhpVar("polyfill_functions"), "polyfill_function", [
+				PhpIf(PhpNot(PhpFunctionCall("function_exists", [PhpVar("polyfill_function")])), [PhpContinue]),
+				PhpLocal("reflection", PhpNew("\\ReflectionFunction", [PhpVar("polyfill_function")])),
 				PhpIf(PhpMethodCall(PhpVar("reflection"), "isInternal", []), [PhpContinue]),
-				PhpLocal("declaringFile", PhpMethodCall(PhpVar("reflection"), "getFileName", [])),
-				PhpLocal("declaringSha256",
-					PhpTernary(PhpBinop("&&", PhpFunctionCall("is_string", [PhpVar("declaringFile")]), PhpFunctionCall("is_file", [PhpVar("declaringFile")])),
-						PhpFunctionCall("hash_file", [PhpString("sha256"), PhpVar("declaringFile")]), PhpBool(false))),
-				PhpIf(PhpBinop("!==", PhpVar("declaringSha256"), PhpVar("polyfillSha256")), [
+				PhpLocal("declaring_file", PhpMethodCall(PhpVar("reflection"), "getFileName", [])),
+				PhpLocal("declaring_sha256",
+					PhpTernary(PhpBinop("&&", PhpFunctionCall("is_string", [PhpVar("declaring_file")]), PhpFunctionCall("is_file", [PhpVar("declaring_file")])),
+						PhpFunctionCall("hash_file", [PhpString("sha256"), PhpVar("declaring_file")]), PhpBool(false))),
+				PhpIf(PhpBinop("!==", PhpVar("declaring_sha256"), PhpVar("polyfill_sha256")), [
 					PhpExprStmt(PhpFunctionCall("error_log", [
 						PhpBinop(".", PhpString("WPHX5201 WordPressHx private runtime rejected incompatible global function "),
-							PhpBinop(".", PhpVar("polyfillFunction"), PhpString(".")))
+							PhpBinop(".", PhpVar("polyfill_function"), PhpString(".")))
 					])),
 					PhpReturn(PhpBool(false))
 				])
 			]),
 			PhpIf(PhpNot(PhpFunctionCall("defined", [PhpString(POLYFILL_CONSTANT)])),
 				[
-					PhpExprStmt(PhpFunctionCall("define", [PhpString(POLYFILL_CONSTANT), PhpVar("polyfillSha256")]))
+					PhpExprStmt(PhpFunctionCall("define", [PhpString(POLYFILL_CONSTANT), PhpVar("polyfill_sha256")]))
 				]),
-			PhpRequireOnce(PhpVar("ownedPolyfill")),
-			PhpLocal("classMap", PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/../private/wordpresshx/classmap.php")), false)),
-			PhpIf(PhpNot(PhpFunctionCall("is_array", [PhpVar("classMap")])), [
+			PhpRequireOnce(PhpVar("owned_polyfill")),
+			PhpLocal("class_map", PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/../private/wordpresshx/classmap.php")), false)),
+			PhpIf(PhpNot(PhpFunctionCall("is_array", [PhpVar("class_map")])), [
 				PhpExprStmt(PhpFunctionCall("error_log", [PhpString("WPHX5202 WordPressHx private runtime rejected its class map.")])),
 				PhpReturn(PhpBool(false))
 			]),
-			PhpLocal("autoloadRegistered", PhpFunctionCall("spl_autoload_register", [
-				PhpClosure([PhpParameter.named(id("className"), PhpStringType)], [new PhpClosureCapture(id("classMap"))], [
-					PhpIf(PhpFunctionCall("isset", [PhpArrayRead(PhpVar("classMap"), PhpVar("className"))]),
-						[PhpRequireOnce(PhpArrayRead(PhpVar("classMap"), PhpVar("className")))])
+			PhpLocal("autoload_registered", PhpFunctionCall("spl_autoload_register", [
+				PhpClosure([PhpParameter.named(id("class_name"), PhpStringType)], [new PhpClosureCapture(id("class_map"))], [
+					PhpIf(PhpFunctionCall("isset", [PhpArrayRead(PhpVar("class_map"), PhpVar("class_name"))]),
+						[PhpRequireOnce(PhpArrayRead(PhpVar("class_map"), PhpVar("class_name")))])
 				], true, PhpVoidType),
 				PhpBool(true),
 				PhpBool(false)
 			])),
-			PhpIf(PhpBinop("!==", PhpVar("autoloadRegistered"), PhpBool(true)), [
+			PhpIf(PhpBinop("!==", PhpBool(true), PhpVar("autoload_registered")), [
 				PhpExprStmt(PhpFunctionCall("error_log",
 					[
 						PhpString("WPHX5202 WordPressHx private runtime could not register its class map.")

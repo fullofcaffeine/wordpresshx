@@ -14,11 +14,11 @@
       "schemaPath": "schemas/generated-files.schema.json",
       "schemaSha256": "84797a5b01061bb7f5cf48271488864ce12de1330723717a7e7336bab0c7b485",
       "currentFixturePath": "fixtures/ownership/valid/current.generated-files.json",
-      "currentFixtureSha256": "c81c3d91b38567cfa5515987dc466498c646790266fa17c030e34478f607581c",
-      "currentManifestDigest": "48384e8915f4cb989ddcc1937b52fbb49e00423da61da59113f227556c848fae",
+      "currentFixtureSha256": "3d6c6497c0ac529488c81f27184843f6398c2dbf5661ae2505bffe294429428c",
+      "currentManifestDigest": "3dc98f213bdd9c836010fdba515f83480db292010df43539ada6181c9540e2bb",
       "nextFixturePath": "fixtures/ownership/valid/next.generated-files.json",
-      "nextFixtureSha256": "3bb89180c354bb1766317492f78154d7d6f876c7e5b503a3b85bed122ea6195c",
-      "nextManifestDigest": "7467354d0c8296cfb66e1a26b3d74dff7f9f5e99923b40e70d7864cc1bd80892"
+      "nextFixtureSha256": "4168a994377c6928bf44695bb0be9dee185b9df17e65e72c65c0a920f21cc189",
+      "nextManifestDigest": "885be60afbfcf7c8dad98884ce6569b55b12d41a65f9da67e84d213ffa5b8e8e"
     },
     "journal": {
       "identity": "wordpress-hx.ownership-journal.v1",
@@ -26,8 +26,8 @@
       "schemaPath": "schemas/ownership-transaction-journal.schema.json",
       "schemaSha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af",
       "fixturePath": "fixtures/ownership/valid/prepared.journal.json",
-      "fixtureSha256": "220c886e3ccccf417759c27c3a3dfb3329dba16dcbe71d66c703b1dd40a3de3c",
-      "journalDigest": "759f732c84a38bf974f5823004cd4e327f57fcc1c3f2fbd82b07f45c94761252"
+      "fixtureSha256": "b52a771fde39917be2f56a33cb2e2ebbdc7dc56b6c7e0ddfc9593b43a12e7389",
+      "journalDigest": "23f8d3b1c075111bcb24166281daa1687c242847ff76f9d7a50a6776d71cc485"
     }
   },
   "authority": {

@@ -105,11 +105,78 @@
   },
   "dependencyGraphs": {
     "composer": {
-      "status": "not-active-in-g0",
-      "manifestPaths": [],
-      "lockPaths": [],
-      "activePackages": [],
-      "admission": "A later gate must add an exact composer.lock and artifact receipt before Composer packages become build or runtime inputs."
+      "status": "bounded-build-only-generated-php-validation",
+      "manifestPaths": [
+        "tooling/php-quality/composer.json"
+      ],
+      "lockPaths": [
+        "tooling/php-quality/composer.lock"
+      ],
+      "lockSha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+      "composer": {
+        "version": "2.10.2",
+        "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
+        "artifactSha256": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
+      },
+      "activePackages": [
+        {
+          "name": "dealerdirect/phpcodesniffer-composer-installer",
+          "version": "1.2.1",
+          "sourceReference": "963f0c67bffde0eac41b56be71ac0e8ba132f0bd"
+        },
+        {
+          "name": "php-stubs/wordpress-stubs",
+          "version": "7.0.0",
+          "sourceReference": "d74b963ed4f47303859bf73c741c80f554c83dc6"
+        },
+        {
+          "name": "phpcompatibility/php-compatibility",
+          "version": "9.3.5",
+          "sourceReference": "9fb324479acf6f39452e0655d2429cc0d3914243"
+        },
+        {
+          "name": "phpcompatibility/phpcompatibility-paragonie",
+          "version": "1.3.4",
+          "sourceReference": "244d7b04fc4bc2117c15f5abe23eb933b5f02bbf"
+        },
+        {
+          "name": "phpcompatibility/phpcompatibility-wp",
+          "version": "2.1.8",
+          "sourceReference": "7c8d18b4d90dac9e86b0869a608fa09158e168fa"
+        },
+        {
+          "name": "phpcsstandards/phpcsextra",
+          "version": "1.5.0",
+          "sourceReference": "b598aa890815b8df16363271b659d73280129101"
+        },
+        {
+          "name": "phpcsstandards/phpcsutils",
+          "version": "1.2.2",
+          "sourceReference": "c216317e96c8b3f5932808f9b0f1f7a14e3bbf55"
+        },
+        {
+          "name": "phpstan/phpstan",
+          "version": "2.2.5",
+          "sourceReference": "909c1e5fef7989ac0d0c1c5c42e32a5c4f6198a0"
+        },
+        {
+          "name": "squizlabs/php_codesniffer",
+          "version": "3.13.5",
+          "sourceReference": "0ca86845ce43291e8f5692c7356fccf3bcf02bf4"
+        },
+        {
+          "name": "wp-coding-standards/wpcs",
+          "version": "3.4.0",
+          "sourceReference": "469c18ceab4d642b15bad4c65ebf3b307bfd55ab"
+        }
+      ],
+      "allowedComposerPlugins": [
+        "dealerdirect/phpcodesniffer-composer-installer@1.2.1"
+      ],
+      "runtimePackages": [],
+      "buildInputOnly": true,
+      "publicationAuthorized": false,
+      "receiptId": "SDK-026-GENERATED-PHP-QUALITY"
     },
     "npm": {
       "status": "bounded-build-inputs",

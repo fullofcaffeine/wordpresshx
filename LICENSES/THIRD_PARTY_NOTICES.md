@@ -18,6 +18,7 @@ license grant. Exact machine-readable evidence lives in `components.json`.
 | `html-entities` 1.0.0, `tink_core` 2.1.1, `helder.set` 0.3.1 | compile-time/transitive dependencies | Haxelib metadata says MIT; inspected archives omit license text | authoritative license texts required before redistribution |
 | `tink_macro` 0.23.0 | compile-time parser dependency | MIT manifest and exact MIT license agree | build provenance; review still pending |
 | Formatter 1.18.0, Gitleaks 8.30.0 | local/CI build tools | exact/tag MIT license evidence | not bundled; record build provenance |
+| Composer 2.10.2 and exact generated-PHP quality graph | build-only formatter, compatibility, security, stubs, and static analysis | exact Composer artifact plus ten-package lock; package metadata declares MIT, LGPL-3.0-or-later, and BSD-3-Clause | ephemeral vendor graph; not bundled in generated plugins; qualified review pending |
 | `actions/checkout`, `krdlab/setup-haxe` | hosted CI actions | exact pinned MIT license evidence | not bundled; record build provenance |
 | Beads 1.0.4 | issue tooling and managed hook/instruction source | exact pinned MIT license | attribute copied managed sections |
 | OCI test images | exact runtime test inputs | digest locks only; layered license inventory not audited here | no redistribution; no aggregate license conclusion |

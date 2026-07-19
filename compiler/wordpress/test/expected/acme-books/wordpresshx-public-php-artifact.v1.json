@@ -55,8 +55,8 @@
       ],
       "classification": "public-native",
       "path": "includes/Bootstrap.php",
-      "sha256": "d8bb76474eb3e6a5258fe1ea8c6b19df7272624715ed99593c1b2cf0fa796b58",
-      "bytes": 287
+      "sha256": "71e0848c48ff7a7f5740a943d3e144655475436705e80ce3f3d152e257a1230e",
+      "bytes": 292
     },
     {
       "role": "autoload",

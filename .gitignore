@@ -11,3 +11,7 @@ __pycache__/
 # Local compiler test output
 compiler/reflaxe.php/build/
 compiler/wordpress/build/
+
+# Exact PHP quality tool installation (composer.lock remains tracked)
+tooling/php-quality/vendor/
+tooling/php-quality/.cache/

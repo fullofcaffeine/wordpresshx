@@ -20,10 +20,13 @@ compatibility, package publication, or production-support claim.
 | Reference hashes and snapshot method | `G0-PRODUCT-AUTHORITY-BASELINE` reference-artifact ledger |
 
 The aggregate toolchain lock makes absence explicit. Composer and a root npm
-graph are not active inputs at G0, so they are represented by closed empty
-graphs with an exact-admission rule. Haxelib and npm build inputs that do exist
-are pinned through artifact hashes, commits/trees, or a closed transitive lock.
-An omitted future dependency is unresolved, never implicitly permitted.
+graph were not active inputs when G0 closed. Later gates may extend this same
+lock only through a bounded, receipt-backed admission. SDK-026 therefore adds
+one exact Composer graph for build-time generated-PHP validation while keeping
+runtime packages empty, deployment artifacts independent of Composer, and
+publication blocked. Haxelib and npm build inputs that do exist are pinned
+through artifact hashes, commits/trees, or a closed transitive lock. An omitted
+future dependency is unresolved, never implicitly permitted.
 
 ## Licensing is still a release blocker
 

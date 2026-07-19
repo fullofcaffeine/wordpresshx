@@ -99,7 +99,18 @@ def main() -> int:
                 "status", "active-without-lock"
             ),
         ),
-        "Composer graph must be explicitly inactive at G0",
+        "Composer graph must remain the admitted SDK-026 build-only graph",
+    )
+    negative_case(
+        "runtime-composer-package",
+        lambda root: mutate_json(
+            root,
+            "manifests/toolchain.lock.json",
+            lambda value: value["dependencyGraphs"]["composer"].__setitem__(
+                "runtimePackages", ["vendor/runtime-package"]
+            ),
+        ),
+        "Composer runtime package set must remain empty",
     )
 
     def add_unlocked_npm_graph(root: Path) -> None:
@@ -187,7 +198,7 @@ def main() -> int:
         "G0 licensing/publication boundary changed",
     )
 
-    print("G0 baseline tests passed: 1 positive and 9 fail-closed mutations")
+    print("G0 baseline tests passed: 1 positive and 10 fail-closed mutations")
     return 0
 
 

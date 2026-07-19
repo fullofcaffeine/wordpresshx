@@ -849,7 +849,14 @@ def main() -> None:
     )
     plan_negative(
         "plan digest tamper",
-        lambda value: value.update({"planDigest": "1" + value["planDigest"][1:]}),
+        lambda value: value.update(
+            {
+                "planDigest": (
+                    "0" if value["planDigest"][0] != "0" else "1"
+                )
+                + value["planDigest"][1:]
+            }
+        ),
         "canonical digest mismatch",
         redigest=False,
     )

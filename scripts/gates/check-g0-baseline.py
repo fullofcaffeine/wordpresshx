@@ -80,6 +80,7 @@ def manifest_paths(root: Path, names: set[str]) -> list[str]:
         "__pycache__",
         "build",
         "node_modules",
+        "vendor",
     }
     found: list[str] = []
     for path in root.rglob("*"):
@@ -261,13 +262,115 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     graphs = toolchain.get("dependencyGraphs", {})
     audit.exact_keys(graphs, {"composer", "npm", "haxelib"}, "dependency graph locks")
     composer = graphs.get("composer", {}) if isinstance(graphs, dict) else {}
-    audit.exact_keys(composer, {"status", "manifestPaths", "lockPaths", "activePackages", "admission"}, "Composer graph")
-    audit.check(composer.get("status") == "not-active-in-g0", "Composer graph must be explicitly inactive at G0")
-    audit.check(composer.get("manifestPaths") == [], "Composer manifest list must be empty at G0")
-    audit.check(composer.get("lockPaths") == [], "Composer lock list must be empty at G0")
-    audit.check(composer.get("activePackages") == [], "Composer package list must be empty at G0")
-    audit.check(manifest_paths(audit.root, {"composer.json"}) == [], "unlocked Composer manifest found")
-    audit.check(manifest_paths(audit.root, {"composer.lock"}) == [], "unlocked Composer lock found")
+    audit.exact_keys(
+        composer,
+        {
+            "status",
+            "manifestPaths",
+            "lockPaths",
+            "lockSha256",
+            "composer",
+            "activePackages",
+            "allowedComposerPlugins",
+            "runtimePackages",
+            "buildInputOnly",
+            "publicationAuthorized",
+            "receiptId",
+        },
+        "Composer graph",
+    )
+    audit.check(
+        composer.get("status")
+        == "bounded-build-only-generated-php-validation",
+        "Composer graph must remain the admitted SDK-026 build-only graph",
+    )
+    expected_composer_manifests = ["tooling/php-quality/composer.json"]
+    expected_composer_locks = ["tooling/php-quality/composer.lock"]
+    audit.check(
+        composer.get("manifestPaths") == expected_composer_manifests,
+        "Composer manifest inventory changed",
+    )
+    audit.check(
+        composer.get("lockPaths") == expected_composer_locks,
+        "Composer lock inventory changed",
+    )
+    audit.check(
+        manifest_paths(audit.root, {"composer.json"})
+        == expected_composer_manifests,
+        "unlocked Composer manifest found",
+    )
+    audit.check(
+        manifest_paths(audit.root, {"composer.lock"})
+        == expected_composer_locks,
+        "unlocked Composer lock found",
+    )
+    audit.check(
+        composer.get("lockSha256")
+        == audit.sha256("tooling/php-quality/composer.lock"),
+        "Composer quality lock SHA-256 changed",
+    )
+    audit.check(
+        composer.get("composer")
+        == {
+            "version": "2.10.2",
+            "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
+            "artifactSha256": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027",
+        },
+        "Composer executable lock changed",
+    )
+    active_composer_packages = composer.get("activePackages", [])
+    active_composer_versions = {
+        package.get("name"): package.get("version")
+        for package in active_composer_packages
+        if isinstance(package, dict)
+    }
+    audit.check(
+        active_composer_versions
+        == {
+            "dealerdirect/phpcodesniffer-composer-installer": "1.2.1",
+            "php-stubs/wordpress-stubs": "7.0.0",
+            "phpcompatibility/php-compatibility": "9.3.5",
+            "phpcompatibility/phpcompatibility-paragonie": "1.3.4",
+            "phpcompatibility/phpcompatibility-wp": "2.1.8",
+            "phpcsstandards/phpcsextra": "1.5.0",
+            "phpcsstandards/phpcsutils": "1.2.2",
+            "phpstan/phpstan": "2.2.5",
+            "squizlabs/php_codesniffer": "3.13.5",
+            "wp-coding-standards/wpcs": "3.4.0",
+        },
+        "Composer build package set changed",
+    )
+    audit.check(
+        len(active_composer_packages) == len(active_composer_versions)
+        and all(
+            isinstance(package.get("sourceReference"), str)
+            and bool(SHA1.fullmatch(package["sourceReference"]))
+            for package in active_composer_packages
+            if isinstance(package, dict)
+        ),
+        "Composer build packages require exact source references",
+    )
+    audit.check(
+        composer.get("allowedComposerPlugins")
+        == ["dealerdirect/phpcodesniffer-composer-installer@1.2.1"],
+        "Composer plugin admission changed",
+    )
+    audit.check(
+        composer.get("runtimePackages") == [],
+        "Composer runtime package set must remain empty",
+    )
+    audit.check(
+        composer.get("buildInputOnly") is True,
+        "Composer quality graph must remain build-input-only",
+    )
+    audit.check(
+        composer.get("publicationAuthorized") is False,
+        "Composer quality graph cannot authorize publication",
+    )
+    audit.check(
+        composer.get("receiptId") == "SDK-026-GENERATED-PHP-QUALITY",
+        "Composer quality graph authority changed",
+    )
 
     npm = graphs.get("npm", {}) if isinstance(graphs, dict) else {}
     audit.exact_keys(npm, {"status", "rootManifestPaths", "rootLockPaths", "activePackages", "externalGraphs"}, "npm graph")
@@ -851,6 +954,25 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
     audit.exact_keys(acceptance, {"repositoryAuthority", "acceptedDecisions", "profiles", "toolchain", "apiClassification", "fullPortBoundary"}, "G0 acceptance evidence")
     expected_decisions = ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-008", "ADR-021"]
     audit.check(acceptance.get("acceptedDecisions") == expected_decisions, "G0 accepted-decision set changed")
+    audit.check(
+        acceptance.get("toolchain")
+        == {
+            "lockId": "G0-TOOLCHAIN-BASELINE",
+            "status": "closed-g0-baseline",
+            "covers": [
+                "haxe",
+                "haxe-formatter",
+                "genes-ts",
+                "reflaxe.php",
+                "node-image",
+                "php-images",
+                "composer-runtime-empty-sdk-026-build-graph",
+                "npm-build-inputs",
+                "haxelib-build-inputs",
+            ],
+        },
+        "G0 aggregate toolchain coverage changed",
+    )
     decision_paths = {
         "ADR-001": "docs/adr/001-product-and-repository-boundary.md",
         "ADR-002": "docs/adr/002-exact-compatibility-profiles.md",

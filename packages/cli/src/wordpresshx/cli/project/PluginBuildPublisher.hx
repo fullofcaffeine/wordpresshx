@@ -22,15 +22,15 @@ class PluginBuildPublisher {
 
 	public static function plan(context:ProjectContext, emission:PluginEmission):Void {
 		try {
-			prepare(context, emission);
+			prepare(context, emission, null);
 		} catch (failure:OwnershipFailure) {
 			throw new CliFailure("WPHX3306", failure.message, 5, "metadata-emission", failure.relativePath,
 				["The typed plugin generation was rejected before staging or publication."], failure);
 		}
 	}
 
-	public static function publish(context:ProjectContext, emission:PluginEmission):ProjectBuildResult {
-		final generation = prepare(context, emission);
+	public static function publish(context:ProjectContext, emission:PluginEmission, quality:PluginPhpQualityResult):ProjectBuildResult {
+		final generation = prepare(context, emission, quality);
 		final temporaryRoot = Fs.mkdtempSync(Path.join(Os.tmpdir(), TEMPORARY_PREFIX));
 		final stageRoot = Path.join(temporaryRoot, "stage");
 		final manifestPath = Path.join(temporaryRoot, "next-manifest.json");
@@ -51,6 +51,10 @@ class PluginBuildPublisher {
 				{
 					validatorId: "wphx.plugin-public-php",
 					run: root -> validatePluginStage(root, generation.pluginBase, emission)
+				},
+				{
+					validatorId: "wphx.plugin-php-quality",
+					run: root -> validateQualityStage(root, generation.pluginBase, generation.qualityPath, emission, quality)
 				}
 			];
 			if (emission.plan.privateTitleFilter != null) {
@@ -79,11 +83,12 @@ class PluginBuildPublisher {
 		}
 	}
 
-	static function prepare(context:ProjectContext, emission:PluginEmission) {
+	static function prepare(context:ProjectContext, emission:PluginEmission, quality:Null<PluginPhpQualityResult>) {
 		final paths = OwnershipPaths.resolve(context.bootstrap);
 		final wordpressRoot = requiredRoot(context, "wordpress");
 		final metadataRoot = requiredRoot(context, paths.metadataRootId);
 		final pluginBase = wordpressRoot.path + "/" + emission.plan.slug;
+		final qualityPath = metadataRoot.path + "/.wphx/php-quality.json";
 		final effectiveBytes = OwnershipJson.encodeDocument(context.effectiveInputs);
 		final packagePayloads:Array<ReproduciblePayload> = [
 			for (file in emission.files)
@@ -91,6 +96,9 @@ class PluginBuildPublisher {
 		];
 		final reproducible = ReproducibleBuild.create(context, packagePayloads);
 		final commonValidators = ["wphx.deterministic-archive", "wphx.plugin-public-php"];
+		if (quality != null) {
+			commonValidators.push("wphx.plugin-php-quality");
+		}
 		if (emission.plan.privateTitleFilter != null) {
 			commonValidators.push("wphx.plugin-private-php");
 		}
@@ -122,6 +130,16 @@ class PluginBuildPublisher {
 			projectionIds: ["emission/plugin"],
 			validatorIds: ["wphx.plugin-public-php"]
 		});
+		if (quality != null) {
+			artifacts.push({
+				path: qualityPath,
+				rootId: metadataRoot.id,
+				bytes: quality.reportBytes,
+				kind: "build.php-quality-report.json",
+				projectionIds: ["metadata/php-quality"],
+				validatorIds: ["wphx.plugin-php-quality"]
+			});
+		}
 		artifacts.push({
 			path: paths.metadataPath,
 			rootId: paths.metadataRootId,
@@ -150,14 +168,16 @@ class PluginBuildPublisher {
 		return {
 			paths: paths,
 			pluginBase: pluginBase,
+			qualityPath: qualityPath,
 			artifacts: artifacts,
 			packagePayloads: packagePayloads,
 			effectiveBytes: effectiveBytes,
-			manifest: manifest(context, emission, paths, artifacts)
+			manifest: manifest(context, emission, paths, artifacts, quality)
 		};
 	}
 
-	static function manifest(context:ProjectContext, emission:PluginEmission, paths:ProjectOwnershipPaths, artifacts:Array<PreparedArtifact>) {
+	static function manifest(context:ProjectContext, emission:PluginEmission, paths:ProjectOwnershipPaths, artifacts:Array<PreparedArtifact>,
+			quality:Null<PluginPhpQualityResult>) {
 		final lock = PluginLockReader.read(context);
 		final sourceBytes = ProjectFiles.read(context.bootstrap.root, emission.plan.sourcePath, "plugin declaration", "artifact-validation");
 		final sourceSpan = OwnershipJson.object([
@@ -188,6 +208,17 @@ class PluginBuildPublisher {
 				"complete-staged-tree"),
 			validator("wphx.effective-inputs", "@wordpress-hx/cli effective-input validator", "v1", lock, context, "complete-staged-tree")
 		];
+		if (quality != null) {
+			validators.push(OwnershipJson.object([
+				"validatorId" => "wphx.plugin-php-quality",
+				"tool" => "WordPressHx pinned generated-PHP quality gate",
+				"version" => "sdk-026-v1",
+				"toolSha256" => quality.policySha256,
+				"configSha256" => quality.composerLockSha256,
+				"scope" => "complete-staged-tree",
+				"outcome" => "passed"
+			]));
+		}
 		if (emission.plan.privateTitleFilter != null) {
 			validators.push(validator("wphx.plugin-private-php", "WordPressHx dependency-closed private PHP packager", "sdk-024-v1", lock, context,
 				"complete-staged-tree"));
@@ -280,6 +311,11 @@ class PluginBuildPublisher {
 		for (file in emission.files) {
 			validateExact(root, pluginBase + "/" + file.relativePath, file.bytes, "plugin artifact");
 		}
+	}
+
+	static function validateQualityStage(root:String, pluginBase:String, qualityPath:String, emission:PluginEmission, quality:PluginPhpQualityResult):Void {
+		validatePluginStage(root, pluginBase, emission);
+		validateExact(root, qualityPath, quality.reportBytes, "PHP quality receipt");
 	}
 
 	static function validateExact(root:String, relative:String, expected:Buffer, label:String):Void {

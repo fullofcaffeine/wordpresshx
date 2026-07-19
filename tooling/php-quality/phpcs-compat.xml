@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="WordPressHx PHP 7.4 compatibility">
+  <description>Blocking syntax/API compatibility checks for every generated PHP file.</description>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg name="extensions" value="php"/>
+  <arg name="parallel" value="1"/>
+  <arg value="ps"/>
+  <config name="testVersion" value="7.4"/>
+
+  <rule ref="PHPCompatibilityWP"/>
+</ruleset>

@@ -37,6 +37,7 @@ EXPECTED_COMPONENT_IDS = [
     "html-entities-1.0.0",
     "krdlab-setup-haxe-2.1.0",
     "lix-15.12.4",
+    "php-quality-build-tool-graph",
     "reflaxe-php-port-origin",
     "repository-original-work",
     "tink-anon-0.7.0",
@@ -613,6 +614,12 @@ def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) 
         audit.root / "compiler/reflaxe.php/haxelib.json", "PHP compiler haxelib manifest"
     )
     images = audit.read_json(audit.root / "docker/images.lock.json", "Docker image lock")
+    php_quality_toolchain = audit.read_json(
+        audit.root / "tooling/php-quality/toolchain.json", "PHP quality toolchain"
+    )
+    php_quality_lock = audit.read_json(
+        audit.root / "tooling/php-quality/composer.lock", "PHP quality Composer lock"
+    )
 
     entries = upstream.get("entries", {}) if isinstance(upstream, dict) else {}
     genes = entries.get("genes-ts", {}) if isinstance(entries, dict) else {}
@@ -748,6 +755,51 @@ def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) 
         provenance.get("destination", {}).get("releaseEligible") is False,
         "reflaxe.php publication must remain ineligible",
     )
+
+    php_quality_component = components.get("php-quality-build-tool-graph", {})
+    php_quality_composer = php_quality_toolchain.get("composer", {})
+    check_equal(
+        audit,
+        php_quality_component.get("artifact", {}).get("url"),
+        php_quality_composer.get("artifactUrl"),
+        "PHP quality Composer artifact URL binding",
+    )
+    check_equal(
+        audit,
+        php_quality_component.get("artifact", {}).get("sha256"),
+        php_quality_composer.get("artifactSha256"),
+        "PHP quality Composer artifact SHA-256 binding",
+    )
+    php_quality_lock_sha256 = hashlib.sha256(
+        (audit.root / "tooling/php-quality/composer.lock").read_bytes()
+    ).hexdigest()
+    check_equal(
+        audit,
+        php_quality_component.get("version"),
+        "composer.lock@" + php_quality_lock_sha256[:12],
+        "PHP quality component lock identity",
+    )
+    packages = php_quality_lock.get("packages-dev", [])
+    audit.check(
+        isinstance(packages, list) and len(packages) == 10,
+        "PHP quality Composer lock must retain ten exact build packages",
+    )
+    if isinstance(packages, list):
+        licenses = sorted(
+            {
+                license_id
+                for package in packages
+                if isinstance(package, dict)
+                for license_id in package.get("license", [])
+                if isinstance(license_id, str)
+            }
+        )
+        check_equal(
+            audit,
+            licenses,
+            ["BSD-3-Clause", "LGPL-3.0-or-later", "MIT"],
+            "PHP quality Composer package license declarations",
+        )
 
     image_map = images.get("images", {})
     audit.check(
@@ -946,6 +998,8 @@ def validate_receipt(audit: Audit) -> None:
         "adr",
         "components",
         "generatedOutput",
+        "phpQualityLock",
+        "phpQualityToolchain",
         "policy",
         "publicationGolden",
         "qualifiedReview",
@@ -987,7 +1041,7 @@ def validate_receipt(audit: Audit) -> None:
         {"componentCount", "unresolvedFindingCount", "conflictCount", "rootLicensePresent"},
         "receipt.audit",
     )
-    audit.check(receipt_audit.get("componentCount") == 22, "receipt component count must be 22")
+    audit.check(receipt_audit.get("componentCount") == 23, "receipt component count must be 23")
     audit.check(
         receipt_audit.get("unresolvedFindingCount") == 8,
         "receipt unresolved finding count must be 8",

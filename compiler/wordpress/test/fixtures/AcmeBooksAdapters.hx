@@ -1,9 +1,12 @@
 package fixtures;
 
 import reflaxe.php.ir.PhpArrayEntry;
+import reflaxe.php.ir.PhpDocParameter;
+import reflaxe.php.ir.PhpDocType;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
+import reflaxe.php.ir.PhpMethodDoc;
 import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpQualifiedName;
@@ -41,7 +44,9 @@ class AcmeBooksAdapters {
 	}
 
 	public static function properties():Array<PhpProperty> {
-		return [new PhpProperty(PhpPrivate, true, id("initialized"), PhpBool(false))];
+		return [
+			new PhpProperty(PhpPrivate, true, id("initialized"), PhpBool(false), PhpBoolType)
+		];
 	}
 
 	public static function methods():Array<PhpMethod> {
@@ -51,31 +56,47 @@ class AcmeBooksAdapters {
 				[PhpAssign(PhpStaticProperty("self", "initialized"), PhpBool(true))]),
 			new PhpMethod(PhpPublic, true, false, id("isInitialized"), [], fixtureSource, PhpBoolType, [PhpReturn(PhpStaticProperty("self", "initialized"))]),
 			new PhpMethod(PhpPublic, true, false, id("filterTitle"), [parameter("title", PhpStringType), parameter("postId", PhpIntType)], fixtureSource,
-				PhpStringType, [PhpReturn(PhpStaticCall("self", "normalizeTitleImpl", [PhpVar("title")]))]),
-			new PhpMethod(PhpPublic, true, false, id("restPermission"), [parameter("request", namedType("\\WP_REST_Request"))], fixtureSource, PhpBoolType,
-				[PhpReturn(PhpFunctionCall("\\current_user_can", [PhpString("read")]))]),
+				PhpStringType, [
+					PhpUnset(PhpVar("postId")),
+					PhpReturn(PhpStaticCall("self", "normalizeTitleImpl", [PhpVar("title")]))
+				]),
+			new PhpMethod(PhpPublic, true, false, id("restPermission"), [parameter("request", namedType("\\WP_REST_Request"))], fixtureSource, PhpBoolType, [
+				PhpUnset(PhpVar("request")),
+				PhpReturn(PhpFunctionCall("\\current_user_can", [PhpString("read")]))
+			]),
 			new PhpMethod(PhpPublic, true, false, id("restBook"), [parameter("request", namedType("\\WP_REST_Request"))], fixtureSource, null, [
 				PhpLocal("id", PhpCastInt(PhpMethodCall(PhpVar("request"), "get_param", [PhpString("id")]))),
 				PhpLocal("payload", PhpStaticCall("self", "bookPayload", [PhpVar("id")])),
 				PhpIf(PhpFunctionCall("\\is_wp_error", [PhpVar("payload")]), [PhpReturn(PhpVar("payload"))]),
 				PhpReturn(PhpNew("\\WP_REST_Response", [PhpVar("payload"), PhpInt(200)]))
-			]),
+			], null, new PhpMethodDoc("Serve one typed book response.", [], PhpDocType.union([
+				PhpDocType.named(PhpQualifiedName.parse("\\WP_Error")),
+				PhpDocType.named(PhpQualifiedName.parse("\\WP_REST_Response"))
+				]), "The response or a validated request error.")),
 			new PhpMethod(PhpPublic, true, false, id("renderSummary"), [
 				parameter("attributes", PhpArrayType),
 				parameter("content", PhpStringType),
 				parameter("block", namedType("\\WP_Block"))
 			], fixtureSource, PhpStringType, [
+				PhpUnset(PhpVar("content")),
+				PhpUnset(PhpVar("block")),
 				PhpLocal("title", PhpNullCoalesce(PhpArrayRead(PhpVar("attributes"), PhpString("title")), PhpString("Books"))),
 				PhpReturn(PhpFunctionCall("\\sprintf", [
 					PhpString("<section class=\"acme-books-summary\">%s</section>"),
 					PhpFunctionCall("\\esc_html", [PhpCastString(PhpVar("title"))])
 				]))
-			]),
+			], null, new PhpMethodDoc("Render the typed book summary block.", [
+				new PhpDocParameter(id("attributes"), PhpDocType.array(PhpDocType.string(), PhpDocType.mixed()), "Block attributes keyed by name.")
+				])),
 			new PhpMethod(PhpPublic, true, false, id("appendLabel"), [
 				PhpParameter.named(id("labels"), PhpArrayType, true),
 				parameter("label", PhpStringType)
 			],
-				fixtureSource, PhpVoidType, [PhpAssign(PhpArrayAppend(PhpVar("labels")), PhpVar("label"))]),
+				fixtureSource, PhpVoidType, [PhpAssign(PhpArrayAppend(PhpVar("labels")), PhpVar("label"))], null,
+				new PhpMethodDoc("Append one typed public label.",
+					[
+						new PhpDocParameter(id("labels"), PhpDocType.array(PhpDocType.integer(), PhpDocType.string()), "Mutable ordered labels.")
+					])),
 			new PhpMethod(PhpPublic, true, false, id("normalizeTitle"), [parameter("title", PhpStringType)], fixtureSource, PhpStringType,
 				[PhpReturn(PhpStaticCall("self", "normalizeTitleImpl", [PhpVar("title")]))]),
 			new PhpMethod(PhpPrivate, true, false, id("normalizeTitleImpl"), [parameter("title", PhpStringType)], fixtureSource, PhpStringType, [
@@ -93,7 +114,10 @@ class AcmeBooksAdapters {
 					entry("id", PhpVar("id")),
 					entry("title", PhpBinop(".", PhpString("Book "), PhpCastString(PhpVar("id"))))
 				]))
-			])
+			], null, new PhpMethodDoc("Create one typed book payload.", [], PhpDocType.union([
+				PhpDocType.array(PhpDocType.string(), PhpDocType.mixed()),
+				PhpDocType.named(PhpQualifiedName.parse("\\WP_Error"))
+				]), "The payload or a validated identifier error."))
 		];
 	}
 

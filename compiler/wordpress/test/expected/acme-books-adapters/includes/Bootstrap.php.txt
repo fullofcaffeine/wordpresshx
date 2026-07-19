@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Acme\BooksAdapters;
 
 class Bootstrap {
-	private static $booted = false;
+	private static bool $booted = false;
 
 	public static function boot(): void {
 		if ( self::$booted ) {

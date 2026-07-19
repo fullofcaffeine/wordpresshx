@@ -119,15 +119,15 @@
       ],
       "classification": "public-native",
       "path": "includes/Bootstrap.php",
-      "sha256": "dca8e55d4d76b67e9d0701e05e18560c8f335c99c77aa529af58cc6041f0a43c",
-      "bytes": 295
+      "sha256": "73de73330bf0556b50f793fc60274117d2d5fe0e822b0aa61b6b4d3214ac3c45",
+      "bytes": 300
     },
     {
       "role": "adapter-class",
       "declarations": [
         {
           "generatedStartLine": 7,
-          "generatedEndLine": 77,
+          "generatedEndLine": 101,
           "source": {
             "endColumn": 2,
             "startLine": 27,
@@ -140,8 +140,8 @@
       ],
       "classification": "public-native",
       "path": "includes/PublicAdapters.php",
-      "sha256": "bd54264ecb3b797219b73ca505f0c4481fbfcac7cea74f747cb5da7e61f8f2d0",
-      "bytes": 2126
+      "sha256": "aa0bf3dfdac1bd4103ed4bbe935031059f65f4891d52c812d43aab2898f7a822",
+      "bytes": 2723
     },
     {
       "role": "autoload",

@@ -28,6 +28,31 @@ PHP_IMAGES = (
     "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
 )
 FORBIDDEN_HAXE = ("Dynamic", "Any", "cast", "Reflect", "untyped")
+PHP_QUALITY_POLICY_FILES = (
+    "composer.json",
+    "composer.lock",
+    "phpcs-compat-private.xml",
+    "phpcs-compat.xml",
+    "phpcs-public.xml",
+    "phpstan-private.neon",
+    "phpstan-public.neon",
+    "run.php",
+    "toolchain.json",
+)
+PHP_QUALITY_TOOLS = (
+    {"id": "composer", "version": "2.10.2"},
+    {"id": "php-stubs/wordpress-stubs", "version": "7.0.0"},
+    {"id": "phpcompatibility/phpcompatibility-wp", "version": "2.1.8"},
+    {"id": "phpstan/phpstan", "version": "2.2.5"},
+    {"id": "squizlabs/php_codesniffer", "version": "3.13.5"},
+    {"id": "wp-coding-standards/wpcs", "version": "3.4.0"},
+)
+PHP_QUALITY_COMPOSER_LOCK_SHA256 = (
+    "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649"
+)
+WORDPRESS_STUBS_SHA256 = (
+    "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
+)
 
 
 def canonical(value: object) -> bytes:
@@ -328,6 +353,195 @@ def expect_command_no_write(
     runtime.no_write += 1
 
 
+def php_quality_policy_sha256(runtime: Runtime) -> str:
+    tool_root = (runtime.entry.parent / "php-quality").resolve(strict=True)
+    framed = bytearray()
+    for relative in PHP_QUALITY_POLICY_FILES:
+        content_sha256 = hashlib.sha256((tool_root / relative).read_bytes()).hexdigest()
+        framed.extend(relative.encode())
+        framed.append(0)
+        framed.extend(content_sha256.encode())
+        framed.append(0)
+    return hashlib.sha256(framed).hexdigest()
+
+
+def assert_php_quality_event(documents: list[dict[str, object]]) -> None:
+    completed = [
+        value
+        for value in documents
+        if value.get("event") == "stage-completed"
+        and value.get("stage") == "format-and-static-check"
+    ]
+    assert len(completed) == 1
+    event = completed[0]
+    assert event["status"] == "passed"
+    payload = event["payload"]
+    assert isinstance(payload, dict)
+    assert payload["reason"] == (
+        "pinned lint, formatter, WPCS, compatibility, PHPStan, symbol, and "
+        "autoload gates passed"
+    )
+    for name in ("policySha256", "reportSha256"):
+        assert re.fullmatch(r"[0-9a-f]{64}", payload[name])
+
+
+def assert_php_quality_report(
+    runtime: Runtime,
+    project: Path,
+    plugin: Path,
+    *,
+    public_php_files: int,
+    private_php_files: int,
+    classmap_entries: int,
+) -> dict[str, object]:
+    report_path = project / "build/wordpress/.wphx/php-quality.json"
+    report_bytes = report_path.read_bytes()
+    report = json.loads(report_bytes)
+    assert canonical(report) == report_bytes
+    assert report["schema"] == "wordpress-hx.php-quality-report.v1"
+    assert report["status"] == "passed"
+    assert report["tools"] == list(PHP_QUALITY_TOOLS)
+
+    expected_policy_sha256 = php_quality_policy_sha256(runtime)
+    assert report["policy"] == {
+        "composerLockSha256": PHP_QUALITY_COMPOSER_LOCK_SHA256,
+        "id": "wp70-release-generated-php-v1",
+        "sha256": expected_policy_sha256,
+        "wordpressStubsSha256": WORDPRESS_STUBS_SHA256,
+    }
+    expected_private_level = 0 if private_php_files else -1
+    expected_autoload = (
+        "authoritative-private-classmap"
+        if private_php_files
+        else "native-require-closure"
+    )
+    assert report["checks"] == {
+        "autoload": expected_autoload,
+        "classmapEntries": classmap_entries,
+        "duplicateSymbols": "none",
+        "formatChangedFiles": 0,
+        "phpFileCount": public_php_files + private_php_files,
+        "phpStanPrivateLevel": expected_private_level,
+        "phpStanPublicLevel": 6,
+        "privatePhpFileCount": private_php_files,
+        "publicPhpFileCount": public_php_files,
+        "syntaxFloor": "7.4.33",
+        "wordpressCodingStandards": "passed",
+    }
+
+    plugin_files = sorted(path for path in plugin.rglob("*") if path.is_file())
+    report_files = report["files"]
+    assert isinstance(report_files, list)
+    report_by_path = {value["path"]: value for value in report_files}
+    assert len(report_by_path) == len(report_files)
+    assert set(report_by_path) == {
+        path.relative_to(plugin).as_posix() for path in plugin_files
+    }
+    for path in plugin_files:
+        value = report_by_path[path.relative_to(plugin).as_posix()]
+        assert set(value) == {"lane", "path", "role", "sha256", "sizeBytes"}
+        assert value["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+        assert value["sizeBytes"] == path.stat().st_size
+
+    manifest_path = project / "build/wordpress/_GeneratedFiles.json"
+    manifest = json.loads(manifest_path.read_text())
+    validators = {
+        value["validatorId"]: value for value in manifest["validators"]
+    }
+    quality_validator = validators["wphx.plugin-php-quality"]
+    assert quality_validator == {
+        "configSha256": PHP_QUALITY_COMPOSER_LOCK_SHA256,
+        "outcome": "passed",
+        "scope": "complete-staged-tree",
+        "tool": "WordPressHx pinned generated-PHP quality gate",
+        "toolSha256": expected_policy_sha256,
+        "validatorId": "wphx.plugin-php-quality",
+        "version": "sdk-026-v1",
+    }
+    manifest_files = {value["path"]: value for value in manifest["files"]}
+    quality_relative = "build/wordpress/.wphx/php-quality.json"
+    quality_artifact = manifest_files[quality_relative]
+    assert quality_artifact["kind"] == "build.php-quality-report.json"
+    assert quality_artifact["contentSha256"] == hashlib.sha256(report_bytes).hexdigest()
+    assert quality_artifact["sizeBytes"] == len(report_bytes)
+    assert quality_artifact["validatorIds"] == ["wphx.plugin-php-quality"]
+    plugin_prefix = f"build/wordpress/{plugin.name}/"
+    plugin_artifacts = [
+        value for path, value in manifest_files.items() if path.startswith(plugin_prefix)
+    ]
+    assert len(plugin_artifacts) == len(plugin_files)
+    assert all(
+        "wphx.plugin-php-quality" in value["validatorIds"]
+        for value in plugin_artifacts
+    )
+    return report
+
+
+def reject_tampered_php_quality_policy(runtime: Runtime, project: Path) -> None:
+    runtime_bundle = runtime.entry.parent / "php-quality"
+    assert runtime_bundle.is_symlink()
+    original_target = os.readlink(runtime_bundle)
+    original_root = runtime_bundle.resolve(strict=True)
+    temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
+    with tempfile.TemporaryDirectory(
+        prefix="wordpresshx-quality-policy-tamper-", dir=temporary_parent
+    ) as raw:
+        tampered_root = Path(raw) / "php-quality"
+        tampered_root.mkdir()
+        for relative in PHP_QUALITY_POLICY_FILES:
+            shutil.copy2(original_root / relative, tampered_root / relative)
+        os.symlink(
+            original_root / "vendor",
+            tampered_root / "vendor",
+            target_is_directory=True,
+        )
+        policy_path = tampered_root / "phpstan-public.neon"
+        policy_path.write_text(policy_path.read_text() + "# rejected test mutation\n")
+        runtime_bundle.unlink()
+        os.symlink(tampered_root, runtime_bundle, target_is_directory=True)
+        try:
+            expect_command_no_write(runtime, project, "build", 6, "WPHX3400")
+        finally:
+            runtime_bundle.unlink(missing_ok=True)
+            os.symlink(original_target, runtime_bundle, target_is_directory=True)
+    assert runtime_bundle.resolve(strict=True) == original_root
+
+
+def reject_invalid_private_classmap(plugin: Path) -> None:
+    before = snapshot(plugin)
+    temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
+    with tempfile.TemporaryDirectory(
+        prefix="wordpresshx-quality-classmap-", dir=temporary_parent
+    ) as raw:
+        stage = Path(raw) / plugin.name
+        shutil.copytree(plugin, stage)
+        classmap_path = stage / "private/wordpresshx/classmap.php"
+        source = classmap_path.read_text()
+        changed, replacements = re.subn(
+            r"(\n\t')([^']+)('\s+=>)",
+            lambda match: match.group(1)
+            + match.group(2)
+            + "\\\\Rejected"
+            + match.group(3),
+            source,
+            count=1,
+        )
+        assert replacements == 1 and changed != source
+        classmap_path.write_text(changed)
+        result = subprocess.run(
+            ["php", str(ROOT / "tooling/php-quality/run.php"), str(stage)],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert result.returncode == 6
+        assert result.stdout == ""
+        assert "private PHP classmap key does not match its declaration" in result.stderr
+        assert str(stage) not in result.stderr
+        assert str(ROOT) not in result.stderr
+    assert snapshot(plugin) == before
+
+
 def php_matrix(plugin: Path, bootstrap_class: str) -> None:
     for image in PHP_IMAGES:
         for path in sorted(plugin.rglob("*.php")):
@@ -544,6 +758,14 @@ def exercise_private_runtime(
     runtime.command(first, "build")
     runtime.command(second, "build")
     assert output_snapshot(first) == output_snapshot(second)
+    assert_php_quality_report(
+        runtime,
+        first,
+        first / "build/wordpress/typed-news",
+        public_php_files=5,
+        private_php_files=16,
+        classmap_entries=14,
+    )
     first_replay = output_snapshot(first)
     replay = runtime.command(first, "build")
     ownership = next(
@@ -562,6 +784,14 @@ def exercise_private_runtime(
     third_source = third / "src/typed/pages/Site.hx"
     third_source.write_text(private_site_source(third_source.read_text(), "pages"))
     runtime.command(third, "build")
+    assert_php_quality_report(
+        runtime,
+        third,
+        third / "build/wordpress/typed-pages",
+        public_php_files=5,
+        private_php_files=16,
+        classmap_entries=14,
+    )
 
     first_plugin = first / "build/wordpress/typed-news"
     third_plugin = third / "build/wordpress/typed-pages"
@@ -623,6 +853,8 @@ def exercise_private_runtime(
         loader = (plugin / "includes/autoload.php").read_text()
         assert "WPHX5202 WordPressHx private runtime rejected its class map." in loader
         assert "WPHX5202 WordPressHx private runtime could not register its class map." in loader
+
+    reject_invalid_private_classmap(first_plugin)
 
     first_bridge = "Typed\\News\\PrivateBridge"
     third_bridge = "Typed\\Pages\\PrivateBridge"
@@ -1129,12 +1361,14 @@ def run(runtime_root: Path) -> dict[str, object]:
         before_check = snapshot(first)
         check = runtime.command(first, "check")
         assert any(value.get("stage") == "php-emission" and value.get("status") == "passed" for value in check)
+        assert_php_quality_event(check)
         assert snapshot(first) == before_check
         runtime.no_write += 1
 
         before_dry_build = snapshot(first)
         dry_build = runtime.command(first, "build", "--dry-run")
         assert any(value.get("event") == "dry-run-planned" for value in dry_build)
+        assert_php_quality_event(dry_build)
         assert snapshot(first) == before_dry_build
         runtime.no_write += 1
 
@@ -1142,6 +1376,8 @@ def run(runtime_root: Path) -> dict[str, object]:
         second_build = runtime.command(second, "build")
         assert any(value.get("event") == "build-published" for value in first_build)
         assert any(value.get("event") == "build-published" for value in second_build)
+        assert_php_quality_event(first_build)
+        assert_php_quality_event(second_build)
         assert output_snapshot(first) == output_snapshot(second)
 
         plugin = first / "build/wordpress/typed-news"
@@ -1153,6 +1389,14 @@ def run(runtime_root: Path) -> dict[str, object]:
         }
         assert {path.relative_to(plugin).as_posix() for path in plugin.rglob("*.php")} == expected_files
         assert_public_plugin_permissions(plugin)
+        assert_php_quality_report(
+            runtime,
+            first,
+            plugin,
+            public_php_files=3,
+            private_php_files=0,
+            classmap_entries=0,
+        )
         root_source = root_php.read_text()
         for expected in (
             "Plugin Name: Typed News",
@@ -1262,6 +1506,8 @@ def run(runtime_root: Path) -> dict[str, object]:
             assert output_snapshot(first) == good_outputs
             runtime.no_write += 1
         source_path.write_text(good_source)
+
+        reject_tampered_php_quality_policy(runtime, first)
 
         dev_cycle(runtime, first, source_path, good_source, root_php)
         assert_public_plugin_permissions(plugin)

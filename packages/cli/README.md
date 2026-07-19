@@ -100,6 +100,17 @@ manifest-last artifact owner. `check`, `doctor`, every `inspect` topic, and
 `build --dry-run` are read-only. `clean` removes only current manifest entries
 whose exact bytes still match and retains every unowned file.
 
+For generated plugins, `check`, dry-run, normal build, and every development
+generation infer and execute the same pinned PHP quality policy. The developer
+does not add Composer, PHPCS, WPCS, PHPStan, WordPress-stub, or shell
+configuration. The Haxe CLI privately stages its exact emission and blocks
+publication on syntax, formatter, WordPress correctness/security,
+PHP-compatibility, static-analysis, duplicate-symbol, classmap, or autoload
+failure. Successful publication includes the canonical owned report at
+`build/wordpress/.wphx/php-quality.json`; its policy and file hashes are bound
+to the generated-file manifest. Installed policy tampering fails as `WPHX3400`
+before live bytes change.
+
 The generic site lane still emits only effective-input metadata, a canonical
 reproducibility report, and a deterministic unsigned evidence ZIP; missing
 native producers remain explicit skipped stages. The generated plugin lane now
@@ -221,6 +232,8 @@ package replay, path-privacy, and tamper suite from the repository root:
 ```bash
 bash scripts/determinism/test-production.sh
 bash scripts/project-cli/test-production.sh
+bash scripts/php-quality/test-production.sh
+bash scripts/scaffold/test-production.sh
 bash packages/cli/scripts/test.sh
 bash packages/cli/scripts/test-browser-source-correlation.sh
 ```
@@ -244,7 +257,8 @@ from the SDK-043 generation.
 The bounded implementation and non-claims are recorded by
 [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json),
 [`SDK-042-DETERMINISTIC-BUILD`](../../manifests/evidence/sdk-042-deterministic-build.json),
-[`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json)
+[`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json),
+[`SDK-026-GENERATED-PHP-QUALITY`](../../manifests/evidence/sdk-026-generated-php-quality.json)
 and
 [`SDK-034-BROWSER-SOURCE-CORRELATION`](../../manifests/evidence/sdk-034-browser-source-correlation.json).
 The official WordPress adapter proof is recorded by

@@ -1,0 +1,83 @@
+{
+  "schema": "wordpress-hx.php-quality-toolchain.v1",
+  "policyId": "wp70-release-generated-php-v1",
+  "composer": {
+    "version": "2.10.2",
+    "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
+    "artifactSha256": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
+  },
+  "php": {
+    "syntaxFloor": "7.4.33",
+    "primary": "8.4.7"
+  },
+  "tools": {
+    "phpCodeSniffer": "3.13.5",
+    "wordpressCodingStandards": "3.4.0",
+    "phpCompatibilityWordPress": "2.1.8",
+    "phpStan": "2.2.5",
+    "wordpressStubs": "7.0.0",
+    "wordpressExtension": "not-admitted-no-release-supports-wordpress-stubs-7.0"
+  },
+  "generatedCodePolicy": {
+    "publicNativePhp": [
+      "byte-stable-format-check",
+      "wordpress-core-and-security-rules",
+      "php-7.4-compatibility",
+      "phpstan-level-6"
+    ],
+    "privateStockHaxePhp": [
+      "php-7.4-lint",
+      "php-7.4-compatibility",
+      "phpstan-level-0",
+      "closed-classmap-and-duplicate-symbol-audit"
+    ],
+    "justifiedExclusions": [
+      {
+        "id": "stock-haxe-style",
+        "scope": "private/wordpresshx/runtime/**/*.php",
+        "excludes": [
+          "WordPress whitespace, naming, documentation, and file-layout sniffs",
+          "automatic formatting"
+        ],
+        "reason": "The dependency-closed private lane is compiler runtime output behind native adapters; rewriting it would invalidate the compiler/runtime evidence and does not improve the WordPress-facing ABI. Correctness, security, compatibility, symbols, and autoload closure remain blocking."
+      },
+      {
+        "id": "stock-haxe-reserved-initializer-name",
+        "scope": "private/wordpresshx/runtime/**/*.php",
+        "excludes": [
+          "PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.MethodDoubleUnderscore"
+        ],
+        "reason": "Haxe 4.3.7 emits __hx__init as an isolated internal method; exact PHP 7.4 and 8.4 execution proves it, while the same compatibility sniff remains blocking on public PHP."
+      },
+      {
+        "id": "generic-printer-layout",
+        "scope": "public-native PHP declarations and multiline closures",
+        "excludes": [
+          "Generic.Formatting.MultipleStatementAlignment",
+          "PEAR.Functions.FunctionCallSignature",
+          "Squiz.Functions.FunctionDeclarationArgumentSpacing"
+        ],
+        "reason": "The generalized typed PHP printer currently owns these deterministic bytes and source ranges. PHPCBF must still prove that no non-excluded fixable WordPress formatting delta exists."
+      },
+      {
+        "id": "haxe-visible-native-identities",
+        "scope": "public-native class filenames, methods, parameters, and derived locals",
+        "excludes": [
+          "WordPress.Files.FileName.InvalidClassFileName",
+          "WordPress.Files.FileName.NotHyphenatedLowercase",
+          "WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid",
+          "WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase"
+        ],
+        "reason": "Stable namespaced class files and Haxe-visible callback/export identities remain readable and reflection-safe; all WordPress correctness and security sniffs stay enabled."
+      },
+      {
+        "id": "fail-closed-loader-diagnostics",
+        "scope": "includes/autoload.php fixed WPHX5201 and WPHX5202 messages",
+        "excludes": [
+          "WordPress.PHP.DevelopmentFunctions.error_log_error_log"
+        ],
+        "reason": "Production loader failures must remain observable; every message is compiler-owned constant text with no request, path, credential, or user data."
+      }
+    ]
+  }
+}

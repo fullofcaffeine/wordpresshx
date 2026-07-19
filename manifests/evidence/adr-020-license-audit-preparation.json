@@ -11,11 +11,19 @@
     },
     "components": {
       "path": "LICENSES/components.json",
-      "sha256": "60186086bfa747865ee40b0fad814c56819767209a7492fafcab675ab40c0b85"
+      "sha256": "93e4c4c443981d1f16d0c8f7dc3f48631630f7310761d19fcf4525632b59453f"
     },
     "generatedOutput": {
       "path": "LICENSES/GENERATED_OUTPUT.md",
       "sha256": "44106e7689f519c7a09e8514d26d91cb8a84a5d01d2ad6385fcf5bf7db3fddd1"
+    },
+    "phpQualityLock": {
+      "path": "tooling/php-quality/composer.lock",
+      "sha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649"
+    },
+    "phpQualityToolchain": {
+      "path": "tooling/php-quality/toolchain.json",
+      "sha256": "e7f18199a9f23ef5bf6eb86c54706e9947da3a06124ec53376aea5a7a60fc1a3"
     },
     "policy": {
       "path": "LICENSES/policy.json",
@@ -31,11 +39,11 @@
     },
     "thirdPartyNotices": {
       "path": "LICENSES/THIRD_PARTY_NOTICES.md",
-      "sha256": "a96ee6e2ffed25a73a7359ccce2182c74a22613340cb98179800a37bd2d74a2c"
+      "sha256": "6293384d92e0eb09dba52c200a0a862a13cfeb0a630f222daa742940f9f90a72"
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "fab9e9113db5ed3071b7e60b77f7d0fac45e3e9f1c74de54ace72b7d24c2ea86"
+      "sha256": "ad470c592947e0d5c54d9718250f283a6bcf8ab98f987fb04dac4092d7750b7d"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",
@@ -43,7 +51,7 @@
     }
   },
   "audit": {
-    "componentCount": 22,
+    "componentCount": 23,
     "unresolvedFindingCount": 8,
     "conflictCount": 3,
     "rootLicensePresent": false

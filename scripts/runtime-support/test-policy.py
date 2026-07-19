@@ -53,6 +53,16 @@ def mutate_policy(root: Path, change: Callable[[dict[str, Any]], None]) -> None:
     write_policy(root, policy)
 
 
+def mutate_json_toolchain(root: Path, key: str, value: Any) -> None:
+    path = root / "manifests/toolchain.lock.json"
+    toolchain = json.loads(path.read_text(encoding="utf-8"))
+    toolchain["dependencyGraphs"]["composer"][key] = value
+    path.write_text(
+        json.dumps(toolchain, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
 def run(root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["python3", str(CHECKER), "--root", str(root)],
@@ -148,6 +158,26 @@ def main() -> None:
             ),
         ),
         "MVP runtime Composer graph must remain absent",
+    )
+    expect_rejected(
+        "runtime package smuggled into build graph",
+        lambda root: (
+            mutate_json_toolchain(
+                root,
+                "runtimePackages",
+                ["vendor/runtime-package"],
+            )
+        ),
+        "build-only Composer graph cannot admit runtime packages",
+    )
+    expect_rejected(
+        "build graph made deployable",
+        lambda root: mutate_json_toolchain(
+            root,
+            "buildInputOnly",
+            False,
+        ),
+        "Composer quality graph must remain build-input-only",
     )
     expect_rejected(
         "vendor directories mistaken for isolation",
@@ -258,7 +288,7 @@ def main() -> None:
         "MVP runtime-support fixture contains forbidden Composer artifact",
     )
 
-    print("ADR-018 runtime-support policy tests passed (1 positive, 17 negative)")
+    print("ADR-018 runtime-support policy tests passed (1 positive, 19 negative)")
 
 
 if __name__ == "__main__":

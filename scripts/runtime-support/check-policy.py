@@ -282,6 +282,11 @@ def validate(root: Path) -> None:
         composer.get("mvpRuntimeGraph") == "absent-no-runtime-dependencies",
         "MVP runtime Composer graph must remain absent",
     )
+    audit.check(
+        composer.get("buildAndAnalysisUse")
+        == "allowed-only-after-exact-tool-and-lock-admission",
+        "build-only Composer use requires an exact admitted tool and lock",
+    )
     audit.check(composer.get("serverInstallRequired") is False, "server Composer install is forbidden")
     audit.check(
         composer.get("runtimeDependencyAdmission") == "unsupported-until-dedicated-follow-up",
@@ -448,12 +453,42 @@ def validate(root: Path) -> None:
     graphs = object_value(toolchain, "dependencyGraphs")
     toolchain_composer = object_value(graphs, "composer")
     audit.check(
-        toolchain_composer.get("status") == "not-active-in-g0",
-        "ADR-018 cannot silently activate the Composer graph",
+        toolchain_composer.get("status")
+        == "bounded-build-only-generated-php-validation",
+        "ADR-018 permits only the admitted generated-PHP build graph",
     )
-    audit.check(toolchain_composer.get("manifestPaths") == [], "toolchain Composer manifests must remain empty")
-    audit.check(toolchain_composer.get("lockPaths") == [], "toolchain Composer locks must remain empty")
-    audit.check(toolchain_composer.get("activePackages") == [], "toolchain Composer packages must remain empty")
+    audit.check(
+        toolchain_composer.get("manifestPaths")
+        == ["tooling/php-quality/composer.json"],
+        "toolchain Composer manifest must remain inside PHP quality tooling",
+    )
+    audit.check(
+        toolchain_composer.get("lockPaths")
+        == ["tooling/php-quality/composer.lock"],
+        "toolchain Composer lock must remain inside PHP quality tooling",
+    )
+    audit.check(
+        isinstance(toolchain_composer.get("activePackages"), list)
+        and len(toolchain_composer.get("activePackages", [])) > 0,
+        "admitted build-only Composer packages must remain inventoried",
+    )
+    audit.check(
+        toolchain_composer.get("runtimePackages") == [],
+        "build-only Composer graph cannot admit runtime packages",
+    )
+    audit.check(
+        toolchain_composer.get("buildInputOnly") is True,
+        "Composer quality graph must remain build-input-only",
+    )
+    audit.check(
+        toolchain_composer.get("publicationAuthorized") is False,
+        "Composer quality graph cannot authorize publication",
+    )
+    audit.check(
+        toolchain_composer.get("receiptId")
+        == "SDK-026-GENERATED-PHP-QUALITY",
+        "Composer quality graph must retain its SDK-026 authority",
+    )
 
     haxe_source = audit.read_text(FIXTURE_SOURCE, "strict Haxe private fixture")
     forbidden = FORBIDDEN_HAXE.search(haxe_source)

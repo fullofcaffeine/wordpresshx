@@ -7,11 +7,14 @@ import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
 import reflaxe.php.ir.PhpClosureCapture;
 import reflaxe.php.ir.PhpDeclaration;
+import reflaxe.php.ir.PhpDocParameter;
+import reflaxe.php.ir.PhpDocType;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpFile;
 import reflaxe.php.ir.PhpFunction;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
+import reflaxe.php.ir.PhpMethodDoc;
 import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpQualifiedName;
@@ -101,10 +104,31 @@ class PrinterTest {
 			printer.printDeclaration(PhpClassDeclaration(interfaceDeclaration)), "interface declaration");
 
 		final traitMethod = new PhpMethod(PhpProtected, false, false, id("label"), [], source, PhpStringType, [PhpReturn(PhpVar("label"))]);
-		final traitDeclaration = new PhpClass(PhpClassKindTrait, id("Helper"), source, null, [],
-			[new PhpProperty(PhpProtected, false, id("label"), PhpString("generic"))], [traitMethod]);
-		assertEquals("trait Helper {\n\tprotected $label = 'generic';\n\n\tprotected function label(): string {\n\t\treturn $label;\n\t}\n}",
+		final traitDeclaration = new PhpClass(PhpClassKindTrait, id("Helper"), source, null, [], [
+			new PhpProperty(PhpProtected, false, id("label"), PhpString("generic"), PhpStringType)
+		], [traitMethod]);
+		assertEquals("trait Helper {\n\tprotected string $label = 'generic';\n\n\tprotected function label(): string {\n\t\treturn $label;\n\t}\n}",
 			printer.printDeclaration(PhpClassDeclaration(traitDeclaration)), "trait declaration");
+
+		final documented = new PhpMethod(PhpPublic, true, false, id("resolve"), [PhpParameter.named(id("values"), PhpArrayType)], source, null, [], null,
+			new PhpMethodDoc("Resolve typed values.", [
+				new PhpDocParameter(id("values"), PhpDocType.array(PhpDocType.string(), PhpDocType.mixed()), "Values keyed by stable name.")
+			], PhpDocType.union([
+				PhpDocType.named(PhpQualifiedName.parse("\\RuntimeException")),
+				PhpDocType.string()
+				]), "The resolved value or failure."));
+		assertEquals("/**\n * Resolve typed values.\n *\n * @param array<string, mixed> $values Values keyed by stable name.\n * @return \\RuntimeException|string The resolved value or failure.\n */\npublic static function resolve(array $values) {\n\n}",
+			printer.printDeclaration(PhpClassDeclaration(new PhpClass(PhpClassKindClass, id("Documented"), source, null, [], [], [documented])))
+				.split("\n")
+				.slice(1, -1)
+				.map(line -> StringTools.startsWith(line, "\t") ? line.substr(1) : line)
+				.join("\n"),
+			"typed PHPDoc method");
+		assertThrows(() -> PhpDocType.union([PhpDocType.string(), PhpDocType.string()]), "duplicate PHPDoc union type");
+		assertThrows(() -> new PhpMethodDoc("bad\nsummary", []), "multiline PHPDoc summary");
+		assertThrows(() -> new PhpMethod(PhpPublic, true, false, id("invalidDoc"), [], source, null, [], null,
+			new PhpMethodDoc("Invalid parameter.", [new PhpDocParameter(id("missing"), PhpDocType.string(), "Missing value.")])),
+			"unknown documented method parameter");
 	}
 
 	static function testExactSourceCorrelation():Void {
@@ -174,6 +198,8 @@ class PrinterTest {
 			PhpParameter.named(id("values"), null, false, true),
 			PhpParameter.named(id("tail"))
 		]), "non-final variadic parameter");
+		assertThrows(() -> new PhpProperty(PhpPrivate, false, id("invalid"), null, PhpVoidType), "void property type");
+		assertThrows(() -> new PhpProperty(PhpPrivate, false, id("invalid"), null, PhpCallableType), "callable property type");
 		final source = PhpSourceRange.at("src/fixtures/Duplicates.hx", 1, 1, 1, 2);
 		assertThrows(() -> new PhpClass(PhpClassKindClass, id("DuplicateMethods"), source, null, [], [], [
 			new PhpMethod(PhpPublic, false, false, id("render"), [], source, null, []),

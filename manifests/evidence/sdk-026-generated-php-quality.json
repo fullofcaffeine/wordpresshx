@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
+  "bead": "wordpresshx-sdk-026",
+  "status": "local-verified-hosted-pending",
+  "observedAt": "2026-07-19T16:31:41Z",
+  "subject": {
+    "implementation": "manifests/php-quality-implementation.json",
+    "genericCompiler": "compiler/reflaxe.php",
+    "wordpressProfile": "compiler/wordpress",
+    "cliPackage": "packages/cli",
+    "toolRoot": "tooling/php-quality",
+    "policyId": "wp70-release-generated-php-v1",
+    "policySha256": "fc85632c5d3dd978ffcb76e8ead1319cfcc345787f798b7d88d31d2af607446a",
+    "composerLockSha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+    "wordpressStubsSha256": "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "language": "Haxe",
+    "javascriptCompiler": "Genes 1.36.3",
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "stagingDiagnostic": "WPHX3400",
+    "receiptSchema": "wordpress-hx.php-quality-run.v1",
+    "reportSchema": "wordpress-hx.php-quality-report.v1",
+    "ownershipValidator": "wphx.plugin-php-quality",
+    "projectAuthoredQualityConfiguration": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "formatter": "1.18.0",
+    "node": "22.17.0",
+    "composer": "2.10.2",
+    "phpCodeSniffer": "3.13.5",
+    "wordpressCodingStandards": "3.4.0",
+    "phpCompatibilityWordPress": "2.1.8",
+    "phpStan": "2.2.5",
+    "wordpressStubs": "7.0.0",
+    "php74Image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+    "php84Image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+    "wordpress70Image": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161"
+  },
+  "authenticatedInputs": [
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocParameter.hx",
+      "sha256": "be22cc7d9946d30d80a19c40157f826921abd4bdf4df93dfbbe249e2f6f9795e"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocType.hx",
+      "sha256": "ca870577c58e4400b4bb1d105d84d000b40e1d736b921fb13762e03b60fc889f"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethod.hx",
+      "sha256": "29f4d246c499e1c72e8c841d54e35f0428682788e2bb3733437bd92b9eba9217"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx",
+      "sha256": "c0f389aa60962aa7f5aed61a958d0cafca12b5a60d7c03a4d65caaaa4fd49ae6"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpProperty.hx",
+      "sha256": "3740d2333aaba2c837376b07815180d40655f496c707fb21bd77967c5eb7e8ec"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+      "sha256": "7d7a03340da9bf73a1cd3154c33897113550fc5212ffe010b41c640d566bd189"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx",
+      "sha256": "e7889bbfcd026bbb70365654fabd5bcc9f2ccb898a51eb60dd2f471b136c269b"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx",
+      "sha256": "44e28e2c34eb17ee138667c82fb7c3a93cb83f7d4f67c9c757f305855070726e"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PublicAdapterProfile.hx",
+      "sha256": "fe51413a440397de41ffcad208d82c9a1070fdd79f806f55130caaa9b1851e9a"
+    },
+    {
+      "path": "compiler/wordpress/test/fixtures/AcmeBooksAdapters.hx",
+      "sha256": "a4de203572c137f59a7405e983bdf0ee84610eaf51d8ae356039d62d10ed2e66"
+    },
+    {
+      "path": "compiler/wordpress/test/fixtures/SourceCorrelationFixture.hx",
+      "sha256": "e0351d4e74cc9da90980252a2e2f6252e918215ebe8fa9a2c256da21528112ce"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
+      "sha256": "ec69c35d59ecd66e43f79e3371e451adf13f03e3357e0b02f5d2ae3b0f75d1ca"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
+      "sha256": "51d830e235816dd4500ea5ce26b8920f3f3f18ce3d322f3e2cd50d53f5422e0b"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQualityResult.hx",
+      "sha256": "a7253d1e5110a5d81901810209a4a10d3a147476a44fa5d8b9bf07d8dc7412e6"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/PluginPrivatePhpProfile.hx",
+      "sha256": "cb2856b5b9316ecb9df094d2eae62a76495e07a729b90156220307cd34a68c96"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/PluginProjectBuild.hx",
+      "sha256": "a2a8c30d19a159dd204b94944b431d1d49f352f89d037396a7302a488871c136"
+    }
+  ],
+  "verification": {
+    "genericCompiler": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed",
+      "packageFileCount": 40,
+      "packageContentSha256": "6dd9674acefeab7ed0aa345dcd8d540f0c3abcdc9f230b0af9064e8b703d693b",
+      "typedPropertyAndStructuredPhpDocSnapshots": "passed",
+      "injectionAndSignatureNegatives": "passed"
+    },
+    "wordpressCompiler": {
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed",
+      "publicFixtures": 3,
+      "structuredArrayAndUnionPhpDoc": "passed"
+    },
+    "standalonePolicy": {
+      "command": "bash scripts/php-quality/test-production.sh",
+      "outcome": "passed",
+      "deterministicFixtureReceipts": 3,
+      "negativeMutations": 5,
+      "privatePathLeaks": 0
+    },
+    "integratedCli": {
+      "command": "bash scripts/scaffold/test-production.sh",
+      "outcome": "passed",
+      "positiveCases": 16,
+      "negativeCases": 11,
+      "noWriteAssertions": 14,
+      "publicReportFiles": 3,
+      "privateReportPhpFiles": 21,
+      "privateClassmapEntries": 14,
+      "policyTamper": "rejected-before-publication",
+      "privateClassmapMismatch": "rejected",
+      "php74": "passed",
+      "php84": "passed",
+      "wordpress70MariaDb": "passed"
+    },
+    "repository": {
+      "command": "bash scripts/check-repository.sh",
+      "outcome": "passed-local"
+    }
+  },
+  "hostedVerification": {
+    "status": "pending",
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "steps": [
+      "Install exact generated-PHP quality toolchain",
+      "Test pinned generated-PHP quality policy",
+      "Test Haxe-first site scaffolding"
+    ],
+    "commit": null,
+    "runId": null,
+    "jobId": null
+  },
+  "claims": {
+    "pinnedToolsAndWordPressStubs": "local-runtime-tested",
+    "lintFormatWpcsCompatibilityStaticAnalysis": "local-runtime-tested",
+    "autoloadClassmapAndDuplicateSymbols": "local-runtime-tested",
+    "narrowVersionedGeneratedExceptions": "policy-authenticated-and-negative-tested",
+    "failClosedBeforePublication": "local-negative-tested",
+    "haxeOnlyCommonPath": "compile-and-runtime-tested",
+    "qualifiedLicenseApproval": "blocked",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "Hosted verification is pending the first pushed implementation commit.",
+    "The private stock-Haxe lane retains its separately documented pre-1.0 migration status and narrower static-analysis level.",
+    "The exact matrix does not establish Windows, multisite, deployment, upgrades, arbitrary handwritten PHP, or production support.",
+    "Public package publication remains blocked independently by licensing and release gates."
+  ]
+}

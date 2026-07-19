@@ -5,6 +5,8 @@ import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
 import reflaxe.php.ir.PhpClosureCapture;
 import reflaxe.php.ir.PhpDeclaration;
+import reflaxe.php.ir.PhpDocParameter;
+import reflaxe.php.ir.PhpMethodDoc;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpFile;
 import reflaxe.php.ir.PhpFunction;
@@ -505,6 +507,7 @@ class PhpPrinter {
 		return tabs(depth)
 			+ printVisibility(property.visibility)
 			+ (property.isStatic ? " static" : "")
+			+ (property.propertyType == null ? "" : " " + printType(property.propertyType))
 			+ " $"
 			+ property.name.value
 			+ (property.defaultValue == null ? "" : " = " + printExpr(property.defaultValue, depth))
@@ -513,7 +516,9 @@ class PhpPrinter {
 
 	function printMethod(method:PhpMethod, depth:Int):String {
 		final prefix = tabs(depth);
-		final signature = prefix
+		final documentation = method.documentation == null ? "" : printMethodDoc(method.documentation, depth) + "\n";
+		final signature = documentation
+			+ prefix
 			+ printVisibility(method.visibility)
 			+ (method.isStatic ? " static" : "")
 			+ " function "
@@ -527,6 +532,26 @@ class PhpPrinter {
 			return signature + ";";
 		}
 		return signature + " {\n" + printStatements(method.body, depth + 1) + "\n" + prefix + "}";
+	}
+
+	function printMethodDoc(documentation:PhpMethodDoc, depth:Int):String {
+		final prefix = tabs(depth);
+		final lines = [prefix + "/**", prefix + " * " + documentation.summary];
+		if (documentation.parameters.length > 0 || documentation.returnType != null) {
+			lines.push(prefix + " *");
+		}
+		for (parameter in documentation.parameters) {
+			lines.push(printDocParameter(parameter, prefix));
+		}
+		if (documentation.returnType != null && documentation.returnDescription != null) {
+			lines.push(prefix + " * @return " + documentation.returnType.render() + " " + documentation.returnDescription);
+		}
+		lines.push(prefix + " */");
+		return lines.join("\n");
+	}
+
+	function printDocParameter(parameter:PhpDocParameter, prefix:String):String {
+		return prefix + " * @param " + parameter.type.render() + " $" + parameter.name.value + " " + parameter.description;
 	}
 
 	function printParameter(parameter:PhpParameter, depth:Int):String {

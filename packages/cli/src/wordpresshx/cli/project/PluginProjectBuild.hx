@@ -20,10 +20,13 @@ class PluginProjectBuild {
 		PluginBuildPublisher.plan(context, emission);
 		events.stageCompleted(ProjectBuild.STAGES[3], payload());
 		events.stageStarted(ProjectBuild.STAGES[4], payload());
+		final quality = PluginPhpQuality.validate(context, emission);
 		events.stageCompleted(ProjectBuild.STAGES[4], OwnershipJson.object([
 			"mode" => mode,
 			"buildId" => buildId,
-			"reason" => "closed PHP IR and target-shape validators passed; WPCS/static analysis remains SDK-026"
+			"reason" => "pinned lint, formatter, WPCS, compatibility, PHPStan, symbol, and autoload gates passed",
+			"policySha256" => quality.policySha256,
+			"reportSha256" => quality.reportSha256
 		]));
 		events.stageSkipped(ProjectBuild.STAGES[5], "plugin bootstrap declares no browser asset target", mode);
 		events.stageStarted(ProjectBuild.STAGES[6], payload());
@@ -44,7 +47,7 @@ class PluginProjectBuild {
 			return null;
 		}
 		events.stageStarted(ProjectBuild.STAGES[7], payload());
-		final publication = PluginBuildPublisher.publish(context, emission);
+		final publication = PluginBuildPublisher.publish(context, emission, quality);
 		events.stageCompleted(ProjectBuild.STAGES[7], OwnershipJson.object(["mode" => mode, "buildId" => buildId, "reason" => publication.outcome]));
 		events.emit("build-published", ProjectBuild.STAGES[7], "passed", OwnershipJson.object([
 			"mode" => mode,

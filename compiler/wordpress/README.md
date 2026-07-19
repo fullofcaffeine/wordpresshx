@@ -39,17 +39,21 @@ and no diagnostic metadata; a separate content-bound debug companion contains
 the adapter map and source index but no PHP or Haxe source. The Haxe/Genes CLI
 consumer is documented in [`packages/cli`](../../packages/cli/README.md).
 
-The emitted manifests are internal evidence records. They do not claim the
-ADR-006 semantic-plan schema, ADR-007 transactional ownership, WPCS/static
-analysis, a general Haxe-to-PHP driver, the full typed hook/REST/block catalogs,
-private stock-Haxe packaging, HXX lowering, publication, or production support.
-Those surfaces remain dependency-gated.
+The compiler fixtures also pass SDK-026's pinned syntax, formatter, WPCS,
+PHP-compatibility, PHPStan, duplicate-symbol, and autoload policy. In the CLI,
+the same policy runs inside the complete private staging transaction and emits
+an ownership-bound report; applications maintain no PHP tool configuration.
+The emitted compiler manifests remain internal evidence records. They do not
+claim the ADR-006 semantic-plan schema, the full typed hook/REST/block catalogs,
+HXX lowering, publication, or production support. Those surfaces remain
+dependency-gated.
 
 Run the local generator, snapshot, fail-closed validation, and native-caller
 gate:
 
 ```bash
 bash compiler/wordpress/scripts/test.sh
+bash scripts/php-quality/test-production.sh
 ```
 
 Then run the exact PHP 7.4/8.4 container matrix and real WordPress 7.0 fixture:

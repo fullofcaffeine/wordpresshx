@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ruleset name="WordPressHx generated public PHP">
+  <description>Blocking WordPress-facing rules for native generated PHP.</description>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg name="extensions" value="php"/>
+  <arg name="parallel" value="1"/>
+  <arg value="ps"/>
+
+  <rule ref="WordPress-Extra">
+    <!-- Native namespaced artifacts deliberately retain stable PSR-4-shaped
+         filenames and Haxe-visible method identities. These exclusions do not
+         suppress escaping, input, SQL, nonce, capability, or compatibility
+         diagnostics. See toolchain.json#generatedCodePolicy. -->
+    <!-- The generic IR printer owns stable declaration/closure layout. Public
+         PHP still passes every non-layout WordPress rule and PHPCBF proves no
+         other fixable delta. These exceptions disappear when a generalized
+         printer-style contract can preserve source ranges byte-for-byte. -->
+    <exclude name="Generic.Formatting.MultipleStatementAlignment"/>
+    <exclude name="PEAR.Functions.FunctionCallSignature"/>
+    <exclude name="Squiz.Functions.FunctionDeclarationArgumentSpacing"/>
+
+  </rule>
+
+  <!-- Haxe-visible class files and public method/parameter identities are
+       confined to generated includes; root plugin files retain every naming
+       sniff. -->
+  <rule ref="WordPress.Files.FileName.InvalidClassFileName">
+    <exclude-pattern>*/includes/*.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+    <exclude-pattern>*/includes/*.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+    <exclude-pattern>*/includes/*.php</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
+    <exclude-pattern>*/includes/*.php</exclude-pattern>
+  </rule>
+
+  <!-- Fail-closed WPHX5201/5202 diagnostics are fixed compiler-owned strings
+       in the generated loader only; every other public file retains the
+       development-function diagnostic. -->
+  <rule ref="WordPress.PHP.DevelopmentFunctions.error_log_error_log">
+    <exclude-pattern>*/includes/autoload.php</exclude-pattern>
+  </rule>
+</ruleset>

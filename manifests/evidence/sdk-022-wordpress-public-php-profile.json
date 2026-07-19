@@ -102,7 +102,7 @@
     },
     "artifactManifestSnapshot": {
       "path": "compiler/wordpress/test/expected/acme-books/wordpresshx-public-php-artifact.v1.json",
-      "sha256": "4312da610b0e96b950fb06bb1ee976574ee0247904d5e377f9643362d34353a8"
+      "sha256": "82d9f52681675a1db040ae624cec1fc7cefed85ad8fef818c5017906a37a018b"
     }
   },
   "toolchain": {
@@ -169,9 +169,9 @@
       "role": "bootstrap",
       "path": "includes/Bootstrap.php",
       "snapshotPath": "compiler/wordpress/test/expected/acme-books/includes/Bootstrap.php.txt",
-      "bytes": 287,
+      "bytes": 292,
       "lines": 20,
-      "sha256": "d8bb76474eb3e6a5258fe1ea8c6b19df7272624715ed99593c1b2cf0fa796b58"
+      "sha256": "71e0848c48ff7a7f5740a943d3e144655475436705e80ce3f3d152e257a1230e"
     },
     {
       "role": "autoload",
@@ -234,7 +234,7 @@
     },
     "readability": {
       "trackedNativeSnapshots": true,
-      "totalPhpBytes": 786,
+      "totalPhpBytes": 791,
       "totalPhpLines": 43,
       "rootHeaderWithinNativeScanWindow": true,
       "ordinaryPhpSymbolsVisible": true,

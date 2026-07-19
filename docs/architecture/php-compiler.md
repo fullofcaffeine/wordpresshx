@@ -25,7 +25,7 @@ For future registration, AST/lowering, printer, diagnostics, runtime, output-mod
 
 ## First admitted slice
 
-The initial import contains typed statements and expressions for control flow, arrays, calls, construction, properties, closures, references, casts, and common statements. SDK-021 extends that foundation with structural files, namespaces, functions, classes/interfaces/traits, properties, methods, PHP 7.4-compatible signature types, typed parameters, callable arrays, immutable relative source ranges, and deterministic rendered declaration ranges. The printer retains output-compatible formatting from the proven source where practical, with general boundary improvements:
+The initial import contains typed statements and expressions for control flow, arrays, calls, construction, properties, closures, references, casts, and common statements. SDK-021 extends that foundation with structural files, namespaces, functions, classes/interfaces/traits, properties, methods, PHP 7.4-compatible signature types, typed parameters, callable arrays, immutable relative source ranges, and deterministic rendered declaration ranges. SDK-026 adds optional native property types plus closed structured PHPDoc refinements for typed arrays and PHP 7.4-inexpressible unions. These are generalized IR facilities, not WordPress strings: validated names and types are constructed structurally, arrays are defensively copied, unions are normalized, comment injection fails closed, and documentation parameters must match the method signature. The printer retains output-compatible formatting from the proven source where practical, with general boundary improvements:
 
 - raw PHP blocks are not part of the generic IR;
 - identifiers and qualified names fail closed;
@@ -76,10 +76,37 @@ WordPress 7.0 over both pinned database lanes. The artifact's JSON is explicitly
 an internal SDK-022 evidence manifest, not the still-pending ADR-006 semantic
 plan or ADR-007 ownership schema.
 
-This advances only the bootstrap/profile slice. Hook, REST, block, lifecycle,
-private stock-Haxe packaging, WPCS/static-analysis integration, independent
-readability sign-off, HXX lowering, and production support remain separate
-beads and claims.
+This advances only the bootstrap/profile slice. SDK-023 adds bounded hook,
+REST, block, and export adapters; SDK-024 adds the dependency-closed private
+stock-Haxe lane; and SDK-026 adds generated-PHP quality enforcement. Broader
+lifecycle APIs, independent readability sign-off, HXX lowering, and production
+support remain separate beads and claims.
+
+## Generated-PHP quality transaction
+
+SDK-026 makes correctness validation part of the Haxe-owned build transaction,
+not project configuration. The CLI embeds the exact policy files, verifies the
+installed tool bundle beside its executable byte-for-byte, writes the complete
+in-memory emission into a private stage, and runs syntax lint, formatter
+stability, WordPress Coding Standards and security sniffs, PHP 7.4
+compatibility, PHPStan, duplicate-symbol, classmap, and autoload checks. A
+failed check returns `WPHX3400`, redacts private paths, and never gives the
+artifact owner publication authority.
+
+Public native PHP uses WordPress 7.0 stubs and PHPStan level 6. Private
+compiler-runtime PHP uses level 0 plus an authoritative declaration-matching
+classmap; it is not reformatted or subjected to WordPress naming/layout rules.
+Every exception is narrow, versioned, and justified in
+[`toolchain.json`](../../tooling/php-quality/toolchain.json). Correctness,
+compatibility, escaping/input/security, symbol, and autoload failures have no
+waiver. A successful build owns a canonical `php-quality.json` whose file
+hashes match the exact emission, and every emitted plugin artifact names
+`wphx.plugin-php-quality` in the manifest-last ownership contract.
+
+This is deliberately Haxe-first: ordinary projects write only their typed Haxe
+declaration. They do not carry Composer, PHPCS, PHPStan, stub, or shell files.
+The exact graph and standalone policy are documented in
+[`tooling/php-quality`](../../tooling/php-quality/README.md).
 
 ## Planned typed-markup capability
 
@@ -121,7 +148,7 @@ The aggregate gate covers the five compiler areas that were directly stale in th
 
 The repair changed compiler/toolchain identities and their deterministic rollups only: the compiler source blob remains `b1b4a0148f3a774cbc4fd53efd6ddbddb8471c0c` with SHA-256 `f3d3b91024a9b3fc5450ef0790d0f111114397caf10d26823576dabb209da182`. Both source PRs passed all six PHP Conformance jobs, including deterministic and live-database lanes. No source-port checkout is a runtime or build input of this SDK.
 
-The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The structural IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json), and exact PHP source-correlation evidence is in [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json).
+The import and reconciliation outcomes are in [`SDK-020-REFLAXE-PHP-BOOTSTRAP`](../../manifests/evidence/sdk-020-reflaxe-php-bootstrap.json). The structural IR/printer and runtime-matrix evidence is in [`SDK-021-PHP-IR-PRINTER`](../../manifests/evidence/sdk-021-php-ir-printer.json). The bounded public WordPress bootstrap evidence is in [`SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE`](../../manifests/evidence/sdk-022-wordpress-public-php-profile.json), exact PHP source-correlation evidence is in [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json), and the staging quality gate is in [`SDK-026-GENERATED-PHP-QUALITY`](../../manifests/evidence/sdk-026-generated-php-quality.json).
 
 ## Current non-claims
 

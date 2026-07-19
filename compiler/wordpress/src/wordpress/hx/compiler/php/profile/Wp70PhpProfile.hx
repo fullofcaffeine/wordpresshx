@@ -35,7 +35,7 @@ class Wp70PhpProfile {
 		]);
 
 		final bootstrap = new PhpClass(PhpClassKindClass, id("Bootstrap"), plan.source, null, [],
-			[new PhpProperty(PhpPrivate, true, id("booted"), PhpBool(false))], [
+			[new PhpProperty(PhpPrivate, true, id("booted"), PhpBool(false), PhpBoolType)], [
 				new PhpMethod(PhpPublic, true, false, id("boot"), [], plan.source, PhpVoidType, [
 					PhpIf(PhpStaticProperty("self", "booted"), [PhpReturnVoid]),
 					PhpAssign(PhpStaticProperty("self", "booted"), PhpBool(true))

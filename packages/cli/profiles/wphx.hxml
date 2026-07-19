@@ -4,6 +4,15 @@
 -main wordpresshx.cli.WphxMain
 -resource assets/development-reload-client.js@wordpresshx-development-reload-client
 -resource project-api/wordpresshx/WordPress.hx@wordpresshx-project-api
+-resource ../../tooling/php-quality/composer.json@wordpresshx-php-quality-composer-json
+-resource ../../tooling/php-quality/composer.lock@wordpresshx-php-quality-composer-lock
+-resource ../../tooling/php-quality/phpcs-compat-private.xml@wordpresshx-php-quality-phpcs-compat-private
+-resource ../../tooling/php-quality/phpcs-compat.xml@wordpresshx-php-quality-phpcs-compat
+-resource ../../tooling/php-quality/phpcs-public.xml@wordpresshx-php-quality-phpcs-public
+-resource ../../tooling/php-quality/phpstan-private.neon@wordpresshx-php-quality-phpstan-private
+-resource ../../tooling/php-quality/phpstan-public.neon@wordpresshx-php-quality-phpstan-public
+-resource ../../tooling/php-quality/run.php@wordpresshx-php-quality-runner
+-resource ../../tooling/php-quality/toolchain.json@wordpresshx-php-quality-toolchain
 -cp ../../compiler/reflaxe.php/src
 -cp ../../compiler/wordpress/src
 -D js-es=6

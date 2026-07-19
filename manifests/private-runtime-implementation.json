@@ -45,8 +45,8 @@
   "compilerIntegration": {
     "genericPhpIr": "compiler/reflaxe.php",
     "genericIrAddition": "PhpRequire(path, once)",
-    "currentGenericPackageFileCount": 37,
-    "currentGenericPackageContentSha256": "7f6ed2fc19f9123e3966dee4591e94567c371c3448a9fcd3f1caa7c922e26c2b",
+    "currentGenericPackageFileCount": 40,
+    "currentGenericPackageContentSha256": "6dd9674acefeab7ed0aa345dcd8d540f0c3abcdc9f230b0af9064e8b703d693b",
     "wordpressKnowledgeAddedToGenericCompiler": false,
     "stockCompiler": "Haxe 4.3.7 PHP target",
     "dce": "full-derived-single-callback-entry",

@@ -29,8 +29,12 @@ class Wp70PublicAdapterProfile {
 		}
 		final base = bootstrap.emitPlugin(plan.plugin);
 		final methods = plan.methods;
-		methods.push(registrationMethod("registerRestRoutes", restRegistrationBody(plan), plan));
-		methods.push(registrationMethod("registerBlocks", blockRegistrationBody(plan), plan));
+		if (plan.restRoutes.length > 0) {
+			methods.push(registrationMethod("registerRestRoutes", restRegistrationBody(plan), plan));
+		}
+		if (plan.blocks.length > 0) {
+			methods.push(registrationMethod("registerBlocks", blockRegistrationBody(plan), plan));
+		}
 		final adapterClass = new PhpClass(PhpClassKindClass, plan.className, plan.source, null, [], plan.properties, methods, plan.semanticNodeId);
 		final adapterFile = new PhpFile(plan.adapterPath, plan.plugin.namespace, true, [PhpClassDeclaration(adapterClass)]);
 		final registrationFile = new PhpFile(plan.registrationPath, null, true, [], registrationStatements(plan));

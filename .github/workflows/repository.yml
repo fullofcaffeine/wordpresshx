@@ -166,6 +166,10 @@ jobs:
         run: bash compiler/wordpress/scripts/test.sh
       - name: Test public PHP on exact PHP 7.4 and 8.4
         run: bash compiler/wordpress/scripts/test-php-matrix.sh
+      - name: Install exact generated-PHP quality toolchain
+        run: bash scripts/php-quality/install.sh
+      - name: Test pinned generated-PHP quality policy
+        run: bash scripts/php-quality/test-production.sh
       - name: Test dependency-closed private PHP runtime packaging
         run: |
           bash scripts/runtime-support/test.sh

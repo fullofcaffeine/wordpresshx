@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-026",
+  "status": "implemented-local-verified-hosted-pending",
+  "scope": "complete-generated-plugin-php-staging-quality-gate",
+  "haxeFirstErgonomics": {
+    "authority": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
+    "applicationDeclarationUnchanged": "WordPress.plugin()",
+    "projectAuthoredConfigurationFiles": [],
+    "handwrittenComposerRequired": false,
+    "handwrittenPhpcsRequired": false,
+    "handwrittenPhpStanRequired": false,
+    "handwrittenWordPressStubsRequired": false,
+    "handwrittenShellRequired": false,
+    "commandsUsingInferredPolicy": [
+      "wphx build",
+      "wphx build --dry-run",
+      "wphx check",
+      "wphx dev"
+    ],
+    "failureDiagnostic": "WPHX3400",
+    "failurePublicationAuthority": false
+  },
+  "genericCompilerSupport": {
+    "package": "compiler/reflaxe.php",
+    "wordpressKnowledgeAdded": false,
+    "nativeTypedProperties": true,
+    "structuredPhpDoc": {
+      "types": [
+        "array<int, T>",
+        "array<string, T>",
+        "int",
+        "mixed",
+        "named-qualified-type",
+        "normalized-union",
+        "string"
+      ],
+      "methodParameterIdentityChecked": true,
+      "defensiveCopies": true,
+      "rawDocCommentInput": false,
+      "commentInjectionRejected": true
+    },
+    "packageFileCount": 40,
+    "packageContentSha256": "6dd9674acefeab7ed0aa345dcd8d540f0c3abcdc9f230b0af9064e8b703d693b"
+  },
+  "toolchain": {
+    "policyId": "wp70-release-generated-php-v1",
+    "policySha256": "fc85632c5d3dd978ffcb76e8ead1319cfcc345787f798b7d88d31d2af607446a",
+    "manifest": "tooling/php-quality/composer.json",
+    "lock": "tooling/php-quality/composer.lock",
+    "lockSha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+    "composer": {
+      "version": "2.10.2",
+      "artifactSha256": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
+    },
+    "phpCodeSniffer": "3.13.5",
+    "wordpressCodingStandards": "3.4.0",
+    "phpCompatibilityWordPress": "2.1.8",
+    "phpStan": "2.2.5",
+    "wordpressStubs": {
+      "version": "7.0.0",
+      "fileSha256": "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
+    },
+    "runtimeComposerPackages": [],
+    "includedInGeneratedPlugin": false
+  },
+  "policy": {
+    "allPhp": [
+      "php-syntax-lint",
+      "duplicate-class-and-function-symbol-audit"
+    ],
+    "publicNativePhp": [
+      "phpcbf-byte-stability",
+      "wordpress-extra-correctness-and-security",
+      "phpcompatibilitywp-7.4",
+      "phpstan-level-6-wordpress-7.0-stubs"
+    ],
+    "privateStockHaxePhp": [
+      "phpcompatibilitywp-7.4-with-one-versioned-internal-name-exception",
+      "phpstan-level-0-wordpress-7.0-stubs",
+      "authoritative-declaration-matching-classmap",
+      "autoload-closure-probe"
+    ],
+    "generatedExceptionAuthority": "tooling/php-quality/toolchain.json#generatedCodePolicy",
+    "correctnessOrSecurityWaiverCount": 0,
+    "unmatchedPhpStanIgnoreDisposition": "blocking"
+  },
+  "stagingAndOwnership": {
+    "input": "complete-in-memory-plugin-emission",
+    "temporaryStageMode": "private-host-temporary-directory",
+    "liveTreeReadDuringAnalysis": false,
+    "formatWritesToEmission": false,
+    "policyEmbeddedInHaxeCli": true,
+    "installedPolicyByteEqualityRequired": true,
+    "receiptSchema": "wordpress-hx.php-quality-run.v1",
+    "reportSchema": "wordpress-hx.php-quality-report.v1",
+    "ownedReportPath": "build/wordpress/.wphx/php-quality.json",
+    "ownershipValidator": "wphx.plugin-php-quality",
+    "everyEmittedPluginArtifactBoundToValidator": true,
+    "failedGenerationPublication": "not-attempted",
+    "privatePathRedaction": true
+  },
+  "verification": {
+    "standaloneCommand": "bash scripts/php-quality/test-production.sh",
+    "standaloneOutcome": "passed",
+    "compilerFixtures": 3,
+    "deterministicReceiptReplay": "passed",
+    "negativeMutations": [
+      "duplicate-symbol",
+      "formatter-drift",
+      "php-syntax",
+      "phpstan-type-error",
+      "wpcs-eval-security-error"
+    ],
+    "integratedCommand": "bash scripts/scaffold/test-production.sh",
+    "integratedOutcome": "passed",
+    "integratedSummarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
+    "publicPhpFiles": 3,
+    "privateGeneration": {
+      "publicPhpFiles": 5,
+      "privatePhpFiles": 16,
+      "classmapEntries": 14
+    },
+    "policyTamper": "rejected-no-write-WPHX3400",
+    "invalidPrivateClassmap": "rejected",
+    "phpMatrix": [
+      "7.4.33",
+      "8.4.7"
+    ],
+    "wordpress": "7.0-mariadb-clean-activation",
+    "strictHaxeBoundary": "passed"
+  },
+  "claims": {
+    "pinnedPhpToolchain": "local-runtime-tested",
+    "formatterAndWpcs": "local-runtime-tested",
+    "staticAnalysis": "local-runtime-tested",
+    "autoloadAndDuplicateSymbols": "local-runtime-tested",
+    "failClosedPublication": "local-negative-tested",
+    "projectConfigurationCeremony": "none",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The public static-analysis level is 6 for the currently emitted native boundary; raising it requires a separately reviewed policy revision and clean fixture corpus.",
+    "The provisional private stock-Haxe lane is not reformatted and uses PHPStan level 0, but compatibility, declaration, symbol, classmap, and autoload failures remain blocking.",
+    "The exact installed tool bundle is currently exposed beside the internal compiled CLI by repository packaging scripts; public npm packaging remains blocked and must include the same authenticated bundle before release.",
+    "This evidence covers generated plugin PHP on the exact supported matrix, not arbitrary handwritten PHP, themes, multisite, Windows, deployment, upgrades, or production operations."
+  ]
+}

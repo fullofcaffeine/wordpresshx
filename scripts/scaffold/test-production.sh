@@ -24,6 +24,7 @@ if [[ "$(haxe --version)" != "4.3.7" ]]; then
   exit 1
 fi
 docker info >/dev/null
+bash "${repository_root}/scripts/php-quality/install.sh"
 
 lix_command="$(command -v lix)"
 lix_haxe="$(cd "$(dirname "${lix_command}")" && pwd -P)/haxe"
@@ -56,6 +57,8 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/project/PluginMacroRuntime.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlan.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPlanReader.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPhpQuality.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPhpQualityResult.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginProjectBuild.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPrivatePhpProfile.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginPrivateRuntime.hx" \
@@ -102,6 +105,7 @@ mkdir -p "${test_root}/runtime-a" "${test_root}/runtime-b" "${test_root}/actual-
 python3 "${package_root}/scripts/add-node-shebang.py" "${test_root}/runtime-a/index.js"
 python3 "${package_root}/scripts/add-node-shebang.py" "${test_root}/runtime-b/index.js"
 diff -ru "${test_root}/runtime-a" "${test_root}/runtime-b"
+bash "${repository_root}/scripts/php-quality/expose-runtime.sh" "${test_root}/runtime-a"
 
 node "${test_root}/runtime-a/index.js" new site actual-site \
   --project "${test_root}/actual-parent" --json >/dev/null

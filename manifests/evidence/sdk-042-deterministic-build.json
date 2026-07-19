@@ -59,15 +59,15 @@
     "ownershipFixtures": [
       {
         "path": "fixtures/ownership/valid/current.generated-files.json",
-        "sha256": "c81c3d91b38567cfa5515987dc466498c646790266fa17c030e34478f607581c"
+        "sha256": "3d6c6497c0ac529488c81f27184843f6398c2dbf5661ae2505bffe294429428c"
       },
       {
         "path": "fixtures/ownership/valid/next.generated-files.json",
-        "sha256": "3bb89180c354bb1766317492f78154d7d6f876c7e5b503a3b85bed122ea6195c"
+        "sha256": "4168a994377c6928bf44695bb0be9dee185b9df17e65e72c65c0a920f21cc189"
       },
       {
         "path": "fixtures/ownership/valid/prepared.journal.json",
-        "sha256": "220c886e3ccccf417759c27c3a3dfb3329dba16dcbe71d66c703b1dd40a3de3c"
+        "sha256": "b52a771fde39917be2f56a33cb2e2ebbdc7dc56b6c7e0ddfc9593b43a12e7389"
       }
     ],
     "workflow": {
@@ -82,7 +82,7 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "39b513290e1b60c08f75c12edf8e0a8ba4549ce5b44944519bad88feb0a1a910",
+    "subjectContentSha256": "c01e71708c7f9cb479a55e1abf3d35b9ac4c6692f4df6d42be291573a5ee19ab",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {

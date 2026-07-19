@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset name="WordPressHx private PHP 7.4 compatibility">
+  <description>Blocking compatibility checks plus one exact stock-Haxe naming exception.</description>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg name="extensions" value="php"/>
+  <arg name="parallel" value="1"/>
+  <arg value="ps"/>
+  <config name="testVersion" value="7.4"/>
+
+  <rule ref="PHPCompatibilityWP">
+    <!-- Stock Haxe 4.3.7 uses this reserved-looking internal method name.
+         It is isolated below the private prefix and covered by both exact PHP
+         runtime lanes; public generated PHP retains the sniff. -->
+    <exclude name="PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.MethodDoubleUnderscore"/>
+  </rule>
+</ruleset>

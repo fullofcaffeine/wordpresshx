@@ -125,6 +125,8 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/PluginMacroRuntime.hx
   packages/cli/src/wordpresshx/cli/project/PluginPlan.hx
   packages/cli/src/wordpresshx/cli/project/PluginPlanReader.hx
+  packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx
+  packages/cli/src/wordpresshx/cli/project/PluginPhpQualityResult.hx
   packages/cli/src/wordpresshx/cli/project/PluginPrivatePhpProfile.hx
   packages/cli/src/wordpresshx/cli/project/PluginPrivateRuntime.hx
   packages/cli/src/wordpresshx/cli/project/PluginPrivateRuntimeCompiler.hx
@@ -464,6 +466,7 @@ required_files=(
   manifests/project-cli-architecture.json
   manifests/project-cli-implementation.json
   manifests/plugin-scaffold-implementation.json
+  manifests/php-quality-implementation.json
   manifests/private-runtime-implementation.json
   manifests/scaffold-implementation.json
   manifests/package-topology.json
@@ -508,6 +511,7 @@ required_files=(
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
   manifests/evidence/sdk-024-private-php-runtime.json
   manifests/evidence/sdk-025-php-source-correlation.json
+  manifests/evidence/sdk-026-generated-php-quality.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -531,11 +535,14 @@ required_files=(
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpClassKind.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpClosureCapture.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpDeclaration.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocParameter.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocType.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpFile.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpFunction.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpIdentifier.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethod.hx
+  compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpParameter.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpProperty.hx
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpQualifiedName.hx
@@ -634,6 +641,9 @@ required_files=(
   scripts/release/test-governance.py
   scripts/licenses/check-license-policy.py
   scripts/licenses/test-license-policy.py
+  scripts/php-quality/expose-runtime.sh
+  scripts/php-quality/install.sh
+  scripts/php-quality/test-production.sh
   scripts/php/check-emission-policy.py
   scripts/php/test-emission-policy.py
   scripts/profiles/verify-gutenberg-forward-23-4.py
@@ -645,6 +655,16 @@ required_files=(
   scripts/wordpress/run-harness.sh
   scripts/wordpress/test-harness.sh
   scripts/wordpress/verify-distribution.py
+  tooling/php-quality/README.md
+  tooling/php-quality/composer.json
+  tooling/php-quality/composer.lock
+  tooling/php-quality/phpcs-compat-private.xml
+  tooling/php-quality/phpcs-compat.xml
+  tooling/php-quality/phpcs-public.xml
+  tooling/php-quality/phpstan-private.neon
+  tooling/php-quality/phpstan-public.neon
+  tooling/php-quality/run.php
+  tooling/php-quality/toolchain.json
 )
 
 missing=0
@@ -715,6 +735,20 @@ sdk025_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-025-php-source-correlation.json"
     ).read_text(encoding="utf-8")
+)
+php_quality_implementation = json.loads(
+    Path("manifests/php-quality-implementation.json").read_text(encoding="utf-8")
+)
+sdk026_receipt = json.loads(
+    Path("manifests/evidence/sdk-026-generated-php-quality.json").read_text(
+        encoding="utf-8"
+    )
+)
+php_quality_toolchain = json.loads(
+    Path("tooling/php-quality/toolchain.json").read_text(encoding="utf-8")
+)
+php_quality_composer_lock = json.loads(
+    Path("tooling/php-quality/composer.lock").read_text(encoding="utf-8")
 )
 runtime_support_architecture = json.loads(
     Path("manifests/runtime-support-packaging.json").read_text(encoding="utf-8")
@@ -1097,7 +1131,7 @@ for locked_subject in adr018_receipt["subject"].values():
 adr018_verification = adr018_receipt["verification"]
 assert adr018_verification["policyCases"] == {
     "positive": 1,
-    "negative": 17,
+    "negative": 19,
     "outcome": "passed",
 }
 assert adr018_verification["determinism"] == {
@@ -4308,7 +4342,7 @@ assert sdk024_handoff == {
 sdk024_compiler = private_runtime_implementation["compilerIntegration"]
 assert Path(sdk024_compiler["genericPhpIr"]).is_dir()
 assert sdk024_compiler["genericIrAddition"] == "PhpRequire(path, once)"
-assert sdk024_compiler["currentGenericPackageFileCount"] == 37
+assert sdk024_compiler["currentGenericPackageFileCount"] == 40
 assert sha256.fullmatch(sdk024_compiler["currentGenericPackageContentSha256"])
 assert sdk024_compiler["wordpressKnowledgeAddedToGenericCompiler"] is False
 assert sdk024_compiler["stockCompiler"] == "Haxe 4.3.7 PHP target"
@@ -4556,6 +4590,333 @@ for sdk024_nonclaim, expected in (
 ):
     assert private_runtime_implementation["claims"][sdk024_nonclaim] == expected
     assert sdk024_receipt["claims"][sdk024_nonclaim] == expected
+
+assert php_quality_implementation["schemaVersion"] == 1
+assert php_quality_implementation["bead"] == "wordpresshx-sdk-026"
+assert php_quality_implementation["status"] in {
+    "implemented-local-verified-hosted-pending",
+    "implemented-hosted-verified",
+}
+assert php_quality_implementation["scope"] == (
+    "complete-generated-plugin-php-staging-quality-gate"
+)
+sdk026_ergonomics = php_quality_implementation["haxeFirstErgonomics"]
+assert sdk026_ergonomics["applicationDeclarationUnchanged"] == (
+    "WordPress.plugin()"
+)
+assert sdk026_ergonomics["projectAuthoredConfigurationFiles"] == []
+for sdk026_user_config in (
+    "handwrittenComposerRequired",
+    "handwrittenPhpcsRequired",
+    "handwrittenPhpStanRequired",
+    "handwrittenWordPressStubsRequired",
+    "handwrittenShellRequired",
+):
+    assert sdk026_ergonomics[sdk026_user_config] is False
+assert sdk026_ergonomics["commandsUsingInferredPolicy"] == sorted(
+    sdk026_ergonomics["commandsUsingInferredPolicy"]
+)
+assert sdk026_ergonomics["failureDiagnostic"] == "WPHX3400"
+assert sdk026_ergonomics["failurePublicationAuthority"] is False
+
+sdk026_generic = php_quality_implementation["genericCompilerSupport"]
+assert sdk026_generic["package"] == "compiler/reflaxe.php"
+assert sdk026_generic["wordpressKnowledgeAdded"] is False
+assert sdk026_generic["nativeTypedProperties"] is True
+assert sdk026_generic["packageFileCount"] == 40
+assert sdk026_generic["packageContentSha256"] == (
+    sdk024_compiler["currentGenericPackageContentSha256"]
+)
+assert sdk026_generic["structuredPhpDoc"] == {
+    "types": [
+        "array<int, T>",
+        "array<string, T>",
+        "int",
+        "mixed",
+        "named-qualified-type",
+        "normalized-union",
+        "string",
+    ],
+    "methodParameterIdentityChecked": True,
+    "defensiveCopies": True,
+    "rawDocCommentInput": False,
+    "commentInjectionRejected": True,
+}
+
+sdk026_policy_paths = [
+    "composer.json",
+    "composer.lock",
+    "phpcs-compat-private.xml",
+    "phpcs-compat.xml",
+    "phpcs-public.xml",
+    "phpstan-private.neon",
+    "phpstan-public.neon",
+    "run.php",
+    "toolchain.json",
+]
+sdk026_policy_input = bytearray()
+for sdk026_policy_name in sdk026_policy_paths:
+    sdk026_policy_path = Path("tooling/php-quality") / sdk026_policy_name
+    sdk026_policy_digest = hashlib.sha256(sdk026_policy_path.read_bytes()).hexdigest()
+    sdk026_policy_input.extend(
+        sdk026_policy_name.encode()
+        + b"\0"
+        + sdk026_policy_digest.encode()
+        + b"\0"
+    )
+sdk026_policy_sha256 = hashlib.sha256(sdk026_policy_input).hexdigest()
+assert sdk026_policy_sha256 == (
+    "fc85632c5d3dd978ffcb76e8ead1319cfcc345787f798b7d88d31d2af607446a"
+)
+sdk026_toolchain = php_quality_implementation["toolchain"]
+assert sdk026_toolchain["policyId"] == "wp70-release-generated-php-v1"
+assert sdk026_toolchain["policySha256"] == sdk026_policy_sha256
+assert sdk026_toolchain["lockSha256"] == hashlib.sha256(
+    Path("tooling/php-quality/composer.lock").read_bytes()
+).hexdigest()
+assert sdk026_toolchain["runtimeComposerPackages"] == []
+assert sdk026_toolchain["includedInGeneratedPlugin"] is False
+assert php_quality_toolchain["schema"] == (
+    "wordpress-hx.php-quality-toolchain.v1"
+)
+assert php_quality_toolchain["policyId"] == sdk026_toolchain["policyId"]
+assert php_quality_toolchain["composer"] == {
+    "version": "2.10.2",
+    "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
+    "artifactSha256": (
+        "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
+    ),
+}
+assert php_quality_toolchain["php"] == {
+    "syntaxFloor": "7.4.33",
+    "primary": "8.4.7",
+}
+assert php_quality_toolchain["tools"] == {
+    "phpCodeSniffer": "3.13.5",
+    "wordpressCodingStandards": "3.4.0",
+    "phpCompatibilityWordPress": "2.1.8",
+    "phpStan": "2.2.5",
+    "wordpressStubs": "7.0.0",
+    "wordpressExtension": (
+        "not-admitted-no-release-supports-wordpress-stubs-7.0"
+    ),
+}
+sdk026_exceptions = php_quality_toolchain["generatedCodePolicy"][
+    "justifiedExclusions"
+]
+assert len(sdk026_exceptions) == 5
+assert [item["id"] for item in sdk026_exceptions] == [
+    "stock-haxe-style",
+    "stock-haxe-reserved-initializer-name",
+    "generic-printer-layout",
+    "haxe-visible-native-identities",
+    "fail-closed-loader-diagnostics",
+]
+
+sdk026_locked_packages = {
+    package["name"]: package["version"].lstrip("v")
+    for package in php_quality_composer_lock["packages-dev"]
+}
+assert sdk026_locked_packages == {
+    "dealerdirect/phpcodesniffer-composer-installer": "1.2.1",
+    "php-stubs/wordpress-stubs": "7.0.0",
+    "phpcompatibility/php-compatibility": "9.3.5",
+    "phpcompatibility/phpcompatibility-paragonie": "1.3.4",
+    "phpcompatibility/phpcompatibility-wp": "2.1.8",
+    "phpcsstandards/phpcsextra": "1.5.0",
+    "phpcsstandards/phpcsutils": "1.2.2",
+    "phpstan/phpstan": "2.2.5",
+    "squizlabs/php_codesniffer": "3.13.5",
+    "wp-coding-standards/wpcs": "3.4.0",
+}
+sdk026_composer_graph = toolchain_lock["dependencyGraphs"]["composer"]
+assert sdk026_composer_graph["status"] == (
+    "bounded-build-only-generated-php-validation"
+)
+assert sdk026_composer_graph["lockSha256"] == sdk026_toolchain["lockSha256"]
+assert sdk026_composer_graph["runtimePackages"] == []
+assert sdk026_composer_graph["buildInputOnly"] is True
+assert sdk026_composer_graph["publicationAuthorized"] is False
+assert sdk026_composer_graph["receiptId"] == (
+    "SDK-026-GENERATED-PHP-QUALITY"
+)
+assert {
+    package["name"]: package["version"]
+    for package in sdk026_composer_graph["activePackages"]
+} == sdk026_locked_packages
+
+sdk026_profile = Path("packages/cli/profiles/wphx.hxml").read_text(
+    encoding="utf-8"
+)
+for sdk026_policy_name in sdk026_policy_paths:
+    assert f"../../tooling/php-quality/{sdk026_policy_name}@" in sdk026_profile
+sdk026_workflow = Path(".github/workflows/repository.yml").read_text(
+    encoding="utf-8"
+)
+for sdk026_step in (
+    "Install exact generated-PHP quality toolchain",
+    "Test pinned generated-PHP quality policy",
+):
+    assert sdk026_step in sdk026_workflow
+assert "bash scripts/php-quality/install.sh" in sdk026_workflow
+assert "bash scripts/php-quality/test-production.sh" in sdk026_workflow
+for sdk026_script in (
+    Path("scripts/php-quality/expose-runtime.sh"),
+    Path("scripts/php-quality/install.sh"),
+    Path("scripts/php-quality/test-production.sh"),
+):
+    assert sdk026_script.stat().st_mode & 0o111
+sdk026_gitignore = Path(".gitignore").read_text(encoding="utf-8")
+for sdk026_ignored in (
+    "tooling/php-quality/vendor/",
+    "tooling/php-quality/.cache/",
+):
+    assert sdk026_ignored in sdk026_gitignore
+assert "ignoreErrors" not in Path("tooling/php-quality/phpstan-public.neon").read_text(
+    encoding="utf-8"
+)
+assert "WordPress-Extra" in Path("tooling/php-quality/phpcs-public.xml").read_text(
+    encoding="utf-8"
+)
+
+sdk026_stage = php_quality_implementation["stagingAndOwnership"]
+assert sdk026_stage["input"] == "complete-in-memory-plugin-emission"
+assert sdk026_stage["liveTreeReadDuringAnalysis"] is False
+assert sdk026_stage["formatWritesToEmission"] is False
+assert sdk026_stage["policyEmbeddedInHaxeCli"] is True
+assert sdk026_stage["installedPolicyByteEqualityRequired"] is True
+assert sdk026_stage["ownedReportPath"] == (
+    "build/wordpress/.wphx/php-quality.json"
+)
+assert sdk026_stage["ownershipValidator"] == "wphx.plugin-php-quality"
+assert sdk026_stage["everyEmittedPluginArtifactBoundToValidator"] is True
+assert sdk026_stage["failedGenerationPublication"] == "not-attempted"
+assert sdk026_stage["privatePathRedaction"] is True
+sdk026_strict_paths = [
+    Path("compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocParameter.hx"),
+    Path("compiler/reflaxe.php/src/reflaxe/php/ir/PhpDocType.hx"),
+    Path("compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx"),
+    Path("packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx"),
+    Path("packages/cli/src/wordpresshx/cli/project/PluginPhpQualityResult.hx"),
+]
+for sdk026_strict_path in sdk026_strict_paths:
+    assert sdk024_forbidden.search(
+        sdk026_strict_path.read_text(encoding="utf-8")
+    ) is None
+
+assert sdk026_receipt["schemaVersion"] == 1
+assert sdk026_receipt["receiptId"] == "SDK-026-GENERATED-PHP-QUALITY"
+assert sdk026_receipt["bead"] == "wordpresshx-sdk-026"
+assert sdk026_receipt["status"] in {
+    "local-verified-hosted-pending",
+    "verified",
+}
+assert sdk026_receipt["subject"]["implementation"] == (
+    "manifests/php-quality-implementation.json"
+)
+assert sdk026_receipt["subject"]["policySha256"] == sdk026_policy_sha256
+assert sdk026_receipt["subject"]["composerLockSha256"] == (
+    sdk026_toolchain["lockSha256"]
+)
+assert sdk026_receipt["verification"]["standalonePolicy"] == {
+    "command": "bash scripts/php-quality/test-production.sh",
+    "outcome": "passed",
+    "deterministicFixtureReceipts": 3,
+    "negativeMutations": 5,
+    "privatePathLeaks": 0,
+}
+sdk026_integrated = sdk026_receipt["verification"]["integratedCli"]
+assert sdk026_integrated["command"] == "bash scripts/scaffold/test-production.sh"
+assert sdk026_integrated["outcome"] == "passed"
+assert sdk026_integrated["positiveCases"] == 16
+assert sdk026_integrated["negativeCases"] == 11
+assert sdk026_integrated["noWriteAssertions"] == 14
+assert sdk026_integrated["publicReportFiles"] == 3
+assert sdk026_integrated["privateReportPhpFiles"] == 21
+assert sdk026_integrated["privateClassmapEntries"] == 14
+assert sdk026_integrated["policyTamper"] == "rejected-before-publication"
+assert sdk026_integrated["privateClassmapMismatch"] == "rejected"
+sdk026_input_records = {
+    record["path"]: record["sha256"]
+    for record in sdk026_receipt["authenticatedInputs"]
+}
+assert list(sdk026_input_records) == sorted(sdk026_input_records)
+assert len(sdk026_input_records) == 16
+for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
+    assert sha256.fullmatch(sdk026_input_sha256)
+    assert hashlib.sha256(Path(sdk026_input_path).read_bytes()).hexdigest() == (
+        sdk026_input_sha256
+    )
+sdk026_hosted = sdk026_receipt["hostedVerification"]
+assert sdk026_hosted["workflow"] == "Repository bootstrap"
+assert sdk026_hosted["job"] == "haxe"
+assert sdk026_hosted["steps"] == [
+    "Install exact generated-PHP quality toolchain",
+    "Test pinned generated-PHP quality policy",
+    "Test Haxe-first site scaffolding",
+]
+if sdk026_hosted["status"] == "pending":
+    assert sdk026_receipt["status"] == "local-verified-hosted-pending"
+    assert php_quality_implementation["status"] == (
+        "implemented-local-verified-hosted-pending"
+    )
+    assert sdk026_receipt["implementation"]["implementationCommit"] is None
+    assert sdk026_hosted["commit"] is None
+    assert sdk026_hosted["runId"] is None
+    assert sdk026_hosted["jobId"] is None
+    assert sdk026_receipt["verification"]["repository"]["outcome"] in {
+        "pending-final-run",
+        "passed-local",
+    }
+    sdk026_claim_prefix = "local"
+elif sdk026_hosted["status"] == "passed":
+    assert sdk026_receipt["status"] == "verified"
+    assert php_quality_implementation["status"] == "implemented-hosted-verified"
+    sdk026_implementation_commit = sdk026_receipt["implementation"][
+        "implementationCommit"
+    ]
+    assert sha1.fullmatch(sdk026_implementation_commit)
+    assert sdk026_hosted["commit"] == sdk026_implementation_commit
+    assert isinstance(sdk026_hosted["runId"], int)
+    assert isinstance(sdk026_hosted["jobId"], int)
+    assert sdk026_receipt["verification"]["repository"]["outcome"] == (
+        "passed-local"
+    )
+    sdk026_claim_prefix = "hosted"
+else:
+    raise AssertionError("SDK-026 hosted verification status is invalid")
+for sdk026_claim in (
+    "pinnedPhpToolchain",
+    "formatterAndWpcs",
+    "staticAnalysis",
+    "autoloadAndDuplicateSymbols",
+):
+    assert php_quality_implementation["claims"][sdk026_claim] == (
+        sdk026_claim_prefix + "-runtime-tested"
+    )
+assert php_quality_implementation["claims"]["failClosedPublication"] == (
+    sdk026_claim_prefix + "-negative-tested"
+)
+for sdk026_claim in (
+    "pinnedToolsAndWordPressStubs",
+    "lintFormatWpcsCompatibilityStaticAnalysis",
+    "autoloadClassmapAndDuplicateSymbols",
+):
+    assert sdk026_receipt["claims"][sdk026_claim] == (
+        sdk026_claim_prefix + "-runtime-tested"
+    )
+assert sdk026_receipt["claims"]["failClosedBeforePublication"] == (
+    sdk026_claim_prefix + "-negative-tested"
+)
+assert php_quality_implementation["claims"]["projectConfigurationCeremony"] == (
+    "none"
+)
+for sdk026_nonclaim, expected in (
+    ("publicPackagePublication", "blocked"),
+    ("productionSupport", "not-tested"),
+):
+    assert php_quality_implementation["claims"][sdk026_nonclaim] == expected
+    assert sdk026_receipt["claims"][sdk026_nonclaim] == expected
 
 assert deterministic_build_implementation["schemaVersion"] == 1
 assert deterministic_build_implementation["bead"] == "wordpresshx-sdk-042"
@@ -5225,7 +5586,10 @@ for record in sdk025_inputs:
     assert sha256.fullmatch(record["sha256"])
     current_sha256 = hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest()
     if current_sha256 != record["sha256"]:
-        assert sdk024_generic_records.get(record["path"]) == current_sha256
+        assert current_sha256 in {
+            sdk024_generic_records.get(record["path"]),
+            sdk026_input_records.get(record["path"]),
+        }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 
 sdk025_fixture = sdk025_receipt["fixtureEvidence"]
@@ -7277,7 +7641,7 @@ for lane in wordpress_matrix["lanes"]:
         assert lane[field] == "passed"
 readability = wordpress_verification["readability"]
 assert readability["trackedNativeSnapshots"] is True
-assert readability["totalPhpBytes"] == 786
+assert readability["totalPhpBytes"] == 791
 assert readability["totalPhpLines"] == 43
 assert readability["rootHeaderWithinNativeScanWindow"] is True
 assert readability["ordinaryPhpSymbolsVisible"] is True
@@ -7439,7 +7803,11 @@ for path, artifact in adapter_generated_files.items():
     digest = hashlib.sha256(snapshot).hexdigest()
     assert digest == artifact["sha256"]
     assert digest == adapter_manifest_files[path]["sha256"]
-    assert digest == adapter_package_digests[artifact["snapshotPath"]]
+    # SDK-023 authenticates the original package at its implementation commit;
+    # later compiler gates may evolve the committed snapshots in place. Keep
+    # the path inside that historical package while the current receipt and
+    # manifest authenticate the evolved bytes, as SDK-022 does above.
+    assert artifact["snapshotPath"] in adapter_package_digests
     assert len(snapshot) == artifact["bytes"]
     assert len(snapshot) == adapter_manifest_files[path]["bytes"]
     assert len(snapshot.splitlines()) == artifact["lines"]
@@ -7580,10 +7948,10 @@ assert adapter_readability["totalPhpBytes"] == sum(
 assert adapter_readability["totalPhpLines"] == sum(
     artifact["lines"] for artifact in adapter_generated_files.values()
 )
-assert adapter_readability["totalPhpBytes"] == 3488
-assert adapter_readability["totalPhpLines"] == 130
-assert adapter_readability["adapterClassBytes"] == 2126
-assert adapter_readability["adapterClassLines"] == 77
+assert adapter_readability["totalPhpBytes"] == 4090
+assert adapter_readability["totalPhpLines"] == 154
+assert adapter_readability["adapterClassBytes"] == 2723
+assert adapter_readability["adapterClassLines"] == 101
 assert adapter_readability["ordinaryPhpSymbolsVisible"] is True
 assert adapter_readability["automatedRawScaffoldReview"] == "passed"
 assert adapter_readability["independentWordpressPhpReviewer"] == (
