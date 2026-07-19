@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wordpress-hx.semantic-node.development.service.v1",
+  "title": "WordPressHx typed development service semantic node payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "serviceId",
+    "serviceKind",
+    "dependsOn",
+    "workingDirectory",
+    "command",
+    "environment",
+    "port",
+    "readiness",
+    "restart",
+    "url",
+    "reload"
+  ],
+  "properties": {
+    "serviceId": {
+      "$ref": "#/$defs/stableId"
+    },
+    "serviceKind": {
+      "enum": [
+        "external",
+        "wordpress"
+      ]
+    },
+    "dependsOn": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/stableId"
+      }
+    },
+    "workingDirectory": {
+      "type": "string",
+      "pattern": "^(?:\\.|[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*)$"
+    },
+    "command": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/command"
+        }
+      ]
+    },
+    "environment": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/environmentName"
+      }
+    },
+    "port": {
+      "$ref": "#/$defs/port"
+    },
+    "readiness": {
+      "$ref": "#/$defs/readiness"
+    },
+    "restart": {
+      "$ref": "#/$defs/restart"
+    },
+    "url": {
+      "$ref": "#/$defs/url"
+    },
+    "reload": {
+      "enum": [
+        "full-page",
+        "none"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "serviceKind": {
+            "const": "wordpress"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "command": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "serviceKind": {
+            "const": "external"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "command": {
+            "$ref": "#/$defs/command"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "environmentName": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "executable",
+        "arguments"
+      ],
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/stableId"
+        },
+        "executable": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._+-]+$"
+        },
+        "arguments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preferred",
+        "strict"
+      ],
+      "properties": {
+        "preferred": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "strict": {
+          "type": "boolean"
+        }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "text",
+        "timeoutMs",
+        "intervalMs"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "http",
+            "log",
+            "process",
+            "tcp"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$"
+        },
+        "text": {
+          "type": "string"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 300000
+        },
+        "intervalMs": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 5000
+        }
+      }
+    },
+    "restart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxAttempts",
+        "backoffMs"
+      ],
+      "properties": {
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "backoffMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        }
+      }
+    },
+    "url": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "path"
+      ],
+      "properties": {
+        "scheme": {
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$"
+        }
+      }
+    }
+  }
+}

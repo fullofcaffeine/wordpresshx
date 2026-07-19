@@ -21,7 +21,15 @@ Hook.action({
 	callback: registerVisits,
 	priority: 10
 });
+
+// The common local WordPress service needs no duplicated command or config.
+Dev.wordpress();
 ```
+
+Typed `WordPressDevelopmentOptions` override only non-default behavior. Services
+without a dedicated SDK adapter use the explicit `Dev.service({...})` escape
+hatch, whose component must exist in the exact project lock and whose command
+is argv-based rather than an implicit shell string.
 
 The generated HXML installs `SemanticPlan.install(...)`. Declarations expand
 to `null` markers and are removed by normal DCE; the collector writes only a

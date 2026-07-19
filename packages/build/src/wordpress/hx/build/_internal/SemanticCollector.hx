@@ -1,7 +1,7 @@
 package wordpress.hx.build._internal;
 
 #if macro
-import haxe.Json;
+import haxe.Exception;
 import haxe.crypto.Sha256;
 import haxe.io.Bytes;
 import haxe.io.Path;
@@ -13,8 +13,30 @@ import haxe.macro.Type.ClassType;
 import sys.FileSystem;
 import sys.io.File;
 import wordpress.hx.build.semantic.BuildInputDeclaration;
+import wordpress.hx.build.semantic.DevelopmentServiceDeclaration;
 import wordpress.hx.build.semantic.HookDeclaration;
 import wordpress.hx.build.semantic.ModuleDeclaration;
+import wordpress.hx.build._internal.CanonicalJson.CanonicalJsonError;
+import wordpress.hx.build._internal.JsonObjectReader.JsonReadError;
+import wordpress.hx.build._internal.JsonParser.JsonParseError;
+import wordpress.hx.build._internal.SemanticModel.CollectorInputMaterial;
+import wordpress.hx.build._internal.SemanticModel.CollectorInputs;
+import wordpress.hx.build._internal.SemanticModel.DevelopmentCommand;
+import wordpress.hx.build._internal.SemanticModel.DevelopmentReadinessKind;
+import wordpress.hx.build._internal.SemanticModel.DevelopmentReloadKind;
+import wordpress.hx.build._internal.SemanticModel.DevelopmentServiceData;
+import wordpress.hx.build._internal.SemanticModel.DevelopmentServiceKind;
+import wordpress.hx.build._internal.SemanticModel.EnvironmentRecord;
+import wordpress.hx.build._internal.SemanticModel.FileDigestRecord;
+import wordpress.hx.build._internal.SemanticModel.InputFileRecord;
+import wordpress.hx.build._internal.SemanticModel.NodeSchemaRecord;
+import wordpress.hx.build._internal.SemanticModel.ResourceRecord;
+import wordpress.hx.build._internal.SemanticModel.SemanticNode;
+import wordpress.hx.build._internal.SemanticModel.SemanticPayload;
+import wordpress.hx.build._internal.SemanticModel.SemanticPlanRecord;
+import wordpress.hx.build._internal.SemanticModel.SourcePoint;
+import wordpress.hx.build._internal.SemanticModel.SourceSpan;
+import wordpress.hx.build._internal.SemanticModel.ToolRecord;
 
 /** Compilation-local, typed semantic declaration registry and plan finalizer. */
 class SemanticCollector {
@@ -24,6 +46,7 @@ class SemanticCollector {
 	static final PHP_NAMESPACE = ~/^[A-Z][A-Za-z0-9]*(?:\\[A-Z][A-Za-z0-9]*)*$/;
 	static final HOOK_NAME = ~/^[A-Za-z_][A-Za-z0-9_.\/:\-]*$/;
 	static final ENVIRONMENT_NAME = ~/^[A-Z][A-Z0-9_]*$/;
+	static final EXECUTABLE_NAME = ~/^[A-Za-z0-9._+\-]+$/;
 	static final SHA256 = ~/^[0-9a-f]{64}$/;
 	static final COLLECTOR_ID = "wordpress-hx.build.semantic-plan";
 	static final PLAN_SCHEMA = "wordpress-hx.semantic-plan.v1";
@@ -33,12 +56,26 @@ class SemanticCollector {
 	static final HOOK_METADATA = ":wordpressHx.semanticHook";
 	static final RESOURCE_METADATA = ":wordpressHx.semanticResource";
 	static final ENVIRONMENT_METADATA = ":wordpressHx.semanticEnvironment";
+	static final DEVELOPMENT_SERVICE_METADATA = ":wordpressHx.semanticDevelopmentService";
+	static final DEVELOPMENT_SERVICE_SCHEMA = "wordpress-hx.semantic-node.development.service.v1";
+	static final DEVELOPMENT_SERVICE_KIND = "development.service";
+	static final DEVELOPMENT_SERVICE_EMITTER = "wordpresshx.dev";
 	static final COLLECTOR_SOURCES = [
 		"wordpress/hx/build/SemanticPlan.hx",
 		"wordpress/hx/build/_internal/CanonicalJson.hx",
+		"wordpress/hx/build/_internal/JsonObjectReader.hx",
+		"wordpress/hx/build/_internal/JsonParser.hx",
+		"wordpress/hx/build/_internal/JsonValue.hx",
 		"wordpress/hx/build/_internal/SemanticCollector.hx",
+		"wordpress/hx/build/_internal/SemanticJson.hx",
+		"wordpress/hx/build/_internal/SemanticModel.hx",
 		"wordpress/hx/build/semantic/BuildInput.hx",
 		"wordpress/hx/build/semantic/BuildInputDeclaration.hx",
+		"wordpress/hx/build/semantic/Dev.hx",
+		"wordpress/hx/build/semantic/DevelopmentCommandOptions.hx",
+		"wordpress/hx/build/semantic/DevelopmentReadinessKind.hx",
+		"wordpress/hx/build/semantic/DevelopmentServiceDeclaration.hx",
+		"wordpress/hx/build/semantic/DevelopmentServiceOptions.hx",
 		"wordpress/hx/build/semantic/Hook.hx",
 		"wordpress/hx/build/semantic/HookDeclaration.hx",
 		"wordpress/hx/build/semantic/HookOptions.hx",
@@ -46,7 +83,8 @@ class SemanticCollector {
 		"wordpress/hx/build/semantic/ModuleDeclaration.hx",
 		"wordpress/hx/build/semantic/ModuleOptions.hx",
 		"wordpress/hx/build/semantic/PublicEnvironmentOptions.hx",
-		"wordpress/hx/build/semantic/ResourceOptions.hx"
+		"wordpress/hx/build/semantic/ResourceOptions.hx",
+		"wordpress/hx/build/semantic/WordPressDevelopmentOptions.hx"
 	];
 
 	static var generation = 0;
@@ -147,6 +185,26 @@ class SemanticCollector {
 		return macro null;
 	}
 
+	public static function collectWordPressService(options:Null<Expr>):ExprOf<DevelopmentServiceDeclaration> {
+		return collectDevelopmentService(WordPressService, optionalExpression(options));
+	}
+
+	public static function collectExternalService(options:Expr):ExprOf<DevelopmentServiceDeclaration> {
+		return collectDevelopmentService(ExternalService, options);
+	}
+
+	static function collectDevelopmentService(serviceKind:DevelopmentServiceKind, options:Null<Expr>):ExprOf<DevelopmentServiceDeclaration> {
+		final position = options == null ? Context.currentPos() : options.pos;
+		final session = requireSession(position);
+		final data = developmentServiceData(serviceKind, options, session);
+		final owner = localTypeIdentity(position);
+		addMetadata(DEVELOPMENT_SERVICE_METADATA, [
+			macro $v{CanonicalJson.encode(SemanticJson.developmentService(data))},
+			macro $v{owner}
+		], position);
+		return macro null;
+	}
+
 	static function loadSession(generation:Int, configPath:String, planOutputPath:String, inputsOutputPath:String):CollectorSession {
 		final root = normalizePhysical(Sys.getCwd());
 		final logicalConfigPath = safeRelativePath(configPath, "WPHX4030", "collector config path", Context.currentPos());
@@ -177,7 +235,8 @@ class SemanticCollector {
 				fail("WPHX4036", "node schema digest mismatch for " + nodeSchema.schemaId, Context.currentPos());
 			}
 			final schema = parseJson(schemaFile.content, "WPHX4037", "node schema " + nodeSchema.schemaId, Context.currentPos());
-			if (stringField(schema, "$id", "WPHX4038", "node schema", Context.currentPos()) != nodeSchema.schemaId) {
+			final schemaId = readJson(Context.currentPos(), () -> JsonObjectReader.from(schema, "node schema", "WPHX4038").string("$id", "WPHX4038"));
+			if (schemaId != nodeSchema.schemaId) {
 				fail("WPHX4039", "node schema identity mismatch for " + nodeSchema.schemaId, Context.currentPos());
 			}
 			addFile(files, schemaFile);
@@ -190,8 +249,8 @@ class SemanticCollector {
 			collectorFiles.push(source);
 			addFile(files, source);
 		}
-		collectorFiles.sort((left, right) -> Reflect.compare(left.path, right.path));
-		final collectorDigestMaterial = [for (file in collectorFiles) {path: file.path, sha256: file.sha256}];
+		collectorFiles.sort((left, right) -> compareText(left.path, right.path));
+		final collectorDigestMaterial:Array<FileDigestRecord> = [for (file in collectorFiles) {path: file.path, sha256: file.sha256}];
 
 		return {
 			generation: generation,
@@ -201,14 +260,15 @@ class SemanticCollector {
 			planOutputPath: resolveOutput(planOutputPath),
 			inputsOutputPath: resolveOutput(inputsOutputPath),
 			config: config,
-			catalogCapabilities: catalogCapabilities(catalog),
+			catalogCapabilities: catalogCapabilities(catalog, Context.currentPos()),
 			tools: tools,
 			files: files,
-			collectorSourceSha256: digest(CanonicalJson.encode(collectorDigestMaterial)),
+			collectorSourceSha256: digest(CanonicalJson.encode(SemanticJson.fileDigests(collectorDigestMaterial))),
 			modules: [],
 			hooks: [],
 			resources: [],
-			environments: []
+			environments: [],
+			services: []
 		};
 	}
 
@@ -230,7 +290,26 @@ class SemanticCollector {
 			modules.set(draft.moduleId, draft);
 		}
 
-		final resourceRecords:Array<Dynamic> = [];
+		final services:Map<String, DevelopmentServiceDraft> = [];
+		for (draft in session.services) {
+			if (services.exists(draft.serviceId)) {
+				fail("WPHX4181", "duplicate development service id " + draft.serviceId, draft.position);
+			}
+			services.set(draft.serviceId, draft);
+		}
+		if (session.services.length > 0) {
+			validateDevelopmentServiceRegistration(session.config.nodeSchemas, Context.currentPos());
+			for (draft in session.services) {
+				for (dependency in draft.dependsOn) {
+					if (!services.exists(dependency)) {
+						fail("WPHX4182", "development service " + draft.serviceId + " depends on undeclared service " + dependency, draft.position);
+					}
+				}
+			}
+			detectDevelopmentServiceCycles(services);
+		}
+
+		final resourceRecords:Array<ResourceRecord> = [];
 		final resourceIds:Map<String, Bool> = [];
 		for (resource in session.resources) {
 			if (resourceIds.exists(resource.id)) {
@@ -241,9 +320,9 @@ class SemanticCollector {
 			addFile(session.files, file);
 			resourceRecords.push({id: resource.id, path: resource.path});
 		}
-		resourceRecords.sort((left, right) -> Reflect.compare(left.id, right.id));
+		resourceRecords.sort((left, right) -> compareText(left.id, right.id));
 
-		final environmentRecords:Array<Dynamic> = [];
+		final environmentRecords:Array<EnvironmentRecord> = [];
 		final environmentNames:Map<String, Bool> = [];
 		for (declaration in session.environments) {
 			if (environmentNames.exists(declaration.name)) {
@@ -266,8 +345,8 @@ class SemanticCollector {
 			}
 			try {
 				CanonicalJson.requireCanonicalString(value, "environment " + declaration.name);
-			} catch (message:String) {
-				fail("WPHX4049", message, declaration.position);
+			} catch (error:CanonicalJsonError) {
+				fail("WPHX4049", error.message, declaration.position);
 			}
 			environmentRecords.push({
 				name: declaration.name,
@@ -277,9 +356,9 @@ class SemanticCollector {
 				valueSha256: digest(value)
 			});
 		}
-		environmentRecords.sort((left, right) -> Reflect.compare(left.name, right.name));
+		environmentRecords.sort((left, right) -> compareText(left.name, right.name));
 
-		final fileRecords = [
+		final fileRecords:Array<InputFileRecord> = [
 			for (file in session.files)
 				{
 					path: file.path,
@@ -288,9 +367,9 @@ class SemanticCollector {
 					role: file.role
 				}
 		];
-		fileRecords.sort((left, right) -> Reflect.compare(left.path, right.path));
+		fileRecords.sort((left, right) -> compareText(left.path, right.path));
 
-		final inputMaterial = {
+		final inputMaterial:CollectorInputMaterial = {
 			schema: INPUTS_SCHEMA,
 			canonicalization: CANONICALIZATION,
 			fingerprintAlgorithm: "sha256-canonical-json-without-fingerprint-and-planDigest-v1",
@@ -309,9 +388,9 @@ class SemanticCollector {
 			environment: environmentRecords,
 			tools: session.tools
 		};
-		final inputsFingerprint = digest(CanonicalJson.encode(inputMaterial));
+		final inputsFingerprint = digest(CanonicalJson.encode(SemanticJson.inputMaterial(inputMaterial)));
 
-		final nodes:Array<Dynamic> = [];
+		final nodes:Array<SemanticNode> = [];
 		for (draft in session.modules) {
 			nodes.push(moduleNode(draft));
 		}
@@ -328,18 +407,26 @@ class SemanticCollector {
 			if (nodeIds.exists(node.id)) {
 				fail("WPHX4046", "duplicate semantic node id " + node.id, draft.position);
 			}
-			for (capability in cast(node.profileCapabilities, Array<Dynamic>)) {
-				if (!session.catalogCapabilities.exists(cast capability)) {
+			for (capability in node.profileCapabilities) {
+				if (!session.catalogCapabilities.exists(capability)) {
 					fail("WPHX4047", "exact profile lacks capability " + capability, draft.position);
 				}
 			}
 			nodeIds.set(node.id, true);
 			nodes.push(node);
 		}
-		nodes.sort((left, right) -> Reflect.compare(left.id, right.id));
+		for (draft in session.services) {
+			final node = developmentServiceNode(draft);
+			if (nodeIds.exists(node.id)) {
+				fail("WPHX4181", "duplicate semantic node id " + node.id, draft.position);
+			}
+			nodeIds.set(node.id, true);
+			nodes.push(node);
+		}
+		nodes.sort((left, right) -> compareText(left.id, right.id));
 		final projections:Map<String, Bool> = [];
 		for (node in nodes) {
-			for (projection in cast(node.projections, Array<Dynamic>)) {
+			for (projection in node.projections) {
 				if (projections.exists(projection.projectionId)) {
 					fail("WPHX4048", "duplicate projection id " + projection.projectionId, Context.currentPos());
 				}
@@ -347,12 +434,13 @@ class SemanticCollector {
 			}
 		}
 
-		final nodeSchemas = [for (nodeSchema in session.config.nodeSchemas) nodeSchemaRecord(nodeSchema)];
-		nodeSchemas.sort((left, right) -> Reflect.compare(left.schemaId, right.schemaId));
-		final planWithoutDigest = {
+		final nodeSchemas:Array<NodeSchemaRecord> = [for (nodeSchema in session.config.nodeSchemas) nodeSchemaRecord(nodeSchema)];
+		nodeSchemas.sort((left, right) -> compareText(left.schemaId, right.schemaId));
+		final planMaterial:SemanticPlanRecord = {
 			schema: PLAN_SCHEMA,
 			canonicalization: CANONICALIZATION,
 			planDigestAlgorithm: "sha256-canonical-json-without-planDigest-v1",
+			planDigest: null,
 			generator: {
 				sdkVersion: session.config.sdkVersion,
 				collectorId: COLLECTOR_ID,
@@ -373,23 +461,25 @@ class SemanticCollector {
 			nodeSchemas: nodeSchemas,
 			nodes: nodes
 		};
-		final planDigest = digest(CanonicalJson.encode(planWithoutDigest));
-		Reflect.setField(planWithoutDigest, "planDigest", planDigest);
-		final inputs = {
-			schema: inputMaterial.schema,
-			canonicalization: inputMaterial.canonicalization,
-			fingerprintAlgorithm: inputMaterial.fingerprintAlgorithm,
-			fingerprint: inputsFingerprint,
+		final planDigest = digest(CanonicalJson.encode(SemanticJson.plan(planMaterial)));
+		final plan:SemanticPlanRecord = {
+			schema: planMaterial.schema,
+			canonicalization: planMaterial.canonicalization,
+			planDigestAlgorithm: planMaterial.planDigestAlgorithm,
 			planDigest: planDigest,
-			project: inputMaterial.project,
-			profile: inputMaterial.profile,
-			files: inputMaterial.files,
-			resources: inputMaterial.resources,
-			environment: inputMaterial.environment,
-			tools: inputMaterial.tools
+			generator: planMaterial.generator,
+			profile: planMaterial.profile,
+			project: planMaterial.project,
+			nodeSchemas: planMaterial.nodeSchemas,
+			nodes: planMaterial.nodes
 		};
-		atomicWrite(session.planOutputPath, CanonicalJson.encode(planWithoutDigest) + "\n");
-		atomicWrite(session.inputsOutputPath, CanonicalJson.encode(inputs) + "\n");
+		final inputs:CollectorInputs = {
+			material: inputMaterial,
+			fingerprint: inputsFingerprint,
+			planDigest: planDigest
+		};
+		atomicWrite(session.planOutputPath, CanonicalJson.encode(SemanticJson.plan(plan)) + "\n");
+		atomicWrite(session.inputsOutputPath, CanonicalJson.encode(SemanticJson.inputs(inputs)) + "\n");
 	}
 
 	static function hydrateDeclarations(session:CollectorSession, types:Array<Type>):Void {
@@ -397,6 +487,7 @@ class SemanticCollector {
 		session.hooks.resize(0);
 		session.resources.resize(0);
 		session.environments.resize(0);
+		session.services.resize(0);
 		final seenTypes:Map<String, Bool> = [];
 		for (type in types) {
 			final classType:Null<ClassType> = switch type {
@@ -497,10 +588,30 @@ class SemanticCollector {
 				}
 				session.environments.push({name: name, position: entry.pos});
 			}
+			for (entry in classType.meta.extract(DEVELOPMENT_SERVICE_METADATA)) {
+				requireMetadataArity(entry, 2);
+				final encoded = metadataString(entry, 0);
+				final owner = metadataString(entry, 1);
+				if (owner != classIdentity) {
+					fail("WPHX4183", "cached development service owner contradicts its typed Haxe class", entry.pos);
+				}
+				final encodedData = parseJson(encoded, "WPHX4183", "cached development service", entry.pos);
+				if (CanonicalJson.encode(encodedData) != encoded) {
+					fail("WPHX4183", "cached development service is not canonical", entry.pos);
+				}
+				final data = decodeDevelopmentService(encodedData, session, entry.pos);
+				session.services.push({
+					serviceId: data.serviceId,
+					dependsOn: data.dependsOn.copy(),
+					data: data,
+					span: sourceSpan(entry.pos, owner + ".development." + data.serviceId, session),
+					position: entry.pos
+				});
+			}
 		}
 	}
 
-	static function moduleNode(draft:ModuleDraft):Dynamic {
+	static function moduleNode(draft:ModuleDraft):SemanticNode {
 		final artifactKind = switch draft.moduleType {
 			case "plugin": "plugin.bootstrap.php";
 			case "mu-plugin": "mu-plugin.bootstrap.php";
@@ -523,21 +634,21 @@ class SemanticCollector {
 					artifactKind: artifactKind
 				}
 			],
-			payload: {
+			payload: ModulePayload({
 				moduleId: draft.moduleId,
 				moduleType: draft.moduleType,
 				displayName: draft.displayName,
 				version: draft.version,
 				namespace: draft.namespace
-			}
+			})
 		};
 	}
 
-	static function hookNode(draft:HookDraft, module:ModuleDraft):Dynamic {
+	static function hookNode(draft:HookDraft, module:ModuleDraft):SemanticNode {
 		final capability = "wordpress.php.function.add_" + draft.hookType;
 		final nativeKind = draft.hookType == "action" ? "hook" : "filter";
 		final capabilities = ["wordpress." + nativeKind + "." + draft.hookName, capability];
-		capabilities.sort(Reflect.compare);
+		capabilities.sort(compareText);
 		return {
 			id: "hook/" + draft.moduleId + "/" + draft.hookName + "/" + draft.hookId,
 			kind: "wordpress.hook",
@@ -553,254 +664,657 @@ class SemanticCollector {
 					artifactKind: "hook.registration.php"
 				}
 			],
-			payload: {
+			payload: HookPayload({
 				hookName: draft.hookName,
 				hookType: draft.hookType,
 				callbackSymbol: module.namespace + "\\" + draft.callbackOwner + "::" + draft.callbackName,
 				priority: draft.priority,
 				acceptedArgs: draft.acceptedArgs
-			}
+			})
 		};
 	}
 
-	static function nodeSchemaRecord(value:NodeSchemaConfig):Dynamic {
-		final record:Dynamic = {
+	static function developmentServiceNode(draft:DevelopmentServiceDraft):SemanticNode {
+		final dependencies = [for (dependency in draft.dependsOn) "service/" + dependency];
+		dependencies.sort(compareText);
+		return {
+			id: "service/" + draft.serviceId,
+			kind: DEVELOPMENT_SERVICE_KIND,
+			schemaId: DEVELOPMENT_SERVICE_SCHEMA,
+			source: draft.span,
+			relatedSources: [],
+			dependsOn: dependencies,
+			profileCapabilities: [],
+			projections: [
+				{
+					projectionId: "dev/service/" + draft.serviceId,
+					emitterId: DEVELOPMENT_SERVICE_EMITTER,
+					artifactKind: "development.service"
+				}
+			],
+			payload: DevelopmentPayload(draft.data)
+		};
+	}
+
+	static function developmentServiceData(serviceKind:DevelopmentServiceKind, options:Null<Expr>, session:CollectorSession):DevelopmentServiceData {
+		final position = options == null ? Context.currentPos() : options.pos;
+		final optionalFields = [
+			"dependsOn",
+			"environment",
+			"preferredPort",
+			"readinessIntervalMs",
+			"readinessKind",
+			"readinessPath",
+			"readinessText",
+			"readinessTimeoutMs",
+			"restartAttempts",
+			"restartBackoffMs",
+			"strictPort",
+			"urlPath",
+			"workingDirectory"
+		];
+		final fields:Map<String, Expr> = switch serviceKind {
+			case WordPressService:
+				optionalFields.push("id");
+				options == null ? [] : objectFields(options, [], optionalFields);
+			case ExternalService:
+				if (options == null) {
+					fail("WPHX4183", "Dev.service requires a literal options object", position);
+				}
+				objectFields(options, ["command", "id"], optionalFields);
+		};
+		final serviceId = fields.exists("id") ? literalString(fields.get("id"), "WPHX4184", "development service id") : "wordpress";
+		requirePattern(STABLE_ID, serviceId, "WPHX4184", "development service id is not stable", position);
+		final workingDirectoryValue = fields.exists("workingDirectory") ? literalString(fields.get("workingDirectory"), "WPHX4185",
+			"development service working directory") : ".";
+		final workingDirectory = projectDirectory(workingDirectoryValue, "WPHX4185", "development service working directory", position);
+		final dependencies = fields.exists("dependsOn") ? literalStringArray(fields.get("dependsOn"), "WPHX4186", "development service dependencies") : [];
+		for (dependency in dependencies) {
+			requirePattern(STABLE_ID, dependency, "WPHX4186", "development service dependency is not stable", fields.get("dependsOn").pos);
+		}
+		sortUnique(dependencies, "WPHX4186", "development service dependencies", position);
+
+		final environment = fields.exists("environment") ? literalStringArray(fields.get("environment"), "WPHX4187", "development service environment") : [];
+		for (name in environment) {
+			requirePattern(ENVIRONMENT_NAME, name, "WPHX4187", "development service environment name is invalid", fields.get("environment").pos);
+		}
+		sortUnique(environment, "WPHX4187", "development service environment", position);
+
+		final command:Null<DevelopmentCommand> = switch serviceKind {
+			case WordPressService: null;
+			case ExternalService:
+				final commandFields = objectFields(fields.get("command"), ["arguments", "component", "executable"]);
+				final component = literalString(commandFields.get("component"), "WPHX4188", "development command component");
+				requirePattern(STABLE_ID, component, "WPHX4188", "development command component is not stable", commandFields.get("component").pos);
+				final executable = literalString(commandFields.get("executable"), "WPHX4189", "development command executable");
+				requirePattern(EXECUTABLE_NAME, executable, "WPHX4189", "development command executable must be a portable basename",
+					commandFields.get("executable").pos);
+				{
+					component: component,
+					executable: executable,
+					arguments: literalStringArray(commandFields.get("arguments"), "WPHX4190", "development command arguments")
+				};
+		};
+
+		final preferredPort = fields.exists("preferredPort") ? literalInteger(fields.get("preferredPort"), "WPHX4191",
+			"development service preferred port") : switch serviceKind {
+				case WordPressService: 8888;
+				case ExternalService: 8080;
+			};
+		final strictPort = fields.exists("strictPort") ? literalBoolean(fields.get("strictPort"), "WPHX4192", "development service strict port") : false;
+		final readinessKindName = fields.exists("readinessKind") ? literalReadinessKind(fields.get("readinessKind"), "WPHX4193",
+			"development readiness kind") : "http";
+		final readinessPath = fields.exists("readinessPath") ? literalString(fields.get("readinessPath"), "WPHX4194",
+			"development readiness path") : switch serviceKind {
+				case WordPressService: "/wp-json/";
+				case ExternalService: "/";
+			};
+		final readinessText = fields.exists("readinessText") ? literalString(fields.get("readinessText"), "WPHX4195", "development readiness text") : "";
+		final readinessTimeoutMs = fields.exists("readinessTimeoutMs") ? literalInteger(fields.get("readinessTimeoutMs"), "WPHX4196",
+			"development readiness timeout") : 60000;
+		final readinessIntervalMs = fields.exists("readinessIntervalMs") ? literalInteger(fields.get("readinessIntervalMs"), "WPHX4197",
+			"development readiness interval") : 100;
+		final restartAttempts = fields.exists("restartAttempts") ? literalInteger(fields.get("restartAttempts"), "WPHX4198",
+			"development restart attempts") : 1;
+		final restartBackoffMs = fields.exists("restartBackoffMs") ? literalInteger(fields.get("restartBackoffMs"), "WPHX4199",
+			"development restart backoff") : 250;
+		final urlPath = fields.exists("urlPath") ? literalString(fields.get("urlPath"), "WPHX4200", "development service URL path") : "/";
+		final reload = switch serviceKind {
+			case WordPressService: FullPageReload;
+			case ExternalService: NoReload;
+		};
+		final readiness = parseReadinessKind(readinessKindName, position);
+
+		final data:DevelopmentServiceData = {
+			serviceId: serviceId,
+			serviceKind: serviceKind,
+			dependsOn: dependencies,
+			workingDirectory: workingDirectory,
+			command: command,
+			environment: environment,
+			port: {
+				preferred: preferredPort,
+				strict: strictPort
+			},
+			readiness: {
+				kind: readiness,
+				path: readinessPath,
+				text: readinessText,
+				timeoutMs: readinessTimeoutMs,
+				intervalMs: readinessIntervalMs
+			},
+			restart: {
+				maxAttempts: restartAttempts,
+				backoffMs: restartBackoffMs
+			},
+			url: {
+				scheme: "http",
+				path: urlPath
+			},
+			reload: reload
+		};
+		validateDevelopmentServiceData(data, session, position);
+		return data;
+	}
+
+	static function decodeDevelopmentService(value:JsonValue, session:CollectorSession, position:Position):DevelopmentServiceData {
+		return readJson(position, () -> {
+			final service = JsonObjectReader.from(value, "development service", "WPHX4183");
+			service.exact([
+				"command",
+				"dependsOn",
+				"environment",
+				"port",
+				"readiness",
+				"reload",
+				"restart",
+				"serviceId",
+				"serviceKind",
+				"url",
+				"workingDirectory"
+			], "WPHX4183");
+			final command:Null<DevelopmentCommand> = switch service.value("command", "WPHX4188") {
+				case NullValue: null;
+				case value:
+					final command = JsonObjectReader.from(value, "development service.command", "WPHX4188");
+					command.exact(["arguments", "component", "executable"], "WPHX4188");
+					{
+						component: command.string("component", "WPHX4188"),
+						executable: command.string("executable", "WPHX4189"),
+						arguments: command.strings("arguments", "WPHX4190")
+					};
+			};
+			final port = service.object("port", "WPHX4191");
+			port.exact(["preferred", "strict"], "WPHX4191");
+			final readiness = service.object("readiness", "WPHX4193");
+			readiness.exact(["intervalMs", "kind", "path", "text", "timeoutMs"], "WPHX4193");
+			final restart = service.object("restart", "WPHX4198");
+			restart.exact(["backoffMs", "maxAttempts"], "WPHX4198");
+			final url = service.object("url", "WPHX4200");
+			url.exact(["path", "scheme"], "WPHX4200");
+			final data:DevelopmentServiceData = {
+				serviceId: service.string("serviceId", "WPHX4184"),
+				serviceKind: parseServiceKind(service.string("serviceKind", "WPHX4180"), position),
+				dependsOn: service.strings("dependsOn", "WPHX4186"),
+				workingDirectory: service.string("workingDirectory", "WPHX4185"),
+				command: command,
+				environment: service.strings("environment", "WPHX4187"),
+				port: {
+					preferred: port.integer("preferred", "WPHX4191"),
+					strict: port.boolean("strict", "WPHX4192")
+				},
+				readiness: {
+					kind: parseReadinessKind(readiness.string("kind", "WPHX4193"), position),
+					path: readiness.string("path", "WPHX4194"),
+					text: readiness.string("text", "WPHX4195"),
+					timeoutMs: readiness.integer("timeoutMs", "WPHX4196"),
+					intervalMs: readiness.integer("intervalMs", "WPHX4197")
+				},
+				restart: {
+					maxAttempts: restart.integer("maxAttempts", "WPHX4198"),
+					backoffMs: restart.integer("backoffMs", "WPHX4199")
+				},
+				url: {
+					scheme: url.string("scheme", "WPHX4200"),
+					path: url.string("path", "WPHX4200")
+				},
+				reload: parseReloadKind(service.string("reload", "WPHX4201"), position)
+			};
+			validateDevelopmentServiceData(data, session, position);
+			return data;
+		});
+	}
+
+	static function validateDevelopmentServiceData(data:DevelopmentServiceData, session:CollectorSession, position:Position):Void {
+		requirePattern(STABLE_ID, data.serviceId, "WPHX4184", "development service id is not stable", position);
+		projectDirectory(data.workingDirectory, "WPHX4185", "development service working directory", position);
+
+		for (dependency in data.dependsOn) {
+			requirePattern(STABLE_ID, dependency, "WPHX4186", "development service dependency is not stable", position);
+			if (dependency == data.serviceId) {
+				fail("WPHX4182", "development service cannot depend on itself: " + data.serviceId, position);
+			}
+		}
+		requireSortedUnique(data.dependsOn, "WPHX4186", "development service dependencies", position);
+
+		for (name in data.environment) {
+			requirePattern(ENVIRONMENT_NAME, name, "WPHX4187", "development service environment name is invalid", position);
+			final rule = session.config.runtimeEnvironment.get(name);
+			if (rule == null || rule.services.indexOf(data.serviceId) < 0) {
+				fail("WPHX4187", "runtime environment " + name + " is not admitted for development service " + data.serviceId, position);
+			}
+		}
+		requireSortedUnique(data.environment, "WPHX4187", "development service environment", position);
+
+		switch data.serviceKind {
+			case WordPressService:
+				if (data.command != null) {
+					fail("WPHX4188", "the SDK-owned WordPress provider must not declare a raw command", position);
+				}
+			case ExternalService:
+				final command = requireDevelopmentCommand(data.command, position);
+				requirePattern(STABLE_ID, command.component, "WPHX4188", "development command component is not stable", position);
+				if (!toolExists(session.tools, command.component)) {
+					fail("WPHX4188", "development command component is absent from the exact project lock: " + command.component, position);
+				}
+				requirePattern(EXECUTABLE_NAME, command.executable, "WPHX4189", "development command executable must be a portable basename", position);
+				var portTokens = 0;
+				for (argument in command.arguments) {
+					if (argument.indexOf("{port}") >= 0) {
+						portTokens++;
+					}
+				}
+				if (portTokens > 1) {
+					fail("WPHX4190", "development command may contain {port} in at most one argument", position);
+				}
+		}
+
+		if (data.port.preferred < 1 || data.port.preferred > 65535) {
+			fail("WPHX4191", "development service preferred port must be between 1 and 65535", position);
+		}
+
+		absoluteUrlPath(data.readiness.path, "WPHX4194", "development readiness path", position);
+		final logReadiness = switch data.readiness.kind {
+			case LogReadiness: true;
+			case _: false;
+		};
+		if (logReadiness != (data.readiness.text.length > 0)) {
+			fail("WPHX4195", "only log readiness requires non-empty readinessText", position);
+		}
+		if (data.readiness.timeoutMs < 100 || data.readiness.timeoutMs > 300000) {
+			fail("WPHX4196", "development readiness timeout must be between 100 and 300000 milliseconds", position);
+		}
+		if (data.readiness.intervalMs < 10 || data.readiness.intervalMs > 5000 || data.readiness.intervalMs > data.readiness.timeoutMs) {
+			fail("WPHX4197", "development readiness interval must be between 10 and 5000 milliseconds and not exceed timeout", position);
+		}
+
+		if (data.restart.maxAttempts < 0 || data.restart.maxAttempts > 10) {
+			fail("WPHX4198", "development restart attempts must be between 0 and 10", position);
+		}
+		if (data.restart.backoffMs < 0 || data.restart.backoffMs > 60000) {
+			fail("WPHX4199", "development restart backoff must be between 0 and 60000 milliseconds", position);
+		}
+
+		if (data.url.scheme != "http") {
+			fail("WPHX4200", "development service URL scheme must be http in collector v1", position);
+		}
+		absoluteUrlPath(data.url.path, "WPHX4200", "development service URL path", position);
+		final expectedReload = switch data.serviceKind {
+			case WordPressService: FullPageReload;
+			case ExternalService: NoReload;
+		};
+		if (data.reload != expectedReload) {
+			fail("WPHX4201", "development service reload behavior contradicts its provider", position);
+		}
+	}
+
+	static function requireDevelopmentCommand(command:Null<DevelopmentCommand>, position:Position):DevelopmentCommand {
+		if (command == null) {
+			return fail("WPHX4188", "an external development service requires a raw command", position);
+		}
+		return command;
+	}
+
+	static function parseServiceKind(value:String, position:Position):DevelopmentServiceKind {
+		return switch value {
+			case "wordpress": WordPressService;
+			case "external": ExternalService;
+			case _: fail("WPHX4180", "development service provider is outside the closed set", position);
+		};
+	}
+
+	static function parseReadinessKind(value:String, position:Position):DevelopmentReadinessKind {
+		return switch value {
+			case "http": HttpReadiness;
+			case "log": LogReadiness;
+			case "process": ProcessReadiness;
+			case "tcp": TcpReadiness;
+			case _: fail("WPHX4193", "development readiness kind is outside the closed set", position);
+		};
+	}
+
+	static function parseReloadKind(value:String, position:Position):DevelopmentReloadKind {
+		return switch value {
+			case "full-page": FullPageReload;
+			case "none": NoReload;
+			case _: fail("WPHX4201", "development reload behavior is outside the closed set", position);
+		};
+	}
+
+	static function validateDevelopmentServiceRegistration(schemas:Array<NodeSchemaConfig>, position:Position):Void {
+		for (schema in schemas) {
+			if (schema.schemaId == DEVELOPMENT_SERVICE_SCHEMA) {
+				if (schema.kind != DEVELOPMENT_SERVICE_KIND
+					|| schema.authority != "core"
+					|| schema.consumerEmitters.indexOf(DEVELOPMENT_SERVICE_EMITTER) < 0) {
+					fail("WPHX4202", "development service schema registration contradicts the core contract", position);
+				}
+				return;
+			}
+		}
+		fail("WPHX4202", "typed development services require the core development service node schema", position);
+	}
+
+	static function detectDevelopmentServiceCycles(services:Map<String, DevelopmentServiceDraft>):Void {
+		final states:Map<String, Int> = [];
+		var visit:String->Void = null;
+		visit = serviceId -> {
+			final state = states.exists(serviceId) ? states.get(serviceId) : 0;
+			if (state == 2) {
+				return;
+			}
+			if (state == 1) {
+				final service = services.get(serviceId);
+				fail("WPHX4203", "development service dependency graph contains a cycle at " + serviceId, service.position);
+			}
+			states.set(serviceId, 1);
+			final service = services.get(serviceId);
+			for (dependency in service.dependsOn) {
+				visit(dependency);
+			}
+			states.set(serviceId, 2);
+		};
+		final ids = [for (serviceId in services.keys()) serviceId];
+		ids.sort(compareText);
+		for (serviceId in ids) {
+			visit(serviceId);
+		}
+	}
+
+	static function nodeSchemaRecord(value:NodeSchemaConfig):NodeSchemaRecord {
+		return {
 			schemaId: value.schemaId,
 			kind: value.kind,
 			version: value.version,
 			authority: value.authority,
+			extensionId: value.extensionId,
 			schemaSha256: value.schemaSha256,
 			consumerEmitters: value.consumerEmitters.copy()
 		};
-		if (value.extensionId != null) {
-			Reflect.setField(record, "extensionId", value.extensionId);
-		}
-		return record;
 	}
 
-	static function validateConfig(value:Dynamic, root:String, position:Position):CollectorConfig {
-		exactObject(value, [
-			"canonicalization",
-			"collectorVersion",
-			"environment",
-			"nodeSchemas",
-			"profile",
-			"project",
-			"resourceRoots",
-			"schema",
-			"sdkVersion",
-			"toolchainLock"
-		], "WPHX4050", "collector config", position);
-		if (stringField(value, "schema", "WPHX4051", "collector config", position) != "wordpress-hx.semantic-collector-config.v1"
-			|| stringField(value, "canonicalization", "WPHX4052", "collector config", position) != CANONICALIZATION) {
-			fail("WPHX4053", "unsupported collector config contract", position);
-		}
-		final sdkVersion = semanticVersion(stringField(value, "sdkVersion", "WPHX4054", "collector config", position), "SDK version", position);
-		final collectorVersion = semanticVersion(stringField(value, "collectorVersion", "WPHX4055", "collector config", position), "collector version",
-			position);
-		final project = Reflect.field(value, "project");
-		exactObject(project, ["id", "version"], "WPHX4056", "collector project", position);
-		final projectId = stringField(project, "id", "WPHX4057", "collector project", position);
-		requirePattern(STABLE_ID, projectId, "WPHX4058", "project id is not stable", position);
-		final projectVersion = semanticVersion(stringField(project, "version", "WPHX4059", "collector project", position), "project version", position);
+	static function validateConfig(value:JsonValue, root:String, position:Position):CollectorConfig {
+		return readJson(position, () -> {
+			final config = JsonObjectReader.from(value, "collector config", "WPHX4050");
+			final hasRuntimeEnvironment = config.has("runtimeEnvironment");
+			final configFields = [
+				"canonicalization",
+				"collectorVersion",
+				"environment",
+				"nodeSchemas",
+				"profile",
+				"project",
+				"resourceRoots",
+				"schema",
+				"sdkVersion",
+				"toolchainLock"
+			];
+			if (hasRuntimeEnvironment) {
+				configFields.push("runtimeEnvironment");
+			}
+			config.exact(configFields, "WPHX4050");
+			if (config.string("schema", "WPHX4051") != "wordpress-hx.semantic-collector-config.v1"
+				|| config.string("canonicalization", "WPHX4052") != CANONICALIZATION) {
+				fail("WPHX4053", "unsupported collector config contract", position);
+			}
+			final sdkVersion = semanticVersion(config.string("sdkVersion", "WPHX4054"), "SDK version", position);
+			final collectorVersion = semanticVersion(config.string("collectorVersion", "WPHX4055"), "collector version", position);
+			final project = config.object("project", "WPHX4056");
+			project.exact(["id", "version"], "WPHX4056");
+			final projectId = project.string("id", "WPHX4057");
+			requirePattern(STABLE_ID, projectId, "WPHX4058", "project id is not stable", position);
+			final projectVersion = semanticVersion(project.string("version", "WPHX4059"), "project version", position);
 
-		final profile = Reflect.field(value, "profile");
-		exactObject(profile, ["catalogFileSha256", "catalogPath", "catalogRevision", "catalogSha256", "id"], "WPHX4060", "collector profile", position);
-		final profileConfig:ProfileConfig = {
-			id: stringField(profile, "id", "WPHX4061", "collector profile", position),
-			catalogRevision: stringField(profile, "catalogRevision", "WPHX4062", "collector profile", position),
-			catalogPath: safeRelativePath(stringField(profile, "catalogPath", "WPHX4063", "collector profile", position), "WPHX4064", "profile catalog path",
-				position),
-			catalogSha256: digestField(profile, "catalogSha256", "WPHX4065", "collector profile", position),
-			catalogFileSha256: digestField(profile, "catalogFileSha256", "WPHX4066", "collector profile", position)
-		};
-		requirePattern(STABLE_ID, profileConfig.id, "WPHX4067", "profile id is not stable", position);
-		if (profileConfig.catalogRevision.indexOf(profileConfig.id + "/") != 0) {
-			fail("WPHX4068", "profile catalog revision contradicts profile id", position);
-		}
+			final profile = config.object("profile", "WPHX4060");
+			profile.exact(["catalogFileSha256", "catalogPath", "catalogRevision", "catalogSha256", "id"], "WPHX4060");
+			final profileConfig:ProfileConfig = {
+				id: profile.string("id", "WPHX4061"),
+				catalogRevision: profile.string("catalogRevision", "WPHX4062"),
+				catalogPath: safeRelativePath(profile.string("catalogPath", "WPHX4063"), "WPHX4064", "profile catalog path", position),
+				catalogSha256: digestValue(profile.string("catalogSha256", "WPHX4065"), "WPHX4065", "collector profile.catalogSha256", position),
+				catalogFileSha256: digestValue(profile.string("catalogFileSha256", "WPHX4066"), "WPHX4066", "collector profile.catalogFileSha256", position)
+			};
+			requirePattern(STABLE_ID, profileConfig.id, "WPHX4067", "profile id is not stable", position);
+			if (profileConfig.catalogRevision.indexOf(profileConfig.id + "/") != 0) {
+				fail("WPHX4068", "profile catalog revision contradicts profile id", position);
+			}
 
-		final lock = Reflect.field(value, "toolchainLock");
-		exactObject(lock, ["path", "sha256"], "WPHX4069", "toolchain lock", position);
-		final toolchainPath = safeRelativePath(stringField(lock, "path", "WPHX4070", "toolchain lock", position), "WPHX4071", "toolchain lock path", position);
-		final toolchainSha256 = digestField(lock, "sha256", "WPHX4072", "toolchain lock", position);
+			final lock = config.object("toolchainLock", "WPHX4069");
+			lock.exact(["path", "sha256"], "WPHX4069");
+			final toolchainPath = safeRelativePath(lock.string("path", "WPHX4070"), "WPHX4071", "toolchain lock path", position);
+			final toolchainSha256 = digestValue(lock.string("sha256", "WPHX4072"), "WPHX4072", "toolchain lock.sha256", position);
 
-		final roots = dynamicArray(value, "resourceRoots", "WPHX4073", "collector config", position);
-		final resourceRoots:Array<String> = [];
-		for (entry in roots) {
-			if (!Std.isOfType(entry, String)) {
-				fail("WPHX4074", "resource root must be a string", position);
+			final resourceRoots = config.strings("resourceRoots", "WPHX4073");
+			for (index in 0...resourceRoots.length) {
+				resourceRoots[index] = safeRelativePath(resourceRoots[index], "WPHX4075", "resource root", position);
 			}
-			resourceRoots.push(safeRelativePath(cast entry, "WPHX4075", "resource root", position));
-		}
-		if (resourceRoots.length == 0) {
-			fail("WPHX4076", "collector config requires at least one resource root", position);
-		}
-		sortUnique(resourceRoots, "WPHX4076", "resource roots", position);
+			if (resourceRoots.length == 0) {
+				fail("WPHX4076", "collector config requires at least one resource root", position);
+			}
+			sortUnique(resourceRoots, "WPHX4076", "resource roots", position);
 
-		final environment:Map<String, EnvironmentRule> = [];
-		for (entry in dynamicArray(value, "environment", "WPHX4077", "collector config", position)) {
-			final hasDefault = Reflect.hasField(entry, "default");
-			exactObject(entry, hasDefault ? ["classification", "default", "name", "required"] : ["classification", "name", "required"], "WPHX4078",
-				"build environment rule", position);
-			if (stringField(entry, "classification", "WPHX4079", "build environment rule", position) != "public-build") {
-				fail("WPHX4080", "collector may read public-build environment only", position);
-			}
-			final name = stringField(entry, "name", "WPHX4081", "build environment rule", position);
-			requirePattern(ENVIRONMENT_NAME, name, "WPHX4082", "build environment name is invalid", position);
-			if (environment.exists(name)) {
-				fail("WPHX4083", "duplicate build environment rule " + name, position);
-			}
-			final required = boolField(entry, "required", "WPHX4084", "build environment rule", position);
-			final defaultValue = hasDefault ? stringField(entry, "default", "WPHX4085", "build environment rule", position) : null;
-			if (required && defaultValue != null) {
-				fail("WPHX4086", "required build environment input cannot also have a default", position);
-			}
-			environment.set(name, {required: required, defaultValue: defaultValue});
-		}
-
-		final nodeSchemas:Array<NodeSchemaConfig> = [];
-		final schemaIds:Map<String, Bool> = [];
-		for (entry in dynamicArray(value, "nodeSchemas", "WPHX4087", "collector config", position)) {
-			final hasExtension = Reflect.hasField(entry, "extensionId");
-			exactObject(entry, hasExtension ? [
-				"authority",
-				"consumerEmitters",
-				"extensionId",
-				"kind",
-				"path",
-				"schemaId",
-				"schemaSha256",
-				"version"
-			] : [
-				"authority",
-				"consumerEmitters",
-				"kind",
-				"path",
-				"schemaId",
-				"schemaSha256",
-				"version"
-			], "WPHX4088", "node schema registration", position);
-			final schemaId = stringField(entry, "schemaId", "WPHX4089", "node schema registration", position);
-			requirePattern(STABLE_ID, schemaId, "WPHX4089", "node schema id is not stable", position);
-			if (schemaIds.exists(schemaId)) {
-				fail("WPHX4090", "duplicate node schema registration " + schemaId, position);
-			}
-			schemaIds.set(schemaId, true);
-			final authority = stringField(entry, "authority", "WPHX4091", "node schema registration", position);
-			if (authority != "core" && authority != "extension") {
-				fail("WPHX4092", "node schema authority must be core or extension", position);
-			}
-			if ((authority == "extension") != hasExtension) {
-				fail("WPHX4093", "only an extension node schema must declare extensionId", position);
-			}
-			final extensionId = hasExtension ? stringField(entry, "extensionId", "WPHX4100", "node schema registration", position) : null;
-			if (extensionId != null) {
-				requirePattern(STABLE_ID, extensionId, "WPHX4100", "extension id is not stable", position);
-			}
-			final emitters:Array<String> = [];
-			for (emitter in dynamicArray(entry, "consumerEmitters", "WPHX4094", "node schema registration", position)) {
-				if (!Std.isOfType(emitter, String)) {
-					fail("WPHX4095", "node schema emitter must be a string", position);
+			final environment:Map<String, EnvironmentRule> = [];
+			for (value in config.array("environment", "WPHX4077")) {
+				final entry = JsonObjectReader.from(value, "build environment rule", "WPHX4078");
+				final hasDefault = entry.has("default");
+				entry.exact(hasDefault ? ["classification", "default", "name", "required"] : ["classification", "name", "required"], "WPHX4078");
+				if (entry.string("classification", "WPHX4079") != "public-build") {
+					fail("WPHX4080", "collector may read public-build environment only", position);
 				}
-				final emitterId:String = cast emitter;
-				requirePattern(STABLE_ID, emitterId, "WPHX4095", "node schema emitter id is not stable", position);
-				emitters.push(emitterId);
+				final name = entry.string("name", "WPHX4081");
+				requirePattern(ENVIRONMENT_NAME, name, "WPHX4082", "build environment name is invalid", position);
+				if (environment.exists(name)) {
+					fail("WPHX4083", "duplicate build environment rule " + name, position);
+				}
+				final required = entry.boolean("required", "WPHX4084");
+				final defaultValue = entry.optionalString("default", "WPHX4085");
+				if (required && defaultValue != null) {
+					fail("WPHX4086", "required build environment input cannot also have a default", position);
+				}
+				environment.set(name, {required: required, defaultValue: defaultValue});
 			}
-			if (emitters.length == 0) {
-				fail("WPHX4096", "node schema requires at least one consumer emitter", position);
-			}
-			sortUnique(emitters, "WPHX4096", "node schema emitters", position);
-			final version = intField(entry, "version", "WPHX4097", "node schema registration", position);
-			if (version < 1 || !StringTools.endsWith(schemaId, ".v" + version)) {
-				fail("WPHX4098", "node schema version contradicts schema id", position);
-			}
-			final kind = stringField(entry, "kind", "WPHX4099", "node schema registration", position);
-			requirePattern(STABLE_ID, kind, "WPHX4099", "node schema kind is not stable", position);
-			if ((schemaId == "wordpress-hx.semantic-node.wordpress.hook.v1" && kind != "wordpress.hook")
-				|| (schemaId == "wordpress-hx.semantic-node.wordpress.module.v1" && kind != "wordpress.module")) {
-				fail("WPHX4099", "core node schema kind contradicts its schema id", position);
-			}
-			nodeSchemas.push({
-				schemaId: schemaId,
-				kind: kind,
-				version: version,
-				authority: authority,
-				extensionId: extensionId,
-				path: safeRelativePath(stringField(entry, "path", "WPHX4101", "node schema registration", position), "WPHX4102", "node schema path", position),
-				schemaSha256: digestField(entry, "schemaSha256", "WPHX4103", "node schema registration", position),
-				consumerEmitters: emitters
-			});
-		}
-		nodeSchemas.sort((left, right) -> Reflect.compare(left.schemaId, right.schemaId));
-		for (required in [
-			"wordpress-hx.semantic-node.wordpress.hook.v1",
-			"wordpress-hx.semantic-node.wordpress.module.v1"
-		]) {
-			if (!schemaIds.exists(required)) {
-				fail("WPHX4104", "collector v1 requires node schema " + required, position);
-			}
-		}
 
-		return {
-			sdkVersion: sdkVersion,
-			collectorVersion: collectorVersion,
-			projectId: projectId,
-			projectVersion: projectVersion,
-			profile: profileConfig,
-			toolchainPath: toolchainPath,
-			toolchainSha256: toolchainSha256,
-			resourceRoots: resourceRoots,
-			environment: environment,
-			nodeSchemas: nodeSchemas
-		};
+			final runtimeEnvironment:Map<String, RuntimeEnvironmentRule> = [];
+			if (hasRuntimeEnvironment) {
+				for (value in config.array("runtimeEnvironment", "WPHX4204")) {
+					final entry = JsonObjectReader.from(value, "runtime environment rule", "WPHX4204");
+					entry.exact(["classification", "name", "required", "services"], "WPHX4204");
+					final name = entry.string("name", "WPHX4204");
+					requirePattern(ENVIRONMENT_NAME, name, "WPHX4204", "runtime environment name is invalid", position);
+					if (environment.exists(name) || runtimeEnvironment.exists(name)) {
+						fail("WPHX4204", "build and runtime environment names must be disjoint and unique: " + name, position);
+					}
+					final classification = entry.string("classification", "WPHX4204");
+					if (classification != "public-runtime" && classification != "secret-runtime") {
+						fail("WPHX4204", "runtime environment classification is outside the closed set", position);
+					}
+					final services = entry.strings("services", "WPHX4204");
+					for (serviceId in services) {
+						requirePattern(STABLE_ID, serviceId, "WPHX4204", "runtime environment service is not stable", position);
+					}
+					if (services.length == 0) {
+						fail("WPHX4204", "runtime environment rule must admit at least one service", position);
+					}
+					requireSortedUnique(services, "WPHX4204", "runtime environment services", position);
+					runtimeEnvironment.set(name, {
+						required: entry.boolean("required", "WPHX4204"),
+						classification: classification,
+						services: services
+					});
+				}
+			}
+
+			final nodeSchemas:Array<NodeSchemaConfig> = [];
+			final schemaIds:Map<String, Bool> = [];
+			for (value in config.array("nodeSchemas", "WPHX4087")) {
+				final entry = JsonObjectReader.from(value, "node schema registration", "WPHX4088");
+				final hasExtension = entry.has("extensionId");
+				entry.exact(hasExtension ? [
+					"authority",
+					"consumerEmitters",
+					"extensionId",
+					"kind",
+					"path",
+					"schemaId",
+					"schemaSha256",
+					"version"
+				] : [
+					"authority",
+					"consumerEmitters",
+					"kind",
+					"path",
+					"schemaId",
+					"schemaSha256",
+					"version"
+				], "WPHX4088");
+				final schemaId = entry.string("schemaId", "WPHX4089");
+				requirePattern(STABLE_ID, schemaId, "WPHX4089", "node schema id is not stable", position);
+				if (schemaIds.exists(schemaId)) {
+					fail("WPHX4090", "duplicate node schema registration " + schemaId, position);
+				}
+				schemaIds.set(schemaId, true);
+				final authority = entry.string("authority", "WPHX4091");
+				if (authority != "core" && authority != "extension") {
+					fail("WPHX4092", "node schema authority must be core or extension", position);
+				}
+				if ((authority == "extension") != hasExtension) {
+					fail("WPHX4093", "only an extension node schema must declare extensionId", position);
+				}
+				final extensionId = entry.optionalString("extensionId", "WPHX4100");
+				if (extensionId != null) {
+					requirePattern(STABLE_ID, extensionId, "WPHX4100", "extension id is not stable", position);
+				}
+				final emitters = entry.strings("consumerEmitters", "WPHX4094");
+				for (emitterId in emitters) {
+					requirePattern(STABLE_ID, emitterId, "WPHX4095", "node schema emitter id is not stable", position);
+				}
+				if (emitters.length == 0) {
+					fail("WPHX4096", "node schema requires at least one consumer emitter", position);
+				}
+				sortUnique(emitters, "WPHX4096", "node schema emitters", position);
+				final version = entry.integer("version", "WPHX4097");
+				if (version < 1 || !StringTools.endsWith(schemaId, ".v" + version)) {
+					fail("WPHX4098", "node schema version contradicts schema id", position);
+				}
+				final kind = entry.string("kind", "WPHX4099");
+				requirePattern(STABLE_ID, kind, "WPHX4099", "node schema kind is not stable", position);
+				if ((schemaId == "wordpress-hx.semantic-node.wordpress.hook.v1" && kind != "wordpress.hook")
+					|| (schemaId == "wordpress-hx.semantic-node.wordpress.module.v1" && kind != "wordpress.module")
+					|| (schemaId == DEVELOPMENT_SERVICE_SCHEMA && kind != DEVELOPMENT_SERVICE_KIND)) {
+					fail("WPHX4099", "core node schema kind contradicts its schema id", position);
+				}
+				nodeSchemas.push({
+					schemaId: schemaId,
+					kind: kind,
+					version: version,
+					authority: authority,
+					extensionId: extensionId,
+					path: safeRelativePath(entry.string("path", "WPHX4101"), "WPHX4102", "node schema path", position),
+					schemaSha256: digestValue(entry.string("schemaSha256", "WPHX4103"), "WPHX4103", "node schema registration.schemaSha256", position),
+					consumerEmitters: emitters
+				});
+			}
+			nodeSchemas.sort((left, right) -> compareText(left.schemaId, right.schemaId));
+			for (required in [
+				"wordpress-hx.semantic-node.wordpress.hook.v1",
+				"wordpress-hx.semantic-node.wordpress.module.v1"
+			]) {
+				if (!schemaIds.exists(required)) {
+					fail("WPHX4104", "collector v1 requires node schema " + required, position);
+				}
+			}
+
+			final validated:CollectorConfig = {
+				sdkVersion: sdkVersion,
+				collectorVersion: collectorVersion,
+				projectId: projectId,
+				projectVersion: projectVersion,
+				profile: profileConfig,
+				toolchainPath: toolchainPath,
+				toolchainSha256: toolchainSha256,
+				resourceRoots: resourceRoots,
+				environment: environment,
+				runtimeEnvironment: runtimeEnvironment,
+				nodeSchemas: nodeSchemas
+			};
+			return validated;
+		});
 	}
 
-	static function validateCatalog(value:Dynamic, config:CollectorConfig, position:Position):Void {
-		final catalog = Reflect.field(value, "catalog");
-		if (catalog == null
-			|| stringField(catalog, "profileId", "WPHX4110", "profile catalog", position) != config.profile.id
-			|| stringField(catalog, "catalogRevision", "WPHX4111", "profile catalog", position) != config.profile.catalogRevision
-			|| stringField(value, "catalogDigest", "WPHX4112", "profile catalog", position) != config.profile.catalogSha256) {
-			fail("WPHX4113", "profile catalog identity or semantic digest mismatch", position);
-		}
+	static function validateCatalog(value:JsonValue, config:CollectorConfig, position:Position):Void {
+		readJson(position, () -> {
+			final document = JsonObjectReader.from(value, "profile catalog", "WPHX4110");
+			final catalog = document.object("catalog", "WPHX4110");
+			if (catalog.string("profileId", "WPHX4110") != config.profile.id
+				|| catalog.string("catalogRevision", "WPHX4111") != config.profile.catalogRevision
+				|| document.string("catalogDigest", "WPHX4112") != config.profile.catalogSha256) {
+				fail("WPHX4113", "profile catalog identity or semantic digest mismatch", position);
+			}
+		});
 	}
 
-	static function catalogCapabilities(value:Dynamic):Map<String, Bool> {
-		final capabilities:Map<String, Bool> = [];
-		final catalog = Reflect.field(value, "catalog");
-		for (entry in dynamicArray(catalog, "capabilities", "WPHX4114", "profile catalog", Context.currentPos())) {
-			final id = stringField(entry, "capabilityId", "WPHX4115", "profile capability", Context.currentPos());
-			capabilities.set(id, true);
-		}
-		return capabilities;
+	static function catalogCapabilities(value:JsonValue, position:Position):Map<String, Bool> {
+		return readJson(position, () -> {
+			final capabilities:Map<String, Bool> = [];
+			final catalog = JsonObjectReader.from(value, "profile catalog", "WPHX4114").object("catalog", "WPHX4114");
+			for (value in catalog.array("capabilities", "WPHX4114")) {
+				final entry = JsonObjectReader.from(value, "profile capability", "WPHX4115");
+				capabilities.set(entry.string("capabilityId", "WPHX4115"), true);
+			}
+			return capabilities;
+		});
 	}
 
-	static function validateToolchain(value:Dynamic, config:CollectorConfig, position:Position):Array<Dynamic> {
-		if (stringField(value, "schema", "WPHX4120", "toolchain lock", position) != "wordpress-hx.project-lock.v1") {
-			fail("WPHX4121", "unsupported generated project lock", position);
-		}
-		final project = Reflect.field(value, "project");
-		final profile = Reflect.field(value, "profile");
-		if (stringField(project, "id", "WPHX4122", "toolchain project", position) != config.projectId
-			|| stringField(profile, "id", "WPHX4123", "toolchain profile", position) != config.profile.id
-			|| stringField(profile, "catalogRevision", "WPHX4124", "toolchain profile", position) != config.profile.catalogRevision
-			|| stringField(profile, "catalogSha256", "WPHX4125", "toolchain profile", position) != config.profile.catalogSha256) {
-			fail("WPHX4126", "toolchain lock contradicts collector project/profile", position);
-		}
-		final tools:Array<Dynamic> = [];
-		for (entry in dynamicArray(value, "components", "WPHX4127", "toolchain lock", position)) {
-			tools.push({
-				id: stringField(entry, "id", "WPHX4128", "toolchain component", position),
-				version: stringField(entry, "version", "WPHX4129", "toolchain component", position),
-				identity: stringField(entry, "identity", "WPHX4130", "toolchain component", position),
-				lockEntrySha256: digestField(entry, "lockEntrySha256", "WPHX4131", "toolchain component", position)
-			});
-		}
-		tools.sort((left, right) -> Reflect.compare(left.id, right.id));
-		return tools;
+	static function validateToolchain(value:JsonValue, config:CollectorConfig, position:Position):Array<ToolRecord> {
+		return readJson(position, () -> {
+			final lock = JsonObjectReader.from(value, "toolchain lock", "WPHX4120");
+			if (lock.string("schema", "WPHX4120") != "wordpress-hx.project-lock.v1") {
+				fail("WPHX4121", "unsupported generated project lock", position);
+			}
+			final project = lock.object("project", "WPHX4122");
+			final profile = lock.object("profile", "WPHX4123");
+			if (project.string("id", "WPHX4122") != config.projectId
+				|| profile.string("id", "WPHX4123") != config.profile.id
+				|| profile.string("catalogRevision", "WPHX4124") != config.profile.catalogRevision
+				|| profile.string("catalogSha256", "WPHX4125") != config.profile.catalogSha256) {
+				fail("WPHX4126", "toolchain lock contradicts collector project/profile", position);
+			}
+			final tools:Array<ToolRecord> = [];
+			for (value in lock.array("components", "WPHX4127")) {
+				final entry = JsonObjectReader.from(value, "toolchain component", "WPHX4128");
+				tools.push({
+					id: entry.string("id", "WPHX4128"),
+					version: entry.string("version", "WPHX4129"),
+					identity: entry.string("identity", "WPHX4130"),
+					lockEntrySha256: digestValue(entry.string("lockEntrySha256", "WPHX4131"), "WPHX4131", "toolchain component.lockEntrySha256", position)
+				});
+			}
+			tools.sort((left, right) -> compareText(left.id, right.id));
+			return tools;
+		});
 	}
 
-	static function sourceSpan(position:Position, symbol:String, session:CollectorSession):Dynamic {
+	static function sourceSpan(position:Position, symbol:String, session:CollectorSession):SourceSpan {
 		final info = Context.getPosInfos(position);
 		final physical = normalizePhysical(info.file);
 		if (!StringTools.startsWith(physical, session.root + "/")) {
@@ -822,7 +1336,7 @@ class SemanticCollector {
 		};
 	}
 
-	static function point(bytes:Bytes, offset:Int, position:Position):Dynamic {
+	static function point(bytes:Bytes, offset:Int, position:Position):SourcePoint {
 		if (offset < bytes.length && (bytes.get(offset) & 0xc0) == 0x80) {
 			fail("WPHX4143", "compiler source span splits a UTF-8 sequence", position);
 		}
@@ -901,8 +1415,8 @@ class SemanticCollector {
 			case EConst(CString(value, _)):
 				try {
 					CanonicalJson.requireCanonicalString(value, label);
-				} catch (message:String) {
-					fail(code, message, expression.pos);
+				} catch (error:CanonicalJsonError) {
+					fail(code, error.message, expression.pos);
 				}
 				value;
 			case _: fail(code, label + " must be a string literal", expression.pos);
@@ -918,6 +1432,53 @@ class SemanticCollector {
 				}
 				parsed;
 			case _: fail(code, label + " must be an integer literal", expression.pos);
+		};
+	}
+
+	static function literalBoolean(expression:Expr, code:String, label:String):Bool {
+		return switch expression.expr {
+			case EConst(CIdent("true")): true;
+			case EConst(CIdent("false")): false;
+			case _: fail(code, label + " must be a boolean literal", expression.pos);
+		};
+	}
+
+	static function literalReadinessKind(expression:Expr, code:String, label:String):String {
+		if (!Context.unify(Context.typeof(expression), Context.getType("wordpress.hx.build.semantic.DevelopmentReadinessKind"))) {
+			fail(code, label + " must be a DevelopmentReadinessKind value", expression.pos);
+		}
+		final name = switch expression.expr {
+			case EConst(CIdent(name)): name;
+			case EField(_, name): name;
+			case _: fail(code, label + " must be a DevelopmentReadinessKind value", expression.pos);
+		};
+		return switch name {
+			case "Http": "http";
+			case "Log": "log";
+			case "Process": "process";
+			case "Tcp": "tcp";
+			case _: fail(code, label + " must be a DevelopmentReadinessKind value", expression.pos);
+		};
+	}
+
+	static function literalStringArray(expression:Expr, code:String, label:String):Array<String> {
+		final values = switch expression.expr {
+			case EArrayDecl(items): items;
+			case _: fail(code, label + " must be an array literal", expression.pos);
+		};
+		return [
+			for (index in 0...values.length)
+				literalString(values[index], code, label + "[" + index + "]")
+		];
+	}
+
+	static function optionalExpression(expression:Null<Expr>):Null<Expr> {
+		if (expression == null) {
+			return null;
+		}
+		return switch expression.expr {
+			case EConst(CIdent("null")): null;
+			case _: expression;
 		};
 	}
 
@@ -1021,7 +1582,7 @@ class SemanticCollector {
 		File.saveContent(temporary, content);
 		try {
 			FileSystem.rename(temporary, path);
-		} catch (error:Dynamic) {
+		} catch (error:Exception) {
 			if (FileSystem.exists(temporary)) {
 				FileSystem.deleteFile(temporary);
 			}
@@ -1038,9 +1599,41 @@ class SemanticCollector {
 			if (part.length == 0 || part == "." || part == "..") {
 				fail(code, label + " contains an unsafe path segment", position);
 			}
-			CanonicalJson.requireCanonicalString(part, label);
+			try {
+				CanonicalJson.requireCanonicalString(part, label);
+			} catch (error:CanonicalJsonError) {
+				fail(code, error.message, position);
+			}
 		}
 		return parts.join("/");
+	}
+
+	static function projectDirectory(value:String, code:String, label:String, position:Position):String {
+		if (value == ".") {
+			return value;
+		}
+		return safeRelativePath(value, code, label, position);
+	}
+
+	static function absoluteUrlPath(value:String, code:String, label:String, position:Position):String {
+		if (value.length == 0 || value.charAt(0) != "/" || value.indexOf("\\") >= 0 || value.indexOf("?") >= 0 || value.indexOf("#") >= 0) {
+			fail(code, label + " must begin with / and contain no query, fragment, or backslash", position);
+		}
+		try {
+			CanonicalJson.requireCanonicalString(value, label);
+		} catch (error:CanonicalJsonError) {
+			fail(code, error.message, position);
+		}
+		return value;
+	}
+
+	static function toolExists(tools:Array<ToolRecord>, component:String):Bool {
+		for (tool in tools) {
+			if (tool.id == component) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static function underAnyRoot(path:String, roots:Array<String>):Bool {
@@ -1071,67 +1664,24 @@ class SemanticCollector {
 		return active;
 	}
 
-	static function exactObject(value:Dynamic, fields:Array<String>, code:String, label:String, position:Position):Void {
-		if (value == null || Std.isOfType(value, Array) || Std.isOfType(value, String)) {
-			fail(code, label + " must be an object", position);
-		}
-		final actual = Reflect.fields(value);
-		actual.sort(Reflect.compare);
-		final expected = fields.copy();
-		expected.sort(Reflect.compare);
-		if (actual.join("\n") != expected.join("\n")) {
-			fail(code, label + " fields must be exactly [" + expected.join(", ") + "]", position);
-		}
-	}
-
-	static function stringField(value:Dynamic, field:String, code:String, label:String, position:Position):String {
-		final result = Reflect.field(value, field);
-		if (!Std.isOfType(result, String)) {
-			fail(code, label + "." + field + " must be a string", position);
-		}
-		try {
-			CanonicalJson.requireCanonicalString(cast result, label + "." + field);
-		} catch (message:String) {
-			fail(code, message, position);
-		}
-		return cast result;
-	}
-
-	static function digestField(value:Dynamic, field:String, code:String, label:String, position:Position):String {
-		final result = stringField(value, field, code, label, position);
-		requirePattern(SHA256, result, code, label + "." + field + " must be a lowercase SHA-256", position);
-		return result;
-	}
-
-	static function boolField(value:Dynamic, field:String, code:String, label:String, position:Position):Bool {
-		final result = Reflect.field(value, field);
-		if (!Std.isOfType(result, Bool)) {
-			fail(code, label + "." + field + " must be a boolean", position);
-		}
-		return cast result;
-	}
-
-	static function intField(value:Dynamic, field:String, code:String, label:String, position:Position):Int {
-		final result = Reflect.field(value, field);
-		return switch Type.typeof(result) {
-			case TInt: cast result;
-			case _: fail(code, label + "." + field + " must be an integer", position);
-		};
-	}
-
-	static function dynamicArray(value:Dynamic, field:String, code:String, label:String, position:Position):Array<Dynamic> {
-		final result = Reflect.field(value, field);
-		if (!Std.isOfType(result, Array)) {
-			fail(code, label + "." + field + " must be an array", position);
-		}
-		return cast result;
+	static function digestValue(value:String, code:String, label:String, position:Position):String {
+		requirePattern(SHA256, value, code, label + " must be a lowercase SHA-256", position);
+		return value;
 	}
 
 	static function sortUnique(values:Array<String>, code:String, label:String, position:Position):Void {
-		values.sort(Reflect.compare);
+		values.sort(compareText);
 		for (index in 1...values.length) {
 			if (values[index - 1] == values[index]) {
 				fail(code, label + " contains duplicate " + values[index], position);
+			}
+		}
+	}
+
+	static function requireSortedUnique(values:Array<String>, code:String, label:String, position:Position):Void {
+		for (index in 1...values.length) {
+			if (compareText(values[index - 1], values[index]) >= 0) {
+				fail(code, label + " must be sorted and unique", position);
 			}
 		}
 	}
@@ -1148,15 +1698,27 @@ class SemanticCollector {
 		}
 	}
 
-	static function parseJson(content:String, code:String, label:String, position:Position):Dynamic {
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
+	}
+
+	static function parseJson(content:String, code:String, label:String, position:Position):JsonValue {
 		try {
-			return Json.parse(content);
-		} catch (error:Dynamic) {
-			return fail(code, label + " is not valid JSON", position);
+			return JsonParser.parse(content);
+		} catch (error:JsonParseError) {
+			return fail(code, label + " is not valid JSON: " + error.message, position);
 		}
 	}
 
-	static function fail(code:String, message:String, position:Position):Dynamic {
+	static function readJson<T>(position:Position, operation:Void->T):T {
+		try {
+			return operation();
+		} catch (error:JsonReadError) {
+			return fail(error.code, error.message, position);
+		}
+	}
+
+	static function fail<T>(code:String, message:String, position:Position):T {
 		Context.error(code + ": " + message, position);
 		throw code + ": " + message;
 	}
@@ -1171,13 +1733,14 @@ private typedef CollectorSession = {
 	final inputsOutputPath:String;
 	final config:CollectorConfig;
 	final catalogCapabilities:Map<String, Bool>;
-	final tools:Array<Dynamic>;
+	final tools:Array<ToolRecord>;
 	final files:Map<String, InputFile>;
 	final collectorSourceSha256:String;
 	final modules:Array<ModuleDraft>;
 	final hooks:Array<HookDraft>;
 	final resources:Array<ResourceDraft>;
 	final environments:Array<EnvironmentDraft>;
+	final services:Array<DevelopmentServiceDraft>;
 }
 
 private typedef CollectorConfig = {
@@ -1190,6 +1753,7 @@ private typedef CollectorConfig = {
 	final toolchainSha256:String;
 	final resourceRoots:Array<String>;
 	final environment:Map<String, EnvironmentRule>;
+	final runtimeEnvironment:Map<String, RuntimeEnvironmentRule>;
 	final nodeSchemas:Array<NodeSchemaConfig>;
 }
 
@@ -1204,6 +1768,12 @@ private typedef ProfileConfig = {
 private typedef EnvironmentRule = {
 	final required:Bool;
 	final defaultValue:Null<String>;
+}
+
+private typedef RuntimeEnvironmentRule = {
+	final required:Bool;
+	final classification:String;
+	final services:Array<String>;
 }
 
 private typedef NodeSchemaConfig = {
@@ -1232,7 +1802,7 @@ private typedef ModuleDraft = {
 	final displayName:String;
 	final version:String;
 	final namespace:String;
-	final span:Dynamic;
+	final span:SourceSpan;
 	final position:Position;
 }
 
@@ -1246,7 +1816,7 @@ private typedef HookDraft = {
 	final callbackHaxeSymbol:String;
 	final priority:Int;
 	final acceptedArgs:Int;
-	final span:Dynamic;
+	final span:SourceSpan;
 	final position:Position;
 }
 
@@ -1258,6 +1828,14 @@ private typedef ResourceDraft = {
 
 private typedef EnvironmentDraft = {
 	final name:String;
+	final position:Position;
+}
+
+private typedef DevelopmentServiceDraft = {
+	final serviceId:String;
+	final dependsOn:Array<String>;
+	final data:DevelopmentServiceData;
+	final span:SourceSpan;
 	final position:Position;
 }
 #end

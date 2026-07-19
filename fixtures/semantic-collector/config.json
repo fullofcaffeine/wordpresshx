@@ -36,6 +36,17 @@
   ],
   "nodeSchemas": [
     {
+      "schemaId": "wordpress-hx.semantic-node.development.service.v1",
+      "kind": "development.service",
+      "version": 1,
+      "authority": "core",
+      "path": "schemas/semantic-nodes/development-service.schema.json",
+      "schemaSha256": "0e344463d1316909a97a08a2381f9ee6c7cd5a57fd158952b0ac8cab9b911d57",
+      "consumerEmitters": [
+        "wordpresshx.dev"
+      ]
+    },
+    {
       "schemaId": "wordpress-hx.semantic-node.wordpress.hook.v1",
       "kind": "wordpress.hook",
       "version": 1,

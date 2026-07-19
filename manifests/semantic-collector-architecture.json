@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-040",
   "status": "implemented-and-locally-tested",
-  "scope": "initial-module-hook-semantic-plan-macro-collector",
+  "scope": "module-hook-and-sdk044-development-service-semantic-plan-macro-collector",
   "contracts": {
     "config": {
       "identity": "wordpress-hx.semantic-collector-config.v1",
       "path": "schemas/semantic-collector-config.schema.json",
-      "sha256": "03824d979ff50178c3b9ab266e7496789e99a86eb0ea750298ec3f5333d9b23d"
+      "sha256": "67504beb95ac413ee9751b8daad6806c3ad1a6d440dc88c7042b86575e6b7799"
     },
     "plan": {
       "identity": "wordpress-hx.semantic-plan.v1",
@@ -21,6 +21,7 @@
       "fingerprintAlgorithm": "sha256-canonical-json-without-fingerprint-and-planDigest-v1"
     },
     "nodeSchemas": [
+      "wordpress-hx.semantic-node.development.service.v1",
       "wordpress-hx.semantic-node.wordpress.hook.v1",
       "wordpress-hx.semantic-node.wordpress.module.v1"
     ]
@@ -41,11 +42,19 @@
       "wordpress.hx.build.semantic.BuildInput.publicEnvironment",
       "wordpress.hx.build.semantic.BuildInput.resource"
     ],
+    "developmentDeclarations": [
+      "wordpress.hx.build.semantic.Dev.service",
+      "wordpress.hx.build.semantic.Dev.wordpress"
+    ],
     "optionTypes": [
       "wordpress.hx.build.semantic.HookOptions",
+      "wordpress.hx.build.semantic.DevelopmentCommandOptions",
+      "wordpress.hx.build.semantic.DevelopmentReadinessKind",
+      "wordpress.hx.build.semantic.DevelopmentServiceOptions",
       "wordpress.hx.build.semantic.ModuleOptions",
       "wordpress.hx.build.semantic.PublicEnvironmentOptions",
-      "wordpress.hx.build.semantic.ResourceOptions"
+      "wordpress.hx.build.semantic.ResourceOptions",
+      "wordpress.hx.build.semantic.WordPressDevelopmentOptions"
     ],
     "literalIdentityRequired": true,
     "runtimeRegistry": false,
@@ -61,7 +70,10 @@
     "callbackTyping": "Haxe-function-type-action-Void-filter-value-preservation",
     "profileGate": "exact-catalog-capability-set",
     "moduleAndProjectionDuplicates": "fail-before-plan-write",
-    "missingDependencies": "fail-before-plan-write"
+    "missingDependencies": "fail-before-plan-write",
+    "developmentServiceGraph": "stable-id-closed-dag-with-duplicate-missing-and-cycle-rejection",
+    "wordpressServiceErgonomics": "zero-argument-sdk-owned-provider-with-typed-literal-overrides",
+    "externalServiceEscapeHatch": "exact-lock-component-and-no-implicit-shell"
   },
   "effectiveInputs": {
     "fileRoles": [
@@ -167,29 +179,33 @@
     "haxeVersion": "4.3.7",
     "directBuildCount": 2,
     "serverBuildCount": 2,
-    "negativeCompileCount": 10,
+    "negativeCompileCount": 17,
     "negativeSchemaMutationCount": 5,
-    "collectorSourceCount": 13,
-    "effectiveFileCount": 20,
+    "collectorSourceCount": 24,
+    "effectiveFileCount": 32,
     "toolCount": 8,
-    "nodeCount": 2,
+    "nodeCount": 3,
     "resourceCount": 1,
     "environmentCount": 1,
-    "collectorSourceSha256": "48bf87907b923c5a6e7e5f234057b48d74d6599dd5a9f4e6abe10aedcf604351",
-    "effectiveInputsFingerprint": "87c0c67bc12a240603af082fe4620aba62430a7e0ecc3e903173eb3689cd54c2",
-    "planDigest": "c89808fc6a821c2b7fd6ed4192fa57db381177eea020e4101e100b4d145e16ff",
+    "collectorSourceSha256": "2bab0f2cf981116954d44426f38193e949c083d95b50c942d60d3e5174957556",
+    "effectiveInputsFingerprint": "444d8c9a1c4d7c962bb6987be43609a2078a14979cc1927a979b54aeec99a464",
+    "planDigest": "a2f5815f77941c272f7e4da3c958296c391d1155a1e0870aaafa633667be3fbc",
+    "jsonBoundaryVectorCount": 8,
     "directVsServerByteEquality": "passed",
     "sourceLocatedDiagnostics": "passed",
     "inputFingerprintInspection": "passed",
     "noNetworkDependency": "passed",
     "fullDceNoRuntimeCollector": "passed",
     "failedCompileNoPlanOrInputs": "passed",
+    "typedDevelopmentServiceDefaults": "passed",
+    "typedJsonBoundary": "passed",
     "outcome": "passed"
   },
   "claims": {
     "sdk040MacroCollector": "compile-tested",
     "canonicalPlanAndInputSidecar": "validated",
     "haxeCompilationServerReplay": "compile-tested",
+    "sdk044DevelopmentServiceContract": "compile-tested",
     "productionEmitterIntegration": "not-tested",
     "generatedFilePublicationSafety": "not-tested",
     "productionWphxDevWatcher": "not-tested",

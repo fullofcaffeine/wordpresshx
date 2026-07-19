@@ -53,6 +53,13 @@
         "$ref": "#/$defs/environment"
       }
     },
+    "runtimeEnvironment": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/runtimeEnvironment"
+      }
+    },
     "nodeSchemas": {
       "type": "array",
       "minItems": 1,
@@ -166,6 +173,39 @@
         },
         "default": {
           "type": "string"
+        }
+      }
+    },
+    "runtimeEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "required",
+        "classification",
+        "services"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "classification": {
+          "enum": [
+            "public-runtime",
+            "secret-runtime"
+          ]
+        },
+        "services": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
         }
       }
     },

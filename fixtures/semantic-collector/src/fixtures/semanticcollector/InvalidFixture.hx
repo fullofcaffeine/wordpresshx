@@ -1,6 +1,8 @@
 package fixtures.semanticcollector;
 
 import wordpress.hx.build.semantic.BuildInput;
+import wordpress.hx.build.semantic.Dev;
+import wordpress.hx.build.semantic.DevelopmentReadinessKind;
 import wordpress.hx.build.semantic.Hook;
 import wordpress.hx.build.semantic.Module;
 
@@ -85,6 +87,52 @@ class InvalidFixture {
 		#end
 		#if missing_environment
 		BuildInput.publicEnvironment({name: "REQUIRED_PUBLIC_VALUE"});
+		#end
+		#if duplicate_service
+		Dev.wordpress();
+		Dev.wordpress();
+		#end
+		#if unknown_service_dependency
+		Dev.wordpress({dependsOn: ["missing-service"]});
+		#end
+		#if invalid_service_environment
+		Dev.wordpress({environment: ["WP_DB_PASSWORD"]});
+		#end
+		#if invalid_service_port
+		Dev.wordpress({preferredPort: 70000});
+		#end
+		#if invalid_service_readiness
+		Dev.wordpress({readinessKind: DevelopmentReadinessKind.Log});
+		#end
+		#if unlocked_external_service
+		Dev.service({
+			id: "search",
+			command: {
+				component: "tool.unlocked",
+				executable: "search-server",
+				arguments: ["--port", "{port}"]
+			}
+		});
+		#end
+		#if service_cycle
+		Dev.service({
+			id: "api",
+			dependsOn: ["worker"],
+			command: {
+				component: "tool.npm",
+				executable: "npm",
+				arguments: ["run", "api", "--", "--port", "{port}"]
+			}
+		});
+		Dev.service({
+			id: "worker",
+			dependsOn: ["api"],
+			command: {
+				component: "tool.npm",
+				executable: "npm",
+				arguments: ["run", "worker"]
+			}
+		});
 		#end
 	}
 

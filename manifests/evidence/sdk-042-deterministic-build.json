@@ -76,7 +76,7 @@
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "1c80f0f7299926fdce4090934790ce346ee6e17a1fa3c3607f205fc35c0543c7"
+      "sha256": "badcd2824fca62846dd4239677b62f56f70c82df99d351ed8f9bf8f9221913eb"
     }
   },
   "implementation": {

@@ -4,7 +4,7 @@
 - Date: 2026-07-18
 - Owners/reviewers: Marcelo Serpa (product and developer-experience owner); Codex (architecture, contract, and reference review)
 - Bead: `wordpresshx-adr-016`
-- Profiles/layers: project bootstrap; exact project lock; SDK CLI/build orchestration; local WordPress and Next.js development
+- Profiles/layers: project bootstrap; exact project lock; SDK CLI/build orchestration; local WordPress and optional integration development
 - Supersedes: the provisional `wphx-sdk` command spelling in PRD §21
 - Superseded by: none
 
@@ -13,9 +13,10 @@
 WordPressHx needs one reproducible way to find a project, select its exact
 profile and tools, type its Haxe authority, produce the ADR-006 semantic plan,
 publish through ADR-007, and explain every input and output. It also needs a
-development loop fast enough to feel native: one initial build, incremental Haxe
-typing, normal WordPress and Next.js services, useful URLs, source diagnostics,
-and reliable rebuilds without exposing a half-generated site.
+development loop fast enough to feel native: one initial build, incremental
+Haxe typing, a normal WordPress service, optional integration services, useful
+URLs, source diagnostics, and reliable rebuilds without exposing a half-
+generated site.
 
 Those goals pull configuration in two directions. The CLI needs a small file it
 can read before Haxe or macros are available. The product direction, however,
@@ -320,15 +321,24 @@ stale state before cleanup.
 ### Development services are typed Haxe declarations
 
 The Haxe site definition supplies a closed service DAG after plan validation.
-Each service has a stable ID and typed provider (`wordpress`, `nextjs`, or an
-explicit external escape hatch), dependency IDs, an executable/provider
-identity, argv without an implicit shell, working directory, admitted input and
-output scopes, environment allowlist, port policy, readiness probe, restart
-policy, URL projection, and reload behavior.
+The ordinary WordPress path deliberately requires one expression:
 
-The ordinary providers choose preferred ports (WordPress 8888 and Next.js 3000
-in the contract fixture), reserve an available port, and record the local choice
-only under `.wphx/runtime/`. A user override is exact and fails with a useful
+```haxe
+Dev.wordpress();
+```
+
+Haxe derives its stable `wordpress` ID, project working directory, preferred
+port 8888, bounded `/wp-json/` HTTP readiness probe, restart policy, root URL,
+and full-page reload behavior. A typed `WordPressDevelopmentOptions` object
+overrides only values that differ. Core also exposes `Dev.service({...})` as an
+explicit external-process escape hatch with a locked component identity and
+argv; it never accepts an implicit shell command.
+
+Every service node carries dependency IDs, working directory, runtime-
+environment allowlist, port policy, readiness probe, restart policy, URL
+projection, and reload behavior. The built-in provider chooses its preferred
+port, reserves an available loopback port, and records the local choice only
+under `.wphx/runtime/`. A strict user override fails with a useful
 occupant/alternative diagnostic rather than killing an unrelated process.
 Readiness is bounded—60 seconds by default in the fixture—and may use a typed
 HTTP, TCP, process, or admitted log probe. A process existing is not equivalent
@@ -341,10 +351,13 @@ compatible attached processes are never killed. Unexpected exits produce a
 structured service diagnostic and follow the typed bounded restart policy rather
 than an infinite silent loop.
 
-This contract deliberately leaves exact provider packages and final typed API
-names to SDK-044 and the site/Next integration beads. It fixes their semantics
-so implementation cannot move service configuration back into handwritten
-JavaScript or arbitrary shell strings.
+Core recognizes only its built-in WordPress provider and the explicit external
+boundary. Next.js support belongs to an optional, versioned integration package
+with its own typed declarations, schema/adapter admission, immutable lock, and
+runtime evidence; it is not a core enum case or dependency. Such a package may
+initially lower through the external boundary, but native HMR requires its own
+validated adapter instead of a fabricated core claim. This keeps service
+configuration in Haxe without coupling every WordPress project to Next.js.
 
 ### Versioning, migration, and rollback
 
@@ -448,8 +461,8 @@ Benefits:
 - Runtime secrets, ports, paths, PIDs, and clocks cannot poison reproducibility.
 - Incremental Haxe compilation is fast without attaching to an arbitrary global
   cache.
-- WordPress and Next.js can be supervised together without introducing a
-  production application kernel.
+- WordPress and an admitted optional integration can be supervised together
+  without introducing a production application kernel or core dependency.
 
 Costs and limits:
 
@@ -545,9 +558,11 @@ SDK-044 now supplies the initial atomic build, managed project-local Haxe wait
 server, effective-input watcher, conservative serialized rebuild, last-good
 retention, edit-during-build retry, and clean compiler shutdown. The
 compile/watch-only form is production-gate tested on exact Linux Node 22.17.0.
-Typed WordPress/Next.js service processes, readiness, service ports, and reload
-adapters are still non-claims and are reported as skipped rather than inferred
-from shell configuration. The exact SDK-043 implementation is in
+The semantic collector now accepts `Dev.wordpress()` and emits a closed,
+content-addressed service node with derived typed defaults; external services
+use the explicit locked/no-shell escape hatch. Service processes, readiness,
+ports, and reload execution are still non-claims and are reported as skipped.
+Optional Next.js support remains outside core. The exact SDK-043 implementation is in
 [`project-cli-implementation.json`](../../manifests/project-cli-implementation.json)
 and [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json);
 the SDK-044 core and its bounded non-claims are in

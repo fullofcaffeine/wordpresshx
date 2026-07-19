@@ -37,6 +37,12 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - An exception is allowed only when an external or compiler API makes a typed implementation genuinely impossible after typed alternatives have been exhausted. Keep it to the smallest expression or boundary adapter, convert immediately to a concrete type, and add an inline comment that explains why it is unavoidable and states the invariant that makes it safe.
 - Existing untyped code is not precedent. Remove violations in any code being touched, and do not add or expand suppressions to bypass this rule.
 
+## Haxe-First Ergonomics
+
+- When Haxe can safely infer, default, derive, validate, or generate something, prefer doing so in the Haxe layer instead of requiring repetitive author code or handwritten PHP, JavaScript, JSON, shell, or framework configuration.
+- Design the common path for high information density: typed defaults, focused macros, enums/abstracts, reusable declarations, generated adapters, and IDE-visible APIs should make ordinary code concise while preserving compile-time checks and deterministic output.
+- Keep advanced behavior available through explicit typed options and narrow escape hatches. Ergonomic helpers must not hide ownership, weaken validation, introduce ambiguous magic, or couple the core SDK to an optional integration.
+
 ## Non-Interactive Shell Commands
 
 **ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.

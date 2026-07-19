@@ -17,6 +17,12 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+haxe \
+  -cp packages/build/src \
+  -cp fixtures/semantic-collector/src \
+  --macro "fixtures.semanticcollector.JsonBoundaryTest.run()" \
+  --no-output
+
 compile_fixture() {
   local output_root="$1"
   shift
@@ -110,9 +116,21 @@ run_negative wrong_filter_return WPHX4019
 run_negative computed_identity WPHX4002
 run_negative resource_traversal WPHX4024
 run_negative missing_environment WPHX4044
+run_negative duplicate_service WPHX4181
+run_negative unknown_service_dependency WPHX4182
+run_negative invalid_service_environment WPHX4187
+run_negative invalid_service_port WPHX4191
+run_negative invalid_service_readiness WPHX4195
+run_negative unlocked_external_service WPHX4188
+run_negative service_cycle WPHX4203
 
 if rg -n '(sys\.net|haxe\.Http|curl|wget|Socket)' packages/build/src; then
   echo "semantic collector source contains a network-capable dependency" >&2
+  exit 1
+fi
+
+if rg -n '\b(Dynamic|Any|cast|Reflect|untyped)\b' packages/build/src --glob '*.hx'; then
+  echo "build package contains a prohibited untyped Haxe construct" >&2
   exit 1
 fi
 
@@ -121,4 +139,4 @@ if rg -n '(wordpress[._]hx[._]build|SemanticCollector|ModuleDeclaration|HookDecl
   exit 1
 fi
 
-echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"negativeCompileCount\":10,\"outcome\":\"passed\",\"serverBuildCount\":2}"
+echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":17,\"outcome\":\"passed\",\"serverBuildCount\":2}"

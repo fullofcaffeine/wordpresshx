@@ -1535,12 +1535,12 @@ collector_verification = semantic_collector_architecture["verification"]
 assert collector_verification["haxeVersion"] == "4.3.7"
 assert collector_verification["directBuildCount"] == 2
 assert collector_verification["serverBuildCount"] == 2
-assert collector_verification["negativeCompileCount"] == 10
+assert collector_verification["negativeCompileCount"] == 17
 assert collector_verification["negativeSchemaMutationCount"] == 5
-assert collector_verification["collectorSourceCount"] == 13
-assert collector_verification["effectiveFileCount"] == 20
+assert collector_verification["collectorSourceCount"] == 24
+assert collector_verification["effectiveFileCount"] == 32
 assert collector_verification["toolCount"] == 8
-assert collector_verification["nodeCount"] == 2
+assert collector_verification["nodeCount"] == 3
 assert collector_verification["outcome"] == "passed"
 assert semantic_collector_architecture["claims"]["sdk040MacroCollector"] == (
     "compile-tested"

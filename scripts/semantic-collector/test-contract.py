@@ -28,6 +28,13 @@ def load_semantic_plan_contract():
 
 CONTRACT = load_semantic_plan_contract()
 ContractError = CONTRACT.ContractError
+NODE_SCHEMAS = {
+    **CONTRACT.NODE_SCHEMAS,
+    "wordpress-hx.semantic-node.development.service.v1": (
+        "development.service",
+        ROOT / "schemas" / "semantic-nodes" / "development-service.schema.json",
+    ),
+}
 
 
 def sha256(data: bytes) -> str:
@@ -108,8 +115,8 @@ def validate_inputs(inputs: dict[str, object], plan: dict[str, object]) -> None:
 
     expected_role_counts = {
         "collector-config": 1,
-        "collector-source": 13,
-        "node-schema": 2,
+        "collector-source": 24,
+        "node-schema": 3,
         "profile-catalog": 1,
         "resource": 1,
         "source": 1,
@@ -206,7 +213,10 @@ def validate_plan(plan: dict[str, object], inputs: dict[str, object]) -> None:
     )
     registry = {item["schemaId"]: item for item in registrations}
     for item in registrations:
-        expected_kind, schema_path = CONTRACT.NODE_SCHEMAS[item["schemaId"]]
+        schema_id = item["schemaId"]
+        if schema_id not in NODE_SCHEMAS:
+            raise ContractError(f"$.nodeSchemas: unregistered schema {schema_id}")
+        expected_kind, schema_path = NODE_SCHEMAS[schema_id]
         if item["kind"] != expected_kind:
             raise ContractError("$.nodeSchemas: kind mismatch")
         if item["schemaSha256"] != sha256(schema_path.read_bytes()):
@@ -218,10 +228,13 @@ def validate_plan(plan: dict[str, object], inputs: dict[str, object]) -> None:
     projection_ids: set[str] = set()
     for index, node in enumerate(nodes):
         label = f"$.nodes[{index}]"
-        registration = registry[node["schemaId"]]
+        schema_id = node["schemaId"]
+        if schema_id not in registry or schema_id not in NODE_SCHEMAS:
+            raise ContractError(f"{label}.schemaId: schema is not registered")
+        registration = registry[schema_id]
         if registration["kind"] != node["kind"]:
             raise ContractError(f"{label}.kind: registration mismatch")
-        _, schema_path = CONTRACT.NODE_SCHEMAS[node["schemaId"]]
+        _, schema_path = NODE_SCHEMAS[schema_id]
         node_schema = CONTRACT.read_json(schema_path, "semantic node schema")
         CONTRACT.ClosedSchemaValidator(node_schema).validate(
             node["payload"], location=f"{label}.payload"
@@ -253,8 +266,43 @@ def validate_plan(plan: dict[str, object], inputs: dict[str, object]) -> None:
                 raise ContractError(f"{label}.projections: unregistered emitter")
     CONTRACT.detect_cycles(by_id)
 
-    if len(nodes) != 2 or len(registrations) != 2:
+    if len(nodes) != 3 or len(registrations) != 3:
         raise ContractError("semantic collector fixture breadth changed")
+
+    service = by_id.get("service/wordpress")
+    if service is None:
+        raise ContractError("semantic collector fixture lacks inferred WordPress service")
+    expected_service = {
+        "serviceId": "wordpress",
+        "serviceKind": "wordpress",
+        "dependsOn": [],
+        "workingDirectory": ".",
+        "command": None,
+        "environment": [],
+        "port": {"preferred": 8888, "strict": False},
+        "readiness": {
+            "kind": "http",
+            "path": "/wp-json/",
+            "text": "",
+            "timeoutMs": 60000,
+            "intervalMs": 100,
+        },
+        "restart": {"maxAttempts": 1, "backoffMs": 250},
+        "url": {"scheme": "http", "path": "/"},
+        "reload": "full-page",
+    }
+    if service["payload"] != expected_service:
+        raise ContractError("inferred WordPress development service defaults drifted")
+    if service["dependsOn"] or service["profileCapabilities"]:
+        raise ContractError("inferred WordPress development service gained dependencies")
+    if service["projections"] != [
+        {
+            "projectionId": "dev/service/wordpress",
+            "emitterId": "wordpresshx.dev",
+            "artifactKind": "development.service",
+        }
+    ]:
+        raise ContractError("inferred WordPress development service projection drifted")
     validate_inputs(inputs, plan)
 
 

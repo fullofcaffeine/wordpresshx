@@ -4,8 +4,10 @@ Status: SDK-040 collection, SDK-041 fail-closed publication, SDK-042
 deterministic packaging, and the SDK-043 bounded `wphx` command foundation are
 implemented and hosted verified. SDK-044's long-running compile/watch core,
 managed Haxe server, last-good publication, and clean compiler shutdown are
-implemented and locally production-gate verified. Typed WordPress/Next.js
-service supervision, readiness, and reload adapters remain SDK-044 work.
+implemented and locally production-gate verified. The typed Haxe development-
+service plan now includes the built-in WordPress declaration; process
+supervision, readiness, and reload execution remain SDK-044 work. Next.js is an
+optional integration boundary rather than a core service dependency.
 
 ## Developer surface
 
@@ -64,10 +66,19 @@ therefore deterministic build evidence, not a deployable site package. The
 stable `wphx dev` entry now performs an initial complete transaction, starts an
 owned project-local Haxe wait server when its exact identity is safe, and stays
 alive watching the effective graph. `--services=none` is a real
-compile/watch-only mode. The default command currently reports service and
-reload stages as skipped because no validated typed service plan or admitted
-reload adapter is registered; it does not invent shell commands or claim that
-WordPress/Next.js children are running.
+compile/watch-only mode. A site can now declare the built-in service with one
+typed Haxe expression:
+
+```haxe
+Dev.wordpress();
+```
+
+The macro derives the stable ID, working directory, preferred port, bounded
+HTTP readiness probe, restart policy, URL, and full-page reload mode. Typed
+options override only what differs. `Dev.service({...})` is the explicit,
+no-shell external-process escape hatch. The CLI still reports service and
+reload execution as skipped until the supervisor consumes the validated plan;
+it does not invent commands or claim that child processes are running.
 
 ## Deterministic clean-build oracle
 
@@ -99,8 +110,8 @@ The stable lifecycle is:
    all target validators pass.
 3. Start a project/toolchain/profile-bound Haxe wait server only when its
    compatibility identity is exact; otherwise compile directly.
-4. Supervise configured WordPress and Next.js development services, select
-   collision-safe loopback ports, and use bounded readiness probes.
+4. Supervise the built-in WordPress service and any admitted extension service,
+   select collision-safe loopback ports, and use bounded readiness probes.
 5. Watch the effective graph, debounce and coalesce bursts, then invalidate the
    smallest stage whose isolation is proven. Ambiguity triggers a full build.
 6. Promote a complete transaction atomically and request browser reload only
@@ -115,10 +126,12 @@ The implemented core covers the initial atomic build, project-bound compiler
 lease, conservative full rebuild, 100 ms sorted/deduplicated coalescing,
 single-flight serialization, edit-during-build stability checks, exact
 last-good retention, manifest-last generation admission, and compiler cleanup.
-When isolation is not proven, every change takes the full atomic path. Service
+When isolation is not proven, every change takes the full atomic path. The
+typed semantic-plan producer is now implemented and fail-closed. Service
 processes, readiness probes, collision-safe service ports, and post-commit
-WordPress/Next.js reload adapters remain disabled until they are produced by a
-validated typed Haxe semantic plan.
+reload execution remain disabled until the CLI supervisor consumes that plan.
+An optional Next.js package must bring its own typed adapter and evidence; core
+does not hard-code a Next provider or native-HMR claim.
 
 CI and one-shot `wphx build` use bounded direct compilation. They never start an
 unbounded watcher or inherit a developer's compilation server.
