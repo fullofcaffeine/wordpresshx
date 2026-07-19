@@ -3,7 +3,8 @@
 - Status: accepted product direction; site foundation and native plugin bootstrap implemented
 - Product owner clarification: 2026-07-17
 - Tracking: `wordpresshx-hy6`
-- Implements later through: `SDK-045`, `SDK-081`, `SDK-083`, `SDK-084`, `SDK-110`, and `SDK-111`
+- Implements later through: `SDK-045`, `SDK-081`, `SDK-083`, `SDK-084`,
+  `SDK-110`, `SDK-111`, and the `SDK-112` through `SDK-120` reference suite
 - Does not claim: HXX lowering, full theme/site production, public package installation, or production compatibility
 
 ## Outcome
@@ -312,9 +313,57 @@ Candidate family contracts include portable result/schema types, compiler metada
 
 Cross-project integration requires a public versioned package, schema, or CLI contract; an immutable version/commit and content hash; independent consumer evidence; and a rollback identity. Floating sibling worktrees and private implementation imports are forbidden release dependencies. Cafetera or other future composition tooling may consume published manifests/evidence as a control plane, but it does not become a WordPress runtime dependency.
 
+## Reference application portfolio
+
+The example strategy has two complementary scales. Focused recipes teach and
+regress one public capability with the smallest useful Haxe source. Integrated
+applications prove that the same contracts compose across WordPress PHP,
+server HXX, Gutenberg/Genes, persistence, security, packaging, and—only where
+the example explicitly selects it—NextJsHx.
+
+Native WordPress is the primary product lane. A Next.js frontend is an optional
+adapter and useful cross-target pressure; it is not required for a native theme,
+plugin, block collection, editor extension, or complete WordPressHx site. Each
+example names its lanes, and only those named lanes gate completion.
+
+| Bead | Maintained example | Principal contract pressure |
+|---|---|---|
+| `SDK-111` | Complete Haxe-managed WordPress site | Theme, plugin, blocks, hierarchy, metadata, styles, packaging, and deployment with no required handwritten target source |
+| `SDK-114` | Core-only observatory landing site | Editable core-block content, native theme/HXX, focused conversion, and optional dual rendering |
+| `SDK-115` | Editorial field journal | Posts, authors, taxonomies, media, search, preview, feeds, block trees, and cache invalidation |
+| `SDK-116` | WooCommerce workshop | Products, variants, money, stock, cart, checkout, orders, webhooks, and provider lifecycle |
+| `SDK-118` | Paid architecture-session booking | One typed payment-to-eligibility-to-slot state machine reused by server, admin, REST, browser, and optional Next rendering |
+| `SDK-119` | Gutenberg extension workbench | Static/dynamic blocks, migrations, InnerBlocks, editor sidebar, data store, patterns/styles, accessibility, and native validation |
+| `SDK-120` | Capability recipe catalog | Small runnable examples and a public-capability-to-example conformance matrix |
+
+The paid-booking example must never trust a checkout redirect or client-owned
+flag. WordPress verifies an exact paid/completed order and request identity,
+then issues request-scoped booking eligibility. Typed states cover unpaid,
+eligible, booked, rescheduled, cancelled, refunded, expired, and conflict
+outcomes. Slot claims, retries, webhooks, time zones, daylight-saving changes,
+and uninstall/data-retention policy are explicit. Automated evidence uses an
+offline test payment method; a live gateway or third-party booking provider is
+admitted only through the exact open-source provenance and capability policy in
+`SDK-117`.
+
+The Gutenberg workbench is deliberately native-WordPress evidence. It must
+exercise public Haxe APIs for `block.json`, edit/save/render boundaries,
+serialization and migration, server preview, editor SlotFill, a typed data
+store, nested blocks, and exact-profile optional capabilities. It cannot use
+private Gutenberg imports, example-only compiler branches, or snapshots as a
+substitute for real editor and frontend behavior.
+
+Reusable models, codecs, identifiers, state machines, components, design
+tokens, and provider adapters move to their owning SDK packages. Examples keep
+only the subject, content, composition, and art direction that make their user
+job concrete. A capability with no sound public typed surface is marked
+deferred in the `SDK-120` matrix rather than imitated with raw PHP, JavaScript,
+weak types, or hidden test APIs.
+
 ## Reference-site design evidence
 
-The landing, editorial, and commerce reference sites use the canonical
+The user-facing landing, editorial, commerce, paid-booking, and Gutenberg
+workbench reference applications use the canonical
 [Anthropic frontend-design rubric](https://github.com/anthropics/skills/blob/fa0fa64bdc967915dc8399e803be67759e1e62b8/skills/frontend-design/SKILL.md)
 at commit `fa0fa64bdc967915dc8399e803be67759e1e62b8`, blob
 `decdff43d05908b4c1fc2cfd2d80fc5743440934`. The rubric is a design-process
@@ -326,7 +375,7 @@ type roles; compare layout sketches; select one justified signature element;
 and critique away choices that could belong to any generic site. Copy uses real
 domain content. Responsive, keyboard-focus, reduced-motion, accessibility, and
 overflow checks are blocking. Desktop/mobile screenshots and a post-build
-critique are retained as evidence. The three sites must not converge on one
+critique are retained as evidence. The applications must not converge on one
 template, palette, type pair, or fashionable default aesthetic.
 
 ## Implementation and evidence sequence
@@ -341,5 +390,11 @@ template, palette, type pair, or fashionable default aesthetic.
 - `SDK-111` is the P0 acceptance vertical: a complete site with zero handwritten PHP, JS/TS, WordPress JSON metadata, or CSS configuration.
 - `SDK-112` through `SDK-117` build and verify the reusable reference-site
   foundation plus distinct landing, editorial, and WooCommerce integrations.
+- `SDK-118` proves a real paid consultation funnel whose server-authoritative
+  order and booking state is shared safely across the declared layers.
+- `SDK-119` turns the Gutenberg surface into a maintained native editor/block
+  workbench rather than treating a visual compiler proof as an application.
+- `SDK-120` keeps every public capability connected to a smallest runnable
+  recipe and at least one integrated example, or records it as deferred.
 
 Each bead advances only its named evidence. This document defines intended architecture; it does not promote any capability to `typed`, `generated`, `runtime-tested`, or `production-supported`.
