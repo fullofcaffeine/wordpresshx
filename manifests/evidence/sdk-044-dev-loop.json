@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T01:09:28Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T01:27:47Z",
+  "implementationCommit": "1842949bfcdc771f2083bca6c8bd1f93e5f25761",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "c89560e0b677ab6526748935e05560818a02f25dd30719300a533b370dd852de"
+      "sha256": "74fc45989b827f4bbce6635ed71be60acb7c202c9d43833232a8ada32e06a9c4"
     },
     "implementationFiles": [
       {
@@ -114,10 +114,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29668506925,
+    "jobId": 88143189268,
+    "commit": "1842949bfcdc771f2083bca6c8bd1f93e5f25761",
+    "status": "passed",
     "required": true
   },
   "limitations": [
@@ -127,9 +127,9 @@
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-local",
-    "atomicIncrementalPublication": "runtime-tested-local",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
+    "productionWphxDevCompileWatch": "runtime-tested-hosted",
+    "atomicIncrementalPublication": "runtime-tested-hosted",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
     "automaticBrowserReload": "not-tested",
