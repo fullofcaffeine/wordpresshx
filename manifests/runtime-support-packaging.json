@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-018",
+  "status": "accepted-architecture-with-executable-prototype",
+  "profile": "wp70-release",
+  "authoring": {
+    "commonPath": "typed-haxe-only",
+    "runtimeNeedAuthority": "typed-transitive-private-closure",
+    "projectAndModuleIdentityAuthority": "semantic-plan",
+    "userAuthoredRuntimeConfigRequired": false,
+    "userAuthoredPhpRequired": false,
+    "userAuthoredComposerRequired": false,
+    "unknownRuntimeNeedDisposition": "reject-before-publication"
+  },
+  "mvpPackage": {
+    "scope": "one-native-wordpress-deployable",
+    "dependencyClosure": "transitively-required-private-implementation-runtime-helpers-and-polyfills",
+    "sharedSiteRuntimeAllowed": false,
+    "serverHaxeNodeOrComposerRequired": false,
+    "emptyRuntimeEmitted": false,
+    "privateRoot": "private/wordpresshx",
+    "runtimeRoot": "private/wordpresshx/runtime",
+    "classmapPath": "private/wordpresshx/classmap.php",
+    "inventoryPath": "private/wordpresshx/runtime-manifest.v1.json",
+    "rootAutoloadPath": "includes/autoload.php",
+    "ownership": "same-manifest-last-transaction-as-public-artifact"
+  },
+  "namespace": {
+    "schema": "wordpress-hx.private-runtime.v1",
+    "identityFields": [
+      "projectId",
+      "moduleId"
+    ],
+    "canonicalInput": "wordpress-hx.private-runtime.v1\\0<projectId>\\0<moduleId>",
+    "digest": "sha256",
+    "digestBitsRetained": 96,
+    "prefixPattern": "wphx_internal.p[0-9a-f]{24}",
+    "haxeDefine": "php-prefix",
+    "userConfigurable": false,
+    "contentOrVersionIncluded": false,
+    "workspaceCollisionDisposition": "reject-plan",
+    "duplicateLogicalModuleDisposition": "reject-solution-plan",
+    "sameRootReinclude": "idempotent-non-fatal",
+    "sameLogicalPluginConcurrentVersions": "unsupported-public-identity-conflict"
+  },
+  "autoload": {
+    "stockFrontControllerPackaged": false,
+    "stockFrontControllerReason": "process-global-include-path-and-unbounded-resolver",
+    "defaultMechanism": "generated-package-local-authoritative-classmap",
+    "exactFullyQualifiedNamesOnly": true,
+    "directoryScanning": false,
+    "networkAccess": false,
+    "processIncludePathMutation": false,
+    "unboundedNamespaceResolver": false,
+    "prependBeforeHostAutoloaders": false,
+    "otherPluginLookup": false,
+    "deterministicOrderAndHashes": true
+  },
+  "composer": {
+    "mvpRuntimeGraph": "absent-no-runtime-dependencies",
+    "buildAndAnalysisUse": "allowed-only-after-exact-tool-and-lock-admission",
+    "serverInstallRequired": false,
+    "runtimeDependencyAdmission": "unsupported-until-dedicated-follow-up",
+    "futureRequirements": [
+      "typed-haxe-declaration-and-explicit-networked-lock-command",
+      "exact-composer-tool-and-lock",
+      "offline-build-check-and-dev-consumption",
+      "bundled-production-files-and-optimized-authoritative-autoload",
+      "package-specific-symbol-isolation-or-proven-global-abi",
+      "public-abi-internal-type-scan",
+      "artifact-derived-sbom-licenses-notices-and-byte-origins",
+      "two-plugin-version-skew-install-update-rollback-and-native-caller-evidence"
+    ],
+    "separateVendorDirectoriesCountAsIsolation": false
+  },
+  "publicBoundary": {
+    "wordPressEntries": "public-native-adapters-only",
+    "privateNamesAllowedInMethodBodies": true,
+    "privateNamesAllowedInPublicAbi": false,
+    "privateCallbacksRegisteredWithWordPress": false,
+    "nativeConversionAtAdapter": true,
+    "reflectionScan": [
+      "parameters",
+      "returns",
+      "properties",
+      "parents",
+      "interfaces",
+      "traits",
+      "attributes",
+      "constants",
+      "default-values",
+      "throws-contract",
+      "names"
+    ]
+  },
+  "globalSymbols": {
+    "defaultAllowed": false,
+    "stockPolyfillException": "exact-inventoried-guarded-matrix-tested-only",
+    "admissionByAnalogyAllowed": false,
+    "compatibilityConstant": "WORDPRESSHX_PRIVATE_POLYFILLS_V1_SHA256",
+    "nativeInternalFunctionAllowed": true,
+    "sameExactDeclaringFileHashAllowed": true,
+    "differentHashDisposition": "reject-private-boot-WPHX5201"
+  },
+  "requiredInventory": [
+    "project-module-and-prefix-derivation",
+    "exact-compiler-and-runtime-identities",
+    "private-roots-and-transitive-dependency-reasons",
+    "generated-files-symbols-global-polyfills-and-hashes",
+    "authoritative-classmap-and-initialization-order",
+    "public-private-adapter-edges-and-conversions",
+    "php-file-count-and-compressed-uncompressed-bytes",
+    "isolated-cold-boot-samples-and-wordpress-request-evidence",
+    "duplicate-include-and-two-plugin-version-skew-results",
+    "global-polyfill-compatibility-and-mismatch-rejection",
+    "source-correlation-license-sbom-syntax-static-ownership-and-install-receipts"
+  ],
+  "budgets": {
+    "serverOnlyStarterGeneratedPhpRuntimeMaxBytes": 409600,
+    "prototypePrivateClosureReviewMaxBytes": 163840,
+    "prototypeIsolatedOpcacheDisabledColdBootP50MaxMilliseconds": 20,
+    "thresholdKind": "stop-and-review-not-production-support",
+    "durableWarmWordPressBudgetOwner": "wordpresshx-g8",
+    "productionPerformanceClaim": "not-tested"
+  },
+  "futureSharedRuntime": {
+    "currentDisposition": "forbidden",
+    "requiresSupersedingAdr": true,
+    "reconsiderationCriteria": [
+      "landing-editorial-and-woocommerce-solutions-with-multiple-removable-deployables",
+      "per-deployable-sdk024-g1-g8-evidence-passes",
+      "duplicated-cost-materially-breaks-budgets-in-at-least-two-solutions",
+      "versioned-runtime-abi-and-exact-compiler-compatibility",
+      "dependency-resolver-security-owner-support-window-and-deprecation-policy",
+      "mixed-version-order-update-rollback-removal-and-offline-matrix",
+      "missing-old-new-corrupt-or-conflicting-runtime-has-nonfatal-native-diagnostic",
+      "measurably-better-than-complete-per-deployable-cost"
+    ],
+    "singleMicrobenchmarkSufficient": false,
+    "rollback": "per-deployable-dependency-closed-support"
+  },
+  "stopConditions": [
+    "unexplained-or-missing-runtime-helper",
+    "private-or-composer-type-leaks-public-abi",
+    "unprefixed-unapproved-global-symbol",
+    "stock-front-or-process-include-path-is-packaged",
+    "runtime-composer-graph-without-dedicated-admission",
+    "local-path-or-secret-in-final-artifact",
+    "size-or-cold-boot-review-threshold-fails",
+    "duplicate-or-two-plugin-coexistence-fails",
+    "private-closure-cannot-pass-supported-php-wordpress-matrix"
+  ],
+  "evidence": {
+    "architectureAccepted": true,
+    "executablePrototype": "manifests/evidence/adr-018-runtime-support-packaging.json",
+    "sdk024ProductionIntegration": "not-tested",
+    "runtimeComposerDependencies": "unsupported",
+    "sharedRuntime": "forbidden",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

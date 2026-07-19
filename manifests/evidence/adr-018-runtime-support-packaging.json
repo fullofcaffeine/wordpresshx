@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-018-RUNTIME-SUPPORT-PACKAGING",
+  "bead": "wordpresshx-adr-018",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T12:50:40Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/018-runtime-support-packaging.md",
+      "sha256": "ec96334c64d0f3ffd8cbbc5b303aec1d7a859290c6cbe1e2e0a22cf801da6a46"
+    },
+    "architecture": {
+      "path": "manifests/runtime-support-packaging.json",
+      "sha256": "814986d75dc52b3f99f9e53e2af7624dde154a2ba6faacb0a1d66e163c816b51"
+    },
+    "fixtureReadme": {
+      "path": "fixtures/runtime-support-packaging/README.md",
+      "sha256": "8924d83a4c82d4720b17098153bec18ccf90665bc8ea9be7595bfb59dac3c668"
+    },
+    "haxeFixture": {
+      "path": "fixtures/runtime-support-packaging/src/fixture/privateimpl/Main.hx",
+      "sha256": "db888ca0e06c3f96acd3e667eae56a61d8ca87b2052a1aa3165530b006f617b4"
+    },
+    "cliProbe": {
+      "path": "fixtures/runtime-support-packaging/runtime/cli-probe.php",
+      "sha256": "9b11dfb50a5e65f34dffbfb27ffc39ed0336c35d2ec635049c17f467f60c19f5"
+    },
+    "coldBootProbe": {
+      "path": "fixtures/runtime-support-packaging/runtime/cold-boot.php",
+      "sha256": "1a1013d6f42b3d4bcb99ab56f4fcecc1dba48279bf65c39e343017ec982b266f"
+    },
+    "conflictProbe": {
+      "path": "fixtures/runtime-support-packaging/runtime/conflict-probe.php",
+      "sha256": "c603c8141a0585a29e36969da516d69bae9aadeb7b1a89e20870cf3085a42868"
+    },
+    "wordpressProbe": {
+      "path": "fixtures/runtime-support-packaging/runtime/wordpress-probe.php",
+      "sha256": "c38b8acc62696402d76dab76de29becbb6b91b042ca942050e373de1d89699b8"
+    },
+    "builder": {
+      "path": "scripts/runtime-support/build-fixtures.py",
+      "sha256": "63c4cc16830d36a70c2130c8e601d2e67a1070584e6a92435cf068f9b892131f"
+    },
+    "policyChecker": {
+      "path": "scripts/runtime-support/check-policy.py",
+      "sha256": "cbc1590ad3ebbee7ba801b327e8cd79eff20a0b959f073ae145ba8db016af84e"
+    },
+    "policyTests": {
+      "path": "scripts/runtime-support/test-policy.py",
+      "sha256": "443717903f2979a2a401e2b3150d3fa49b1ee9101117e2cfcb2c2080e2ebb222"
+    },
+    "runtimeVerifier": {
+      "path": "scripts/runtime-support/test-runtime.py",
+      "sha256": "7a2be430f474afb9050bba055e9af6740f91ff6a1e62c4c3ae2138b03f9dff4d"
+    },
+    "localGate": {
+      "path": "scripts/runtime-support/test.sh",
+      "sha256": "96c3461d4bebd20efa47c99768cfee343ee2fbe638947bcef360c26b2e7788e4"
+    },
+    "phpMatrixGate": {
+      "path": "scripts/runtime-support/test-php-matrix.sh",
+      "sha256": "b78ea809290f9ffc9c5c830d468facd03aa7ce927c98a0b3b88b6ced506b081a"
+    },
+    "wordpressGate": {
+      "path": "scripts/runtime-support/test-wordpress.sh",
+      "sha256": "82482f0f26600e04ea6cadddb2c3c7c3472bb61f71639cf369e4219b57843397"
+    },
+    "productionGate": {
+      "path": "scripts/runtime-support/test-production.sh",
+      "sha256": "95c8a824bed82075e51c6c9749b62accf9e557c33def3528c98c4f03c049ecae"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "9d9d6018acc717bce80fb7680606d2fb955be0dac87c0413336474ee8bc48883"
+    },
+    "imageLock": {
+      "path": "docker/images.lock.json",
+      "sha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069"
+    }
+  },
+  "contract": {
+    "profile": "wp70-release",
+    "commonAuthoring": "typed-haxe-only-with-derived-runtime-support",
+    "packageScope": "one-dependency-closed-native-wordpress-deployable",
+    "prefixSchema": "wordpress-hx.private-runtime.v1",
+    "prefixDigest": "sha256-first-96-bits-over-nul-separated-project-and-module",
+    "autoload": "package-local-authoritative-classmap",
+    "globalPolyfillCompatibility": "exact-hash-or-native-else-WPHX5201",
+    "stockFrontController": "excluded",
+    "runtimeComposerGraph": "absent-no-runtime-dependencies",
+    "sharedSiteRuntime": "forbidden",
+    "serverComposerInstall": "forbidden"
+  },
+  "verification": {
+    "commands": [
+      "python3 scripts/runtime-support/test-policy.py",
+      "bash scripts/runtime-support/test.sh",
+      "bash scripts/runtime-support/test-php-matrix.sh",
+      "bash scripts/runtime-support/test-wordpress.sh"
+    ],
+    "haxeVersion": "4.3.7",
+    "policyCases": {
+      "positive": 1,
+      "negative": 17,
+      "outcome": "passed"
+    },
+    "determinism": {
+      "freshBuildCount": 2,
+      "byteIdentical": true
+    },
+    "variants": [
+      {
+        "slug": "runtime-alpha",
+        "version": "1.0.0",
+        "prefix": "wphx_internal.pe6e097a62ec834baa79f7d6b",
+        "prefixDerivationSha256": "e6e097a62ec834baa79f7d6b72c5d2df3ee4d999bb68dfc2814aea40e1031d14",
+        "globalPolyfillSha256": "80f6c2172d93b501328e2c4fa131b81a186ff850e6a437e9068f9e842a6b3237",
+        "classmapEntries": 14,
+        "privatePhpFiles": 16,
+        "privatePhpBytes": 64488,
+        "packagePhpFiles": 20,
+        "packagePhpBytes": 67977,
+        "packageTreeSha256": "069af2a58a2a0e1efd1ac77bed517abd97c7d8072853209ef286aa77e1d5a175"
+      },
+      {
+        "slug": "runtime-beta",
+        "version": "2.0.0",
+        "prefix": "wphx_internal.pa7649ff01b1cf7bb11446304",
+        "prefixDerivationSha256": "a7649ff01b1cf7bb11446304a7a669bac3459a8866054dec36e9991d8e295fc5",
+        "globalPolyfillSha256": "80f6c2172d93b501328e2c4fa131b81a186ff850e6a437e9068f9e842a6b3237",
+        "classmapEntries": 14,
+        "privatePhpFiles": 16,
+        "privatePhpBytes": 64487,
+        "packagePhpFiles": 20,
+        "packagePhpBytes": 67970,
+        "packageTreeSha256": "e5d328166380ecceeb249f423ccf81b2cc465019d8c9f0a1f7c5998d602acf3e"
+      }
+    ],
+    "localColdBoot": {
+      "measurement": "isolated-opcache-disabled-hrtime-inside-php-process",
+      "sampleCountPerVariant": 25,
+      "alphaP50Nanoseconds": 781000,
+      "betaP50Nanoseconds": 791625,
+      "reviewThresholdNanoseconds": 20000000,
+      "outcome": "passed-not-production-claim"
+    },
+    "phpMatrix": [
+      {
+        "version": "7.4.33",
+        "image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+        "lint": "passed",
+        "twoPluginBehavior": "seed:alpha-v1:beta-v2",
+        "globalPolyfillMismatch": "rejected-before-private-boot-WPHX5201",
+        "publicReflection": "string-int-to-string",
+        "singleObservedColdBootNanoseconds": 3513416
+      },
+      {
+        "version": "8.4.7",
+        "image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+        "lint": "passed",
+        "twoPluginBehavior": "seed:alpha-v1:beta-v2",
+        "globalPolyfillMismatch": "rejected-before-private-boot-WPHX5201",
+        "publicReflection": "string-int-to-string",
+        "singleObservedColdBootNanoseconds": 3313834
+      }
+    ],
+    "wordpressRuntime": {
+      "wordpressVersion": "7.0",
+      "phpVersion": "8.4.23",
+      "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+      "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
+      "freshInstall": "passed",
+      "bothPluginsDiscoveredActivatedAndBooted": "passed",
+      "twoPluginBehavior": "seed:alpha-v1:beta-v2",
+      "publicReflection": "string-int-to-string",
+      "outcome": "passed"
+    },
+    "stockFrontControllersPackaged": false,
+    "processIncludePathMutationPackaged": false,
+    "duplicateSameRoot": "idempotent",
+    "globalPolyfillMismatch": "rejected-before-private-boot-WPHX5201",
+    "runtimeComposerArtifacts": 0,
+    "strictHaxeForbiddenTokens": 0,
+    "outcome": "passed"
+  },
+  "referenceReview": {
+    "repositories": [
+      {
+        "name": "haxe.rust",
+        "commit": "c1c95fbe7debccac68975ac9b5d75c115894675f",
+        "paths": [
+          "docs/consumer-runtime-benchmark-corpus.md",
+          "docs/schemas/runtime-plan-v4.schema.json"
+        ]
+      },
+      {
+        "name": "haxe.go",
+        "commit": "6f93082877bd3e65b5ad26a61bc594075c857ec9",
+        "paths": [
+          "docs/hxrt-selective-runtime.md"
+        ]
+      },
+      {
+        "name": "haxe.ruby",
+        "commit": "cf1cbfcecc60b44ecc5e53f0a69dd5675ebc74eb",
+        "paths": [
+          "runtime/README.md",
+          "docs/reviews/rubyhx-railshx-1.0-readiness-review.md"
+        ]
+      },
+      {
+        "name": "haxe.ocaml",
+        "commit": "56310df380f5094d9e4eac664ec2f03c5de52c90",
+        "paths": [
+          "README.md"
+        ]
+      },
+      {
+        "name": "genes",
+        "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+        "paths": [
+          "src/genes/LibraryProfile.hx"
+        ]
+      },
+      {
+        "name": "haxe.elixir.codex",
+        "commit": "fa4be51176f9e84360e47d21ff49efaa9e89f3ae",
+        "paths": [
+          "release/manifest.json",
+          "test/snapshot/otp/otp_core_runtime_contract/intended/_GeneratedFiles.json"
+        ]
+      }
+    ],
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "review": {
+    "productOwner": "Marcelo Serpa",
+    "architectureAndPrototype": "Codex",
+    "independentWordPressPhpReadabilityReview": "required-by-g1-not-satisfied-by-this-adr"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "runId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true,
+    "jobs": {
+      "contract": {
+        "name": "repository",
+        "jobId": null,
+        "status": "pending"
+      },
+      "phpRuntime": {
+        "name": "haxe",
+        "jobId": null,
+        "status": "pending"
+      },
+      "wordpressRuntime": {
+        "name": "wordpress-runtime",
+        "jobId": null,
+        "status": "pending"
+      }
+    }
+  },
+  "limitations": [
+    "The package builder is an executable architecture harness, not the SDK-024 semantic-plan/emitter/owner integration.",
+    "The bounded Haxe fixture is not arbitrary stock-Haxe PHP compatibility or a promise to retain the private lane after 1.0.",
+    "The isolated cold-boot observations are stop-threshold evidence, not warm WordPress request or production performance claims.",
+    "Runtime Composer dependencies remain unsupported; an empty graph is the validated MVP boundary, not package-manager compatibility evidence.",
+    "The independent WordPress/PHP readability reviewer, WPCS/static analysis, source correlation, license/SBOM, final ZIP, and G8 retention decision remain open."
+  ],
+  "claims": {
+    "architectureDecision": "accepted",
+    "perDeployableDependencyClosedPrototype": "runtime-tested",
+    "derivedPrivateNamespace": "runtime-tested",
+    "authoritativeClassmapIsolation": "runtime-tested",
+    "php74AndPhp84Coexistence": "runtime-tested",
+    "cleanWordPress70TwoPluginCoexistence": "runtime-tested",
+    "globalPolyfillCompatibility": "exact-hash-coexistence-and-conflict-rejection-runtime-tested",
+    "publicAbiSupportTypeLeakage": "not-observed-in-bounded-reflection-fixture",
+    "sdk024ProductionPrivateLane": "not-tested",
+    "runtimeComposerDependencies": "unsupported",
+    "sharedSiteRuntime": "forbidden",
+    "privateLaneAfter1_0": "not-decided",
+    "productionPerformance": "not-tested",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

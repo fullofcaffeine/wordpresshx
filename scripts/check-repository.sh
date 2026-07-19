@@ -361,6 +361,14 @@ required_files=(
   scripts/scaffold/plugin-native-caller.php
   scripts/scaffold/test-plugin-production.py
   scripts/scaffold/test-plugin-wordpress.sh
+  scripts/runtime-support/build-fixtures.py
+  scripts/runtime-support/check-policy.py
+  scripts/runtime-support/test-policy.py
+  scripts/runtime-support/test-runtime.py
+  scripts/runtime-support/test-php-matrix.sh
+  scripts/runtime-support/test-production.sh
+  scripts/runtime-support/test-wordpress.sh
+  scripts/runtime-support/test.sh
   tools/README.md
   examples/README.md
   fixtures/README.md
@@ -395,6 +403,12 @@ required_files=(
   fixtures/project-cli/valid/build-dry-run.events.jsonl
   fixtures/project-cli/valid/dev.events.jsonl
   fixtures/project-cli/valid/effective-inputs.json
+  fixtures/runtime-support-packaging/README.md
+  fixtures/runtime-support-packaging/runtime/cli-probe.php
+  fixtures/runtime-support-packaging/runtime/cold-boot.php
+  fixtures/runtime-support-packaging/runtime/conflict-probe.php
+  fixtures/runtime-support-packaging/runtime/wordpress-probe.php
+  fixtures/runtime-support-packaging/src/fixture/privateimpl/Main.hx
   fixtures/profiles/README.md
   fixtures/profiles/valid/gutenberg-forward-23.4.json
   fixtures/profiles/valid/wp70-release.json
@@ -442,6 +456,7 @@ required_files=(
   manifests/scaffold-implementation.json
   manifests/package-topology.json
   manifests/php-emission-policy.json
+  manifests/runtime-support-packaging.json
   manifests/release-support-policy.json
   manifests/toolchain.lock.json
   manifests/upstream.lock.json
@@ -449,6 +464,7 @@ required_files=(
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
+  manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
   manifests/evidence/sdk-041-ownership-transaction.json
@@ -685,6 +701,14 @@ wordpress_adapter_receipt = json.loads(
 sdk025_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-025-php-source-correlation.json"
+    ).read_text(encoding="utf-8")
+)
+runtime_support_architecture = json.loads(
+    Path("manifests/runtime-support-packaging.json").read_text(encoding="utf-8")
+)
+adr018_receipt = json.loads(
+    Path(
+        "manifests/evidence/adr-018-runtime-support-packaging.json"
     ).read_text(encoding="utf-8")
 )
 sdk034_receipt = json.loads(
@@ -980,6 +1004,174 @@ entry = lock["entries"]["genes-ts"]
 subject = receipt["subject"]
 sha1 = re.compile(r"[0-9a-f]{40}\Z")
 sha256 = re.compile(r"[0-9a-f]{64}\Z")
+
+assert runtime_support_architecture["schemaVersion"] == 1
+assert runtime_support_architecture["decision"] == "ADR-018"
+assert runtime_support_architecture["status"] == (
+    "accepted-architecture-with-executable-prototype"
+)
+assert runtime_support_architecture["authoring"]["commonPath"] == (
+    "typed-haxe-only"
+)
+assert runtime_support_architecture["authoring"][
+    "userAuthoredRuntimeConfigRequired"
+] is False
+assert runtime_support_architecture["mvpPackage"][
+    "sharedSiteRuntimeAllowed"
+] is False
+assert runtime_support_architecture["namespace"]["digestBitsRetained"] == 96
+assert runtime_support_architecture["namespace"]["userConfigurable"] is False
+assert runtime_support_architecture["autoload"][
+    "stockFrontControllerPackaged"
+] is False
+assert runtime_support_architecture["autoload"][
+    "processIncludePathMutation"
+] is False
+assert runtime_support_architecture["composer"]["mvpRuntimeGraph"] == (
+    "absent-no-runtime-dependencies"
+)
+assert runtime_support_architecture["composer"][
+    "separateVendorDirectoriesCountAsIsolation"
+] is False
+assert runtime_support_architecture["publicBoundary"][
+    "privateNamesAllowedInPublicAbi"
+] is False
+assert runtime_support_architecture["globalSymbols"] == {
+    "defaultAllowed": False,
+    "stockPolyfillException": "exact-inventoried-guarded-matrix-tested-only",
+    "admissionByAnalogyAllowed": False,
+    "compatibilityConstant": "WORDPRESSHX_PRIVATE_POLYFILLS_V1_SHA256",
+    "nativeInternalFunctionAllowed": True,
+    "sameExactDeclaringFileHashAllowed": True,
+    "differentHashDisposition": "reject-private-boot-WPHX5201",
+}
+assert runtime_support_architecture["budgets"][
+    "serverOnlyStarterGeneratedPhpRuntimeMaxBytes"
+] == 409600
+assert runtime_support_architecture["budgets"][
+    "prototypePrivateClosureReviewMaxBytes"
+] == 163840
+assert runtime_support_architecture["futureSharedRuntime"][
+    "currentDisposition"
+] == "forbidden"
+assert runtime_support_architecture["evidence"]["productionSupport"] == (
+    "not-tested"
+)
+assert runtime_support_architecture["evidence"]["publicationAuthorized"] is False
+
+assert adr018_receipt["schemaVersion"] == 1
+assert adr018_receipt["receiptId"] == "ADR-018-RUNTIME-SUPPORT-PACKAGING"
+assert adr018_receipt["bead"] == "wordpresshx-adr-018"
+assert adr018_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+for locked_subject in adr018_receipt["subject"].values():
+    locked_path = Path(locked_subject["path"])
+    assert hashlib.sha256(locked_path.read_bytes()).hexdigest() == (
+        locked_subject["sha256"]
+    )
+adr018_verification = adr018_receipt["verification"]
+assert adr018_verification["policyCases"] == {
+    "positive": 1,
+    "negative": 17,
+    "outcome": "passed",
+}
+assert adr018_verification["determinism"] == {
+    "freshBuildCount": 2,
+    "byteIdentical": True,
+}
+assert len(adr018_verification["variants"]) == 2
+assert {variant["slug"] for variant in adr018_verification["variants"]} == {
+    "runtime-alpha",
+    "runtime-beta",
+}
+for variant in adr018_verification["variants"]:
+    assert variant["classmapEntries"] == 14
+    assert variant["privatePhpFiles"] == 16
+    assert variant["privatePhpBytes"] <= 163840
+    assert variant["packagePhpBytes"] <= 409600
+    assert variant["globalPolyfillSha256"] == (
+        "80f6c2172d93b501328e2c4fa131b81a186ff850e6a437e9068f9e842a6b3237"
+    )
+    assert re.fullmatch(r"wphx_internal\.p[0-9a-f]{24}", variant["prefix"])
+    assert sha256.fullmatch(variant["prefixDerivationSha256"])
+    assert sha256.fullmatch(variant["packageTreeSha256"])
+assert adr018_verification["localColdBoot"]["sampleCountPerVariant"] == 25
+assert adr018_verification["localColdBoot"]["outcome"] == (
+    "passed-not-production-claim"
+)
+assert [lane["version"] for lane in adr018_verification["phpMatrix"]] == [
+    "7.4.33",
+    "8.4.7",
+]
+assert adr018_verification["phpMatrix"][0]["image"] == image_lock["images"][
+    "php74Floor"
+]["reference"]
+assert adr018_verification["phpMatrix"][1]["image"] == image_lock["images"][
+    "php84Cli"
+]["reference"]
+assert all(
+    lane["twoPluginBehavior"] == "seed:alpha-v1:beta-v2"
+    for lane in adr018_verification["phpMatrix"]
+)
+assert all(
+    lane["globalPolyfillMismatch"] == "rejected-before-private-boot-WPHX5201"
+    for lane in adr018_verification["phpMatrix"]
+)
+adr018_wordpress = adr018_verification["wordpressRuntime"]
+assert adr018_wordpress["wordpressVersion"] == "7.0"
+assert adr018_wordpress["wordpressImage"] == image_lock["images"][
+    "wordpress70Php84"
+]["reference"]
+assert adr018_wordpress["databaseImage"] == image_lock["images"]["mariadb"][
+    "reference"
+]
+assert adr018_wordpress["bothPluginsDiscoveredActivatedAndBooted"] == "passed"
+assert adr018_wordpress["twoPluginBehavior"] == "seed:alpha-v1:beta-v2"
+assert adr018_verification["stockFrontControllersPackaged"] is False
+assert adr018_verification["processIncludePathMutationPackaged"] is False
+assert adr018_verification["runtimeComposerArtifacts"] == 0
+assert adr018_verification["strictHaxeForbiddenTokens"] == 0
+assert adr018_verification["globalPolyfillMismatch"] == (
+    "rejected-before-private-boot-WPHX5201"
+)
+adr018_hosted = adr018_receipt["hostedWorkflow"]
+if adr018_receipt["status"] == "implemented-hosted-pending":
+    assert adr018_hosted["runId"] is None
+    assert adr018_hosted["commit"] is None
+    assert adr018_hosted["status"] == "pending-first-main-run"
+    assert all(
+        job["jobId"] is None and job["status"] == "pending"
+        for job in adr018_hosted["jobs"].values()
+    )
+else:
+    assert isinstance(adr018_hosted["runId"], int)
+    assert sha1.fullmatch(adr018_hosted["commit"])
+    assert adr018_hosted["status"] == "passed"
+    assert all(
+        isinstance(job["jobId"], int) and job["status"] == "passed"
+        for job in adr018_hosted["jobs"].values()
+    )
+assert adr018_hosted["required"] is True
+assert adr018_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert adr018_receipt["referenceReview"][
+    "runtimeOrBuildDependencyCreated"
+] is False
+assert adr018_receipt["referenceReview"]["genesSourceChanged"] is False
+assert adr018_receipt["claims"]["architectureDecision"] == "accepted"
+assert adr018_receipt["claims"]["sdk024ProductionPrivateLane"] == (
+    "not-tested"
+)
+assert adr018_receipt["claims"]["runtimeComposerDependencies"] == (
+    "unsupported"
+)
+assert adr018_receipt["claims"]["sharedSiteRuntime"] == "forbidden"
+assert adr018_receipt["claims"]["globalPolyfillCompatibility"] == (
+    "exact-hash-coexistence-and-conflict-rejection-runtime-tested"
+)
+assert adr018_receipt["claims"]["productionSupport"] == "not-tested"
+assert adr018_receipt["claims"]["publicationAuthorized"] is False
 
 
 def verify_historical_package(subject, implementation_commit):
@@ -3292,6 +3484,9 @@ assert sdk044_plugin_receipt["status"] in {
     "implemented-hosted-pending",
     "verified",
 }
+assert sdk044_plugin_receipt["evidenceCommit"] is None or sha1.fullmatch(
+    sdk044_plugin_receipt["evidenceCommit"]
+)
 assert set(sdk044_plugin_receipt["subject"]) == {
     "implementationManifest",
     "compilerPlanBoundary",
@@ -3335,6 +3530,7 @@ if sdk044_plugin_hosted["status"] == "pending-first-main-run":
         "implemented-sdk044-plugin-development-hosted-pending"
     )
     assert sdk044_plugin_receipt["implementationCommit"] is None
+    assert sdk044_plugin_receipt["evidenceCommit"] is None
     assert sdk044_plugin_receipt["historicalVerification"][
         "subjectCommit"
     ] is None
@@ -3348,9 +3544,21 @@ elif sdk044_plugin_hosted["status"] == "passed":
         "implemented-sdk044-plugin-development-hosted-verified"
     )
     assert sha1.fullmatch(sdk044_plugin_receipt["implementationCommit"])
+    assert sha1.fullmatch(sdk044_plugin_receipt["evidenceCommit"])
     assert sdk044_plugin_receipt["historicalVerification"][
         "subjectCommit"
-    ] == sdk044_plugin_receipt["implementationCommit"]
+    ] == sdk044_plugin_receipt["evidenceCommit"]
+    assert subprocess.run(
+        [
+            "git",
+            "merge-base",
+            "--is-ancestor",
+            sdk044_plugin_receipt["implementationCommit"],
+            sdk044_plugin_receipt["evidenceCommit"],
+        ],
+        check=False,
+        capture_output=True,
+    ).returncode == 0
     assert isinstance(sdk044_plugin_hosted["runId"], int)
     assert isinstance(sdk044_plugin_hosted["jobId"], int)
     assert sdk044_plugin_hosted["commit"] == (
@@ -3895,6 +4103,9 @@ assert sdk045_plugin_receipt["status"] in {
     "implemented-hosted-pending",
     "verified",
 }
+assert sdk045_plugin_receipt["evidenceCommit"] is None or sha1.fullmatch(
+    sdk045_plugin_receipt["evidenceCommit"]
+)
 assert set(sdk045_plugin_receipt["subject"]) == {
     "implementationManifest",
     "projectApi",
@@ -3934,6 +4145,7 @@ if sdk045_plugin_hosted["status"] == "pending-first-main-run":
         "implemented-sdk045-plugin-hosted-pending"
     )
     assert sdk045_plugin_receipt["implementationCommit"] is None
+    assert sdk045_plugin_receipt["evidenceCommit"] is None
     assert sdk045_plugin_receipt["historicalVerification"][
         "subjectCommit"
     ] is None
@@ -3947,9 +4159,21 @@ elif sdk045_plugin_hosted["status"] == "passed":
         "implemented-sdk045-plugin-hosted-verified"
     )
     assert sha1.fullmatch(sdk045_plugin_receipt["implementationCommit"])
+    assert sha1.fullmatch(sdk045_plugin_receipt["evidenceCommit"])
     assert sdk045_plugin_receipt["historicalVerification"][
         "subjectCommit"
-    ] == sdk045_plugin_receipt["implementationCommit"]
+    ] == sdk045_plugin_receipt["evidenceCommit"]
+    assert subprocess.run(
+        [
+            "git",
+            "merge-base",
+            "--is-ancestor",
+            sdk045_plugin_receipt["implementationCommit"],
+            sdk045_plugin_receipt["evidenceCommit"],
+        ],
+        check=False,
+        capture_output=True,
+    ).returncode == 0
     assert isinstance(sdk045_plugin_hosted["runId"], int)
     assert isinstance(sdk045_plugin_hosted["jobId"], int)
     assert sdk045_plugin_hosted["commit"] == (
@@ -7962,6 +8186,7 @@ python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
 python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
+python3 scripts/runtime-support/test-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/ownership/test-contract.py

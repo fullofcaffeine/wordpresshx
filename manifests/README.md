@@ -8,6 +8,14 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   adapter, HXX, evidence, stop, and pre-G8 migration/removal lock. Its G1
   evidence remains `not-tested`, stock-Haxe output is not guaranteed after
   `1.0`, and publication remains blocked.
+- `runtime-support-packaging.json` is ADR-018's accepted per-deployable,
+  dependency-closed private-support contract. It derives a stable private PHP
+  prefix and authoritative class map from typed Haxe project/module authority,
+  discards stock Haxe's process-global front controller, guards the exact
+  process-wide polyfill ABI before private boot, keeps the MVP runtime Composer
+  graph empty, and forbids a shared site runtime. Its executable prototype does
+  not implement SDK-024, admit runtime Composer packages, retain the stock-Haxe
+  lane after `1.0`, or claim production support.
 - `hxx-architecture.json` is the accepted ADR-011 inline-authoring, parser-selection, generic-PHP/WordPress lowering ownership, safety, density, escape-hatch, and no-runtime lock. SDK-080 resolves its parser closure through `packages/hxx/dependency-lock.json` and proves only the bounded parser-adapter prototype; native lowering remains owned by later evidence beads.
 - `browser-build-architecture.json` is the accepted ADR-013 strict TS/TSX
   primary lane, bounded classic Genes differential, exact project
@@ -136,6 +144,16 @@ vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
 SDK-040 collection and SDK-041 ownership publication now have separate
 implementation receipts; real emitters and runtime compatibility remain
 unproven.
+
+Receipt `ADR-018-RUNTIME-SUPPORT-PACKAGING` records the dependency-closed
+private-support architecture prototype. Strict Haxe logic is compiled twice
+under two derived 96-bit PHP prefixes, while a generated authoritative class
+map replaces the stock front controller. The bounded packages are byte-equal,
+remain below the review ceilings, coexist on PHP 7.4/8.4 and clean WordPress
+7.0, expose only native public signatures, and contain no runtime Composer
+graph. SDK-024 production integration, runtime Composer packages, independent
+PHP readability review, final ZIP/SBOM, post-`1.0` retention, and production
+support remain explicit non-claims.
 
 Receipt `SDK-040-SEMANTIC-COLLECTOR` records the first real Haxe macro
 collector, four deterministic direct/server compilations, ten source-located

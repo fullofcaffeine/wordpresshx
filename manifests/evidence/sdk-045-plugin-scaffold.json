@@ -5,6 +5,7 @@
   "status": "verified",
   "observedAt": "2026-07-19T11:57:24Z",
   "implementationCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+  "evidenceCommit": "fb2a0c1fa66c2621a099697b7ea5b5e2e2327458",
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-scaffold-implementation.json",
@@ -177,7 +178,7 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "subjectCommit": "fb2a0c1fa66c2621a099697b7ea5b5e2e2327458",
     "subjectContentSha256": "4d8550ec1007b07bc5329a8e35ab0aab50c80d8ac03be0ce4a5d401da4a1f1d8",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },

@@ -43,3 +43,11 @@ owned shutdown. SDK-043 additionally runs the production Haxe/Genes one-shot
 CLI against isolated copies of the same consumer while preserving the original
 contract vectors. It is not the SDK-044 watcher/process supervisor or
 WordPress/Next.js runtime evidence.
+
+`runtime-support-packaging/` contains ADR-018's strict Haxe private-logic
+fixture. The evidence harness compiles it under two automatically derived PHP
+prefixes and constructs temporary dependency-closed WordPress plugins to test
+class-map isolation, exact global-polyfill compatibility and rejection,
+duplicate loading, version skew, public reflection, size, cold boot, exact PHP
+7.4/8.4, and clean WordPress 7.0 activation. Generated PHP is evidence-only and
+is not committed application source or the SDK-024 production packager.

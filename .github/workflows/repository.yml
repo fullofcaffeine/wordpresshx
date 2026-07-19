@@ -105,6 +105,8 @@ jobs:
         run: bash compiler/wordpress/scripts/test.sh
       - name: Discover and activate the plugin on real WordPress 7.0
         run: bash compiler/wordpress/scripts/test-wordpress.sh
+      - name: Prove dependency-closed private runtime coexistence on WordPress 7.0
+        run: bash scripts/runtime-support/test-wordpress.sh
       - name: Install exact scoped browser asset toolchain
         run: |
           npm install --global lix@15.12.4
@@ -164,6 +166,10 @@ jobs:
         run: bash compiler/wordpress/scripts/test.sh
       - name: Test public PHP on exact PHP 7.4 and 8.4
         run: bash compiler/wordpress/scripts/test-php-matrix.sh
+      - name: Test dependency-closed private PHP runtime packaging
+        run: |
+          bash scripts/runtime-support/test.sh
+          bash scripts/runtime-support/test-php-matrix.sh
       - name: Install exact scoped HXX toolchain
         run: |
           npm install --global lix@15.12.4

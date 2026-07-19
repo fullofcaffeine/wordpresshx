@@ -5,9 +5,10 @@
   "status": "verified",
   "observedAt": "2026-07-19T11:57:24Z",
   "implementationCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+  "evidenceCommit": "fb2a0c1fa66c2621a099697b7ea5b5e2e2327458",
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
+    "subjectCommit": "fb2a0c1fa66c2621a099697b7ea5b5e2e2327458",
     "subjectContentSha256": "bc08fbc172b56a49f59f52c0206233380eb664bff14eac6fbe7bb845019b9dc1",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
