@@ -2,9 +2,8 @@
 
 Status: SDK-040 collection, SDK-041 fail-closed publication, SDK-042
 deterministic packaging, and the SDK-043 bounded `wphx` command foundation are
-implemented and locally verified. SDK-042 hosted promotion remains pending the
-implementation run. SDK-044 owns the long-running watcher, compiler-server,
-service, readiness, reload, and shutdown engine.
+implemented and hosted verified. SDK-044 owns the long-running watcher,
+compiler-server, service, readiness, reload, and shutdown engine.
 
 ## Developer surface
 

@@ -2868,6 +2868,8 @@ if sdk042_hosted["status"] == "pending-first-main-run":
     assert sdk042_hosted["runId"] is None
     assert sdk042_hosted["jobId"] is None
     assert sdk042_hosted["commit"] is None
+    assert "jobCount" not in sdk042_hosted
+    assert "allJobsPassed" not in sdk042_hosted
     sdk042_evidence_level = "runtime-tested-local"
 elif sdk042_hosted["status"] == "passed":
     assert sdk042_receipt["status"] == "verified"
@@ -2880,6 +2882,11 @@ elif sdk042_hosted["status"] == "passed":
     assert isinstance(sdk042_hosted["runId"], int)
     assert isinstance(sdk042_hosted["jobId"], int)
     assert sha1.fullmatch(sdk042_hosted["commit"])
+    assert sdk042_hosted["commit"] == (
+        sdk042_receipt_implementation["implementationCommit"]
+    )
+    assert sdk042_hosted["jobCount"] == 11
+    assert sdk042_hosted["allJobsPassed"] is True
     sdk042_evidence_level = "runtime-tested-hosted"
 else:
     raise AssertionError("SDK-042 deterministic build hosted status is invalid")
