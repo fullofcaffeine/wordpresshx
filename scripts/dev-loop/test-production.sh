@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in docker haxe haxelib lix node python3 realpath rg; do
+for command_name in docker haxe haxelib lix node python3 realpath; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-044 production development-loop gate requires ${command_name}" >&2
     exit 1
@@ -43,9 +43,27 @@ strict_haxe_paths=(
   "${package_root}/src/wordpresshx/cli/project/DevEngine.hx"
   "${package_root}/src/wordpresshx/cli/project/development"
 )
-if rg -n '\b(Dynamic|Any|cast|Reflect|untyped)\b' "${strict_haxe_paths[@]}"; then
-  echo "SDK-044 service runtime must remain strictly typed" >&2
-  exit 1
+if ! python3 - "${strict_haxe_paths[@]}" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+forbidden = re.compile(r"\b(?:Dynamic|Any|cast|Reflect|untyped)\b")
+violations = []
+for raw_path in sys.argv[1:]:
+    source_path = Path(raw_path)
+    candidates = [source_path] if source_path.is_file() else sorted(source_path.rglob("*.hx"))
+    for candidate in candidates:
+        for line_number, line in enumerate(candidate.read_text(encoding="utf-8").splitlines(), 1):
+            if forbidden.search(line):
+                violations.append(f"{candidate}:{line_number}:{line}")
+if violations:
+    print("\n".join(violations))
+    raise SystemExit(1)
+PY
+then
+	echo "SDK-044 service runtime must remain strictly typed" >&2
+	exit 1
 fi
 
 mkdir -p "${test_root}/runtime-a" "${test_root}/runtime-b"
