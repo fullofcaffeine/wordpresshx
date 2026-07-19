@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-042-DETERMINISTIC-BUILD",
+  "bead": "wordpresshx-sdk-042",
+  "status": "implemented-hosted-pending",
+  "subject": {
+    "architecture": {
+      "path": "manifests/deterministic-build-implementation.json",
+      "sha256": "e7295e383e23278c746dce46cfe4b92a6f83fb8bba41a762b283d20be2ffb78e"
+    },
+    "reportBuilder": {
+      "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
+      "sha256": "12978c7801361be5954aba63237b88ef1b2241ddbccc217ae84da7090ada44ff"
+    },
+    "archiveWriter": {
+      "path": "packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx",
+      "sha256": "e4c0bedf1607eb7409bb585eb2a341ea582e5e558f6079cad5c3f264927c168f"
+    },
+    "publisher": {
+      "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+      "sha256": "e03696c4d3aacd8c17fb0f31bf8aeafddde7f06fdb317b22b2f58ece65857b77"
+    },
+    "ownershipPaths": {
+      "path": "packages/cli/src/wordpresshx/cli/project/OwnershipPaths.hx",
+      "sha256": "3d5f002cb258212e9485a33caae5bc5b70e1de75dc08558efb55e5ba2e177b0b"
+    },
+    "ownershipPreflight": {
+      "path": "packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx",
+      "sha256": "095594995dc0ce448209fb818295f0bc8d5941203e7f914be29c9879425bbc55"
+    },
+    "artifactOwner": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+      "sha256": "e4286bcf305b51dda199e875905e1014544d1270f1ec267bc9ee3980dd816619"
+    },
+    "reportSchema": {
+      "path": "schemas/reproducible-build.schema.json",
+      "sha256": "863bfea38718f20b9a6bbae1d262d6300054eb0b0f7d0337c164775c3de4564b"
+    },
+    "comparator": {
+      "path": "scripts/determinism/compare-builds.py",
+      "sha256": "fe3202e10b9cf57aa4ac55b66534176b55b38350522101a0d72c24b48836e0f7"
+    },
+    "productionCorpus": {
+      "path": "scripts/determinism/test-production.py",
+      "sha256": "99e43d6c4ba7ac29bd864dd021cf2676f49c9d4024296ddf089f0a3f66cc10c2"
+    },
+    "gate": {
+      "path": "scripts/determinism/test-production.sh",
+      "sha256": "ee4dffd5f88f88c8a34ca84d5a47e83277fabde831caddd1e73c4c43c95ea7e3"
+    },
+    "projectCliCorpus": {
+      "path": "scripts/project-cli/test-production.py",
+      "sha256": "950395b4ae335fae8e12d893e32b7734605d13c68c502b6100bcc5ecc7db1628"
+    },
+    "ownershipContract": {
+      "path": "scripts/ownership/test-contract.py",
+      "sha256": "a4b14e593aa3a6ee2a3dc819300cc01b9f8661bd2371e1af448a10dba4eece00"
+    },
+    "ownershipFixtures": [
+      {
+        "path": "fixtures/ownership/valid/current.generated-files.json",
+        "sha256": "9317389d7dc41deb4050aed2718ae88b7399250519c57252579b3db34490ffae"
+      },
+      {
+        "path": "fixtures/ownership/valid/next.generated-files.json",
+        "sha256": "35bc2e4ce02eb36e001cf01fcf9f3b6eab93afd5396ff972f3259201ae284fe4"
+      },
+      {
+        "path": "fixtures/ownership/valid/prepared.journal.json",
+        "sha256": "e42b5498d0df39d043014462297fe4f50fb5f1996a5e917b124a272b92cca8a5"
+      }
+    ],
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "a501a89cfeda577f6a32cc73e00becf234ab7711330e05f03ac51d592532647a"
+    },
+    "architectureDocumentation": {
+      "path": "docs/architecture/build-and-dev-loop.md",
+      "sha256": "f5fd030dfc384f3d151421acda9294a10cf9dc7f4e38b40c69991836bcc42353"
+    }
+  },
+  "implementation": {
+    "implementationCommit": null,
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "productArchiveWriter": "closed-haxe-zip32-stored-v1",
+    "hostZipDependency": false,
+    "hostZlibDependency": false,
+    "networkReads": false,
+    "forcePath": false,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false
+  },
+  "verification": {
+    "command": "bash scripts/determinism/test-production.sh",
+    "outcome": "passed",
+    "freshRootCount": 2,
+    "ownedArtifactCount": 3,
+    "archiveEntryCount": 2,
+    "negativeComparisonCount": 3,
+    "additiveRootMigrationCount": 1,
+    "fingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "archiveSha256": "7d05200b86caccee66bc37d74259aef6d6452c15d913aa1ab69551bb00fdad4f",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "containerNetwork": "none",
+    "genesCompileReplay": "byte-identical",
+    "ownedGenerationReplay": "byte-identical",
+    "manifestReplay": "byte-identical",
+    "unsignedArchiveReplay": "byte-identical",
+    "fixedTimestampModeOrderAndMetadata": "passed",
+    "hostPathTempPathAndIdentityScan": "passed",
+    "archiveTamperDiagnostic": "passed",
+    "modeDriftDiagnostic": "passed",
+    "missingArtifactDiagnostic": "passed",
+    "safeAdditiveSdk043Migration": "passed"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test deterministic build and unsigned archive replay",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true
+  },
+  "claims": {
+    "sdk042DeterministicBuild": "runtime-tested-local",
+    "effectiveInputFingerprint": "runtime-tested-local",
+    "ownedGenerationDeterminism": "runtime-tested-local",
+    "unsignedArchiveDeterminism": "runtime-tested-local",
+    "actionableDifferenceReport": "runtime-tested-local",
+    "targetEmitterIntegration": "not-tested",
+    "deployableWordPressPackage": "not-tested",
+    "deployableNextjsPackage": "not-tested",
+    "packageInstallation": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The first archive contains only the canonical report and effective-input metadata; target emitters are not registered.",
+    "The runtime corpus uses exact Linux Node 22.17.0; Windows and network filesystems are not tested.",
+    "WordPress, Next.js, package installation, signing, and production deployment are not tested.",
+    "Public package publication remains blocked."
+  ]
+}

@@ -51,4 +51,8 @@ validates the complete stage, owns only exact manifest path+hash entries,
 publishes the manifest last, and recovers a durable journal without overwriting
 unexpected bytes. SDK-043 connects that library to `wphx build` and `clean`, adds
 strict project/lock/effective-input resolution, read-only check/inspect/doctor
-modes, and preserves the previous trace implementation byte-for-byte.
+modes, and preserves the previous trace implementation byte-for-byte. SDK-042
+extends the same Haxe/Genes publisher with a canonical reproducibility report
+and deterministic unsigned ZIP, then proves the complete owned generation
+byte-for-byte across unrelated fresh roots. The archive remains bounded
+evidence until real target emitters contribute deployable files.

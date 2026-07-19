@@ -17,6 +17,8 @@ import wordpresshx.cli.NodeGlobals;
 **/
 class ArtifactOwner {
 	public static inline final EXACT_NODE_VERSION = "22.17.0";
+	static inline final PRIVATE_FILE_MODE = 0x180; // 0600
+	static inline final GENERATED_FILE_MODE = 0x1a4; // 0644
 
 	final projectRoot:String;
 	final rootDevice:Int;
@@ -159,8 +161,9 @@ class ArtifactOwner {
 			if (OwnershipJson.encode(Reflect.field(liveCurrent, "locations")) != OwnershipJson.encode(Reflect.field(next, "locations"))) {
 				fail("v1 cannot migrate ownership metadata locations implicitly", "layout-migration");
 			}
-			if (OwnershipJson.encode(Reflect.field(liveCurrent, "outputRoots")) != OwnershipJson.encode(Reflect.field(next, "outputRoots"))) {
-				fail("v1 cannot migrate output roots implicitly", "root-migration");
+			if (OwnershipJson.encode(Reflect.field(liveCurrent, "outputRoots")) != OwnershipJson.encode(Reflect.field(next, "outputRoots"))
+				&& !isAdditiveRootMigration(liveCurrent, next)) {
+				fail("v1 only permits an additive exact output-root migration", "root-migration");
 			}
 		}
 		final current = liveCurrent == null ? OwnershipContract.deriveManifest(next, []) : liveCurrent;
@@ -191,13 +194,14 @@ class ArtifactOwner {
 			ensureDirectory(workRoot);
 			if (liveCurrent != null) {
 				atomicWrite(OwnershipContract.string(Reflect.field(journal, "priorManifest"), "storagePath", "prior manifest"),
-					OwnershipJson.encodeDocument(liveCurrent));
+					OwnershipJson.encodeDocument(liveCurrent), GENERATED_FILE_MODE);
 			}
-			atomicWrite(OwnershipContract.string(Reflect.field(journal, "nextManifest"), "storagePath", "next manifest"), OwnershipJson.encodeDocument(next));
+			atomicWrite(OwnershipContract.string(Reflect.field(journal, "nextManifest"), "storagePath", "next manifest"), OwnershipJson.encodeDocument(next),
+				GENERATED_FILE_MODE);
 			if (mode == "build") {
 				final stageRoot = OwnershipContract.string(Reflect.field(journal, "locations"), "stageRoot", "journal locations");
 				for (path => buffer in staged) {
-					atomicWrite(stageRoot + "/" + path, buffer);
+					atomicWrite(stageRoot + "/" + path, buffer, GENERATED_FILE_MODE);
 				}
 				verifyPrivateStage(stageRoot, next);
 			}
@@ -222,6 +226,26 @@ class ArtifactOwner {
 			}
 			throw new OwnershipFailure("ownership publication failed before commit", "publication-failed");
 		}
+	}
+
+	function isAdditiveRootMigration(current:Dynamic, next:Dynamic):Bool {
+		final currentRoots = OwnershipContract.array(current, "outputRoots", "current manifest");
+		final nextRoots = OwnershipContract.array(next, "outputRoots", "next manifest");
+		if (nextRoots.length <= currentRoots.length) {
+			return false;
+		}
+		final nextById = new Map<String, Dynamic>();
+		for (root in nextRoots) {
+			nextById.set(OwnershipContract.string(root, "rootId", "next output root"), root);
+		}
+		for (root in currentRoots) {
+			final id = OwnershipContract.string(root, "rootId", "current output root");
+			final candidate = nextById.get(id);
+			if (candidate == null || OwnershipJson.encode(root) != OwnershipJson.encode(candidate)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function validateMode(mode:String, liveCurrent:Null<Dynamic>, current:Dynamic, next:Dynamic, staged:Map<String, Buffer>, relinquished:Array<String>):Void {
@@ -838,23 +862,23 @@ class ArtifactOwner {
 		}
 	}
 
-	function atomicWrite(relative:String, buffer:Buffer):Void {
+	function atomicWrite(relative:String, buffer:Buffer, mode:Int = PRIVATE_FILE_MODE):Void {
 		final temporary = relative == journalPath ? journalTemporaryPath : Path.dirname(relative) + "/." + Path.basename(relative) + ".tmp";
 		if (lexists(relativeAbsolute(temporary))) {
 			fail("atomic metadata temporary path already exists", "transaction-collision", relative);
 		}
 		ensureParent(relative);
-		writeExclusive(temporary, buffer);
+		writeExclusive(temporary, buffer, mode);
 		renameRelative(temporary, relative);
 	}
 
-	function writeExclusive(relative:String, buffer:Buffer):Void {
+	function writeExclusive(relative:String, buffer:Buffer, mode:Int = PRIVATE_FILE_MODE):Void {
 		revalidateProjectRoot();
 		assertSafeComponents(relative, "exclusive write");
 		final absolute = relativeAbsolute(relative);
 		var descriptor:Null<Int> = null;
 		try {
-			descriptor = Fs.openSync(absolute, cast "wx", 0x180);
+			descriptor = Fs.openSync(absolute, cast "wx", mode);
 			var offset = 0;
 			while (offset < buffer.length) {
 				final written = Fs.writeSync(descriptor, buffer, offset, buffer.length - offset, offset);

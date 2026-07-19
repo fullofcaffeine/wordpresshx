@@ -10,7 +10,7 @@
     },
     "owner": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
-      "sha256": "dfb6c5302da5e0783877ae80aba3bb72a95ef59b9ce515313b863c949c0e6763"
+      "sha256": "e4286bcf305b51dda199e875905e1014544d1270f1ec267bc9ee3980dd816619"
     },
     "contract": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
@@ -60,6 +60,15 @@
     "diagnosticAbsolutePathPrivacy": "passed",
     "noNetworkOrChildProcessImplementation": "passed",
     "outcome": "passed"
+  },
+  "sdk042CompatibilityReverification": {
+    "change": "normalized-generated-modes-and-safe-additive-output-root-migration",
+    "generatedFileMode": 420,
+    "rootRemovalOrRewriteAllowed": false,
+    "ownershipCommand": "bash scripts/ownership/test.sh",
+    "determinismCommand": "bash scripts/determinism/test-production.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",

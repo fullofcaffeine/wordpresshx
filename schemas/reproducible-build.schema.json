@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/reproducible-build.schema.json",
+  "title": "WordPressHx reproducible build report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "canonicalization",
+    "fingerprint",
+    "project",
+    "normalization",
+    "entries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.reproducible-build.v1"
+    },
+    "canonicalization": {
+      "const": "wordpress-hx.canonical-json.v1"
+    },
+    "fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "normalization": {
+      "$ref": "#/$defs/normalization"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._@+-]+(?:/[A-Za-z0-9._@+-]+)*$"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileId",
+        "profileCatalogSha256",
+        "toolchainSha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "profileId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "profileCatalogSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "toolchainSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archiveFormat",
+        "entryOrder",
+        "fileMode",
+        "directoryMode",
+        "modifiedAt",
+        "compression",
+        "extraFields",
+        "archiveComment"
+      ],
+      "properties": {
+        "archiveFormat": {
+          "const": "zip32-stored-v1"
+        },
+        "entryOrder": {
+          "const": "portable-ascii-path-ascending"
+        },
+        "fileMode": {
+          "const": 420
+        },
+        "directoryMode": {
+          "const": 493
+        },
+        "modifiedAt": {
+          "const": "1980-01-01T00:00:00Z"
+        },
+        "compression": {
+          "const": "stored"
+        },
+        "extraFields": {
+          "const": false
+        },
+        "archiveComment": {
+          "const": false
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "sizeBytes",
+        "mode"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "mode": {
+          "const": 420
+        }
+      }
+    }
+  }
+}

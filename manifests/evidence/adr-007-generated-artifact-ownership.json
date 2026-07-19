@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/generated-artifact-ownership.json",
-      "sha256": "7b4d25d6e0202b379287fd07b481ee427b1e2d0d5f88e4425cb3c4a6ccb9df04"
+      "sha256": "675bdf1527d0f9127d28c865854a2d4f4ca4fdac9ef554a7b5a08aa5d3da48fd"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -22,7 +22,7 @@
     },
     "validator": {
       "path": "scripts/ownership/test-contract.py",
-      "sha256": "bdbce5c45b955110071164b8ddfd6e1b5f5e5ec1eaba7f498dedd7045e89e0fb"
+      "sha256": "a4b14e593aa3a6ee2a3dc819300cc01b9f8661bd2371e1af448a10dba4eece00"
     },
     "gate": {
       "path": "scripts/ownership/test-adr-contract.sh",
@@ -30,24 +30,24 @@
     },
     "currentManifestFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475"
+      "sha256": "9317389d7dc41deb4050aed2718ae88b7399250519c57252579b3db34490ffae"
     },
     "nextManifestFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9"
+      "sha256": "35bc2e4ce02eb36e001cf01fcf9f3b6eab93afd5396ff972f3259201ae284fe4"
     },
     "journalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb"
+      "sha256": "e42b5498d0df39d043014462297fe4f50fb5f1996a5e917b124a272b92cca8a5"
     }
   },
   "contract": {
     "manifestSchema": "wordpress-hx.generated-files.v1",
     "journalSchema": "wordpress-hx.ownership-journal.v1",
     "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
-    "currentManifestDigest": "4f90772d16347850680681b2e0e337c4a4fa5292fbf077ff3c9115212cdc60ed",
-    "nextManifestDigest": "2da74105e544350413ecf4c05337557c70becf0617214251c1562a237f721f2e",
-    "preparedJournalDigest": "cdfb36d1e9e556b4faae2b780dbb4f6f55a112dad1152dcc4741559d3de7aee2",
+    "currentManifestDigest": "4bff3d3e3c11d3a0118caffd519d00bcaab90d95abd52bb827718403f9312240",
+    "nextManifestDigest": "51cab841c9cd6e147293cd8a6cd4f10e3962599609c0192920446561f1aba307",
+    "preparedJournalDigest": "0f1b9dce77b4ff3ffef214e43163f06560f554d3b3ce935c1f8b2075bf786e71",
     "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
     "manifestPublication": "last-as-commit-marker",
     "forceOverwrite": false
@@ -79,6 +79,13 @@
     "processInterruptionRecovery": "passed",
     "specialFilesRejected": "passed",
     "outcome": "passed"
+  },
+  "sdk042CompatibilityRevision": {
+    "change": "safe-additive-exact-output-root-set-migration",
+    "rootRemovalOrRewriteAllowed": false,
+    "command": "bash scripts/ownership/test.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD"
   },
   "referenceReview": {
     "repositories": [

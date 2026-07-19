@@ -49,6 +49,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   `project-cli-implementation.json` records SDK-043's real bounded Haxe/Genes
   command, exact input resolver, read-only modes, and ownership publication;
   SDK-044 still owns real watch/process/WordPress/Next.js evidence.
+- `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
+  reproducibility report, fixed-representation unsigned ZIP writer, complete
+  owned-generation comparator, two-fresh-root gate, and safe additive
+  migration from the SDK-043 metadata-only output-root set.
 - `release-support-policy.json` is the accepted ADR-021 finite-channel, exact-matrix, ownership, deprecation, security, direct-main contribution, release, and immutable-rollback contract. Its empty supported-version list and disabled publication flags are deliberate stable blockers, not placeholders.
 
 - `upstream.lock.json` records resolved cross-project inputs. Its `partial` status means only the listed entries are pinned; omitted upstreams remain unresolved rather than receiving guessed or floating values.
@@ -118,6 +122,13 @@ provenance, exact clean, tamper rejection, and preservation of the frozen
 `wphx-sdk` trace entry. PHP/browser/asset emitters, the SDK-044 watcher and
 services, real WordPress/Next.js runtimes, and production support remain
 explicit non-claims.
+
+Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated
+fresh roots, byte-identical Genes output and complete owned generations, a
+canonical reproducibility report, fixed-mode/fixed-time stored ZIP entries,
+path-privacy scanning, three actionable comparison failures, and the safe
+additive migration from SDK-043's existing output-root set. The bounded archive is
+not yet a deployable WordPress or Next.js package.
 
 Receipt `ADR-007-GENERATED-ARTIFACT-OWNERSHIP` records the closed exact-file
 manifest and journal schemas, canonical old/new/create/replace/remove fixtures,

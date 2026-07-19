@@ -23,3 +23,8 @@ The historical contract vectors remain unchanged. Run
 `bash scripts/project-cli/test-production.sh` for the real command corpus; it
 does not claim the SDK-044 watcher/process supervisor, target emitters, or
 production support.
+
+SDK-042 reuses this accepted fixture through
+`bash scripts/determinism/test-production.sh`. The determinism corpus copies it
+into two unrelated fresh roots, perturbs non-input filesystem metadata, and
+compares the complete owned generation and normalized unsigned archive.

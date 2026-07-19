@@ -912,6 +912,19 @@ def fsync_directory(path: Path) -> None:
         os.close(descriptor)
 
 
+def is_additive_root_migration(
+    current: dict[str, object], next_manifest: dict[str, object]
+) -> bool:
+    current_roots = current["outputRoots"]
+    next_roots = next_manifest["outputRoots"]
+    if not isinstance(current_roots, list) or not isinstance(next_roots, list):
+        return False
+    if len(next_roots) <= len(current_roots):
+        return False
+    next_by_id = {root["rootId"]: root for root in next_roots}
+    return all(next_by_id.get(root["rootId"]) == root for root in current_roots)
+
+
 def safe_unlink_matching(
     project: Path, relative: str, expected: dict[str, object]
 ) -> None:
@@ -1065,8 +1078,12 @@ class FixtureTransaction:
         current = live_current or make_manifest([])
         if live_current is not None and current["locations"] != next_manifest["locations"]:
             raise ContractError("v1 cannot migrate ownership metadata locations implicitly")
-        if live_current is not None and current["outputRoots"] != next_manifest["outputRoots"]:
-            raise ContractError("v1 cannot migrate output roots implicitly")
+        if (
+            live_current is not None
+            and current["outputRoots"] != next_manifest["outputRoots"]
+            and not is_additive_root_migration(current, next_manifest)
+        ):
+            raise ContractError("v1 only permits an additive exact output-root migration")
         self.check_root_safety(project, next_manifest)
         self.verify_owned_tree(project, current)
         if not validator_passed:

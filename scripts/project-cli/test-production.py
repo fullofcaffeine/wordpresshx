@@ -12,6 +12,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 
@@ -25,6 +26,8 @@ NODE_IMAGE = (
 )
 MANIFEST = Path("build/nextjs/_GeneratedFiles.json")
 EFFECTIVE = Path("build/nextjs/.wphx/effective-inputs.json")
+REPRODUCIBILITY = Path("dist/wordpress-hx-build.json")
+ARCHIVE = Path("dist/wordpress-hx.zip")
 TRANSACTION = Path("build/nextjs/.wphx-transactions")
 UNOWNED = Path("build/nextjs/README.txt")
 
@@ -296,7 +299,49 @@ def run(runtime_root: Path) -> dict[str, object]:
         manifest = json.loads((project / MANIFEST).read_text())
         assert manifest["schema"] == "wordpress-hx.generated-files.v1"
         assert manifest["manifestDigest"] == digest(manifest, "manifestDigest")
-        assert [item["path"] for item in manifest["files"]] == [EFFECTIVE.as_posix()]
+        assert [item["path"] for item in manifest["files"]] == sorted(
+            [EFFECTIVE.as_posix(), REPRODUCIBILITY.as_posix(), ARCHIVE.as_posix()]
+        )
+        report_bytes = (project / REPRODUCIBILITY).read_bytes()
+        report = json.loads(report_bytes)
+        assert report_bytes == canonical(report, newline=True)
+        assert report["schema"] == "wordpress-hx.reproducible-build.v1"
+        assert report["fingerprint"] == inputs["fingerprint"]
+        assert report["normalization"] == {
+            "archiveComment": False,
+            "archiveFormat": "zip32-stored-v1",
+            "compression": "stored",
+            "directoryMode": 0o755,
+            "entryOrder": "portable-ascii-path-ascending",
+            "extraFields": False,
+            "fileMode": 0o644,
+            "modifiedAt": "1980-01-01T00:00:00Z",
+        }
+        assert report["entries"] == [
+            {
+                "path": EFFECTIVE.as_posix(),
+                "sha256": hashlib.sha256(EXPECTED_INPUTS.read_bytes()).hexdigest(),
+                "sizeBytes": len(EXPECTED_INPUTS.read_bytes()),
+                "mode": 0o644,
+            }
+        ]
+        with zipfile.ZipFile(project / ARCHIVE) as archive:
+            assert archive.namelist() == [
+                "_wphx/reproducible-build.json",
+                EFFECTIVE.as_posix(),
+            ]
+            assert archive.comment == b""
+            for info in archive.infolist():
+                assert info.compress_type == zipfile.ZIP_STORED
+                assert info.date_time == (1980, 1, 1, 0, 0, 0)
+                assert info.extra == b""
+                assert info.comment == b""
+                assert info.create_system == 3
+                assert (info.external_attr >> 16) & 0xFFFF == stat.S_IFREG | 0o644
+            assert archive.read("_wphx/reproducible-build.json") == report_bytes
+            assert archive.read(EFFECTIVE.as_posix()) == EXPECTED_INPUTS.read_bytes()
+        for generated in (project / MANIFEST, project / EFFECTIVE, project / REPRODUCIBILITY, project / ARCHIVE):
+            assert stat.S_IMODE(generated.stat().st_mode) == 0o644
         assert unowned.read_bytes() == b"hand-owned fixture\n"
 
         published = snapshot(project)
@@ -325,6 +370,8 @@ def run(runtime_root: Path) -> dict[str, object]:
 
         runtime.invoke_project(project, "clean")
         assert not (project / EFFECTIVE).exists()
+        assert not (project / REPRODUCIBILITY).exists()
+        assert not (project / ARCHIVE).exists()
         assert unowned.read_bytes() == b"hand-owned fixture\n"
         clean_manifest = json.loads((project / MANIFEST).read_text())
         assert clean_manifest["files"] == []

@@ -33,20 +33,10 @@ class OwnershipPreflight {
 					"Do not move generated ownership metadata; clean with its matching CLI before changing output roots."
 				]);
 			}
-			final expectedRoots:Array<Dynamic> = [
-				for (root in bootstrap.outputRoots)
-					OwnershipJson.object([
-						"rootId" => root.id,
-						"path" => root.path,
-						"ownershipMode" => "exact-file-manifest-coexists-with-unowned"
-					])
-			];
-			expectedRoots.sort((left, right) -> {
-				final leftKey = Reflect.field(left, "path") + "\x00" + Reflect.field(left, "rootId");
-				final rightKey = Reflect.field(right, "path") + "\x00" + Reflect.field(right, "rootId");
-				return Reflect.compare(leftKey, rightKey);
-			});
-			if (OwnershipJson.encode(Reflect.field(manifest, "outputRoots")) != OwnershipJson.encode(expectedRoots)) {
+			final expectedRoots = OwnershipPaths.manifestRoots(bootstrap, paths);
+			final currentRoots:Array<Dynamic> = cast Reflect.field(manifest, "outputRoots");
+			if (OwnershipJson.encode(currentRoots) != OwnershipJson.encode(expectedRoots)
+				&& !OwnershipPaths.isAdditiveRootSet(currentRoots, expectedRoots)) {
 				throw new CliFailure("WPHX1031", "ownership manifest output roots differ from wordpress-hx.json", 5, "ownership-publish",
 					paths.layout.manifestPath, [
 						"Restore the matching configuration or clean before an explicit output-root migration."

@@ -73,13 +73,15 @@ manifest-last artifact owner. `check`, `doctor`, every `inspect` topic, and
 `build --dry-run` are read-only. `clean` removes only current manifest entries
 whose exact bytes still match and retains every unowned file.
 
-The SDK-043 slice deliberately emits only the CLI-owned effective-input
-metadata artifact. PHP, browser, and asset stages report `stage-skipped` until
-their registered producers land; a skipped producer is never represented as a
-site build. `wphx dev` is a stable parsed command but currently exits with
-`WPHX4000` without modifying the project, because SDK-044 must supply and prove
-the real long-running engine. This avoids a polling placeholder or a false
-watch/runtime claim.
+The SDK-042/043 slice emits three CLI-owned artifacts: the effective-input
+metadata, a canonical reproducibility report, and a deterministic unsigned ZIP
+that contains the report plus its declared payload. The archive is deliberately
+bounded build evidence, not yet a deployable site package: PHP, browser, asset,
+and target-package stages report `stage-skipped` until their registered
+producers land. A skipped producer is never represented as a site build.
+`wphx dev` is a stable parsed command but currently exits with `WPHX4000`
+without modifying the project, because SDK-044 must supply and prove the real
+long-running engine.
 
 Use `--json` for canonical JSONL lifecycle events and closed diagnostics. Human
 errors include a stable `WPHXnnnn` code, failing stage, safe project-relative
@@ -160,6 +162,7 @@ Run the complete deterministic compile, locked Node/PHP runtime, output snapshot
 package replay, path-privacy, and tamper suite from the repository root:
 
 ```bash
+bash scripts/determinism/test-production.sh
 bash scripts/project-cli/test-production.sh
 bash packages/cli/scripts/test.sh
 bash packages/cli/scripts/test-browser-source-correlation.sh
@@ -173,8 +176,17 @@ commands, publication/replay/clean/provenance, tamper and ownership failures,
 invalid locks/configuration/package graphs, links and special files, Haxe
 failure, and the honest SDK-044 handoff.
 
+The SDK-042 determinism gate copies the same accepted project into two fresh,
+unrelated roots at different depths, varies source modes and modification
+times, builds with the locked offline Node runtime, and compares every owned
+file, mode, manifest byte, report, and ZIP byte. It independently parses the
+ZIP policy and proves actionable failures for corrupted bytes, mode drift, and
+missing artifacts before exercising the safe additive output-root migration
+from the SDK-043 generation.
+
 The bounded implementation and non-claims are recorded by
 [`SDK-043-PROJECT-CLI`](../../manifests/evidence/sdk-043-project-cli.json),
+[`SDK-042-DETERMINISTIC-BUILD`](../../manifests/evidence/sdk-042-deterministic-build.json),
 [`SDK-025-PHP-SOURCE-CORRELATION`](../../manifests/evidence/sdk-025-php-source-correlation.json)
 and
 [`SDK-034-BROWSER-SOURCE-CORRELATION`](../../manifests/evidence/sdk-034-browser-source-correlation.json).

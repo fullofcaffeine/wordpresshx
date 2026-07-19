@@ -53,6 +53,13 @@ the canonical JSONL command/stage/diagnostic/service event vocabulary. Their
 contract fixture proves deterministic state transitions only; SDK-043/044
 still own the production CLI, watcher, server, and process implementation.
 
+[`reproducible-build.schema.json`](reproducible-build.schema.json) closes the
+SDK-042 in-archive and sidecar build report. It binds the effective-input
+fingerprint, normalized file and directory modes, fixed ZIP timestamp,
+path-safe sorted payload entries, exact hashes and sizes, and the unsigned
+archive policy. The first archive contains only bounded CLI evidence; the
+schema does not promote it to a deployable WordPress or Next.js package.
+
 [`php-haxe-map.schema.json`](php-haxe-map.schema.json) and
 [`source-correlation-index.schema.json`](source-correlation-index.schema.json)
 are the accepted ADR-014 contracts. The PHP format binds half-open UTF-8 byte

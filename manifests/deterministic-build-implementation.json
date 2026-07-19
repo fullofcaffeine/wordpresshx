@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-042",
+  "status": "implemented-sdk042-local-verified",
+  "scope": "reproducible-effective-input-generation-and-bounded-unsigned-archive",
+  "contracts": {
+    "effectiveInputs": {
+      "identity": "wordpress-hx.effective-inputs.v1",
+      "schema": "schemas/effective-inputs.schema.json",
+      "fingerprintAlgorithm": "sha256-canonical-json-without-fingerprint-v1"
+    },
+    "ownershipManifest": {
+      "identity": "wordpress-hx.generated-files.v1",
+      "schema": "schemas/generated-files.schema.json",
+      "commitMarker": "manifest-published-last"
+    },
+    "reproducibleBuild": {
+      "identity": "wordpress-hx.reproducible-build.v1",
+      "schema": "schemas/reproducible-build.schema.json",
+      "sidecarPath": "dist/wordpress-hx-build.json",
+      "archivePath": "_wphx/reproducible-build.json"
+    },
+    "archive": {
+      "format": "zip32-stored-v1",
+      "path": "dist/wordpress-hx.zip",
+      "signature": "unsigned",
+      "boundedEvidenceOnly": true
+    },
+    "canonicalization": "wordpress-hx.canonical-json.v1"
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+    "reportBuilder": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
+    "archiveWriter": "packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx",
+    "ownershipPreflight": "packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx",
+    "artifactOwner": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "comparisonOracle": "scripts/determinism/compare-builds.py",
+    "exactToolchain": {
+      "haxe": "4.3.7",
+      "genes": "1.36.3",
+      "genesCommit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "node": "22.17.0",
+      "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "hostZipDependency": false,
+    "hostZlibDependency": false,
+    "handwrittenJavascriptImplementation": false,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false
+  },
+  "publication": {
+    "artifacts": [
+      {
+        "path": "build/nextjs/.wphx/effective-inputs.json",
+        "role": "effective-input-graph",
+        "mode": 420
+      },
+      {
+        "path": "dist/wordpress-hx-build.json",
+        "role": "reproducibility-report",
+        "mode": 420
+      },
+      {
+        "path": "dist/wordpress-hx.zip",
+        "role": "normalized-unsigned-archive",
+        "mode": 420
+      }
+    ],
+    "outputRoots": [
+      {
+        "rootId": "nextjs",
+        "path": "build/nextjs"
+      },
+      {
+        "rootId": "wordpress",
+        "path": "build/wordpress"
+      },
+      {
+        "rootId": "wphx.distribution",
+        "path": "dist"
+      }
+    ],
+    "validators": [
+      "wphx.deterministic-archive",
+      "wphx.effective-inputs"
+    ],
+    "archiveEntries": [
+      "_wphx/reproducible-build.json",
+      "build/nextjs/.wphx/effective-inputs.json"
+    ],
+    "manifestMode": 420,
+    "manifestPublishedLast": true,
+    "targetProducers": "stage-skipped-until-registered",
+    "deployableSitePackageClaimed": false
+  },
+  "normalization": {
+    "entryOrder": "portable-ascii-path-ascending",
+    "encoding": "utf-8",
+    "jsonLineEnding": "lf",
+    "fileMode": 420,
+    "directoryMode": 493,
+    "modifiedAt": "1980-01-01T00:00:00Z",
+    "compression": "stored",
+    "extraFields": false,
+    "archiveComment": false,
+    "absolutePaths": false,
+    "hostPermissions": false,
+    "hostMtimes": false,
+    "localeOrTimezone": false
+  },
+  "effectiveInputCoverage": {
+    "sourceFiles": "content-addressed",
+    "macroAndBootstrapInputs": "content-addressed",
+    "projectAndProfileConfiguration": "content-addressed",
+    "toolAndRuntimeLocks": "content-addressed",
+    "packageAndResourceLocks": "content-addressed",
+    "publicBuildEnvironment": "allowlisted-value-digests",
+    "runtimeSecrets": "excluded",
+    "hostPathsTimesPortsPids": "excluded"
+  },
+  "safety": {
+    "completePrivateStageBeforePublication": true,
+    "canonicalReportRecomputedBeforePublication": true,
+    "archiveBytesRecomputedBeforePublication": true,
+    "allOwnedArtifactsCompared": true,
+    "firstCausalDifferenceReported": true,
+    "safeAdditiveOutputRootMigrationOnly": true,
+    "rootRemovalOrRewriteAllowed": false,
+    "forcePath": false,
+    "networkDependency": false
+  },
+  "verification": {
+    "command": "bash scripts/determinism/test-production.sh",
+    "schema": "wordpress-hx.sdk042-determinism-summary.v1",
+    "freshRootCount": 2,
+    "ownedArtifactCount": 3,
+    "archiveEntryCount": 2,
+    "negativeComparisonCount": 3,
+    "additiveRootMigrationCount": 1,
+    "fingerprint": "f858fd71094e14d4777616456d4d457bdd8b738e818b63853fe41c3dd8589479",
+    "archiveSha256": "7d05200b86caccee66bc37d74259aef6d6452c15d913aa1ab69551bb00fdad4f",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "containerNetwork": "none",
+    "genesCompileReplay": "byte-identical",
+    "ownedGenerationReplay": "byte-identical",
+    "hostPathAndIdentityScan": "passed",
+    "outcome": "passed"
+  },
+  "referencePatterns": [
+    {
+      "repository": "haxe.elixir.codex",
+      "path": "scripts/release/deterministic-zip.js",
+      "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+      "blob": "7727d882bef08851edfe12c3da13f351eb1e16a4",
+      "sha256": "63c5fe3cf60dd7665854385d809956a89cbf61c4e812de1773ceaeabfbd731cf",
+      "lesson": "fixed-entry-order-and-representation",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    }
+  ],
+  "claims": {
+    "sdk042DeterministicBuild": "runtime-tested-local",
+    "effectiveInputFingerprint": "runtime-tested-local",
+    "ownedGenerationDeterminism": "runtime-tested-local",
+    "unsignedArchiveDeterminism": "runtime-tested-local",
+    "actionableDifferenceReport": "runtime-tested-local",
+    "targetEmitterIntegration": "not-tested",
+    "deployableWordPressPackage": "not-tested",
+    "deployableNextjsPackage": "not-tested",
+    "packageInstallation": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The first archive contains only the canonical report and effective-input metadata; target emitters are not registered.",
+    "The runtime corpus uses exact Linux Node 22.17.0; Windows and network filesystems are not tested.",
+    "WordPress, Next.js, package installation, signing, and production deployment are not tested.",
+    "Public package publication remains blocked."
+  ]
+}

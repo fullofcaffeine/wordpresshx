@@ -101,11 +101,15 @@ required_files=(
   packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx
   packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx
   packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx
+  packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx
+  packages/cli/src/wordpresshx/cli/project/DeterministicZipEntry.hx
   packages/cli/src/wordpresshx/cli/project/Doctor.hx
   packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx
   packages/cli/src/wordpresshx/cli/project/Inspector.hx
   packages/cli/src/wordpresshx/cli/project/OwnershipPaths.hx
   packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx
+  packages/cli/src/wordpresshx/cli/project/PreparedArtifact.hx
+  packages/cli/src/wordpresshx/cli/project/PreparedGeneration.hx
   packages/cli/src/wordpresshx/cli/project/ProjectBootstrap.hx
   packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx
   packages/cli/src/wordpresshx/cli/project/ProjectContext.hx
@@ -115,6 +119,9 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx
   packages/cli/src/wordpresshx/cli/project/ProjectOutputRoot.hx
   packages/cli/src/wordpresshx/cli/project/ProjectOwnershipPaths.hx
+  packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx
+  packages/cli/src/wordpresshx/cli/project/ReproduciblePayload.hx
+  packages/cli/src/wordpresshx/cli/project/ReproducibleProducts.hx
   packages/cli/test/ownership/src/sdk041/fixture/Main.hx
   packages/cli/test/browser-source-correlation/src/sdk034/fixture/Main.hx
   packages/cli/test/expected/browser-development.text
@@ -291,6 +298,7 @@ required_files=(
   schemas/semantic-collector-config.schema.json
   schemas/semantic-collector-inputs.schema.json
   schemas/generated-files.schema.json
+  schemas/reproducible-build.schema.json
   schemas/ownership-transaction-journal.schema.json
   schemas/project.schema.json
   schemas/project-lock.schema.json
@@ -307,6 +315,9 @@ required_files=(
   scripts/ownership/test-contract.py
   scripts/ownership/test-production.py
   scripts/ownership/test.sh
+  scripts/determinism/compare-builds.py
+  scripts/determinism/test-production.py
+  scripts/determinism/test-production.sh
   scripts/project-cli/test-contract.py
   scripts/project-cli/test-production.py
   scripts/project-cli/test-production.sh
@@ -382,6 +393,7 @@ required_files=(
   manifests/semantic-plan-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
+  manifests/deterministic-build-implementation.json
   manifests/ownership-implementation.json
   manifests/project-cli-architecture.json
   manifests/project-cli-implementation.json
@@ -399,6 +411,7 @@ required_files=(
   manifests/evidence/sdk-041-ownership-transaction.json
   manifests/evidence/adr-016-project-cli-configuration.json
   manifests/evidence/sdk-043-project-cli.json
+  manifests/evidence/sdk-042-deterministic-build.json
   manifests/evidence/ci-checkout-node24.json
   manifests/evidence/sdk-004-canonical-repository.json
   manifests/evidence/sdk-010-wp70-release.json
@@ -776,6 +789,16 @@ project_cli_implementation = json.loads(
 )
 sdk043_receipt = json.loads(
     Path("manifests/evidence/sdk-043-project-cli.json").read_text(
+        encoding="utf-8"
+    )
+)
+deterministic_build_implementation = json.loads(
+    Path("manifests/deterministic-build-implementation.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk042_receipt = json.loads(
+    Path("manifests/evidence/sdk-042-deterministic-build.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1662,6 +1685,9 @@ assert ownership_transaction["caughtFailureAfterCompleteCommit"] == (
 assert ownership_transaction["simultaneousMultiFileVisibilityClaimed"] is False
 assert ownership_transaction["powerLossDurabilityClaimed"] is False
 assert ownership_transaction["forceOverwriteFlag"] is False
+assert ownership_transaction["outputRootMigration"] == (
+    "safe-additive-exact-root-set-only"
+)
 ownership_recovery = ownership_architecture["recovery"]
 assert ownership_recovery["completeNextManifestAndTree"] == "finalize"
 assert ownership_recovery[
@@ -1761,6 +1787,14 @@ assert ownership_receipt["verification"]["outcome"] == "passed"
 assert ownership_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
 assert ownership_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
 assert ownership_receipt["referenceReview"]["genesSourceChanged"] is False
+ownership_sdk042_revision = ownership_receipt["sdk042CompatibilityRevision"]
+assert ownership_sdk042_revision == {
+    "change": "safe-additive-exact-output-root-set-migration",
+    "rootRemovalOrRewriteAllowed": False,
+    "command": "bash scripts/ownership/test.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD",
+}
 ownership_hosted = ownership_receipt["hostedWorkflow"]
 assert ownership_hosted["workflow"] == "Repository bootstrap"
 assert ownership_hosted["job"] == "repository"
@@ -1947,6 +1981,17 @@ for sdk041_receipt_proof in (
 ):
     assert sdk041_receipt_verification[sdk041_receipt_proof] == "passed"
 assert sdk041_receipt_verification["outcome"] == "passed"
+assert sdk041_receipt["sdk042CompatibilityReverification"] == {
+    "change": (
+        "normalized-generated-modes-and-safe-additive-output-root-migration"
+    ),
+    "generatedFileMode": 420,
+    "rootRemovalOrRewriteAllowed": False,
+    "ownershipCommand": "bash scripts/ownership/test.sh",
+    "determinismCommand": "bash scripts/determinism/test-production.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD",
+}
 sdk041_hosted = sdk041_receipt["hostedWorkflow"]
 assert sdk041_hosted["workflow"] == "Repository bootstrap"
 assert sdk041_hosted["job"] == "haxe"
@@ -2475,6 +2520,20 @@ for sdk043_unproven_receipt_claim in (
         "not-tested"
     )
 
+assert sdk043_receipt["sdk042CompatibilityReverification"] == {
+    "producedArtifacts": [
+        "build/nextjs/.wphx/effective-inputs.json",
+        "dist/wordpress-hx-build.json",
+        "dist/wordpress-hx.zip",
+    ],
+    "positiveCases": 15,
+    "negativeCases": 16,
+    "noWriteAssertions": 18,
+    "command": "bash scripts/project-cli/test-production.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD",
+}
+
 for sdk043_compatibility_receipt in (sdk025_receipt, sdk034_receipt):
     sdk043_compatibility = sdk043_compatibility_receipt[
         "sdk043CompatibilityReverification"
@@ -2487,6 +2546,371 @@ for sdk043_compatibility_receipt in (sdk025_receipt, sdk034_receipt):
     assert sdk043_compatibility["hostedEvidenceOwner"] == (
         sdk043_receipt["receiptId"]
     )
+
+assert deterministic_build_implementation["schemaVersion"] == 1
+assert deterministic_build_implementation["bead"] == "wordpresshx-sdk-042"
+assert deterministic_build_implementation["status"] in {
+    "implemented-sdk042-local-verified",
+    "implemented-sdk042-hosted-verified",
+}
+assert deterministic_build_implementation["scope"] == (
+    "reproducible-effective-input-generation-and-bounded-unsigned-archive"
+)
+sdk042_contracts = deterministic_build_implementation["contracts"]
+assert sdk042_contracts["effectiveInputs"] == {
+    "identity": "wordpress-hx.effective-inputs.v1",
+    "schema": "schemas/effective-inputs.schema.json",
+    "fingerprintAlgorithm": (
+        "sha256-canonical-json-without-fingerprint-v1"
+    ),
+}
+assert sdk042_contracts["ownershipManifest"] == {
+    "identity": "wordpress-hx.generated-files.v1",
+    "schema": "schemas/generated-files.schema.json",
+    "commitMarker": "manifest-published-last",
+}
+assert sdk042_contracts["reproducibleBuild"] == {
+    "identity": "wordpress-hx.reproducible-build.v1",
+    "schema": "schemas/reproducible-build.schema.json",
+    "sidecarPath": "dist/wordpress-hx-build.json",
+    "archivePath": "_wphx/reproducible-build.json",
+}
+assert sdk042_contracts["archive"] == {
+    "format": "zip32-stored-v1",
+    "path": "dist/wordpress-hx.zip",
+    "signature": "unsigned",
+    "boundedEvidenceOnly": True,
+}
+assert sdk042_contracts["canonicalization"] == (
+    "wordpress-hx.canonical-json.v1"
+)
+for sdk042_schema_contract in (
+    "effectiveInputs",
+    "ownershipManifest",
+    "reproducibleBuild",
+):
+    assert Path(sdk042_contracts[sdk042_schema_contract]["schema"]).is_file()
+
+sdk042_code = deterministic_build_implementation["implementation"]
+assert sdk042_code["language"] == "Haxe"
+assert sdk042_code["target"] == "Genes-emitted-Node-ESM"
+assert sdk042_code["publisher"] == (
+    "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx"
+)
+assert sdk042_code["reportBuilder"] == (
+    "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx"
+)
+assert sdk042_code["archiveWriter"] == (
+    "packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx"
+)
+assert sdk042_code["ownershipPreflight"] == (
+    "packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx"
+)
+assert sdk042_code["artifactOwner"] == (
+    "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx"
+)
+assert sdk042_code["comparisonOracle"] == (
+    "scripts/determinism/compare-builds.py"
+)
+assert sdk042_code["exactToolchain"] == {
+    "haxe": cli_dependency_lock["haxe"]["version"],
+    "genes": cli_dependency_lock["compiler"]["version"],
+    "genesCommit": cli_dependency_lock["compiler"]["commit"],
+    "node": cli_dependency_lock["runtime"]["version"],
+    "nodeImage": cli_dependency_lock["runtime"]["image"],
+}
+for sdk042_false_implementation_claim in (
+    "hostZipDependency",
+    "hostZlibDependency",
+    "handwrittenJavascriptImplementation",
+    "genesSourceChanged",
+    "siblingDependencyCreated",
+):
+    assert sdk042_code[sdk042_false_implementation_claim] is False
+assert sdk042_code["genesPullRequest"] is None
+
+sdk042_publication = deterministic_build_implementation["publication"]
+assert sdk042_publication["artifacts"] == [
+    {
+        "path": "build/nextjs/.wphx/effective-inputs.json",
+        "role": "effective-input-graph",
+        "mode": 420,
+    },
+    {
+        "path": "dist/wordpress-hx-build.json",
+        "role": "reproducibility-report",
+        "mode": 420,
+    },
+    {
+        "path": "dist/wordpress-hx.zip",
+        "role": "normalized-unsigned-archive",
+        "mode": 420,
+    },
+]
+assert sdk042_publication["outputRoots"] == [
+    {"rootId": "nextjs", "path": "build/nextjs"},
+    {"rootId": "wordpress", "path": "build/wordpress"},
+    {"rootId": "wphx.distribution", "path": "dist"},
+]
+assert sdk042_publication["validators"] == [
+    "wphx.deterministic-archive",
+    "wphx.effective-inputs",
+]
+assert sdk042_publication["archiveEntries"] == [
+    "_wphx/reproducible-build.json",
+    "build/nextjs/.wphx/effective-inputs.json",
+]
+assert sdk042_publication["manifestMode"] == 420
+assert sdk042_publication["manifestPublishedLast"] is True
+assert sdk042_publication["targetProducers"] == (
+    "stage-skipped-until-registered"
+)
+assert sdk042_publication["deployableSitePackageClaimed"] is False
+
+assert deterministic_build_implementation["normalization"] == {
+    "entryOrder": "portable-ascii-path-ascending",
+    "encoding": "utf-8",
+    "jsonLineEnding": "lf",
+    "fileMode": 420,
+    "directoryMode": 493,
+    "modifiedAt": "1980-01-01T00:00:00Z",
+    "compression": "stored",
+    "extraFields": False,
+    "archiveComment": False,
+    "absolutePaths": False,
+    "hostPermissions": False,
+    "hostMtimes": False,
+    "localeOrTimezone": False,
+}
+assert deterministic_build_implementation["effectiveInputCoverage"] == {
+    "sourceFiles": "content-addressed",
+    "macroAndBootstrapInputs": "content-addressed",
+    "projectAndProfileConfiguration": "content-addressed",
+    "toolAndRuntimeLocks": "content-addressed",
+    "packageAndResourceLocks": "content-addressed",
+    "publicBuildEnvironment": "allowlisted-value-digests",
+    "runtimeSecrets": "excluded",
+    "hostPathsTimesPortsPids": "excluded",
+}
+assert deterministic_build_implementation["safety"] == {
+    "completePrivateStageBeforePublication": True,
+    "canonicalReportRecomputedBeforePublication": True,
+    "archiveBytesRecomputedBeforePublication": True,
+    "allOwnedArtifactsCompared": True,
+    "firstCausalDifferenceReported": True,
+    "safeAdditiveOutputRootMigrationOnly": True,
+    "rootRemovalOrRewriteAllowed": False,
+    "forcePath": False,
+    "networkDependency": False,
+}
+
+sdk042_verification = deterministic_build_implementation["verification"]
+assert sdk042_verification["command"] == (
+    "bash scripts/determinism/test-production.sh"
+)
+assert sdk042_verification["schema"] == (
+    "wordpress-hx.sdk042-determinism-summary.v1"
+)
+assert sdk042_verification["freshRootCount"] == 2
+assert sdk042_verification["ownedArtifactCount"] == 3
+assert sdk042_verification["archiveEntryCount"] == 2
+assert sdk042_verification["negativeComparisonCount"] == 3
+assert sdk042_verification["additiveRootMigrationCount"] == 1
+assert sdk042_verification["fingerprint"] == (
+    project_cli_contracts["effectiveInputs"]["fingerprint"]
+)
+assert sdk042_verification["archiveSha256"] == (
+    "7d05200b86caccee66bc37d74259aef6d6452c15d913aa1ab69551bb00fdad4f"
+)
+assert sdk042_verification["nodeImage"] == (
+    cli_dependency_lock["runtime"]["image"]
+)
+assert sdk042_verification["containerNetwork"] == "none"
+assert sdk042_verification["genesCompileReplay"] == "byte-identical"
+assert sdk042_verification["ownedGenerationReplay"] == "byte-identical"
+assert sdk042_verification["hostPathAndIdentityScan"] == "passed"
+assert sdk042_verification["outcome"] == "passed"
+
+sdk042_references = deterministic_build_implementation["referencePatterns"]
+assert len(sdk042_references) == 1
+sdk042_reference = sdk042_references[0]
+assert sdk042_reference["repository"] == "haxe.elixir.codex"
+assert sdk042_reference["path"] == "scripts/release/deterministic-zip.js"
+assert sdk042_reference["commit"] == (
+    "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+)
+assert sdk042_reference["blob"] == (
+    "7727d882bef08851edfe12c3da13f351eb1e16a4"
+)
+assert sdk042_reference["sha256"] == (
+    "63c5fe3cf60dd7665854385d809956a89cbf61c4e812de1773ceaeabfbd731cf"
+)
+assert sdk042_reference["lesson"] == (
+    "fixed-entry-order-and-representation"
+)
+assert sdk042_reference["copiedBytes"] is False
+assert sdk042_reference["dependencyCreated"] is False
+
+assert sdk042_receipt["schemaVersion"] == 1
+assert sdk042_receipt["receiptId"] == "SDK-042-DETERMINISTIC-BUILD"
+assert sdk042_receipt["bead"] == "wordpresshx-sdk-042"
+assert sdk042_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+
+def verify_sdk042_subject(record):
+    assert set(record) == {"path", "sha256"}
+    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
+        record["sha256"]
+    )
+
+
+assert set(sdk042_receipt["subject"]) == {
+    "architecture",
+    "reportBuilder",
+    "archiveWriter",
+    "publisher",
+    "ownershipPaths",
+    "ownershipPreflight",
+    "artifactOwner",
+    "reportSchema",
+    "comparator",
+    "productionCorpus",
+    "gate",
+    "projectCliCorpus",
+    "ownershipContract",
+    "ownershipFixtures",
+    "workflow",
+    "architectureDocumentation",
+}
+for sdk042_subject_name, sdk042_subject in sdk042_receipt["subject"].items():
+    if sdk042_subject_name == "ownershipFixtures":
+        assert len(sdk042_subject) == 3
+        for sdk042_subject_record in sdk042_subject:
+            verify_sdk042_subject(sdk042_subject_record)
+    else:
+        verify_sdk042_subject(sdk042_subject)
+assert sdk042_receipt["subject"]["architecture"]["sha256"] == (
+    hashlib.sha256(
+        Path("manifests/deterministic-build-implementation.json").read_bytes()
+    ).hexdigest()
+)
+
+sdk042_receipt_implementation = sdk042_receipt["implementation"]
+assert sdk042_receipt_implementation["applicationLanguage"] == "Haxe"
+assert sdk042_receipt_implementation["javascriptCompiler"] == "Genes"
+assert sdk042_receipt_implementation["runtime"] == "Node ESM"
+assert sdk042_receipt_implementation["productArchiveWriter"] == (
+    "closed-haxe-zip32-stored-v1"
+)
+for sdk042_false_receipt_implementation_claim in (
+    "hostZipDependency",
+    "hostZlibDependency",
+    "networkReads",
+    "forcePath",
+    "genesSourceChanged",
+    "siblingDependencyCreated",
+):
+    assert sdk042_receipt_implementation[
+        sdk042_false_receipt_implementation_claim
+    ] is False
+assert sdk042_receipt_implementation["genesPullRequest"] is None
+
+sdk042_receipt_verification = sdk042_receipt["verification"]
+for sdk042_shared_verification_field in (
+    "command",
+    "outcome",
+    "freshRootCount",
+    "ownedArtifactCount",
+    "archiveEntryCount",
+    "negativeComparisonCount",
+    "additiveRootMigrationCount",
+    "fingerprint",
+    "archiveSha256",
+    "nodeImage",
+    "containerNetwork",
+    "genesCompileReplay",
+    "ownedGenerationReplay",
+):
+    assert sdk042_receipt_verification[sdk042_shared_verification_field] == (
+        sdk042_verification[sdk042_shared_verification_field]
+    )
+for sdk042_receipt_proof in (
+    "fixedTimestampModeOrderAndMetadata",
+    "hostPathTempPathAndIdentityScan",
+    "archiveTamperDiagnostic",
+    "modeDriftDiagnostic",
+    "missingArtifactDiagnostic",
+    "safeAdditiveSdk043Migration",
+):
+    assert sdk042_receipt_verification[sdk042_receipt_proof] == "passed"
+assert sdk042_receipt_verification["manifestReplay"] == "byte-identical"
+assert sdk042_receipt_verification["unsignedArchiveReplay"] == (
+    "byte-identical"
+)
+
+assert "Test deterministic build and unsigned archive replay" in workflow_text
+assert "bash scripts/determinism/test-production.sh" in workflow_text
+sdk042_hosted = sdk042_receipt["hostedWorkflow"]
+assert sdk042_hosted["workflow"] == "Repository bootstrap"
+assert sdk042_hosted["job"] == "haxe"
+assert sdk042_hosted["step"] == (
+    "Test deterministic build and unsigned archive replay"
+)
+assert sdk042_hosted["required"] is True
+if sdk042_hosted["status"] == "pending-first-main-run":
+    assert sdk042_receipt["status"] == "implemented-hosted-pending"
+    assert deterministic_build_implementation["status"] == (
+        "implemented-sdk042-local-verified"
+    )
+    assert sdk042_receipt_implementation["implementationCommit"] is None
+    assert sdk042_hosted["runId"] is None
+    assert sdk042_hosted["jobId"] is None
+    assert sdk042_hosted["commit"] is None
+    sdk042_evidence_level = "runtime-tested-local"
+elif sdk042_hosted["status"] == "passed":
+    assert sdk042_receipt["status"] == "verified"
+    assert deterministic_build_implementation["status"] == (
+        "implemented-sdk042-hosted-verified"
+    )
+    assert sha1.fullmatch(
+        sdk042_receipt_implementation["implementationCommit"]
+    )
+    assert isinstance(sdk042_hosted["runId"], int)
+    assert isinstance(sdk042_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk042_hosted["commit"])
+    sdk042_evidence_level = "runtime-tested-hosted"
+else:
+    raise AssertionError("SDK-042 deterministic build hosted status is invalid")
+
+for sdk042_proven_claim in (
+    "sdk042DeterministicBuild",
+    "effectiveInputFingerprint",
+    "ownedGenerationDeterminism",
+    "unsignedArchiveDeterminism",
+    "actionableDifferenceReport",
+):
+    assert deterministic_build_implementation["claims"][
+        sdk042_proven_claim
+    ] == sdk042_evidence_level
+    assert sdk042_receipt["claims"][sdk042_proven_claim] == (
+        sdk042_evidence_level
+    )
+for sdk042_unproven_claim in (
+    "targetEmitterIntegration",
+    "deployableWordPressPackage",
+    "deployableNextjsPackage",
+    "packageInstallation",
+    "productionSupport",
+):
+    assert deterministic_build_implementation["claims"][
+        sdk042_unproven_claim
+    ] == "not-tested"
+    assert sdk042_receipt["claims"][sdk042_unproven_claim] == "not-tested"
+assert sdk042_receipt["limitations"] == (
+    deterministic_build_implementation["limitations"]
+)
 
 assert source_correlation_architecture["schemaVersion"] == 1
 assert source_correlation_architecture["decision"] == "ADR-014"
@@ -6106,6 +6530,8 @@ python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/ownership/test-contract.py
 python3 scripts/project-cli/test-contract.py
+python3 -m py_compile scripts/determinism/compare-builds.py
+python3 -m py_compile scripts/determinism/test-production.py
 python3 -m py_compile scripts/project-cli/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py

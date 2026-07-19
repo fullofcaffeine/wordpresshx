@@ -1,9 +1,10 @@
 # Build and development loop
 
-Status: SDK-040 collection, SDK-041 fail-closed publication, and the SDK-043
-bounded `wphx` command foundation are implemented. SDK-042 still owns the
-aggregate deterministic-build replay gate, and SDK-044 owns the long-running
-watcher, compiler-server, service, readiness, reload, and shutdown engine.
+Status: SDK-040 collection, SDK-041 fail-closed publication, SDK-042
+deterministic packaging, and the SDK-043 bounded `wphx` command foundation are
+implemented and locally verified. SDK-042 hosted promotion remains pending the
+implementation run. SDK-044 owns the long-running watcher, compiler-server,
+service, readiness, reload, and shutdown engine.
 
 ## Developer surface
 
@@ -51,11 +52,34 @@ generation privately and publishes through the SDK-041 owner; `check`,
 `doctor`, `inspect`, and `build --dry-run` have no publication authority.
 
 The current generation is intentionally limited to CLI effective-input
-metadata. Missing PHP, browser, and asset producers appear as explicit skipped
-stages. The stable `wphx dev` entry validates project and ownership state, then
-exits `WPHX4000` without starting children or writing files until SDK-044's
-engine is present. The transcript in ADR-016 remains a contract fixture, not a
-claim that the watcher already runs.
+metadata plus its reproducibility report and unsigned archive. Missing PHP,
+browser, and asset producers appear as explicit skipped stages; the archive is
+therefore deterministic build evidence, not a deployable site package. The
+stable `wphx dev` entry validates project and ownership state, then exits
+`WPHX4000` without starting children or writing files until SDK-044's engine is
+present. The transcript in ADR-016 remains a contract fixture, not a claim that
+the watcher already runs.
+
+## Deterministic clean-build oracle
+
+Every bounded build derives one canonical artifact set in memory before live
+publication. The transaction contains the effective-input document,
+`dist/wordpress-hx-build.json`, and `dist/wordpress-hx.zip`. The report binds
+the exact project/profile/toolchain fingerprint and every payload path, byte
+length, SHA-256, and normalized mode. The Haxe ZIP32 writer uses sorted portable
+paths, stored entries, the 1980 ZIP epoch, regular-file mode `0644`, no extra
+fields, and no archive or entry comments. It has no host `zip`, Python, zlib,
+locale, timezone, mtime, or permission input.
+
+The SDK-042 gate compiles the Genes CLI twice, then builds the same fixture in
+two unrelated fresh roots with deliberately different input mtimes and modes.
+It byte-compares the complete ownership manifest, generated artifacts, report,
+and archive, validates the archive independently, scans for host/temp/user path
+leaks, and exercises path-specific byte/mode/missing diagnostics. A safe
+additive ownership-root migration admits the new distribution root from an
+SDK-043 generation; removing or rewriting an existing root remains forbidden.
+This clean-build result is the oracle SDK-044 incremental generations must
+match before they can be promoted.
 
 ## SDK-044 `wphx dev` lifecycle
 

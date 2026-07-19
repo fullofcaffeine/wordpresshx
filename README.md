@@ -80,6 +80,7 @@ bash scripts/check-repository.sh
 bash scripts/ownership/test.sh
 bash scripts/project-cli/test.sh
 bash scripts/project-cli/test-production.sh
+bash scripts/determinism/test-production.sh
 bd lint
 bd dep cycles
 ```

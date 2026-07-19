@@ -7,7 +7,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "c25d9fdaed3ff6a958f7fa737e69908a4fbb4ae21d1d942513b1f148b35791df"
+      "sha256": "5cfb51054e79a52d319642ca77782ded568893e5991cc104b24e32a6b5faf67f"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -35,7 +35,7 @@
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
-      "sha256": "34aa961d3031c8f0941f10e9c356a64d18ebd0f1a46e8ad270f99ee2d7687154"
+      "sha256": "e03696c4d3aacd8c17fb0f31bf8aeafddde7f06fdb317b22b2f58ece65857b77"
     },
     "profile": {
       "path": "packages/cli/profiles/wphx.hxml",
@@ -55,7 +55,7 @@
     },
     "validator": {
       "path": "scripts/project-cli/test-production.py",
-      "sha256": "53c3ab4dc5a7cc7d5e073f895f5a719a7f0979d64ed4ff4b99c4b957a3426d1d"
+      "sha256": "950395b4ae335fae8e12d893e32b7734605d13c68c502b6100bcc5ecc7db1628"
     },
     "gate": {
       "path": "scripts/project-cli/test-production.sh",
@@ -63,7 +63,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "3bd3d3f0148b6e36d73189122a992a242c1cb3d86c9f56b14ac165d0e7874e08"
+      "sha256": "a501a89cfeda577f6a32cc73e00becf234ab7711330e05f03ac51d592532647a"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
@@ -83,19 +83,19 @@
     },
     "ownershipContractValidator": {
       "path": "scripts/ownership/test-contract.py",
-      "sha256": "bdbce5c45b955110071164b8ddfd6e1b5f5e5ec1eaba7f498dedd7045e89e0fb"
+      "sha256": "a4b14e593aa3a6ee2a3dc819300cc01b9f8661bd2371e1af448a10dba4eece00"
     },
     "ownershipCurrentFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "3f126c776cb7ff4d2547db15f51292d4cf22058498bf4276cd22cd9fcd1e0475"
+      "sha256": "9317389d7dc41deb4050aed2718ae88b7399250519c57252579b3db34490ffae"
     },
     "ownershipNextFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "dd87b28802314e284a8d750b799dbb3bd9f1e914180dc0a17bdba9787f0ed2e9"
+      "sha256": "35bc2e4ce02eb36e001cf01fcf9f3b6eab93afd5396ff972f3259201ae284fe4"
     },
     "ownershipJournalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "0b559c7e6af9b113701d92526ebeb4aaa834d3be11259b064d84181090caf8fb"
+      "sha256": "e42b5498d0df39d043014462297fe4f50fb5f1996a5e917b124a272b92cca8a5"
     },
     "schemas": [
       {
@@ -196,6 +196,19 @@
       "command": "bash packages/cli/scripts/test-browser-source-correlation.sh",
       "outcome": "passed"
     }
+  },
+  "sdk042CompatibilityReverification": {
+    "producedArtifacts": [
+      "build/nextjs/.wphx/effective-inputs.json",
+      "dist/wordpress-hx-build.json",
+      "dist/wordpress-hx.zip"
+    ],
+    "positiveCases": 15,
+    "negativeCases": 16,
+    "noWriteAssertions": 18,
+    "command": "bash scripts/project-cli/test-production.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD"
   },
   "referenceReview": {
     "repository": "haxe.elixir.codex",
