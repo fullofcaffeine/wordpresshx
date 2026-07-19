@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
   "bead": "wordpresshx-sdk-045.2",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T08:28:55Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T08:43:05Z",
+  "implementationCommit": "574b1724942926541e4055a28e0c265cebebe927",
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-scaffold-implementation.json",
@@ -173,7 +173,7 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
+    "subjectCommit": "574b1724942926541e4055a28e0c265cebebe927",
     "subjectContentSha256": "552bcee098e20cc2f3bfc199d7b02ca677bda2b4fb0be2a5c7ee0e63dcd55eec",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
@@ -218,19 +218,19 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29680082830,
+    "jobId": 88174533989,
+    "commit": "574b1724942926541e4055a28e0c265cebebe927",
+    "status": "passed",
     "required": true
   },
   "claims": {
-    "haxeOnlyPluginScaffold": "runtime-tested-local",
-    "derivedPluginMetadata": "compile-tested-local",
-    "nativePhpEmission": "runtime-tested-local",
-    "deterministicPluginPackaging": "runtime-tested-local",
-    "compileWatchReuse": "runtime-tested-local",
-    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-local",
+    "haxeOnlyPluginScaffold": "runtime-tested-hosted",
+    "derivedPluginMetadata": "compile-tested-hosted",
+    "nativePhpEmission": "runtime-tested-hosted",
+    "deterministicPluginPackaging": "runtime-tested-hosted",
+    "compileWatchReuse": "runtime-tested-hosted",
+    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-hosted",
     "typedHooksBeyondBootstrap": "not-implemented",
     "publicPackageInstallation": "blocked",
     "productionSupport": "not-tested"
