@@ -4895,6 +4895,14 @@ elif sdk026_hosted["status"] == "passed":
     assert sdk026_hosted["commit"] == sdk026_implementation_commit
     assert isinstance(sdk026_hosted["runId"], int)
     assert isinstance(sdk026_hosted["jobId"], int)
+    assert sdk026_hosted["runId"] == 29695491419
+    assert sdk026_hosted["jobId"] == 88215411504
+    assert sdk026_hosted["completedAt"] == "2026-07-19T16:53:52Z"
+    assert sdk026_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29695491419"
+    )
+    assert sdk026_hosted["fullMatrixStatus"] == "passed"
+    assert sdk026_hosted["jobCount"] == 11
     assert sdk026_receipt["verification"]["repository"]["outcome"] == (
         "passed-local"
     )

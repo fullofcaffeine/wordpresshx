@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
   "bead": "wordpresshx-sdk-026",
-  "status": "local-verified-hosted-pending",
-  "observedAt": "2026-07-19T16:31:41Z",
+  "status": "verified",
+  "observedAt": "2026-07-19T16:53:52Z",
   "subject": {
     "implementation": "manifests/php-quality-implementation.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -16,7 +16,7 @@
     "wordpressStubsSha256": "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "6daf377559f004a3c09a00dc722ce3d87fccde9b",
     "language": "Haxe",
     "javascriptCompiler": "Genes 1.36.3",
     "genesSourceChanged": false,
@@ -160,7 +160,7 @@
     }
   },
   "hostedVerification": {
-    "status": "pending",
+    "status": "passed",
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "steps": [
@@ -176,23 +176,26 @@
       "failedStep": "Test Haxe and Genes PHP trace CLI",
       "cause": "private-human-trace-snapshot-retained-pre-phpdoc-native-lines"
     },
-    "commit": null,
-    "runId": null,
-    "jobId": null
+    "commit": "6daf377559f004a3c09a00dc722ce3d87fccde9b",
+    "runId": 29695491419,
+    "jobId": 88215411504,
+    "completedAt": "2026-07-19T16:53:52Z",
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29695491419",
+    "fullMatrixStatus": "passed",
+    "jobCount": 11
   },
   "claims": {
-    "pinnedToolsAndWordPressStubs": "local-runtime-tested",
-    "lintFormatWpcsCompatibilityStaticAnalysis": "local-runtime-tested",
-    "autoloadClassmapAndDuplicateSymbols": "local-runtime-tested",
+    "pinnedToolsAndWordPressStubs": "hosted-runtime-tested",
+    "lintFormatWpcsCompatibilityStaticAnalysis": "hosted-runtime-tested",
+    "autoloadClassmapAndDuplicateSymbols": "hosted-runtime-tested",
     "narrowVersionedGeneratedExceptions": "policy-authenticated-and-negative-tested",
-    "failClosedBeforePublication": "local-negative-tested",
+    "failClosedBeforePublication": "hosted-negative-tested",
     "haxeOnlyCommonPath": "compile-and-runtime-tested",
     "qualifiedLicenseApproval": "blocked",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-tested"
   },
   "limitations": [
-    "Hosted verification is pending a passing implementation commit; the first run passed the SDK-026 steps and exposed one stale native-line trace snapshot.",
     "The private stock-Haxe lane retains its separately documented pre-1.0 migration status and narrower static-analysis level.",
     "The exact matrix does not establish Windows, multisite, deployment, upgrades, arbitrary handwritten PHP, or production support.",
     "Public package publication remains blocked independently by licensing and release gates."

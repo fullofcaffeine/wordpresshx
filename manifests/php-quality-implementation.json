@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-026",
-  "status": "implemented-local-verified-hosted-pending",
+  "status": "implemented-hosted-verified",
   "scope": "complete-generated-plugin-php-staging-quality-gate",
   "haxeFirstErgonomics": {
     "authority": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
@@ -131,11 +131,11 @@
     "strictHaxeBoundary": "passed"
   },
   "claims": {
-    "pinnedPhpToolchain": "local-runtime-tested",
-    "formatterAndWpcs": "local-runtime-tested",
-    "staticAnalysis": "local-runtime-tested",
-    "autoloadAndDuplicateSymbols": "local-runtime-tested",
-    "failClosedPublication": "local-negative-tested",
+    "pinnedPhpToolchain": "hosted-runtime-tested",
+    "formatterAndWpcs": "hosted-runtime-tested",
+    "staticAnalysis": "hosted-runtime-tested",
+    "autoloadAndDuplicateSymbols": "hosted-runtime-tested",
+    "failClosedPublication": "hosted-negative-tested",
     "projectConfigurationCeremony": "none",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-tested"
