@@ -42,7 +42,7 @@
     },
     "devLoopDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "107c572ababf74daf4fff10123770b8b358f23509bd932128f40d2ee4bce1295"
+      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
     }
   },
   "contract": {
@@ -108,6 +108,13 @@
     "localVerification": "passed",
     "hostedVerification": "pending-first-hosted-main-run"
   },
+  "sdk044ProviderDocumentationRevision": {
+    "observedAt": "2026-07-19T00:00:00Z",
+    "reason": "The shared development-loop document now records SDK-044's Haxe-derived WordPress provider while preserving SDK-040 as the declaration and collection evidence owner.",
+    "collectorContractChanged": false,
+    "collectorRuntimeReverificationRequired": false,
+    "evidenceOwner": "SDK-044-DEV-LOOP"
+  },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "semantic-plan",
@@ -120,7 +127,7 @@
   "limitations": [
     "The implemented breadth is module, hook, resource, public-build-environment, and typed local-development-service collection.",
     "The collector writes intermediate build artifacts only; SDK-041 has not yet proven fail-closed target publication.",
-    "The typed service plan does not yet start the SDK-owned WordPress runtime, reserve a collision-safe port, run readiness probes, supervise crashes, or request browser reload.",
+    "SDK-040 only declares and collects the typed service plan; SDK-044 separately owns process supervision, the Haxe-derived WordPress provider, collision-safe ports, readiness, and post-publication reload requests.",
     "Next.js is not coupled to the core collector; any future integration must register through an optional package and its own evidence.",
     "No production emitter, packaged consumer, WordPress runtime, Next.js runtime, Windows watcher, or production-support claim is made."
   ],

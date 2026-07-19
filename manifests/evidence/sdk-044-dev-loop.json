@@ -8,7 +8,7 @@
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "5f46b21c879fcc45fa933a30a9787ddb1905950485b3b2078f21c9aacdfe5196"
+      "sha256": "f5a19f2661509e3257de36a331b0b365c19c598afcecb8b086fe66bc44e820ec"
     },
     "implementationFiles": [
       {
@@ -73,11 +73,15 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlan.hx",
-        "sha256": "c47850320acc0821ed2a77f27e298747e007a5d131d391c67211f0b1a67ffa9a"
+        "sha256": "64b4c2a47608298a321d5da0f266f3b6d55b25c3b42b0c97f7da54356414fa65"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
-        "sha256": "2e9be84ebd8b8e1412e197f354dab0106036ed18b9072ce01e91949581da1c54"
+        "sha256": "35969209f0e445e839da48eb379fde21ff9e7e465e61f2ba33a756e5be06b42f"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
+        "sha256": "48da3bcd3e520c50e54c8a76804309bbee861f869d7bfe4a63e456c4c9de072e"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProject.hx",
@@ -97,20 +101,28 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
-        "sha256": "eb3e989cc232f341f8f9b37a7c45f1e59ad1e7b650b445bce19e2ad904802b1d"
+        "sha256": "a7a6dc72ae7390bf2110ac6884f96f072716452b99029182a9d062e896206b01"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
-        "sha256": "ed72994c3613e2042c06c56bd78269aa937040ebae6c1d7e587b014af0e4c5e7"
+        "sha256": "5006a39f172053369bb99644d6b753c6a3c07b833747576c1a5863008b069ef2"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
+        "sha256": "6dd5f1c95f0ad26d5bcc7e32b9d49ee10dd27877ca69050ae9f31f61ab050605"
       }
     ],
+    "dependencyLock": {
+      "path": "packages/cli/dependency-lock.json",
+      "sha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439"
+    },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "f523bb05bc013543926a7c1497109ed1247a876684b1703e0cf9acf493219a94"
+      "sha256": "d63724cfc8127389c312157b9f62ecb6383354c50e63a9c6879ddd4b9730b204"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",
-      "sha256": "d495d208e766906adc17175efde62138f8392a3b06cea44d5d48ff3ceba2e450"
+      "sha256": "55459b8d7d26919291e8d4e0e472d132e4e11d89134b4362a0548b1a68448c19"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -126,7 +138,7 @@
     },
     "architectureDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "107c572ababf74daf4fff10123770b8b358f23509bd932128f40d2ee4bce1295"
+      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
     }
   },
   "implementation": {
@@ -138,6 +150,7 @@
     "publication": "complete-transaction-manifest-last",
     "servicePlanBoundary": "closed-canonical-json-to-concrete-haxe-types",
     "serviceLifecycle": "dependency-order-no-shell-readiness-restart-and-reverse-shutdown",
+    "wordpressProvider": "haxe-derived-private-compose-v2-configuration-and-owned-process-lifecycle",
     "genesSourceChanged": false,
     "genesPullRequest": null,
     "siblingDependencyCreated": false
@@ -150,12 +163,18 @@
     "containerNetwork": "none",
     "publishedGenerations": 7,
     "compilerStarts": 2,
-    "serviceScenarios": 3,
+    "serviceScenarios": 4,
     "externalServiceStarts": 6,
     "portCollisionRecovery": "passed",
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
+    "wordpressProviderControlledProcess": "passed",
+    "wordpressComposeV2Syntax": "passed",
+    "wordpressGeneratedConfigPrivacy": "passed",
+    "wordpressSecretPlaceholder": "passed",
+    "wordpressUnchangedServiceRetention": "passed",
+    "postPublishReloadRequest": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
     "failedBuildRetainedExactOwnedBytes": "passed",
@@ -163,13 +182,27 @@
     "durablePathPrivacy": "passed"
   },
   "referenceReview": {
-    "repository": "haxe.elixir.codex",
-    "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+    "repositories": [
+      {
+        "repository": "haxe.elixir.codex",
+        "commit": "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
+      },
+      {
+        "repository": "haxe.ruby",
+        "commit": "d20f3520997616e07c870f91b867717f28216928"
+      },
+      {
+        "repository": "genes",
+        "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b"
+      }
+    ],
     "concepts": [
       "single-effective-input-and-watch-root-graph",
       "debounced-single-flight-rebuild",
       "owned-compatible-haxe-wait-lifecycle",
-      "bounded-direct-compilation-fallback"
+      "bounded-direct-compilation-fallback",
+      "ensure-owned-development-process-shutdown",
+      "bounded-sigterm-to-sigkill-child-cleanup"
     ],
     "exactPathBlobAndSha256RecordedInImplementation": true,
     "codeOrFixtureBytesCopied": false,
@@ -188,7 +221,8 @@
   "limitations": [
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
-    "The SDK-owned WordPress provider, optional Next.js adapter, and real browser reload transport are not implemented; the generic external-service lifecycle is locally runtime tested.",
+    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are locally tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
+    "Post-publication reload requests are locally tested, but a real browser reload transport and the optional Next.js adapter are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
@@ -196,6 +230,9 @@
     "atomicIncrementalPublication": "runtime-tested-hosted",
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "externalDevelopmentService": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
+    "wordpressExactImagePair": "runtime-tested-by-sdk090",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
     "automaticBrowserReload": "not-tested",

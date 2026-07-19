@@ -190,7 +190,7 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "85034b2fc7063436a63c788eb9fddf2e6b36d710fafce2280cb4a8e7fabcda8e"
+      "sha256": "1cb51cd3cb9eb2445bc60aa6d2913497d7bc8cfa40502c058f819ff9b2ce5439"
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",

@@ -12,6 +12,7 @@ import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.project.ProjectFiles;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentCommand;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
+import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentServiceKind;
 
 /** One owned no-shell process with bounded output retained only for readiness. */
 class RunningService {
@@ -28,37 +29,40 @@ class RunningService {
 	final child:NodeChildProcess;
 	final events:DevelopmentEvents;
 	final onFailure:RunningService->CliFailure->Void;
+	final cleanup:Null<(Void->Void)->Void>;
 	var logWindow = "";
 	var failureReported = false;
+	var cleanupStarted = false;
 	var stopCallback:Null<Void->Void>;
 	var stopReason = "stopped";
 	var stopTimer:Null<Timer>;
 
 	public static function start(project:DevelopmentProject, service:DevelopmentService, port:Int, events:DevelopmentEvents,
 			onFailure:RunningService->CliFailure->Void):RunningService {
-		final command = requireCommand(service);
 		final environment = environmentFor(project, service, port);
 		final workingDirectory = service.workingDirectory == "." ? project.root : ProjectFiles.requireDirectory(project.root, service.workingDirectory,
 			"development service working directory", "service-start");
-		final arguments = [
-			for (argument in command.arguments)
-				StringTools.replace(argument, "{port}", Std.string(port))
-		];
-		final child = ChildProcess.spawn(command.executable, arguments, {
-			cwd: workingDirectory,
-			env: environment,
+		final launch = switch service.kind {
+			case External: externalLaunch(service, port, workingDirectory, environment);
+			case WordPress: WordPressProvider.launch(project, service, port, workingDirectory, environment);
+		};
+		final child = ChildProcess.spawn(launch.executable, launch.arguments, {
+			cwd: launch.workingDirectory,
+			env: launch.environment,
 			shell: false,
 			stdio: ["ignore", "pipe", "pipe"]
 		});
-		return new RunningService(service, port, child, events, onFailure);
+		return new RunningService(service, port, child, events, onFailure, launch.cleanup);
 	}
 
-	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void) {
+	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void,
+			cleanup:Null<(Void->Void)->Void>) {
 		this.service = service;
 		this.port = port;
 		this.child = child;
 		this.events = events;
 		this.onFailure = onFailure;
+		this.cleanup = cleanup;
 		this.url = service.url.scheme + "://127.0.0.1:" + port + service.url.path;
 		capture(child.stdout);
 		capture(child.stderr);
@@ -123,16 +127,42 @@ class RunningService {
 	}
 
 	function finishStop():Void {
+		if (cleanupStarted) {
+			return;
+		}
+		cleanupStarted = true;
 		if (stopTimer != null) {
 			stopTimer.stop();
 			stopTimer = null;
 		}
+		if (cleanup != null) {
+			cleanup(completeStop);
+			return;
+		}
+		completeStop();
+	}
+
+	function completeStop():Void {
 		events.stopped(service, stopReason);
 		final callback = stopCallback;
 		stopCallback = null;
 		if (callback != null) {
 			callback();
 		}
+	}
+
+	static function externalLaunch(service:DevelopmentService, port:Int, workingDirectory:String, environment:DynamicAccess<String>):DevelopmentProcessLaunch {
+		final command = requireCommand(service);
+		return {
+			executable: command.executable,
+			arguments: [
+				for (argument in command.arguments)
+					StringTools.replace(argument, "{port}", Std.string(port))
+			],
+			workingDirectory: workingDirectory,
+			environment: environment,
+			cleanup: null
+		};
 	}
 
 	function failure(message:String):CliFailure {

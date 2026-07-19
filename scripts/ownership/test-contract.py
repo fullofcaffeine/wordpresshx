@@ -33,6 +33,17 @@ JOURNAL_FIXTURE_PATH = (
 )
 ARTIFACT_ROOT = ROOT / "fixtures" / "ownership" / "artifacts"
 SCRIPT_PATH = Path(__file__).resolve()
+TOOLCHAIN_LOCK_PATH = ROOT / "manifests" / "toolchain.lock.json"
+SEMANTIC_PLAN_FIXTURE_PATH = (
+    ROOT / "fixtures" / "semantic-plan" / "valid" / "minimal-plugin.json"
+)
+SEMANTIC_EMISSION_FIXTURE_PATH = (
+    ROOT
+    / "fixtures"
+    / "semantic-plan"
+    / "valid"
+    / "minimal-plugin.emission.json"
+)
 
 MANIFEST_RELATIVE = "build/_GeneratedFiles.json"
 TRANSACTION_ROOT_RELATIVE = "build/.wphx-transactions"
@@ -391,19 +402,15 @@ def make_manifest(
             "cliVersion": "0.0.0-dev",
             "generatorId": "wordpress-hx.ownership.contract-fixture",
             "generatorSourceSha256": script_digest,
-            "toolchainSha256": (
-                "549f0b84740be8df96ecb576690358874cb173a37aeb62298e6ae9cbb0bd5a46"
-            ),
+            "toolchainSha256": file_sha256(TOOLCHAIN_LOCK_PATH),
         },
         "inputs": {
             "sourceTreeSha256": (
                 "f4eb38f34bc4aa1e048dd382379b86cb6d209a3e31d482c55d31a14e59722f2c"
             ),
-            "semanticPlanSha256": (
-                "9de65539baed674562f90707a2d5bbe0fe1f089022c7ca17d25f8f31f158fd49"
-            ),
+            "semanticPlanSha256": file_sha256(SEMANTIC_PLAN_FIXTURE_PATH),
             "emissionResultSha256s": [
-                "5a265058db49d614a25cec15d9175efe7bc3c6a682418e663ec5c4b9aac1e2e3"
+                file_sha256(SEMANTIC_EMISSION_FIXTURE_PATH)
             ],
             "generationSha256": generation_digest(files),
             "profile": {

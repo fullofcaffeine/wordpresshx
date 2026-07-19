@@ -1,5 +1,8 @@
 package wordpresshx.cli.project.development;
 
+import wordpresshx.cli.closedjson.CanonicalJson;
+import wordpresshx.cli.closedjson.JsonValue;
+
 enum DevelopmentServiceKind {
 	External;
 	WordPress;
@@ -100,15 +103,22 @@ class DevelopmentService {
 }
 
 class DevelopmentPlan {
-	public final digest:String;
+	public final serviceDigest:String;
 	public final services:Array<DevelopmentService>;
 
-	public function new(digest:String, services:Array<DevelopmentService>) {
-		this.digest = digest;
+	public function new(serviceDigest:String, services:Array<DevelopmentService>) {
+		this.serviceDigest = serviceDigest;
 		this.services = services;
 	}
 
-	public static function empty():DevelopmentPlan {
-		return new DevelopmentPlan("", []);
+	public static function empty(projectLockSha256:String):DevelopmentPlan {
+		return new DevelopmentPlan(digestServices(projectLockSha256, []), []);
+	}
+
+	public static function digestServices(projectLockSha256:String, payloads:Array<JsonValue>):String {
+		return CanonicalJson.digest(ObjectValue([
+			{name: "projectLockSha256", value: StringValue(projectLockSha256)},
+			{name: "services", value: ArrayValue(payloads)}
+		]));
 	}
 }

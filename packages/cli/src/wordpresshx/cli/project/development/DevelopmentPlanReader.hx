@@ -52,7 +52,7 @@ class DevelopmentPlanReader {
 
 	public static function load(context:ProjectContext, project:DevelopmentProject):DevelopmentPlan {
 		if (!ProjectFiles.existsRegular(context.bootstrap.root, PLAN_PATH)) {
-			return DevelopmentPlan.empty();
+			return DevelopmentPlan.empty(project.toolchainSha256);
 		}
 		try {
 			final buffer = ProjectFiles.read(context.bootstrap.root, PLAN_PATH, "generated development plan", "service-start");
@@ -117,6 +117,7 @@ class DevelopmentPlanReader {
 
 		validateSchemaRegistry(plan.array("nodeSchemas", "WPHX2310"));
 		final services:Array<DevelopmentService> = [];
+		final servicePayloads:Array<JsonValue> = [];
 		final nodes:Array<PlanNodeRecord> = [];
 		var previousNode:Null<String> = null;
 		for (nodeValue in plan.array("nodes", "WPHX2310")) {
@@ -149,18 +150,20 @@ class DevelopmentPlanReader {
 			final schemaId = schemaId(node.string("schemaId", "WPHX2310"), "semantic node schema ID");
 			if (kind == "development.service") {
 				expect(schemaId, SERVICE_SCHEMA_ID, "development service schema ID");
-				final service = decodeService(node.value("payload", "WPHX2310"), project);
+				final payload = node.value("payload", "WPHX2310");
+				final service = decodeService(payload, project);
 				expect(id, "service/" + service.id, "development service node ID");
 				final expectedDependencies = [for (dependency in service.dependsOn) "service/" + dependency];
 				if (dependencies.join("\n") != expectedDependencies.join("\n")) {
 					invalid("WPHX2312", "development service envelope dependencies contradict its payload");
 				}
 				services.push(service);
+				servicePayloads.push(payload);
 			}
 		}
 		validateNodeDependencies(nodes);
 		validateServiceGraph(services);
-		return new DevelopmentPlan(planDigest, services);
+		return new DevelopmentPlan(DevelopmentPlan.digestServices(project.toolchainSha256, servicePayloads), services);
 	}
 
 	static function validateSchemaRegistry(values:Array<JsonValue>):Void {

@@ -109,6 +109,21 @@ function serviceNode(sourceDigest, serviceId, dependsOn, readiness) {
     }
   };
 }
+function wordpressNode(sourceDigest) {
+  const node = serviceNode(
+    sourceDigest,
+    'wordpress',
+    [],
+    {intervalMs: 50, kind: 'http', path: '/wp-json/', text: '', timeoutMs: 3000}
+  );
+  node.payload.command = null;
+  node.payload.environment = ['WP_DB_PASSWORD'];
+  node.payload.port = {preferred: 44200, strict: false};
+  node.payload.reload = 'full-page';
+  node.payload.serviceKind = 'wordpress';
+  node.source.symbol = 'acme.site.Site.wordpress';
+  return node;
+}
 function writeServicePlan(mode, source) {
   if (!mode) return;
   const lockBytes = fs.readFileSync('.wphx/project.lock.json');
@@ -116,7 +131,9 @@ function writeServicePlan(mode, source) {
   const sourceDigest = sha256(Buffer.from(source));
   const nodes = mode === 'timeout'
     ? [serviceNode(sourceDigest, 'timeout', [], {intervalMs: 50, kind: 'tcp', path: '/', text: '', timeoutMs: 300})]
-    : [
+    : mode === 'wordpress'
+      ? [wordpressNode(sourceDigest)]
+      : [
         serviceNode(sourceDigest, 'api', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000}),
         serviceNode(sourceDigest, 'frontend', ['api'], {intervalMs: 50, kind: 'log', path: '/', text: 'FRONTEND_READY', timeoutMs: 3000})
       ];
@@ -214,6 +231,70 @@ if (args.length === 1 && args[0] === '--version') {
         "#!/bin/sh\nset -eu\n[ \"${1:-}\" = --version ]\nprintf '%s\\n' 15.12.2\n"
     )
     lix.chmod(0o755)
+    docker = tools / "docker"
+    docker.write_text(
+        """#!/usr/bin/env node
+'use strict';
+const fs = require('fs');
+const http = require('http');
+const path = require('path');
+const args = process.argv.slice(2);
+let trace;
+function record(event, detail = {}) {
+  if (trace) fs.appendFileSync(trace, JSON.stringify({event, pid: process.pid, ...detail}) + '\\n');
+}
+if (args[0] !== 'compose') process.exit(64);
+if (args[1] === 'version') {
+  process.stdout.write('Docker Compose version v2.38.2\\n');
+  process.exit(0);
+}
+const fileIndex = args.indexOf('--file');
+if (fileIndex < 0 || fileIndex + 1 >= args.length) process.exit(64);
+const composePath = args[fileIndex + 1];
+trace = path.join(path.dirname(composePath), 'docker-events.jsonl');
+const command = args.includes('up') ? 'up' : args.includes('down') ? 'down' : '';
+if (command === 'down') {
+  record('down', {composePath});
+  process.exit(0);
+}
+if (command !== 'up') process.exit(64);
+const config = JSON.parse(fs.readFileSync(composePath, 'utf8'));
+const database = config.services.database;
+const wordpress = config.services.wordpress;
+if (database.image !== 'docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b') process.exit(65);
+if (wordpress.image !== 'docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161') process.exit(66);
+if (wordpress.environment.WORDPRESS_DB_PASSWORD !== '${WPHX_INTERNAL_WORDPRESS_DB_PASSWORD:?required}') process.exit(67);
+const mapping = wordpress.ports[0];
+const match = /^127\\.0\\.0\\.1:([0-9]+):80$/.exec(mapping);
+if (!match) process.exit(68);
+const port = Number(match[1]);
+record('up', {
+  composePath,
+  declaredPresent: process.env.WP_DB_PASSWORD !== undefined,
+  internalPresent: typeof process.env.WPHX_INTERNAL_WORDPRESS_DB_PASSWORD === 'string',
+  port,
+  secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined
+});
+const server = http.createServer((request, response) => {
+  response.statusCode = request.url === '/wp-json/' ? 200 : 404;
+  response.end();
+});
+let stopped = false;
+function stop(signal) {
+  if (stopped) return;
+  stopped = true;
+  server.close(() => {
+    record('stopped', {signal});
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(0), 1000).unref();
+}
+process.on('SIGTERM', () => stop('SIGTERM'));
+process.on('SIGINT', () => stop('SIGINT'));
+server.listen(port, '127.0.0.1');
+"""
+    )
+    docker.chmod(0o755)
     return tools
 
 
@@ -309,12 +390,14 @@ class DevSession:
         ]
         if service_mode is not None:
             command.extend(["--env", f"WPHX_FAKE_SERVICE_PLAN={service_mode}"])
+        if service_mode == "wordpress":
+            command.extend(["--env", "WP_DB_PASSWORD=declared-test-only"])
         command.extend(
             [
-            "-w",
-            "/evidence/project",
-            NODE_IMAGE,
-            *cli_arguments,
+                "-w",
+                "/evidence/project",
+                NODE_IMAGE,
+                *cli_arguments,
             ]
         )
         self.process = subprocess.Popen(
@@ -526,6 +609,13 @@ def service_trace(project: Path) -> list[dict[str, object]]:
     return [json.loads(line) for line in path.read_text().splitlines()]
 
 
+def docker_trace(project: Path) -> list[dict[str, object]]:
+    path = project / ".wphx/runtime/docker-events.jsonl"
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text().splitlines()]
+
+
 def service_ids(events: list[dict[str, object]], event_name: str) -> list[object]:
     return [
         event["payload"]["serviceId"]
@@ -543,6 +633,29 @@ def prepare_service_case(
     shutil.copytree(PROJECT_FIXTURE, project)
     install_service_fixture(project)
     return evidence, project, make_tools(evidence)
+
+
+def validate_wordpress_compose(path: Path) -> None:
+    environment = os.environ.copy()
+    environment.update(
+        {
+            "WP_DB_PASSWORD": "compose-validation-only",
+            "WPHX_INTERNAL_WORDPRESS_DB_PASSWORD": "compose-validation-only",
+            "WPHX_INTERNAL_WORDPRESS_DB_ROOT_PASSWORD": "compose-validation-root-only",
+        }
+    )
+    result = subprocess.run(
+        ["docker", "compose", "--file", str(path), "config", "--quiet"],
+        text=True,
+        capture_output=True,
+        check=False,
+        env=environment,
+    )
+    if result.returncode != 0:
+        raise AssertionError(
+            f"real Docker Compose rejected generated provider config: {result.stderr}"
+        )
+    assert not result.stdout
 
 
 def run_healthy_service_case(runtime: Path, parent: Path) -> dict[str, object]:
@@ -716,11 +829,94 @@ def run_timeout_service_case(runtime: Path, parent: Path) -> dict[str, object]:
         session.force_cleanup()
 
 
+def run_wordpress_service_case(runtime: Path, parent: Path) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(parent, "services-wordpress")
+    session = DevSession(
+        runtime, evidence, project, tools, service_mode="wordpress"
+    )
+    try:
+        _, ready = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId")
+            == "wordpress",
+        )
+        session.wait_for("watch-ready")
+        assert ready["payload"]["url"] == "http://127.0.0.1:44200/"
+        assert ready["payload"]["readiness"] == "http"
+        assert ready["payload"]["reload"] == "full-page"
+        assert service_ids(session.events, "service-starting") == ["wordpress"]
+
+        compose_files = list(
+            (project / ".wphx/runtime").glob("wphx-*.compose.json")
+        )
+        assert len(compose_files) == 1
+        compose_bytes = compose_files[0].read_bytes()
+        compose = json.loads(compose_bytes)
+        assert compose_bytes == canonical(compose, newline=True)
+        assert stat.S_IMODE(compose_files[0].stat().st_mode) == 0o600
+        assert b"declared-test-only" not in compose_bytes
+        validate_wordpress_compose(compose_files[0])
+
+        started = docker_trace(project)
+        assert [value["event"] for value in started] == ["up"], started
+        assert started[0]["port"] == 44200
+        assert started[0]["declaredPresent"] is False
+        assert started[0]["internalPresent"] is True
+        assert started[0]["secretPresent"] is False
+
+        rebuild_start = len(session.events)
+        session.run_node(
+            "const fs=require('fs');"
+            "fs.appendFileSync('src/acme/site/Site.hx','\\n// wordpress reload\\n');"
+        )
+        published_index, _ = session.wait_for(
+            "build-published",
+            after=rebuild_start,
+            predicate=lambda value: value["payload"].get("generation") == 2,
+        )
+        _, reload_event = session.wait_for(
+            "reload-requested",
+            after=published_index + 1,
+            predicate=lambda value: value["payload"].get("serviceId")
+            == "wordpress",
+        )
+        assert reload_event["payload"]["reason"] == (
+            "complete ownership transaction published"
+        )
+        assert service_ids(session.events, "service-starting") == ["wordpress"]
+        assert service_ids(session.events, "service-stopped") == []
+        assert [value["event"] for value in docker_trace(project)] == ["up"]
+
+        session.stop()
+        session.wait_for("command-completed", timeout=2)
+        validate_event_stream(session.events)
+        assert service_ids(session.events, "service-stopped") == [
+            "wordpress",
+            "compiler",
+        ]
+        assert [value["event"] for value in docker_trace(project)] == [
+            "up",
+            "stopped",
+            "down",
+        ]
+        assert not list((project / ".wphx/runtime").glob("wphx-*.compose.json"))
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {
+            "provider": "docker-compose-v2",
+            "reloadAfterGeneration": 2,
+            "serviceRestartsOnSourceEdit": 0,
+        }
+    finally:
+        session.force_cleanup()
+
+
 def run_service_cases(runtime: Path, parent: Path) -> dict[str, object]:
     return {
         "healthy": run_healthy_service_case(runtime, parent),
         "restart": run_restart_service_case(runtime, parent),
         "timeout": run_timeout_service_case(runtime, parent),
+        "wordpress": run_wordpress_service_case(runtime, parent),
     }
 
 

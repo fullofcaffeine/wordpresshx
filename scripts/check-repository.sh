@@ -2574,7 +2574,7 @@ assert dev_loop_implementation["status"] in {
     "implemented-sdk044-services-local-verified",
 }
 assert dev_loop_implementation["scope"] == (
-    "managed-compiler-effective-watch-atomic-publish-and-typed-external-service-supervision"
+    "managed-compiler-effective-watch-atomic-publish-and-typed-development-service-supervision"
 )
 sdk044_command = dev_loop_implementation["command"]
 assert sdk044_command["default"] == "wphx dev"
@@ -2594,6 +2594,8 @@ for sdk044_code_path in (
     "compilerRunner",
     "servicePlanReader",
     "serviceSupervisor",
+    "developmentProcessLaunch",
+    "wordpressProvider",
     "closedJsonBoundary",
     "eventStream",
     "publisher",
@@ -2648,14 +2650,50 @@ for sdk044_implemented_service_part in (
     "boundedGraphRestartImplemented",
     "reverseShutdownImplemented",
     "runtimeEnvironmentAllowlistImplemented",
+    "wordpressProviderImplemented",
+    "postPublishReloadRequestImplemented",
 ):
     assert sdk044_services[sdk044_implemented_service_part] is True
 for sdk044_unimplemented_service_part in (
-    "wordpressProviderImplemented",
     "wordpressReloadImplemented",
     "nextjsReloadImplemented",
 ):
     assert sdk044_services[sdk044_unimplemented_service_part] is False
+sdk044_wordpress_lock = cli_dependency_lock["wordpressDevelopmentProvider"]
+assert sdk044_wordpress_lock == {
+    "profile": "wp70-release",
+    "executor": "docker-compose-v2-host-capability",
+    "sourceLock": "docker/images.lock.json",
+    "sourceLockSha256": hashlib.sha256(
+        Path("docker/images.lock.json").read_bytes()
+    ).hexdigest(),
+    "wordpressImage": image_lock["images"]["wordpress70Php84"]["reference"],
+    "databaseImage": image_lock["images"]["mariadb"]["reference"],
+}
+sdk044_wordpress = dev_loop_implementation["wordpressProvider"]
+assert sdk044_wordpress == {
+    **sdk044_wordpress_lock,
+    "dependencyLock": "packages/cli/dependency-lock.json",
+    "runtimeConfiguration": "private-canonical-generated-compose-json",
+    "runtimeConfigurationMode": 384,
+    "secretTransport": "required-environment-interpolation",
+    "hostExecutorEnvironment": "closed-docker-cli-allowlist",
+    "publishedPortBinding": "127.0.0.1-only",
+    "shellExecution": False,
+    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-and-config-removal",
+    "exactImageRuntimeEvidence": "SDK-090-WORDPRESS-HARNESS",
+}
+sdk044_wordpress_source = Path(sdk044_code["wordpressProvider"]).read_text(
+    encoding="utf-8"
+)
+assert (
+    'WORDPRESS_IMAGE = "' + sdk044_wordpress_lock["wordpressImage"] + '"'
+    in sdk044_wordpress_source
+)
+assert (
+    'DATABASE_IMAGE = "' + sdk044_wordpress_lock["databaseImage"] + '"'
+    in sdk044_wordpress_source
+)
 sdk044_verification = dev_loop_implementation["verification"]
 assert sdk044_verification["command"] == (
     "bash scripts/dev-loop/test-production.sh"
@@ -2686,6 +2724,12 @@ for sdk044_passed_proof in (
     "runtimeSecretNonPropagation",
     "boundedCrashRestartExhaustion",
     "reverseServiceShutdown",
+    "wordpressProviderControlledProcess",
+    "wordpressComposeV2Syntax",
+    "wordpressGeneratedConfigPrivacy",
+    "wordpressSecretPlaceholder",
+    "wordpressUnchangedServiceRetention",
+    "postPublishReloadRequest",
     "strictHaxeBoundaryGuard",
     "sigintCleanup",
     "durablePathPrivacy",
@@ -2698,11 +2742,52 @@ assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["externalDevelopmentService"] == (
     "controlled-process-runtime-tested-local"
 )
+assert dev_loop_implementation["claims"]["wordpressDevelopmentProvider"] == (
+    "controlled-process-and-compose-syntax-runtime-tested-local"
+)
+assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
+    "runtime-tested-by-sdk090"
+)
+assert dev_loop_implementation["claims"]["postPublishReloadRequest"] == (
+    "controlled-event-runtime-tested-local"
+)
+sdk044_reference_authorities = {
+    ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (
+        "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+        "7a54b03b3c2fdf03caf53c7ac9e1aeba5cb0c418",
+        "b5243f3279859d6d9fa50184af5e5450bc54fb34996725699bc5bcd1fe6c08b0",
+        "debounced-effective-input-watcher",
+    ),
+    ("haxe.elixir.codex", "lib/haxe_server.ex"): (
+        "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
+        "db684a03e104cdaaa2e1fe23b07d7a99b64d1581",
+        "1419b50305b80ae229cf441c4b9764b87732917c911740565a1c1f2c7352110c",
+        "owned-compatible-haxe-wait-lifecycle",
+    ),
+    ("haxe.ruby", "test/development_watcher_test.rb"): (
+        "d20f3520997616e07c870f91b867717f28216928",
+        "8b91637e4fd9fe551b075cbe6fd7ba851938efb6",
+        "753eb60e7932435a3d5b285148b698c50e9f9b1a47990721c3bdad2227b3e163",
+        "ensure-owned-development-process-shutdown",
+    ),
+    ("genes", "tools/ts2hx/src/test-runtime-profile.ts"): (
+        "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+        "1941a9972c4b6cbc124b66ab7fd53149a736934f",
+        "7a0bcd961b3cdbf73e25b910361ed4abad1dd24ed237cd3e1b0d75711abf40f6",
+        "bounded-sigterm-to-sigkill-child-cleanup",
+    ),
+}
+assert len(dev_loop_implementation["referencePatterns"]) == len(
+    sdk044_reference_authorities
+)
 for sdk044_reference in dev_loop_implementation["referencePatterns"]:
-    assert sdk044_reference["repository"] == "haxe.elixir.codex"
-    assert sdk044_reference["commit"] == (
-        "40254f38d9c07c069c7c3e19831096dcc2d6c95d"
-    )
+    sdk044_reference_authority = sdk044_reference_authorities[
+        (sdk044_reference["repository"], sdk044_reference["path"])
+    ]
+    assert sdk044_reference["commit"] == sdk044_reference_authority[0]
+    assert sdk044_reference["blob"] == sdk044_reference_authority[1]
+    assert sdk044_reference["sha256"] == sdk044_reference_authority[2]
+    assert sdk044_reference["concept"] == sdk044_reference_authority[3]
     assert sha1.fullmatch(sdk044_reference["blob"])
     assert sha256.fullmatch(sdk044_reference["sha256"])
     assert sdk044_reference["copiedBytes"] is False
@@ -2751,12 +2836,18 @@ assert sdk044_receipt["verification"] == {
     "containerNetwork": "none",
     "publishedGenerations": 7,
     "compilerStarts": 2,
-    "serviceScenarios": 3,
+    "serviceScenarios": 4,
     "externalServiceStarts": 6,
     "portCollisionRecovery": "passed",
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
+    "wordpressProviderControlledProcess": "passed",
+    "wordpressComposeV2Syntax": "passed",
+    "wordpressGeneratedConfigPrivacy": "passed",
+    "wordpressSecretPlaceholder": "passed",
+    "wordpressUnchangedServiceRetention": "passed",
+    "postPublishReloadRequest": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "incrementalAndCleanOwnedBytes": "byte-identical",
     "failedBuildRetainedExactOwnedBytes": "passed",

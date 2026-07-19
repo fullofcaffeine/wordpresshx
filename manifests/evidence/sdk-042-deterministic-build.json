@@ -54,20 +54,20 @@
     },
     "ownershipContract": {
       "path": "scripts/ownership/test-contract.py",
-      "sha256": "a4b14e593aa3a6ee2a3dc819300cc01b9f8661bd2371e1af448a10dba4eece00"
+      "sha256": "33cdac8c091a1b1659c3818a0a66a092b23002f3caab72f91955777db4d58e00"
     },
     "ownershipFixtures": [
       {
         "path": "fixtures/ownership/valid/current.generated-files.json",
-        "sha256": "9317389d7dc41deb4050aed2718ae88b7399250519c57252579b3db34490ffae"
+        "sha256": "f761721d50903fc859b04c004286d17bbcd814583f07b23a70444361d935be08"
       },
       {
         "path": "fixtures/ownership/valid/next.generated-files.json",
-        "sha256": "35bc2e4ce02eb36e001cf01fcf9f3b6eab93afd5396ff972f3259201ae284fe4"
+        "sha256": "bfa1287a338db989458053576ef3e6a00f803b9aec1efd20f429842ae61512af"
       },
       {
         "path": "fixtures/ownership/valid/prepared.journal.json",
-        "sha256": "e42b5498d0df39d043014462297fe4f50fb5f1996a5e917b124a272b92cca8a5"
+        "sha256": "e1e92c47f31ddf11b7bca3f9c427ecd513314b2afb35d021472cde6e6c457d77"
       }
     ],
     "workflow": {
@@ -76,7 +76,7 @@
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "107c572ababf74daf4fff10123770b8b358f23509bd932128f40d2ee4bce1295"
+      "sha256": "2a5f1757b48535c9d07fbe8d62d322cfed3e6006a679c977ca371367ddaac98a"
     }
   },
   "implementation": {

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-044",
   "status": "implemented-sdk044-services-local-verified",
-  "scope": "managed-compiler-effective-watch-atomic-publish-and-typed-external-service-supervision",
+  "scope": "managed-compiler-effective-watch-atomic-publish-and-typed-development-service-supervision",
   "command": {
     "default": "wphx dev",
     "compileWatchOnly": "wphx dev --services=none",
@@ -21,6 +21,8 @@
     "compilerRunner": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
     "servicePlanReader": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
     "serviceSupervisor": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
+    "developmentProcessLaunch": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
+    "wordpressProvider": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
     "closedJsonBoundary": "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
     "eventStream": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
     "publisher": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
@@ -86,10 +88,28 @@
     "boundedGraphRestartImplemented": true,
     "reverseShutdownImplemented": true,
     "runtimeEnvironmentAllowlistImplemented": true,
-    "wordpressProviderImplemented": false,
+    "wordpressProviderImplemented": true,
+    "postPublishReloadRequestImplemented": true,
     "wordpressReloadImplemented": false,
     "nextjsReloadImplemented": false,
-    "currentBehavior": "supervise-admitted-external-services-and-explicitly-skip-when-no-service-or-reload-adapter-exists"
+    "currentBehavior": "derive-and-supervise-the-built-in-wordpress-provider-or-admitted-external-services-and-emit-reload-requests-after-publication"
+  },
+  "wordpressProvider": {
+    "profile": "wp70-release",
+    "executor": "docker-compose-v2-host-capability",
+    "dependencyLock": "packages/cli/dependency-lock.json",
+    "sourceLock": "docker/images.lock.json",
+    "sourceLockSha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
+    "runtimeConfiguration": "private-canonical-generated-compose-json",
+    "runtimeConfigurationMode": 384,
+    "secretTransport": "required-environment-interpolation",
+    "hostExecutorEnvironment": "closed-docker-cli-allowlist",
+    "publishedPortBinding": "127.0.0.1-only",
+    "shellExecution": false,
+    "normalShutdown": "foreground-compose-up-then-bounded-compose-down-and-config-removal",
+    "exactImageRuntimeEvidence": "SDK-090-WORDPRESS-HARNESS"
   },
   "verification": {
     "command": "bash scripts/dev-loop/test-production.sh",
@@ -116,6 +136,12 @@
     "runtimeSecretNonPropagation": "passed",
     "boundedCrashRestartExhaustion": "passed",
     "reverseServiceShutdown": "passed",
+    "wordpressProviderControlledProcess": "passed",
+    "wordpressComposeV2Syntax": "passed",
+    "wordpressGeneratedConfigPrivacy": "passed",
+    "wordpressSecretPlaceholder": "passed",
+    "wordpressUnchangedServiceRetention": "passed",
+    "postPublishReloadRequest": "passed",
     "strictHaxeBoundaryGuard": "passed",
     "sigintCleanup": "passed",
     "durablePathPrivacy": "passed",
@@ -142,6 +168,26 @@
       "concept": "owned-compatible-haxe-wait-lifecycle",
       "copiedBytes": false,
       "dependencyCreated": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "d20f3520997616e07c870f91b867717f28216928",
+      "path": "test/development_watcher_test.rb",
+      "blob": "8b91637e4fd9fe551b075cbe6fd7ba851938efb6",
+      "sha256": "753eb60e7932435a3d5b285148b698c50e9f9b1a47990721c3bdad2227b3e163",
+      "concept": "ensure-owned-development-process-shutdown",
+      "copiedBytes": false,
+      "dependencyCreated": false
+    },
+    {
+      "repository": "genes",
+      "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+      "path": "tools/ts2hx/src/test-runtime-profile.ts",
+      "blob": "1941a9972c4b6cbc124b66ab7fd53149a736934f",
+      "sha256": "7a0bcd961b3cdbf73e25b910361ed4abad1dd24ed237cd3e1b0d75711abf40f6",
+      "concept": "bounded-sigterm-to-sigkill-child-cleanup",
+      "copiedBytes": false,
+      "dependencyCreated": false
     }
   ],
   "claims": {
@@ -151,6 +197,9 @@
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "actualHaxeWaitCompilationParity": "runtime-tested-by-sdk040",
     "externalDevelopmentService": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
+    "wordpressExactImagePair": "runtime-tested-by-sdk090",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
     "automaticBrowserReload": "not-tested",
@@ -162,7 +211,8 @@
   "limitations": [
     "The current producer graph emits only CLI metadata, its reproducibility report, and an unsigned evidence archive; PHP, browser, asset, and deployable site producers are not registered.",
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
-    "The SDK-owned WordPress provider, optional Next.js adapter, and real browser reload transport are not implemented; the generic external-service lifecycle is locally runtime tested.",
+    "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are locally tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
+    "Post-publication reload requests are locally tested, but a real browser reload transport and the optional Next.js adapter are not implemented.",
     "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

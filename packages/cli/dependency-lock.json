@@ -26,6 +26,14 @@
     "version": "22.17.0",
     "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
   },
+  "wordpressDevelopmentProvider": {
+    "profile": "wp70-release",
+    "executor": "docker-compose-v2-host-capability",
+    "sourceLock": "docker/images.lock.json",
+    "sourceLockSha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b"
+  },
   "haxe": {
     "version": "4.3.7"
   },

@@ -24,6 +24,7 @@ if [[ "$(haxe --version)" != "4.3.7" ]]; then
   exit 1
 fi
 docker info >/dev/null
+docker compose version >/dev/null
 
 lix_command="$(command -v lix)"
 lix_haxe="$(cd "$(dirname "${lix_command}")" && pwd -P)/haxe"

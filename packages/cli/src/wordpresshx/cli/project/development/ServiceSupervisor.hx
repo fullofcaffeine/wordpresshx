@@ -6,7 +6,6 @@ import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliEventStream;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentReloadKind;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
-import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentServiceKind;
 
 /** Dependency-ordered owned-process lifecycle for validated development plans. */
 class ServiceSupervisor {
@@ -40,7 +39,7 @@ class ServiceSupervisor {
 		}
 		project = nextProject;
 		plan = nextPlan;
-		if (activeDigest != null && activeDigest == nextPlan.digest) {
+		if (activeDigest != null && activeDigest == nextPlan.serviceDigest) {
 			callback(null);
 			return;
 		}
@@ -106,7 +105,7 @@ class ServiceSupervisor {
 			return;
 		}
 		if (index >= ordered.length) {
-			activeDigest = currentPlan.digest;
+			activeDigest = currentPlan.serviceDigest;
 			transitioning = false;
 			restartTransition = false;
 			final callback = transitionCallback;
@@ -117,12 +116,6 @@ class ServiceSupervisor {
 			return;
 		}
 		final service = ordered[index];
-		if (service.kind == WordPress) {
-			abortTransition(token,
-				new CliFailure("WPHX2324", "the SDK-owned WordPress development provider is not available in this build", 7, "service-start", null,
-					["Use --services=none until the pinned WordPress provider is installed."]));
-			return;
-		}
 		allocator.allocate(service, (port, portFailure) -> {
 			if (!currentTransition(token)) {
 				return;

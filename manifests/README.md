@@ -52,9 +52,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   managed project-local compiler lifecycle, effective-graph subscriptions,
   coalesced serialized rebuilds, input-stability checks, last-good retention,
   clean compiler shutdown, and strictly typed external-service supervision with
-  bounded readiness, collision-safe ports, restart, and reverse shutdown. The
-  built-in WordPress provider, optional Next.js adapter, and browser reload
-  transport remain explicit non-claims.
+  bounded readiness, collision-safe ports, restart, and reverse shutdown. It
+  also records the Haxe-derived `wp70-release` provider's exact image lock,
+  private generated Compose configuration, secret interpolation, and bounded
+  lifecycle. Its controlled process/configuration proof is distinct from a real
+  `wphx dev` WordPress-container run. The optional Next.js adapter and browser
+  reload transport remain explicit non-claims.
 - `deterministic-build-implementation.json` records SDK-042's Haxe/Genes
   reproducibility report, fixed-representation unsigned ZIP writer, complete
   owned-generation comparator, two-fresh-root gate, and safe additive
@@ -135,9 +138,15 @@ lock repair, compiler-identity restart, edit-during-build follow-up, SIGINT
 cleanup, path privacy, byte equality with a clean build, authenticated typed
 service-plan consumption, dependency-order external processes, HTTP/log/TCP
 readiness, collision recovery, bounded restart exhaustion, secret
-non-propagation, and reverse shutdown. It does not claim the built-in WordPress
-provider, optional Next.js adapter, browser reload transport, Windows/network
-filesystem behavior, package publication, or production support.
+non-propagation, and reverse shutdown. Its built-in WordPress provider case
+additionally proves exact locked image selection, private canonical mode-`0600`
+Compose generation, real Compose v2 syntax validation, placeholder-only secret
+configuration, no restart for an unchanged service graph, post-publication
+reload-request ordering, and normal process/config cleanup. SDK-090 separately
+runtime proves the exact WordPress/MariaDB image pair. The receipt does not claim
+that SDK-044 starts that real pair, mounts a generated site, implements the
+optional Next.js adapter or browser reload transport, or supports
+Windows/network filesystems, package publication, or production use.
 
 Receipt `SDK-042-DETERMINISTIC-BUILD` records two clean builds in unrelated
 fresh roots, byte-identical Genes output and complete owned generations, a

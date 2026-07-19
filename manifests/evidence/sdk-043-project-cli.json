@@ -7,7 +7,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "aa463fda86356b286f62c315dba2788eca0aa3de2d71209b7ab5b6604e616fdf"
+      "sha256": "a778be53ea99300741b90f9cbc076a9732967e870cd0db8b27396626a1de578e"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -67,7 +67,7 @@
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "549f0b84740be8df96ecb576690358874cb173a37aeb62298e6ae9cbb0bd5a46"
+      "sha256": "408262e6a24e405a8d7ee8433795676d0e3263829038a44e95273a89c5cf3b32"
     },
     "semanticPlanValidator": {
       "path": "scripts/semantic-plan/test-contract.py",
@@ -75,27 +75,27 @@
     },
     "semanticPlanFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "sha256": "9de65539baed674562f90707a2d5bbe0fe1f089022c7ca17d25f8f31f158fd49"
+      "sha256": "6806f2615f140c4cd0ab754beea6a07855ac0f4059f4631be4517b13277ea4a5"
     },
     "semanticEmissionFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "sha256": "5a265058db49d614a25cec15d9175efe7bc3c6a682418e663ec5c4b9aac1e2e3"
+      "sha256": "4b6a702f49c4a72b8ee009e76e9129992d8035c94f003bfbeab425c438966685"
     },
     "ownershipContractValidator": {
       "path": "scripts/ownership/test-contract.py",
-      "sha256": "a4b14e593aa3a6ee2a3dc819300cc01b9f8661bd2371e1af448a10dba4eece00"
+      "sha256": "33cdac8c091a1b1659c3818a0a66a092b23002f3caab72f91955777db4d58e00"
     },
     "ownershipCurrentFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "9317389d7dc41deb4050aed2718ae88b7399250519c57252579b3db34490ffae"
+      "sha256": "f761721d50903fc859b04c004286d17bbcd814583f07b23a70444361d935be08"
     },
     "ownershipNextFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "35bc2e4ce02eb36e001cf01fcf9f3b6eab93afd5396ff972f3259201ae284fe4"
+      "sha256": "bfa1287a338db989458053576ef3e6a00f803b9aec1efd20f429842ae61512af"
     },
     "ownershipJournalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "e42b5498d0df39d043014462297fe4f50fb5f1996a5e917b124a272b92cca8a5"
+      "sha256": "e1e92c47f31ddf11b7bca3f9c427ecd513314b2afb35d021472cde6e6c457d77"
     },
     "schemas": [
       {
