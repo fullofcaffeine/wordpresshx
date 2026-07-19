@@ -65,7 +65,7 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   the historical contract. `ownership-implementation.json` records the SDK-041
   Haxe/Genes implementation, its exact runtime profile, and its bounded locked
   Linux filesystem evidence; target emitters remain later work.
-- `generated-output-vcs-policy.json` is ADR-017's proposed role-based policy for
+- `generated-output-vcs-policy.json` is ADR-017's accepted role-based policy for
   SDK goldens, default regenerated consumer output, explicit per-root consumer
   commit opt-in, drift review, and invariant clean release regeneration. Its
   Git/ZIP rehearsal is synthetic policy evidence; SDK-101 remains responsible
@@ -292,7 +292,7 @@ files, five discovery roots, eight toolchain components, 22 dry-run events,
 23 development events, and 28 fail-closed mutations. It establishes no real
 watcher, service, browser reload, installed-consumer, or production claim.
 
-Receipt `ADR-017-GENERATED-OUTPUT-VCS-POLICY` records the proposed closed
+Receipt `ADR-017-GENERATED-OUTPUT-VCS-POLICY` records the accepted closed
 three-mode policy, 19 policy and four receipt mutations, default ignored
 consumer output, reviewed SDK golden drift, a closed explicit-root consumer
 policy with four root-admission negatives, committed output/provenance drift,
@@ -300,9 +300,11 @@ policy with four root-admission negatives, committed output/provenance drift,
 output exclusion, exact generated build-input comparison and stale rejection,
 two-artifact generation/archive byte equality, complete provenance binding,
 ambient-cache isolation, dirty-source rejection, and checkout non-mutation.
-Hosted acceptance remains pending. The generated PHP, JavaScript, manifest, and
-ZIP are synthetic carriers; production `wphx`, WordPress packaging, SBOM,
-registry, and support claims remain untested.
+Hosted Repository bootstrap run `29701535362`, dedicated job `88231284369`,
+and the complete matrix passed for implementation commit
+`13a38799d58ab2be1459e9b3f3367bab4464a4b5`. The generated PHP, JavaScript,
+manifest, and ZIP remain synthetic carriers; production `wphx`, WordPress
+packaging, SBOM, registry, and support claims remain untested.
 
 `upstream.lock.json` now also includes the exact `wp70-release` source authority. Its detailed source/distribution lock lives under `profiles/wp70-release/`, and receipt `SDK-010-WP70-RELEASE-SOURCE` records direct clean materialization. The recorded capability level is only `inventoried`; runtime and production claims remain `not-tested`.
 

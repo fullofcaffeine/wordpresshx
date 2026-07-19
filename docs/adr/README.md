@@ -46,10 +46,10 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-014: Source maps and PHP trace correlation](014-source-maps-and-php-trace-correlation.md)
 - [ADR-016: Project and CLI configuration](016-project-and-cli-configuration.md)
+- [ADR-017: Generated output version-control policy](017-generated-output-version-control-policy.md)
 - [ADR-018: Runtime support packaging](018-runtime-support-packaging.md)
 - [ADR-021: Release and support policy](021-release-and-support-policy.md)
 
 ## Proposed records
 
-- [ADR-017: Generated output version-control policy](017-generated-output-version-control-policy.md) — local contract evidence passed; required hosted policy replay pending.
 - [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — qualified review and owner approval pending; no license grant or publication authorization.

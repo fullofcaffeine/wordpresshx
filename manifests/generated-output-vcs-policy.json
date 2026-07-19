@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "policyId": "wordpress-hx.generated-output-vcs.v1",
   "decision": "ADR-017",
-  "status": "proposed-hosted-evidence-pending",
+  "status": "accepted",
   "authority": {
     "authoredApplicationSource": "haxe",
     "generatedOutputRole": "derived-inspectable-non-authoritative",
@@ -221,7 +221,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "proposed-hosted-evidence-pending",
+    "architectureDecision": "accepted",
     "closedPolicyContract": "validated",
     "gitFixtureReplay": "runtime-tested",
     "productionWphxIntegration": "not-tested",

@@ -1,6 +1,6 @@
 # ADR-017: Generated output version-control policy
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-07-19
 - Owners/reviewers: Marcelo Serpa (product and developer-experience owner); Codex (architecture, policy-contract, Git-fixture, and sibling-reference review)
 - Bead: `wordpresshx-adr-017`
@@ -319,6 +319,13 @@ The receipt is
 It preserves the synthetic boundary: production `wphx` integration,
 deterministic WordPress ZIPs, actual registry publication, and production
 support remain untested.
+
+The first hosted `main` proof passed on implementation commit
+`13a38799d58ab2be1459e9b3f3367bab4464a4b5`: Repository bootstrap run
+`29701535362`, including dedicated `generated-output-vcs` job `88231284369`
+and the complete repository, Haxe, security, and WordPress-runtime matrix. The
+receipt binds those exact identities; this hosted result accepts the decision
+without expanding the synthetic fixture's production claims.
 
 ## Migration, rollback, and supersession
 
