@@ -55,6 +55,7 @@ class PluginBuildPublisher {
 			];
 			final owner = new ArtifactOwner(context.bootstrap.root, generation.paths.layout);
 			final outcome:OwnershipResult = owner.publish(manifestPath, stageRoot, validators);
+			PluginArtifactPermissions.enforce(context.bootstrap.root, generation.pluginBase, emission.files);
 			final digest = manifestDigest(generation.manifest);
 			removeTemporary(temporaryRoot);
 			return {outcome: outcome, manifestDigest: digest};

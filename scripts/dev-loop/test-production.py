@@ -1012,8 +1012,8 @@ def run_wordpress_service_case(
         )
         assert len(plugin_directories) == 1
         plugin_path = plugin_directories[0] / "wordpresshx-dev-reload.php"
-        assert stat.S_IMODE(plugin_directories[0].stat().st_mode) == 0o700
-        assert stat.S_IMODE(plugin_path.stat().st_mode) == 0o600
+        assert stat.S_IMODE(plugin_directories[0].stat().st_mode) == 0o755
+        assert stat.S_IMODE(plugin_path.stat().st_mode) == 0o644
         plugin_source = plugin_path.read_text()
         assert "add_action('wp_footer'" in plugin_source
         assert "WPHX_DEV_RELOAD_CLIENT" in plugin_source

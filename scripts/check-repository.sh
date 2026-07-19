@@ -112,6 +112,7 @@ required_files=(
   packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx
   packages/cli/src/wordpresshx/cli/project/PreparedArtifact.hx
   packages/cli/src/wordpresshx/cli/project/PreparedGeneration.hx
+  packages/cli/src/wordpresshx/cli/project/PluginArtifactPermissions.hx
   packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx
   packages/cli/src/wordpresshx/cli/project/PluginCompilationRegistry.hx
   packages/cli/src/wordpresshx/cli/project/PluginEmission.hx
@@ -2840,7 +2841,7 @@ assert sdk044_wordpress == {
     "reloadCapabilityEntropyBits": 256,
     "reloadOriginPolicy": "exact-admitted-wordpress-service-origin",
     "reloadClient": "haxe-authored-genes-1.36.3-esbuild-0.27.2-embedded-asset",
-    "reloadAdapter": "private-mode-0600-development-only-mu-plugin",
+    "reloadAdapter": "read-only-secret-free-0755-directory-0644-development-mu-plugin",
     "reloadProductionArtifact": False,
     "shellExecution": False,
     "normalShutdown": "foreground-compose-up-then-bounded-compose-down-reload-client-close-and-private-runtime-file-removal",
@@ -3130,6 +3131,9 @@ assert sdk044_plugin_inference == {
         "re-derive-current-emission-and-compare-exact-file-set-and-sha256-bytes"
     ),
     "mount": "exact-validated-plugin-directory-read-only",
+    "generatedPluginHostPermissions": (
+        "haxe-publisher-enforced-directory-0755-file-0644-every-generation-and-no-op"
+    ),
 }
 sdk044_plugin_provider = plugin_development_implementation["provider"]
 assert sdk044_plugin_provider["profile"] == "wp70-release"
@@ -3153,6 +3157,9 @@ assert sdk044_plugin_provider["reloadAdapterMount"] == (
 )
 assert sdk044_plugin_provider["reloadAdapterScope"] == (
     "private-static-closure-no-global-symbols"
+)
+assert sdk044_plugin_provider["reloadAdapterHostPermissions"] == (
+    "directory-0755-file-0644-secret-free-environment-values-only"
 )
 assert sdk044_plugin_provider["activePluginHeader"] == (
     "wordpress-send-headers-hook-after-active-plugin-gate"
@@ -3186,6 +3193,8 @@ sdk044_plugin_forbidden = re.compile(
     r"\b(?:Dynamic|Any|cast|Reflect|untyped)\b"
 )
 for sdk044_plugin_code_name in (
+    "artifactPermissions",
+    "pluginPublisher",
     "deployablePlugin",
     "developmentProject",
     "plan",
@@ -3266,6 +3275,9 @@ for sdk044_plugin_passed_proof in (
 assert sdk044_plugin_verification[
     "extraPluginEntryRejectedBeforeServiceStart"
 ] == "passed-WPHX2332"
+assert sdk044_plugin_verification[
+    "generatedPluginNativeRuntimePermissions"
+] == "passed-0755-directories-0644-files-and-no-op-repair"
 assert sdk044_plugin_verification["serviceRestartsOnSourceEdit"] == 0
 assert sdk044_plugin_verification["regressionCommand"] == (
     "bash scripts/dev-loop/test-production.sh"
@@ -3283,6 +3295,7 @@ assert sdk044_plugin_receipt["status"] in {
 assert set(sdk044_plugin_receipt["subject"]) == {
     "implementationManifest",
     "compilerPlanBoundary",
+    "publicationBoundary",
     "developmentRuntime",
     "consumerGate",
     "controlledRegressionGate",

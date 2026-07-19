@@ -8,7 +8,7 @@
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "b84b3e4e9613ae7f8753aaeb6cf4ec6e51875c52d1cef612232227954dd8a2c6"
+      "sha256": "de591c7581c2d7a51a3410c741e79e8d86e82f8c71653c2617c55f6fa1110bfa"
     },
     "implementationFiles": [
       {
@@ -180,7 +180,7 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "8e7e094bae91819bf7467f141ebe168bcddbcccab740d9e5d352b5283bc2305f",
+    "subjectContentSha256": "0b5aa37614b904139941151afb4dad9f03a6433b8e06747b7f05b5f9b455e2a9",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {

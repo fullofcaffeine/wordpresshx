@@ -101,7 +101,11 @@ canonical mode-`0600` Compose configuration from typed compiler authority, the
 exact `wp70-release` image lock, and its allocated loopback port. For a plugin,
 the graph shares a named WordPress volume with a private installer, bind-mounts
 only the exact generated plugin read-only, and mounts the one-file development
-MU adapter through its own private read-only directory. It installs WordPress
+MU adapter through its own private read-only directory. The Haxe publication
+boundary automatically enforces mode `0755` on the exact generated plugin
+directories and `0644` on its files after every generation and ownership
+no-op. This keeps the native Linux Apache worker able to traverse the mount
+without asking application authors for filesystem setup. It installs WordPress
 and activates the plugin before readiness can pass. The installer starts only
 after an exec-form healthcheck proves the pinned image has completed the
 required WordPress core, include, configuration, MU-adapter, and plugin-entry
@@ -123,10 +127,13 @@ The CLI embeds a browser client authored in strictly typed Haxe, compiled by the
 pinned Genes 1.36.3 profile, and bundled deterministically by pinned esbuild
 0.27.2. It serves that asset and an event stream from a loopback-only endpoint
 guarded by a fresh 256-bit capability and the exact admitted WordPress origin.
-A private mode-`0600` development MU-plugin adds the client at the WordPress
-footer boundary. Its PHP body runs in a private static closure so the adapter
-cannot leak or overwrite WordPress/plugin globals; its URLs arrive only through
-required runtime interpolation, not generated source or Compose bytes. A failed
+A secret-free development MU-plugin adds the client at the WordPress footer
+boundary. Its private runtime directory is mode `0755` and the generated PHP is
+mode `0644`, so the native Linux Apache worker can traverse and read the
+read-only mount. Its PHP body runs in a private static closure so the adapter
+cannot leak or overwrite WordPress/plugin globals; its URLs and capability
+arrive only through required runtime interpolation, not generated source or
+Compose bytes. The Compose and bootstrap files remain mode `0600`. A failed
 build sends nothing. A complete
 manifest-last publication sends one reload. Shutdown closes the stream and
 removes the private adapter. None of the client, endpoint, capability, or

@@ -59,6 +59,15 @@ def output_snapshot(project: Path) -> dict[str, tuple[str, int, bytes | str]]:
     return result
 
 
+def assert_public_plugin_permissions(plugin: Path) -> None:
+    for path in (plugin, *sorted(plugin.rglob("*"))):
+        metadata = path.lstat()
+        assert not stat.S_ISLNK(metadata.st_mode), path
+        expected = 0o755 if stat.S_ISDIR(metadata.st_mode) else 0o644
+        assert stat.S_ISDIR(metadata.st_mode) or stat.S_ISREG(metadata.st_mode), path
+        assert stat.S_IMODE(metadata.st_mode) == expected, path
+
+
 def exact_environment() -> dict[str, str]:
     candidates: list[Path] = []
     configured = os.environ.get("WORDPRESSHX_EXACT_NODE_DIR")
@@ -581,8 +590,8 @@ def real_wordpress_dev_cycle(
         reload_path = private_directory / "wordpresshx-dev-reload.php"
         bootstrap_path = bootstrap_files[0]
         assert stat.S_IMODE(compose_path.stat().st_mode) == 0o600
-        assert stat.S_IMODE(private_directory.stat().st_mode) == 0o700
-        assert stat.S_IMODE(reload_path.stat().st_mode) == 0o600
+        assert stat.S_IMODE(private_directory.stat().st_mode) == 0o755
+        assert stat.S_IMODE(reload_path.stat().st_mode) == 0o644
         assert stat.S_IMODE(bootstrap_path.stat().st_mode) == 0o600
         assert reload_path.read_text().rstrip().endswith("})();")
         assert "add_action('send_headers'" in reload_path.read_text()
@@ -831,6 +840,7 @@ def run(runtime_root: Path) -> dict[str, object]:
             "typed-news.php",
         }
         assert {path.relative_to(plugin).as_posix() for path in plugin.rglob("*.php")} == expected_files
+        assert_public_plugin_permissions(plugin)
         root_source = root_php.read_text()
         for expected in (
             "Plugin Name: Typed News",
@@ -859,6 +869,19 @@ def run(runtime_root: Path) -> dict[str, object]:
         )
         assert ownership["payload"]["reason"] == "no-op"
         assert output_snapshot(first) == before_replay
+
+        plugin.chmod(0o700)
+        (plugin / "includes").chmod(0o700)
+        root_php.chmod(0o600)
+        mode_repair = runtime.command(first, "build")
+        mode_repair_ownership = next(
+            value
+            for value in mode_repair
+            if value.get("event") == "stage-completed"
+            and value.get("stage") == "ownership-publish"
+        )
+        assert mode_repair_ownership["payload"]["reason"] == "no-op"
+        assert_public_plugin_permissions(plugin)
 
         custom_source = source.replace(
             "WordPress.plugin();",
@@ -896,6 +919,7 @@ def run(runtime_root: Path) -> dict[str, object]:
         source_path.write_text(good_source)
 
         dev_cycle(runtime, first, source_path, good_source, root_php)
+        assert_public_plugin_permissions(plugin)
         reject_unowned_plugin_entry(runtime, first, plugin)
         real_wordpress_dev_cycle(
             runtime,

@@ -43,6 +43,7 @@ if ! python3 - \
 	"${package_root}/src/wordpresshx/cli/WphxMain.hx" \
 	"${package_root}/src/wordpresshx/cli/project/CompilerRunner.hx" \
 	"${package_root}/src/wordpresshx/cli/project/ProjectBuild.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginArtifactPermissions.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginBuildPublisher.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginCompilationRegistry.hx" \
 	"${package_root}/src/wordpresshx/cli/project/PluginEmission.hx" \

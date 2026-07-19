@@ -67,9 +67,9 @@ class ReadinessProbe {
 			final pluginEntry = service.wordpressPluginEntry;
 			final pluginHeader = response.headers.get("x-wordpresshx-plugin");
 			final statusReady = status >= 200 && status < (service.service.kind == WordPress ? 300 : 400);
-			final bootstrapReady = service.service.kind != WordPress
+			final bootstrapReady = observation.observeBootstrap(service.service.kind != WordPress
 				|| service.service.readiness.text.length == 0
-				|| service.containsLog(service.service.readiness.text);
+				|| service.containsLog(service.service.readiness.text));
 			final pluginReady = pluginEntry == null || pluginHeader == pluginEntry;
 			observation.record(status, statusReady, bootstrapReady, pluginHeader != null, pluginReady);
 			response.resume();
@@ -135,9 +135,14 @@ private class ReadinessObservation {
 		responseSeen = true;
 		this.status = status;
 		this.statusReady = statusReady;
-		this.bootstrapReady = bootstrapReady;
+		this.bootstrapReady = this.bootstrapReady || bootstrapReady;
 		this.pluginHeaderPresent = pluginHeaderPresent;
 		this.pluginHeaderReady = pluginHeaderReady;
+	}
+
+	public function observeBootstrap(observed:Bool):Bool {
+		bootstrapReady = bootstrapReady || observed;
+		return bootstrapReady;
 	}
 
 	public function description():String {

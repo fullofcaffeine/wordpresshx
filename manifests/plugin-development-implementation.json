@@ -21,7 +21,8 @@
     "missingPlanBehavior": "no-inferred-service",
     "incompleteOrExtraPluginTreeDiagnostic": "WPHX2332",
     "pluginValidation": "re-derive-current-emission-and-compare-exact-file-set-and-sha256-bytes",
-    "mount": "exact-validated-plugin-directory-read-only"
+    "mount": "exact-validated-plugin-directory-read-only",
+    "generatedPluginHostPermissions": "haxe-publisher-enforced-directory-0755-file-0644-every-generation-and-no-op"
   },
   "provider": {
     "profile": "wp70-release",
@@ -33,6 +34,7 @@
     "bootstrapStartBarrier": "wordpress-healthcheck-complete-core-includes-reload-adapter-and-plugin-entry",
     "reloadAdapterMount": "private-mu-plugin-directory-read-only",
     "reloadAdapterScope": "private-static-closure-no-global-symbols",
+    "reloadAdapterHostPermissions": "directory-0755-file-0644-secret-free-environment-values-only",
     "activePluginHeader": "wordpress-send-headers-hook-after-active-plugin-gate",
     "installation": "fresh-native-wordpress-install",
     "activation": "native-activate-plugin-before-readiness",
@@ -60,6 +62,8 @@
   "implementation": {
     "language": "Haxe",
     "target": "Genes-emitted-Node-ESM",
+    "artifactPermissions": "packages/cli/src/wordpresshx/cli/project/PluginArtifactPermissions.hx",
+    "pluginPublisher": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
     "deployablePlugin": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlugin.hx",
     "developmentProject": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProject.hx",
     "plan": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlan.hx",
@@ -88,6 +92,7 @@
     "bootstrapSentinelAndPluginHeaderReadiness": "passed",
     "pluginActivationBeforeReadiness": "passed",
     "exactReadOnlyPluginMount": "passed",
+    "generatedPluginNativeRuntimePermissions": "passed-0755-directories-0644-files-and-no-op-repair",
     "privateMuAdapterDirectoryAndScope": "passed",
     "privateConfigurationModes": "passed",
     "secretAndCapabilityExclusion": "passed",

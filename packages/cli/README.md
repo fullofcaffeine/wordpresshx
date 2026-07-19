@@ -118,9 +118,14 @@ WordPress.plugin();
 
 The CLI derives the typed WordPress defaults from the current compiler
 `PluginPlan`, validates the complete published plugin tree against the same
-emission, mounts it read-only, mounts the generated development MU adapter as a
-private read-only directory, performs a private fresh install and activation,
-and exposes readiness only after the plugin is active. A generated healthcheck
+emission, and gives the exact generated plugin tree normal native-runtime
+`0755` directory and `0644` file modes after every publication or ownership
+no-op. It mounts that tree read-only, mounts the generated development MU
+adapter as a private read-only directory, and gives the adapter's secret-free
+source the same container-readable modes. Runtime URLs and the reload capability
+remain environment-only; private Compose/bootstrap files remain `0600`. The
+provider performs a private fresh install and activation and
+exposes readiness only after the plugin is active. A generated healthcheck
 also gates the installer on the complete pinned-image core, MU-adapter, and
 plugin file set, so process creation alone is never treated as distribution
 readiness. The ready

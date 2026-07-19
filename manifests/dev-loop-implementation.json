@@ -116,7 +116,7 @@
     "reloadCapabilityEntropyBits": 256,
     "reloadOriginPolicy": "exact-admitted-wordpress-service-origin",
     "reloadClient": "haxe-authored-genes-1.36.3-esbuild-0.27.2-embedded-asset",
-    "reloadAdapter": "private-mode-0600-development-only-mu-plugin",
+    "reloadAdapter": "read-only-secret-free-0755-directory-0644-development-mu-plugin",
     "reloadProductionArtifact": false,
     "shellExecution": false,
     "normalShutdown": "foreground-compose-up-then-bounded-compose-down-reload-client-close-and-private-runtime-file-removal",

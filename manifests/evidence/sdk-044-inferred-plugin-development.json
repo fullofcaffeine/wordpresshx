@@ -8,13 +8,13 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": null,
-    "subjectContentSha256": "2c67dd0266713cf5c4ee301dd4cad099a96496604f16e121d0d6e07db518b143",
+    "subjectContentSha256": "46382f9577151896b730c0a0e9ea1c668d3a84150433728360cd7c51baada620",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "subject": {
     "implementationManifest": {
       "path": "manifests/plugin-development-implementation.json",
-      "sha256": "3266ce1cab70fcf17da875b33423261e32d45e4e1a296458941b64f5c5360bce"
+      "sha256": "40430ea6873776922a8692b95dfb04e7435cebc096423a6627a8ddadd62634cb"
     },
     "compilerPlanBoundary": [
       {
@@ -34,10 +34,20 @@
         "sha256": "47757cd2e82567a5944ca3f1d256bc1c8dd52cbe6cf3ab159c7c9f74d48b0e99"
       }
     ],
+    "publicationBoundary": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginArtifactPermissions.hx",
+        "sha256": "45b85a27924e8dd21144296354837a5967dacd3cfc3a12b4231440dc998b7fa5"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
+        "sha256": "7eb77bbd6bf558f83b58d75481fc05d84f54951d61421d3f9347b4c8ad5e1e2c"
+      }
+    ],
     "developmentRuntime": [
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ReadinessProbe.hx",
-        "sha256": "946a194a967105c06a3f32f8b967bb5870861a6ca8f48d45b53554490e723cf2"
+        "sha256": "dddfd0a4e59d7056d96f8a3a71cd8f25b0809e4acfd9688f54d70be355106679"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
@@ -49,7 +59,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
-        "sha256": "17d2b19cb1f6dec14279e813849a0239fcc1c90fd83000ff77fa3ec680558827"
+        "sha256": "e18fd0d9c8488b7b582ff79b63fa23f4ba3bf9300fca361946a06d79494edaec"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
@@ -63,17 +73,17 @@
     "consumerGate": [
       {
         "path": "scripts/scaffold/test-plugin-production.py",
-        "sha256": "d0bd26e04ff8aad57328a69375fe1ae5c116cb27431e1c5992f440b2a54c3757"
+        "sha256": "a03f90eddbb83026daf32afb4cd6c6730e4c9f93a6da83872f2999597069dd53"
       },
       {
         "path": "scripts/scaffold/test-production.sh",
-        "sha256": "5ec7d6c29cf7256380aba123b98f53b68e2c4aa09fc7fe58a035fec5c46f1f34"
+        "sha256": "3b4b2e435b2b8964556ef5143cb34ae82da0bb944516dc91807ec4e04ae5324e"
       }
     ],
     "controlledRegressionGate": [
       {
         "path": "scripts/dev-loop/test-production.py",
-        "sha256": "aa50f19f6d34d004add70003777fedb7c881a091cff0c26844d37789d4bc8cf1"
+        "sha256": "6b96e3f06a0efac6adbdd2e3c3106c318607f9e48f23f8b684ece8a74a38ff29"
       },
       {
         "path": "scripts/dev-loop/test-production.sh",
@@ -82,7 +92,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "fd219f473932ff2a3fc2da5aa4d8bef53de696bd95249af3ec6e5a21eaa18ae5"
+      "sha256": "799797052ac25c6d48ee637f65def3610793481736df11dcfeab5fa2c0db294d"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -99,7 +109,7 @@
       },
       {
         "path": "docs/architecture/build-and-dev-loop.md",
-        "sha256": "d405222e496ef2285c0d0547602c1793f2be606a38276b6d6c5a290dcac4d5f2"
+        "sha256": "c2c1bf33e792d286e682fba3c83152bf13e535cba42e89f219863062db9cd4b7"
       },
       {
         "path": "docs/architecture/haxe-first-site-authoring.md",
@@ -111,7 +121,7 @@
       },
       {
         "path": "packages/cli/README.md",
-        "sha256": "b212d4fea43ea765f163d293814619815dbb3bdea94c7011a76b9fede25eb9df"
+        "sha256": "67e954085b3ef31eb5c8211aef65dbed742fee73d9996a98fd46f7db471ea11f"
       }
     ]
   },
@@ -141,6 +151,7 @@
     "bootstrapSentinelAndPluginHeaderReadiness": "passed",
     "pluginActivationBeforeReadiness": "passed",
     "exactReadOnlyPluginMount": "passed",
+    "generatedPluginNativeRuntimePermissions": "passed-0755-directories-0644-files-and-no-op-repair",
     "privateMuAdapterDirectoryAndScope": "passed",
     "privateConfigurationModes": "passed",
     "secretAndCapabilityExclusion": "passed",

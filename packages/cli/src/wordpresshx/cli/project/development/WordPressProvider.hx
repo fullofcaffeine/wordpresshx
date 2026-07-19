@@ -29,6 +29,9 @@ class WordPressProvider {
 	static inline final INTERNAL_PLUGIN_ENTRY = "WPHX_INTERNAL_WORDPRESS_PLUGIN_ENTRY";
 	static inline final INTERNAL_SITE_TITLE = "WPHX_INTERNAL_WORDPRESS_SITE_TITLE";
 	static inline final INTERNAL_SITE_URL = "WPHX_INTERNAL_WORDPRESS_SITE_URL";
+	static inline final CONTAINER_READABLE_DIRECTORY_MODE = 493;
+	static inline final CONTAINER_READABLE_FILE_MODE = 420;
+	static inline final PRIVATE_FILE_MODE = 384;
 	static inline final CLEANUP_TIMEOUT_MS = 10000;
 	static final EXECUTOR_ENVIRONMENT = [
 		"DOCKER_CERT_PATH",
@@ -82,22 +85,22 @@ class WordPressProvider {
 		final pluginPath = Path.join(pluginDirectory, "wordpresshx-dev-reload.php");
 		final bootstrapPath = Path.join(project.root, ".wphx/runtime/" + projectName + ".bootstrap.php");
 		try {
-			Fs.mkdirSync(pluginDirectory, 448);
+			Fs.mkdirSync(pluginDirectory, CONTAINER_READABLE_DIRECTORY_MODE);
 			Fs.writeFileSync(pluginPath, WordPressReloadAdapter.pluginSource(), {
 				encoding: "utf8",
-				mode: 384,
+				mode: CONTAINER_READABLE_FILE_MODE,
 				flag: "wx"
 			});
 			if (deployablePlugin != null) {
 				Fs.writeFileSync(bootstrapPath, WordPressBootstrapAdapter.source(), {
 					encoding: "utf8",
-					mode: 384,
+					mode: PRIVATE_FILE_MODE,
 					flag: "wx"
 				});
 			}
 			Fs.writeFileSync(composePath, CanonicalJson.encode(compose(project, service, port, environment, pluginDirectory, bootstrapPath)) + "\n", {
 				encoding: "utf8",
-				mode: 384,
+				mode: PRIVATE_FILE_MODE,
 				flag: "wx"
 			});
 		} catch (_:Exception) {
