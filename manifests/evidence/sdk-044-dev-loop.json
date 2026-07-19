@@ -150,7 +150,7 @@
     },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "8ba174a958f8d24893417ab3e62bb4ddea5750a8b07ad0a8b0c9c128c7647e36"
+      "sha256": "e3c08d7b6a330f7c371e58eb5c0dbb832f0f7c74b67aff2883656a96aaebf1c1"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",

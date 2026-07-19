@@ -30,6 +30,8 @@ PLAYWRIGHT_IMAGE = (
     "mcr.microsoft.com/playwright@sha256:"
     "6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d"
 )
+BROWSER_READY_TIMEOUT_SECONDS = 120
+BROWSER_STOP_TIMEOUT_SECONDS = 10
 OWNED_PATHS = (
     Path("build/nextjs/_GeneratedFiles.json"),
     Path("build/nextjs/.wphx/effective-inputs.json"),
@@ -698,6 +700,36 @@ def wait_for_path(path: Path, process: subprocess.Popen[str], timeout: float) ->
     raise AssertionError(f"timed out waiting for browser marker {path}")
 
 
+def stop_browser_process(process: subprocess.Popen[str], container_name: str) -> None:
+    try:
+        subprocess.run(
+            ["docker", "kill", container_name],
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=BROWSER_STOP_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        pass
+    if process.poll() is not None:
+        return
+    try:
+        process.terminate()
+    except ProcessLookupError:
+        return
+    try:
+        process.wait(timeout=BROWSER_STOP_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            return
+        try:
+            process.wait(timeout=BROWSER_STOP_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            pass
+
+
 def wait_for_docker_event(project: Path, event: str, timeout: float = 5.0) -> dict[str, object]:
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -1045,7 +1077,14 @@ def run_wordpress_service_case(
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        wait_for_path(browser_evidence / "browser-ready", browser, 15)
+        # A fresh hosted runner may need to pull the immutable browser image
+        # before Docker creates the named container. Keep that acquisition
+        # outside the page-readiness semantics while retaining a hard bound.
+        wait_for_path(
+            browser_evidence / "browser-ready",
+            browser,
+            BROWSER_READY_TIMEOUT_SECONDS,
+        )
         assert browser_page_loads(project) == 1
 
         failed_start = len(session.events)
@@ -1132,13 +1171,7 @@ def run_wordpress_service_case(
         }
     finally:
         if browser is not None and browser.poll() is None:
-            subprocess.run(
-                ["docker", "kill", browser_name],
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            browser.wait(timeout=10)
+            stop_browser_process(browser, browser_name)
         session.force_cleanup()
 
 
