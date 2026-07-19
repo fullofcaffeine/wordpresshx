@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-024",
-  "status": "implemented-sdk024-hosted-pending",
+  "status": "implemented-sdk024-hosted-verified",
   "scope": "bounded-stock-haxe-private-php-production-lane",
   "architectureAuthority": {
     "decisionManifest": "manifests/runtime-support-packaging.json",
@@ -173,13 +173,13 @@
     "postOneDotZeroGuarantee": "none-until-G8-retention-decision"
   },
   "claims": {
-    "typedPrivateTitleFilter": "runtime-tested-local",
-    "dependencyClosedPrivatePackaging": "runtime-tested-local",
-    "deterministicPrivatePackaging": "runtime-tested-local",
-    "multiplePluginCoexistence": "runtime-tested-local",
-    "php74And84Compatibility": "runtime-tested-local",
-    "wordpress70Compatibility": "runtime-tested-local",
-    "nativePublicAbiIsolation": "runtime-tested-local",
+    "typedPrivateTitleFilter": "runtime-tested-hosted",
+    "dependencyClosedPrivatePackaging": "runtime-tested-hosted",
+    "deterministicPrivatePackaging": "runtime-tested-hosted",
+    "multiplePluginCoexistence": "runtime-tested-hosted",
+    "php74And84Compatibility": "runtime-tested-hosted",
+    "wordpress70Compatibility": "runtime-tested-hosted",
+    "nativePublicAbiIsolation": "runtime-tested-hosted",
     "runtimeComposerDependencies": "not-admitted",
     "qualifiedLicenseApproval": "blocked",
     "generalTypedWordPressHooks": "not-implemented",

@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "receiptId": "SDK-024-PRIVATE-PHP-RUNTIME",
   "bead": "wordpresshx-sdk-024",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-19T14:03:50Z",
-  "implementationCommit": null,
-  "evidenceCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-19T14:38:25Z",
+  "implementationCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
+  "evidenceCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
   "subject": {
     "implementationManifest": {
       "path": "manifests/private-runtime-implementation.json",
-      "sha256": "f2f87a2973b5476a828d3cb256b8fa3c4cac93eea8cbde73adcfe442cf5b7145"
+      "sha256": "220648fbd87a74a0192318915c9eaa0e561297ab03e150ab6b8e4f41b9b17388"
     },
     "projectApi": {
       "path": "packages/cli/project-api/wordpresshx/WordPress.hx",
@@ -154,8 +154,8 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
-    "subjectContentSha256": "fc1a8f4067999a907f4ff3c5d88833ccd0552bd80259ebcb119578495502aa24",
+    "subjectCommit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4",
+    "subjectContentSha256": "62d0bcab4231b87d0107d5d5c725171838cedc068132d0ffc491d9afef4202d5",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -235,19 +235,19 @@
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
     "required": true,
-    "status": "pending-first-main-run",
-    "runId": null,
-    "jobId": null,
-    "commit": null
+    "status": "passed",
+    "runId": 29691003328,
+    "jobId": 88203599046,
+    "commit": "1f08aa07ba089fbb46c9a8688e268b74b3c7d9a4"
   },
   "claims": {
-    "typedPrivateTitleFilter": "runtime-tested-local",
-    "dependencyClosedPrivatePackaging": "runtime-tested-local",
-    "deterministicPrivatePackaging": "runtime-tested-local",
-    "multiplePluginCoexistence": "runtime-tested-local",
-    "php74And84Compatibility": "runtime-tested-local",
-    "wordpress70Compatibility": "runtime-tested-local",
-    "nativePublicAbiIsolation": "runtime-tested-local",
+    "typedPrivateTitleFilter": "runtime-tested-hosted",
+    "dependencyClosedPrivatePackaging": "runtime-tested-hosted",
+    "deterministicPrivatePackaging": "runtime-tested-hosted",
+    "multiplePluginCoexistence": "runtime-tested-hosted",
+    "php74And84Compatibility": "runtime-tested-hosted",
+    "wordpress70Compatibility": "runtime-tested-hosted",
+    "nativePublicAbiIsolation": "runtime-tested-hosted",
     "runtimeComposerDependencies": "not-admitted",
     "qualifiedLicenseApproval": "blocked",
     "generalTypedWordPressHooks": "not-implemented",
