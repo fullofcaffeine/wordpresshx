@@ -126,6 +126,12 @@
       }
     ]
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
+    "subjectContentSha256": "e7354849532b853f95bea61c9cbfe4a7a550f495913aea443c9ac5aaff82dcfb",
+    "depthOneFallback": "self-contained-subject-digest-inventory"
+  },
   "implementation": {
     "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
     "applicationLanguage": "Haxe",

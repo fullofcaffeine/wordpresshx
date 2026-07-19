@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "bead": "wordpresshx-sdk-045.2",
+  "status": "implemented-sdk045-plugin-hosted-pending",
+  "scope": "haxe-first-native-plugin-scaffold",
+  "contract": {
+    "command": "wphx new plugin <name>",
+    "planIdentity": "wordpress-hx.scaffold-plan.v1",
+    "pluginPlanIdentity": "wordpress-hx.plugin-plan.v1",
+    "emissionIdentity": "wordpress-hx.plugin-emission.v1",
+    "profile": "wp70-release",
+    "unsupportedKindsRemainFailClosed": [
+      "block",
+      "block-collection",
+      "island",
+      "mu-plugin",
+      "solution",
+      "theme"
+    ],
+    "unsupportedDiagnostic": "WPHX3002-before-writes"
+  },
+  "haxeFirstErgonomics": {
+    "maintainedAuthority": "Site.hx",
+    "commonDeclaration": "WordPress.plugin()",
+    "requiredArguments": 0,
+    "derivedFromAuthenticatedProjectIdentity": [
+      "plugin-slug",
+      "display-name",
+      "description",
+      "text-domain",
+      "php-namespace",
+      "wordpress-7.0-requirement",
+      "php-7.4-requirement",
+      "semantic-version",
+      "author",
+      "license"
+    ],
+    "typedOverrideFields": [
+      "author",
+      "description",
+      "license",
+      "name",
+      "namespace",
+      "version"
+    ],
+    "overrideForm": "inline-typed-literal-object",
+    "unknownNonliteralAndInvalidOverrides": "compile-time-errors",
+    "handwrittenPhpRequired": false,
+    "handwrittenJavascriptOrTypescriptRequired": false,
+    "handwrittenWordPressJsonRequired": false,
+    "rawTargetSegmentsRequired": false
+  },
+  "compilerBoundary": {
+    "projectApi": "packages/cli/project-api/wordpresshx/WordPress.hx",
+    "packaging": "embedded-cli-resource-materialized-to-private-temporary-classpath",
+    "reservedInputs": [
+      "wordpress-hx-plan-output",
+      "wordpress-hx-profile",
+      "wordpress-hx-project-id"
+    ],
+    "handoff": "closed-typed-plan-after-successful-haxe-typing",
+    "liveOutputDuringTyping": false,
+    "compileServerReuse": true,
+    "genericPhpCompiler": "compiler/reflaxe.php",
+    "wordpressProfile": "compiler/wordpress",
+    "structuredPublicPhpReceipt": "SDK-022-WORDPRESS-PUBLIC-PHP-PROFILE",
+    "dependencyDirection": "cli-to-wordpress-profile-to-generic-compiler",
+    "wordpressBranchesInGenericCompiler": false,
+    "fullPortDependency": false
+  },
+  "emission": {
+    "classification": "ordinary-public-native-wordpress-plugin",
+    "files": [
+      "<slug>.php",
+      "includes/Bootstrap.php",
+      "includes/autoload.php"
+    ],
+    "readablePhp": true,
+    "rawPhpSegments": 0,
+    "stockHaxePhpFiles": 0,
+    "runtimeHxxDependency": false,
+    "runtimeCompilerDependency": false,
+    "wordpressRoutingAndLifecycleAuthority": "native-wordpress"
+  },
+  "ownershipAndPackaging": {
+    "publication": "single-existing-manifest-last-ownership-transaction",
+    "validation": "complete-private-stage-before-live-write",
+    "modifiedOwnedFileBehavior": "fail-closed-no-write",
+    "identicalRebuild": "no-op-byte-identical",
+    "freshProjectReplay": "byte-identical",
+    "archive": "deterministic-zip32-stored-v1",
+    "archiveRoot": "<slug>",
+    "metadata": [
+      "effective-inputs",
+      "plugin-emission",
+      "plugin-plan",
+      "reproducible-build-report"
+    ]
+  },
+  "implementation": {
+    "language": "Haxe",
+    "target": "Genes-emitted-Node-ESM",
+    "entry": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+    "scaffoldPackage": "packages/cli/src/wordpresshx/cli/scaffold",
+    "projectPackage": "packages/cli/src/wordpresshx/cli/project",
+    "emitter": "packages/cli/src/wordpresshx/cli/project/PluginEmitter.hx",
+    "publisher": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
+    "strictHaxeBoundary": true,
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "sourceChanged": false,
+      "pullRequest": null,
+      "siblingDependencyCreated": false
+    },
+    "toolchain": {
+      "haxe": "4.3.7",
+      "lixPackage": "15.12.4",
+      "lixReportedCli": "15.12.2",
+      "hxnodejs": "10.0.0",
+      "node": "22.17.0",
+      "npm": "10.9.2"
+    }
+  },
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "summarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
+    "outcome": "passed",
+    "positiveCases": 10,
+    "negativeCases": 5,
+    "noWriteAssertions": 8,
+    "generatedFileCount": 11,
+    "nativePhpFileCount": 3,
+    "freshTreeReplay": "byte-identical",
+    "buildReplay": "no-op-byte-identical",
+    "devReplay": "three-atomic-generations",
+    "phpRuntimeMatrix": [
+      "7.4",
+      "8.4"
+    ],
+    "wordpress": {
+      "version": "7.0",
+      "database": "mariadb",
+      "freshInstall": "passed",
+      "headerDiscovery": "passed",
+      "activation": "passed",
+      "freshRequestProbe": "passed"
+    },
+    "strictHaxeBoundaryGuard": "passed"
+  },
+  "claims": {
+    "haxeOnlyPluginScaffold": "runtime-tested-local",
+    "derivedPluginMetadata": "compile-tested-local",
+    "nativePhpEmission": "runtime-tested-local",
+    "deterministicPluginPackaging": "runtime-tested-local",
+    "compileWatchReuse": "runtime-tested-local",
+    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-local",
+    "typedHooksBeyondBootstrap": "not-implemented",
+    "publicPackageInstallation": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The current plugin surface emits a conventional activation-safe bootstrap but does not yet expose typed hooks or lifecycle behavior beyond bootstrap.",
+    "The CLI and SDK packages remain private, so clean public-registry installation is not claimed.",
+    "The runtime matrix is bounded to PHP 7.4 and 8.4 plus WordPress 7.0 with MariaDB; Windows, network filesystems, deployment, upgrades, multisite, and production support remain untested.",
+    "Theme, block, island, MU-plugin, and solution scaffolds remain unavailable until their native producers pass independent real consumers."
+  ]
+}

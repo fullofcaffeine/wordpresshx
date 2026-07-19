@@ -53,6 +53,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   same-filesystem staging, collision/link refusal, marker-bounded hand-owned
   edits, and exact rollback. Native site/plugin/block producers and public
   package installation remain explicit non-claims.
+- `plugin-scaffold-implementation.json` records SDK-045.2's Haxe-first
+  `wphx new plugin` path: a zero-argument typed declaration derives ordinary
+  metadata, the existing structured WordPress PHP profile emits readable
+  native files, and the established owner publishes a deterministic plugin ZIP.
+  Its receipt covers compile-server reuse and clean WordPress activation while
+  keeping hooks beyond bootstrap and public package installation as non-claims.
 - `dev-loop-implementation.json` records SDK-044's real compile/watch core:
   managed project-local compiler lifecycle, effective-graph subscriptions,
   coalesced serialized rebuilds, input-stability checks, last-good retention,

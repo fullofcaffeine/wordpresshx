@@ -28,6 +28,12 @@
       "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     }
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
+    "subjectContentSha256": "bbcd485f4bdfecbd935dfc75a9c0108023040e146533295a8e42563e36a758ba",
+    "depthOneFallback": "self-contained-subject-digest-inventory"
+  },
   "change": {
     "workflowUseCount": 11,
     "fullCommitPins": true,

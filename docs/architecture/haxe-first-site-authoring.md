@@ -1,10 +1,10 @@
 # Haxe-first site authoring
 
-- Status: accepted product direction; implementation is dependency-gated
+- Status: accepted product direction; site foundation and native plugin bootstrap implemented
 - Product owner clarification: 2026-07-17
 - Tracking: `wordpresshx-hy6`
 - Implements later through: `SDK-045`, `SDK-081`, `SDK-083`, `SDK-084`, `SDK-110`, and `SDK-111`
-- Does not claim: implemented scaffolding, HXX lowering, full theme support, or production compatibility
+- Does not claim: HXX lowering, full theme/site production, public package installation, or production compatibility
 
 ## Outcome
 
@@ -188,6 +188,7 @@ The intended commands are:
 
 ```text
 wphx new site acme --profile wp70-release
+wphx new plugin acme-plugin --profile wp70-release
 wphx dev
 wphx check
 wphx test
@@ -303,7 +304,8 @@ template, palette, type pair, or fashionable default aesthetic.
 
 ## Implementation and evidence sequence
 
-- `SDK-045` proves the Site.hx-centered scaffold and generated ownership boundaries.
+- `SDK-045.1` proves the Site.hx-centered site foundation and generated ownership boundaries.
+- `SDK-045.2` proves the concise typed plugin declaration through ordinary PHP, deterministic packaging, compile/watch reuse, and clean WordPress activation.
 - `ADR-011` and `SDK-080` select and prototype the exact compile-time HXX parser boundary; native lowering remains later work.
 - `SDK-081` implements typed server HXX and contextual output lowering.
 - `SDK-083` proves a Haxe-authored native theme and hierarchy path before the MVP release gate.

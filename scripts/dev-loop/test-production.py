@@ -210,22 +210,24 @@ if (args.length === 1 && args[0] === '--version') {
   process.on('SIGINT', () => stop('SIGINT'));
   server.listen(port, '127.0.0.1', () => record('started', {port}));
   server.on('error', () => process.exit(69));
-} else if (args.length >= 3 && args[0] === '--connect') {
-  const port = Number(args[1]);
+} else if (args.includes('--connect')) {
+  const connectIndex = args.indexOf('--connect');
+  const port = Number(args[connectIndex + 1]);
+  const command = args[connectIndex + 2];
   const socket = net.createConnection({host: '127.0.0.1', port});
   const timeout = setTimeout(() => process.exit(69), 1000);
   socket.once('error', () => process.exit(69));
   socket.once('connect', () => {
     clearTimeout(timeout);
     socket.destroy();
-    if (args[2] === '-version') {
+    if (command === '-version') {
       process.stdout.write('4.3.7\\n');
       process.exit(0);
     }
-    compile(args[2]);
+    compile(command);
   });
-} else if (args.length === 1) {
-  compile(args[0]);
+} else if (args.includes('.wphx/bootstrap/project.hxml')) {
+  compile('.wphx/bootstrap/project.hxml');
 } else {
   process.exit(64);
 }

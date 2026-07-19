@@ -79,6 +79,12 @@
       "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
     }
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
+    "subjectContentSha256": "39b513290e1b60c08f75c12edf8e0a8ba4549ce5b44944519bad88feb0a1a910",
+    "depthOneFallback": "self-contained-subject-digest-inventory"
+  },
   "implementation": {
     "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
     "applicationLanguage": "Haxe",

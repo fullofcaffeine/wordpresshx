@@ -24,8 +24,9 @@ class ScaffoldCommands {
 			output.write("  " + file.actionLabel() + " " + file.ownership.label() + " mode=" + file.mode + " sha256=" + file.sha256() + " bytes="
 				+ file.sizeBytes() + " " + file.relativePath + "\n");
 		}
-		output.write("  limitation native-target-producers-not-registered\n");
-		output.write("  limitation public-package-installation-blocked\n");
+		for (limitation in plan.limitations()) {
+			output.write("  limitation " + limitation + "\n");
+		}
 		output.write(dryRun ? "planned only; no files written\n" : "published complete scaffold\n");
 	}
 }

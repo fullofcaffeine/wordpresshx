@@ -8,6 +8,7 @@ import wordpresshx.cli.Content;
 import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.scaffold.ScaffoldFile.ScaffoldFileAction;
 import wordpresshx.cli.scaffold.ScaffoldFile.ScaffoldOwnership;
+import wordpresshx.cli.scaffold.ScaffoldRequest.ScaffoldKind;
 import wordpresshx.cli.scaffold.ScaffoldRequest.ScaffoldMode;
 
 /** Render the complete minimal site tree from one validated slug. */
@@ -40,16 +41,17 @@ class ScaffoldRenderer {
 			new ScaffoldFile(".haxerc", ScaffoldProjection.haxerc(), CliOwned, Create),
 			new ScaffoldFile(".wphx/bootstrap/project.hxml", ScaffoldProjection.hxml(entryPoint, ["src"], ["test"]), CliOwned, Create),
 			new ScaffoldFile(".wphx/project.lock.json", projectLock, CliOwned, Create),
-			new ScaffoldFile("README.md", readme(projectId, request.profile), Authored, Create),
+			new ScaffoldFile("README.md", readme(request.kind, projectId, request.profile), Authored, Create),
 			new ScaffoldFile("assets/.gitkeep", "", Authored, Create),
 			new ScaffoldFile("package.json", manifest, CliOwned, Create),
 			new ScaffoldFile("package-lock.json", packageLock, CliOwned, Create),
-			new ScaffoldFile("src/" + entryPoint.split(".").join("/") + ".hx", siteSource(packageName, projectId, request.profile), Authored, Create),
-			new ScaffoldFile("test/" + packageName.split(".").join("/") + "/SiteTest.hx", siteTestSource(packageName), Authored, Create),
+			new ScaffoldFile("src/" + entryPoint.split(".").join("/") + ".hx", siteSource(request.kind, packageName, projectId, request.profile), Authored,
+				Create),
+			new ScaffoldFile("test/" + packageName.split(".").join("/") + "/SiteTest.hx", siteTestSource(request.kind, packageName), Authored, Create),
 			new ScaffoldFile("wordpress-hx.json", ScaffoldJson.document(config, true), CliOwned, Create)
 		];
-		return new ScaffoldPlan(request.mode, projectId, ScaffoldIdentity.displayName(projectId), packageName, entryPoint, request.profile, targetRoot,
-			projectId, files);
+		return new ScaffoldPlan(request.mode, request.kind, projectId, ScaffoldIdentity.displayName(projectId), packageName, entryPoint, request.profile,
+			targetRoot, projectId, files);
 	}
 
 	static function validateSelectedRoot(mode:ScaffoldMode, selectedRoot:String, targetRoot:String):Void {
@@ -164,7 +166,17 @@ class ScaffoldRenderer {
 		]), true);
 	}
 
-	static function siteSource(packageName:String, projectId:String, profile:String):String {
+	static function siteSource(kind:ScaffoldKind, packageName:String, projectId:String, profile:String):String {
+		if (kind == Plugin) {
+			return "package "
+				+ packageName
+				+ ";\n\n"
+				+ "import wordpresshx.WordPress;\n\n"
+				+ "/** Haxe-owned plugin authority; identity and native PHP are derived. */\n"
+				+ "final class Site {\n"
+				+ "\tpublic static final definition = WordPress.plugin();\n"
+				+ "}\n";
+		}
 		return "package "
 			+ packageName
 			+ ";\n\n"
@@ -180,7 +192,20 @@ class ScaffoldRenderer {
 			+ "}\n";
 	}
 
-	static function siteTestSource(packageName:String):String {
+	static function siteTestSource(kind:ScaffoldKind, packageName:String):String {
+		if (kind == Plugin) {
+			return "package "
+				+ packageName
+				+ ";\n\n"
+				+ "final class SiteTest {\n"
+				+ "\tpublic static function targetIsTyped():Void {\n"
+				+ "\t\tfinal target:wordpresshx.WordPress.WordPressTarget = Site.definition.target;\n"
+				+ "\t\tif (target != wordpresshx.WordPress.WordPressTarget.Plugin) {\n"
+				+ "\t\t\tthrow new haxe.Exception(\"plugin target differs\");\n"
+				+ "\t\t}\n"
+				+ "\t}\n"
+				+ "}\n";
+		}
 		return "package "
 			+ packageName
 			+ ";\n\n"
@@ -194,7 +219,13 @@ class ScaffoldRenderer {
 			+ "}\n";
 	}
 
-	static function readme(projectId:String, profile:String):String {
+	static function readme(kind:ScaffoldKind, projectId:String, profile:String):String {
+		final finalParagraph = switch kind {
+			case Site:
+				"Pre-release limitation: native site/plugin/block producers and public package installation are not registered yet, so the current build proves only the typed project and deterministic ownership foundation.\n";
+			case Plugin:
+				"The zero-argument `WordPress.plugin()` declaration derives conventional plugin metadata from the project identity. Pass an inline typed options object only for metadata you need to override. This pre-release slice emits and packages the native bootstrap only; hooks, lifecycle behavior beyond bootstrap, and public package installation remain dependency-gated.\n";
+		};
 		return "# "
 			+ ScaffoldIdentity.displayName(projectId)
 			+ "\n\n"
@@ -209,7 +240,6 @@ class ScaffoldRenderer {
 			+ "Exact profile: `"
 			+ profile
 			+ "`. Bootstrap JSON, HXML, npm metadata, and the project lock are CLI-owned projections; edit `Site.hx` for normal work.\n\n"
-			+
-			"Pre-release limitation: native site/plugin/block producers and public package installation are not registered yet, so the current build proves only the typed project and deterministic ownership foundation.\n";
+			+ finalParagraph;
 	}
 }

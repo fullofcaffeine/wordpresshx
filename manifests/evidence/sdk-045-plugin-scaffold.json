@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
+  "bead": "wordpresshx-sdk-045.2",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-19T08:28:55Z",
+  "implementationCommit": null,
+  "subject": {
+    "implementationManifest": {
+      "path": "manifests/plugin-scaffold-implementation.json",
+      "sha256": "9eb1a530ae1a5895686e1838fb4a7b84d1df2025efa82e8e7bbb5ac15271f77c"
+    },
+    "projectApi": {
+      "path": "packages/cli/project-api/wordpresshx/WordPress.hx",
+      "sha256": "399d35e2f871404a980dca923393bffb68ddae7dc4f4df63610e8749875b7431"
+    },
+    "compilerIntegration": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
+        "sha256": "892c925134753b32258f914aa8d4337f74c16e0608c2a622d025b9e6439823e2"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ProjectBuild.hx",
+        "sha256": "cd7257827476c6aef1cfe071b2145389f40e78a315f6464f38fcb33c5e229942"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
+        "sha256": "3abff98aab821a7aa612fe61ab5d7ed84c3ad22d20c4655f46df7401f62c434d"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginCompilationRegistry.hx",
+        "sha256": "521ad5cdc00f6f77ace4238ce2d4da954dcd8ad5378ae24f0971dbe9ae7c4926"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginEmission.hx",
+        "sha256": "79911b14a09a2990b86938bb90e14d5784c2e573466df14f9f913dc87ecd1be0"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginEmittedFile.hx",
+        "sha256": "90f5a6a329560b9f8d98bd0f7d01df7e750836c3032d69663ace143b29f9f167"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginEmitter.hx",
+        "sha256": "1ee7d71888f04f35096217ab188836455f93561bf6d88b459d3f694d7c8479f4"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginLockIdentity.hx",
+        "sha256": "5ff5e34f83fe77bedc90ea13b1cce010dd0c972164eaa769a3b819b2b1a9c748"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginLockReader.hx",
+        "sha256": "41a37b91295081f814337464133435b1b4a7906bc88bb6e7e0b8f0f448635224"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginMacroInvocation.hx",
+        "sha256": "40b8a6ec62cf54a1431fa53f6e4ed4e9913c3103070ea226dbfc49766e1f878e"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginMacroRuntime.hx",
+        "sha256": "dca9225fbd2e47da4797314451bef02a3abca2d56dc2f9eae7abc5a775345bc8"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginPlan.hx",
+        "sha256": "d3df434c2f0e68ac5d08933394217d64ab94caa689c7a2616188c46f7e9bbfc2"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginPlanReader.hx",
+        "sha256": "b3d9e9eb9441dce2da22e8de8cd998d39726fc86e138e3fc97df13ef4c2e6292"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginProjectBuild.hx",
+        "sha256": "2d56ebf52f31f648a32d987be18ba4313adf220ba4e31bcb3dfbaceb01006a9c"
+      }
+    ],
+    "scaffoldIntegration": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+        "sha256": "c7fa7eb5aac0bdf45b5e2cfe3cf9a48e20cfd1afad127c1c7799f164ea1f45d1"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldArguments.hx",
+        "sha256": "f5dc96c34e868a1c4f4f4f24425cf465caaa5aec8484a12b7c3c19e3f515a2a2"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldCommands.hx",
+        "sha256": "1582d3039791128e6bdac3af6a94b83667856fe37b441807cab93cd35e28e0e5"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPlan.hx",
+        "sha256": "5c9bcf34927473a676dc44b6de30d7015126116bc0377d1991c8f913ae2ea084"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
+        "sha256": "da5debed23c99f7f93100a4f8b275afb4b8797c10b448e0b42a63985b1b8e0db"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRequest.hx",
+        "sha256": "8f0d22e824e4e330b0531ba87886ba681f3a3b94737267f3abcdf9a79ee76eee"
+      }
+    ],
+    "profile": {
+      "path": "packages/cli/profiles/wphx.hxml",
+      "sha256": "3f07789bf0a57c8de1a377d722e429615f49fddd2876e56166f506e50aa9c5f1"
+    },
+    "schema": {
+      "path": "schemas/scaffold-plan.schema.json",
+      "sha256": "c9378c239c7a5ee8b2804dfe4d8c3c72c4cdf40b6af5f1f867c3d28f464a3469"
+    },
+    "consumerGates": [
+      {
+        "path": "scripts/scaffold/plugin-native-caller.php",
+        "sha256": "50803e2cb79009c5becc2a5e1053a9074b4a2dd71f93f1d8bd9c60d596c542f0"
+      },
+      {
+        "path": "scripts/scaffold/test-plugin-production.py",
+        "sha256": "78f5d28a1a78cc4a754c638e01afa90a21c7c41a3a7008e1b29bfb75fa7ba27e"
+      },
+      {
+        "path": "scripts/scaffold/test-plugin-wordpress.sh",
+        "sha256": "ef55498bd06db11448636f7139b9315ce38b15e6c531d6a9a19594aa5d4779b7"
+      },
+      {
+        "path": "scripts/scaffold/test-production.py",
+        "sha256": "0270da1920b7d527fb10788b6aa5da008bb43a200ec21013e4cb8738873f213a"
+      },
+      {
+        "path": "scripts/scaffold/test-production.sh",
+        "sha256": "223c54453bc0644d21941cba973a0dec8f717e945828051ce3d9da11b7391d62"
+      }
+    ],
+    "compatibilityCorpora": [
+      {
+        "path": "scripts/determinism/test-production.py",
+        "sha256": "5d2fc8a1d1c6a7c73c2a8a6f03d595734fee950fb9acd7aac4611b5f494cd3ba"
+      },
+      {
+        "path": "scripts/dev-loop/test-production.py",
+        "sha256": "79e063929a3ccb736efa960eafc4052974fe9a00d32b4010da4cb27aa652574f"
+      },
+      {
+        "path": "scripts/project-cli/test-production.py",
+        "sha256": "df1ba6e3c021d4412074d1222e89efd1b99a98d0d13fddf6a83a832451e35e81"
+      }
+    ],
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "d49b10998ab2b2d91c6a56d8bc75b72b2e5abcb8302e8a4cc074b5044cb92e2e"
+    },
+    "repositoryValidator": [
+      {
+        "path": "scripts/check-repository.sh",
+        "sha256": "02d5ec1f582cd07da9288668aabdf965d214a2f4836b6df3f1dc76fca44d75a2"
+      },
+      {
+        "path": "scripts/ci/check-checkout-action.py",
+        "sha256": "8bc553e482eb4190502c291bcab804f2f6f59d5af94b12eaa3eeaea9faec6201"
+      }
+    ],
+    "documentation": [
+      {
+        "path": "docs/architecture/haxe-first-site-authoring.md",
+        "sha256": "f3be66ca2b5135e3500731acd25ba2ec50e7c7cc90860cae83a18e04aa1c8b18"
+      },
+      {
+        "path": "manifests/README.md",
+        "sha256": "4b7a645647f3af19bcb011884de671936deb316d8e1c3cf7d17ea412d65a63b9"
+      },
+      {
+        "path": "packages/cli/README.md",
+        "sha256": "12311290b3828104225ff380fec6743b8dd61f08d1f5b152aba9709ac0e214b3"
+      }
+    ]
+  },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": null,
+    "subjectContentSha256": "552bcee098e20cc2f3bfc199d7b02ca677bda2b4fb0be2a5c7ee0e63dcd55eec",
+    "depthOneFallback": "self-contained-subject-digest-inventory"
+  },
+  "implementation": {
+    "applicationLanguage": "Haxe",
+    "javascriptCompiler": "Genes",
+    "runtime": "Node ESM",
+    "profile": "wp70-release",
+    "commonDeclaration": "WordPress.plugin()",
+    "strictHaxeBoundary": true,
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingDependencyCreated": false
+  },
+  "verification": {
+    "command": "bash scripts/scaffold/test-production.sh",
+    "summarySchema": "wordpress-hx.sdk045-plugin-scaffold-summary.v1",
+    "outcome": "passed",
+    "positiveCases": 10,
+    "negativeCases": 5,
+    "noWriteAssertions": 8,
+    "generatedFileCount": 11,
+    "nativePhpFileCount": 3,
+    "freshTreeReplay": "byte-identical",
+    "buildReplay": "no-op-byte-identical",
+    "devReplay": "three-atomic-generations",
+    "phpRuntimeMatrix": [
+      "7.4",
+      "8.4"
+    ],
+    "wordpress": {
+      "version": "7.0",
+      "database": "mariadb",
+      "freshInstall": "passed",
+      "headerDiscovery": "passed",
+      "activation": "passed",
+      "freshRequestProbe": "passed"
+    },
+    "strictHaxeBoundaryGuard": "passed"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "step": "Test Haxe-first site scaffolding",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true
+  },
+  "claims": {
+    "haxeOnlyPluginScaffold": "runtime-tested-local",
+    "derivedPluginMetadata": "compile-tested-local",
+    "nativePhpEmission": "runtime-tested-local",
+    "deterministicPluginPackaging": "runtime-tested-local",
+    "compileWatchReuse": "runtime-tested-local",
+    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-local",
+    "typedHooksBeyondBootstrap": "not-implemented",
+    "publicPackageInstallation": "blocked",
+    "productionSupport": "not-tested"
+  },
+  "limitations": [
+    "The current plugin surface emits a conventional activation-safe bootstrap but does not yet expose typed hooks or lifecycle behavior beyond bootstrap.",
+    "The CLI and SDK packages remain private, so clean public-registry installation is not claimed.",
+    "The runtime matrix is bounded to PHP 7.4 and 8.4 plus WordPress 7.0 with MariaDB; Windows, network filesystems, deployment, upgrades, multisite, and production support remain untested.",
+    "Theme, block, island, MU-plugin, and solution scaffolds remain unavailable until their native producers pass independent real consumers."
+  ]
+}

@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -70,6 +71,7 @@ def main() -> int:
             "status",
             "source",
             "subject",
+            "historicalVerification",
             "change",
             "localVerification",
             "implementation",
@@ -122,10 +124,61 @@ def main() -> int:
 
     subjects = receipt["subject"]
     exact_keys(subjects, {"validator", "workflow"}, "checkout receipt subject")
-    for name, subject in subjects.items():
+    subject_records = sorted(subjects.items(), key=lambda item: item[1]["path"])
+    material = bytearray()
+    historical = receipt["historicalVerification"]
+    exact_keys(
+        historical,
+        {
+            "algorithm",
+            "subjectCommit",
+            "subjectContentSha256",
+            "depthOneFallback",
+        },
+        "checkout historical verification",
+    )
+    assert historical["algorithm"] == (
+        "sha256-lines-of-sha256-two-spaces-path-lf-v1"
+    )
+    assert SHA1.fullmatch(historical["subjectCommit"])
+    assert historical["depthOneFallback"] == (
+        "self-contained-subject-digest-inventory"
+    )
+    historical_available = (
+        subprocess.run(
+            [
+                "git",
+                "cat-file",
+                "-e",
+                f"{historical['subjectCommit']}^{{commit}}",
+            ],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
+    for name, subject in subject_records:
         exact_keys(subject, {"path", "sha256"}, f"checkout receipt subject {name}")
+        material.extend(f"{subject['sha256']}  {subject['path']}\n".encode())
         subject_path = ROOT / subject["path"]
-        assert digest(subject_path) == subject["sha256"], f"stale checkout subject: {name}"
+        if subject_path.is_file() and digest(subject_path) == subject["sha256"]:
+            continue
+        if historical_available:
+            content = subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{historical['subjectCommit']}:{subject['path']}",
+                ],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            assert hashlib.sha256(content).hexdigest() == subject["sha256"]
+    assert hashlib.sha256(material).hexdigest() == (
+        historical["subjectContentSha256"]
+    )
     assert subjects["validator"]["path"] == "scripts/ci/check-checkout-action.py"
     assert subjects["workflow"]["path"] == ".github/workflows/repository.yml"
 

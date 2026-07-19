@@ -86,10 +86,12 @@ def make_tools(evidence: Path) -> None:
         "#!/bin/sh\n"
         "set -eu\n"
         "if [ \"${1:-}\" = --version ]; then printf '%s\\n' 4.3.7; exit 0; fi\n"
-        "if [ \"$#\" -ne 1 ] || [ \"$1\" != .wphx/bootstrap/project.hxml ]; then exit 64; fi\n"
-        "grep -Fx -- '-cp src' \"$1\" >/dev/null\n"
-        "grep -Fx -- '-cp test' \"$1\" >/dev/null\n"
-        "grep -Fx -- '--no-output' \"$1\" >/dev/null\n"
+        "hxml=\n"
+        "for argument in \"$@\"; do [ \"$argument\" = .wphx/bootstrap/project.hxml ] && hxml=$argument; done\n"
+        "[ -n \"$hxml\" ] || exit 64\n"
+        "grep -Fx -- '-cp src' \"$hxml\" >/dev/null\n"
+        "grep -Fx -- '-cp test' \"$hxml\" >/dev/null\n"
+        "grep -Fx -- '--no-output' \"$hxml\" >/dev/null\n"
     )
     lix = tools / "lix"
     lix.write_text(
@@ -196,15 +198,20 @@ class Runtime:
 def validate_plan(plan: dict[str, object]) -> None:
     assert set(plan) == PLAN_KEYS
     assert plan["schema"] == "wordpress-hx.scaffold-plan.v1"
-    assert plan["operation"] in {"new-site", "init-site"}
-    assert plan["kind"] == "site"
+    assert plan["operation"] in {"new-site", "new-plugin", "init-site"}
+    assert plan["kind"] in {"site", "plugin"}
     assert plan["profile"] == "wp70-release"
     assert plan["target"] == plan["projectId"]
     assert plan["status"] == ("planned" if plan["dryRun"] else "published")
-    assert plan["limitations"] == [
-        "native-target-producers-not-registered",
-        "public-package-installation-blocked",
-    ]
+    expected_limitations = (
+        ["plugin-bootstrap-only", "public-package-installation-blocked"]
+        if plan["kind"] == "plugin"
+        else [
+            "native-target-producers-not-registered",
+            "public-package-installation-blocked",
+        ]
+    )
+    assert plan["limitations"] == expected_limitations
     files = plan["files"]
     assert isinstance(files, list) and files
     paths = [item["path"] for item in files]
@@ -415,7 +422,7 @@ def run(runtime_root: Path) -> dict[str, object]:
                 ],
                 "WPHX3004",
             ),
-            (["new", "plugin", "safe-name", "--project", runtime.container(invalid_parent)], "WPHX3002"),
+            (["new", "theme", "safe-name", "--project", runtime.container(invalid_parent)], "WPHX3002"),
         ):
             diagnostic = runtime.scaffold(arguments, expected=2)
             assert diagnostic["code"] == code

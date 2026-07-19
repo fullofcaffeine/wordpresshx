@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in diff docker haxe haxelib lix node python3 realpath; do
+for command_name in diff docker haxe haxelib lix node npm php python3 realpath; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-045 production scaffold gate requires ${command_name}" >&2
     exit 1
@@ -35,12 +35,26 @@ fi
   cd "${package_root}"
   lix --silent download
 )
-haxelib run formatter --check -s "${package_root}/src"
+haxelib run formatter --check -s "${package_root}/src" -s "${package_root}/project-api"
 
 if ! python3 - \
-  "${package_root}/src/wordpresshx/cli/scaffold" \
-  "${package_root}/src/wordpresshx/cli/WphxMain.hx" \
-  "${package_root}/src/wordpresshx/cli/project/CompilerRunner.hx" <<'PY'
+	"${package_root}/project-api" \
+	"${package_root}/src/wordpresshx/cli/scaffold" \
+	"${package_root}/src/wordpresshx/cli/WphxMain.hx" \
+	"${package_root}/src/wordpresshx/cli/project/CompilerRunner.hx" \
+	"${package_root}/src/wordpresshx/cli/project/ProjectBuild.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginBuildPublisher.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginCompilationRegistry.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginEmission.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginEmittedFile.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginEmitter.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginLockIdentity.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginLockReader.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginMacroInvocation.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginMacroRuntime.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPlan.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginPlanReader.hx" \
+	"${package_root}/src/wordpresshx/cli/project/PluginProjectBuild.hx" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -85,4 +99,5 @@ docker run --rm --network none \
   node --version | grep -Fx 'v22.17.0' >/dev/null
 
 python3 "${repository_root}/scripts/scaffold/test-production.py" "${test_root}/runtime-a"
+python3 "${repository_root}/scripts/scaffold/test-plugin-production.py" "${test_root}/runtime-a"
 echo "SDK-045 Haxe-first scaffold gate passed"

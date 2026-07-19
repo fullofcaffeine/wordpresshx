@@ -3,5 +3,8 @@
 -cp src
 -main wordpresshx.cli.WphxMain
 -resource assets/development-reload-client.js@wordpresshx-development-reload-client
+-resource project-api/wordpresshx/WordPress.hx@wordpresshx-project-api
+-cp ../../compiler/reflaxe.php/src
+-cp ../../compiler/wordpress/src
 -D js-es=6
 -dce full

@@ -222,12 +222,14 @@ def make_tools(root: Path) -> None:
         "#!/bin/sh\n"
         "set -eu\n"
         "if [ \"${1:-}\" = \"--version\" ]; then printf '%s\\n' 4.3.7; exit 0; fi\n"
-        "if [ \"$#\" -ne 1 ] || [ \"$1\" != .wphx/bootstrap/project.hxml ]; then exit 64; fi\n"
+        "hxml=\n"
+        "for argument in \"$@\"; do [ \"$argument\" = .wphx/bootstrap/project.hxml ] && hxml=$argument; done\n"
+        "[ -n \"$hxml\" ] || exit 64\n"
         "if grep -q BROKEN_HAXE src/acme/site/Site.hx; then\n"
         "  printf '%s\\n' 'src/acme/site/Site.hx:1: characters 1-6 : synthetic typing failure' >&2\n"
         "  exit 1\n"
         "fi\n"
-        "grep -Fx -- --no-output \"$1\" >/dev/null\n"
+        "grep -Fx -- --no-output \"$hxml\" >/dev/null\n"
     )
     lix = tools / "lix"
     lix.write_text("#!/bin/sh\nset -eu\n[ \"${1:-}\" = --version ]\nprintf '%s\\n' 15.12.2\n")

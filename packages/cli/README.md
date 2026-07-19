@@ -56,6 +56,29 @@ its self-digested exact lock, profile, package graph, HXML inputs, source and
 asset discovery roots, public build environment, and ownership state before it
 invokes a tool or writes an artifact.
 
+`wphx new plugin typed-news` creates the first native-producing scaffold. Its
+maintained application authority is only:
+
+```haxe
+import wordpresshx.WordPress;
+
+final class Site {
+    public static final definition = WordPress.plugin();
+}
+```
+
+Haxe derives the slug, display name, description, text domain, PHP namespace,
+WordPress/PHP requirements, version, author, and license from the authenticated
+project identity and exact profile. An inline typed options object overrides
+only metadata that differs from convention. `check` validates the complete
+private generation without writing; `build` atomically publishes three
+readable PHP files plus a deterministic plugin ZIP; and `dev
+--services=none` reuses the same transaction through the managed Haxe compile
+server. No maintained PHP, JavaScript, WordPress JSON, or raw target segment is
+required. This pre-release slice is deliberately limited to the plugin
+bootstrap; typed hooks and lifecycle behavior beyond bootstrap remain later
+work, and the CLI package is not publicly installable.
+
 ```bash
 wphx build
 wphx build --dry-run --json

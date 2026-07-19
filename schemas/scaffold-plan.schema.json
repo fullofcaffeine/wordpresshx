@@ -24,11 +24,15 @@
     "operation": {
       "enum": [
         "new-site",
+        "new-plugin",
         "init-site"
       ]
     },
     "kind": {
-      "const": "site"
+      "enum": [
+        "site",
+        "plugin"
+      ]
     },
     "projectId": {
       "type": "string",
@@ -62,12 +66,62 @@
       }
     },
     "limitations": {
-      "const": [
-        "native-target-producers-not-registered",
-        "public-package-installation-blocked"
+      "oneOf": [
+        {
+          "const": [
+            "native-target-producers-not-registered",
+            "public-package-installation-blocked"
+          ]
+        },
+        {
+          "const": [
+            "plugin-bootstrap-only",
+            "public-package-installation-blocked"
+          ]
+        }
       ]
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "new-plugin"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "const": "plugin"
+          },
+          "limitations": {
+            "const": [
+              "plugin-bootstrap-only",
+              "public-package-installation-blocked"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "kind": {
+            "const": "site"
+          },
+          "limitations": {
+            "const": [
+              "native-target-producers-not-registered",
+              "public-package-installation-blocked"
+            ]
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "projectId": {
       "type": "string",

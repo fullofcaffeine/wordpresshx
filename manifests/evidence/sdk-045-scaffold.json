@@ -103,6 +103,12 @@
       }
     ]
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
+    "subjectContentSha256": "1fe9b393d32c0adad3a00fbc25dd7da12385153548a0eee10a9d7a91ad5e0b16",
+    "depthOneFallback": "self-contained-subject-digest-inventory"
+  },
   "implementation": {
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",

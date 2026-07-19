@@ -78,6 +78,7 @@ class WphxMain {
 			.stdout.write('WordPressHx CLI 0.0.0\n\n'
 				+ 'Usage: wphx <command> [options]\n\n'
 				+ '  new site <name>    Create a minimal Haxe-owned site project\n'
+				+ '  new plugin <name>  Create a Haxe-owned native plugin project\n'
 				+ '  init [name]        Initialize the current existing directory\n'
 				+ '  build [--dry-run]  Type, validate, and atomically publish\n'
 				+ '  check              Run the complete no-publication gate\n'

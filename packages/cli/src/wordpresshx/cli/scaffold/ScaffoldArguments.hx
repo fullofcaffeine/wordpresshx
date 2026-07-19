@@ -1,19 +1,12 @@
 package wordpresshx.cli.scaffold;
 
 import wordpresshx.cli.CliFailure;
+import wordpresshx.cli.scaffold.ScaffoldRequest.ScaffoldKind;
 import wordpresshx.cli.scaffold.ScaffoldRequest.ScaffoldMode;
 
 /** Closed parser for project-creation mutations. */
 class ScaffoldArguments {
-	static final KNOWN_UNAVAILABLE = [
-		"island",
-		"plugin",
-		"mu-plugin",
-		"block",
-		"block-collection",
-		"theme",
-		"solution"
-	];
+	static final KNOWN_UNAVAILABLE = ["island", "mu-plugin", "block", "block-collection", "theme", "solution"];
 
 	public static function parse(arguments:Array<String>):ScaffoldRequest {
 		if (arguments.length == 0) {
@@ -76,27 +69,32 @@ class ScaffoldArguments {
 				return usage("new requires a kind and project name");
 			}
 			final kind = positionals[0];
-			if (kind != "site") {
+			final scaffoldKind = switch kind {
+				case "site": Site;
+				case "plugin": Plugin;
+				case _: null;
+			};
+			if (scaffoldKind == null) {
 				if (KNOWN_UNAVAILABLE.indexOf(kind) >= 0) {
 					throw new CliFailure("WPHX3002", "new " + kind + " is unavailable until its native producer passes the real consumer path", 2,
 						"scaffold-plan", null, [
-							"Use new site for the proven project foundation, or wait for the named target producer."
+							"Use new site or new plugin for a proven project foundation, or wait for the named target producer."
 						]);
 				}
 				return usage("unknown scaffold kind: " + kind);
 			}
-			return new ScaffoldRequest(NewProject, ScaffoldIdentity.projectId(positionals[1]), profile, projectPath, dryRun, json);
+			return new ScaffoldRequest(NewProject, scaffoldKind, ScaffoldIdentity.projectId(positionals[1]), profile, projectPath, dryRun, json);
 		}
 		if (positionals.length > 1) {
 			return usage("init accepts at most one project name");
 		}
 		final requested = positionals.length == 0 ? null : ScaffoldIdentity.projectId(positionals[0]);
-		return new ScaffoldRequest(ExistingProject, requested, profile, projectPath, dryRun, json);
+		return new ScaffoldRequest(ExistingProject, Site, requested, profile, projectPath, dryRun, json);
 	}
 
 	static function usage<T>(message:String):T {
 		throw new CliFailure("WPHX3001", message, 2, "scaffold-plan", null, [
-			"Use: wphx new site <name> [--profile wp70-release] [--project <parent>] [--dry-run] [--json], or wphx init [name]."
+			"Use: wphx new <site|plugin> <name> [--profile wp70-release] [--project <parent>] [--dry-run] [--json], or wphx init [name]."
 		]);
 	}
 }

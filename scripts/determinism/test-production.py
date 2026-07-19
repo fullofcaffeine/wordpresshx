@@ -47,9 +47,10 @@ def make_tools(root: Path) -> None:
         "#!/bin/sh\n"
         "set -eu\n"
         "if [ \"${1:-}\" = \"--version\" ]; then printf '%s\\n' 4.3.7; exit 0; fi\n"
-        "[ \"$#\" -eq 1 ]\n"
-        "[ \"$1\" = .wphx/bootstrap/project.hxml ]\n"
-        "grep -Fx -- --no-output \"$1\" >/dev/null\n"
+        "hxml=\n"
+        "for argument in \"$@\"; do [ \"$argument\" = .wphx/bootstrap/project.hxml ] && hxml=$argument; done\n"
+        "[ -n \"$hxml\" ]\n"
+        "grep -Fx -- --no-output \"$hxml\" >/dev/null\n"
     )
     lix = tools / "lix"
     lix.write_text("#!/bin/sh\nset -eu\n[ \"${1:-}\" = --version ]\nprintf '%s\\n' 15.12.2\n")

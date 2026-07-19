@@ -10,13 +10,13 @@ class CompilerRunner {
 	public static function typeProject(context:ProjectContext):Void {
 		ScaffoldProjection.validate(context);
 		validateBootstrap(context);
-		run(context, [".wphx/bootstrap/project.hxml"]);
+		compile(context, [".wphx/bootstrap/project.hxml"]);
 	}
 
 	public static function typeProjectWithServer(context:ProjectContext, port:Int):Void {
 		ScaffoldProjection.validate(context);
 		validateBootstrap(context);
-		run(context, ["--connect", Std.string(port), ".wphx/bootstrap/project.hxml"]);
+		compile(context, ["--connect", Std.string(port), ".wphx/bootstrap/project.hxml"]);
 	}
 
 	public static function probeServer(context:ProjectContext, port:Int):Bool {
@@ -38,10 +38,19 @@ class CompilerRunner {
 					"Regenerate .wphx/bootstrap/project.hxml with the exact CLI instead of adding a live output flag."
 				]);
 		}
+		for (line in hxml.split("\n").map(StringTools.trim)) {
+			if (StringTools.startsWith(line, "-D wordpress-hx-") || StringTools.startsWith(line, "--define wordpress-hx-")) {
+				throw new CliFailure("WPHX2000", "project HXML may not override reserved WordPressHx compiler inputs", 6, "haxe-typing-and-plan", hxmlPath,
+					["Regenerate the CLI-owned Haxe bootstrap from the project authority."]);
+			}
+		}
 	}
 
-	static function run(context:ProjectContext, arguments:Array<String>):Void {
+	static function compile(context:ProjectContext, baseArguments:Array<String>):Void {
 		final hxmlPath = ".wphx/bootstrap/project.hxml";
+		PluginCompilationRegistry.clear(context.bootstrap.root);
+		final invocation = PluginMacroRuntime.prepare(context);
+		final arguments = PluginMacroRuntime.compilerArguments(invocation).concat(baseArguments);
 		final result:ChildProcessSpawnSyncResult = ChildProcess.spawnSync("haxe", arguments, {
 			cwd: context.bootstrap.root,
 			encoding: "utf8",
@@ -49,14 +58,20 @@ class CompilerRunner {
 			stdio: ["ignore", "pipe", "pipe"]
 		});
 		if (result.error != null) {
+			PluginMacroRuntime.discard(invocation);
 			throw new CliFailure("WPHX2001", "could not start the exact Haxe compiler", 6, "haxe-typing-and-plan", hxmlPath,
 				["Run wphx doctor and restore the project-local Haxe/Lix installation."]);
 		}
 		if (result.status != 0) {
+			PluginMacroRuntime.discard(invocation);
 			final raw = Std.string(result.stderr);
 			final redacted = StringTools.replace(raw, context.bootstrap.root + "/", "");
 			final message = StringTools.trim(redacted).length == 0 ? "Haxe typing failed" : StringTools.trim(redacted);
 			throw new CliFailure("WPHX2002", message, 6, "haxe-typing-and-plan", hxmlPath, ["Fix the reported Haxe source error and rerun the command."]);
+		}
+		final plan = PluginMacroRuntime.finish(invocation, context);
+		if (plan != null) {
+			PluginCompilationRegistry.put(context.bootstrap.root, plan);
 		}
 	}
 

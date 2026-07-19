@@ -24,22 +24,19 @@ class ProjectBuild {
 		}
 		final diagnosis = Doctor.inspect(context);
 		if (!diagnosis.passed) {
-			final checks:Array<Dynamic> = cast Reflect.field(diagnosis.report, "checks");
-			final failed = checks.filter(check -> Reflect.field(check, "status") == "failed")[0];
-			throw new CliFailure("WPHX1200",
-				"toolchain/ownership preflight failed at "
-				+ Reflect.field(failed, "id")
-				+ ": found "
-				+ Reflect.field(failed, "actual")
-				+ ", expected "
-				+ Reflect.field(failed, "expected"),
-				7, "configuration", null, [cast Reflect.field(failed, "remediation")]);
+			throw new CliFailure("WPHX1200", "toolchain/ownership preflight failed; run wphx doctor for the exact mismatch", 7, "configuration", null, [
+				"Restore the exact project-local tools and authenticated owned files reported by wphx doctor."
+			]);
 		}
 		OwnershipPreflight.inspect(context);
 		final stagePayload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
 		events.stageStarted(STAGES[0], stagePayload());
 		compile(context);
 		events.stageCompleted(STAGES[0], stagePayload());
+		final pluginPlan = PluginCompilationRegistry.get(context.bootstrap.root);
+		if (pluginPlan != null) {
+			return PluginProjectBuild.finish(context, pluginPlan, events, mode, buildId, publish, dryRun, generation);
+		}
 		events.stageSkipped(STAGES[1], "no PHP target producer is registered in the current build graph", mode);
 		events.stageSkipped(STAGES[2], "no browser target producer is registered in the current build graph", mode);
 		events.stageStarted(STAGES[3], stagePayload());
