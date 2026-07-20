@@ -13,14 +13,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in cmp grep haxe haxelib lix node python3; do
+for command_name in cmp grep haxelib lix node python3; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "ADR-009 schema authority gate requires ${command_name}" >&2
     exit 1
   fi
 done
 
-if [[ "$(haxe --version)" != "4.3.7" ]]; then
+lix_bin_dir="$(cd "$(dirname "$(command -v lix)")" && pwd -P)"
+scoped_haxe="${lix_bin_dir}/haxe"
+if [[ ! -x "${scoped_haxe}" ]]; then
+	echo "ADR-009 schema authority gate requires the Lix Haxe shim" >&2
+	echo "Run: lix install haxe 4.3.7 --global" >&2
+	exit 1
+fi
+if [[ "$("${scoped_haxe}" --version)" != "4.3.7" ]]; then
   echo "ADR-009 schema authority gate requires Haxe 4.3.7" >&2
   exit 1
 fi
@@ -86,7 +93,7 @@ if grep --recursive --line-number --extended-regexp \
 fi
 
 main_class="wordpress.hx.contracts.tests.SchemaAuthorityTest"
-haxe \
+"${scoped_haxe}" \
 	-cp "${package_root}/src" \
 	-cp "${package_root}/test" \
 	-main "${main_class}" \
@@ -95,7 +102,7 @@ haxe \
 
 (
   cd "${repository_root}/packages/cli"
-  haxe \
+  "${scoped_haxe}" \
     -cp ../contracts/src \
 		-cp ../contracts/test \
 		-main "${main_class}" \
@@ -121,7 +128,7 @@ haxe \
   "${test_root}/genes/index.ts"
 "${node_command}" "${test_root}/javascript/index.js" >"${test_root}/javascript.txt"
 
-haxe \
+"${scoped_haxe}" \
   -cp "${package_root}/src" \
 	-cp "${package_root}/test" \
 	-main "${main_class}" \
@@ -145,7 +152,7 @@ assert_compile_failure() {
   local fixture_main="$2"
   shift 2
   local diagnostic="${test_root}/${fixture}.diagnostic.txt"
-	if haxe \
+	if "${scoped_haxe}" \
 		-cp "${package_root}/src" \
 		-cp "${package_root}/test-negative/${fixture}" \
 		-main "${fixture_main}" \

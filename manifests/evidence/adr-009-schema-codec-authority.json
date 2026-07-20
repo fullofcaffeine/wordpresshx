@@ -27,7 +27,7 @@
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
-      "sha256": "05a888d194833f266e10cc959193c1ef9f177bb9df5aacbb0eb2e9ca128bd4dd"
+      "sha256": "b70c72048da62547d1fb590dad44b30363ef15b4432b19ff20dd1e9bc351c440"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
