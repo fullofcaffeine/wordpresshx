@@ -68,7 +68,7 @@
     },
     "browserProbe": {
       "path": "packages/gutenberg/scripts/run-static-block-playwright.mjs",
-      "sha256": "39690c8b84b53fc77e282dfaa991b7ae1bee4a44e3006d2eaf4236c87e44f06c"
+      "sha256": "10a400381f2379d6297d5228337e177d6fc5660c05e58dd7e678f68f247b6872"
     },
     "wordpressSetup": {
       "path": "packages/gutenberg/test/static-block-runtime/setup.php",

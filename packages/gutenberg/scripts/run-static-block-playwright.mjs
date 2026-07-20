@@ -85,9 +85,25 @@ async function savePost() {
   );
 }
 
+async function editorSurface() {
+  // Block API v3 can move the editing canvas into an iframe; classic setups
+  // still render it in the top-level document.
+  const iframeSelector = 'iframe[name="editor-canvas"]';
+  if ((await page.locator(iframeSelector).count()) > 0) {
+    return page.frameLocator(iframeSelector);
+  }
+  return page;
+}
+
+async function editorControl(label) {
+  const surface = await editorSurface();
+  return surface.locator(`[aria-label="${label}"]`);
+}
+
 async function assertNoRecoveryWarning() {
+  const surface = await editorSurface();
   return assert.equal(
-    await page
+    await surface
       .locator(".block-editor-block-list__block-invalid-warning")
       .count(),
     0,
@@ -119,8 +135,8 @@ assert.deepEqual(insertion.attributes, {
   message: "Before typed edit.",
 });
 
-const labelInput = page.locator('[aria-label="Callout label"]');
-const messageInput = page.locator('[aria-label="Callout message"]');
+const labelInput = await editorControl("Callout label");
+const messageInput = await editorControl("Callout message");
 await labelInput.waitFor({ state: "visible" });
 await labelInput.fill("SHIP READY");
 await page.waitForTimeout(1_200);
@@ -169,15 +185,15 @@ await page
   .locator(".edit-post-layout, .interface-interface-skeleton")
   .first()
   .waitFor({ state: "visible", timeout: 60_000 });
-await page
-  .locator('[aria-label="Callout label"]')
-  .waitFor({ state: "visible" });
+const reloadedLabelInput = await editorControl("Callout label");
+const reloadedMessageInput = await editorControl("Callout message");
+await reloadedLabelInput.waitFor({ state: "visible" });
 assert.equal(
-  await page.locator('[aria-label="Callout label"]').inputValue(),
+  await reloadedLabelInput.inputValue(),
   "SHIP READY",
 );
 assert.equal(
-  await page.locator('[aria-label="Callout message"]').inputValue(),
+  await reloadedMessageInput.inputValue(),
   "Typed editor round trip.",
 );
 await assertNoRecoveryWarning();
@@ -200,15 +216,15 @@ assert.equal(
 assert.equal(await currentFrontend.locator("textarea").count(), 0);
 
 await openEditor(legacyPostId);
-await page
-  .locator('[aria-label="Callout message"]')
-  .waitFor({ state: "visible" });
+const legacyLabelInput = await editorControl("Callout label");
+const legacyMessageInput = await editorControl("Callout message");
+await legacyMessageInput.waitFor({ state: "visible" });
 assert.equal(
-  await page.locator('[aria-label="Callout label"]').inputValue(),
+  await legacyLabelInput.inputValue(),
   "NOTE",
 );
 assert.equal(
-  await page.locator('[aria-label="Callout message"]').inputValue(),
+  await legacyMessageInput.inputValue(),
   "Legacy bytes.",
 );
 assert.equal(await editedContent(), expectedMigrated);
