@@ -36,11 +36,11 @@
     },
     "assetManifest": {
       "path": "packages/gutenberg/test/block-metadata-fixture/assets.manifest.json",
-      "sha256": "ed4dc1bc6d81d1beb16f00d4b55a2fd6658745df21ea5f0511d8dd3ceebeceea"
+      "sha256": "24e790b3aee39a3b35913ac59b423b9708dca3457d558d26359f41f3664f29d4"
     },
     "expectedOutput": {
       "path": "packages/gutenberg/test/expected/block-metadata.json",
-      "sha256": "60b952d4c30117040abd755281281190a908d5bc54846c0f6acf0666f1c33dc3"
+      "sha256": "f3d5a2db9ee34269193a3a8064c38fc6398ab3d002abfbed876cdd7425c40a17"
     },
     "verifier": {
       "path": "packages/gutenberg/scripts/verify-block-metadata.py",
@@ -104,7 +104,7 @@
     "fileReferenceCount": 4,
     "profileHandleReferenceCount": 1,
     "generatedFileCountIncludingOwnedFixtures": 9,
-    "generatedTreeSha256": "149416b3e6144f688993f0589eed238f9039596de50b7022c8824ebf1da068f0",
+    "generatedTreeSha256": "d8fae6095b537d7f5f8c1b4c62cf99600da469b23f9d297cd55be59cfa83f9cd",
     "generationManifestSha256": "72c0d3fd44ac6f182eedddf4d83ec0cc548ef5beae6ecc62bde26c2a306c6c77",
     "staticBlockJsonSha256": "6009f0a7d16d1059a2a28884a27078ff4f6074bdbe21709f8ba237275bf95e31",
     "dynamicBlockJsonSha256": "7d3ef23ad0de138b7b49e7a4d91ba0221c563afb7718f07eda4e7167b45bf123",

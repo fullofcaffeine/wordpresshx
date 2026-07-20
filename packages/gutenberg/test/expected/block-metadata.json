@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "treeDigestAlgorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-  "generatedTreeSha256": "149416b3e6144f688993f0589eed238f9039596de50b7022c8824ebf1da068f0",
+  "generatedTreeSha256": "d8fae6095b537d7f5f8c1b4c62cf99600da469b23f9d297cd55be59cfa83f9cd",
   "files": [
     {
       "path": "block-generation-manifest.json",
@@ -25,8 +25,8 @@
     },
     {
       "path": "blocks/book-grid/render.php",
-      "sha256": "e9d33628cf631c5b5bc5f0c43c0f0db8f8e8048d83617bf8621e336e30719f88",
-      "sizeBytes": 148
+      "sha256": "822d4c5d443fa1cd60849ba78fd63a0d79ebb303f04778020101ad92f9c37c43",
+      "sizeBytes": 146
     },
     {
       "path": "blocks/callout/block.json",
