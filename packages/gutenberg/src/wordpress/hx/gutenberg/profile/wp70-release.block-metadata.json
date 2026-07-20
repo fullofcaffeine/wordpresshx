@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogRevision": "wp70-release/catalog-v1",
+  "source": {
+    "repository": "https://github.com/WordPress/gutenberg.git",
+    "commit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "tree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "path": "schemas/json/block.json",
+    "blob": "246cb4ed9d2e07da32c80c24d1201c72a420cb54",
+    "sha256": "f1709bcc9bde24e0a40d58dc3134ea0e917b07032b47f988b73e941200f3ab9d",
+    "schemaUrl": "https://schemas.wp.org/trunk/block.json"
+  },
+  "policy": {
+    "apiVersion": 3,
+    "additionalProperties": false,
+    "experimentalMetadata": false,
+    "scriptModules": false,
+    "manualBlockJsonEditing": false
+  },
+  "allowedMetadataKeys": [
+    "allowedBlocks",
+    "ancestor",
+    "apiVersion",
+    "attributes",
+    "category",
+    "description",
+    "editorScript",
+    "editorStyle",
+    "icon",
+    "keywords",
+    "name",
+    "parent",
+    "providesContext",
+    "render",
+    "script",
+    "style",
+    "supports",
+    "textdomain",
+    "title",
+    "usesContext",
+    "version",
+    "viewScript",
+    "viewStyle"
+  ],
+  "forbiddenMetadataKeys": [
+    {
+      "key": "__experimental",
+      "reason": "release-profile declarations cannot opt into experimental block identity"
+    },
+    {
+      "key": "viewScriptModule",
+      "reason": "the wp70-release browser asset profile has scriptModules=false"
+    },
+    {
+      "key": "futureOnly",
+      "reason": "forward-only metadata cannot enter a wp70-release artifact"
+    }
+  ],
+  "allowedSupportsKeys": [
+    "align",
+    "alignWide",
+    "allowedBlocks",
+    "anchor",
+    "ariaLabel",
+    "background",
+    "className",
+    "color",
+    "contentRole",
+    "customCSS",
+    "customClassName",
+    "dimensions",
+    "filter",
+    "html",
+    "inserter",
+    "interactivity",
+    "layout",
+    "listView",
+    "lock",
+    "multiple",
+    "position",
+    "renaming",
+    "reusable",
+    "shadow",
+    "spacing",
+    "splitting",
+    "typography",
+    "visibility"
+  ],
+  "assetKeys": [
+    { "key": "editorScript", "kind": "script" },
+    { "key": "script", "kind": "script" },
+    { "key": "viewScript", "kind": "script" },
+    { "key": "editorStyle", "kind": "style" },
+    { "key": "style", "kind": "style" },
+    { "key": "viewStyle", "kind": "style" },
+    { "key": "render", "kind": "render" }
+  ],
+  "allowedHandles": [
+    { "reference": "wp-blocks", "capabilityId": "wordpress.script-handle.wp-blocks" },
+    { "reference": "wp-components", "capabilityId": "wordpress.script-handle.wp-components" },
+    { "reference": "wp-data", "capabilityId": "wordpress.script-handle.wp-data" },
+    { "reference": "wp-element", "capabilityId": "wordpress.script-handle.wp-element" },
+    { "reference": "wp-i18n", "capabilityId": "wordpress.script-handle.wp-i18n" },
+    { "reference": "react", "capabilityId": "wordpress.script-handle.react" },
+    { "reference": "react-dom", "capabilityId": "wordpress.script-handle.react-dom" },
+    { "reference": "react-jsx-runtime", "capabilityId": "wordpress.script-handle.react-jsx-runtime" }
+  ]
+}

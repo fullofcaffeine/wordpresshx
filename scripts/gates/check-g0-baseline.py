@@ -1218,6 +1218,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             "SDK-033-WORDPRESS-ASSET-METADATA",
             "SDK-034-BROWSER-SOURCE-CORRELATION",
             "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+            "SDK-060-TYPED-BLOCK-METADATA",
             "SDK-063-EDITOR-PLUGIN-SLOTFILL",
             "SDK-064-TYPED-DATA-STORE",
             "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",

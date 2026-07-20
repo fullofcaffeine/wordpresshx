@@ -189,6 +189,73 @@ build artifacts; the Haxe fixture remains the application authoring surface.
 Script Modules and unrelated entries or adapters are not claimed and require
 their own exact-profile parity proof.
 
+## Typed block metadata and native `block.json`
+
+SDK-060 removes a common three-way drift problem: the Haxe attribute type, the
+browser registration, and WordPress' `block.json` can no longer describe
+different blocks. A public Haxe class is the attribute schema. Field metadata
+adds only the WordPress facts Haxe cannot infer, such as where saved markup is
+read from:
+
+~~~haxe
+extern class CalloutAttributes {
+  @:wpSource(AttributeSource.RichText)
+  @:wpSelector("p")
+  @:wpRole(AttributeRole.Content)
+  @:wpDefault("")
+  public var message:String;
+
+  @:wpDefault(CalloutTone.Info)
+  public var tone:CalloutTone;
+}
+~~~
+
+`CalloutTone` is a normal Haxe enum whose constructors have explicit
+`@:wpValue` strings. The compiler checks its default, derives the allowed JSON
+values, and gives later edit/save code the same closed Haxe type. A block then
+declares user-facing metadata, stable supports, and logical asset IDs:
+
+~~~haxe
+Block.define(CalloutAttributes, {
+  name: "wordpresshx/callout",
+  title: "Editorial callout",
+  category: BlockCategory.Design,
+  supports: {
+    anchor: true,
+    align: [BlockAlignment.Wide, BlockAlignment.Full],
+    color: {background: true, text: true}
+  },
+  assets: {
+    editorScript: "callout-editor",
+    style: "callout-style"
+  }
+});
+~~~
+
+The selected profile supplies API version 3, the exact upstream schema
+identity, and the admitted metadata/support vocabulary. The asset manifest
+maps each logical ID to either a final staged file with its SHA-256 digest or a
+profile-owned WordPress handle. The compiler fails before publication if a
+file is absent, stale, assigned to another block, has the wrong asset kind, or
+uses a handle outside `wp70-release`.
+
+Output is ordinary deterministic `block.json`, not a WordPressHx runtime
+format. An adjacent registration plan records the same block name, metadata
+path, and metadata digest for native `register_block_type` and
+browser `registerBlockType`; it is build evidence consumed by later emitters.
+WordPress remains the runtime registry and metadata authority.
+
+Start with the two-block walkthrough in
+[`test/block-metadata-fixture`](test/block-metadata-fixture/README.md). Run the
+compiler, exact-profile verifier, replay, and negative fixtures without Docker:
+
+~~~sh
+bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress
+~~~
+
+Omit `--skip-wordpress` to install the generated metadata on exact WordPress
+7.0 and prove static registration plus a real dynamic render-file call.
+
 ## Typed editor plugins and SlotFill
 
 SDK-063 adds a Haxe-only editor extension on the same exact WordPress 7.0

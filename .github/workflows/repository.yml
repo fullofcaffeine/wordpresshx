@@ -147,6 +147,8 @@ jobs:
           haxelib install formatter 1.18.0 --quiet
       - name: Prove official assets, handles, enqueue order, and translations
         run: bash packages/gutenberg/scripts/test-assets.sh
+      - name: Prove typed block metadata on WordPress 7.0
+        run: bash packages/gutenberg/scripts/test-block-metadata.sh
       - name: Prove the typed editor plugin and SlotFill on WordPress 7.0
         run: bash packages/gutenberg/scripts/test-editor-plugin.sh
       - name: Prove the typed native data store on WordPress 7.0
@@ -244,3 +246,5 @@ jobs:
         run: bash packages/gutenberg/scripts/test-hxx.sh
       - name: Test strict and classic Genes React differential
         run: bash packages/gutenberg/scripts/test-differential.sh
+      - name: Test typed profile-specific block.json generation
+        run: bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress

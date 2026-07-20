@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-060-TYPED-BLOCK-METADATA",
+  "bead": "wordpresshx-sdk-060",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T19:51:36Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.block-metadata.json",
+      "sha256": "685b79b0e2f4a181a8c50f002a0720a5ea66784f9b37e55a7e48ee6e47abd73f"
+    },
+    "publicMacro": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/Block.hx",
+      "sha256": "007c3d3a3b9a948ef0805b682a3e21d78b255d8c6186c9b530f2988c2bba5dea"
+    },
+    "collector": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockBuilder.hx",
+      "sha256": "57fb0b8fc28fb641519ce74fdc9711e42650d6c4f4020cf25aa29a6050226054"
+    },
+    "attributeDeriver": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockAttributeDeriver.hx",
+      "sha256": "16cfce52f66e9b812554df86ddcf5684ef4c7dfb5fa5306f9fdbfbd62a6731d5"
+    },
+    "optionsParser": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockOptions.hx",
+      "sha256": "314fe0e050e1621f51899548a4624abb36fcd0480c4fd780558fa401143c1453"
+    },
+    "nativeEmitter": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockEmitter.hx",
+      "sha256": "2743ccd8decc2b5bd51f34fb7ee4248295d177a02e5e5f3cb709400223709331"
+    },
+    "haxeFixture": {
+      "path": "packages/gutenberg/test/block-metadata-fixture/src/sdk060/fixture/Main.hx",
+      "sha256": "ee922c2c13bd690d2de5be4525e7af112df3c098f885e599c8014fe2a044283b"
+    },
+    "assetManifest": {
+      "path": "packages/gutenberg/test/block-metadata-fixture/assets.manifest.json",
+      "sha256": "ed4dc1bc6d81d1beb16f00d4b55a2fd6658745df21ea5f0511d8dd3ceebeceea"
+    },
+    "expectedOutput": {
+      "path": "packages/gutenberg/test/expected/block-metadata.json",
+      "sha256": "60b952d4c30117040abd755281281190a908d5bc54846c0f6acf0666f1c33dc3"
+    },
+    "verifier": {
+      "path": "packages/gutenberg/scripts/verify-block-metadata.py",
+      "sha256": "424eacd8cef511ca78f28b2f4340069db65903da4e0e4d9a7ca9022ee8558ff0"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-block-metadata.sh",
+      "sha256": "cea6cde969650992946f2d5dfdd4e6bd1d5e1933783f8682df025ab36bbd4e60"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-block-metadata-lane.sh",
+      "sha256": "a099ded9c3bfd260991926a1e93942ea2daf3d1c0cb29cf979ed2a8fd6fc1132"
+    },
+    "independentNativeOracle": {
+      "path": "packages/gutenberg/test/block-metadata-runtime/native-wordpress-oracle.php",
+      "sha256": "b15f9128ebcdfa7033069377cab179dd6726a80365308d6a0383cbbfd1f04d68"
+    }
+  },
+  "provider": {
+    "profileId": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "blockSchemaPath": "schemas/json/block.json",
+    "blockSchemaBlob": "246cb4ed9d2e07da32c80c24d1201c72a420cb54",
+    "blockSchemaSha256": "f1709bcc9bde24e0a40d58dc3134ea0e917b07032b47f988b73e941200f3ab9d",
+    "apiVersion": 3,
+    "additionalProperties": false,
+    "scriptModules": false,
+    "experimentalMetadata": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "formatter": "1.18.0",
+    "python": "stdlib-json-sha256",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "mysqlImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d"
+  },
+  "implementation": {
+    "authoringSurface": "haxe",
+    "attributeAuthority": "typed Haxe class fields and closed Haxe enums",
+    "metadataProjection": "normal deterministic block.json",
+    "assetAuthority": "closed manifest of final file digests and exact profile handles",
+    "registrationParity": "one block name, metadata path, and metadata digest shared by native and browser plans",
+    "serverRegistrationApi": "register_block_type",
+    "clientRegistrationApi": "registerBlockType",
+    "manualBlockJsonEditingAllowed": false,
+    "companionApplicationPhpAuthored": false,
+    "companionApplicationJavaScriptOrTypeScriptAuthored": false,
+    "independentOracleLanguage": "native PHP external consumer",
+    "productPhpCompilerOwner": "compiler/reflaxe.php via SDK-062",
+    "commit": null
+  },
+  "compilation": {
+    "blockCount": 2,
+    "staticBlockCount": 1,
+    "dynamicBlockCount": 1,
+    "ownedAssetCount": 5,
+    "fileReferenceCount": 4,
+    "profileHandleReferenceCount": 1,
+    "generatedFileCountIncludingOwnedFixtures": 9,
+    "generatedTreeSha256": "149416b3e6144f688993f0589eed238f9039596de50b7022c8824ebf1da068f0",
+    "generationManifestSha256": "72c0d3fd44ac6f182eedddf4d83ec0cc548ef5beae6ecc62bde26c2a306c6c77",
+    "staticBlockJsonSha256": "6009f0a7d16d1059a2a28884a27078ff4f6074bdbe21709f8ba237275bf95e31",
+    "dynamicBlockJsonSha256": "7d3ef23ad0de138b7b49e7a4d91ba0221c563afb7718f07eda4e7167b45bf123",
+    "staticRegistrationPlanSha256": "840e8e5e4362615bf82452ecd3f817de9c8c10b333be1592163baf1e93e0fdf4",
+    "dynamicRegistrationPlanSha256": "17dbf65001db0e8847507321421f951f8c1ee296fee1055d0a909ecd25a895d8",
+    "expectedOutputPinned": true,
+    "secondCompileMatched": true,
+    "publicWeakTypes": [],
+    "forbiddenHaxeWeakConstructs": []
+  },
+  "negativeDiagnostics": {
+    "compileTime": {
+      "WPX6012": "lookalike attribute source type",
+      "WPX6018": "attribute default differs from the Haxe field type",
+      "WPX6020": "unknown block metadata key",
+      "WPX6021": "forward-only or release-forbidden metadata key",
+      "WPX6025": "profile-incompatible API version",
+      "WPX6027": "lookalike block category type",
+      "WPX6029": "unknown support key",
+      "WPX6030": "missing or wrong-owner asset reference"
+    },
+    "negativeCompileFixtureCount": 8,
+    "independentMutationCount": 8,
+    "mutations": [
+      "unknown metadata key",
+      "forward-only script module",
+      "API version 4",
+      "enum default outside the closed values",
+      "unknown support key",
+      "missing editor registration asset",
+      "client block-name mismatch",
+      "server metadata-digest mismatch"
+    ],
+    "originalSourcePaths": true
+  },
+  "localVerification": {
+    "commands": [
+      "bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress",
+      "php -l packages/gutenberg/test/block-metadata-runtime/native-wordpress-oracle.php",
+      "rg -n '\\b(Dynamic|Any|cast|Reflect|untyped)\\b' packages/gutenberg/src/wordpress/hx/gutenberg/block packages/gutenberg/test/block-metadata-fixture/src packages/gutenberg/test-negative-block"
+    ],
+    "deterministicCompilerAndVerifier": "passed",
+    "phpOracleSyntax": "passed",
+    "forbiddenHaxeWeakConstructs": "none",
+    "realWordPressRuntime": "pending-hosted-clean-runner",
+    "localDockerDiagnostic": "docker info did not return within 10 seconds on the shared development daemon; no product byte failed"
+  },
+  "realWordPressRuntime": {
+    "check": "wordpresshx-sdk060-real-wordpress-registration-v1",
+    "outcome": "pending-hosted-clean-runner",
+    "wordpressVersion": "7.0",
+    "profileId": "wp70-release",
+    "registeredBlocks": null,
+    "dynamicRendered": null,
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "databaseImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d"
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "url": null,
+    "haxeJob": "haxe",
+    "haxeStep": "Test typed profile-specific block.json generation",
+    "haxeJobId": null,
+    "wordpressJob": "wordpress-runtime",
+    "wordpressStep": "Prove typed block metadata on WordPress 7.0",
+    "wordpressJobId": null,
+    "jobCount": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "reflaxePhpSourceChanged": false,
+    "reason": "SDK-060 emits metadata and registration evidence only. Existing Genes owns later browser code and the existing co-located PHP compiler owns SDK-062 registration/render lowering."
+  },
+  "claims": {
+    "typedAttributeDerivation": "compile-tested",
+    "profileSpecificMetadata": "compile-and-mutation-tested",
+    "deterministicNativeBlockJson": "replay-tested",
+    "finalFileAndHandleOwnership": "compile-and-mutation-tested",
+    "serverClientRegistrationParity": "plan-and-mutation-tested",
+    "realWordPressMetadataRegistration": "hosted-pending",
+    "realBrowserBlockRegistration": "not-tested-owned-by-sdk-061",
+    "haxeGeneratedDynamicRenderPhp": "not-tested-owned-by-sdk-062",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "SDK-060 owns metadata and parity evidence, not edit/save components or browser registration execution; SDK-061 consumes the client side.",
+    "The committed render.php is a bounded native artifact fixture; application render PHP must be Haxe-authored and produced by compiler/reflaxe.php in SDK-062.",
+    "The handwritten native-wordpress-oracle.php is deliberately an independent test consumer and is not application or generated plugin source.",
+    "Complex variations, deprecations, selectors, transforms, and experimental supports are outside the stable SDK-060 subset and require their owning follow-up gates.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

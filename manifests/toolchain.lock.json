@@ -424,7 +424,7 @@
   "profileInputs": {
       "upstreamLock": {
         "path": "manifests/upstream.lock.json",
-        "sha256": "1c51ffa0a1e80d7cdbb3c6741a207026695d23ab95112bdd9ee14bd21e4171cb"
+        "sha256": "051e2ef6f35ae5a73a715155503b7f62efcf084585628d47373a6876b2f82c8e"
       },
     "profiles": [
       "wp70-release",

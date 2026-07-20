@@ -15,16 +15,16 @@
       "schemaPath": "schemas/semantic-plan.schema.json",
       "schemaSha256": "b603c99448ae81c4be78649730e6e90938cd408847fa3cb11263d87015a58c33",
       "fixturePath": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "fixtureSha256": "54a394bdc032ce8b90fc41404f1f8ace6815ca3b78547f13fe8fde522a023664",
-      "planDigest": "3f6f925e1fa98880f32623bbb4779bbb8066f4a943b088f55de466f58aa063b2"
+      "fixtureSha256": "388d500f569a3c78811560ba6779cbe90031507f1d805190accbe524c69db0bf",
+      "planDigest": "eef0adb9df59dc3995acee913457b7da86a1e6b70250acc17b9fecf41c6b3983"
     },
     "emission": {
       "identity": "wordpress-hx.semantic-emission.v1",
       "schemaPath": "schemas/semantic-emission.schema.json",
       "schemaSha256": "217ea910fa326bfb4a47476b785be4646b5c22791f0700562bad2fd797ff11ba",
       "fixturePath": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "fixtureSha256": "377d8d9331897a5a4084e737f48d1969614c22d6c5c2d5f4b7953f287c5d5408",
-      "resultDigest": "951ac890bd477fed4d5fc6772ad90b5efbd64de820789f8ff2c87d2adbaaa54c"
+      "fixtureSha256": "fd54c5c3e3193d687ad3faa042267ea9dc65cd88c09d4e3ac6a187b36f98408f",
+      "resultDigest": "5d42355f67687190c96a43e97203e2eddcf2eefcec133ab82656b64f75ffd90a"
     }
   },
   "canonicalization": {

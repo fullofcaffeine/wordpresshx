@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "artifacts": [
+    {
+      "id": "callout-editor",
+      "blockName": "wordpresshx/callout",
+      "metadataKey": "editorScript",
+      "kind": "script",
+      "referenceKind": "file",
+      "reference": "file:./build/editor.js",
+      "path": "blocks/callout/build/editor.js",
+      "owner": "wordpresshx.callout",
+      "capabilityId": "",
+      "sha256": "1e3249ab8bb01374366d72b27dcaf19b751c52e619c59b97345e227176c4d428"
+    },
+    {
+      "id": "callout-style",
+      "blockName": "wordpresshx/callout",
+      "metadataKey": "style",
+      "kind": "style",
+      "referenceKind": "file",
+      "reference": "file:./style.css",
+      "path": "blocks/callout/style.css",
+      "owner": "wordpresshx.callout",
+      "capabilityId": "",
+      "sha256": "53db9eacaa270f782ead70fdf53321bfc1e106dc8fe71020c43a567ac9227e46"
+    },
+    {
+      "id": "wordpress-blocks-handle",
+      "blockName": "wordpresshx/callout",
+      "metadataKey": "script",
+      "kind": "script",
+      "referenceKind": "handle",
+      "reference": "wp-blocks",
+      "path": "",
+      "owner": "wordpress:7.0",
+      "capabilityId": "wordpress.script-handle.wp-blocks",
+      "sha256": "df689770a3834c01df1ab4b6be6f6cf1d8f337ec6abf549c93df6722d85d3dee"
+    },
+    {
+      "id": "book-grid-editor",
+      "blockName": "wordpresshx/book-grid",
+      "metadataKey": "editorScript",
+      "kind": "script",
+      "referenceKind": "file",
+      "reference": "file:./build/editor.js",
+      "path": "blocks/book-grid/build/editor.js",
+      "owner": "wordpresshx.book-grid",
+      "capabilityId": "",
+      "sha256": "d094348208d7166403420b0c978f8fe1f1fc5defb6b49d0b40f8cd7e3df2561c"
+    },
+    {
+      "id": "book-grid-render",
+      "blockName": "wordpresshx/book-grid",
+      "metadataKey": "render",
+      "kind": "render",
+      "referenceKind": "file",
+      "reference": "file:./render.php",
+      "path": "blocks/book-grid/render.php",
+      "owner": "wordpresshx.book-grid",
+      "capabilityId": "",
+      "sha256": "e9d33628cf631c5b5bc5f0c43c0f0db8f8e8048d83617bf8621e336e30719f88"
+    }
+  ]
+}

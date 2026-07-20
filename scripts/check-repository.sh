@@ -315,6 +315,9 @@ required_files=(
   packages/gutenberg/scripts/test-differential.sh
   packages/gutenberg/scripts/test-assets.sh
   packages/gutenberg/scripts/test-editor-plugin.sh
+  packages/gutenberg/scripts/test-block-metadata.sh
+  packages/gutenberg/scripts/run-wordpress-block-metadata-lane.sh
+  packages/gutenberg/scripts/verify-block-metadata.py
   packages/gutenberg/scripts/test.sh
   packages/gutenberg/scripts/emit-assets-plugin.py
   packages/gutenberg/scripts/emit-editor-plugin.py
@@ -333,6 +336,18 @@ required_files=(
   packages/gutenberg/scripts/verify-hxx.mjs
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserNode.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/AttributeRole.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/AttributeSource.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/Block.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockAlignment.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockCategory.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockAttributeDeriver.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockBuilder.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockEmitter.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockInputs.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockJson.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockModel.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockOptions.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/components/Button.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/components/ButtonProps.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/components/Notice.hx
@@ -356,6 +371,7 @@ required_files=(
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json
+  packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.block-metadata.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/react/DomTypes.hx
@@ -397,6 +413,11 @@ required_files=(
   packages/gutenberg/test/assets-runtime/editor-entry.tsx
   packages/gutenberg/test/assets-runtime/entry-plan.json
   packages/gutenberg/test/assets-runtime/probe-assets.php
+  packages/gutenberg/test/block-metadata-fixture/README.md
+  packages/gutenberg/test/block-metadata-fixture/assets.manifest.json
+  packages/gutenberg/test/expected/block-metadata.json
+  packages/gutenberg/test/block-metadata-fixture/src/sdk060/fixture/Main.hx
+  packages/gutenberg/test/block-metadata-runtime/native-wordpress-oracle.php
   packages/gutenberg/test/runtime/setup.d.ts
   packages/gutenberg/test/runtime/setup.js
   packages/gutenberg/test/runtime/signals.d.ts
@@ -662,6 +683,7 @@ required_files=(
   manifests/evidence/sdk-035-classic-genes-differential.json
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
   manifests/evidence/sdk-064-typed-data-store.json
+  manifests/evidence/sdk-060-typed-block-metadata.json
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -1236,6 +1258,16 @@ sdk033_tooling_lock_path = Path(
 sdk033_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-033-wordpress-asset-metadata.json"
+    ).read_text(encoding="utf-8")
+)
+sdk060_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.block-metadata.json"
+)
+sdk060_profile = json.loads(sdk060_profile_path.read_text(encoding="utf-8"))
+sdk060_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-060-typed-block-metadata.json"
     ).read_text(encoding="utf-8")
 )
 sdk063_profile_path = Path(
@@ -7981,6 +8013,264 @@ assert sdk033_receipt["claims"]["scriptModules"] == "not-tested"
 assert sdk033_receipt["claims"]["publicPackagePublication"] == "blocked"
 assert sdk033_receipt["claims"]["productionSupport"] == "not-tested"
 
+assert sdk060_receipt["schemaVersion"] == 1
+assert sdk060_receipt["receiptId"] == "SDK-060-TYPED-BLOCK-METADATA"
+assert sdk060_receipt["bead"] == "wordpresshx-sdk-060"
+assert sdk060_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk060_subject_name, sdk060_subject in sdk060_receipt["subject"].items():
+    if sdk060_subject_name == "package":
+        continue
+    sdk060_subject_path = Path(sdk060_subject["path"])
+    assert hashlib.sha256(sdk060_subject_path.read_bytes()).hexdigest() == (
+        sdk060_subject["sha256"]
+    )
+assert sdk060_profile["schemaVersion"] == 1
+assert sdk060_profile["profileId"] == "wp70-release"
+assert sdk060_profile["catalogRevision"] == "wp70-release/catalog-v1"
+sdk060_profile_source = sdk060_profile["source"]
+assert sdk060_profile_source["repository"] == (
+    lock["entries"]["wp70-release"]["embeddedGutenberg"]["repository"]
+)
+assert sdk060_profile_source["commit"] == (
+    lock["entries"]["wp70-release"]["embeddedGutenberg"]["commit"]
+)
+assert sdk060_profile_source["tree"] == (
+    lock["entries"]["wp70-release"]["embeddedGutenberg"]["tree"]
+)
+assert sdk060_profile_source["path"] == "schemas/json/block.json"
+assert sdk060_profile_source["blob"] == (
+    "246cb4ed9d2e07da32c80c24d1201c72a420cb54"
+)
+assert sdk060_profile_source["sha256"] == (
+    "f1709bcc9bde24e0a40d58dc3134ea0e917b07032b47f988b73e941200f3ab9d"
+)
+assert sdk060_profile_source["schemaUrl"] == (
+    "https://schemas.wp.org/trunk/block.json"
+)
+assert sdk060_profile["policy"] == {
+    "apiVersion": 3,
+    "additionalProperties": False,
+    "experimentalMetadata": False,
+    "scriptModules": False,
+    "manualBlockJsonEditing": False,
+}
+assert sdk060_profile["allowedMetadataKeys"] == sorted(
+    set(sdk060_profile["allowedMetadataKeys"])
+)
+assert sdk060_profile["allowedSupportsKeys"] == sorted(
+    set(sdk060_profile["allowedSupportsKeys"])
+)
+assert {entry["key"]: entry["kind"] for entry in sdk060_profile["assetKeys"]} == {
+    "editorScript": "script",
+    "script": "script",
+    "viewScript": "script",
+    "editorStyle": "style",
+    "style": "style",
+    "viewStyle": "style",
+    "render": "render",
+}
+assert {entry["key"] for entry in sdk060_profile["forbiddenMetadataKeys"]} == {
+    "__experimental",
+    "viewScriptModule",
+    "futureOnly",
+}
+assert len(sdk060_profile["allowedHandles"]) == len(
+    {entry["reference"] for entry in sdk060_profile["allowedHandles"]}
+)
+assert sdk060_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+sdk060_provider = sdk060_receipt["provider"]
+assert sdk060_provider["profileId"] == sdk060_profile["profileId"]
+assert sdk060_provider["catalogRevision"] == sdk060_profile["catalogRevision"]
+assert sdk060_provider["wordpressVersion"] == (
+    lock["entries"]["wp70-release"]["wordpressSource"]["tag"]
+)
+assert sdk060_provider["wordpressCommit"] == (
+    lock["entries"]["wp70-release"]["wordpressSource"]["commit"]
+)
+assert sdk060_provider["gutenbergCommit"] == sdk060_profile_source["commit"]
+assert sdk060_provider["gutenbergTree"] == sdk060_profile_source["tree"]
+assert sdk060_provider["blockSchemaPath"] == sdk060_profile_source["path"]
+assert sdk060_provider["blockSchemaBlob"] == sdk060_profile_source["blob"]
+assert sdk060_provider["blockSchemaSha256"] == sdk060_profile_source["sha256"]
+assert sdk060_provider["apiVersion"] == sdk060_profile["policy"]["apiVersion"]
+assert sdk060_provider["additionalProperties"] is False
+assert sdk060_provider["scriptModules"] is False
+assert sdk060_provider["experimentalMetadata"] is False
+assert sdk060_receipt["toolchain"]["haxe"] == "4.3.7"
+assert sdk060_receipt["toolchain"]["formatter"] == "1.18.0"
+assert sdk060_receipt["toolchain"]["wordpressImage"] == image_lock["images"][
+    "wordpress70Php84"
+]["reference"]
+assert sdk060_receipt["toolchain"]["mysqlImage"] == image_lock["images"][
+    "mysql"
+]["reference"]
+sdk060_implementation = sdk060_receipt["implementation"]
+assert sdk060_implementation["authoringSurface"] == "haxe"
+assert sdk060_implementation["metadataProjection"] == (
+    "normal deterministic block.json"
+)
+assert sdk060_implementation["serverRegistrationApi"] == "register_block_type"
+assert sdk060_implementation["clientRegistrationApi"] == "registerBlockType"
+assert sdk060_implementation["manualBlockJsonEditingAllowed"] is False
+assert sdk060_implementation["companionApplicationPhpAuthored"] is False
+assert sdk060_implementation[
+    "companionApplicationJavaScriptOrTypeScriptAuthored"
+] is False
+assert sdk060_implementation["independentOracleLanguage"] == (
+    "native PHP external consumer"
+)
+assert sdk060_implementation["productPhpCompilerOwner"] == (
+    "compiler/reflaxe.php via SDK-062"
+)
+sdk060_compilation = sdk060_receipt["compilation"]
+assert sdk060_compilation["blockCount"] == 2
+assert sdk060_compilation["staticBlockCount"] == 1
+assert sdk060_compilation["dynamicBlockCount"] == 1
+assert sdk060_compilation["ownedAssetCount"] == 5
+assert sdk060_compilation["fileReferenceCount"] == 4
+assert sdk060_compilation["profileHandleReferenceCount"] == 1
+assert sdk060_compilation["generatedFileCountIncludingOwnedFixtures"] == 9
+assert sdk060_compilation["expectedOutputPinned"] is True
+assert sdk060_compilation["secondCompileMatched"] is True
+assert sdk060_compilation["publicWeakTypes"] == []
+assert sdk060_compilation["forbiddenHaxeWeakConstructs"] == []
+for sdk060_hash_name in (
+    "generatedTreeSha256",
+    "generationManifestSha256",
+    "staticBlockJsonSha256",
+    "dynamicBlockJsonSha256",
+    "staticRegistrationPlanSha256",
+    "dynamicRegistrationPlanSha256",
+):
+    assert sha256.fullmatch(sdk060_compilation[sdk060_hash_name])
+sdk060_diagnostics = sdk060_receipt["negativeDiagnostics"]
+assert set(sdk060_diagnostics["compileTime"]) == {
+    "WPX6012",
+    "WPX6018",
+    "WPX6020",
+    "WPX6021",
+    "WPX6025",
+    "WPX6027",
+    "WPX6029",
+    "WPX6030",
+}
+assert sdk060_diagnostics["negativeCompileFixtureCount"] == 8
+assert sdk060_diagnostics["independentMutationCount"] == 8
+assert len(sdk060_diagnostics["mutations"]) == 8
+assert sdk060_diagnostics["originalSourcePaths"] is True
+sdk060_local = sdk060_receipt["localVerification"]
+assert sdk060_local["deterministicCompilerAndVerifier"] == "passed"
+assert sdk060_local["phpOracleSyntax"] == "passed"
+assert sdk060_local["forbiddenHaxeWeakConstructs"] == "none"
+assert sdk060_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk060_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk060_receipt["changeDecision"]["reflaxePhpSourceChanged"] is False
+assert sdk060_receipt["claims"]["typedAttributeDerivation"] == (
+    "compile-tested"
+)
+assert sdk060_receipt["claims"]["profileSpecificMetadata"] == (
+    "compile-and-mutation-tested"
+)
+assert sdk060_receipt["claims"]["deterministicNativeBlockJson"] == (
+    "replay-tested"
+)
+assert sdk060_receipt["claims"]["realBrowserBlockRegistration"] == (
+    "not-tested-owned-by-sdk-061"
+)
+assert sdk060_receipt["claims"]["haxeGeneratedDynamicRenderPhp"] == (
+    "not-tested-owned-by-sdk-062"
+)
+assert sdk060_receipt["claims"]["productionSupport"] == "not-tested"
+assert len(sdk060_receipt["knownLimitations"]) >= 5
+assert any(
+    "independent test consumer" in limitation
+    for limitation in sdk060_receipt["knownLimitations"]
+)
+assert "Prove typed block metadata on WordPress 7.0" in workflow_text
+assert "Test typed profile-specific block.json generation" in workflow_text
+assert "bash packages/gutenberg/scripts/test-block-metadata.sh" in workflow_text
+assert (
+    "bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress"
+    in workflow_text
+)
+sdk060_runtime = sdk060_receipt["realWordPressRuntime"]
+assert sdk060_runtime["check"] == (
+    "wordpresshx-sdk060-real-wordpress-registration-v1"
+)
+assert sdk060_runtime["wordpressVersion"] == "7.0"
+assert sdk060_runtime["profileId"] == "wp70-release"
+assert sdk060_runtime["wordpressImage"] == image_lock["images"][
+    "wordpress70Php84"
+]["reference"]
+assert sdk060_runtime["databaseImage"] == image_lock["images"]["mysql"][
+    "reference"
+]
+sdk060_hosted = sdk060_receipt["repositoryHostedVerification"]
+assert sdk060_hosted["workflow"] == "Repository bootstrap"
+assert sdk060_hosted["required"] is True
+assert sdk060_hosted["haxeJob"] == "haxe"
+assert sdk060_hosted["haxeStep"] == (
+    "Test typed profile-specific block.json generation"
+)
+assert sdk060_hosted["wordpressJob"] == "wordpress-runtime"
+assert sdk060_hosted["wordpressStep"] == (
+    "Prove typed block metadata on WordPress 7.0"
+)
+if sdk060_receipt["status"] == "implemented-hosted-pending":
+    assert sdk060_implementation["commit"] is None
+    assert sdk060_runtime["outcome"] == "pending-hosted-clean-runner"
+    assert sdk060_runtime["registeredBlocks"] is None
+    assert sdk060_runtime["dynamicRendered"] is None
+    assert sdk060_receipt["claims"]["realWordPressMetadataRegistration"] == (
+        "hosted-pending"
+    )
+    assert sdk060_local["realWordPressRuntime"] == (
+        "pending-hosted-clean-runner"
+    )
+    assert sdk060_hosted["status"] == "pending-main-push"
+    for sdk060_pending_name in (
+        "commit",
+        "runId",
+        "url",
+        "haxeJobId",
+        "wordpressJobId",
+        "jobCount",
+        "allJobsPassed",
+        "artifactHashesMatched",
+        "completedAt",
+    ):
+        assert sdk060_hosted[sdk060_pending_name] is None
+else:
+    assert sdk060_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk060_implementation["commit"])
+    assert sdk060_hosted["commit"] == sdk060_implementation["commit"]
+    assert isinstance(sdk060_hosted["runId"], int)
+    assert isinstance(sdk060_hosted["haxeJobId"], int)
+    assert isinstance(sdk060_hosted["wordpressJobId"], int)
+    assert sdk060_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk060_hosted['runId']}"
+    )
+    assert sdk060_hosted["status"] == "passed"
+    assert sdk060_hosted["jobCount"] == 13
+    assert sdk060_hosted["allJobsPassed"] is True
+    assert sdk060_hosted["artifactHashesMatched"] is True
+    assert sdk060_hosted["completedAt"] == sdk060_receipt["observedAt"]
+    assert sdk060_runtime["outcome"] == "passed"
+    assert sdk060_runtime["registeredBlocks"] == [
+        "wordpresshx/book-grid",
+        "wordpresshx/callout",
+    ]
+    assert sdk060_runtime["dynamicRendered"] is True
+    assert sdk060_receipt["claims"]["realWordPressMetadataRegistration"] == (
+        "real-wordpress-tested"
+    )
+    assert sdk060_local["realWordPressRuntime"] == (
+        "passed-hosted-clean-runner"
+    )
+
 assert sdk063_receipt["schemaVersion"] == 1
 assert sdk063_receipt["receiptId"] == "SDK-063-EDITOR-PLUGIN-SLOTFILL"
 assert sdk063_receipt["bead"] == "wordpresshx-sdk-063"
@@ -8368,6 +8658,13 @@ assert sdk064_receipt["claims"]["completeTodoStudio"] == "not-claimed"
 assert sdk064_receipt["claims"]["productionSupport"] == "not-tested"
 assert "Prove the typed native data store on WordPress 7.0" in workflow_text
 assert "bash packages/gutenberg/scripts/test-data-store.sh" in workflow_text
+assert "Prove typed block metadata on WordPress 7.0" in workflow_text
+assert "Test typed profile-specific block.json generation" in workflow_text
+assert "bash packages/gutenberg/scripts/test-block-metadata.sh" in workflow_text
+assert (
+    "bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress"
+    in workflow_text
+)
 sdk064_hosted = sdk064_receipt["repositoryHostedVerification"]
 assert sdk064_hosted["workflow"] == "Repository bootstrap"
 assert sdk064_hosted["job"] == "wordpress-runtime"

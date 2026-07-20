@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "treeDigestAlgorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+  "generatedTreeSha256": "149416b3e6144f688993f0589eed238f9039596de50b7022c8824ebf1da068f0",
+  "files": [
+    {
+      "path": "block-generation-manifest.json",
+      "sha256": "72c0d3fd44ac6f182eedddf4d83ec0cc548ef5beae6ecc62bde26c2a306c6c77",
+      "sizeBytes": 889
+    },
+    {
+      "path": "blocks/book-grid/block.json",
+      "sha256": "7d3ef23ad0de138b7b49e7a4d91ba0221c563afb7718f07eda4e7167b45bf123",
+      "sizeBytes": 411
+    },
+    {
+      "path": "blocks/book-grid/build/editor.js",
+      "sha256": "d094348208d7166403420b0c978f8fe1f1fc5defb6b49d0b40f8cd7e3df2561c",
+      "sizeBytes": 133
+    },
+    {
+      "path": "blocks/book-grid/registration-plan.json",
+      "sha256": "17dbf65001db0e8847507321421f951f8c1ee296fee1055d0a909ecd25a895d8",
+      "sizeBytes": 600
+    },
+    {
+      "path": "blocks/book-grid/render.php",
+      "sha256": "e9d33628cf631c5b5bc5f0c43c0f0db8f8e8048d83617bf8621e336e30719f88",
+      "sizeBytes": 148
+    },
+    {
+      "path": "blocks/callout/block.json",
+      "sha256": "6009f0a7d16d1059a2a28884a27078ff4f6074bdbe21709f8ba237275bf95e31",
+      "sizeBytes": 755
+    },
+    {
+      "path": "blocks/callout/build/editor.js",
+      "sha256": "1e3249ab8bb01374366d72b27dcaf19b751c52e619c59b97345e227176c4d428",
+      "sizeBytes": 126
+    },
+    {
+      "path": "blocks/callout/registration-plan.json",
+      "sha256": "840e8e5e4362615bf82452ecd3f817de9c8c10b333be1592163baf1e93e0fdf4",
+      "sizeBytes": 591
+    },
+    {
+      "path": "blocks/callout/style.css",
+      "sha256": "53db9eacaa270f782ead70fdf53321bfc1e106dc8fe71020c43a567ac9227e46",
+      "sizeBytes": 83
+    }
+  ]
+}
