@@ -439,8 +439,9 @@ stock Haxe PHP on PHP 8.4.7.
 
 The `contract-schema` job in the public repository workflow runs that complete
 shell gate with the exact Haxe, Node, TypeScript, Genes, and pinned PHP container
-toolchain. Its first hosted run remains pending until these bytes reach `main`;
-the architecture manifest does not claim hosted success beforehand.
+toolchain. Hosted run `29711579924`, job `88256189891`, passed at commit
+`7745c5d0aedfa79b74cd782565decfd38ccc21b2`; the evidence receipt binds those
+exact identities rather than inferring success from workflow configuration.
 
 Acceptance commands:
 

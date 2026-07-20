@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-20T01:00:21Z",
+  "status": "verified",
+  "observedAt": "2026-07-20T01:54:10Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "be3ffeca8c214fe8c44bd362410092c6641bf8580e58f53cfdd531e2b893710e"
+      "sha256": "e0c51d91e9a4ee45db4d06b68d5fe0cc069cf742b5ae92897c4fd9c2aee3251d"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "e3bc1a0a4a3e8833680c2cbf053a1439f583210867490d9951514f85461eb5d3"
+      "sha256": "f46144069a3edc2c4badb587f3421eea717d64cadbd787f61d6e876e8e9434fe"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -23,7 +23,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "a6fafab4f47a3ac3bbea2be11423e5b62a735f3c1cec4c31b4e7207d5931dcd7"
+      "sha256": "bbbca806dc84444c194dcd83c40e697a1749839773c6c107f97c368f573366b5"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -68,7 +68,7 @@
     "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
     "documentBoundPathIndependentRules": "passed",
     "developmentEncodeValidation": "passed",
-    "outcome": "passed-local"
+    "outcome": "passed-local-and-hosted"
   },
   "review": {
     "initialFindingCount": 10,
@@ -82,17 +82,16 @@
     "workflow": "Repository bootstrap",
     "job": "contract-schema",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-run"
+    "runId": 29711579924,
+    "jobId": 88256189891,
+    "commit": "7745c5d0aedfa79b74cd782565decfd38ccc21b2",
+    "status": "passed"
   },
   "limitations": [
     "The executable builder is a bounded architecture prototype, not the SDK-054 ergonomic macro-derived application API.",
     "Foreign JSON parsers, production PHP/Genes codec emitters, native REST registration, Gutenberg attribute projection, and migration execution remain follow-up work.",
     "The PHP parity lane uses stock Haxe PHP; integration with the co-located custom PHP compiler remains untested here.",
-    "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt.",
-    "Hosted verification remains pending until these bytes reach main."
+    "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt."
   ],
   "claims": {
     "architectureDecision": "accepted",

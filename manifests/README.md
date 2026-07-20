@@ -184,8 +184,9 @@ interpretation, Genes with strict TypeScript/Node, and PHP 8.4.7; the corpus
 also proves immutable and cycle-safe defaults, document-bound path-independent
 rules, 27 Haxe invariants, 18 independent schema mutations, and four compile
 failures. Macro derivation, production target emitters, and native
-WordPress/Gutenberg runtimes remain explicit non-claims; the first hosted run is
-pending until the receipt reaches `main`.
+WordPress/Gutenberg runtimes remain explicit non-claims. Public workflow run
+`29711579924`, job `88256189891`, passed the complete cross-target gate at the
+exact receipt subject commit.
 
 Receipt `ADR-018-RUNTIME-SUPPORT-PACKAGING` records the dependency-closed
 private-support architecture prototype. Strict Haxe logic is compiled twice

@@ -177,7 +177,10 @@ def validate_architecture_manifest() -> None:
         "workflow": ".github/workflows/repository.yml",
         "job": "contract-schema",
         "command": "bash scripts/contracts/test-schema-authority.sh",
-        "status": "configured-pending-first-hosted-run",
+        "runId": 29711579924,
+        "jobId": 88256189891,
+        "commit": "7745c5d0aedfa79b74cd782565decfd38ccc21b2",
+        "status": "passed",
     }:
         raise ValidationError("hosted contract gate declaration changed")
     for claim in (
