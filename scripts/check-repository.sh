@@ -8121,9 +8121,20 @@ else:
         "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
         f"{sdk063_hosted['runId']}"
     )
+    assert sdk063_hosted["jobUrl"] == (
+        sdk063_hosted["url"] + f"/job/{sdk063_hosted['jobId']}"
+    )
     assert sdk063_hosted["status"] == "passed"
+    assert sdk063_hosted["jobCount"] == 13
+    assert sdk063_hosted["generatedTreeSha256"] == sdk063_receipt[
+        "compilation"
+    ]["generatedTreeSha256"]
+    assert sdk063_hosted["productionBundleSha256"] == sdk063_receipt[
+        "compilation"
+    ]["productionBundleSha256"]
     assert sdk063_hosted["allJobsPassed"] is True
     assert sdk063_hosted["artifactHashesMatched"] is True
+    assert sdk063_hosted["completedAt"] == sdk063_receipt["observedAt"]
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"

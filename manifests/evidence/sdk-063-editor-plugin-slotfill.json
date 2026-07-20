@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-063-EDITOR-PLUGIN-SLOTFILL",
   "bead": "wordpresshx-sdk-063",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-20T06:29:41Z",
+  "status": "verified",
+  "observedAt": "2026-07-20T07:08:17Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -123,7 +123,8 @@
     "postTypeSelector": "core/editor#getCurrentPostType",
     "translationsExtractedFromHaxe": true,
     "shippedBrowserHxxRuntime": false,
-    "wordpressSpecificGenesBranch": false
+    "wordpressSpecificGenesBranch": false,
+    "commit": "0c4bb0437581dd0e3d9dd00449855d5898eb3349"
   },
   "exactProfileVerification": {
     "publicPackages": [
@@ -229,13 +230,18 @@
     "job": "wordpress-runtime",
     "step": "Prove the typed editor plugin and SlotFill on WordPress 7.0",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null,
-    "allJobsPassed": null,
-    "artifactHashesMatched": null
+    "status": "passed",
+    "commit": "0c4bb0437581dd0e3d9dd00449855d5898eb3349",
+    "runId": 29723189010,
+    "jobId": 88290358461,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29723189010",
+    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29723189010/job/88290358461",
+    "jobCount": 13,
+    "generatedTreeSha256": "311e6527f1bdaa9ec6b84d768588fd59b9cb383f4f6bdfd7eb5824a34ce2665e",
+    "productionBundleSha256": "9d09332fb1a1d0bbd9b23779ff3b2d1885a2f94a86bc23032f3c4f8b211cb3a2",
+    "allJobsPassed": true,
+    "artifactHashesMatched": true,
+    "completedAt": "2026-07-20T07:08:17Z"
   },
   "changeDecision": {
     "genesSourceChanged": false,
