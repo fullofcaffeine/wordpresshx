@@ -1,0 +1,5 @@
+-cp src
+-cp test
+--macro nullSafety("wordpress.hx.contracts", Strict)
+-main wordpress.hx.contracts.tests.SchemaAuthorityTest
+--interp

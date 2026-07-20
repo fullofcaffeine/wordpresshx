@@ -54,6 +54,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   fixture proves schema/canonicalization/traceability rules only; it remains a
   historical contract record and does not retroactively claim the SDK-040
   implementation.
+- `schema-codec-architecture.json` is ADR-009's single-authority contract for
+  the closed Haxe schema IR, missing/null/default semantics, exact validators,
+  explicitly related native sanitizers, deterministic issues, adjacent
+  migrations, and fail-closed PHP/Genes/REST/Gutenberg projections. Its
+  executable builder fixture proves a bounded cross-target slice; ergonomic
+  macro derivation and production target emitters remain follow-up work.
 - `semantic-collector-architecture.json` is the SDK-040 implementation lock for
   typed module/hook/resource/public-environment declarations, compilation-server
   metadata recovery, canonical plan and input-sidecar generation, exact-profile
@@ -171,6 +177,15 @@ vectors, and 21 fail-closed mutations. It is architecture-contract evidence;
 SDK-040 collection and SDK-041 ownership publication now have separate
 implementation receipts; real emitters and runtime compatibility remain
 unproven.
+
+Receipt `ADR-009-SCHEMA-CODEC-AUTHORITY` records the accepted closed contract
+schema IR and its builder prototype. The same canonical transcript passes Haxe
+interpretation, Genes with strict TypeScript/Node, and PHP 8.4.7; the corpus
+also proves immutable and cycle-safe defaults, document-bound path-independent
+rules, 27 Haxe invariants, 18 independent schema mutations, and four compile
+failures. Macro derivation, production target emitters, and native
+WordPress/Gutenberg runtimes remain explicit non-claims; the first hosted run is
+pending until the receipt reaches `main`.
 
 Receipt `ADR-018-RUNTIME-SUPPORT-PACKAGING` records the dependency-closed
 private-support architecture prototype. Strict Haxe logic is compiled twice

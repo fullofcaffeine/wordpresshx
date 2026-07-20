@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "ADR-009",
+  "observedAt": "2026-07-20T01:00:21Z",
+  "canonicalAuthority": {
+    "identity": "wordpress-hx.contract-schema.v1",
+    "haxeType": "wordpress.hx.contracts.schema.SchemaDocument",
+    "serializedSchema": "schemas/contract-schema.schema.json",
+    "domainCodec": "wordpress.hx.contracts.ContractCodec<T>",
+    "runtimeValidator": "wordpress.hx.contracts.ContractValidator",
+    "foreignParserIncluded": false,
+    "runtimeReflectionRequired": false
+  },
+  "authoring": {
+    "supportedIrForm": "typed-builder",
+    "plannedErgonomicForm": "macro-derived-from-closed-haxe-declarations",
+    "convergenceRule": "Every authoring form must produce the same SchemaDocument before any target projection.",
+    "targetArtifactsAsAuthority": false,
+    "manualParallelSchemasAllowed": false
+  },
+  "wireSemantics": {
+    "nodeKinds": [
+      "boolean",
+      "integer",
+      "string",
+      "enum",
+      "array",
+      "object",
+      "tagged-union",
+      "nullable",
+      "refined"
+    ],
+    "integer": "signed-int32",
+    "floatingPoint": "forbidden",
+    "decimalRecommendation": "bounded integer units or a versioned validated domain string",
+    "stringLength": "unicode-scalar-values",
+    "unknownObjectFields": "reject",
+    "taggedUnion": "closed object containing distinct discriminator and payload fields",
+    "missing": "Presence.Missing",
+    "explicitNull": "Presence.Present(NullableValue.ExplicitNull)",
+    "presentValue": "Presence.Present(NullableValue.NonNull(value))",
+    "default": "optional fields only; recursively frozen with cycles rejected; shape and named rules checked at declaration binding; fresh copies projected or materialized only when missing; explicit null never invokes a default"
+  },
+  "canonicalSerialization": {
+    "identity": "wordpress-hx.contract-canonical-json.v1",
+    "encoding": "utf-8-compact-json-with-sorted-object-keys",
+    "objectKeyOrder": "lexicographic-unicode-scalar-value",
+    "payloadStringNormalization": "preserve",
+    "schemaArtifactStorage": "installed-content-addressed-registry",
+    "semanticPlanCanonicalization": "wordpress-hx.canonical-json.v1-with-NFC",
+    "semanticPlanReferenceFields": [
+      "ascii-schema-id",
+      "signed-int32-version",
+      "lowercase-hex-sha256"
+    ],
+    "rawSchemaBytesInlineInSemanticPlan": false,
+    "digestBoundary": "sha256-over-exact-contract-canonical-bytes-before-the-ASCII-reference-enters-the-ADR-006-plan"
+  },
+  "rules": {
+    "validation": {
+      "identity": "RuleId plus positive revision",
+      "requiredParity": "exact",
+      "attachment": "any refined value node including roots array items and union payloads",
+      "execution": "schema-driven-before-domain-construction",
+      "pathAffectsRuleSemantics": false,
+      "ruleSetBinding": "retained-by-SchemaDocument-and-used-by-validator",
+      "unknownRule": "fail-closed-WPHX5206"
+    },
+    "sanitization": {
+      "identity": "RuleId plus positive revision",
+      "allowedParity": [
+        "exact",
+        "documented-native-relation"
+      ],
+      "execution": "explicit-operation-adapter-before-validation",
+      "implicitDuringContractDecode": false,
+      "securitySensitiveSilentRepair": false
+    },
+    "roleCollisionAllowed": false
+  },
+  "decodePipeline": [
+    "foreign bytes or native values enter a target-owned parser adapter",
+    "the adapter immediately constructs the closed WireValue algebra",
+    "optional missing-field defaults are materialized",
+    "built-in structural constraints and exact named validators run",
+    "a domain codec constructs T only from the normalized validated value"
+  ],
+  "diagnostics": {
+    "mode": "deterministic-fail-first",
+    "shape": [
+      "code",
+      "jsonPointerPath",
+      "expected",
+      "actual"
+    ],
+    "codes": {
+      "WPHX5201": "wire-kind-mismatch",
+      "WPHX5202": "missing-required-field",
+      "WPHX5203": "unknown-field",
+      "WPHX5204": "duplicate-field",
+      "WPHX5205": "constraint-or-rule-rejection",
+      "WPHX5206": "rule-unavailable"
+    },
+    "objectPrecedence": "duplicate and unknown names in lexical order, then declared fields in schema order",
+    "arrayPrecedence": "ascending index",
+    "pointerEscaping": "RFC-6901"
+  },
+  "compatibility": {
+    "schemaVersion": "positive-monotonic-integer",
+    "semanticChangeRequiresVersionIncrement": true,
+    "ruleBehaviorChangeRequiresRuleRevision": true,
+    "migrations": "ordered complete adjacent pure references from version 1 to current",
+    "implicitEmitterMigration": false,
+    "oldSchemaValidationBeforeMigration": true,
+    "migrationOutputValidationAgainstNewSchema": true
+  },
+  "targetProjectionPolicy": {
+    "php": "generate readable native scalar/array codecs and callbacks through the generic PHP layer plus WordPress adapters",
+    "javascript": "generate strict browser types and codecs through the pinned Genes compiler contract",
+    "rest": "project the representable WordPress argument subset and named callbacks; fail on semantic loss",
+    "blockAttributes": "project only Gutenberg-representable source/default/serialization shapes; fail on semantic loss",
+    "projectionCannotWiden": true,
+    "generatedTargetMayBecomeAuthority": false,
+    "implementationStatus": "decision-and-cross-target-architecture-prototype-only"
+  },
+  "prototypeEvidence": {
+    "sourceTreeSha256": "13f572da58bf8579eb9ee297aa093534890d4db92053aaea18735c72bed52b21",
+    "schemaSha256": "68504df60f8b2f1376020435610bc5a768f4c0ae969130819ec0981de8679177",
+    "transcriptSha256": "4760183a044a47dab1d52e1e5968182c9ade5a093844a8708afa07569095863e",
+    "haxeInvariantCount": 27,
+    "crossTargetVectorCount": 17,
+    "independentMutationCount": 18,
+    "negativeCompileFixtureCount": 4,
+    "targets": [
+      "haxe-interp-4.3.7",
+      "genes-ts-1.36.3-c59ecb361fd91418584487c2138bae8d3d3a3961-typescript-5.9.3-node-22.17.0",
+      "php-8.4.7"
+    ]
+  },
+  "hostedGate": {
+    "workflow": ".github/workflows/repository.yml",
+    "job": "contract-schema",
+    "command": "bash scripts/contracts/test-schema-authority.sh",
+    "status": "configured-pending-first-hosted-run"
+  },
+  "referenceReview": [
+    {
+      "repository": "genes",
+      "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+      "path": "src/genes/ts/JsonCodec.hx",
+      "gitBlob": "0036ecee746c4839d729346f2069617f3deb2763",
+      "sha256": "f30573a4dde521f61f026cb9fce7b863412a228385ad9ec70c0b67d30a46c8f8",
+      "patternUsed": "contain and immediately narrow a foreign JavaScript boundary",
+      "weakTypeImplementationCopied": false,
+      "copiedBytes": false
+    },
+    {
+      "repository": "genes",
+      "commit": "2b4b71b00528fb376f7f0f8527237cf336b0f36b",
+      "path": "src/genes/ts/JsonValue.hx",
+      "gitBlob": "a93e138c50b8a51bd7ba4ec1705fc297457096c9",
+      "sha256": "1ee2c4f002e914f265b0f653c1255b216c7e962bc590c5d48f5f7c982bc57f0d",
+      "patternUsed": "native JSON stays native at the JavaScript edge",
+      "weakTypeImplementationCopied": false,
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "test/json_parity/src_haxe/Main.hx",
+      "gitBlob": "45b98e6b7744e24987c5d58cefbc36e6f5c18197",
+      "sha256": "5242dee72ad5dd30b9cf091b6fc125fd163b72e90441735bf44391cb9ac9e942",
+      "patternUsed": "one semantic vector corpus executed on more than one target",
+      "weakTypeImplementationCopied": false,
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "2030abea264dac770915dbeff427acc349ff082e",
+      "path": "src/reflaxe/elixir/schema/SchemaIntrospection.hx",
+      "gitBlob": "d75c94cde9021d773fd79a1b9aeef1a74c6acc64",
+      "sha256": "58ce08954813100dbbca732a69bef5c7e35de2a6f41eed27f37f2af1496b4308",
+      "patternUsed": "compile-time type metadata can drive framework field checks",
+      "fallbackHeuristicsCopied": false,
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ocaml",
+      "commit": "e336cc70792f8eb0a1e525211cd5944fb7e16187",
+      "path": "packages/reflaxe.ocaml/src/reflaxe/ocaml/lowered/OcamlLoweringReportWriter.hx",
+      "gitBlob": "ee2b28ff81b940943155c632f9afd19391268f12",
+      "sha256": "fbd82ed699d4679d85423c31196a381905c99a41245f575cd05fe66149c00077",
+      "patternUsed": "typed deterministic inspection artifact with explicit model and version",
+      "copiedBytes": false
+    },
+    {
+      "repository": "tink_json",
+      "commit": "7dd309a8c4153eb7d89ab05d34d2fb7037b83681",
+      "path": "src/tink/json/macros/GenReader.hx",
+      "gitBlob": "df4e8077cc7ea23c5b1eb580fdf3264a564add23",
+      "sha256": "6b9658378c53f20df96ef27b0a6f7f3acd5e8417aa3eab4e21a149b207ab8ad7",
+      "patternUsed": "macro-derived readers preserve field and optionality knowledge",
+      "weakTypeImplementationCopied": false,
+      "copiedBytes": false
+    },
+    {
+      "repository": "tink_json",
+      "commit": "7dd309a8c4153eb7d89ab05d34d2fb7037b83681",
+      "path": "src/tink/json/macros/GenWriter.hx",
+      "gitBlob": "5509b75d78b232718fa5dbe4912324e7dbc35785",
+      "sha256": "3f375a4e811b3fd3f22efbfd8212694035a42d2859749c773e02b760b69113e2",
+      "patternUsed": "macro-derived writers keep output deterministic and type-directed",
+      "weakTypeImplementationCopied": false,
+      "copiedBytes": false
+    }
+  ],
+  "claims": {
+    "architectureDecision": "accepted-after-review",
+    "typedIrPrototype": "validated",
+    "productionMacroDerivation": "not-tested",
+    "productionPhpEmitter": "not-tested",
+    "productionGenesEmitter": "not-tested",
+    "wordpressRestRuntime": "not-tested",
+    "gutenbergBlockRuntime": "not-tested",
+    "php74Runtime": "not-tested",
+    "packedConsumer": "not-tested"
+  }
+}

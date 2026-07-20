@@ -19,6 +19,18 @@ projection coverage, artifact bytes, owner/source nodes, source spans, and
 required validators. It grants no permission to write live files; ADR-007 owns
 publication and recovery.
 
+[`contract-schema.schema.json`](contract-schema.schema.json) is the ADR-009
+closed serialization of the shared typed schema IR. It fixes required versus
+optional fields, explicit nullable nodes, missing-only defaults, signed integer
+and Unicode-scalar string constraints, closed objects, tagged-union envelopes,
+rules refined at any value position, versioned validation/sanitization rules,
+and adjacent migration identities. Every serialized integer position is
+bounded to signed int32. Exact contract bytes live in the content-addressed
+schema registry; only an ASCII identity/version/digest reference enters the
+separately NFC-normalized semantic plan. PHP, Genes, REST, and Gutenberg schemas
+are projections of this authority and must fail when they cannot preserve its
+semantics.
+
 [`semantic-collector-config.schema.json`](semantic-collector-config.schema.json)
 closes the generated SDK-040 macro bootstrap: exact project/profile/toolchain,
 resource roots, public build environment allowlist, and content-addressed node

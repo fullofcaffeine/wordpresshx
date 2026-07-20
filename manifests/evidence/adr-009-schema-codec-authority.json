@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
+  "bead": "wordpresshx-adr-009",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T01:00:21Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/009-schema-and-codec-authority.md",
+      "sha256": "be3ffeca8c214fe8c44bd362410092c6641bf8580e58f53cfdd531e2b893710e"
+    },
+    "architecture": {
+      "path": "manifests/schema-codec-architecture.json",
+      "sha256": "e3bc1a0a4a3e8833680c2cbf053a1439f583210867490d9951514f85461eb5d3"
+    },
+    "serializedSchema": {
+      "path": "schemas/contract-schema.schema.json",
+      "sha256": "68504df60f8b2f1376020435610bc5a768f4c0ae969130819ec0981de8679177"
+    },
+    "transcript": {
+      "path": "fixtures/schema-codec/expected/cross-target.txt",
+      "sha256": "4760183a044a47dab1d52e1e5968182c9ade5a093844a8708afa07569095863e"
+    },
+    "independentValidator": {
+      "path": "scripts/contracts/validate-schema-authority.py",
+      "sha256": "a6fafab4f47a3ac3bbea2be11423e5b62a735f3c1cec4c31b4e7207d5931dcd7"
+    },
+    "gate": {
+      "path": "scripts/contracts/test-schema-authority.sh",
+      "sha256": "b371030f4af112c525f3037c34f45f18136f6011389b703a4045987207371013"
+    },
+    "workflow": {
+      "path": ".github/workflows/repository.yml",
+      "sha256": "b30c3a2ff67535cf70e4f029a06b1d031b867e2cffd3f49144467ff8718ff8d6"
+    }
+  },
+  "authority": {
+    "schemaIdentity": "wordpress-hx.contract-schema.v1",
+    "canonicalJsonIdentity": "wordpress-hx.contract-canonical-json.v1",
+    "haxeType": "wordpress.hx.contracts.schema.SchemaDocument",
+    "domainCodec": "wordpress.hx.contracts.ContractCodec<T>",
+    "browserCompiler": "genes-ts-1.36.3-c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "phpPrototypeCompiler": "stock-haxe-4.3.7-php",
+    "manualParallelTargetSchemasAllowed": false,
+    "runtimeReflectionRequired": false
+  },
+  "verification": {
+    "commands": [
+      "bash scripts/contracts/test-schema-authority.sh",
+      "bash scripts/check-repository.sh",
+      "git diff --check",
+      "git diff --cached --check"
+    ],
+    "sourceTreeSha256": "13f572da58bf8579eb9ee297aa093534890d4db92053aaea18735c72bed52b21",
+    "haxeVersion": "4.3.7",
+    "genesVersion": "1.36.3",
+    "typescriptVersion": "5.9.3",
+    "nodeVersion": "22.17.0",
+    "phpVersion": "8.4.7",
+    "strictNullSafety": true,
+    "strictHaxeForbiddenTokenCount": 0,
+    "crossTargetVectorCount": 17,
+    "haxeInvariantCount": 27,
+    "independentMutationCount": 18,
+    "negativeCompileFixtureCount": 4,
+    "canonicalTranscriptByteIdenticalAcrossTargets": true,
+    "immutableDefaultCallerAndProjectionIsolation": "passed",
+    "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
+    "documentBoundPathIndependentRules": "passed",
+    "developmentEncodeValidation": "passed",
+    "outcome": "passed-local"
+  },
+  "review": {
+    "initialFindingCount": 10,
+    "firstRereviewFindingCount": 3,
+    "finalFreshReview": "no-blockers",
+    "finalReviewReranFocusedGate": true,
+    "finalReviewCheckedCurrentBytes": true,
+    "reviewer": "fresh Codex subagent"
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "contract-schema",
+    "required": true,
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-run"
+  },
+  "limitations": [
+    "The executable builder is a bounded architecture prototype, not the SDK-054 ergonomic macro-derived application API.",
+    "Foreign JSON parsers, production PHP/Genes codec emitters, native REST registration, Gutenberg attribute projection, and migration execution remain follow-up work.",
+    "The PHP parity lane uses stock Haxe PHP; integration with the co-located custom PHP compiler remains untested here.",
+    "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt.",
+    "Hosted verification remains pending until these bytes reach main."
+  ],
+  "claims": {
+    "architectureDecision": "accepted",
+    "typedIrPrototype": "cross-target-runtime-tested",
+    "canonicalSchemaAndDiagnostics": "validated",
+    "productionMacroDerivation": "not-tested",
+    "productionPhpEmitter": "not-tested",
+    "productionGenesEmitter": "not-tested",
+    "wordpressRestRuntime": "not-tested",
+    "gutenbergRuntime": "not-tested",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

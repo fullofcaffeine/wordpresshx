@@ -1,0 +1,19 @@
+schema={"migrations":[{"fromVersion":1,"revision":1,"ruleId":"site.article.v1-to-v2","toVersion":2}],"root":{"fields":[{"default":{"mode":"none"},"jsonName":"id","requirement":"required","value":{"kind":"integer","maximum":2147483647,"minimum":1}},{"default":{"mode":"none"},"jsonName":"status","requirement":"required","value":{"kind":"enum","values":["draft","published"]}},{"default":{"mode":"none"},"jsonName":"summary","requirement":"optional","value":{"kind":"refined","sanitizers":[{"parity":"documented-native-relation","revision":1,"ruleId":"wordpress.sanitize-text-field"}],"validators":[],"value":{"kind":"nullable","value":{"kind":"string","maxLength":160}}}},{"default":{"mode":"none"},"jsonName":"tags","requirement":"required","value":{"items":{"kind":"string","maxLength":32,"minLength":1},"kind":"array","maxItems":8}},{"default":{"mode":"none"},"jsonName":"title","requirement":"required","value":{"kind":"refined","sanitizers":[],"validators":[{"parity":"exact","revision":1,"ruleId":"site.article.title.nonblank"}],"value":{"kind":"string","maxLength":120,"minLength":1}}}],"kind":"object","unknownFields":"reject"},"schema":"wordpress-hx.contract-schema.v1","schemaId":"site.article","version":2}
+schema-invariants=27/27
+missing-optional={"id":7,"status":"published","tags":["compiler","wordpress"],"title":"Typed boundaries"}
+explicit-null={"id":7,"status":"published","summary":null,"tags":["compiler","wordpress"],"title":"Typed boundaries"}
+present-summary={"id":7,"status":"published","summary":"A bounded field note.","tags":["compiler","wordpress"],"title":"Typed boundaries"}
+unicode-title={"id":7,"status":"published","tags":["compiler","wordpress"],"title":"Café 🚀"}
+decomposed-title={"id":7,"status":"published","tags":["compiler","wordpress"],"title":"Café"}
+missing-required={"actual":"missing","code":"WPHX5202","expected":"required field","path":"/title"}
+wrong-type={"actual":"string","code":"WPHX5201","expected":"integer","path":"/id"}
+zero-id={"actual":"0","code":"WPHX5205","expected":"integer greater than or equal to 1","path":"/id"}
+unknown-enum={"actual":"scheduled","code":"WPHX5205","expected":"draft|published","path":"/status"}
+empty-tag={"actual":"length=0","code":"WPHX5205","expected":"string with at least 1 Unicode scalar values","path":"/tags/0"}
+too-many-tags={"actual":"length=9","code":"WPHX5205","expected":"array with at most 8 items","path":"/tags"}
+unknown-field={"actual":"unknown-field","code":"WPHX5203","expected":"closed field set","path":"/extra"}
+unicode-key-order={"actual":"unknown-field","code":"WPHX5203","expected":"closed field set","path":"/"}
+duplicate-field={"actual":"duplicate-field","code":"WPHX5204","expected":"one field occurrence","path":"/title"}
+invalid-title={"actual":"constraint-failed","code":"WPHX5205","expected":"site.article.title.nonblank@1","path":"/title"}
+null-required={"actual":"null","code":"WPHX5201","expected":"string","path":"/title"}
+encode-invariants=1/1

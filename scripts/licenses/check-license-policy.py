@@ -848,13 +848,13 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
     workflow = audit.read_text(".github/workflows/repository.yml")
     checkout_pins = action_pins(workflow, "actions/checkout")
     audit.check(
-        len(checkout_pins) == 12
+        len(checkout_pins) == 13
         and every_action_use_is_exact(
             workflow,
             "actions/checkout",
             components.get("actions-checkout-7.0.0", {}).get("commit"),
         ),
-        "all twelve checkout actions must use the inventoried exact commit",
+        "all thirteen checkout actions must use the inventoried exact commit",
     )
     audit.check(
         workflow.count("fetch-depth: 0") == 1
@@ -977,6 +977,7 @@ def validate_receipt(audit: Audit) -> None:
             "implementation",
             "hostedWorkflow",
             "adr017WorkflowRevision",
+            "adr009WorkflowRevision",
             "claims",
             "limitations",
         },
@@ -1029,6 +1030,43 @@ def validate_receipt(audit: Audit) -> None:
         workflow_revision.get("evidenceOwner")
         == "ADR-017-GENERATED-OUTPUT-VCS-POLICY",
         "ADR-017 workflow revision evidence owner differs",
+    )
+
+    schema_workflow_revision = receipt.get("adr009WorkflowRevision", {})
+    audit.keys(
+        schema_workflow_revision,
+        {
+            "observedAt",
+            "reason",
+            "licensePolicyChanged",
+            "componentInventoryChanged",
+            "publicationStateChanged",
+            "evidenceOwner",
+        },
+        "receipt.adr009WorkflowRevision",
+    )
+    audit.check(
+        schema_workflow_revision.get("observedAt") == "2026-07-20T00:57:25Z",
+        "ADR-009 workflow revision observation time must remain exact",
+    )
+    audit.check(
+        schema_workflow_revision.get("reason")
+        == "ADR-009 adds one exact-pinned checkout use for its independent contract-schema job.",
+        "ADR-009 workflow revision reason differs",
+    )
+    for field in (
+        "licensePolicyChanged",
+        "componentInventoryChanged",
+        "publicationStateChanged",
+    ):
+        audit.check(
+            schema_workflow_revision.get(field) is False,
+            f"receipt.adr009WorkflowRevision.{field} must be false",
+        )
+    audit.check(
+        schema_workflow_revision.get("evidenceOwner")
+        == "ADR-009-SCHEMA-CODEC-AUTHORITY",
+        "ADR-009 workflow revision evidence owner differs",
     )
 
     subjects = receipt.get("subject", {})

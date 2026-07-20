@@ -33,6 +33,7 @@ required_files=(
   docs/adr/006-semantic-plan-and-emitter-contract.md
   docs/adr/007-generated-artifact-ownership.md
   docs/adr/008-profile-generation-and-api-classification.md
+  docs/adr/009-schema-and-codec-authority.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/014-source-maps-and-php-trace-correlation.md
@@ -53,6 +54,45 @@ required_files=(
   docs/release/release-checklist.md
   docs/release/rollback-checklist.md
   packages/README.md
+  packages/contracts/README.md
+  packages/contracts/test.hxml
+  packages/contracts/src/wordpress/hx/contracts/CanonicalWireJson.hx
+  packages/contracts/src/wordpress/hx/contracts/ContractCodec.hx
+  packages/contracts/src/wordpress/hx/contracts/ContractError.hx
+  packages/contracts/src/wordpress/hx/contracts/ContractRuleSet.hx
+  packages/contracts/src/wordpress/hx/contracts/ContractValidator.hx
+  packages/contracts/src/wordpress/hx/contracts/DecodeResult.hx
+  packages/contracts/src/wordpress/hx/contracts/NoContractRules.hx
+  packages/contracts/src/wordpress/hx/contracts/NullableValue.hx
+  packages/contracts/src/wordpress/hx/contracts/Presence.hx
+  packages/contracts/src/wordpress/hx/contracts/RuleEvaluation.hx
+	packages/contracts/src/wordpress/hx/contracts/UnicodeScalarOrder.hx
+  packages/contracts/src/wordpress/hx/contracts/WireKind.hx
+  packages/contracts/src/wordpress/hx/contracts/WireValue.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/FieldDefault.hx
+	packages/contracts/src/wordpress/hx/contracts/schema/FieldDefaults.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/FieldRequirement.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/FrozenList.hx
+	packages/contracts/src/wordpress/hx/contracts/schema/FrozenWireField.hx
+	packages/contracts/src/wordpress/hx/contracts/schema/FrozenWireValue.hx
+	packages/contracts/src/wordpress/hx/contracts/schema/FrozenWireValueTools.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/MigrationRef.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/RuleId.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/RuleParity.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaCase.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaDocument.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaField.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaId.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaInvariant.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaJson.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaNode.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/SchemaRuleRef.hx
+  packages/contracts/src/wordpress/hx/contracts/schema/UnknownFieldPolicy.hx
+  packages/contracts/test/wordpress/hx/contracts/tests/SchemaAuthorityTest.hx
+  packages/contracts/test-negative/domain_mismatch/Main.hx
+  packages/contracts/test-negative/null_is_missing/Main.hx
+	packages/contracts/test-negative/raw_null/wordpress/hx/contracts/negative/RawNullMain.hx
+	packages/contracts/test-negative/frozen_default_mutation/wordpress/hx/contracts/negative/FrozenDefaultMutationMain.hx
   packages/cli/.haxerc
   packages/cli/.npmignore
   packages/cli/README.md
@@ -345,6 +385,7 @@ required_files=(
   generated/wp70-release/catalog-v1/generation-report.json
   generated/wp70-release/catalog-v1/omissions.json
   schemas/README.md
+  schemas/contract-schema.schema.json
   schemas/profile.schema.json
   schemas/profile-diff.schema.json
   schemas/php-haxe-map.schema.json
@@ -369,6 +410,8 @@ required_files=(
   scripts/source-correlation/validate-sdk025.py
   scripts/semantic-plan/test-contract.py
   scripts/semantic-plan/test.sh
+  scripts/contracts/test-schema-authority.sh
+  scripts/contracts/validate-schema-authority.py
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
   scripts/generated-output-vcs/check-policy.py
@@ -474,6 +517,7 @@ required_files=(
   fixtures/source-correlation/artifacts/browser/two-stage.js.map
   fixtures/source-correlation/artifacts/browser/two-stage.ts
   fixtures/source-correlation/artifacts/browser/two-stage.ts.map
+  fixtures/schema-codec/expected/cross-target.txt
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -485,6 +529,7 @@ required_files=(
   manifests/hxx-architecture.json
   manifests/source-correlation-architecture.json
   manifests/semantic-plan-architecture.json
+  manifests/schema-codec-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/generated-output-vcs-policy.json
@@ -509,6 +554,7 @@ required_files=(
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
+	manifests/evidence/adr-009-schema-codec-authority.json
   manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
@@ -917,6 +963,14 @@ semantic_plan_architecture = json.loads(
 )
 semantic_plan_receipt = json.loads(
     Path("manifests/evidence/adr-006-semantic-plan-contract.json").read_text(
+        encoding="utf-8"
+    )
+)
+schema_codec_architecture = json.loads(
+    Path("manifests/schema-codec-architecture.json").read_text(encoding="utf-8")
+)
+adr009_receipt = json.loads(
+    Path("manifests/evidence/adr-009-schema-codec-authority.json").read_text(
         encoding="utf-8"
     )
 )
@@ -1951,6 +2005,62 @@ elif semantic_hosted["status"] == "passed":
     assert sha1.fullmatch(semantic_hosted["commit"])
 else:
     raise AssertionError("semantic-plan hosted status is invalid")
+
+assert schema_codec_architecture["schemaVersion"] == 1
+assert schema_codec_architecture["decisionId"] == "ADR-009"
+assert schema_codec_architecture["claims"]["architectureDecision"] == (
+    "accepted-after-review"
+)
+schema_prototype = schema_codec_architecture["prototypeEvidence"]
+assert schema_prototype["haxeInvariantCount"] == 27
+assert schema_prototype["crossTargetVectorCount"] == 17
+assert schema_prototype["independentMutationCount"] == 18
+assert schema_prototype["negativeCompileFixtureCount"] == 4
+assert adr009_receipt["schemaVersion"] == 1
+assert adr009_receipt["receiptId"] == "ADR-009-SCHEMA-CODEC-AUTHORITY"
+assert adr009_receipt["bead"] == "wordpresshx-adr-009"
+assert adr009_receipt["status"] in {"implemented-hosted-pending", "verified"}
+for adr009_subject in adr009_receipt["subject"].values():
+    assert hashlib.sha256(Path(adr009_subject["path"]).read_bytes()).hexdigest() == (
+        adr009_subject["sha256"]
+    )
+adr009_verification = adr009_receipt["verification"]
+assert adr009_verification["sourceTreeSha256"] == schema_prototype[
+    "sourceTreeSha256"
+]
+assert adr009_verification["haxeInvariantCount"] == 27
+assert adr009_verification["crossTargetVectorCount"] == 17
+assert adr009_verification["independentMutationCount"] == 18
+assert adr009_verification["negativeCompileFixtureCount"] == 4
+assert adr009_verification["strictNullSafety"] is True
+assert adr009_verification["strictHaxeForbiddenTokenCount"] == 0
+assert adr009_verification["canonicalTranscriptByteIdenticalAcrossTargets"] is True
+assert adr009_receipt["review"]["finalFreshReview"] == "no-blockers"
+assert adr009_receipt["claims"]["architectureDecision"] == "accepted"
+assert adr009_receipt["claims"]["publicationAuthorized"] is False
+for unproven_schema_claim in (
+    "productionMacroDerivation",
+    "productionPhpEmitter",
+    "productionGenesEmitter",
+    "wordpressRestRuntime",
+    "gutenbergRuntime",
+    "productionSupport",
+):
+    assert adr009_receipt["claims"][unproven_schema_claim] == "not-tested"
+adr009_hosted = adr009_receipt["hostedWorkflow"]
+assert adr009_hosted["workflow"] == "Repository bootstrap"
+assert adr009_hosted["job"] == "contract-schema"
+assert adr009_hosted["required"] is True
+if adr009_receipt["status"] == "implemented-hosted-pending":
+    assert adr009_hosted["status"] == "pending-first-run"
+    assert adr009_hosted["runId"] is None
+    assert adr009_hosted["jobId"] is None
+    assert adr009_hosted["commit"] is None
+else:
+    assert adr009_hosted["status"] == "passed"
+    assert isinstance(adr009_hosted["runId"], int)
+    assert isinstance(adr009_hosted["jobId"], int)
+    assert sha1.fullmatch(adr009_hosted["commit"])
 assert semantic_plan_receipt["claims"]["architectureDecision"] == "accepted"
 assert semantic_plan_receipt["claims"]["schemaAndFixtureContract"] == "validated"
 for unproven_receipt_claim in (
@@ -9151,6 +9261,7 @@ python3 scripts/php/test-emission-policy.py
 python3 scripts/runtime-support/test-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
+python3 scripts/contracts/validate-schema-authority.py
 python3 scripts/ownership/test-contract.py
 python3 scripts/generated-output-vcs/test-policy.py
 python3 scripts/project-cli/test-contract.py

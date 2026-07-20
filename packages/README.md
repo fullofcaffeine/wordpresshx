@@ -59,3 +59,11 @@ extends the same Haxe/Genes publisher with a canonical reproducibility report
 and deterministic unsigned ZIP, then proves the complete owned generation
 byte-for-byte across unrelated fresh roots. The archive remains bounded
 evidence until real target emitters contribute deployable files.
+
+ADR-009 establishes the [`contracts`](contracts/README.md) executable
+architecture slice. Its closed Haxe wire algebra, frozen schema IR, shared
+validator, explicit missing/null model, versioned rule references, and adjacent
+migration identities produce one byte-identical corpus on Haxe interpretation,
+exact Node, and exact primary PHP. This is the authority SDK-054 will project
+into REST, PHP, Genes, and Gutenberg contracts; macro derivation and production
+foreign-byte adapters remain deliberately unclaimed.

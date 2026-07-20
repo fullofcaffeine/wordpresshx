@@ -353,6 +353,61 @@ store, nested blocks, and exact-profile optional capabilities. It cannot use
 private Gutenberg imports, example-only compiler branches, or snapshots as a
 substitute for real editor and frontend behavior.
 
+### Cohesive Gutenberg authoring surface
+
+`SDK-121` owns the public authoring experience across the Gutenberg capability
+families implemented by `SDK-060` through `SDK-067` and the theme/design work in
+`SDK-084`. The objective is not just to make one custom block compile. A site
+author should be able to build a polished editor and frontend experience in
+Haxe/HXX without repeatedly hand-synchronizing PHP registration, React code,
+block metadata, serialized markup, theme configuration, styles, translations,
+and package dependencies.
+
+The exact-profile catalog covers these families as their native evidence is
+admitted:
+
+- core-block references, typed attributes, nested block trees, templates,
+  allowed-child/parent/ancestor contracts, locking, and block context;
+- static and dynamic custom blocks, edit/save/render separation, supports,
+  deprecations, migrations, variations, styles, transforms, and bindings;
+- registered starter patterns and categories, synced-pattern content handles,
+  templates, template parts, rich-text formats, media flows, design tokens,
+  `theme.json`, and generated styling;
+- `BlockControls`, `InspectorControls`, toolbars, panels, accessible WordPress
+  components, editor plugins, SlotFill surfaces, and profile-stable commands,
+  notices, and preferences;
+- typed WordPress data stores, selectors, actions, resolution/error states,
+  undo-aware updates, and declared dependencies; and
+- the native Interactivity API only in profiles and maturity tiers whose SSR,
+  state-codec, hydration, navigation, security, and performance behavior has
+  passed its separate gate.
+
+Every admitted capability has two layers. A generated low-level facade retains
+the exact upstream names, packages, props, metadata, and runtime semantics. A
+concise Haxe/HXX abstraction derives duplicated identifiers, registrations,
+schemas, assets, and native projection files where the type system can do so
+soundly. Authors can drop to the typed facade when the higher-level abstraction
+does not fit. Unsupported or private behavior uses an explicit interop or
+unsafe boundary; it never widens the normal API to arbitrary strings or weak
+values.
+
+The SDK reuses Gutenberg and WordPress components, data registries, editor
+state, parser, style engine, and frontend runtime. It does not clone them into a
+Haxe component library, state manager, renderer, or site runtime. Ergonomic
+Haxe is successful only when its generated PHP, metadata, block markup, and
+Genes output remain recognizable and proportionate to those native APIs.
+
+Pattern abstractions preserve WordPress's own lifecycle distinctions. A
+source-owned registered pattern is typed HXX plus metadata projected to normal
+pattern registration/files. A synced pattern is a persisted WordPress content
+entity addressed through a typed ID/status/capability contract; it is not
+silently copied into source control or mistaken for a static pattern. Block
+templates and template parts likewise compile to their native theme artifacts
+and parser-valid block markup. The Haxe layer derives names, categories,
+dependencies, attributes, translations, and package placement once, while
+still exposing the exact typed low-level registration surface when a site needs
+native behavior beyond the concise abstraction.
+
 Reusable models, codecs, identifiers, state machines, components, design
 tokens, and provider adapters move to their owning SDK packages. Examples keep
 only the subject, content, composition, and art direction that make their user
@@ -396,5 +451,8 @@ template, palette, type pair, or fashionable default aesthetic.
   workbench rather than treating a visual compiler proof as an application.
 - `SDK-120` keeps every public capability connected to a smallest runnable
   recipe and at least one integrated example, or records it as deferred.
+- `SDK-121` unifies the exact-profile block, pattern, theme, editor-component,
+  data, and interactivity capabilities into one coherent Haxe/HXX authoring
+  surface without replacing Gutenberg runtime semantics.
 
 Each bead advances only its named evidence. This document defines intended architecture; it does not promote any capability to `typed`, `generated`, `runtime-tested`, or `production-supported`.

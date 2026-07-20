@@ -42,6 +42,7 @@ Decisions involving licensing, security, public support, or compatibility claims
 - [ADR-006: Semantic plan and emitter contract](006-semantic-plan-and-emitter-contract.md)
 - [ADR-007: Generated artifact ownership](007-generated-artifact-ownership.md)
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
+- [ADR-009: Schema and codec authority](009-schema-and-codec-authority.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-014: Source maps and PHP trace correlation](014-source-maps-and-php-trace-correlation.md)

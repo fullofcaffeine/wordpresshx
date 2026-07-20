@@ -1,0 +1,446 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fullofcaffeine/wordpresshx/schemas/contract-schema.schema.json",
+  "title": "WordPressHx canonical contract schema IR",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaId",
+    "version",
+    "root",
+    "migrations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.contract-schema.v1"
+    },
+    "schemaId": {
+      "$ref": "#/$defs/stableId"
+    },
+    "version": {
+      "$ref": "#/$defs/positiveInt32"
+    },
+    "root": {
+      "$ref": "#/$defs/node"
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/migration"
+      }
+    }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$"
+    },
+    "fieldName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_-]*$"
+    },
+    "int32": {
+      "type": "integer",
+      "minimum": -2147483648,
+      "maximum": 2147483647
+    },
+    "nonNegativeInt32": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "positiveInt32": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleId",
+        "revision",
+        "parity"
+      ],
+      "properties": {
+        "ruleId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "revision": {
+          "$ref": "#/$defs/positiveInt32"
+        },
+        "parity": {
+          "enum": [
+            "exact",
+            "documented-native-relation"
+          ]
+        }
+      }
+    },
+    "migration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fromVersion",
+        "toVersion",
+        "ruleId",
+        "revision"
+      ],
+      "properties": {
+        "fromVersion": {
+          "$ref": "#/$defs/positiveInt32"
+        },
+        "toVersion": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2147483647
+        },
+        "ruleId": {
+          "$ref": "#/$defs/stableId"
+        },
+        "revision": {
+          "$ref": "#/$defs/positiveInt32"
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default",
+        "jsonName",
+        "requirement",
+        "value"
+      ],
+      "properties": {
+        "default": {
+          "$ref": "#/$defs/fieldDefault"
+        },
+        "jsonName": {
+          "$ref": "#/$defs/fieldName"
+        },
+        "requirement": {
+          "enum": [
+            "required",
+            "optional"
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/node"
+        }
+      }
+    },
+    "fieldDefault": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "none"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "value"
+          ],
+          "properties": {
+            "mode": {
+              "const": "when-missing"
+            },
+            "value": {
+              "$ref": "#/$defs/wireValue"
+            }
+          }
+        }
+      ]
+    },
+    "wireValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/int32"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/wireValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/wireValue"
+          }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "value"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "$ref": "#/$defs/node"
+        }
+      }
+    },
+    "booleanNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "boolean"
+        }
+      }
+    },
+    "integerNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "integer"
+        },
+        "minimum": {
+          "$ref": "#/$defs/int32"
+        },
+        "maximum": {
+          "$ref": "#/$defs/int32"
+        }
+      }
+    },
+    "stringNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "string"
+        },
+        "minLength": {
+          "$ref": "#/$defs/nonNegativeInt32"
+        },
+        "maxLength": {
+          "$ref": "#/$defs/nonNegativeInt32"
+        }
+      }
+    },
+    "enumNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "values"
+      ],
+      "properties": {
+        "kind": {
+          "const": "enum"
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "arrayNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "items"
+      ],
+      "properties": {
+        "kind": {
+          "const": "array"
+        },
+        "items": {
+          "$ref": "#/$defs/node"
+        },
+        "minItems": {
+          "$ref": "#/$defs/nonNegativeInt32"
+        },
+        "maxItems": {
+          "$ref": "#/$defs/nonNegativeInt32"
+        }
+      }
+    },
+    "objectNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "fields",
+        "unknownFields"
+      ],
+      "properties": {
+        "kind": {
+          "const": "object"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field"
+          }
+        },
+        "unknownFields": {
+          "const": "reject"
+        }
+      }
+    },
+    "taggedUnionNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "discriminator",
+        "payloadField",
+        "cases"
+      ],
+      "properties": {
+        "kind": {
+          "const": "tagged-union"
+        },
+        "discriminator": {
+          "$ref": "#/$defs/fieldName"
+        },
+        "payloadField": {
+          "$ref": "#/$defs/fieldName"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/case"
+          }
+        }
+      }
+    },
+    "nullableNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "nullable"
+        },
+        "value": {
+          "$ref": "#/$defs/nonNullableNode"
+        }
+      }
+    },
+    "refinedNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value",
+        "validators",
+        "sanitizers"
+      ],
+      "properties": {
+        "kind": {
+          "const": "refined"
+        },
+        "value": {
+          "$ref": "#/$defs/unrefinedNode"
+        },
+        "validators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          }
+        },
+        "sanitizers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          }
+        }
+      }
+    },
+    "nonNullableNode": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/booleanNode"
+        },
+        {
+          "$ref": "#/$defs/integerNode"
+        },
+        {
+          "$ref": "#/$defs/stringNode"
+        },
+        {
+          "$ref": "#/$defs/enumNode"
+        },
+        {
+          "$ref": "#/$defs/arrayNode"
+        },
+        {
+          "$ref": "#/$defs/objectNode"
+        },
+        {
+          "$ref": "#/$defs/taggedUnionNode"
+        }
+      ]
+    },
+    "unrefinedNode": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nonNullableNode"
+        },
+        {
+          "$ref": "#/$defs/nullableNode"
+        }
+      ]
+    },
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/unrefinedNode"
+        },
+        {
+          "$ref": "#/$defs/refinedNode"
+        }
+      ]
+    }
+  }
+}
