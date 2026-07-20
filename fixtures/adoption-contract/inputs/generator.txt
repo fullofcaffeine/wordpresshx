@@ -1,0 +1,2 @@
+WordPressHx ADR-015 fixture-only static adoption planner 0.0.0-fixture.
+It reads exact metadata bytes and never loads provider runtime code.

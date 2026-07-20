@@ -1,0 +1,5 @@
+exact|available|php-call|Acme\Calendar\list_events|limit=12
+browser|available|js-call|@acme/calendar.CalendarBadge|count=7|label=Due this week
+absent|provider-absent
+wrong-version|wrong-version
+missing-binding|missing-binding:js.calendar.badge

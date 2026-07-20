@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpress-hx.dev/schemas/adoption-review.schema.json",
+  "title": "WordPressHx adoption omission and review report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "reportId",
+    "contract",
+    "provider",
+    "generator",
+    "summary",
+    "includedBindings",
+    "omissions",
+    "conflicts",
+    "reflection",
+    "claims",
+    "reportDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.adoption-review.v1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "reportId": {
+      "$ref": "#/$defs/id"
+    },
+    "contract": {
+      "$ref": "#/$defs/contractRef"
+    },
+    "provider": {
+      "$ref": "#/$defs/providerRef"
+    },
+    "generator": {
+      "$ref": "#/$defs/generatorRef"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "includedBindings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "omissions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/omission"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conflict"
+      }
+    },
+    "reflection": {
+      "$ref": "#/$defs/reflection"
+    },
+    "claims": {
+      "$ref": "#/$defs/claims"
+    },
+    "reportDigest": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?"
+    },
+    "contractRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "sha256"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "providerRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "artifactSha256"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "artifactSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "generatorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "sha256"],
+      "properties": {
+        "id": {
+          "const": "wordpress-hx-adoption-generator"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovered", "included", "omitted", "conflicts"],
+      "properties": {
+        "discovered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "included": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "omitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conflicts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "omission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nativeName",
+        "target",
+        "kind",
+        "code",
+        "reason",
+        "sourceInputIds",
+        "requiredAction"
+      ],
+      "properties": {
+        "nativeName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "enum": ["php", "javascript", "wordpress"]
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "enum": [
+            "ambiguous-type",
+            "unsupported-union",
+            "magic-member",
+            "dynamic-property",
+            "conditional-symbol",
+            "by-reference-variadic",
+            "conflicting-authority",
+            "unsupported-callback",
+            "private-api"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceInputIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "requiredAction": {
+          "enum": [
+            "omit",
+            "supply-curated-precise-contract",
+            "obtain-authoritative-signature",
+            "separate-conditional-capability"
+          ]
+        }
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nativeName",
+        "strongerInputId",
+        "weakerInputId",
+        "resolution"
+      ],
+      "properties": {
+        "nativeName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strongerInputId": {
+          "$ref": "#/$defs/id"
+        },
+        "weakerInputId": {
+          "$ref": "#/$defs/id"
+        },
+        "resolution": {
+          "const": "omit-binding-and-report"
+        }
+      }
+    },
+    "reflection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "executed", "isolationReceiptSha256"],
+      "properties": {
+        "requested": {
+          "type": "boolean"
+        },
+        "executed": {
+          "type": "boolean"
+        },
+        "isolationReceiptSha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceStage",
+        "reviewRequired",
+        "providerRuntimeTested",
+        "providerTrustAdmitted",
+        "productionSupported",
+        "implementationOwnershipTransferred"
+      ],
+      "properties": {
+        "evidenceStage": {
+          "enum": [
+            "inventoried",
+            "contract-generated",
+            "contract-tested",
+            "provider-runtime-tested"
+          ]
+        },
+        "reviewRequired": {
+          "type": "boolean"
+        },
+        "providerRuntimeTested": {
+          "type": "boolean"
+        },
+        "providerTrustAdmitted": {
+          "type": "boolean"
+        },
+        "productionSupported": {
+          "type": "boolean"
+        },
+        "implementationOwnershipTransferred": {
+          "const": false
+        }
+      }
+    }
+  }
+}

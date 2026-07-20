@@ -1,0 +1,530 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpress-hx.dev/schemas/adoption-contract.schema.json",
+  "title": "WordPressHx precise-or-omitted adoption contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "contractId",
+    "contractVersion",
+    "profile",
+    "provider",
+    "generation",
+    "capabilitySet",
+    "bindings",
+    "ownership",
+    "contractDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.adoption-contract.v1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "contractId": {
+      "$ref": "#/$defs/id"
+    },
+    "contractVersion": {
+      "$ref": "#/$defs/semver"
+    },
+    "profile": {
+      "$ref": "#/$defs/profileRef"
+    },
+    "provider": {
+      "$ref": "#/$defs/provider"
+    },
+    "generation": {
+      "$ref": "#/$defs/generation"
+    },
+    "capabilitySet": {
+      "$ref": "#/$defs/capabilitySetRef"
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "ownership": {
+      "$ref": "#/$defs/ownership"
+    },
+    "contractDigest": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "[0-9a-f]{64}"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "[^/][^\\\\]*"
+    },
+    "profileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "catalogRevision", "catalogSha256"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "[a-z0-9-]+/catalog-v[1-9][0-9]*"
+        },
+        "catalogSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "version",
+        "artifactUrl",
+        "artifactSha256",
+        "sourceUrl",
+        "sourceRevision",
+        "sourceSha256",
+        "runtimeOwner",
+        "implementationOwnership"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "wordpress-plugin",
+            "composer-package",
+            "npm-package",
+            "project-native"
+          ]
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "artifactUrl": {
+          "type": "string",
+          "pattern": "https://\\S+"
+        },
+        "artifactSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "pattern": "https://\\S+"
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runtimeOwner": {
+          "const": "native-provider"
+        },
+        "implementationOwnership": {
+          "const": "external-not-transferred"
+        }
+      }
+    },
+    "generatorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "sha256"],
+      "properties": {
+        "id": {
+          "const": "wordpress-hx-adoption-generator"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "target",
+        "kind",
+        "authorityClass",
+        "precedence",
+        "path",
+        "sha256",
+        "executed"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "enum": ["php", "javascript", "wordpress", "provider"]
+        },
+        "kind": {
+          "enum": [
+            "provider-stub",
+            "typescript-declaration",
+            "block-metadata",
+            "rest-schema",
+            "reflection-snapshot",
+            "package-metadata",
+            "source-signature",
+            "plugin-header",
+            "documentation-metadata",
+            "curated-contract",
+            "provider-runtime-source"
+          ]
+        },
+        "authorityClass": {
+          "enum": [
+            "authoritative-signature",
+            "isolated-reflection",
+            "package-or-source-signature",
+            "documentation",
+            "curated"
+          ]
+        },
+        "precedence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "executed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "reflectionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalId",
+        "imageDigest",
+        "network",
+        "filesystem",
+        "commandSha256",
+        "outputSha256"
+      ],
+      "properties": {
+        "approvalId": {
+          "$ref": "#/$defs/id"
+        },
+        "imageDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "network": {
+          "const": "none"
+        },
+        "filesystem": {
+          "const": "read-only-provider-inputs-and-private-output"
+        },
+        "commandSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "outputSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "mergePolicy",
+        "generator",
+        "inputs",
+        "reflection"
+      ],
+      "properties": {
+        "mode": {
+          "enum": ["static-no-execution", "isolated-reflection-opt-in"]
+        },
+        "mergePolicy": {
+          "const": "one-complete-binding-from-highest-nonconflicting-authority"
+        },
+        "generator": {
+          "$ref": "#/$defs/generatorRef"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/input"
+          }
+        },
+        "reflection": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/reflectionReceipt"
+            }
+          ]
+        }
+      }
+    },
+    "capabilitySetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "primitiveType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": ["void", "bool", "int32", "float64", "string"]
+        }
+      }
+    },
+    "nativeNominalType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target", "name"],
+      "properties": {
+        "kind": {
+          "const": "native-nominal"
+        },
+        "target": {
+          "enum": ["php", "javascript"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "schemaType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "schemaId", "schemaVersion", "schemaSha256", "nodePath"],
+      "properties": {
+        "kind": {
+          "const": "schema-ref"
+        },
+        "schemaId": {
+          "$ref": "#/$defs/id"
+        },
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schemaSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "nodePath": {
+          "type": "string"
+        }
+      }
+    },
+    "listType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {
+          "const": "list"
+        },
+        "value": {
+          "$ref": "#/$defs/typeRef"
+        }
+      }
+    },
+    "nullableType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {
+          "const": "nullable"
+        },
+        "value": {
+          "$ref": "#/$defs/typeRef"
+        }
+      }
+    },
+    "typeRef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/primitiveType"
+        },
+        {
+          "$ref": "#/$defs/nativeNominalType"
+        },
+        {
+          "$ref": "#/$defs/schemaType"
+        },
+        {
+          "$ref": "#/$defs/listType"
+        },
+        {
+          "$ref": "#/$defs/nullableType"
+        }
+      ]
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "nativeName", "haxeName", "requirement", "passing", "type"],
+      "properties": {
+        "position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nativeName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "haxeName": {
+          "type": "string",
+          "pattern": "[A-Za-z_][A-Za-z0-9_]*"
+        },
+        "requirement": {
+          "enum": ["required", "optional"]
+        },
+        "passing": {
+          "enum": ["value", "reference"]
+        },
+        "type": {
+          "$ref": "#/$defs/typeRef"
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "target",
+        "kind",
+        "nativeName",
+        "haxePath",
+        "sourceInputId",
+        "capabilityId",
+        "parameters",
+        "returnType",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "enum": ["php", "javascript"]
+        },
+        "kind": {
+          "enum": [
+            "function",
+            "constructor",
+            "static-method",
+            "instance-method",
+            "module-function",
+            "react-component"
+          ]
+        },
+        "nativeName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "haxePath": {
+          "type": "string",
+          "pattern": "[A-Za-z_][A-Za-z0-9_.]*"
+        },
+        "sourceInputId": {
+          "$ref": "#/$defs/id"
+        },
+        "capabilityId": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          }
+        },
+        "returnType": {
+          "$ref": "#/$defs/typeRef"
+        },
+        "status": {
+          "const": "admitted-precise"
+        }
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerRuntime",
+        "contract",
+        "applicationLogic",
+        "compilerRecognition",
+        "regeneration",
+        "removal",
+        "modifiedGeneratedFile"
+      ],
+      "properties": {
+        "providerRuntime": {
+          "const": "external-native-provider"
+        },
+        "contract": {
+          "const": "cli-owned-generated"
+        },
+        "applicationLogic": {
+          "const": "haxe-authored"
+        },
+        "compilerRecognition": {
+          "const": "generic-contract-only-no-provider-name-branches"
+        },
+        "regeneration": {
+          "const": "private-stage-deterministic-diff-before-publication"
+        },
+        "removal": {
+          "const": "manifest-owned-contract-and-facade-only-provider-untouched"
+        },
+        "modifiedGeneratedFile": {
+          "const": "fail-closed-no-overwrite-or-delete"
+        }
+      }
+    }
+  }
+}

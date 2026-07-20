@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "ADR-015",
+  "status": "proposed-pending-fresh-review",
+  "profileId": "wp70-release",
+  "authority": {
+    "defaultExecution": "forbidden",
+    "bindingPolicy": "precise-or-omitted",
+    "sourceMerge": "one-complete-binding-no-field-splicing",
+    "providerRuntimeOwner": "native-provider",
+    "implementationOwnershipTransferred": false,
+    "compilerProviderNameBranchesAllowed": false,
+    "weakFallbackTypesAllowed": false,
+    "capabilityTokensSerializable": false,
+    "staleCapabilityAuthority": false
+  },
+  "sourcePrecedence": [
+    "authoritative-signature",
+    "isolated-reflection-opt-in",
+    "package-or-source-signature",
+    "documentation",
+    "curated-contract"
+  ],
+  "selection": {
+    "unit": "one-complete-native-binding",
+    "fieldSplicingAcrossSources": false,
+    "strongerIncompleteSourceBlocksLowerCompleteSource": false,
+    "strongerConflictWithLowerSource": "omit-binding-and-report",
+    "lowerSourceMayAddUncontestedBinding": true,
+    "unknownOrUnsupportedShape": "omit-with-stable-review-code",
+    "generatedBroadFallback": false
+  },
+  "execution": {
+    "defaultMode": "static-no-execution",
+    "providerRuntimeSourceMayBeReadAsBytes": true,
+    "providerRuntimeSourceExecutedByDefault": false,
+    "reflectionMode": "explicit-isolated-opt-in-only",
+    "reflectionNetwork": "none",
+    "reflectionInputs": "read-only",
+    "reflectionOutput": "private",
+    "reflectionReceiptRequired": true,
+    "reflectionResultBecomesUniversalAuthority": false
+  },
+  "contracts": {
+    "adoption": {
+      "identity": "wordpress-hx.adoption-contract.v1",
+      "schema": "schemas/adoption-contract.schema.json",
+      "purpose": "exact-provider-identity-inputs-precise-bindings-and-ownership"
+    },
+    "capability": {
+      "identity": "wordpress-hx.adoption-capability.v1",
+      "schema": "schemas/adoption-capability.schema.json",
+      "purpose": "exact-runtime-probes-and-nonserializable-scoped-authority"
+    },
+    "review": {
+      "identity": "wordpress-hx.adoption-review.v1",
+      "schema": "schemas/adoption-review.schema.json",
+      "purpose": "included-omitted-conflicting-and-evidence-stage-report"
+    }
+  },
+  "providerLayers": [
+    {
+      "id": "app-local-contract",
+      "owner": "consumer-project",
+      "providerRuntimeOwner": "native-provider",
+      "promotionRequirement": "none",
+      "compilerRecognition": "generic-adoption-contract"
+    },
+    {
+      "id": "reusable-companion-package",
+      "owner": "wordpress-hx-companion-maintainers",
+      "providerRuntimeOwner": "native-provider",
+      "promotionRequirement": "repeated-stable-use-independent-versioning-and-provider-boundary-tests",
+      "compilerRecognition": "generic-adoption-contract"
+    }
+  ],
+  "ownership": {
+    "contract": "cli-owned-generated-separate-from-application-logic",
+    "facade": "generated-or-reviewed-companion-source",
+    "applicationLogic": "haxe-authored",
+    "providerImplementation": "external-native-provider",
+    "regeneration": "private-stage-deterministic-diff-before-publication",
+    "modifiedGeneratedBytes": "fail-closed",
+    "markerEdits": "exact-anchor-preflight-backup-and-rollback",
+    "removal": "manifest-owned-contract-and-facade-only-provider-untouched",
+    "haxeRemovalBoundary": "same-native-facade-or-module-boundary"
+  },
+  "evidenceStages": [
+    {
+      "id": "inventoried",
+      "meaning": "exact metadata bytes and candidates recorded",
+      "runtimeClaim": false
+    },
+    {
+      "id": "contract-generated",
+      "meaning": "schemas and precise-or-omitted bindings validate",
+      "runtimeClaim": false
+    },
+    {
+      "id": "contract-tested",
+      "meaning": "positive-negative typing and native ABI boundary tests pass",
+      "runtimeClaim": false
+    },
+    {
+      "id": "provider-runtime-tested",
+      "meaning": "exact admitted provider passes the declared thin runtime seam",
+      "runtimeClaim": true
+    }
+  ],
+  "prototypeEvidence": {
+    "contractSha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9",
+    "capabilitySha256": "0ab815d115f7dbad055a556e1cb5ccf3982c8900fc2ce8ce1111736f6f8dc383",
+    "reviewSha256": "48b3fd951636e535d7ab114804bc0847e7575240be8e40f02676613646a4ca71",
+    "sourceTreeSha256": "5fc1642e3605f6861a96decba22dfbf3d0dae903d5903b458afe88feef197d09",
+    "transcriptSha256": "739907a3fd3602c5142e0f68a1882bb327b1bca0b7452fac823a5e51cfec8a0b",
+    "contractSchemaSha256": "ae39f7ec38d8a6ecc3ac3fb5f7ed1c73369b1ff0e2ca6ef66f0a1d26bb23477f",
+    "capabilitySchemaSha256": "d023d3f1b0a551182e1067f3b3a49ed5eae75c5c30944b7995bea691c1e1a281",
+    "reviewSchemaSha256": "cc32857709d5a2a62ebd509716999bcda6a68f8c70858dea7c88336b5e20dc20",
+    "bindingCount": 3,
+    "capabilityCount": 2,
+    "omissionCount": 4,
+    "conflictCount": 1,
+    "compileNegativeCount": 4,
+    "independentMutationCount": 31,
+    "targets": [
+      "haxe-4.3.7-interp",
+      "genes-ts-1.36.3-typescript-5.9.3-node-22.17.0",
+      "stock-haxe-php-8.4.7"
+    ],
+    "providerRuntimeExecutionDuringGeneration": false,
+    "realProviderUsed": false
+  },
+  "referenceReview": [
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "docs/railshx-gem-layers.md",
+      "gitBlob": "ab73886476402f981d0e0d2c020f082961699dec",
+      "sha256": "23db884aadffa4f26148ce5d81d994fdd20ad17bea825204570746835481a8bf",
+      "concept": "native-runtime-owner-app-local-contract-and-companion-package-separation",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "docs/railshx-gem-layer-testing.md",
+      "gitBlob": "800cdc47759da8eb912c794a430e0f59f47c9053",
+      "sha256": "cfa223461662a14360f78abc490e55462e3d63883fdc1cdd78a4b7fdab9308a1",
+      "concept": "test-generated-boundary-and-thin-real-provider-seam",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "lib/hxruby/generators/adopt.rb",
+      "gitBlob": "ab962580344903a6ccf7956ad9034d346d62885b",
+      "sha256": "d9a6aeffef602ef7823362097b27a1532488a3fe6469608cc70511097a6e3a54",
+      "concept": "deterministic-metadata-first-inventory-and-review-markers",
+      "copiedBytes": false
+    }
+  ],
+  "hostedGate": {
+    "workflow": ".github/workflows/adoption-contract.yml",
+    "job": "adoption-contract",
+    "command": "bash scripts/adoption/test.sh",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run"
+  },
+  "claims": {
+    "architectureDecision": "proposed-pending-fresh-review",
+    "closedSchemas": "validated",
+    "fixtureContract": "validated",
+    "typedCapabilityPrototype": "compile-tested-local-pending-hosted",
+    "productionGenerator": "not-tested",
+    "isolatedReflectionRuntime": "not-tested",
+    "realProviderRuntime": "not-tested",
+    "wordpressRuntime": "not-tested",
+    "providerTrustAdmission": "not-tested",
+    "publicPackageConsumer": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

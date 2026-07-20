@@ -1,0 +1,175 @@
+{
+  "schema": "wordpress-hx.adoption-contract.v1",
+  "schemaVersion": 1,
+  "contractId": "acme-calendar.wp70",
+  "contractVersion": "1.0.0",
+  "profile": {
+    "id": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "catalogSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e"
+  },
+  "provider": {
+    "id": "acme-calendar",
+    "kind": "wordpress-plugin",
+    "version": "2.4.1",
+    "artifactUrl": "https://example.test/acme-calendar/acme-calendar.2.4.1.zip",
+    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013",
+    "sourceUrl": "https://example.test/acme-calendar/source/2.4.1",
+    "sourceRevision": "fixture-acme-calendar-2.4.1",
+    "sourceSha256": "e6d6899aa7588bcc748dcb44c14a8fa7c232465fe3c6c37d519c295b2283efdf",
+    "runtimeOwner": "native-provider",
+    "implementationOwnership": "external-not-transferred"
+  },
+  "generation": {
+    "mode": "static-no-execution",
+    "mergePolicy": "one-complete-binding-from-highest-nonconflicting-authority",
+    "generator": {
+      "id": "wordpress-hx-adoption-generator",
+      "version": "0.0.0-fixture",
+      "sha256": "b95a1d1e416525f981226b11a4945d62bb23be15e7fdba14242e8846a27353f1"
+    },
+    "inputs": [
+      {
+        "id": "browser-types",
+        "target": "javascript",
+        "kind": "typescript-declaration",
+        "authorityClass": "authoritative-signature",
+        "precedence": 1,
+        "path": "fixtures/adoption-contract/inputs/index.d.ts",
+        "sha256": "8c0b693e30c977e941122ef7e6d6108bd70d14ab39dee89d6776e525cc48246f",
+        "executed": false
+      },
+      {
+        "id": "package-metadata",
+        "target": "provider",
+        "kind": "package-metadata",
+        "authorityClass": "package-or-source-signature",
+        "precedence": 3,
+        "path": "fixtures/adoption-contract/inputs/package-metadata.json",
+        "sha256": "eb0e484d9bb26022868a4f13d8bb53d887d8f5a2c3861308e339c1fdf9f09d1f",
+        "executed": false
+      },
+      {
+        "id": "php-stubs",
+        "target": "php",
+        "kind": "provider-stub",
+        "authorityClass": "authoritative-signature",
+        "precedence": 1,
+        "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+        "sha256": "0477e3b9da5d13bf7e8f30f5ac62909b69a962566bf3a9f19a0013e6c8ceb39f",
+        "executed": false
+      },
+      {
+        "id": "plugin-source",
+        "target": "wordpress",
+        "kind": "provider-runtime-source",
+        "authorityClass": "package-or-source-signature",
+        "precedence": 3,
+        "path": "fixtures/adoption-contract/inputs/plugin.php",
+        "sha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013",
+        "executed": false
+      }
+    ],
+    "reflection": null
+  },
+  "capabilitySet": {
+    "id": "acme-calendar.capabilities",
+    "version": "1.0.0"
+  },
+  "bindings": [
+    {
+      "id": "js.calendar.badge",
+      "target": "javascript",
+      "kind": "react-component",
+      "nativeName": "@acme/calendar.CalendarBadge",
+      "haxePath": "acme.calendar.browser.CalendarBadge",
+      "sourceInputId": "browser-types",
+      "capabilityId": "calendar.badge.browser",
+      "parameters": [
+        {
+          "position": 0,
+          "nativeName": "props",
+          "haxeName": "props",
+          "requirement": "required",
+          "passing": "value",
+          "type": {
+            "kind": "native-nominal",
+            "target": "javascript",
+            "name": "CalendarBadgeProps"
+          }
+        }
+      ],
+      "returnType": {
+        "kind": "native-nominal",
+        "target": "javascript",
+        "name": "ReactElement"
+      },
+      "status": "admitted-precise"
+    },
+    {
+      "id": "js.calendar.format-label",
+      "target": "javascript",
+      "kind": "module-function",
+      "nativeName": "@acme/calendar.formatCalendarLabel",
+      "haxePath": "acme.calendar.browser.CalendarLabels.format",
+      "sourceInputId": "browser-types",
+      "capabilityId": "calendar.badge.browser",
+      "parameters": [
+        {
+          "position": 0,
+          "nativeName": "count",
+          "haxeName": "count",
+          "requirement": "required",
+          "passing": "value",
+          "type": {
+            "kind": "int32"
+          }
+        }
+      ],
+      "returnType": {
+        "kind": "string"
+      },
+      "status": "admitted-precise"
+    },
+    {
+      "id": "php.calendar.list-events",
+      "target": "php",
+      "kind": "function",
+      "nativeName": "Acme\\Calendar\\list_events",
+      "haxePath": "acme.calendar.server.CalendarEvents.list",
+      "sourceInputId": "php-stubs",
+      "capabilityId": "calendar.read.php",
+      "parameters": [
+        {
+          "position": 0,
+          "nativeName": "limit",
+          "haxeName": "limit",
+          "requirement": "required",
+          "passing": "value",
+          "type": {
+            "kind": "int32"
+          }
+        }
+      ],
+      "returnType": {
+        "kind": "list",
+        "value": {
+          "kind": "native-nominal",
+          "target": "php",
+          "name": "Acme\\Calendar\\Event"
+        }
+      },
+      "status": "admitted-precise"
+    }
+  ],
+  "ownership": {
+    "providerRuntime": "external-native-provider",
+    "contract": "cli-owned-generated",
+    "applicationLogic": "haxe-authored",
+    "compilerRecognition": "generic-contract-only-no-provider-name-branches",
+    "regeneration": "private-stage-deterministic-diff-before-publication",
+    "removal": "manifest-owned-contract-and-facade-only-provider-untouched",
+    "modifiedGeneratedFile": "fail-closed-no-overwrite-or-delete"
+  },
+  "contractDigest": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+}

@@ -110,3 +110,13 @@ WordPress 7.0 MySQL/MariaDB runtime lanes. The bounded receipt is
 [`SDK-025-PHP-SOURCE-CORRELATION`](../manifests/evidence/sdk-025-php-source-correlation.json).
 SDK-034 still owns browser stack parsing, composed/two-stage lookup, and
 development/minified throw evidence.
+
+[`adoption-contract.schema.json`](adoption-contract.schema.json),
+[`adoption-capability.schema.json`](adoption-capability.schema.json), and
+[`adoption-review.schema.json`](adoption-review.schema.json) are ADR-015's
+proposed precise-or-omitted provider boundary. They separately bind exact
+provider/profile/generator inputs and complete bindings, scoped runtime probes,
+and every omission/conflict/evidence claim. The schemas forbid weak fallback
+types, default provider execution, serializable capability authority, and
+implicit provider implementation ownership. Their synthetic fixture does not
+implement the SDK-070/073 generators or admit a real provider.

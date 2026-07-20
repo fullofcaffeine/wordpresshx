@@ -1,0 +1,70 @@
+{
+  "schema": "wordpress-hx.adoption-capability.v1",
+  "schemaVersion": 1,
+  "capabilitySetId": "acme-calendar.capabilities",
+  "capabilitySetVersion": "1.0.0",
+  "contract": {
+    "id": "acme-calendar.wp70",
+    "version": "1.0.0",
+    "sha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+  },
+  "profile": {
+    "id": "wp70-release",
+    "catalogRevision": "wp70-release/catalog-v1",
+    "catalogSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e"
+  },
+  "provider": {
+    "id": "acme-calendar",
+    "version": "2.4.1",
+    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013"
+  },
+  "authority": {
+    "tokenScope": "declared-per-capability",
+    "tokenSerializable": false,
+    "tokenCacheable": false,
+    "staleTokenAuthority": false,
+    "absenceBehavior": "typed-unavailable-with-core-fallback",
+    "providerTrustAdmission": "separate-sdk-117-requirement"
+  },
+  "capabilities": [
+    {
+      "id": "calendar.badge.browser",
+      "target": "javascript",
+      "scope": "browser-module",
+      "optional": true,
+      "probe": {
+        "kind": "javascript-exports",
+        "requiredBindings": [
+          "js.calendar.badge",
+          "js.calendar.format-label"
+        ],
+        "requiredNativeSymbols": [
+          "@acme/calendar.CalendarBadge",
+          "@acme/calendar.formatCalendarLabel"
+        ],
+        "versionMatch": "exact",
+        "artifactMatch": "exact-sha256",
+        "conditionalFailure": "unavailable-not-partially-authorized"
+      }
+    },
+    {
+      "id": "calendar.read.php",
+      "target": "php",
+      "scope": "request",
+      "optional": true,
+      "probe": {
+        "kind": "wordpress-plugin-and-symbols",
+        "requiredBindings": [
+          "php.calendar.list-events"
+        ],
+        "requiredNativeSymbols": [
+          "Acme\\Calendar\\list_events"
+        ],
+        "versionMatch": "exact",
+        "artifactMatch": "exact-sha256",
+        "conditionalFailure": "unavailable-not-partially-authorized"
+      }
+    }
+  ],
+  "capabilitySetDigest": "0ab815d115f7dbad055a556e1cb5ccf3982c8900fc2ce8ce1111736f6f8dc383"
+}

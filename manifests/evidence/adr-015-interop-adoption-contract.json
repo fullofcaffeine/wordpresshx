@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-015-INTEROP-ADOPTION-CONTRACT",
+  "bead": "wordpresshx-adr-015",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T04:02:54Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/015-interop-and-adoption-contract-format.md",
+      "sha256": "9af8c34e0c8a0ae2eff5a10c22e4366f8ec7adb3558cb70c2de54f0ea13d33a8"
+    },
+    "architecture": {
+      "path": "manifests/adoption-contract-architecture.json",
+      "sha256": "0992dbfeb6e7747d11aad146201f12584a700391bf3d87d8089ca144a38ba7e4"
+    },
+    "adoptionContractSchema": {
+      "path": "schemas/adoption-contract.schema.json",
+      "sha256": "ae39f7ec38d8a6ecc3ac3fb5f7ed1c73369b1ff0e2ca6ef66f0a1d26bb23477f"
+    },
+    "adoptionCapabilitySchema": {
+      "path": "schemas/adoption-capability.schema.json",
+      "sha256": "d023d3f1b0a551182e1067f3b3a49ed5eae75c5c30944b7995bea691c1e1a281"
+    },
+    "adoptionReviewSchema": {
+      "path": "schemas/adoption-review.schema.json",
+      "sha256": "cc32857709d5a2a62ebd509716999bcda6a68f8c70858dea7c88336b5e20dc20"
+    },
+    "transcript": {
+      "path": "fixtures/adoption-contract/expected/capability-plan.txt",
+      "sha256": "739907a3fd3602c5142e0f68a1882bb327b1bca0b7452fac823a5e51cfec8a0b"
+    },
+    "independentValidator": {
+      "path": "scripts/adoption/validate-architecture.py",
+      "sha256": "ef471d3e4d1f45d4f41cc30600c8e78a1d7f5a22c8f30a9f372190c4fa740eb4"
+    },
+    "gate": {
+      "path": "scripts/adoption/test.sh",
+      "sha256": "87eeecfc40caa57c34fadcb3da4656ce2ffcd637a57cd97d3ee62e9f9a36158f"
+    },
+    "workflow": {
+      "path": ".github/workflows/adoption-contract.yml",
+      "sha256": "0c4a1608e3b04c1a60216ddc1ba269c8d95563420d3e8f2d799d1d3270766f63"
+    }
+  },
+  "authority": {
+    "modelIdentity": "wordpress-hx-adoption-contract-v1",
+    "defaultExecution": "forbidden",
+    "bindingPolicy": "precise-or-omitted",
+    "sourceMerge": "one-complete-binding-no-field-splicing",
+    "providerRuntimeOwner": "native-provider",
+    "implementationOwnershipTransferred": false,
+    "compilerProviderNameBranchesAllowed": false,
+    "weakFallbackTypesAllowed": false,
+    "capabilityTokensSerializable": false,
+    "capabilityTokensCacheable": false,
+    "staleCapabilityAuthority": false,
+    "providerTrustAdmissionAuthority": "SDK-117"
+  },
+  "verification": {
+    "commands": [
+      "python3 scripts/adoption/validate-architecture.py",
+      "bash scripts/adoption/test.sh"
+    ],
+    "sourceTreeSha256": "5fc1642e3605f6861a96decba22dfbf3d0dae903d5903b458afe88feef197d09",
+    "haxeVersion": "4.3.7",
+    "genesVersion": "1.36.3",
+    "typescriptVersion": "5.9.3",
+    "nodeVersion": "22.17.0",
+    "phpVersion": "8.4.7",
+    "strictNullSafety": true,
+    "strictHaxeForbiddenTokenCount": 0,
+    "bindingCount": 3,
+    "capabilityCount": 2,
+    "omissionCount": 4,
+    "conflictCount": 1,
+    "compileNegativeCount": 4,
+    "independentMutationCount": 31,
+    "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
+    "providerRuntimeExecutionDuringGeneration": false,
+    "realProviderUsed": false,
+    "wordpressRuntimeUsed": false,
+    "outcome": "passed-local-pending-hosted"
+  },
+  "review": {
+    "selfAdversarialReview": "completed-non-independent",
+    "correctedFindings": [
+      "Source precedence applies to one complete binding and never splices signature fields across authorities.",
+      "A stronger-versus-weaker signature conflict omits the binding instead of selecting a convenient shape.",
+      "Capability tokens are nominal, scoped, nonserializable, noncacheable, and grant no stale authority.",
+      "Contract generation does not transfer provider implementation, package, data, or removal ownership."
+    ],
+    "freshIndependentReview": "pending",
+    "acceptanceAuthorized": false
+  },
+  "referenceReview": {
+    "exactRecordCount": 3,
+    "repository": "haxe.ruby",
+    "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+    "codeOrFixtureBytesCopied": false,
+    "runtimeOrBuildDependencyCreated": false,
+    "genesSourceChanged": false
+  },
+  "hostedWorkflow": {
+    "workflow": "Adoption-contract architecture",
+    "job": "adoption-contract",
+    "required": true,
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run"
+  },
+  "limitations": [
+    "The schemas and Haxe surface are a bounded architecture prototype, not the SDK-070/073 production adoption implementation.",
+    "The fixture uses a synthetic provider and does not execute or test a real WordPress plugin, Composer package, or npm package.",
+    "The isolated-reflection lane is specified and mutation-tested but is not executed by this receipt.",
+    "The prototype emits a typed call plan and does not invoke a native provider ABI.",
+    "WordPress runtime, PHP 7.4, browser bundling, package consumers, provider trust admission, and removal transactions are not tested by this receipt.",
+    "Fresh independent architecture review remains pending."
+  ],
+  "claims": {
+    "architectureDecision": "proposed-pending-fresh-review",
+    "closedSchemas": "validated",
+    "fixtureContract": "validated",
+    "typedCapabilityPrototype": "compile-tested-local-pending-hosted",
+    "noProviderExecution": "fixture-tested",
+    "productionGenerator": "not-tested",
+    "isolatedReflectionRuntime": "not-tested",
+    "nativeProviderAbi": "not-tested",
+    "realProviderRuntime": "not-tested",
+    "wordpressRuntime": "not-tested",
+    "providerTrustAdmission": "not-tested",
+    "php74Runtime": "not-tested",
+    "publicPackageConsumer": "not-tested",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

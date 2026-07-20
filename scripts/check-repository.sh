@@ -6,6 +6,7 @@ cd "${repository_root}"
 
 required_files=(
   .gitleaks.toml
+  .github/workflows/adoption-contract.yml
   .github/workflows/output-context.yml
   .github/workflows/repository.yml
   .beads/hooks/pre-commit
@@ -39,6 +40,7 @@ required_files=(
   docs/adr/012-output-context-safety.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/014-source-maps-and-php-trace-correlation.md
+  docs/adr/015-interop-and-adoption-contract-format.md
   docs/adr/016-project-and-cli-configuration.md
   docs/adr/017-generated-output-version-control-policy.md
   docs/adr/020-licensing-and-generated-output.md
@@ -408,6 +410,9 @@ required_files=(
   schemas/effective-inputs.schema.json
   schemas/cli-event.schema.json
   schemas/source-correlation-index.schema.json
+  schemas/adoption-contract.schema.json
+  schemas/adoption-capability.schema.json
+  schemas/adoption-review.schema.json
   scripts/source-correlation/validate-contracts.py
   scripts/source-correlation/validate-sdk025.py
   scripts/semantic-plan/test-contract.py
@@ -417,6 +422,8 @@ required_files=(
   scripts/output-context/test-wordpress.sh
   scripts/output-context/test.sh
   scripts/output-context/validate-architecture.py
+  scripts/adoption/test.sh
+  scripts/adoption/validate-architecture.py
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
   scripts/generated-output-vcs/check-policy.py
@@ -538,6 +545,23 @@ required_files=(
   fixtures/output-context/test-negative/script_as_rest/Main.hx
   fixtures/output-context/test-negative/text_as_attribute/Main.hx
   fixtures/output-context/test-negative/url_as_text/Main.hx
+  fixtures/adoption-contract/README.md
+  fixtures/adoption-contract/contract/acme-calendar.capability.json
+  fixtures/adoption-contract/contract/acme-calendar.contract.json
+  fixtures/adoption-contract/contract/acme-calendar.review.json
+  fixtures/adoption-contract/expected/capability-plan.txt
+  fixtures/adoption-contract/inputs/generator.txt
+  fixtures/adoption-contract/inputs/index.d.ts
+  fixtures/adoption-contract/inputs/package-metadata.json
+  fixtures/adoption-contract/inputs/plugin.php
+  fixtures/adoption-contract/inputs/provider-stubs.php
+  fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/AcmeCalendar.hx
+  fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/Adoption.hx
+  fixtures/adoption-contract/test/Main.hx
+  fixtures/adoption-contract/test-negative/cross_request_scope/Main.hx
+  fixtures/adoption-contract/test-negative/direct_token_construction/Main.hx
+  fixtures/adoption-contract/test-negative/omitted_binding/Main.hx
+  fixtures/adoption-contract/test-negative/wrong_capability/Main.hx
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -551,6 +575,7 @@ required_files=(
   manifests/semantic-plan-architecture.json
   manifests/schema-codec-architecture.json
   manifests/output-context-architecture.json
+  manifests/adoption-contract-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/generated-output-vcs-policy.json
@@ -577,6 +602,7 @@ required_files=(
   manifests/evidence/adr-006-semantic-plan-contract.json
 	manifests/evidence/adr-009-schema-codec-authority.json
   manifests/evidence/adr-012-output-context-safety.json
+  manifests/evidence/adr-015-interop-adoption-contract.json
   manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
@@ -1003,6 +1029,16 @@ output_context_architecture = json.loads(
 )
 adr012_receipt = json.loads(
     Path("manifests/evidence/adr-012-output-context-safety.json").read_text(
+        encoding="utf-8"
+    )
+)
+adoption_architecture = json.loads(
+    Path("manifests/adoption-contract-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+adr015_receipt = json.loads(
+    Path("manifests/evidence/adr-015-interop-adoption-contract.json").read_text(
         encoding="utf-8"
     )
 )
@@ -2178,6 +2214,161 @@ elif adr012_hosted["status"] == "passed":
     assert sha1.fullmatch(adr012_hosted["commit"])
 else:
     raise AssertionError("output-context hosted status is invalid")
+
+assert adoption_architecture["schemaVersion"] == 1
+assert adoption_architecture["decisionId"] == "ADR-015"
+assert adoption_architecture["status"] == "proposed-pending-fresh-review"
+adoption_authority = adoption_architecture["authority"]
+assert adoption_authority["defaultExecution"] == "forbidden"
+assert adoption_authority["bindingPolicy"] == "precise-or-omitted"
+assert adoption_authority["sourceMerge"] == (
+    "one-complete-binding-no-field-splicing"
+)
+assert adoption_authority["providerRuntimeOwner"] == "native-provider"
+assert adoption_authority["implementationOwnershipTransferred"] is False
+assert adoption_authority["compilerProviderNameBranchesAllowed"] is False
+assert adoption_authority["weakFallbackTypesAllowed"] is False
+assert adoption_authority["capabilityTokensSerializable"] is False
+assert adoption_authority["staleCapabilityAuthority"] is False
+assert adoption_architecture["sourcePrecedence"] == [
+    "authoritative-signature",
+    "isolated-reflection-opt-in",
+    "package-or-source-signature",
+    "documentation",
+    "curated-contract",
+]
+adoption_selection = adoption_architecture["selection"]
+assert adoption_selection["unit"] == "one-complete-native-binding"
+assert adoption_selection["fieldSplicingAcrossSources"] is False
+assert adoption_selection["strongerConflictWithLowerSource"] == (
+    "omit-binding-and-report"
+)
+assert adoption_selection["unknownOrUnsupportedShape"] == (
+    "omit-with-stable-review-code"
+)
+assert adoption_selection["generatedBroadFallback"] is False
+adoption_execution = adoption_architecture["execution"]
+assert adoption_execution["defaultMode"] == "static-no-execution"
+assert adoption_execution["providerRuntimeSourceExecutedByDefault"] is False
+assert adoption_execution["reflectionMode"] == (
+    "explicit-isolated-opt-in-only"
+)
+assert adoption_execution["reflectionNetwork"] == "none"
+assert adoption_execution["reflectionReceiptRequired"] is True
+assert adoption_execution["reflectionResultBecomesUniversalAuthority"] is False
+adoption_contracts = adoption_architecture["contracts"]
+assert adoption_contracts["adoption"]["identity"] == (
+    "wordpress-hx.adoption-contract.v1"
+)
+assert adoption_contracts["capability"]["identity"] == (
+    "wordpress-hx.adoption-capability.v1"
+)
+assert adoption_contracts["review"]["identity"] == (
+    "wordpress-hx.adoption-review.v1"
+)
+assert len(adoption_architecture["providerLayers"]) == 2
+assert [stage["id"] for stage in adoption_architecture["evidenceStages"]] == [
+    "inventoried",
+    "contract-generated",
+    "contract-tested",
+    "provider-runtime-tested",
+]
+adoption_prototype = adoption_architecture["prototypeEvidence"]
+assert adoption_prototype["bindingCount"] == 3
+assert adoption_prototype["capabilityCount"] == 2
+assert adoption_prototype["omissionCount"] == 4
+assert adoption_prototype["conflictCount"] == 1
+assert adoption_prototype["compileNegativeCount"] == 4
+assert adoption_prototype["independentMutationCount"] == 31
+assert adoption_prototype["providerRuntimeExecutionDuringGeneration"] is False
+assert adoption_prototype["realProviderUsed"] is False
+assert len(adoption_architecture["referenceReview"]) == 3
+for adoption_reference in adoption_architecture["referenceReview"]:
+    assert sha1.fullmatch(adoption_reference["commit"])
+    assert sha1.fullmatch(adoption_reference["gitBlob"])
+    assert sha256.fullmatch(adoption_reference["sha256"])
+    assert adoption_reference["copiedBytes"] is False
+
+assert adr015_receipt["schemaVersion"] == 1
+assert adr015_receipt["receiptId"] == "ADR-015-INTEROP-ADOPTION-CONTRACT"
+assert adr015_receipt["bead"] == "wordpresshx-adr-015"
+assert adr015_receipt["status"] in {
+    "implemented-hosted-pending",
+    "implemented-review-pending",
+    "verified",
+}
+for adr015_subject in adr015_receipt["subject"].values():
+    assert hashlib.sha256(Path(adr015_subject["path"]).read_bytes()).hexdigest() == (
+        adr015_subject["sha256"]
+    )
+adr015_authority = adr015_receipt["authority"]
+assert adr015_authority["defaultExecution"] == "forbidden"
+assert adr015_authority["bindingPolicy"] == "precise-or-omitted"
+assert adr015_authority["sourceMerge"] == (
+    "one-complete-binding-no-field-splicing"
+)
+assert adr015_authority["implementationOwnershipTransferred"] is False
+assert adr015_authority["weakFallbackTypesAllowed"] is False
+assert adr015_authority["capabilityTokensSerializable"] is False
+assert adr015_authority["capabilityTokensCacheable"] is False
+assert adr015_authority["staleCapabilityAuthority"] is False
+adr015_verification = adr015_receipt["verification"]
+assert adr015_verification["sourceTreeSha256"] == adoption_prototype[
+    "sourceTreeSha256"
+]
+assert adr015_verification["strictNullSafety"] is True
+assert adr015_verification["strictHaxeForbiddenTokenCount"] == 0
+assert adr015_verification["bindingCount"] == 3
+assert adr015_verification["capabilityCount"] == 2
+assert adr015_verification["omissionCount"] == 4
+assert adr015_verification["conflictCount"] == 1
+assert adr015_verification["compileNegativeCount"] == 4
+assert adr015_verification["independentMutationCount"] == 31
+assert adr015_verification[
+    "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
+] is True
+assert adr015_verification["providerRuntimeExecutionDuringGeneration"] is False
+assert adr015_verification["realProviderUsed"] is False
+assert adr015_verification["wordpressRuntimeUsed"] is False
+assert adr015_receipt["review"]["freshIndependentReview"] == "pending"
+assert adr015_receipt["review"]["acceptanceAuthorized"] is False
+assert adr015_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert adr015_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert adr015_receipt["referenceReview"]["genesSourceChanged"] is False
+assert adr015_receipt["claims"]["publicationAuthorized"] is False
+for unproven_adoption_claim in (
+    "productionGenerator",
+    "isolatedReflectionRuntime",
+    "nativeProviderAbi",
+    "realProviderRuntime",
+    "wordpressRuntime",
+    "providerTrustAdmission",
+    "php74Runtime",
+    "publicPackageConsumer",
+    "productionSupport",
+):
+    assert adr015_receipt["claims"][unproven_adoption_claim] == "not-tested"
+adr015_hosted = adr015_receipt["hostedWorkflow"]
+adoption_hosted = adoption_architecture["hostedGate"]
+assert adr015_hosted["workflow"] == "Adoption-contract architecture"
+assert adr015_hosted["job"] == "adoption-contract"
+assert adr015_hosted["required"] is True
+assert adoption_hosted["job"] == adr015_hosted["job"]
+assert adoption_hosted["status"] == adr015_hosted["status"]
+for hosted_identity in ("runId", "jobId", "commit"):
+    assert adoption_hosted[hosted_identity] == adr015_hosted[hosted_identity]
+if adr015_hosted["status"] == "pending-first-hosted-main-run":
+    assert adr015_receipt["status"] == "implemented-hosted-pending"
+    assert adr015_hosted["runId"] is None
+    assert adr015_hosted["jobId"] is None
+    assert adr015_hosted["commit"] is None
+elif adr015_hosted["status"] == "passed":
+    assert isinstance(adr015_hosted["runId"], int)
+    assert isinstance(adr015_hosted["jobId"], int)
+    assert sha1.fullmatch(adr015_hosted["commit"])
+else:
+    raise AssertionError("adoption-contract hosted status is invalid")
+
 assert semantic_plan_receipt["claims"]["architectureDecision"] == "accepted"
 assert semantic_plan_receipt["claims"]["schemaAndFixtureContract"] == "validated"
 for unproven_receipt_claim in (
@@ -9380,6 +9571,7 @@ python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/contracts/validate-schema-authority.py
 python3 scripts/output-context/validate-architecture.py
+python3 scripts/adoption/validate-architecture.py
 python3 scripts/ownership/test-contract.py
 python3 scripts/generated-output-vcs/test-policy.py
 python3 scripts/project-cli/test-contract.py

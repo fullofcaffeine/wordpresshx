@@ -1,0 +1,11 @@
+{
+  "name": "@acme/calendar",
+  "version": "2.4.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  }
+}

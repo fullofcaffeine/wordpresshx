@@ -18,6 +18,13 @@ Source Map v3 chain fixtures. Its validator authenticates exact bytes, hashes,
 UTF-8 coordinates, source roots, map-layer continuity, retention, and
 fail-closed mutations. It is not PHP/browser runtime or trace-CLI evidence.
 
+`adoption-contract/` contains ADR-015's synthetic cross-target provider inputs,
+three closed self-digested adoption records, a request/browser capability-token
+prototype, and four compile-negative programs. Its gate proves three precise
+bindings, four explicit omissions, one source conflict, deterministic
+Haxe/Genes/PHP behavior, and no provider execution. It is not a production
+generator, real provider, WordPress runtime, trust admission, or support claim.
+
 `semantic-plan/` contains the ADR-006 canonical plan and staged-emission
 contract fixtures. The validator binds exact node schemas, profile
 capabilities, UTF-8 source spans, projection coverage, and expected artifact

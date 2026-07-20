@@ -68,6 +68,15 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   SSR, and clean WordPress 7.0, while production SDK types and HXX lowering
   remain follow-up work pending fresh independent review. Its focused hosted
   gate passes at the exact commit recorded by the receipt.
+- `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
+  complete-binding source precedence, precise-or-omitted contract, scoped
+  capability, native-provider ownership, and app-local/companion-layer lock.
+  Its synthetic fixture validates three bindings, four omissions, one conflict,
+  four compile-negative boundaries, and thirty-one independent mutations across
+  Haxe, Genes/strict TypeScript/Node, and PHP. It does not implement a production
+  generator, execute or admit a real provider, test WordPress, or authorize
+  production support; hosted evidence and fresh independent review remain
+  pending.
 - `semantic-collector-architecture.json` is the SDK-040 implementation lock for
   typed module/hook/resource/public-environment declarations, compilation-server
   metadata recovery, canonical plan and input-sidecar generation, exact-profile

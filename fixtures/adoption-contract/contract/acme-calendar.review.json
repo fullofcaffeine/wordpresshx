@@ -1,0 +1,100 @@
+{
+  "schema": "wordpress-hx.adoption-review.v1",
+  "schemaVersion": 1,
+  "reportId": "acme-calendar.review.1",
+  "contract": {
+    "id": "acme-calendar.wp70",
+    "version": "1.0.0",
+    "sha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+  },
+  "provider": {
+    "id": "acme-calendar",
+    "version": "2.4.1",
+    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013"
+  },
+  "generator": {
+    "id": "wordpress-hx-adoption-generator",
+    "version": "0.0.0-fixture",
+    "sha256": "b95a1d1e416525f981226b11a4945d62bb23be15e7fdba14242e8846a27353f1"
+  },
+  "summary": {
+    "discovered": 7,
+    "included": 3,
+    "omitted": 4,
+    "conflicts": 1
+  },
+  "includedBindings": [
+    "js.calendar.badge",
+    "js.calendar.format-label",
+    "php.calendar.list-events"
+  ],
+  "omissions": [
+    {
+      "nativeName": "@acme/calendar.CalendarRegistry",
+      "target": "javascript",
+      "kind": "exported-value",
+      "code": "dynamic-property",
+      "reason": "the declaration exposes an open property bag with no closed provider schema",
+      "sourceInputIds": [
+        "browser-types"
+      ],
+      "requiredAction": "obtain-authoritative-signature"
+    },
+    {
+      "nativeName": "Acme\\Calendar\\Event::__call",
+      "target": "php",
+      "kind": "instance-method",
+      "code": "magic-member",
+      "reason": "the provider does not publish a finite method and return contract",
+      "sourceInputIds": [
+        "php-stubs"
+      ],
+      "requiredAction": "omit"
+    },
+    {
+      "nativeName": "Acme\\Calendar\\conditional_helper",
+      "target": "php",
+      "kind": "function",
+      "code": "conflicting-authority",
+      "reason": "the authoritative stub and source signature disagree, so neither shape is emitted",
+      "sourceInputIds": [
+        "php-stubs",
+        "plugin-source"
+      ],
+      "requiredAction": "obtain-authoritative-signature"
+    },
+    {
+      "nativeName": "Acme\\Calendar\\mutate_all",
+      "target": "php",
+      "kind": "function",
+      "code": "by-reference-variadic",
+      "reason": "the v1 ABI algebra does not prove aliasing and variadic reference behavior",
+      "sourceInputIds": [
+        "php-stubs"
+      ],
+      "requiredAction": "supply-curated-precise-contract"
+    }
+  ],
+  "conflicts": [
+    {
+      "nativeName": "Acme\\Calendar\\conditional_helper",
+      "strongerInputId": "php-stubs",
+      "weakerInputId": "plugin-source",
+      "resolution": "omit-binding-and-report"
+    }
+  ],
+  "reflection": {
+    "requested": false,
+    "executed": false,
+    "isolationReceiptSha256": null
+  },
+  "claims": {
+    "evidenceStage": "contract-generated",
+    "reviewRequired": true,
+    "providerRuntimeTested": false,
+    "providerTrustAdmitted": false,
+    "productionSupported": false,
+    "implementationOwnershipTransferred": false
+  },
+  "reportDigest": "48b3fd951636e535d7ab114804bc0847e7575240be8e40f02676613646a4ca71"
+}
