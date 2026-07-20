@@ -104,6 +104,7 @@ expect_compile_failure unknown_metadata WPX6020
 expect_compile_failure forward_metadata WPX6021
 expect_compile_failure wrong_default WPX6018
 expect_compile_failure wrong_source WPX6012
+expect_compile_failure wrong_role WPX6014
 expect_compile_failure wrong_category WPX6027
 expect_compile_failure missing_asset WPX6030
 expect_compile_failure unknown_support WPX6029

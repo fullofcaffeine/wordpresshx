@@ -197,11 +197,16 @@ different blocks. A public Haxe class is the attribute schema. Field metadata
 adds only the WordPress facts Haxe cannot infer, such as where saved markup is
 read from:
 
+Source and role values use their complete SDK type paths because these
+annotations live on a separate schema class. The macro validates the nominal
+enum-abstract identity, so a local lookalike named `AttributeSource` or
+`AttributeRole` fails compilation instead of silently producing metadata.
+
 ~~~haxe
 extern class CalloutAttributes {
-  @:wpSource(AttributeSource.RichText)
+  @:wpSource(wordpress.hx.gutenberg.block.AttributeSource.RichText)
   @:wpSelector("p")
-  @:wpRole(AttributeRole.Content)
+  @:wpRole(wordpress.hx.gutenberg.block.AttributeRole.Content)
   @:wpDefault("")
   public var message:String;
 

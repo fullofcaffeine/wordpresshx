@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-060-TYPED-BLOCK-METADATA",
   "bead": "wordpresshx-sdk-060",
-  "status": "verified",
-  "observedAt": "2026-07-20T21:19:41Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T21:37:55Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -20,7 +20,7 @@
     },
     "attributeDeriver": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockAttributeDeriver.hx",
-      "sha256": "16cfce52f66e9b812554df86ddcf5684ef4c7dfb5fa5306f9fdbfbd62a6731d5"
+      "sha256": "a53719bb41d9ee4dffbd42217c09f9550c0fe28ee955a3159fdc4cfee0ae0d17"
     },
     "optionsParser": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockOptions.hx",
@@ -48,7 +48,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-block-metadata.sh",
-      "sha256": "cea6cde969650992946f2d5dfdd4e6bd1d5e1933783f8682df025ab36bbd4e60"
+      "sha256": "6ce9d9ff61bc56c436608329d8a584f9045d56913bce12d48c665544de9f3d31"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-block-metadata-lane.sh",
@@ -94,7 +94,7 @@
     "companionApplicationJavaScriptOrTypeScriptAuthored": false,
     "independentOracleLanguage": "native PHP external consumer",
     "productPhpCompilerOwner": "compiler/reflaxe.php via SDK-062",
-    "commit": "b3560a257d3cfd6d6a2e744710c08b520bbfd351"
+    "commit": null
   },
   "compilation": {
     "blockCount": 2,
@@ -118,6 +118,7 @@
   "negativeDiagnostics": {
     "compileTime": {
       "WPX6012": "lookalike attribute source type",
+      "WPX6014": "lookalike attribute role type",
       "WPX6018": "attribute default differs from the Haxe field type",
       "WPX6020": "unknown block metadata key",
       "WPX6021": "forward-only or release-forbidden metadata key",
@@ -126,7 +127,7 @@
       "WPX6029": "unknown support key",
       "WPX6030": "missing or wrong-owner asset reference"
     },
-    "negativeCompileFixtureCount": 8,
+    "negativeCompileFixtureCount": 9,
     "independentMutationCount": 8,
     "mutations": [
       "unknown metadata key",
@@ -149,39 +150,36 @@
     "deterministicCompilerAndVerifier": "passed",
     "phpOracleSyntax": "passed",
     "forbiddenHaxeWeakConstructs": "none",
-    "realWordPressRuntime": "passed-hosted-clean-runner",
+    "realWordPressRuntime": "pending-hosted-clean-runner",
     "localDockerDiagnostic": "docker info did not return within 10 seconds on the shared development daemon; no product byte failed"
   },
   "realWordPressRuntime": {
     "check": "wordpresshx-sdk060-real-wordpress-registration-v1",
-    "outcome": "passed",
+    "outcome": "pending-hosted-clean-runner",
     "wordpressVersion": "7.0",
     "profileId": "wp70-release",
-    "registeredBlocks": [
-      "wordpresshx/book-grid",
-      "wordpresshx/callout"
-    ],
-    "dynamicRendered": true,
+    "registeredBlocks": null,
+    "dynamicRendered": null,
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d"
   },
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "passed",
-    "commit": "b3560a257d3cfd6d6a2e744710c08b520bbfd351",
-    "runId": 29779136488,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29779136488",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "url": null,
     "haxeJob": "haxe",
     "haxeStep": "Test typed profile-specific block.json generation",
-    "haxeJobId": 88475803891,
+    "haxeJobId": null,
     "wordpressJob": "wordpress-runtime",
     "wordpressStep": "Prove typed block metadata on WordPress 7.0",
-    "wordpressJobId": 88475803948,
-    "jobCount": 13,
-    "allJobsPassed": true,
-    "artifactHashesMatched": true,
-    "completedAt": "2026-07-20T21:19:41Z"
+    "wordpressJobId": null,
+    "jobCount": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -195,7 +193,7 @@
     "deterministicNativeBlockJson": "replay-tested",
     "finalFileAndHandleOwnership": "compile-and-mutation-tested",
     "serverClientRegistrationParity": "plan-and-mutation-tested",
-    "realWordPressMetadataRegistration": "real-wordpress-tested",
+    "realWordPressMetadataRegistration": "hosted-pending",
     "realBrowserBlockRegistration": "not-tested-owned-by-sdk-061",
     "haxeGeneratedDynamicRenderPhp": "not-tested-owned-by-sdk-062",
     "productionSupport": "not-tested"

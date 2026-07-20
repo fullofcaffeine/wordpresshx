@@ -1,12 +1,9 @@
 package sdk060.fixture;
 
-import wordpress.hx.gutenberg.block.AttributeRole;
-import wordpress.hx.gutenberg.block.AttributeSource;
-
 extern class CalloutAttributes {
-	@:wpSource(AttributeSource.RichText)
+	@:wpSource(wordpress.hx.gutenberg.block.AttributeSource.RichText)
 	@:wpSelector("p")
-	@:wpRole(AttributeRole.Content)
+	@:wpRole(wordpress.hx.gutenberg.block.AttributeRole.Content)
 	@:wpDefault("")
 	public var message:String;
 

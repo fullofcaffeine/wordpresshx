@@ -8148,6 +8148,7 @@ for sdk060_hash_name in (
 sdk060_diagnostics = sdk060_receipt["negativeDiagnostics"]
 assert set(sdk060_diagnostics["compileTime"]) == {
     "WPX6012",
+    "WPX6014",
     "WPX6018",
     "WPX6020",
     "WPX6021",
@@ -8156,7 +8157,7 @@ assert set(sdk060_diagnostics["compileTime"]) == {
     "WPX6029",
     "WPX6030",
 }
-assert sdk060_diagnostics["negativeCompileFixtureCount"] == 8
+assert sdk060_diagnostics["negativeCompileFixtureCount"] == 9
 assert sdk060_diagnostics["independentMutationCount"] == 8
 assert len(sdk060_diagnostics["mutations"]) == 8
 assert sdk060_diagnostics["originalSourcePaths"] is True

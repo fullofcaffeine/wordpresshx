@@ -210,12 +210,8 @@ class BlockAttributeDeriver {
 			return fail(code, "attribute " + field.name + " needs one " + name + " value", field.pos);
 		}
 		final expression = entries[0].params[0];
-		final expectedOwner = name == ":wpSource" ? "AttributeSource" : "AttributeRole";
-		switch expression.expr {
-			case EField(owner, _) if (terminalName(owner) == expectedOwner):
-			case _:
-				return fail(code, "attribute " + field.name + " must use a typed " + expectedOwner + " value", expression.pos);
-		}
+		final expectedOwner = name == ":wpSource" ? "wordpress.hx.gutenberg.block.AttributeSource" : "wordpress.hx.gutenberg.block.AttributeRole";
+		validateChoiceOwner(field.name, expression, expectedOwner, code);
 		final terminal = terminalName(expression);
 		final value = switch terminal {
 			case "Attribute": "attribute";
@@ -231,6 +227,24 @@ class BlockAttributeDeriver {
 			return fail(code, "attribute " + field.name + " uses unsupported " + name + " value " + value, expression.pos);
 		}
 		return value;
+	}
+
+	static function validateChoiceOwner(fieldName:String, expression:Expr, expectedOwner:String, code:String):Void {
+		final actualType = Context.typeof(expression);
+		final expectedName = expectedOwner.substr(expectedOwner.lastIndexOf(".") + 1);
+		final ownerMatches = switch actualType {
+			case TAbstract(reference, parameters) if (parameters.length == 0): final declaration = reference.get(); declaration.module == expectedOwner && declaration.name == expectedName;
+			case _:
+				false;
+		};
+		if (!ownerMatches) {
+			fail(code, "attribute "
+				+ fieldName
+				+ " must use a typed "
+				+ expectedOwner
+				+ " value, found "
+				+ TypeTools.toString(actualType), expression.pos);
+		}
 	}
 
 	static function validateSource(name:String, source:Null<String>, selector:Null<String>, htmlAttribute:Null<String>, position:Position):Void {
