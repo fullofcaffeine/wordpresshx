@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-060-TYPED-BLOCK-METADATA",
   "bead": "wordpresshx-sdk-060",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-20T21:37:55Z",
+  "status": "verified",
+  "observedAt": "2026-07-20T21:52:35Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -94,7 +94,7 @@
     "companionApplicationJavaScriptOrTypeScriptAuthored": false,
     "independentOracleLanguage": "native PHP external consumer",
     "productPhpCompilerOwner": "compiler/reflaxe.php via SDK-062",
-    "commit": null
+    "commit": "42949e5dcc98c3f2a86394594a0b5bf3ac72b9eb"
   },
   "compilation": {
     "blockCount": 2,
@@ -150,36 +150,39 @@
     "deterministicCompilerAndVerifier": "passed",
     "phpOracleSyntax": "passed",
     "forbiddenHaxeWeakConstructs": "none",
-    "realWordPressRuntime": "pending-hosted-clean-runner",
+    "realWordPressRuntime": "passed-hosted-clean-runner",
     "localDockerDiagnostic": "docker info did not return within 10 seconds on the shared development daemon; no product byte failed"
   },
   "realWordPressRuntime": {
     "check": "wordpresshx-sdk060-real-wordpress-registration-v1",
-    "outcome": "pending-hosted-clean-runner",
+    "outcome": "passed",
     "wordpressVersion": "7.0",
     "profileId": "wp70-release",
-    "registeredBlocks": null,
-    "dynamicRendered": null,
+    "registeredBlocks": [
+      "wordpresshx/book-grid",
+      "wordpresshx/callout"
+    ],
+    "dynamicRendered": true,
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d"
   },
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "url": null,
+    "status": "passed",
+    "commit": "42949e5dcc98c3f2a86394594a0b5bf3ac72b9eb",
+    "runId": 29781259253,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29781259253",
     "haxeJob": "haxe",
     "haxeStep": "Test typed profile-specific block.json generation",
-    "haxeJobId": null,
+    "haxeJobId": 88482797864,
     "wordpressJob": "wordpress-runtime",
     "wordpressStep": "Prove typed block metadata on WordPress 7.0",
-    "wordpressJobId": null,
-    "jobCount": null,
-    "allJobsPassed": null,
-    "artifactHashesMatched": null,
-    "completedAt": null
+    "wordpressJobId": 88482797764,
+    "jobCount": 13,
+    "allJobsPassed": true,
+    "artifactHashesMatched": true,
+    "completedAt": "2026-07-20T21:52:35Z"
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -193,7 +196,7 @@
     "deterministicNativeBlockJson": "replay-tested",
     "finalFileAndHandleOwnership": "compile-and-mutation-tested",
     "serverClientRegistrationParity": "plan-and-mutation-tested",
-    "realWordPressMetadataRegistration": "hosted-pending",
+    "realWordPressMetadataRegistration": "real-wordpress-tested",
     "realBrowserBlockRegistration": "not-tested-owned-by-sdk-061",
     "haxeGeneratedDynamicRenderPhp": "not-tested-owned-by-sdk-062",
     "productionSupport": "not-tested"
