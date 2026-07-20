@@ -163,10 +163,10 @@
     "workflow": ".github/workflows/adoption-contract.yml",
     "job": "adoption-contract",
     "command": "bash scripts/adoption/test.sh",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run"
+    "runId": 29716562008,
+    "jobId": 88270893309,
+    "commit": "be8041d0d00c21d44fe2c0198e2d101c1f383908",
+    "status": "passed"
   },
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",

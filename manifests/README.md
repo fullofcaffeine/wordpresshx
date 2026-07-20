@@ -75,8 +75,8 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   four compile-negative boundaries, and thirty-one independent mutations across
   Haxe, Genes/strict TypeScript/Node, and PHP. It does not implement a production
   generator, execute or admit a real provider, test WordPress, or authorize
-  production support; hosted evidence and fresh independent review remain
-  pending.
+  production support; the exact focused hosted gate passes while fresh
+  independent review remains pending.
 - `semantic-collector-architecture.json` is the SDK-040 implementation lock for
   typed module/hook/resource/public-environment declarations, compilation-server
   metadata recovery, canonical plan and input-sidecar generation, exact-profile

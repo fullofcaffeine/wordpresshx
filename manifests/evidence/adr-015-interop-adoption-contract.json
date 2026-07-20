@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-015-INTEROP-ADOPTION-CONTRACT",
   "bead": "wordpresshx-adr-015",
-  "status": "implemented-hosted-pending",
+  "status": "implemented-review-pending",
   "observedAt": "2026-07-20T04:02:54Z",
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
-      "sha256": "9af8c34e0c8a0ae2eff5a10c22e4366f8ec7adb3558cb70c2de54f0ea13d33a8"
+      "sha256": "e25a134e9ecaca3c9315714ddb1387e7016617033b5f4436c27e31595d8fbf27"
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "0992dbfeb6e7747d11aad146201f12584a700391bf3d87d8089ca144a38ba7e4"
+      "sha256": "cd7852ddd06ab0fadaaad7a9c77467ebc31947f7c604fcab3924cffc0044f94a"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -79,7 +79,7 @@
     "providerRuntimeExecutionDuringGeneration": false,
     "realProviderUsed": false,
     "wordpressRuntimeUsed": false,
-    "outcome": "passed-local-pending-hosted"
+    "outcome": "passed-local-and-hosted"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -104,10 +104,10 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run"
+    "runId": 29716562008,
+    "jobId": 88270893309,
+    "commit": "be8041d0d00c21d44fe2c0198e2d101c1f383908",
+    "status": "passed"
   },
   "limitations": [
     "The schemas and Haxe surface are a bounded architecture prototype, not the SDK-070/073 production adoption implementation.",
@@ -121,8 +121,8 @@
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-pending-hosted",
-    "noProviderExecution": "fixture-tested",
+    "typedCapabilityPrototype": "compile-tested-local-and-hosted",
+    "noProviderExecution": "fixture-tested-local-and-hosted",
     "productionGenerator": "not-tested",
     "isolatedReflectionRuntime": "not-tested",
     "nativeProviderAbi": "not-tested",

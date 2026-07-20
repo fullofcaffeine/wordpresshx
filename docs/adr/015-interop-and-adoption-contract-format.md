@@ -358,8 +358,12 @@ bash scripts/check-repository.sh
 The independent Python validator authenticates every input, schema, fixture,
 contract, capability set, review report, and architecture invariant, then
 rejects thirty-one independent mutations. The focused hosted job is
-`adoption-contract`. Hosted execution and fresh independent review are separate
-gates; this ADR remains proposed until both are recorded.
+`adoption-contract`. Public run
+[`29716562008`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29716562008),
+job `88270893309`, passed the complete corpus at implementation commit
+`be8041d0d00c21d44fe2c0198e2d101c1f383908`. Hosted execution and fresh
+independent review are separate gates; this ADR remains proposed pending that
+fresh review.
 
 The static WordPress metadata boundary follows the official
 [plugin header requirements](https://developer.wordpress.org/plugins/plugin-basics/header-requirements/)
