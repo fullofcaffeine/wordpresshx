@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-064-TYPED-DATA-STORE",
   "bead": "wordpresshx-sdk-064",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-20T08:55:55Z",
+  "status": "verified",
+  "observedAt": "2026-07-20T10:01:46Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -166,7 +166,7 @@
     "translationsExtractedFromHaxe": true,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": null
+    "commit": "f8620993bc3cbe19da578f258c95a67cc88c0327"
   },
   "exactProfileVerification": {
     "publicPackage": "@wordpress/data@10.40.0",
@@ -264,19 +264,30 @@
     "job": "wordpress-runtime",
     "step": "Prove the typed native data store on WordPress 7.0",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null,
-    "jobUrl": null,
-    "jobCount": null,
+    "status": "passed",
+    "commit": "f8620993bc3cbe19da578f258c95a67cc88c0327",
+    "runId": 29733035785,
+    "jobId": 88321767673,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29733035785",
+    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29733035785/job/88321767673",
+    "jobCount": 13,
     "generatedTreeSha256": "2f4aada3c1d004de42287d6ea33fe5db750d045db1584c8788b3d803749e7c04",
     "productionBundleSha256": "c5686f0664c4f199eb0968b950af3df3ab671c64358888d49cb43a46b55475a6",
-    "allJobsPassed": null,
-    "artifactHashesMatched": null,
-    "completedAt": null
+    "allJobsPassed": true,
+    "artifactHashesMatched": true,
+    "completedAt": "2026-07-20T10:01:46Z"
   },
+  "failedHostedAttempts": [
+    {
+      "runId": 29731343651,
+      "commit": "b19af85ec30acbf720b20e16eb261abf393f1ef3",
+      "outcome": "failed-clean-runner-integration",
+      "reason": "The WordPress job lacked the optional rg command, and the Haxe scaffold integration rejected two stale SDK-045 receipt hashes after the repository workflow and validator changed. The typed data-store bytes did not fail; the portable grep fallback and both content-addressed receipt fields were then verified locally and hosted.",
+      "completedAt": "2026-07-20T09:30:08Z",
+      "failedJobs": 2,
+      "otherJobsPassed": 11
+    }
+  ],
   "changeDecision": {
     "genesSourceChanged": false,
     "genesPullRequest": null,
