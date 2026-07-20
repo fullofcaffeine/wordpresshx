@@ -4,12 +4,13 @@ Reserved for consumer-facing examples that use only public SDK paths and are
 installed/tested from their final packages. There are no working examples yet;
 hidden test-only APIs and unsupported capability demonstrations are forbidden.
 
-The planned production-evidence portfolio includes a complete native
-Haxe-managed WordPress site, a subject-specific landing page, an editorial
-blog, an open-source WooCommerce shop, a paid consultation booking funnel, and
-a native Gutenberg extension/block workbench. A companion recipe catalog maps
-each public stable SDK capability to a smallest runnable example and an
-integrated application—or records that capability as deferred.
+The planned production-evidence portfolio is led by the flagship Todo Studio
+and includes a complete native Haxe-managed WordPress site, a subject-specific
+landing page, an editorial blog, an open-source WooCommerce shop, a paid
+consultation booking funnel, a native Gutenberg extension/block workbench, and
+a community events atlas. A companion recipe catalog maps each public stable
+SDK capability and modern architecture lane to a smallest runnable example and
+an integrated application—or records that capability as deferred.
 
 Reusable typed WordPress/Gutenberg/provider/token/rendering contracts and the
 payment-to-booking state machine belong in SDK packages; site-specific content
@@ -24,6 +25,13 @@ offline test payment method. It may not rely on a redirect, browser flag, live
 credential, proprietary extension, or unreviewed booking provider. The
 Gutenberg workbench must use the public typed block/editor surface and pass
 real editor, serialization, preview, accessibility, update, and removal gates.
+
+The exact native WordPress, block-theme, hybrid-island, admin-SPA, decoupled
+SPA/PWA, headless SSR/SSG/ISR, BFF, dual-renderer, widget, multisite, and
+event-driven coverage is defined in the
+[`reference-application-architectures.md`](../docs/architecture/reference-application-architectures.md)
+matrix. Its third-party plugin table is a dated research shortlist, not an
+admission or support claim.
 
 Design work follows the exact canonical Anthropic frontend-design reference
 pinned in

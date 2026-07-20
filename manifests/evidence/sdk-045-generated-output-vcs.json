@@ -142,7 +142,7 @@
     "documentation": [
       {
         "path": "manifests/README.md",
-        "sha256": "20c33e5618ec136698545908dfa1a44c10310fffeb77653ad3e19168c966c155"
+        "sha256": "f7a155052d3efe52e1991b1589e49da49cde8a9704390f5383865627913b83ef"
       },
       {
         "path": "packages/cli/README.md",

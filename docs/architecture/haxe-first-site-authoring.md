@@ -4,7 +4,7 @@
 - Product owner clarification: 2026-07-17
 - Tracking: `wordpresshx-hy6`
 - Implements later through: `SDK-045`, `SDK-081`, `SDK-083`, `SDK-084`,
-  `SDK-110`, `SDK-111`, and the `SDK-112` through `SDK-120` reference suite
+  `SDK-110`, `SDK-111`, and the `SDK-112` through `SDK-123` reference suite
 - Does not claim: HXX lowering, full theme/site production, public package installation, or production compatibility
 
 ## Outcome
@@ -294,6 +294,55 @@ Escape hatches remain available but explicit:
 
 The happy path must not require any escape hatch.
 
+### Third-party plugin adoption and companion layers
+
+Installed WordPress plugins remain owned by WordPress and their native package,
+setup, storage, hook, block, update, and removal lifecycles. WordPressHx does not
+port or vendor their implementation merely to make them pleasant from Haxe. It
+adds a typed layer in two stages:
+
+1. An app-local adoption command inventories the exact SDK-117-admitted plugin
+   artifact without executing provider code. SDK-070 and SDK-072 consume the
+   strongest deterministic metadata available—headers, hashes, authoritative
+   PHP stubs/signatures, declared REST and block metadata, package exports and
+   types, and checked source declarations—and emit precise contracts plus an
+   explicit omission/review report.
+2. A stable integration used by more than one application may graduate into a
+   reusable companion package. That package owns Haxe facades, macros, HXX
+   ergonomics, generators, examples, and boundary tests; the native plugin
+   remains the runtime owner. Compiler core understands only generic adoption,
+   facade, capability, and no-emit contracts. It never branches on a plugin or
+   companion package name.
+
+An uncertain provider member is omitted rather than emitted as `Dynamic`,
+`Any`, `cast`, `Reflect`, or `untyped`. SDK-073 couples every usable facade to
+the exact provider identity/version and a runtime-scoped capability proof; a
+serialized or process-stale capability is not authority. Tests cover
+deterministic inventory, generated Haxe shape, positive and negative Haxe
+compilation, and thin real WordPress seams for present, absent, wrong-version,
+conditional-symbol, update, and removal behavior. They test the WordPressHx
+boundary, not the provider's entire upstream behavior.
+
+This adapts the runtime-owner, deterministic-first inventory, app-local
+contract, reusable-companion, and boundary-testing concepts from
+`../haxe.ruby` commit `a74818e996b68e467621a76cfaae520f553c6960`:
+
+- `docs/railshx-gem-layers.md`, blob
+  `ab73886476402f981d0e0d2c020f082961699dec`, SHA-256
+  `23db884aadffa4f26148ce5d81d994fdd20ad17bea825204570746835481a8bf`;
+- `docs/railshx-gem-layer-testing.md`, blob
+  `800cdc47759da8eb912c794a430e0f59f47c9053`, SHA-256
+  `cfa223461662a14360f78abc490e55462e3d63883fdc1cdd78a4b7fdab9308a1`;
+  and
+- `lib/hxruby/generators/adopt.rb`, blob
+  `ab962580344903a6ccf7956ad9034d346d62885b`, SHA-256
+  `d9a6aeffef602ef7823362097b27a1532488a3fe6469608cc70511097a6e3a54`.
+
+No source or fixture bytes are copied, and WordPressHx gains no dependency on
+RubyHx. The stricter WordPressHx rule removes the review-marked weak placeholder
+lane that Ruby source sometimes needs: incomplete plugin contracts stay visibly
+incomplete.
+
 ## Unified Haxe solution family
 
 WordPressHx should remain composable with the maintainer's broader Haxe compiler and framework family without becoming a monorepo-wide runtime or importing sibling internals.
@@ -326,8 +375,17 @@ adapter and useful cross-target pressure; it is not required for a native theme,
 plugin, block collection, editor extension, or complete WordPressHx site. Each
 example names its lanes, and only those named lanes gate completion.
 
+The maintained lane definitions, application-to-architecture mapping, and
+dated third-party plugin research shortlist live in
+[`reference-application-architectures.md`](reference-application-architectures.md).
+That matrix distinguishes native server rendering, block themes, hybrid
+islands, admin and front-end SPAs, offline PWA behavior, headless SSR/SSG/ISR,
+BFFs, dual delivery, widgets, multisite, and event-driven integration without
+pretending they share identical runtime semantics.
+
 | Bead | Maintained example | Principal contract pressure |
 |---|---|---|
+| `SDK-122` | **Flagship Todo Studio** | Complete multi-user task application across native persistence, schema/REST/security, server HXX, Genes interactions, Gutenberg authoring, theme/package lifecycle, and optional typed visual-plugin companions |
 | `SDK-111` | Complete Haxe-managed WordPress site | Theme, plugin, blocks, hierarchy, metadata, styles, packaging, and deployment with no required handwritten target source |
 | `SDK-114` | Core-only observatory landing site | Editable core-block content, native theme/HXX, focused conversion, and optional dual rendering |
 | `SDK-115` | Editorial field journal | Posts, authors, taxonomies, media, search, preview, feeds, block trees, and cache invalidation |
@@ -335,6 +393,20 @@ example names its lanes, and only those named lanes gate completion.
 | `SDK-118` | Paid architecture-session booking | One typed payment-to-eligibility-to-slot state machine reused by server, admin, REST, browser, and optional Next rendering |
 | `SDK-119` | Gutenberg extension workbench | Static/dynamic blocks, migrations, InnerBlocks, editor sidebar, data store, patterns/styles, accessibility, and native validation |
 | `SDK-120` | Capability recipe catalog | Small runnable examples and a public-capability-to-example conformance matrix |
+| `SDK-123` | Community Events Atlas | Native block/hybrid experience plus a decoupled Genes explorer, with independently admitted calendar, community, and federation companions |
+
+Todo Studio is the portfolio flagship and primary integration-pressure
+application. It is a production-shaped project and personal-work studio rather
+than a local-state checklist: typed task/project/user state, capture, list,
+board, calendar, and focus views, filters/search, collaboration boundaries,
+optimistic success/conflict/offline recovery, keyboard and drag/drop behavior,
+and package/data lifecycle must agree across WordPress PHP, REST, Genes, and
+Gutenberg. The maintained source is Haxe/HXX; native artifacts stay inspectable.
+Its core experience works with WordPress and Gutenberg alone. At least one
+useful visual open-source plugin is integrated only after SDK-117 admission and
+through the app-local/companion contract above, with exact absence and removal
+fallback. Reusable improvements discovered while building it move into the SDK,
+not an example-only compiler branch.
 
 The paid-booking example must never trust a checkout redirect or client-owned
 flag. WordPress verifies an exact paid/completed order and request identity,
@@ -417,8 +489,8 @@ weak types, or hidden test APIs.
 
 ## Reference-site design evidence
 
-The user-facing landing, editorial, commerce, paid-booking, and Gutenberg
-workbench reference applications use the canonical
+The user-facing Todo Studio, landing, editorial, commerce, paid-booking, and
+Gutenberg workbench reference applications use the canonical
 [Anthropic frontend-design rubric](https://github.com/anthropics/skills/blob/fa0fa64bdc967915dc8399e803be67759e1e62b8/skills/frontend-design/SKILL.md)
 at commit `fa0fa64bdc967915dc8399e803be67759e1e62b8`, blob
 `decdff43d05908b4c1fc2cfd2d80fc5743440934`. The rubric is a design-process
@@ -454,5 +526,8 @@ template, palette, type pair, or fashionable default aesthetic.
 - `SDK-121` unifies the exact-profile block, pattern, theme, editor-component,
   data, and interactivity capabilities into one coherent Haxe/HXX authoring
   surface without replacing Gutenberg runtime semantics.
+- `SDK-122` composes those foundations into the flagship Todo Studio and uses
+  the SDK-070/072/073/117 adoption lane to prove an optional visual plugin
+  without surrendering runtime ownership or the core-only experience.
 
 Each bead advances only its named evidence. This document defines intended architecture; it does not promote any capability to `typed`, `generated`, `runtime-tested`, or `production-supported`.

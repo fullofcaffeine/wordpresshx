@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in cmp haxe haxelib lix node python3 rg; do
+for command_name in cmp grep haxe haxelib lix node python3; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "ADR-009 schema authority gate requires ${command_name}" >&2
     exit 1
@@ -75,9 +75,9 @@ haxelib run formatter --check \
   -s "${package_root}/test" \
   -s "${package_root}/test-negative"
 
-if rg --line-number \
-  --glob '*.hx' \
-  '\b(Dynamic|Any|Reflect|untyped|cast)\b' \
+if grep --recursive --line-number --extended-regexp \
+  --include='*.hx' \
+  '(^|[^[:alnum:]_])(Dynamic|Any|Reflect|untyped|cast)([^[:alnum:]_]|$)' \
   "${package_root}/src" \
   "${package_root}/test" \
   "${package_root}/test-negative"; then
@@ -155,7 +155,7 @@ assert_compile_failure() {
     exit 1
   fi
   for expected_fragment in "$@"; do
-    if ! rg --fixed-strings --quiet "${expected_fragment}" "${diagnostic}"; then
+    if ! grep --fixed-strings --quiet -- "${expected_fragment}" "${diagnostic}"; then
       echo "negative fixture ${fixture} omitted diagnostic: ${expected_fragment}" >&2
       sed -n '1,80p' "${diagnostic}" >&2
       exit 1
