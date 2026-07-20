@@ -162,12 +162,12 @@
     ]
   },
   "aggregateLockAdoption": {
-    "reason": "admit-the-exact-sdk-063-editor-verification-graph-without-changing-compiler-or-runtime-identities",
-    "previousToolchainLockSha256": "626ce605e87ea3e1c9e9c690bea851360cf74126d7f41b676bd56ac351e69f35",
-    "toolchainLockSha256": "b8780833e368fc673337a9d389c67d747a0a104b5c084161328f0fe005d5a739",
+    "reason": "admit-the-exact-sdk-064-data-store-verification-graph-without-changing-compiler-or-runtime-identities",
+    "previousToolchainLockSha256": "b8780833e368fc673337a9d389c67d747a0a104b5c084161328f0fe005d5a739",
+    "toolchainLockSha256": "ea160d8fe921c24e099fe12c134c829d745e25346f46333196c91eebe838ee63",
     "cliManifestSha256": "18d7909224a2db4293836261f0dc1f0e8311a6a5fb9857fbb76ccb42ffcbc164",
     "cliLockSha256": "57a6dc69e9bb4519cccfdddf2625c8a635831e45178b6ecae3c744d8c243d075",
-    "semanticPlanFixtureSha256": "f1f9c8a786444aac2f492887ff60d76191d2c7687a8e29ab812d2636593d26f6",
+    "semanticPlanFixtureSha256": "54a394bdc032ce8b90fc41404f1f8ace6815ca3b78547f13fe8fde522a023664",
     "semanticEmissionFixtureSha256": "5b89842ed72e73754ca4c433014a4af559e79760e14e12bd9ddce8a5d26809e4",
     "ownershipCurrentFixtureSha256": "10dd22f22916a5a841ad2764bf49946a5f1a889032828a2221d27a74e7ba978a",
     "ownershipNextFixtureSha256": "fe0c26ab0e5972d2d2730660c676cfdb2fc3c2187617c559f1522a937453192d",

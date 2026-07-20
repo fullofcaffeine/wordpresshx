@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogId": "data-store",
+  "catalogRevision": "wp70-release/data-store-v1",
+  "requiresBaseCatalogRevision": "wp70-release/catalog-v1",
+  "componentCatalogSource": {
+    "catalogId": "editor-plugin",
+    "catalogRevision": "wp70-release/editor-plugin-v1",
+    "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json",
+    "sha256": "c319f40b7bdad1b4d28d1d8ecb84f8bf695a575f53a97b439a3986e779fcf9ab"
+  },
+  "provider": {
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+  },
+  "package": {
+    "request": "@wordpress/data",
+    "version": "10.40.0",
+    "packageCapability": "gutenberg.package.@wordpress/data",
+    "wordpressHandle": "wp-data",
+    "handleCapability": "wordpress.script-handle.wp-data",
+    "source": {
+      "path": "packages/data/package.json",
+      "blob": "19c7303d78ba3a890d2478781e6f055a94f979d3",
+      "sha256": "ee82b7fca901d27270be7262954be019982311f151857bd1385575329f987c6a"
+    },
+    "npm": {
+      "tarball": "https://registry.npmjs.org/@wordpress/data/-/data-10.40.0.tgz",
+      "integrity": "sha512-wwqkMc9iLteRO1zNxL/R3COWnijsdC5TIjenmd2JivReUmdA4ulAN3Tq7QiHkhwOV4jzZkuWW7DgR2ynxf55lw==",
+      "shasum": "14d15ee78f1386e6f2e444988349993e88a5712c"
+    }
+  },
+  "admittedCapabilities": [
+    {"capabilityId": "gutenberg.export.@wordpress/data.createReduxStore", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.dispatch", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.register", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.select", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.subscribe", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.useDispatch", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/data.useSelect", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.package.@wordpress/data", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "wordpress.script-handle.wp-data", "classification": "public", "evidenceStatus": "source-verified"}
+  ],
+  "components": [
+    {
+      "tag": "PanelBody",
+      "haxeType": "wordpress.hx.gutenberg.components.PanelBody",
+      "propsType": "wordpress.hx.gutenberg.components.PanelBodyProps",
+      "children": "optional",
+      "request": "@wordpress/components",
+      "export": "PanelBody",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/panel/types.ts",
+        "propsBlob": "c28a4e1a25166bba39da61026182897d762313a9",
+        "propsSha256": "54a7a22c16d463e4732121cbd57e80caa860ba1a67bb67809c1f884ba8d609df"
+      }
+    },
+    {
+      "tag": "PluginSidebar",
+      "haxeType": "wordpress.hx.gutenberg.editor.PluginSidebar",
+      "propsType": "wordpress.hx.gutenberg.editor.PluginSidebarProps",
+      "children": "required",
+      "request": "@wordpress/editor",
+      "export": "PluginSidebar",
+      "source": {
+        "path": "packages/editor/src/components/index.js",
+        "blob": "d940532be75a3dc71e3f8bf6c3aed11e3d350204",
+        "sha256": "69b3bd3e83183a693a18aee16463c9794634f43b570bad1920db55d50c354065",
+        "propsPath": "packages/editor/src/components/plugin-sidebar/index.js",
+        "propsBlob": "dfcc01b5e6028327a2b751508981900e283eca0a",
+        "propsSha256": "c6fa77334b16cadcd984426325eb85c8e369d84406546c8eebee8f1fa01eb455"
+      }
+    },
+    {
+      "tag": "PluginSidebarMoreMenuItem",
+      "haxeType": "wordpress.hx.gutenberg.editor.PluginSidebarMoreMenuItem",
+      "propsType": "wordpress.hx.gutenberg.editor.PluginSidebarMoreMenuItemProps",
+      "children": "required",
+      "request": "@wordpress/editor",
+      "export": "PluginSidebarMoreMenuItem",
+      "source": {
+        "path": "packages/editor/src/components/index.js",
+        "blob": "d940532be75a3dc71e3f8bf6c3aed11e3d350204",
+        "sha256": "69b3bd3e83183a693a18aee16463c9794634f43b570bad1920db55d50c354065",
+        "propsPath": "packages/editor/src/components/plugin-sidebar-more-menu-item/index.js",
+        "propsBlob": "379a0720dc8a91004f34009eee563658c0d44395",
+        "propsSha256": "ebe43ab70ddc9e5b71b4f7ad485bdeb25005b1ab6fa618fd219bbaa365a7dd4a"
+      }
+    },
+    {
+      "tag": "ToggleControl",
+      "haxeType": "wordpress.hx.gutenberg.components.ToggleControl",
+      "propsType": "wordpress.hx.gutenberg.components.ToggleControlProps",
+      "children": "forbidden",
+      "request": "@wordpress/components",
+      "export": "ToggleControl",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/toggle-control/types.ts",
+        "propsBlob": "568c44fb64af071555dde842378152d08a2321a7",
+        "propsSha256": "d8eca9156a211b068728a026e13826b3f0462857a118eb368f9f5c40657fb44d"
+      }
+    }
+  ],
+  "apis": [
+    {
+      "request": "@wordpress/data",
+      "exports": ["createReduxStore", "dispatch", "register", "select", "subscribe", "useDispatch", "useSelect"],
+      "source": {
+        "path": "packages/data/src/index.ts",
+        "blob": "3e6b19f84ba505011654a92dc1f9da3981907c1a",
+        "sha256": "c5aa7a3f733efea9f432f5e1611f8a015ab1d7e3b82e3db3422ad4cb5ae64a46"
+      },
+      "exportSources": [
+        {"export": "createReduxStore", "path": "packages/data/src/redux-store/index.js", "blob": "3f8cc91c1e4aad5629269ac5600e2ceca5ed6cf2", "sha256": "9a1c954a2e3f54e8011d224bfac61aa2ce8e2d565132dfa2ec9c884dd5849e54"},
+        {"export": "dispatch", "path": "packages/data/src/dispatch.ts", "blob": "348865112a59c64c97dc4332f02e83a48163b8f6", "sha256": "d9cf2d880112bcdf535b2e069cfc930c0be744548125758087b0d0f5f8bb5205"},
+        {"export": "register", "path": "packages/data/src/registry.js", "blob": "8db8bfbbbb702d800f9473fcb3b8b8e8e268c835", "sha256": "1a31345899b511add0aa71ecf46ff739595c27dab7eb3af242df5faa5a58f3ee"},
+        {"export": "select", "path": "packages/data/src/select.ts", "blob": "263502a5a1fba232bd6a8709d662d4a1b912caa1", "sha256": "593405def651364d973e4f004babc84c36d0975d0a51565bd15ba9e13cd17837"},
+        {"export": "subscribe", "path": "packages/data/src/index.ts", "blob": "3e6b19f84ba505011654a92dc1f9da3981907c1a", "sha256": "c5aa7a3f733efea9f432f5e1611f8a015ab1d7e3b82e3db3422ad4cb5ae64a46"},
+        {"export": "useDispatch", "path": "packages/data/src/components/use-dispatch/use-dispatch.js", "blob": "742fdc2a6e96546c8e5312503a777e80575de0f2", "sha256": "42beccc3c85d59f68fd450eef31987bd96b8dab6c1f0365759f1361f4a2bab20"},
+        {"export": "useSelect", "path": "packages/data/src/components/use-select/index.js", "blob": "f7eda689d9abaf47a3c077760cf119f291f0af1b", "sha256": "936588fc758dcd6f9fb2e2c9c8b4553669dde14c06aff90adda5c46f052d0f41"}
+      ]
+    }
+  ],
+  "mappings": [
+    {"request": "@wordpress/components", "handle": "wp-components"},
+    {"request": "@wordpress/data", "handle": "wp-data"},
+    {"request": "@wordpress/editor", "handle": "wp-editor"},
+    {"request": "@wordpress/element", "handle": "wp-element"},
+    {"request": "@wordpress/i18n", "handle": "wp-i18n"},
+    {"request": "@wordpress/plugins", "handle": "wp-plugins"},
+    {"request": "react/jsx-runtime", "handle": "react-jsx-runtime"}
+  ],
+  "policy": {
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false,
+    "componentCatalogGeneratedOrCurated": "curated-exact-source-and-published-types",
+    "customStoreContract": "closed-action-and-immutable-snapshot",
+    "legacyStringStoreAccessAllowed": false,
+    "manualRegistrationJavaScriptAllowed": false
+  }
+}

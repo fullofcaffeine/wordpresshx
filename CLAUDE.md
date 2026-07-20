@@ -68,3 +68,14 @@ _Add a brief overview of your project architecture_
 ## Conventions & Patterns
 
 _Add your project-specific conventions here_
+
+### Strictly Typed Haxe
+
+- Do not use `Dynamic`, `Any`, `cast`, `Reflect`, or `untyped` in Haxe code. Prefer concrete types, typedefs, enums, abstracts, generics, typed adapters/codecs, and compiler-checked pattern matching.
+- An exception is allowed only at the smallest unavoidable external or compiler boundary, followed immediately by conversion to a concrete type and an inline comment stating why the boundary is safe.
+
+### Haxe-First Ergonomics
+
+- When Haxe can safely infer, default, derive, validate, or generate something, do it in the Haxe layer instead of requiring repetitive author code or handwritten PHP, JavaScript, JSON, shell, or framework configuration.
+- Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
+- Keep the common path concise, typed, IDE-visible, deterministic, and compatible with explicit advanced options and narrow escape hatches.

@@ -260,3 +260,54 @@ unchanged SDK-032 base catalog, so adding this vertical does not rewrite or
 invalidate the earlier browser-HXX receipt. Its exact source and package proof
 is recorded in
 [`SDK-063-EDITOR-PLUGIN-SLOTFILL`](../../manifests/evidence/sdk-063-editor-plugin-slotfill.json).
+
+## Compile-time-validated WordPress data stores
+
+SDK-064 builds on the editor surface with a typed facade over native
+`@wordpress/data`. The application declares one state type, one closed action
+type, an initial value, and a pure reducer. `DataStore.define` validates their
+relationship during Haxe compilation and returns a branded native store
+descriptor:
+
+~~~haxe
+private static final key =
+  StoreKey.literal("wordpresshx/todo-studio-lab");
+
+private static final store:TypedDataStore<TodoState, TodoAction> =
+  DataStore.define(key, TodoDomain.initial(), TodoDomain.reduce);
+~~~
+
+Invalid namespaced keys, reducers that return another state, actions without a
+string-compatible `type` discriminator, and dispatches from the wrong action
+domain fail at the Haxe source position. Runtime validation remains appropriate
+for values that can only be known from the installed site or current request;
+it is not used as a substitute for a statically knowable store contract.
+
+The first public facade deliberately keeps a narrow, precise shape:
+
+- `DataStores.register` installs the descriptor in WordPress' registry;
+- `snapshot` and `useSnapshot` return the exact state type;
+- `send` and `useSender` accept only the exact action type; and
+- `subscribe` keeps the native WordPress subscription lifecycle.
+
+Applications layer meaningful command and selector names over those primitives
+in ordinary Haxe. WordPress remains runtime owner of Redux registration,
+dispatch, selection, subscriptions, and React updates; WordPressHx adds the
+compile-time contract and Haxe/HXX authoring surface.
+
+Run the deterministic compiler and packaging lane:
+
+~~~sh
+bash packages/gutenberg/scripts/test-data-store.sh --skip-wordpress
+~~~
+
+Run the full exact-WordPress and Chromium proof while retaining its generated
+plugin, plan, screenshot, and browser evidence:
+
+~~~sh
+SDK064_VISUAL_OUTPUT=packages/gutenberg/sdk064-preview \
+  bash packages/gutenberg/scripts/test-data-store.sh
+~~~
+
+The beginner-oriented walkthrough is
+[`examples/todo-data-store-lab`](../../examples/todo-data-store-lab/README.md).

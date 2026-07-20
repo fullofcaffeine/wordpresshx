@@ -13,11 +13,11 @@
   "subject": {
     "toolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "b8780833e368fc673337a9d389c67d747a0a104b5c084161328f0fe005d5a739"
+      "sha256": "ea160d8fe921c24e099fe12c134c829d745e25346f46333196c91eebe838ee63"
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",
-      "sha256": "518ab02dc5543efae48a00e8e2a0eb8f11c980e70aca662607b42e029f4716f7"
+      "sha256": "8bd9885b65dbace689364420de72d794ae3c218dbbe5e11acd8d45e523d60379"
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",

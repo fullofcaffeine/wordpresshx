@@ -661,6 +661,7 @@ required_files=(
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
+  manifests/evidence/sdk-064-typed-data-store.json
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -1251,6 +1252,22 @@ sdk063_tooling_lock_path = Path(
 sdk063_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-063-editor-plugin-slotfill.json"
+    ).read_text(encoding="utf-8")
+)
+sdk064_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.data-store.browser-hxx.json"
+)
+sdk064_profile = json.loads(sdk064_profile_path.read_text(encoding="utf-8"))
+sdk064_tooling_manifest_path = Path(
+    "packages/gutenberg/editor-tooling/package.json"
+)
+sdk064_tooling_lock_path = Path(
+    "packages/gutenberg/editor-tooling/package-lock.json"
+)
+sdk064_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-064-typed-data-store.json"
     ).read_text(encoding="utf-8")
 )
 toolchain_lock = json.loads(
@@ -8135,6 +8152,265 @@ else:
     assert sdk063_hosted["allJobsPassed"] is True
     assert sdk063_hosted["artifactHashesMatched"] is True
     assert sdk063_hosted["completedAt"] == sdk063_receipt["observedAt"]
+
+assert sdk064_receipt["schemaVersion"] == 1
+assert sdk064_receipt["receiptId"] == "SDK-064-TYPED-DATA-STORE"
+assert sdk064_receipt["bead"] == "wordpresshx-sdk-064"
+assert sdk064_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk064_subject_name, sdk064_subject in sdk064_receipt["subject"].items():
+    if sdk064_subject_name == "package":
+        continue
+    sdk064_subject_path = Path(sdk064_subject["path"])
+    assert hashlib.sha256(sdk064_subject_path.read_bytes()).hexdigest() == (
+        sdk064_subject["sha256"]
+    )
+assert sdk064_profile["schemaVersion"] == 1
+assert sdk064_profile["profileId"] == "wp70-release"
+assert sdk064_profile["catalogId"] == "data-store"
+assert sdk064_profile["catalogRevision"] == "wp70-release/data-store-v1"
+assert sdk064_profile["requiresBaseCatalogRevision"] == lock["entries"][
+    "wp70-release"
+]["catalogRevision"]
+sdk064_component_source = sdk064_profile["componentCatalogSource"]
+assert sdk064_component_source["catalogId"] == sdk063_profile["catalogId"]
+assert sdk064_component_source["catalogRevision"] == sdk063_profile[
+    "catalogRevision"
+]
+assert sdk064_component_source["path"] == sdk063_profile_path.as_posix()
+assert sdk064_component_source["sha256"] == hashlib.sha256(
+    sdk063_profile_path.read_bytes()
+).hexdigest()
+assert sdk064_receipt["provider"]["profileId"] == sdk064_profile["profileId"]
+assert sdk064_receipt["provider"]["baseCatalogRevision"] == (
+    sdk064_profile["requiresBaseCatalogRevision"]
+)
+assert sdk064_receipt["provider"]["editorCatalogRevision"] == (
+    sdk064_component_source["catalogRevision"]
+)
+assert sdk064_receipt["provider"]["dataCatalogRevision"] == sdk064_profile[
+    "catalogRevision"
+]
+assert sdk064_receipt["provider"]["wordpressVersion"] == sdk064_profile[
+    "provider"
+]["wordpressVersion"]
+assert sdk064_receipt["provider"]["wordpressCommit"] == lock["entries"][
+    "wp70-release"
+]["wordpressSource"]["commit"]
+assert sdk064_receipt["provider"]["gutenbergCommit"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["commit"]
+assert sdk064_receipt["provider"]["gutenbergTree"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["tree"]
+sdk064_api_exports = sdk064_profile["apis"][0]["exports"]
+assert sdk064_receipt["provider"]["publicDataApiCount"] == len(
+    sdk064_api_exports
+)
+assert sdk064_receipt["provider"]["sourceVerifiedCapabilityCount"] == len(
+    sdk064_profile["admittedCapabilities"]
+)
+assert sdk064_receipt["provider"]["exactWordPressNpmPackageCount"] == 1
+assert sdk064_receipt["provider"]["editorComponentCatalogReused"] is True
+assert sdk064_receipt["provider"]["privateApisAllowed"] is False
+assert sdk064_receipt["provider"]["experimentalApisAllowed"] is False
+assert sdk064_receipt["provider"]["legacyStringStoreAccessAllowed"] is False
+assert sdk064_profile["package"]["request"] == "@wordpress/data"
+assert sdk064_profile["package"]["version"] == "10.40.0"
+assert sdk064_profile["package"]["wordpressHandle"] == "wp-data"
+assert sdk064_profile["policy"]["privateApisAllowed"] is False
+assert sdk064_profile["policy"]["experimentalApisAllowed"] is False
+assert sdk064_profile["policy"]["legacyStringStoreAccessAllowed"] is False
+assert sdk064_profile["policy"]["manualRegistrationJavaScriptAllowed"] is False
+assert all(
+    capability["classification"] == "public"
+    and capability["evidenceStatus"] == "source-verified"
+    for capability in sdk064_profile["admittedCapabilities"]
+)
+sdk064_graph = next(
+    graph
+    for graph in toolchain_lock["dependencyGraphs"]["npm"]["externalGraphs"]
+    if graph["id"] == "sdk-064-data-store-verification-graph"
+)
+assert sdk064_graph["authority"] == (
+    "exact-provider-data-store-overlay-package-lock-and-real-wordpress-runtime"
+)
+assert sdk064_graph["receiptId"] == sdk064_receipt["receiptId"]
+assert sdk064_graph["profilePath"] == sdk064_profile_path.as_posix()
+assert sdk064_graph["profileSha256"] == hashlib.sha256(
+    sdk064_profile_path.read_bytes()
+).hexdigest()
+assert sdk064_graph["manifestPath"] == sdk064_tooling_manifest_path.as_posix()
+assert sdk064_graph["manifestSha256"] == hashlib.sha256(
+    sdk064_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk064_graph["lockPath"] == sdk064_tooling_lock_path.as_posix()
+assert sdk064_graph["lockSha256"] == hashlib.sha256(
+    sdk064_tooling_lock_path.read_bytes()
+).hexdigest()
+sdk064_tooling_manifest = json.loads(
+    sdk064_tooling_manifest_path.read_text(encoding="utf-8")
+)
+sdk064_tooling_lock = json.loads(
+    sdk064_tooling_lock_path.read_text(encoding="utf-8")
+)
+assert set(sdk064_graph["directPackages"]) == {
+    f"{name}@{version}"
+    for name, version in sdk064_tooling_manifest["devDependencies"].items()
+}
+assert sdk064_graph["lifecycleScriptsAllowed"] is False
+assert sdk064_graph["buildInputOnly"] is True
+assert sdk064_graph["advisoryFollowUp"] == "wordpresshx-g2.3"
+assert sdk064_graph["runtimeImage"] == image_lock["images"]["node"][
+    "reference"
+]
+assert sdk064_graph["browserRuntimeImage"] == image_lock["images"][
+    "playwright"
+]["reference"]
+assert sdk064_graph["wordpressRuntimeImage"] == image_lock["images"][
+    "wordpress70Php84"
+]["reference"]
+assert sdk064_receipt["toolchain"]["npmLockedPackageCount"] == (
+    len(sdk064_tooling_lock["packages"]) - 1
+)
+assert sdk064_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+sdk064_implementation = sdk064_receipt["implementation"]
+assert sdk064_implementation["authoringSurface"] == "haxe-hxx"
+assert sdk064_implementation[
+    "companionApplicationJavaScriptOrTypeScriptAuthored"
+] is False
+assert sdk064_implementation["nativeRegistry"] == "@wordpress/data"
+assert sdk064_implementation["nativeApis"] == sdk064_api_exports
+assert sdk064_implementation["storeKey"] == "wordpresshx/todo-studio-lab"
+assert sdk064_implementation["compileTimeValidatedContracts"] == [
+    "namespaced store key",
+    "initial state and reducer state input",
+    "reducer state result",
+    "closed action structure",
+    "string-compatible action discriminator",
+    "store-specific dispatched action",
+]
+assert sdk064_implementation["domainCommandsLayeredInHaxe"] is True
+assert sdk064_implementation["translationsExtractedFromHaxe"] is True
+assert sdk064_implementation["shippedBrowserHxxRuntime"] is False
+assert sdk064_implementation["wordpressSpecificGenesBranch"] is False
+assert sdk064_receipt["exactProfileVerification"]["outcome"] == "passed"
+sdk064_compilation = sdk064_receipt["compilation"]
+assert sdk064_compilation["dependencies"] == [
+    "react-jsx-runtime",
+    "wp-components",
+    "wp-data",
+    "wp-editor",
+    "wp-i18n",
+    "wp-plugins",
+]
+assert sdk064_compilation["publicWeakTypes"] == []
+assert sdk064_compilation["forbiddenHaxeWeakConstructs"] == []
+assert sdk064_compilation["generatedAndBundleMachinePathLeaks"] == 0
+assert sdk064_compilation["secondCompileMatched"] is True
+assert sdk064_compilation["developmentAndProductionReplayMatched"] is True
+assert sdk064_compilation["generatedPluginReplayMatched"] is True
+assert sdk064_compilation["php74Syntax"] == "passed"
+assert sdk064_compilation["php84Syntax"] == "passed"
+sdk064_diagnostics = sdk064_receipt["negativeDiagnostics"]
+assert set(sdk064_diagnostics) == {
+    "WPX6401",
+    "WPX6403",
+    "WPX6405",
+    "typedActionMismatch",
+    "originalSourcePaths",
+}
+assert sdk064_diagnostics["originalSourcePaths"] is True
+sdk064_runtime = sdk064_receipt["realWordPressRuntime"]
+assert sdk064_runtime["check"] == "wordpresshx-sdk064-real-data-store-v1"
+assert sdk064_runtime["outcome"] == "passed"
+assert sdk064_runtime["wordpressVersion"] == "7.0"
+assert sdk064_runtime["pluginActivated"] is True
+assert sdk064_runtime["initialSnapshotSelected"] is True
+assert sdk064_runtime["keyboardAction"] is True
+assert sdk064_runtime["mouseActions"] is True
+assert sdk064_runtime["finalRevision"] == 7
+assert sdk064_runtime["nativeSubscriptionCount"] >= 7
+assert sdk064_runtime["loadingObserved"] is True
+assert sdk064_runtime["errorObserved"] is True
+assert sdk064_runtime["recoveryObserved"] is True
+assert sdk064_runtime["focusEnteredSidebar"] is True
+assert sdk064_runtime["postTypeNegative"] == (
+    "page editor has no extension menu item"
+)
+assert sdk064_runtime["publicUnregisterBefore"] is True
+assert sdk064_runtime["publicUnregisterRemoved"] is True
+assert sdk064_runtime["publicUnregisterAfter"] is False
+assert sdk064_runtime["consoleErrors"] == 0
+assert sdk064_runtime["pageErrors"] == 0
+assert sdk064_runtime["accessibility"]["seriousOrCriticalViolations"] == 0
+assert sdk064_receipt["localVerification"]["outcome"] == "passed"
+assert sdk064_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk064_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk064_receipt["changeDecision"][
+    "wordpressSpecificGenesBranch"
+] is False
+assert sdk064_receipt["changeDecision"]["siblingGenesBuildInput"] is False
+assert sdk064_receipt["claims"]["typedCustomDataStore"] == (
+    "compile-and-runtime-tested"
+)
+assert sdk064_receipt["claims"]["compileTimeInvalidStoreRejection"] == (
+    "tested"
+)
+assert sdk064_receipt["claims"]["nativeDispatchSelectSubscription"] == (
+    "real-editor-tested"
+)
+assert sdk064_receipt["claims"]["loadingErrorAndRecovery"] == (
+    "real-editor-tested"
+)
+assert sdk064_receipt["claims"]["completeTodoStudio"] == "not-claimed"
+assert sdk064_receipt["claims"]["productionSupport"] == "not-tested"
+assert "Prove the typed native data store on WordPress 7.0" in workflow_text
+assert "bash packages/gutenberg/scripts/test-data-store.sh" in workflow_text
+sdk064_hosted = sdk064_receipt["repositoryHostedVerification"]
+assert sdk064_hosted["workflow"] == "Repository bootstrap"
+assert sdk064_hosted["job"] == "wordpress-runtime"
+assert sdk064_hosted["step"] == (
+    "Prove the typed native data store on WordPress 7.0"
+)
+assert sdk064_hosted["required"] is True
+assert sdk064_hosted["generatedTreeSha256"] == sdk064_compilation[
+    "generatedTreeSha256"
+]
+assert sdk064_hosted["productionBundleSha256"] == sdk064_compilation[
+    "productionBundleSha256"
+]
+if sdk064_receipt["status"] == "implemented-hosted-pending":
+    assert sdk064_implementation.get("commit") is None
+    assert sdk064_hosted["status"] == "pending-main-push"
+    assert sdk064_hosted["commit"] is None
+    assert sdk064_hosted["runId"] is None
+    assert sdk064_hosted["jobId"] is None
+    assert sdk064_hosted["url"] is None
+    assert sdk064_hosted["jobUrl"] is None
+    assert sdk064_hosted["jobCount"] is None
+    assert sdk064_hosted["allJobsPassed"] is None
+    assert sdk064_hosted["artifactHashesMatched"] is None
+    assert sdk064_hosted["completedAt"] is None
+else:
+    assert sdk064_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk064_implementation["commit"])
+    assert sdk064_hosted["commit"] == sdk064_implementation["commit"]
+    assert isinstance(sdk064_hosted["runId"], int)
+    assert isinstance(sdk064_hosted["jobId"], int)
+    assert sdk064_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk064_hosted['runId']}"
+    )
+    assert sdk064_hosted["jobUrl"] == (
+        sdk064_hosted["url"] + f"/job/{sdk064_hosted['jobId']}"
+    )
+    assert sdk064_hosted["status"] == "passed"
+    assert sdk064_hosted["jobCount"] == 13
+    assert sdk064_hosted["allJobsPassed"] is True
+    assert sdk064_hosted["artifactHashesMatched"] is True
+    assert sdk064_hosted["completedAt"] == sdk064_receipt["observedAt"]
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"

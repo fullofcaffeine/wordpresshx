@@ -1,6 +1,10 @@
 /.sdk032-tmp/
 /.sdk033-tmp/
+/.sdk063-tmp/
+/.sdk064-tmp/
 /sdk032-preview/
 /sdk063-preview/
+/sdk064-preview/
 /hxx-tooling/node_modules/
 /build-tooling/node_modules/
+/editor-tooling/node_modules/

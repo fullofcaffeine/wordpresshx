@@ -32,6 +32,7 @@
         "SDK-034-BROWSER-SOURCE-CORRELATION",
         "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
         "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+        "SDK-064-TYPED-DATA-STORE",
         "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
       ],
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",

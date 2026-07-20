@@ -385,8 +385,8 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     }
     audit.check(
         isinstance(external_graphs, list)
-        and len(external_graphs) == 7
-        and len(graph_ids) == 7,
+        and len(external_graphs) == 8
+        and len(graph_ids) == 8,
         "npm external graph set changed",
     )
     graph_by_id = {
@@ -404,6 +404,9 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     )
     sdk063_graph = graph_by_id.get(
         "sdk-063-editor-plugin-verification-graph", {}
+    )
+    sdk064_graph = graph_by_id.get(
+        "sdk-064-data-store-verification-graph", {}
     )
     sdk034_graph = graph_by_id.get(
         "sdk-034-browser-source-correlation-verification-graph", {}
@@ -823,6 +826,96 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         "SDK-063 npm graph receipt changed",
     )
     audit.exact_keys(
+        sdk064_graph,
+        {
+            "id",
+            "authority",
+            "profilePath",
+            "profileSha256",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "directPackages",
+            "runtimeImage",
+            "browserRuntimeImage",
+            "wordpressRuntimeImage",
+            "lifecycleScriptsAllowed",
+            "buildInputOnly",
+            "advisoryFollowUp",
+            "receiptId",
+        },
+        "SDK-064 npm graph",
+    )
+    audit.check(
+        sdk064_graph.get("authority")
+        == "exact-provider-data-store-overlay-package-lock-and-real-wordpress-runtime",
+        "SDK-064 npm graph authority changed",
+    )
+    sdk064_profile = sdk064_graph.get("profilePath")
+    sdk064_manifest = sdk064_graph.get("manifestPath")
+    sdk064_lock = sdk064_graph.get("lockPath")
+    audit.check(
+        sdk064_profile
+        == (
+            "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+            "wp70-release.data-store.browser-hxx.json"
+        ),
+        "SDK-064 data-store profile path changed",
+    )
+    audit.check(
+        sdk064_manifest == "packages/gutenberg/editor-tooling/package.json",
+        "SDK-064 npm manifest path changed",
+    )
+    audit.check(
+        sdk064_lock == "packages/gutenberg/editor-tooling/package-lock.json",
+        "SDK-064 npm lock path changed",
+    )
+    for path, digest, label in (
+        (sdk064_profile, sdk064_graph.get("profileSha256"), "profile"),
+        (sdk064_manifest, sdk064_graph.get("manifestSha256"), "manifest"),
+        (sdk064_lock, sdk064_graph.get("lockSha256"), "lock"),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-064 {label} digest changed",
+            )
+    audit.check(
+        sdk064_graph.get("directPackages")
+        == sdk063_graph.get("directPackages"),
+        "SDK-064 direct npm package set changed",
+    )
+    audit.check(
+        sdk064_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-064 runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk064_graph.get("browserRuntimeImage") == playwright.get("reference"),
+        "SDK-064 browser image differs from the Playwright lock",
+    )
+    audit.check(
+        sdk064_graph.get("wordpressRuntimeImage")
+        == nested(images, "wordpress70Php84", "reference"),
+        "SDK-064 WordPress image differs from the image lock",
+    )
+    audit.check(
+        sdk064_graph.get("lifecycleScriptsAllowed") is False,
+        "SDK-064 npm lifecycle scripts must remain disabled",
+    )
+    audit.check(
+        sdk064_graph.get("buildInputOnly") is True,
+        "SDK-064 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk064_graph.get("advisoryFollowUp") == "wordpresshx-g2.3",
+        "SDK-064 advisory follow-up changed",
+    )
+    audit.check(
+        sdk064_graph.get("receiptId") == "SDK-064-TYPED-DATA-STORE",
+        "SDK-064 npm graph receipt changed",
+    )
+    audit.exact_keys(
         sdk034_graph,
         {
             "id",
@@ -1126,6 +1219,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             "SDK-034-BROWSER-SOURCE-CORRELATION",
             "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
             "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+            "SDK-064-TYPED-DATA-STORE",
             "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
         ],
         "wp70 upstream/source receipt link changed",

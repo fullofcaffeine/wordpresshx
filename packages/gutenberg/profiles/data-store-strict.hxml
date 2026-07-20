@@ -1,0 +1,5 @@
+profiles/hxx-common.hxml
+-D wordpress_hx_browser_hxx_catalog=data-store
+-D js-source-map
+-cp test/data-store-fixture/src
+-main sdk064.fixture.Main

@@ -1,8 +1,17 @@
 # Examples
 
-Reserved for consumer-facing examples that use only public SDK paths and are
-installed/tested from their final packages. There are no working examples yet;
-hidden test-only APIs and unsupported capability demonstrations are forbidden.
+Consumer-facing examples use public SDK paths and are installed and tested from
+their generated native packages. Two focused examples are runnable today; they
+are small capability proofs, not yet the complete Todo Studio flagship:
+
+| Example | What it proves | Start here |
+| --- | --- | --- |
+| Editor sidebar | Haxe/HXX registers a native Gutenberg SlotFill extension with typed components and post-type gating. | [`editor-sidebar/README.md`](editor-sidebar/README.md) |
+| Todo data-store lab | A compile-time-validated Haxe store drives native `@wordpress/data`, HXX UI, subscriptions, and async error recovery. | [`todo-data-store-lab/README.md`](todo-data-store-lab/README.md) |
+
+Hidden test-only APIs and unsupported capability demonstrations remain
+forbidden. Each guide identifies what is production-shaped and what is still
+deliberately deferred, so a compiler proof is not mistaken for a complete app.
 
 The planned production-evidence portfolio is led by the flagship Todo Studio
 and includes a complete native Haxe-managed WordPress site, a subject-specific

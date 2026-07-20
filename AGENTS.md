@@ -41,6 +41,7 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 
 - When Haxe can safely infer, default, derive, validate, or generate something, prefer doing so in the Haxe layer instead of requiring repetitive author code or handwritten PHP, JavaScript, JSON, shell, or framework configuration.
 - Design the common path for high information density: typed defaults, focused macros, enums/abstracts, reusable declarations, generated adapters, and IDE-visible APIs should make ordinary code concise while preserving compile-time checks and deterministic output.
+- Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
 - Keep advanced behavior available through explicit typed options and narrow escape hatches. Ergonomic helpers must not hide ownership, weaken validation, introduce ambiguous magic, or couple the core SDK to an optional integration.
 
 ## Non-Interactive Shell Commands

@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-064-TYPED-DATA-STORE",
+  "bead": "wordpresshx-sdk-064",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T08:55:55Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.data-store.browser-hxx.json",
+      "sha256": "52a6be6448ee95296b0c8d99368db33c89c9b719c1b6bae7816428ef2bd84baf"
+    },
+    "haxeProfile": {
+      "path": "packages/gutenberg/profiles/data-store-strict.hxml",
+      "sha256": "2ae42a6a0d6910abf128b07751a1cdf22dcbf548df080e08c0ad8d4cc483fa43"
+    },
+    "unitProfile": {
+      "path": "packages/gutenberg/profiles/data-store-unit.hxml",
+      "sha256": "194bb1df661351e2e6018020b80fcb6294f37748123d8167039b1c8fff8b6cbf"
+    },
+    "haxeFixture": {
+      "path": "packages/gutenberg/test/data-store-fixture/src/sdk064/fixture/Main.hx",
+      "sha256": "cc0b00b39cac89eaa76b9551e3d60442e15cc779bf4a020fe2a8301b56962fb8"
+    },
+    "domainFixture": {
+      "path": "packages/gutenberg/test/data-store-fixture/src/sdk064/fixture/TodoDomain.hx",
+      "sha256": "e0806cf69365c1c9bdb5e79f4dbb5738b6b754ffe98f13c6b7511169d4dcd6b4"
+    },
+    "storeFixture": {
+      "path": "packages/gutenberg/test/data-store-fixture/src/sdk064/fixture/TodoStore.hx",
+      "sha256": "134312557c3545070e0da1c606a90140f73cae629e8e29cde79f98d283b1b3af"
+    },
+    "fixtureStyles": {
+      "path": "packages/gutenberg/test/data-store-fixture/src/sdk064/fixture/DataStoreStyles.hx",
+      "sha256": "85533d89c1272d6a67202a2991dca61b9077b0405ab2bde34cc02ec84159d643"
+    },
+    "unitFixture": {
+      "path": "packages/gutenberg/test/data-store-unit/src/sdk064/unit/Main.hx",
+      "sha256": "c067484eb7e2a4d8b97f1cc364a6b5a05efa8277f2aebf2f1fd816a27abc2601"
+    },
+    "dataStoreMacro": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/DataStore.hx",
+      "sha256": "b6e6331ea31974a334bfd290669bcc0939003a3b948eb5a5448a06be146b211f"
+    },
+    "dataStoreFacade": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/DataStores.hx",
+      "sha256": "66b7bf5f6968c00c5e42488808ba7541faabb7977df6e02857cfddf30209b7fc"
+    },
+    "storeKey": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/StoreKey.hx",
+      "sha256": "dd862c8007a91603e8b12553f24cfeb806cabaff3d79acce2b1cf0f140da869d"
+    },
+    "typedDescriptor": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/TypedDataStore.hx",
+      "sha256": "30c37fc304a92010844579d6560ecdad73654ee5c4fea6d0712bf6e3087e0a58"
+    },
+    "dataPromise": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/DataPromise.hx",
+      "sha256": "3874a0195eebcf5fa218fef32eb4eff2e7158f4fc6dbca64f14f248fd7c6b122"
+    },
+    "macroBuilder": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/data/_internal/DataStoreBuilder.hx",
+      "sha256": "5b45cf27c267a164928f7d1a7cc15c882550bf4efcfd5122b26be584d73c65ea"
+    },
+    "toolingManifest": {
+      "path": "packages/gutenberg/editor-tooling/package.json",
+      "sha256": "26727b8ae1ff0a3efa9e70e4828bf2d6c4a0ea23c323d1c0eb2a59bef8035cde"
+    },
+    "toolingLock": {
+      "path": "packages/gutenberg/editor-tooling/package-lock.json",
+      "sha256": "3807e6e1995234a7b13a2af5671f2b82923bab529e9b649c47a5ae4c84a3ae4d"
+    },
+    "profileVerifier": {
+      "path": "packages/gutenberg/scripts/verify-data-store-profile.py",
+      "sha256": "b32ab9d12d4cca1a7025e87af155073dc86cd55a59c9bdf0821b6810d77cda42"
+    },
+    "artifactVerifier": {
+      "path": "packages/gutenberg/scripts/verify-data-store.mjs",
+      "sha256": "a7643b1720eb6def58c185f30c9d065a77894ea2b44c05c7ee1a3df6ac21d9b3"
+    },
+    "nativeEmitter": {
+      "path": "packages/gutenberg/scripts/emit-data-store-plugin.py",
+      "sha256": "fb28626d0c3f809c6b927bf6bfa30d09d99b9aed275901125dc29ad018906ca1"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-data-store.sh",
+      "sha256": "ad5ec0bb8c63ff903c8314a4fea8f8d7351b2af2df457872c264f449f7c5a1b1"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-data-store-lane.sh",
+      "sha256": "90385508507dfcc0dd9b2dfcd8f99113fd742769aacccc2648e69f48fb8f3039"
+    },
+    "browserProbe": {
+      "path": "packages/gutenberg/scripts/run-data-store-playwright.mjs",
+      "sha256": "93faefa9265956ab878cc2f5bf6b1b2961dc382ca2cfa2614fb5af35d75878e4"
+    },
+    "wordpressSetup": {
+      "path": "packages/gutenberg/test/data-store-runtime/setup.php",
+      "sha256": "5cb4f4edfb945981c4cccb97e979c947b890e64d9a4e2125a6c1d93ac4808921"
+    }
+  },
+  "provider": {
+    "profileId": "wp70-release",
+    "baseCatalogRevision": "wp70-release/catalog-v1",
+    "editorCatalogRevision": "wp70-release/editor-plugin-v1",
+    "dataCatalogRevision": "wp70-release/data-store-v1",
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "publicDataApiCount": 7,
+    "sourceVerifiedCapabilityCount": 9,
+    "exactWordPressNpmPackageCount": 1,
+    "editorComponentCatalogReused": true,
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false,
+    "legacyStringStoreAccessAllowed": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixNpmPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "node": "22.17.0",
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "webpack": "5.108.4",
+    "axeCore": "4.10.2",
+    "npmLockedPackageCount": 1795,
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "playwrightImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "php74Image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+    "php84Image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+    "lifecycleScriptsAllowed": false
+  },
+  "implementation": {
+    "authoringSurface": "haxe-hxx",
+    "companionApplicationJavaScriptOrTypeScriptAuthored": false,
+    "nativeRegistry": "@wordpress/data",
+    "nativeApis": [
+      "createReduxStore",
+      "dispatch",
+      "register",
+      "select",
+      "subscribe",
+      "useDispatch",
+      "useSelect"
+    ],
+    "storeKey": "wordpresshx/todo-studio-lab",
+    "compileTimeValidatedContracts": [
+      "namespaced store key",
+      "initial state and reducer state input",
+      "reducer state result",
+      "closed action structure",
+      "string-compatible action discriminator",
+      "store-specific dispatched action"
+    ],
+    "frameworkActionBoundary": "unknown Redux initialization and probe actions preserve the typed application state",
+    "domainCommandsLayeredInHaxe": true,
+    "translationsExtractedFromHaxe": true,
+    "shippedBrowserHxxRuntime": false,
+    "wordpressSpecificGenesBranch": false,
+    "commit": null
+  },
+  "exactProfileVerification": {
+    "publicPackage": "@wordpress/data@10.40.0",
+    "checks": [
+      "immutable Gutenberg source SHA-256",
+      "immutable Git blob SHA-1",
+      "provider package-lock version",
+      "npm tarball integrity and shasum",
+      "stable public exports and source definitions",
+      "official WordPress script-handle mapping",
+      "private and experimental API exclusion"
+    ],
+    "outcome": "passed"
+  },
+  "compilation": {
+    "generatedTreeSha256": "2f4aada3c1d004de42287d6ea33fe5db750d045db1584c8788b3d803749e7c04",
+    "developmentBundleSha256": "d1204da5369eeda52f6871ecfed034856bc40bf329945ba249165d63d0c35ca4",
+    "productionBundleSha256": "c5686f0664c4f199eb0968b950af3df3ab671c64358888d49cb43a46b55475a6",
+    "productionVersion": "05012ea1ca3ccc251f8f",
+    "assetPlanSha256": "3f8241a7b5cd3547249864853565bd0351a0e1045032069f189d7dc66eb4e78f",
+    "dependencies": [
+      "react-jsx-runtime",
+      "wp-components",
+      "wp-data",
+      "wp-editor",
+      "wp-i18n",
+      "wp-plugins"
+    ],
+    "sourceImports": [
+      "@wordpress/components",
+      "@wordpress/data",
+      "@wordpress/editor",
+      "@wordpress/i18n",
+      "@wordpress/plugins"
+    ],
+    "publicWeakTypes": [],
+    "forbiddenHaxeWeakConstructs": [],
+    "generatedAndBundleMachinePathLeaks": 0,
+    "secondCompileMatched": true,
+    "developmentAndProductionReplayMatched": true,
+    "generatedPluginReplayMatched": true,
+    "php74Syntax": "passed",
+    "php84Syntax": "passed"
+  },
+  "negativeDiagnostics": {
+    "WPX6401": "invalid namespaced store-key literal",
+    "WPX6403": "reducer state input or result differs from initial state",
+    "WPX6405": "closed action lacks a string-compatible type discriminator",
+    "typedActionMismatch": "String is rejected where the store-specific action is required",
+    "originalSourcePaths": true
+  },
+  "realWordPressRuntime": {
+    "check": "wordpresshx-sdk064-real-data-store-v1",
+    "wordpressVersion": "7.0",
+    "pluginActivated": true,
+    "initialSnapshotSelected": true,
+    "keyboardAction": true,
+    "mouseActions": true,
+    "finalRevision": 7,
+    "nativeSubscriptionCount": 7,
+    "loadingObserved": true,
+    "errorObserved": true,
+    "recoveryObserved": true,
+    "focusEnteredSidebar": true,
+    "focusAfterClose": {
+      "ariaLabel": "Todo data-store lab",
+      "tagName": "BUTTON"
+    },
+    "postTypeNegative": "page editor has no extension menu item",
+    "publicUnregisterBefore": true,
+    "publicUnregisterRemoved": true,
+    "publicUnregisterAfter": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "accessibility": {
+      "engine": "axe-core 4.10.2",
+      "seriousOrCriticalViolations": 0
+    },
+    "localScreenshot": {
+      "sha256": "a2d44dd7e8531d2b578058f43780e561f65b7b6e7c044d3ece8c139911b5fea8",
+      "retention": "local reproducible review artifact generated with SDK064_VISUAL_OUTPUT"
+    },
+    "outcome": "passed"
+  },
+  "localVerification": {
+    "commands": [
+      "python3 packages/gutenberg/scripts/verify-data-store-profile.py",
+      "bash packages/gutenberg/scripts/test-data-store.sh --skip-wordpress",
+      "SDK064_VISUAL_OUTPUT=packages/gutenberg/sdk064-preview bash packages/gutenberg/scripts/test-data-store.sh"
+    ],
+    "outcome": "passed"
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "job": "wordpress-runtime",
+    "step": "Prove the typed native data store on WordPress 7.0",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null,
+    "jobUrl": null,
+    "jobCount": null,
+    "generatedTreeSha256": "2f4aada3c1d004de42287d6ea33fe5db750d045db1584c8788b3d803749e7c04",
+    "productionBundleSha256": "c5686f0664c4f199eb0968b950af3df3ab671c64358888d49cb43a46b55475a6",
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "wordpressSpecificGenesBranch": false,
+    "siblingGenesBuildInput": false,
+    "reason": "Released Genes 1.36.3 already emits the typed data-store descriptor, exact WordPress imports, and HXX UI without weak owned generated types."
+  },
+  "claims": {
+    "typedCustomDataStore": "compile-and-runtime-tested",
+    "compileTimeInvalidStoreRejection": "tested",
+    "nativeDispatchSelectSubscription": "real-editor-tested",
+    "loadingErrorAndRecovery": "real-editor-tested",
+    "typedHxxEditorUi": "real-editor-tested",
+    "undoIntegration": "not-applicable-to-isolated-custom-store",
+    "persistentTodoStorage": "not-tested",
+    "completeTodoStudio": "not-claimed",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "The first reusable contract intentionally exposes one immutable snapshot selector and one closed action transport; applications layer domain command and selector names in typed Haxe.",
+    "The lab state is in memory and demonstrates the SDK-064 foundation, not WordPress persistence, REST authorization, or the complete Todo Studio application.",
+    "Core editor undo history is not claimed because this isolated custom registry state does not mutate core editor content; later persistent editor integrations require their own undo evidence where relevant.",
+    "The exact provider graph contains upstream npm deprecation and peer-range warnings already bounded as build inputs; lifecycle scripts are disabled and no advisory-free claim is made.",
+    "The screenshot is a reproducible local review artifact rather than a committed binary or hosted artifact.",
+    "The pinned tink_hxx/tink_parse closure emits upstream Haxe 4.3 deprecation warnings.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

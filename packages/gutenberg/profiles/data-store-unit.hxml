@@ -1,0 +1,5 @@
+-cp test/data-store-fixture/src
+-cp test/data-store-unit/src
+-main sdk064.unit.Main
+-D js-es=6
+-dce full
