@@ -21,7 +21,7 @@
     },
     "profileResolver": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx",
-      "sha256": "7d6f28b12efefa10fd566b77d4e5bfc2d1cb55329a2f007b40c3a874b2940f93"
+      "sha256": "9f4dc1d93bfd2844813a2a7f61c954f191514bd56169b5c6d223b558ebd76ba8"
     },
     "parserAdapter": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",

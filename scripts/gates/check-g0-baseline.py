@@ -378,40 +378,37 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
     audit.check(npm.get("rootManifestPaths") == [], "root npm manifests must be absent at G0")
     audit.check(npm.get("rootLockPaths") == [], "root npm locks must be absent at G0")
     external_graphs = npm.get("externalGraphs", [])
+    graph_ids = {
+        graph.get("id")
+        for graph in external_graphs
+        if isinstance(graph, dict) and isinstance(graph.get("id"), str)
+    }
     audit.check(
-        isinstance(external_graphs, list) and len(external_graphs) == 6,
+        isinstance(external_graphs, list)
+        and len(external_graphs) == 7
+        and len(graph_ids) == 7,
         "npm external graph set changed",
     )
-    genes_graph = (
-        external_graphs[0]
-        if isinstance(external_graphs, list) and len(external_graphs) > 0
-        else {}
+    graph_by_id = {
+        graph["id"]: graph
+        for graph in external_graphs
+        if isinstance(graph, dict) and isinstance(graph.get("id"), str)
+    }
+    genes_graph = graph_by_id.get("genes-ts-v1.33.0-release-graph", {})
+    sdk031_graph = graph_by_id.get("sdk-031-gutenberg-verification-graph", {})
+    sdk032_graph = graph_by_id.get(
+        "sdk-032-react-gutenberg-hxx-verification-graph", {}
     )
-    sdk031_graph = (
-        external_graphs[1]
-        if isinstance(external_graphs, list) and len(external_graphs) > 1
-        else {}
+    sdk033_graph = graph_by_id.get(
+        "sdk-033-wordpress-assets-verification-graph", {}
     )
-    sdk032_graph = (
-        external_graphs[2]
-        if isinstance(external_graphs, list) and len(external_graphs) > 2
-        else {}
+    sdk063_graph = graph_by_id.get(
+        "sdk-063-editor-plugin-verification-graph", {}
     )
-    sdk033_graph = (
-        external_graphs[3]
-        if isinstance(external_graphs, list) and len(external_graphs) > 3
-        else {}
+    sdk034_graph = graph_by_id.get(
+        "sdk-034-browser-source-correlation-verification-graph", {}
     )
-    sdk034_graph = (
-        external_graphs[4]
-        if isinstance(external_graphs, list) and len(external_graphs) > 4
-        else {}
-    )
-    sdk025_graph = (
-        external_graphs[5]
-        if isinstance(external_graphs, list) and len(external_graphs) > 5
-        else {}
-    )
+    sdk025_graph = graph_by_id.get("sdk-025-php-trace-cli-graph", {})
     audit.check(
         genes_graph
         == {
@@ -463,6 +460,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/tooling/package.json",
                 "packages/gutenberg/hxx-tooling/package.json",
                 "packages/gutenberg/build-tooling/package.json",
+                "packages/gutenberg/editor-tooling/package.json",
                 "packages/cli/package.json",
                 "packages/cli/browser-tooling/package.json",
             ]
@@ -479,6 +477,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/tooling/package-lock.json",
                 "packages/gutenberg/hxx-tooling/package-lock.json",
                 "packages/gutenberg/build-tooling/package-lock.json",
+                "packages/gutenberg/editor-tooling/package-lock.json",
                 "packages/cli/package-lock.json",
                 "packages/cli/browser-tooling/package-lock.json",
             ]
@@ -712,6 +711,116 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
         sdk033_graph.get("receiptId")
         == "SDK-033-WORDPRESS-ASSET-METADATA",
         "SDK-033 npm graph receipt changed",
+    )
+    audit.exact_keys(
+        sdk063_graph,
+        {
+            "id",
+            "authority",
+            "profilePath",
+            "profileSha256",
+            "manifestPath",
+            "manifestSha256",
+            "lockPath",
+            "lockSha256",
+            "directPackages",
+            "runtimeImage",
+            "browserRuntimeImage",
+            "wordpressRuntimeImage",
+            "lifecycleScriptsAllowed",
+            "buildInputOnly",
+            "advisoryFollowUp",
+            "receiptId",
+        },
+        "SDK-063 npm graph",
+    )
+    audit.check(
+        sdk063_graph.get("authority")
+        == "exact-provider-editor-overlay-package-lock-and-real-wordpress-runtime",
+        "SDK-063 npm graph authority changed",
+    )
+    sdk063_profile = sdk063_graph.get("profilePath")
+    sdk063_manifest = sdk063_graph.get("manifestPath")
+    sdk063_lock = sdk063_graph.get("lockPath")
+    audit.check(
+        sdk063_profile
+        == (
+            "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+            "wp70-release.editor-plugin.browser-hxx.json"
+        ),
+        "SDK-063 editor profile path changed",
+    )
+    audit.check(
+        sdk063_manifest == "packages/gutenberg/editor-tooling/package.json",
+        "SDK-063 npm manifest path changed",
+    )
+    audit.check(
+        sdk063_lock == "packages/gutenberg/editor-tooling/package-lock.json",
+        "SDK-063 npm lock path changed",
+    )
+    for path, digest, label in (
+        (sdk063_profile, sdk063_graph.get("profileSha256"), "profile"),
+        (sdk063_manifest, sdk063_graph.get("manifestSha256"), "manifest"),
+        (sdk063_lock, sdk063_graph.get("lockSha256"), "lock"),
+    ):
+        if isinstance(path, str):
+            audit.check(
+                audit.sha256(path) == digest,
+                f"SDK-063 {label} digest changed",
+            )
+    audit.check(
+        sdk063_graph.get("directPackages")
+        == [
+            "@babel/core@7.25.7",
+            "@babel/plugin-transform-typescript@7.29.7",
+            "@playwright/test@1.58.2",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/browserslist-config@6.40.0",
+            "@wordpress/components@32.2.0",
+            "@wordpress/data@10.40.0",
+            "@wordpress/dependency-extraction-webpack-plugin@6.40.0",
+            "@wordpress/editor@14.40.0",
+            "@wordpress/element@6.40.0",
+            "@wordpress/i18n@6.13.0",
+            "@wordpress/plugins@7.40.0",
+            "@wordpress/scripts@31.5.0",
+            "axe-core@4.10.2",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3",
+            "webpack@5.108.4",
+        ],
+        "SDK-063 direct npm package set changed",
+    )
+    audit.check(
+        sdk063_graph.get("runtimeImage") == node.get("reference"),
+        "SDK-063 runtime image differs from the Node lock",
+    )
+    audit.check(
+        sdk063_graph.get("browserRuntimeImage") == playwright.get("reference"),
+        "SDK-063 browser image differs from the Playwright lock",
+    )
+    audit.check(
+        sdk063_graph.get("wordpressRuntimeImage")
+        == nested(images, "wordpress70Php84", "reference"),
+        "SDK-063 WordPress image differs from the image lock",
+    )
+    audit.check(
+        sdk063_graph.get("lifecycleScriptsAllowed") is False,
+        "SDK-063 npm lifecycle scripts must remain disabled",
+    )
+    audit.check(
+        sdk063_graph.get("buildInputOnly") is True,
+        "SDK-063 npm graph must remain a build input",
+    )
+    audit.check(
+        sdk063_graph.get("advisoryFollowUp") == "wordpresshx-g2.3",
+        "SDK-063 advisory follow-up changed",
+    )
+    audit.check(
+        sdk063_graph.get("receiptId") == "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+        "SDK-063 npm graph receipt changed",
     )
     audit.exact_keys(
         sdk034_graph,
@@ -1016,6 +1125,7 @@ def validate_cross_evidence(audit: Audit, receipt: dict[str, Any], toolchain: di
             "SDK-033-WORDPRESS-ASSET-METADATA",
             "SDK-034-BROWSER-SOURCE-CORRELATION",
             "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+            "SDK-063-EDITOR-PLUGIN-SLOTFILL",
             "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
         ],
         "wp70 upstream/source receipt link changed",

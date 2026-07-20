@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+  "bead": "wordpresshx-sdk-063",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T06:29:41Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json",
+      "sha256": "c319f40b7bdad1b4d28d1d8ecb84f8bf695a575f53a97b439a3986e779fcf9ab"
+    },
+    "profileResolver": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx",
+      "sha256": "9f4dc1d93bfd2844813a2a7f61c954f191514bd56169b5c6d223b558ebd76ba8"
+    },
+    "haxeProfile": {
+      "path": "packages/gutenberg/profiles/editor-plugin-strict.hxml",
+      "sha256": "2c0ac7dbd96a47fac520df499f6a30c73931b549bff9e0d3098634afeeeecf87"
+    },
+    "haxeFixture": {
+      "path": "packages/gutenberg/test/editor-plugin-fixture/src/sdk063/fixture/Main.hx",
+      "sha256": "d16401e9757115506e92837d7d0a89dd1b25bb042ac8cda95970d119d04e6a6e"
+    },
+    "fixtureStyles": {
+      "path": "packages/gutenberg/test/editor-plugin-fixture/src/sdk063/fixture/EditorStyles.hx",
+      "sha256": "c992bea055d2fe3c984e2dc66bfe11dd96de7402f9b1dafd8c9808053eee63d1"
+    },
+    "toolingManifest": {
+      "path": "packages/gutenberg/editor-tooling/package.json",
+      "sha256": "26727b8ae1ff0a3efa9e70e4828bf2d6c4a0ea23c323d1c0eb2a59bef8035cde"
+    },
+    "toolingLock": {
+      "path": "packages/gutenberg/editor-tooling/package-lock.json",
+      "sha256": "3807e6e1995234a7b13a2af5671f2b82923bab529e9b649c47a5ae4c84a3ae4d"
+    },
+    "profileVerifier": {
+      "path": "packages/gutenberg/scripts/verify-editor-profile.py",
+      "sha256": "f0e509030bd1d0c87dca10ca30233dca5bd8a820a0f833a095d84f9d9b69cc63"
+    },
+    "artifactVerifier": {
+      "path": "packages/gutenberg/scripts/verify-editor.mjs",
+      "sha256": "3967301d9febedeef7c034f9717556944f0eca7ee4c5b9c006df3b591d73454b"
+    },
+    "nativeEmitter": {
+      "path": "packages/gutenberg/scripts/emit-editor-plugin.py",
+      "sha256": "8dbd9bd5133a912d6e59629e796dac33eb939bd29139d5cc606c8bc1e70c6324"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-editor-plugin.sh",
+      "sha256": "98d0be2f848c387377d1ca75abf8e743410af675a93311368ec24e0d77e11b95"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-editor-lane.sh",
+      "sha256": "e430309935dff1da9b24922eef0ff7e8f56641d52deee69773deab09d43dde82"
+    },
+    "browserProbe": {
+      "path": "packages/gutenberg/scripts/run-editor-playwright.mjs",
+      "sha256": "e854291b79a59445bc6b8a1332df3488b2d1bb941eac1942f133bbdd4e8ccd24"
+    },
+    "wordpressSetup": {
+      "path": "packages/gutenberg/test/editor-plugin-runtime/setup.php",
+      "sha256": "bbf13ed5092698e6602f9fec4ce45b85cbb9e000add300ca46d2c872704e9f9b"
+    }
+  },
+  "provider": {
+    "profileId": "wp70-release",
+    "baseCatalogRevision": "wp70-release/catalog-v1",
+    "editorCatalogRevision": "wp70-release/editor-plugin-v1",
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "overlayComponentCount": 4,
+    "sourceVerifiedCapabilityCount": 11,
+    "exactWordPressNpmPackageCount": 77,
+    "baseCatalogBytesChanged": false,
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixNpmPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "node": "22.17.0",
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "webpack": "5.108.4",
+    "axeCore": "4.10.2",
+    "npmLockedPackageCount": 1795,
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "playwrightImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "php74Image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+    "php84Image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+    "lifecycleScriptsAllowed": false
+  },
+  "implementation": {
+    "authoringSurface": "haxe-hxx",
+    "companionApplicationJavaScriptOrTypeScriptAuthored": false,
+    "nativeRegistration": "@wordpress/plugins#registerPlugin",
+    "nativeUnregistration": "@wordpress/plugins#unregisterPlugin",
+    "nativeSlotFill": [
+      "@wordpress/editor#PluginSidebar",
+      "@wordpress/editor#PluginSidebarMoreMenuItem"
+    ],
+    "nativeComponents": [
+      "@wordpress/components#Button",
+      "@wordpress/components#PanelBody",
+      "@wordpress/components#ToggleControl"
+    ],
+    "typedIdentities": [
+      "PluginName",
+      "SidebarName",
+      "PostTypeName"
+    ],
+    "postTypeSelector": "core/editor#getCurrentPostType",
+    "translationsExtractedFromHaxe": true,
+    "shippedBrowserHxxRuntime": false,
+    "wordpressSpecificGenesBranch": false
+  },
+  "exactProfileVerification": {
+    "publicPackages": [
+      "@wordpress/data@10.40.0",
+      "@wordpress/editor@14.40.0",
+      "@wordpress/plugins@7.40.0"
+    ],
+    "basePackagesReused": [
+      "@wordpress/components@32.2.0",
+      "@wordpress/element@6.40.0",
+      "@wordpress/i18n@6.13.0"
+    ],
+    "checks": [
+      "immutable Gutenberg and WordPress source SHA-256",
+      "immutable Git blob SHA-1",
+      "provider package-lock versions",
+      "npm tarball integrity and shasum",
+      "stable public exports and selector source",
+      "official WordPress script-handle mappings",
+      "private and experimental API exclusion"
+    ],
+    "outcome": "passed"
+  },
+  "compilation": {
+    "generatedTreeSha256": "311e6527f1bdaa9ec6b84d768588fd59b9cb383f4f6bdfd7eb5824a34ce2665e",
+    "developmentBundleSha256": "bec71ed6bdfea15d92c4ed99d985dd6c5fbb6cb3b60f82a795874ced4df00b31",
+    "productionBundleSha256": "9d09332fb1a1d0bbd9b23779ff3b2d1885a2f94a86bc23032f3c4f8b211cb3a2",
+    "productionVersion": "47d41252f6acf5bb9e72",
+    "assetPlanSha256": "15c74fc96184b0a1e175fa7378a6977b25feca6e255ddff49119d0bffe51d5bf",
+    "dependencies": [
+      "react-jsx-runtime",
+      "wp-components",
+      "wp-data",
+      "wp-editor",
+      "wp-element",
+      "wp-i18n",
+      "wp-plugins"
+    ],
+    "sourceImports": [
+      "@wordpress/components",
+      "@wordpress/data",
+      "@wordpress/editor",
+      "@wordpress/element",
+      "@wordpress/i18n",
+      "@wordpress/plugins"
+    ],
+    "publicWeakTypes": [],
+    "forbiddenHaxeWeakConstructs": [],
+    "generatedAndBundleMachinePathLeaks": 0,
+    "secondCompileMatched": true,
+    "developmentAndProductionReplayMatched": true,
+    "generatedPluginReplayMatched": true,
+    "php74Syntax": "passed",
+    "php84Syntax": "passed"
+  },
+  "negativeDiagnostics": {
+    "WPX6301": "invalid plugin-name literal",
+    "WPX3216": "missing required PluginSidebar title",
+    "WPX3207": "private or unprofiled component",
+    "typedIdentityMismatch": "SidebarName is rejected where PluginName is required",
+    "originalSourcePaths": true
+  },
+  "realWordPressRuntime": {
+    "check": "wordpresshx-sdk063-real-editor-v1",
+    "wordpressVersion": "7.0",
+    "pluginActivated": true,
+    "keyboardMenuOpen": true,
+    "menuRole": "menuitemcheckbox",
+    "focusEnteredSidebar": true,
+    "focusEntryTabs": 4,
+    "keyboardToggle": true,
+    "mousePriority": true,
+    "focusAfterClose": {
+      "ariaLabel": "Todo Studio readiness",
+      "tagName": "BUTTON"
+    },
+    "postTypeNegative": "page editor has no extension menu item",
+    "publicUnregisterBefore": true,
+    "publicUnregisterRemoved": true,
+    "publicUnregisterAfter": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "accessibility": {
+      "engine": "axe-core 4.10.2",
+      "seriousOrCriticalViolations": 0
+    },
+    "localScreenshot": {
+      "sha256": "6ae5ed588d1c32184a1b6aa3c3004bdb58f70d1199cd9db365e1308f33b468c6",
+      "retention": "local reproducible review artifact generated with SDK063_VISUAL_OUTPUT"
+    },
+    "outcome": "passed"
+  },
+  "localVerification": {
+    "commands": [
+      "python3 packages/gutenberg/scripts/verify-editor-profile.py",
+      "bash packages/gutenberg/scripts/test-editor-plugin.sh --skip-wordpress",
+      "SDK063_VISUAL_OUTPUT=packages/gutenberg/sdk063-preview bash packages/gutenberg/scripts/test-editor-plugin.sh"
+    ],
+    "outcome": "passed"
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "job": "wordpress-runtime",
+    "step": "Prove the typed editor plugin and SlotFill on WordPress 7.0",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "wordpressSpecificGenesBranch": false,
+    "siblingGenesBuildInput": false,
+    "reason": "Released Genes 1.36.3 already emits the typed HXX and exact WordPress imports needed by the bounded editor extension."
+  },
+  "claims": {
+    "typedEditorPluginRegistration": "compile-and-runtime-tested",
+    "typedSidebarSlotFill": "real-editor-tested",
+    "exactProfileResolution": "source-and-runtime-tested",
+    "keyboardMouseAndFocus": "real-editor-tested",
+    "postTypeVisibility": "real-editor-tested",
+    "translationsAndAssetMetadata": "generated-and-runtime-loaded",
+    "completeEditorExtensionSurface": "not-claimed",
+    "customDataStore": "not-tested",
+    "blocksAndFrontendRendering": "not-tested",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "The overlay admits one stable sidebar/panel vertical; commands, formats, preferences, notices, additional SlotFills, and custom stores remain later SDK work.",
+    "CurrentPost intentionally owns only the exact core/editor getCurrentPostType selector; general typed data-store descriptors belong to SDK-064.",
+    "Haxe 4 cannot lex an anonymous fragment as the root inline-markup expression, so the sibling SlotFill nodes use ReactNode's typed Array form while nested fragments remain direct HXX.",
+    "The exact provider graph contains upstream npm deprecation and peer-range warnings already bounded as build inputs; lifecycle scripts are disabled and no advisory-free claim is made.",
+    "The screenshot is a reproducible local review artifact rather than a committed binary or hosted artifact.",
+    "The pinned tink_hxx/tink_parse closure emits upstream Haxe 4.3 deprecation warnings.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

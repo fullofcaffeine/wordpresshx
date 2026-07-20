@@ -277,6 +277,44 @@
           "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA"
         },
         {
+          "id": "sdk-063-editor-plugin-verification-graph",
+          "authority": "exact-provider-editor-overlay-package-lock-and-real-wordpress-runtime",
+          "profilePath": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json",
+          "profileSha256": "c319f40b7bdad1b4d28d1d8ecb84f8bf695a575f53a97b439a3986e779fcf9ab",
+          "manifestPath": "packages/gutenberg/editor-tooling/package.json",
+          "manifestSha256": "26727b8ae1ff0a3efa9e70e4828bf2d6c4a0ea23c323d1c0eb2a59bef8035cde",
+          "lockPath": "packages/gutenberg/editor-tooling/package-lock.json",
+          "lockSha256": "3807e6e1995234a7b13a2af5671f2b82923bab529e9b649c47a5ae4c84a3ae4d",
+          "directPackages": [
+            "@babel/core@7.25.7",
+            "@babel/plugin-transform-typescript@7.29.7",
+            "@playwright/test@1.58.2",
+            "@types/react@18.3.27",
+            "@types/react-dom@18.3.7",
+            "@wordpress/browserslist-config@6.40.0",
+            "@wordpress/components@32.2.0",
+            "@wordpress/data@10.40.0",
+            "@wordpress/dependency-extraction-webpack-plugin@6.40.0",
+            "@wordpress/editor@14.40.0",
+            "@wordpress/element@6.40.0",
+            "@wordpress/i18n@6.13.0",
+            "@wordpress/plugins@7.40.0",
+            "@wordpress/scripts@31.5.0",
+            "axe-core@4.10.2",
+            "react@18.3.1",
+            "react-dom@18.3.1",
+            "typescript@5.9.3",
+            "webpack@5.108.4"
+          ],
+          "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+          "browserRuntimeImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+          "wordpressRuntimeImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+          "lifecycleScriptsAllowed": false,
+          "buildInputOnly": true,
+          "advisoryFollowUp": "wordpresshx-g2.3",
+          "receiptId": "SDK-063-EDITOR-PLUGIN-SLOTFILL"
+        },
+        {
           "id": "sdk-034-browser-source-correlation-verification-graph",
           "authority": "exact-genes-map-esbuild-lock-and-real-chromium-runtime",
           "profilePath": "packages/cli/profiles/browser-correlation.hxml",
@@ -348,7 +386,7 @@
   "profileInputs": {
       "upstreamLock": {
         "path": "manifests/upstream.lock.json",
-        "sha256": "ff288a3c710990183c30a7cbaf4ae3ee8c8dda8b70b9e995d936a3cdacec91fd"
+        "sha256": "4a55da90f9f4bc040f595fc1ad0cdc3c1e4720049560a5231629305c1d1565f4"
       },
     "profiles": [
       "wp70-release",

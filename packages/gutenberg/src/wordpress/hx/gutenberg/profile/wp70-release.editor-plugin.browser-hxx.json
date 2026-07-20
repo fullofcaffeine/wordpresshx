@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogId": "editor-plugin",
+  "catalogRevision": "wp70-release/editor-plugin-v1",
+  "requiresBaseCatalogRevision": "wp70-release/catalog-v1",
+  "provider": {
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+  },
+  "packages": [
+    {
+      "request": "@wordpress/data",
+      "version": "10.40.0",
+      "packageCapability": "gutenberg.package.@wordpress/data",
+      "wordpressHandle": "wp-data",
+      "handleCapability": "wordpress.script-handle.wp-data",
+      "source": {
+        "path": "packages/data/package.json",
+        "blob": "19c7303d78ba3a890d2478781e6f055a94f979d3",
+        "sha256": "ee82b7fca901d27270be7262954be019982311f151857bd1385575329f987c6a"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/data/-/data-10.40.0.tgz",
+        "integrity": "sha512-wwqkMc9iLteRO1zNxL/R3COWnijsdC5TIjenmd2JivReUmdA4ulAN3Tq7QiHkhwOV4jzZkuWW7DgR2ynxf55lw==",
+        "shasum": "14d15ee78f1386e6f2e444988349993e88a5712c"
+      }
+    },
+    {
+      "request": "@wordpress/editor",
+      "version": "14.40.0",
+      "packageCapability": "gutenberg.package.@wordpress/editor",
+      "wordpressHandle": "wp-editor",
+      "handleCapability": "wordpress.script-handle.wp-editor",
+      "source": {
+        "path": "packages/editor/package.json",
+        "blob": "1dfeee24e13f5815144154327ab306cb83791e76",
+        "sha256": "b06db122ca52eae11cc85b73cb0080cbeabec3a6b9a8cfca05302d909ff3ef9e"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/editor/-/editor-14.40.0.tgz",
+        "integrity": "sha512-zvBTTGSXcxuIT1pBypvC6Li3yzY2fH/mTCOCeM+sv5qht9VQXxuy90wO05jlrGxSy3nnnlL8cAsEBeXthxZybA==",
+        "shasum": "d3451e9adf0dc5b66b884088dba4bc412343acfb"
+      }
+    },
+    {
+      "request": "@wordpress/plugins",
+      "version": "7.40.0",
+      "packageCapability": "gutenberg.package.@wordpress/plugins",
+      "wordpressHandle": "wp-plugins",
+      "handleCapability": "wordpress.script-handle.wp-plugins",
+      "source": {
+        "path": "packages/plugins/package.json",
+        "blob": "691a8e50f3b573f77474522c0a7e48ec53950070",
+        "sha256": "ef1b50b68b8bd72c063ace74333d5e1e493563a4bfb3287dd030074b63251215"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/plugins/-/plugins-7.40.0.tgz",
+        "integrity": "sha512-JulB48hzQJI2KZYKmyzLE2u4NyQU0Mv2myQ4DLwCzPRQHPIKeuyXYMqWW9Sm/oGhyhBWNSCb8l0t0CPZRWmOpg==",
+        "shasum": "639ddf89a75c88a3f979fd56bdebad16d32b4d59"
+      }
+    }
+  ],
+  "admittedCapabilities": [
+    {"capabilityId": "gutenberg.export.@wordpress/data.useSelect", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/editor.PluginSidebar", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/editor.PluginSidebarMoreMenuItem", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/editor.getCurrentPostType", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/editor.store", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/plugins.registerPlugin", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.export.@wordpress/plugins.unregisterPlugin", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.package.@wordpress/editor", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "gutenberg.package.@wordpress/plugins", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "wordpress.script-handle.wp-editor", "classification": "public", "evidenceStatus": "source-verified"},
+    {"capabilityId": "wordpress.script-handle.wp-plugins", "classification": "public", "evidenceStatus": "source-verified"}
+  ],
+  "components": [
+    {
+      "tag": "PanelBody",
+      "haxeType": "wordpress.hx.gutenberg.components.PanelBody",
+      "propsType": "wordpress.hx.gutenberg.components.PanelBodyProps",
+      "children": "optional",
+      "request": "@wordpress/components",
+      "export": "PanelBody",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/panel/types.ts",
+        "propsBlob": "c28a4e1a25166bba39da61026182897d762313a9",
+        "propsSha256": "54a7a22c16d463e4732121cbd57e80caa860ba1a67bb67809c1f884ba8d609df"
+      }
+    },
+    {
+      "tag": "PluginSidebar",
+      "haxeType": "wordpress.hx.gutenberg.editor.PluginSidebar",
+      "propsType": "wordpress.hx.gutenberg.editor.PluginSidebarProps",
+      "children": "required",
+      "request": "@wordpress/editor",
+      "export": "PluginSidebar",
+      "source": {
+        "path": "packages/editor/src/components/index.js",
+        "blob": "d940532be75a3dc71e3f8bf6c3aed11e3d350204",
+        "sha256": "69b3bd3e83183a693a18aee16463c9794634f43b570bad1920db55d50c354065",
+        "propsPath": "packages/editor/src/components/plugin-sidebar/index.js",
+        "propsBlob": "dfcc01b5e6028327a2b751508981900e283eca0a",
+        "propsSha256": "c6fa77334b16cadcd984426325eb85c8e369d84406546c8eebee8f1fa01eb455"
+      }
+    },
+    {
+      "tag": "PluginSidebarMoreMenuItem",
+      "haxeType": "wordpress.hx.gutenberg.editor.PluginSidebarMoreMenuItem",
+      "propsType": "wordpress.hx.gutenberg.editor.PluginSidebarMoreMenuItemProps",
+      "children": "required",
+      "request": "@wordpress/editor",
+      "export": "PluginSidebarMoreMenuItem",
+      "source": {
+        "path": "packages/editor/src/components/index.js",
+        "blob": "d940532be75a3dc71e3f8bf6c3aed11e3d350204",
+        "sha256": "69b3bd3e83183a693a18aee16463c9794634f43b570bad1920db55d50c354065",
+        "propsPath": "packages/editor/src/components/plugin-sidebar-more-menu-item/index.js",
+        "propsBlob": "379a0720dc8a91004f34009eee563658c0d44395",
+        "propsSha256": "ebe43ab70ddc9e5b71b4f7ad485bdeb25005b1ab6fa618fd219bbaa365a7dd4a"
+      }
+    },
+    {
+      "tag": "ToggleControl",
+      "haxeType": "wordpress.hx.gutenberg.components.ToggleControl",
+      "propsType": "wordpress.hx.gutenberg.components.ToggleControlProps",
+      "children": "forbidden",
+      "request": "@wordpress/components",
+      "export": "ToggleControl",
+      "source": {
+        "path": "packages/components/src/index.ts",
+        "blob": "07b1a6b7125c01bf2d3aca7fcddfa7956a364818",
+        "sha256": "314b658a422edb8132a87451fe663bd37d80d54d20023e20a10e0c99446c8d7d",
+        "propsPath": "packages/components/src/toggle-control/types.ts",
+        "propsBlob": "568c44fb64af071555dde842378152d08a2321a7",
+        "propsSha256": "d8eca9156a211b068728a026e13826b3f0462857a118eb368f9f5c40657fb44d"
+      }
+    }
+  ],
+  "apis": [
+    {
+      "request": "@wordpress/plugins",
+      "exports": ["registerPlugin", "unregisterPlugin"],
+      "source": {
+        "path": "packages/plugins/src/api/index.ts",
+        "blob": "932628ddd623dbc186381d6d202ae63736bd2eab",
+        "sha256": "e4fc36989ed253920736992dcd3df26c71b8f2c6bac64bdf9264be445d3d8b40"
+      }
+    },
+    {
+      "request": "@wordpress/data",
+      "exports": ["useSelect"],
+      "source": {
+        "path": "packages/data/src/components/use-select/index.js",
+        "blob": "f7eda689d9abaf47a3c077760cf119f291f0af1b",
+        "sha256": "936588fc758dcd6f9fb2e2c9c8b4553669dde14c06aff90adda5c46f052d0f41"
+      }
+    },
+    {
+      "request": "@wordpress/editor",
+      "exports": ["store"],
+      "selectors": ["getCurrentPostType"],
+      "source": {
+        "path": "packages/editor/src/store/index.js",
+        "blob": "a3241a2fc7e1843cf32a6d6b0cced06b74ad5f1d",
+        "sha256": "d8589b5191aae302d127582f47b10011b65cc38eff554ce18deefc7b47c60b04"
+      },
+      "selectorSource": {
+        "path": "packages/editor/src/store/selectors.js",
+        "blob": "321c29a0f4ced8c42fa668bc85fb7e9a282b4968",
+        "sha256": "736e3f2216f7a1437872f542c3e9dfc9fa4c68bf692a772b0ab30a9766dfee3a"
+      }
+    }
+  ],
+  "handleSource": {
+    "repository": "https://github.com/WordPress/wordpress-develop.git",
+    "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "path": "src/wp-includes/assets/script-loader-packages.php",
+    "blob": "fa631e47f7afdf20fdc8aeee38b1d2bc6d0f8c25",
+    "sha256": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68"
+  },
+  "mappings": [
+    {"request": "@wordpress/components", "handle": "wp-components"},
+    {"request": "@wordpress/data", "handle": "wp-data"},
+    {"request": "@wordpress/editor", "handle": "wp-editor"},
+    {"request": "@wordpress/element", "handle": "wp-element"},
+    {"request": "@wordpress/i18n", "handle": "wp-i18n"},
+    {"request": "@wordpress/plugins", "handle": "wp-plugins"},
+    {"request": "react/jsx-runtime", "handle": "react-jsx-runtime"}
+  ],
+  "policy": {
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false,
+    "componentCatalogGeneratedOrCurated": "curated-exact-source-and-published-types",
+    "stringStoreKeyScope": "core/editor/getCurrentPostType-only",
+    "unknownPropsAllowed": false,
+    "manualRegistrationJavaScriptAllowed": false,
+    "npmWorkspaceOnlyVersionResolution": {
+      "scope": "build-input-only-unimported-from-final-bundle",
+      "@wordpress/vips": {"providerWorkspaceVersion": "1.0.0-prerelease", "registryVersion": "1.0.0"},
+      "@wordpress/worker-threads": {"providerWorkspaceVersion": "1.0.0-prerelease", "registryVersion": "1.0.0"}
+    }
+  }
+}

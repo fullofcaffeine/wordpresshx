@@ -188,3 +188,75 @@ provide source roots only during offline diagnosis. The emitted PHP/JS/JSON are
 build artifacts; the Haxe fixture remains the application authoring surface.
 Script Modules and unrelated entries or adapters are not claimed and require
 their own exact-profile parity proof.
+
+## Typed editor plugins and SlotFill
+
+SDK-063 adds a Haxe-only editor extension on the same exact WordPress 7.0
+profile. Plugin, sidebar, and post-type identities are distinct branded types;
+valid literals are checked during compilation and runtime input has explicit
+parsers. The public surface wraps native `registerPlugin`, `unregisterPlugin`,
+`useSelect`, `PluginSidebar`, `PluginSidebarMoreMenuItem`, `PanelBody`, and
+`ToggleControl` APIs. WordPress still owns the registry, editor store, SlotFill
+runtime, components, and focus model.
+
+The normal application source is dense Haxe/HXX:
+
+~~~haxe
+private static final pluginName =
+  PluginName.literal("wordpresshx-todo-readiness");
+private static final sidebarName = SidebarName.literal("todo-readiness");
+
+private static function render():ReactNode {
+  return <if {CurrentPost.isType(PostTypeName.literal("post"))}>
+    <Main.ReadinessSidebar/>
+  <else><></></if>;
+}
+
+private static function ReadinessSidebar():ReactNode {
+  final required = useState(false);
+  final menuItem:ReactNode =
+    <PluginSidebarMoreMenuItem target={sidebarName}>
+      Todo Studio readiness
+    </PluginSidebarMoreMenuItem>;
+  final sidebar:ReactNode =
+    <PluginSidebar name={sidebarName} title="Todo Studio readiness">
+      <PanelBody title="Before this ships">
+        <ToggleControl
+          label="Require editorial review"
+          checked={required.value}
+          onChange={next -> required.set(next)}
+        />
+      </PanelBody>
+    </PluginSidebar>;
+  return [menuItem, sidebar];
+}
+~~~
+
+The Array at the root is React's typed sibling-node form. Haxe 4's inline
+markup lexer cannot use a fragment literal as the outermost expression;
+nested `<>...</>` fragments remain supported. There is no authored JS/TS
+registration file, browser HXX parser, private Gutenberg import, or recreated
+SlotFill implementation.
+
+Run the deterministic build and real editor proof while retaining an
+inspectable plugin and screenshot:
+
+~~~sh
+SDK063_VISUAL_OUTPUT=packages/gutenberg/sdk063-preview \
+  bash packages/gutenberg/scripts/test-editor-plugin.sh
+~~~
+
+Use `--skip-wordpress` for the compile, strict-TypeScript, official bundle,
+replay, generated-plugin, and PHP-matrix checks only. The complete lane also
+installs the generated plugin on exact WordPress 7.0/MySQL and uses real
+Chromium to prove keyboard opening through the `menuitemcheckbox` SlotFill,
+bounded keyboard focus entry, keyboard and mouse state changes, focus-preserving
+close through the pinned toolbar control, zero serious/critical axe findings,
+post-only visibility, public unregister behavior, and zero console/page errors.
+
+The editor overlay is selected explicitly with
+`-D wordpress_hx_browser_hxx_catalog=editor-plugin`. It composes with the
+unchanged SDK-032 base catalog, so adding this vertical does not rewrite or
+invalidate the earlier browser-HXX receipt. Its exact source and package proof
+is recorded in
+[`SDK-063-EDITOR-PLUGIN-SLOTFILL`](../../manifests/evidence/sdk-063-editor-plugin-slotfill.json).

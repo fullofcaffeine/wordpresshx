@@ -1,0 +1,5 @@
+profiles/hxx-common.hxml
+-D wordpress_hx_browser_hxx_catalog=editor-plugin
+-D js-source-map
+-cp test/editor-plugin-fixture/src
+-main sdk063.fixture.Main

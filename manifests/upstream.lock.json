@@ -31,6 +31,7 @@
         "SDK-033-WORDPRESS-ASSET-METADATA",
         "SDK-034-BROWSER-SOURCE-CORRELATION",
         "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+        "SDK-063-EDITOR-PLUGIN-SLOTFILL",
         "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
       ],
       "upgradeOwner": "wordpress-hx-sdk profile maintainers",

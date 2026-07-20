@@ -296,6 +296,8 @@ required_files=(
   packages/gutenberg/haxe_libraries/tink_parse.hxml
   packages/gutenberg/hxx-tooling/package-lock.json
   packages/gutenberg/hxx-tooling/package.json
+  packages/gutenberg/editor-tooling/package-lock.json
+  packages/gutenberg/editor-tooling/package.json
   packages/gutenberg/build-tooling/package-lock.json
   packages/gutenberg/build-tooling/package.json
   packages/gutenberg/build-tooling/webpack.config.cjs
@@ -305,14 +307,19 @@ required_files=(
   packages/gutenberg/profiles/differential-classic.hxml
   packages/gutenberg/profiles/differential-common.hxml
   packages/gutenberg/profiles/differential-strict.hxml
+  packages/gutenberg/profiles/editor-plugin-strict.hxml
   packages/gutenberg/profiles/hxx-common.hxml
   packages/gutenberg/profiles/hxx-strict.hxml
   packages/gutenberg/profiles/strict.hxml
   packages/gutenberg/scripts/test-hxx.sh
   packages/gutenberg/scripts/test-differential.sh
   packages/gutenberg/scripts/test-assets.sh
+  packages/gutenberg/scripts/test-editor-plugin.sh
   packages/gutenberg/scripts/test.sh
   packages/gutenberg/scripts/emit-assets-plugin.py
+  packages/gutenberg/scripts/emit-editor-plugin.py
+  packages/gutenberg/scripts/run-editor-playwright.mjs
+  packages/gutenberg/scripts/run-wordpress-editor-lane.sh
   packages/gutenberg/scripts/run-wordpress-assets-lane.sh
   packages/gutenberg/scripts/verify-assets-profile.py
   packages/gutenberg/scripts/verify-assets.mjs
@@ -320,6 +327,8 @@ required_files=(
   packages/gutenberg/scripts/verify-dependency-lock.py
   packages/gutenberg/scripts/verify-differential-profile.py
   packages/gutenberg/scripts/verify-differential.mjs
+  packages/gutenberg/scripts/verify-editor-profile.py
+  packages/gutenberg/scripts/verify-editor.mjs
   packages/gutenberg/scripts/verify-hxx-profile.py
   packages/gutenberg/scripts/verify-hxx.mjs
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx
@@ -328,12 +337,26 @@ required_files=(
   packages/gutenberg/src/wordpress/hx/gutenberg/components/ButtonProps.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/components/Notice.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/components/NoticeProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/PanelBody.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/PanelBodyProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/ToggleControl.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/components/ToggleControlProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/CurrentPost.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/EditorPlugins.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PluginName.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PluginSidebar.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PluginSidebarMoreMenuItem.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PluginSidebarMoreMenuItemProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PluginSidebarProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/PostTypeName.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/editor/SidebarName.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/html/HtmlProps.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/BrowserHxx.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json
+  packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/react/DomTypes.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/react/Hooks.hx
@@ -346,12 +369,19 @@ required_files=(
   packages/gutenberg/test-negative-hxx/unsupported_switch/Main.hx
   packages/gutenberg/test-negative-hxx/wrong_event/Main.hx
   packages/gutenberg/test-negative-hxx/wrong_ref/Main.hx
+  packages/gutenberg/test-negative-editor/invalid_plugin_name/Main.hx
+  packages/gutenberg/test-negative-editor/missing_sidebar_title/Main.hx
+  packages/gutenberg/test-negative-editor/private_component/Main.hx
+  packages/gutenberg/test-negative-editor/wrong_identity_kind/Main.hx
   packages/gutenberg/test/consumer/consumer.ts
   packages/gutenberg/test/consumer/ordinary-consumer.mjs
   packages/gutenberg/test/differential-consumer/consumer.ts
   packages/gutenberg/test/differential-fixture/src/sdk035/fixture/DifferentialApi.hx
   packages/gutenberg/test/differential-fixture/src/sdk035/fixture/Main.hx
   packages/gutenberg/test/differential-runtime/run.mjs
+  packages/gutenberg/test/editor-plugin-fixture/src/sdk063/fixture/EditorStyles.hx
+  packages/gutenberg/test/editor-plugin-fixture/src/sdk063/fixture/Main.hx
+  packages/gutenberg/test/editor-plugin-runtime/setup.php
   packages/gutenberg/test/expected/browser-profile.json
   packages/gutenberg/test/expected/differential.json
   packages/gutenberg/test/fixture/src/sdk031/fixture/BrowserApi.hx
@@ -630,6 +660,7 @@ required_files=(
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
+  manifests/evidence/sdk-063-editor-plugin-slotfill.json
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -1204,6 +1235,22 @@ sdk033_tooling_lock_path = Path(
 sdk033_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-033-wordpress-asset-metadata.json"
+    ).read_text(encoding="utf-8")
+)
+sdk063_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.editor-plugin.browser-hxx.json"
+)
+sdk063_profile = json.loads(sdk063_profile_path.read_text(encoding="utf-8"))
+sdk063_tooling_manifest_path = Path(
+    "packages/gutenberg/editor-tooling/package.json"
+)
+sdk063_tooling_lock_path = Path(
+    "packages/gutenberg/editor-tooling/package-lock.json"
+)
+sdk063_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-063-editor-plugin-slotfill.json"
     ).read_text(encoding="utf-8")
 )
 toolchain_lock = json.loads(
@@ -7916,6 +7963,167 @@ assert sdk033_receipt["claims"]["translationAttachment"] == "runtime-tested"
 assert sdk033_receipt["claims"]["scriptModules"] == "not-tested"
 assert sdk033_receipt["claims"]["publicPackagePublication"] == "blocked"
 assert sdk033_receipt["claims"]["productionSupport"] == "not-tested"
+
+assert sdk063_receipt["schemaVersion"] == 1
+assert sdk063_receipt["receiptId"] == "SDK-063-EDITOR-PLUGIN-SLOTFILL"
+assert sdk063_receipt["bead"] == "wordpresshx-sdk-063"
+assert sdk063_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk063_subject_name, sdk063_subject in sdk063_receipt["subject"].items():
+    if sdk063_subject_name == "package":
+        continue
+    sdk063_subject_path = Path(sdk063_subject["path"])
+    assert hashlib.sha256(sdk063_subject_path.read_bytes()).hexdigest() == (
+        sdk063_subject["sha256"]
+    )
+assert sdk063_profile["schemaVersion"] == 1
+assert sdk063_profile["profileId"] == "wp70-release"
+assert sdk063_profile["catalogId"] == "editor-plugin"
+assert sdk063_profile["catalogRevision"] == "wp70-release/editor-plugin-v1"
+assert sdk063_profile["requiresBaseCatalogRevision"] == lock["entries"][
+    "wp70-release"
+]["catalogRevision"]
+assert sdk063_receipt["provider"]["profileId"] == sdk063_profile["profileId"]
+assert sdk063_receipt["provider"]["baseCatalogRevision"] == (
+    sdk063_profile["requiresBaseCatalogRevision"]
+)
+assert sdk063_receipt["provider"]["editorCatalogRevision"] == (
+    sdk063_profile["catalogRevision"]
+)
+assert sdk063_receipt["provider"]["wordpressCommit"] == lock["entries"][
+    "wp70-release"
+]["wordpressSource"]["commit"]
+assert sdk063_receipt["provider"]["gutenbergCommit"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["commit"]
+assert sdk063_receipt["provider"]["gutenbergTree"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["tree"]
+assert sdk063_receipt["provider"]["overlayComponentCount"] == len(
+    sdk063_profile["components"]
+)
+assert sdk063_receipt["provider"]["sourceVerifiedCapabilityCount"] == len(
+    sdk063_profile["admittedCapabilities"]
+)
+assert sdk063_receipt["provider"]["baseCatalogBytesChanged"] is False
+assert sdk063_profile["policy"]["privateApisAllowed"] is False
+assert sdk063_profile["policy"]["experimentalApisAllowed"] is False
+assert sdk063_profile["policy"]["manualRegistrationJavaScriptAllowed"] is False
+assert all(
+    capability["classification"] == "public"
+    and capability["evidenceStatus"] == "source-verified"
+    for capability in sdk063_profile["admittedCapabilities"]
+)
+sdk063_graph = next(
+    graph
+    for graph in toolchain_lock["dependencyGraphs"]["npm"]["externalGraphs"]
+    if graph["id"] == "sdk-063-editor-plugin-verification-graph"
+)
+assert sdk063_graph["receiptId"] == sdk063_receipt["receiptId"]
+assert sdk063_graph["profilePath"] == sdk063_profile_path.as_posix()
+assert sdk063_graph["profileSha256"] == hashlib.sha256(
+    sdk063_profile_path.read_bytes()
+).hexdigest()
+assert sdk063_graph["manifestPath"] == sdk063_tooling_manifest_path.as_posix()
+assert sdk063_graph["manifestSha256"] == hashlib.sha256(
+    sdk063_tooling_manifest_path.read_bytes()
+).hexdigest()
+assert sdk063_graph["lockPath"] == sdk063_tooling_lock_path.as_posix()
+assert sdk063_graph["lockSha256"] == hashlib.sha256(
+    sdk063_tooling_lock_path.read_bytes()
+).hexdigest()
+sdk063_tooling_manifest = json.loads(
+    sdk063_tooling_manifest_path.read_text(encoding="utf-8")
+)
+sdk063_tooling_lock = json.loads(
+    sdk063_tooling_lock_path.read_text(encoding="utf-8")
+)
+assert set(sdk063_graph["directPackages"]) == {
+    f"{name}@{version}"
+    for name, version in sdk063_tooling_manifest["devDependencies"].items()
+}
+assert sdk063_graph["lifecycleScriptsAllowed"] is False
+assert sdk063_graph["runtimeImage"] == image_lock["images"]["node"]["reference"]
+assert sdk063_graph["browserRuntimeImage"] == image_lock["images"][
+    "playwright"
+]["reference"]
+assert sdk063_graph["wordpressRuntimeImage"] == image_lock["images"][
+    "wordpress70Php84"
+]["reference"]
+assert sdk063_receipt["toolchain"]["npmLockedPackageCount"] == (
+    len(sdk063_tooling_lock["packages"]) - 1
+)
+assert sdk063_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+assert sdk063_receipt["implementation"]["authoringSurface"] == "haxe-hxx"
+assert sdk063_receipt["implementation"][
+    "companionApplicationJavaScriptOrTypeScriptAuthored"
+] is False
+assert sdk063_receipt["implementation"]["shippedBrowserHxxRuntime"] is False
+assert sdk063_receipt["implementation"]["wordpressSpecificGenesBranch"] is False
+assert sdk063_receipt["compilation"]["publicWeakTypes"] == []
+assert sdk063_receipt["compilation"]["forbiddenHaxeWeakConstructs"] == []
+assert sdk063_receipt["compilation"]["secondCompileMatched"] is True
+assert sdk063_receipt["compilation"][
+    "developmentAndProductionReplayMatched"
+] is True
+assert sdk063_receipt["compilation"]["generatedPluginReplayMatched"] is True
+assert sdk063_receipt["compilation"]["php74Syntax"] == "passed"
+assert sdk063_receipt["compilation"]["php84Syntax"] == "passed"
+assert sdk063_receipt["realWordPressRuntime"]["outcome"] == "passed"
+assert sdk063_receipt["realWordPressRuntime"]["keyboardMenuOpen"] is True
+assert sdk063_receipt["realWordPressRuntime"]["focusEnteredSidebar"] is True
+assert sdk063_receipt["realWordPressRuntime"]["keyboardToggle"] is True
+assert sdk063_receipt["realWordPressRuntime"]["mousePriority"] is True
+assert sdk063_receipt["realWordPressRuntime"]["postTypeNegative"] == (
+    "page editor has no extension menu item"
+)
+assert sdk063_receipt["realWordPressRuntime"]["consoleErrors"] == 0
+assert sdk063_receipt["realWordPressRuntime"]["pageErrors"] == 0
+assert sdk063_receipt["realWordPressRuntime"]["accessibility"][
+    "seriousOrCriticalViolations"
+] == 0
+assert sdk063_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk063_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk063_receipt["changeDecision"]["siblingGenesBuildInput"] is False
+assert sdk063_receipt["claims"]["typedEditorPluginRegistration"] == (
+    "compile-and-runtime-tested"
+)
+assert sdk063_receipt["claims"]["completeEditorExtensionSurface"] == (
+    "not-claimed"
+)
+assert sdk063_receipt["claims"]["productionSupport"] == "not-tested"
+assert "Prove the typed editor plugin and SlotFill on WordPress 7.0" in workflow_text
+assert "bash packages/gutenberg/scripts/test-editor-plugin.sh" in workflow_text
+sdk063_hosted = sdk063_receipt["repositoryHostedVerification"]
+assert sdk063_hosted["workflow"] == "Repository bootstrap"
+assert sdk063_hosted["job"] == "wordpress-runtime"
+assert sdk063_hosted["step"] == (
+    "Prove the typed editor plugin and SlotFill on WordPress 7.0"
+)
+assert sdk063_hosted["required"] is True
+if sdk063_receipt["status"] == "implemented-hosted-pending":
+    assert sdk063_receipt["implementation"].get("commit") is None
+    assert sdk063_hosted["status"] == "pending-main-push"
+    assert sdk063_hosted["commit"] is None
+    assert sdk063_hosted["runId"] is None
+    assert sdk063_hosted["jobId"] is None
+    assert sdk063_hosted["url"] is None
+    assert sdk063_hosted["allJobsPassed"] is None
+    assert sdk063_hosted["artifactHashesMatched"] is None
+else:
+    assert sdk063_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk063_receipt["implementation"]["commit"])
+    assert sdk063_hosted["commit"] == sdk063_receipt["implementation"]["commit"]
+    assert isinstance(sdk063_hosted["runId"], int)
+    assert isinstance(sdk063_hosted["jobId"], int)
+    assert sdk063_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk063_hosted['runId']}"
+    )
+    assert sdk063_hosted["status"] == "passed"
+    assert sdk063_hosted["allJobsPassed"] is True
+    assert sdk063_hosted["artifactHashesMatched"] is True
 
 assert php_provenance["schemaVersion"] == 1
 assert php_provenance["component"] == "reflaxe.php"

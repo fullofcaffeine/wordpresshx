@@ -92,6 +92,15 @@ build. The SDK-owned HXX parser disables Genes' second source-markup parser in
 both differential profiles, while Genes remains the sole owner of TSX and
 classic JavaScript printing.
 
+SDK-063 follows the same boundary for editor extensions. An SDK-owned exact
+catalog overlay admits public WordPress editor, plugin-registry, data, and
+component contracts without changing the SDK-032 base catalog or Genes. Haxe
+owns branded editor identities, direct-return HXX, and the thin typed facades;
+Genes owns TSX emission; the official WordPress build owns externalization and
+asset metadata; WordPress owns registration, SlotFill, the editor store, and
+runtime focus behavior. The real WordPress 7.0/Chromium proof is recorded in
+[`SDK-063-EDITOR-PLUGIN-SLOTFILL`](../../manifests/evidence/sdk-063-editor-plugin-slotfill.json).
+
 ## Upgrade and rollback
 
 The generic compiler maintainers own upgrades. The immediate recorded rollback is `v1.32.0` at commit `09a17f57ae5645d719d2edbb9c795b40abd8e4f1`, tree `06f5ced331180886047161d8dfaa850ccdc6984a`. Any upgrade or rollback still requires a fresh SDK receipt; the existence of a prior release is not itself compatibility evidence.

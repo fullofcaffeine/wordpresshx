@@ -7,7 +7,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "97f9948a479abc13e1a63a7e9ceac20e293f877ab828940e77eab6239d8d664a"
+      "sha256": "7ccc08c3e2bf1a7d34b35da75ce84c986f7a367cec52f7887388b7d9581486b7"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
@@ -63,11 +63,11 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
+      "sha256": "a2dde437ed382f13c54b2a90262a4183509f6626210e6378aa4bc63dedeb85e8"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "626ce605e87ea3e1c9e9c690bea851360cf74126d7f41b676bd56ac351e69f35"
+      "sha256": "b8780833e368fc673337a9d389c67d747a0a104b5c084161328f0fe005d5a739"
     },
     "semanticPlanValidator": {
       "path": "scripts/semantic-plan/test-contract.py",
@@ -75,11 +75,11 @@
     },
     "semanticPlanFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "sha256": "cffedf1c0311cd0e947c6ccc1b3bbb5fde74608ac901ec00a10ee91fac63d298"
+      "sha256": "f1f9c8a786444aac2f492887ff60d76191d2c7687a8e29ab812d2636593d26f6"
     },
     "semanticEmissionFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "sha256": "f475efe2fd1519894961466081f1fb893439624ccc2ec15885e24e995a399a4f"
+      "sha256": "5b89842ed72e73754ca4c433014a4af559e79760e14e12bd9ddce8a5d26809e4"
     },
     "ownershipContractValidator": {
       "path": "scripts/ownership/test-contract.py",
@@ -87,15 +87,15 @@
     },
     "ownershipCurrentFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "3d6c6497c0ac529488c81f27184843f6398c2dbf5661ae2505bffe294429428c"
+      "sha256": "10dd22f22916a5a841ad2764bf49946a5f1a889032828a2221d27a74e7ba978a"
     },
     "ownershipNextFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "4168a994377c6928bf44695bb0be9dee185b9df17e65e72c65c0a920f21cc189"
+      "sha256": "fe0c26ab0e5972d2d2730660c676cfdb2fc3c2187617c559f1522a937453192d"
     },
     "ownershipJournalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "b52a771fde39917be2f56a33cb2e2ebbdc7dc56b6c7e0ddfc9593b43a12e7389"
+      "sha256": "73b81d3db37254532a9b42435f5693b7bee4851623363aa055adb9de5bd7a4af"
     },
     "schemas": [
       {
@@ -129,7 +129,7 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "f25d2df4d401f6a36632a36a515fdd23c8fca5e003ed8f28f3903d537f2f0aa6",
+    "subjectContentSha256": "ab1466ccb4c71c01d2ec67503bb96089e5e88000c78dabf2ef18bbf320bf14e2",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
