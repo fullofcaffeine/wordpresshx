@@ -133,7 +133,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "46333493123ed75715211c5b4f54ee26d1053ab97b76acc68f38c1487c9f6999"
+      "sha256": "7c36a0179577280af08df387733075b9ed615fe30454ca5d98c3f44c93569913"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
