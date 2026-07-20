@@ -63,7 +63,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ea58ae6f5a312b831ebd0732f21650698d2099d7859264143865e4caa897c6fb"
+      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
@@ -129,7 +129,7 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "4943ed2a58043282e6fd868d30489ebbcadde4f60e9923f9315322dd369405df",
+    "subjectContentSha256": "ef24969529e7717e77c36d29c8e909d730a4ae30e73c9b9a2e216729f6e521cc",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {

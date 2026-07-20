@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "upstreamRepository": "https://github.com/gastownhall/beads.git",
+  "baseTag": "v1.1.0",
+  "baseCommit": "8e4e59d39f3459a43cf21a3236a13eca4dd874f7",
+  "historyFix": {
+    "issue": 4867,
+    "pullRequest": 4912,
+    "commit": "53f337894114cd7adeacfd4941a44bb66f400288"
+  },
+  "expectedChangedFiles": [
+    "internal/storage/dolt/history.go",
+    "internal/storage/dolt/history_test.go",
+    "internal/storage/dolt/versioned_test.go",
+    "internal/storage/embeddeddolt/history_test.go",
+    "internal/storage/issueops/history.go"
+  ],
+  "build": {
+    "cgoEnabled": "1",
+    "tags": "gms_pure_go",
+    "testPackage": "./internal/storage/embeddeddolt",
+    "testName": "TestHistory_NullTextColumns"
+  },
+  "scope": {
+    "purpose": "Read historical issue states containing migrated NULL text columns for a fail-closed security scan",
+    "liveDatabaseAccess": "forbidden",
+    "temporaryDatabaseCopyRequired": true,
+    "retireWhen": "An admitted Beads release contains the equivalent of upstream pull request 4912"
+  }
+}

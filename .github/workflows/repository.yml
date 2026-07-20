@@ -166,6 +166,10 @@ jobs:
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
       - name: Validate security policy
         run: bash scripts/ci/check-security-tooling.sh
+      - name: Test decoded Beads state scanner
+        run: |
+          bash scripts/security/test-beads-decoded-state.sh
+          bash scripts/security/test-beads-history-failure.sh
       - name: Scan complete Git history
         run: bash scripts/security/run-gitleaks.sh
       - name: Reject machine-local paths

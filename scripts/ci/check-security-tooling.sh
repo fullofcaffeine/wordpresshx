@@ -9,6 +9,9 @@ required_files=(
   .beads/hooks/pre-commit
   .beads/hooks/pre-push
   scripts/beads/push-safe.sh
+  scripts/beads/build-history-reader.sh
+  scripts/beads/test-history-reader.sh
+  scripts/beads/verify-history-reader-lock.py
   scripts/ci/install-gitleaks.sh
   scripts/hooks/install.sh
   scripts/hooks/pre-commit
@@ -18,8 +21,13 @@ required_files=(
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
   scripts/security/run-beads-gitleaks.sh
+  scripts/security/scan-beads-decoded-state.sh
+  scripts/security/test-beads-decoded-state.sh
+  scripts/security/test-beads-history-failure.sh
   scripts/security/run-gitleaks.sh
   scripts/security/run-local-path-audit.sh
+  tooling/beads/history-reader.lock.json
+  tooling/beads/README.md
 )
 
 for path in "${required_files[@]}"; do
@@ -44,6 +52,10 @@ grep -Fq 'scripts/hooks/pre-push' .beads/hooks/pre-push
 grep -Fq 'scripts/security/run-gitleaks.sh' scripts/hooks/pre-commit
 grep -Fq 'scripts/security/run-gitleaks.sh' scripts/hooks/pre-push
 grep -Fq 'scripts/security/run-beads-gitleaks.sh' scripts/beads/push-safe.sh
+grep -Fq 'scripts/beads/build-history-reader.sh' scripts/security/run-beads-gitleaks.sh
+grep -Fq 'scripts/security/scan-beads-decoded-state.sh' scripts/security/run-beads-gitleaks.sh
+grep -Fq 'Test decoded Beads state scanner' .github/workflows/repository.yml
+python3 scripts/beads/verify-history-reader-lock.py
 
 readonly checkout_action="actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0"
 checkout_action_lines="$(grep -E '^[[:space:]]*uses:[[:space:]]+actions/checkout@' .github/workflows/*.yml || true)"
