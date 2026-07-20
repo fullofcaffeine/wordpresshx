@@ -84,7 +84,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-data-store.sh",
-      "sha256": "ad5ec0bb8c63ff903c8314a4fea8f8d7351b2af2df457872c264f449f7c5a1b1"
+      "sha256": "aa7cbde65382b9a04571a4e8acbc5bd888aa3a559fc5648daa2dab14ee78e4ec"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-data-store-lane.sh",

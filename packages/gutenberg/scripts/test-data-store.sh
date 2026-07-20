@@ -17,7 +17,7 @@ if (( $# != 0 )); then
   exit 2
 fi
 
-for command_name in docker git haxe haxelib lix node npm python3 rg; do
+for command_name in docker git haxe haxelib lix node npm python3; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-064 data-store gate requires ${command_name}" >&2
     exit 1
@@ -90,12 +90,19 @@ fi
     -s "${package_root}/test-negative-data-store"
 )
 
-if rg -n --glob '*.hx' \
-  '\b(Dynamic|Any|cast|Reflect|untyped)\b' \
-  "${package_root}/src/wordpress/hx/gutenberg/data" \
-  "${package_root}/test/data-store-fixture/src" \
-  "${package_root}/test/data-store-unit/src" \
-  "${package_root}/test-negative-data-store"; then
+weak_type_pattern='(^|[^[:alnum:]_])(Dynamic|Any|cast|Reflect|untyped)([^[:alnum:]_]|$)'
+weak_type_roots=(
+  "${package_root}/src/wordpress/hx/gutenberg/data"
+  "${package_root}/test/data-store-fixture/src"
+  "${package_root}/test/data-store-unit/src"
+  "${package_root}/test-negative-data-store"
+)
+if command -v rg >/dev/null 2>&1; then
+  weak_type_search=(rg -n --glob '*.hx' "${weak_type_pattern}")
+else
+  weak_type_search=(grep -R -n -E --include='*.hx' "${weak_type_pattern}")
+fi
+if "${weak_type_search[@]}" "${weak_type_roots[@]}"; then
   echo "SDK-064 Haxe source contains a forbidden weak-type construct" >&2
   exit 1
 fi
