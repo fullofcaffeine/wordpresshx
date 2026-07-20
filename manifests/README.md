@@ -66,7 +66,8 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   terminal and non-interchangeable; the unsafe raw target remains withheld.
   Its bounded fixture covers Haxe, Genes/TypeScript/Node, stock-Haxe PHP, React
   SSR, and clean WordPress 7.0, while production SDK types and HXX lowering
-  remain follow-up work pending fresh review and hosted evidence.
+  remain follow-up work pending fresh independent review. Its focused hosted
+  gate passes at the exact commit recorded by the receipt.
 - `semantic-collector-architecture.json` is the SDK-040 implementation lock for
   typed module/hook/resource/public-environment declarations, compilation-server
   metadata recovery, canonical plan and input-sidecar generation, exact-profile
@@ -201,7 +202,9 @@ cross-context reuse; one plan transcript matches across Haxe, Genes/strict
 TypeScript/Node, and PHP 8.4.7; React SSR and clean WordPress 7.0 exercise the
 malicious-input corpus at their native sinks. Production SDK/HXX lowering,
 browser rich HTML, PHP 7.4, provider markup, fresh independent review, and the
-first hosted run remain explicit non-claims. No raw output API is published.
+production implementation remain explicit non-claims. Focused hosted run
+`29713766565`, job `88262490140`, passes at its exact subject commit. No raw
+output API is published.
 
 Receipt `ADR-018-RUNTIME-SUPPORT-PACKAGING` records the dependency-closed
 private-support architecture prototype. Strict Haxe logic is compiled twice

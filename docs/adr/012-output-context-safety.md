@@ -277,8 +277,11 @@ The independent Python validator authenticates the fixture tree and expected
 transcript, asserts the complete context/conversion model, and rejects
 twenty-one mutations. The combined gate is configured as the `output-context`
 job in the focused output-context workflow. Hosted evidence and a fresh
-independent review are still required before this ADR can move from proposed
-to accepted.
+independent review are separate gates. Public run
+[`29713766565`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29713766565),
+job `88262490140`, passed the complete corpus at commit
+`11ec7cc273ca65130c1fcd79505347390dba3d9a`. Fresh independent review remains
+required before this ADR can move from proposed to accepted.
 
 The design follows the official
 [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/),

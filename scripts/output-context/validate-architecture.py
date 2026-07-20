@@ -296,7 +296,10 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "configured-pending-first-hosted-run",
+        "status": "passed",
+        "runId": 29713766565,
+        "jobId": 88262490140,
+        "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 

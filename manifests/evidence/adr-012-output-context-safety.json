@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-20T02:40:33Z",
+  "status": "implemented-review-pending",
+  "observedAt": "2026-07-20T03:04:48Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "8e26b231fc6232b31b84e76ee999a48354be9bba084e4b6b896a2ba2238f640c"
+      "sha256": "ae63307bb511334c040d048cd21442d9c57cb19bb89ef09865309d8e6819efde"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "2608f488bb0ab7edadbb512d4bfde3e88cb9464891bfa999802b0a0c86bc78fe"
+      "sha256": "0b476270c26c0d1de49bdd705c582b7de8e860baaef07ab2908f09a8470d596e"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,7 +19,7 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "c3a27817a9502ae6826eaf5b06e00a177bce1a46070fd1f7046a6613e59e5bab"
+      "sha256": "e24344395b9350deecba95596b3a6220802754a14dab4e7974a6fd629e278e2b"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
@@ -67,7 +67,7 @@
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "passed-local-hosted-pending"
+    "outcome": "passed-local-and-hosted"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -89,10 +89,10 @@
     "workflow": "Output-context safety",
     "job": "output-context",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run"
+    "runId": 29713766565,
+    "jobId": 88262490140,
+    "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+    "status": "passed"
   },
   "limitations": [
     "The Haxe output types and sinks are a bounded architecture prototype, not the SDK-052 public implementation.",
@@ -100,7 +100,7 @@
     "The prototype brands two named native KSES policies; a public custom-policy type constructor and browser policy are not implemented by this receipt.",
     "Browser rich-HTML policy, PHP 7.4, packed-consumer, and provider-markup behavior are not tested by this receipt.",
     "The unsafe raw target is intentionally withheld until ADR-019 defines auditable waiver governance.",
-    "Fresh independent architecture review and the first hosted output-context run remain pending."
+    "Fresh independent architecture review remains pending."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",

@@ -53,5 +53,5 @@ Decisions involving licensing, security, public support, or compatibility claims
 
 ## Proposed records
 
-- [ADR-012: Output-context safety](012-output-context-safety.md) — fresh independent review and hosted evidence pending; no raw output API is published.
+- [ADR-012: Output-context safety](012-output-context-safety.md) — hosted evidence passes; fresh independent review remains pending and no raw output API is published.
 - [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — qualified review and owner approval pending; no license grant or publication authorization.
