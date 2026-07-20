@@ -96,10 +96,19 @@ if probe.get("profileId") != "wp70-release" or probe.get("dynamicRendered") is n
 blocks = probe.get("registeredBlocks", {})
 if set(blocks) != {"wordpresshx/book-grid", "wordpresshx/callout"}:
     raise SystemExit(f"native registry contents drifted: {probe!r}")
-if blocks["wordpresshx/book-grid"]["attributeNames"] != ["count", "showCover"]:
-    raise SystemExit(f"dynamic attributes drifted: {probe!r}")
-if blocks["wordpresshx/callout"]["attributeNames"] != ["message", "tone"]:
-    raise SystemExit(f"static attributes drifted: {probe!r}")
+expected_attributes = {
+    "wordpresshx/book-grid": ["count", "showCover"],
+    "wordpresshx/callout": ["message", "tone"],
+}
+core_attributes = ["lock", "metadata"]
+for block_name, declared_attributes in expected_attributes.items():
+    block = blocks[block_name]
+    if block["declaredAttributeNames"] != declared_attributes:
+        raise SystemExit(f"declared attributes drifted: {probe!r}")
+    if block["coreInjectedAttributeNames"] != core_attributes:
+        raise SystemExit(f"WordPress core attributes drifted: {probe!r}")
+    if block["runtimeAttributeNames"] != declared_attributes + core_attributes:
+        raise SystemExit(f"runtime attributes drifted: {probe!r}")
 if blocks["wordpresshx/book-grid"]["hasRenderCallback"] is not True:
     raise SystemExit(f"dynamic callback is absent: {probe!r}")
 if blocks["wordpresshx/callout"]["hasRenderCallback"] is not False:

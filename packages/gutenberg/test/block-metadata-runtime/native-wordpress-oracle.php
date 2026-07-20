@@ -26,19 +26,32 @@ foreach ( array( 'book-grid', 'callout' ) as $slug ) {
 	if ( ! is_file( $metadata_root . '/block.json' ) ) {
 		throw new RuntimeException( 'Generated block metadata is absent for ' . $slug );
 	}
+	$metadata = json_decode(
+		file_get_contents( $metadata_root . '/block.json' ),
+		true,
+		512,
+		JSON_THROW_ON_ERROR
+	);
+	$declared_attribute_names = array_keys( $metadata['attributes'] ?? array() );
 	$block = register_block_type( $metadata_root );
 	if ( false === $block ) {
 		throw new RuntimeException( 'Native metadata registration failed for ' . $slug );
 	}
+	$runtime_attribute_names       = array_keys( $block->attributes );
+	$core_injected_attribute_names = array_values(
+		array_diff( $runtime_attribute_names, $declared_attribute_names )
+	);
 	$registered[ $block->name ] = array(
-		'apiVersion'          => $block->api_version,
-		'attributeNames'      => array_keys( $block->attributes ),
-		'category'            => $block->category,
-		'editorScriptHandles' => $block->editor_script_handles,
-		'hasRenderCallback'   => is_callable( $block->render_callback ),
-		'scriptHandles'       => $block->script_handles,
-		'styleHandles'        => $block->style_handles,
-		'title'               => $block->title,
+		'apiVersion'                   => $block->api_version,
+		'category'                     => $block->category,
+		'coreInjectedAttributeNames'   => $core_injected_attribute_names,
+		'declaredAttributeNames'       => $declared_attribute_names,
+		'editorScriptHandles'          => $block->editor_script_handles,
+		'hasRenderCallback'            => is_callable( $block->render_callback ),
+		'runtimeAttributeNames'        => $runtime_attribute_names,
+		'scriptHandles'                => $block->script_handles,
+		'styleHandles'                 => $block->style_handles,
+		'title'                        => $block->title,
 	);
 }
 

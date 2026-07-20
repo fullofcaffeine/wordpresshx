@@ -52,11 +52,11 @@
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-block-metadata-lane.sh",
-      "sha256": "a099ded9c3bfd260991926a1e93942ea2daf3d1c0cb29cf979ed2a8fd6fc1132"
+      "sha256": "a3c120a9e697ec2f803b048cced343c38cef5c95885091cb12003942089c1daa"
     },
     "independentNativeOracle": {
       "path": "packages/gutenberg/test/block-metadata-runtime/native-wordpress-oracle.php",
-      "sha256": "b15f9128ebcdfa7033069377cab179dd6726a80365308d6a0383cbbfd1f04d68"
+      "sha256": "3a16971ae8da5da13809c9658bb5186eb32fa19672f7f00e789addac69a07699"
     }
   },
   "provider": {
