@@ -133,7 +133,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "42a2fdeb68be8d6b7104b811c83874c594c1dd93e97ec0780025c61edca61c63"
+      "sha256": "e45471f9f0ceabe275f3d0944fbefdd4ace5fa11ef885674d42c3b1065284009"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -142,7 +142,7 @@
     "documentation": [
       {
         "path": "manifests/README.md",
-        "sha256": "43515dbd2e7fb8ed64ed3c3bc8b0a223802a2d459a7e2b73e5749c8d0ad170ff"
+        "sha256": "86ee25c144fe9f6d2ab9c8f0510a1424c7a5262641ba25b3a6cec587fc19f905"
       },
       {
         "path": "packages/cli/README.md",

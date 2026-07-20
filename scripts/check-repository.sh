@@ -6,6 +6,7 @@ cd "${repository_root}"
 
 required_files=(
   .gitleaks.toml
+  .github/workflows/output-context.yml
   .github/workflows/repository.yml
   .beads/hooks/pre-commit
   .beads/hooks/pre-push
@@ -35,6 +36,7 @@ required_files=(
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/009-schema-and-codec-authority.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
+  docs/adr/012-output-context-safety.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
   docs/adr/014-source-maps-and-php-trace-correlation.md
   docs/adr/016-project-and-cli-configuration.md
@@ -412,6 +414,9 @@ required_files=(
   scripts/semantic-plan/test.sh
   scripts/contracts/test-schema-authority.sh
   scripts/contracts/validate-schema-authority.py
+  scripts/output-context/test-wordpress.sh
+  scripts/output-context/test.sh
+  scripts/output-context/validate-architecture.py
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
   scripts/generated-output-vcs/check-policy.py
@@ -518,6 +523,21 @@ required_files=(
   fixtures/source-correlation/artifacts/browser/two-stage.ts
   fixtures/source-correlation/artifacts/browser/two-stage.ts.map
   fixtures/schema-codec/expected/cross-target.txt
+  fixtures/output-context/README.md
+  fixtures/output-context/expected/context-plan.txt
+  fixtures/output-context/runtime/browser.mjs
+  fixtures/output-context/runtime/wordpress-probe.php
+  fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx
+  fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx
+  fixtures/output-context/test/Main.hx
+  fixtures/output-context/test-negative/css_from_string/Main.hx
+  fixtures/output-context/test-negative/direct_terminal_construction/Main.hx
+  fixtures/output-context/test-negative/json_as_script/Main.hx
+  fixtures/output-context/test-negative/kses_as_compiler_markup/Main.hx
+  fixtures/output-context/test-negative/plain_as_rich_html/Main.hx
+  fixtures/output-context/test-negative/script_as_rest/Main.hx
+  fixtures/output-context/test-negative/text_as_attribute/Main.hx
+  fixtures/output-context/test-negative/url_as_text/Main.hx
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -530,6 +550,7 @@ required_files=(
   manifests/source-correlation-architecture.json
   manifests/semantic-plan-architecture.json
   manifests/schema-codec-architecture.json
+  manifests/output-context-architecture.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/generated-output-vcs-policy.json
@@ -555,6 +576,7 @@ required_files=(
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
 	manifests/evidence/adr-009-schema-codec-authority.json
+  manifests/evidence/adr-012-output-context-safety.json
   manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
   manifests/evidence/adr-007-generated-artifact-ownership.json
@@ -971,6 +993,16 @@ schema_codec_architecture = json.loads(
 )
 adr009_receipt = json.loads(
     Path("manifests/evidence/adr-009-schema-codec-authority.json").read_text(
+        encoding="utf-8"
+    )
+)
+output_context_architecture = json.loads(
+    Path("manifests/output-context-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+adr012_receipt = json.loads(
+    Path("manifests/evidence/adr-012-output-context-safety.json").read_text(
         encoding="utf-8"
     )
 )
@@ -2061,6 +2093,91 @@ else:
     assert isinstance(adr009_hosted["runId"], int)
     assert isinstance(adr009_hosted["jobId"], int)
     assert sha1.fullmatch(adr009_hosted["commit"])
+
+assert output_context_architecture["schemaVersion"] == 1
+assert output_context_architecture["decisionId"] == "ADR-012"
+assert output_context_architecture["status"] == (
+    "proposed-pending-fresh-review"
+)
+output_authority = output_context_architecture["authority"]
+assert output_authority["lateEscapingRequired"] is True
+assert output_authority["universalSafeTypeAllowed"] is False
+assert output_authority["terminalRawStringConversionAllowed"] is False
+assert output_authority["terminalValuesSerializable"] is False
+assert output_authority["escapingIdempotenceAssumed"] is False
+assert len(output_context_architecture["contexts"]) == 10
+assert len(output_context_architecture["allowedEdges"]) == 11
+assert len(output_context_architecture["forbiddenEdges"]) == 14
+assert len(output_context_architecture["hxxResolution"]) == 8
+output_prototype = output_context_architecture["prototypeEvidence"]
+assert output_prototype["contextCount"] == 10
+assert output_prototype["allowedEdgeCount"] == 11
+assert output_prototype["forbiddenEdgeCount"] == 14
+assert output_prototype["hxxPositionCount"] == 8
+assert output_prototype["compileNegativeCount"] == 8
+assert output_prototype["independentMutationCount"] == 21
+assert len(output_context_architecture["referenceReview"]) == 7
+for output_reference in output_context_architecture["referenceReview"]:
+    assert sha1.fullmatch(output_reference["commit"])
+    assert sha1.fullmatch(output_reference["gitBlob"])
+    assert sha256.fullmatch(output_reference["sha256"])
+    assert output_reference["copiedBytes"] is False
+assert adr012_receipt["schemaVersion"] == 1
+assert adr012_receipt["receiptId"] == "ADR-012-OUTPUT-CONTEXT-SAFETY"
+assert adr012_receipt["bead"] == "wordpresshx-adr-012"
+assert adr012_receipt["status"] in {
+    "implemented-hosted-pending",
+    "implemented-review-pending",
+    "verified",
+}
+for adr012_subject in adr012_receipt["subject"].values():
+    assert hashlib.sha256(Path(adr012_subject["path"]).read_bytes()).hexdigest() == (
+        adr012_subject["sha256"]
+    )
+adr012_verification = adr012_receipt["verification"]
+assert adr012_verification["sourceTreeSha256"] == output_prototype[
+    "sourceTreeSha256"
+]
+assert adr012_verification["strictNullSafety"] is True
+assert adr012_verification["strictHaxeForbiddenTokenCount"] == 0
+assert adr012_verification["contextCount"] == 10
+assert adr012_verification["allowedEdgeCount"] == 11
+assert adr012_verification["forbiddenEdgeCount"] == 14
+assert adr012_verification["hxxPositionCount"] == 8
+assert adr012_verification["compileNegativeCount"] == 8
+assert adr012_verification["independentMutationCount"] == 21
+assert adr012_verification[
+    "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
+] is True
+assert adr012_receipt["authority"]["unsafeRawApiPublished"] is False
+assert adr012_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
+assert adr012_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
+assert adr012_receipt["referenceReview"]["genesSourceChanged"] is False
+assert adr012_receipt["claims"]["publicationAuthorized"] is False
+for unproven_output_claim in (
+    "productionSdkTypes",
+    "productionHxxLowerer",
+    "browserRichHtmlPolicy",
+    "php74Runtime",
+    "packedConsumer",
+    "productionSupport",
+):
+    assert adr012_receipt["claims"][unproven_output_claim] == "not-tested"
+adr012_hosted = adr012_receipt["hostedWorkflow"]
+assert adr012_hosted["workflow"] == "Output-context safety"
+assert adr012_hosted["job"] == "output-context"
+assert adr012_hosted["required"] is True
+if adr012_hosted["status"] == "pending-first-hosted-main-run":
+    assert adr012_receipt["status"] == "implemented-hosted-pending"
+    assert adr012_hosted["runId"] is None
+    assert adr012_hosted["jobId"] is None
+    assert adr012_hosted["commit"] is None
+elif adr012_hosted["status"] == "passed":
+    assert isinstance(adr012_hosted["runId"], int)
+    assert isinstance(adr012_hosted["jobId"], int)
+    assert sha1.fullmatch(adr012_hosted["commit"])
+else:
+    raise AssertionError("output-context hosted status is invalid")
 assert semantic_plan_receipt["claims"]["architectureDecision"] == "accepted"
 assert semantic_plan_receipt["claims"]["schemaAndFixtureContract"] == "validated"
 for unproven_receipt_claim in (
@@ -9262,6 +9379,7 @@ python3 scripts/runtime-support/test-policy.py
 python3 scripts/source-correlation/validate-contracts.py
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/contracts/validate-schema-authority.py
+python3 scripts/output-context/validate-architecture.py
 python3 scripts/ownership/test-contract.py
 python3 scripts/generated-output-vcs/test-policy.py
 python3 scripts/project-cli/test-contract.py

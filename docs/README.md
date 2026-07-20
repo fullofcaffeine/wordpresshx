@@ -6,6 +6,7 @@ The repository is still establishing its durable documentation structure.
 - [ADR process and template](adr/README.md)
 - [Semantic plan and emitter contract](adr/006-semantic-plan-and-emitter-contract.md)
 - [Generated artifact ownership and recovery](adr/007-generated-artifact-ownership.md)
+- [Output-context safety](adr/012-output-context-safety.md)
 - [Project, CLI, and development-loop configuration](adr/016-project-and-cli-configuration.md)
 - [Runtime support packaging](adr/018-runtime-support-packaging.md)
 - [Provisional repository layout](architecture/repository-layout.md)

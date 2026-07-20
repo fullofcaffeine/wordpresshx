@@ -60,6 +60,13 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   migrations, and fail-closed PHP/Genes/REST/Gutenberg projections. Its
   executable builder fixture proves a bounded cross-target slice; ergonomic
   macro derivation and production target emitters remain follow-up work.
+- `output-context-architecture.json` is ADR-012's proposed exact-context trust
+  and conversion graph. It keeps text, attribute, URL, textarea, policy-branded
+  rich HTML, JSON document, HTML script data, typed CSS, and compiler markup
+  terminal and non-interchangeable; the unsafe raw target remains withheld.
+  Its bounded fixture covers Haxe, Genes/TypeScript/Node, stock-Haxe PHP, React
+  SSR, and clean WordPress 7.0, while production SDK types and HXX lowering
+  remain follow-up work pending fresh review and hosted evidence.
 - `semantic-collector-architecture.json` is the SDK-040 implementation lock for
   typed module/hook/resource/public-environment declarations, compilation-server
   metadata recovery, canonical plan and input-sidecar generation, exact-profile
@@ -187,6 +194,14 @@ failures. Macro derivation, production target emitters, and native
 WordPress/Gutenberg runtimes remain explicit non-claims. Public workflow run
 `29711579924`, job `88256189891`, passed the complete cross-target gate at the
 exact receipt subject commit.
+
+Receipt `ADR-012-OUTPUT-CONTEXT-SAFETY` records the proposed terminal output
+graph and its bounded prototype. Eight compile failures prevent representative
+cross-context reuse; one plan transcript matches across Haxe, Genes/strict
+TypeScript/Node, and PHP 8.4.7; React SSR and clean WordPress 7.0 exercise the
+malicious-input corpus at their native sinks. Production SDK/HXX lowering,
+browser rich HTML, PHP 7.4, provider markup, fresh independent review, and the
+first hosted run remain explicit non-claims. No raw output API is published.
 
 Receipt `ADR-018-RUNTIME-SUPPORT-PACKAGING` records the dependency-closed
 private-support architecture prototype. Strict Haxe logic is compiled twice

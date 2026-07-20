@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "ADR-012",
+  "status": "proposed-pending-fresh-review",
+  "profileId": "wp70-release",
+  "authority": {
+    "owner": "wordpress-hx-output-context-v1",
+    "lateEscapingRequired": true,
+    "universalSafeTypeAllowed": false,
+    "terminalRawStringConversionAllowed": false,
+    "terminalValuesSerializable": false,
+    "escapingIdempotenceAssumed": false,
+    "validationEqualsEscaping": false,
+    "sanitizationEqualsValidation": false,
+    "nonceEqualsAuthorization": false
+  },
+  "sourceStates": [
+    {
+      "id": "untrusted",
+      "meaning": "a value crossed an input, persistence, provider, or network boundary",
+      "outputAuthority": false
+    },
+    {
+      "id": "validated",
+      "meaning": "a value satisfied a domain predicate without mutation",
+      "outputAuthority": false
+    },
+    {
+      "id": "sanitized",
+      "meaning": "a value was deliberately transformed under one named input policy",
+      "outputAuthority": false
+    },
+    {
+      "id": "domain-value",
+      "meaning": "an application value whose domain type is known",
+      "outputAuthority": false
+    }
+  ],
+  "contexts": [
+    {
+      "id": "html-text",
+      "terminalContract": "HtmlText",
+      "acceptedSource": "String-or-text-domain-value",
+      "serverLowering": "esc_html-at-final-sink",
+      "browserLowering": "React-child-auto-escape",
+      "sinks": ["element-child", "admin-plain-message", "dynamic-block-text"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "html-attribute",
+      "terminalContract": "HtmlAttribute",
+      "acceptedSource": "String-or-typed-attribute-value",
+      "serverLowering": "esc_attr-at-final-sink",
+      "browserLowering": "React-attribute-auto-escape",
+      "sinks": ["ordinary-attribute", "aria-attribute", "data-attribute"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "html-url",
+      "terminalContract": "HtmlUrl",
+      "acceptedSource": "ValidatedUrl",
+      "serverLowering": "esc_url-at-final-sink",
+      "browserLowering": "validated-url-then-React-attribute-auto-escape",
+      "sinks": ["href", "src", "action", "formaction"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "html-textarea",
+      "terminalContract": "TextareaText",
+      "acceptedSource": "String-or-text-domain-value",
+      "serverLowering": "esc_textarea-at-final-sink",
+      "browserLowering": "React-textarea-value",
+      "sinks": ["textarea-content"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "html-rich-policy",
+      "terminalContract": "policy-branded-KsesHtml",
+      "acceptedSource": "String-plus-named-profile-native-or-content-addressed-custom-KSES-policy",
+      "serverLowering": "wp_kses_post-or-wp_kses_data-or-wp_kses-at-final-sink",
+      "browserLowering": "separate-browser-policy-result-required-before-internal-rich-html-lowering",
+      "sinks": ["rich-content-child", "admin-rich-message", "provider-rich-fragment"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "json-document",
+      "terminalContract": "JsonDocument<T>",
+      "acceptedSource": "T-plus-ContractCodec<T>",
+      "serverLowering": "wp_json_encode-with-explicit-failure-handling-for-JSON-response",
+      "browserLowering": "schema-codec-plus-JSON-stringify-for-JSON-response",
+      "sinks": ["REST-response", "application-json-document"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "html-script-data",
+      "terminalContract": "HtmlScriptData<T>",
+      "acceptedSource": "T-plus-ContractCodec<T>",
+      "serverLowering": "wp_json_encode-with-JSON_HEX_TAG-AMP-APOS-QUOT-and-explicit-failure",
+      "browserLowering": "JSON-stringify-plus-script-data-character-escaping",
+      "sinks": ["non-executable-script-data", "native-script-data-registration"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "css-declarations",
+      "terminalContract": "CssDeclarations",
+      "acceptedSource": "closed-typed-property-and-value-AST",
+      "serverLowering": "typed-CSS-printer-then-esc_attr",
+      "browserLowering": "typed-React-style-object",
+      "sinks": ["style-attribute", "generated-stylesheet-declaration"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "compiler-markup",
+      "terminalContract": "CompilerMarkup",
+      "acceptedSource": "resolved-and-typed-HXX-AST-only",
+      "serverLowering": "static-native-markup-plus-context-specific-native-calls",
+      "browserLowering": "typed-HXX-to-React-Gutenberg",
+      "sinks": ["template-root", "component-child", "dynamic-block-render"],
+      "crossContextReuse": false
+    },
+    {
+      "id": "unsafe-raw-target",
+      "terminalContract": "withheld-until-ADR-019",
+      "acceptedSource": "reviewed-waiver-only",
+      "serverLowering": "not-published",
+      "browserLowering": "not-published",
+      "sinks": [],
+      "crossContextReuse": false
+    }
+  ],
+  "allowedEdges": [
+    "String->HtmlText@text-sink",
+    "String->HtmlAttribute@ordinary-attribute-sink",
+    "String->TextareaText@textarea-sink",
+    "String->ValidatedUrl@URL-validator",
+    "ValidatedUrl->HtmlUrl@URL-attribute-sink",
+    "String+NamedNativeOrExactCustomKsesPolicy->KsesHtml@rich-content-sink",
+    "T+ContractCodec<T>->JsonDocument<T>@JSON-response-sink",
+    "T+ContractCodec<T>->HtmlScriptData<T>@script-data-sink",
+    "TypedCssDeclaration[]->CssDeclarations@style-sink",
+    "ResolvedHxxAst->CompilerMarkup@compiler-lowering",
+    "AdmittedNativeProvider+TypedContract->ProviderMarkup@profile-adapter"
+  ],
+  "forbiddenEdges": [
+    "HtmlText->HtmlAttribute",
+    "HtmlAttribute->HtmlText",
+    "HtmlUrl->HtmlText",
+    "JsonDocument<T>->HtmlScriptData<T>",
+    "HtmlScriptData<T>->JsonDocument<T>",
+    "KsesHtml->CompilerMarkup",
+    "String->KsesHtml-without-policy",
+    "String->CompilerMarkup",
+    "String->CssDeclarations",
+    "terminal-output->storage",
+    "terminal-output->serialization",
+    "server-event-attribute->inline-JavaScript",
+    "browser-raw-string->rich-HTML",
+    "unsafe-raw-target->release-without-current-waiver"
+  ],
+  "hxxResolution": [
+    {
+      "position": "ordinary-child",
+      "input": "String-or-text-domain-value",
+      "result": "html-text"
+    },
+    {
+      "position": "ordinary-attribute",
+      "input": "String-or-typed-attribute-value",
+      "result": "html-attribute"
+    },
+    {
+      "position": "href-src-action-formaction",
+      "input": "static-checked-literal-or-ValidatedUrl",
+      "result": "html-url"
+    },
+    {
+      "position": "textarea-content",
+      "input": "String-or-text-domain-value",
+      "result": "html-textarea"
+    },
+    {
+      "position": "style-attribute",
+      "input": "CssDeclarations",
+      "result": "css-declarations"
+    },
+    {
+      "position": "rich-content-insertion",
+      "input": "target-specific-policy-result-or-compiler-markup",
+      "result": "html-rich-policy-or-compiler-markup"
+    },
+    {
+      "position": "script-data",
+      "input": "HtmlScriptData<T>",
+      "result": "html-script-data"
+    },
+    {
+      "position": "server-event-handler-attribute",
+      "input": "none",
+      "result": "compile-error"
+    }
+  ],
+  "trustConstructors": [
+    {
+      "id": "compiler-resolved-hxx",
+      "acceptsRawMarkupString": false,
+      "provenanceRequired": "Haxe-source-span-and-typed-AST"
+    },
+    {
+      "id": "wordpress-kses-policy",
+      "acceptsRawMarkupString": true,
+      "provenanceRequired": "policy-kind-identity-version-and-for-custom-allowlist-protocol-digest"
+    },
+    {
+      "id": "admitted-native-provider",
+      "acceptsRawMarkupString": false,
+      "provenanceRequired": "profile-capability-provider-version-and-contract-receipt"
+    },
+    {
+      "id": "unsafe-waiver",
+      "acceptsRawMarkupString": true,
+      "provenanceRequired": "ADR-019-waiver-id-source-hash-owner-expiry-and-removal-gate"
+    }
+  ],
+  "wordpressSemantics": {
+    "escapeLate": true,
+    "translationOrder": "translate-then-contextually-escape",
+    "ksesIsPolicySanitizationNotUniversalTrust": true,
+    "nativeKsesPolicyAuthority": "exact-profile-filterable-runtime-semantics",
+    "customKsesPolicyAuthority": "content-addressed-tags-attributes-and-explicit-protocols",
+    "escUrlIncludesProtocolFiltering": true,
+    "escUrlRawIsNotAnOutputFunction": true,
+    "wpJsonEncodeFailureMustBeHandled": true,
+    "inlineEventAttributesDefault": "rejected",
+    "inlineScriptDefault": "rejected-in-favor-of-enqueued-modules-or-native-script-data-APIs"
+  },
+  "browserSemantics": {
+    "reactTextAndAttributeEscaping": "relied-on-and-runtime-tested",
+    "reactUrlSanitizationAuthority": false,
+    "richHtmlServerPolicyReusableInBrowser": false,
+    "unsafeHtmlPropertyPublic": false,
+    "eventHandlers": "typed-callbacks-in-browser-HXX-only"
+  },
+  "prototypeEvidence": {
+    "sourceTreeSha256": "28d97a705b26879a71037ff555775c9a0f0081f5e7f1f204e2dae1c94d013840",
+    "transcriptSha256": "b9359f199da38f1cf2dc039dcbd1a90ad8a31c35bb6f80c9df8c4f6429581793",
+    "contextCount": 10,
+    "allowedEdgeCount": 11,
+    "forbiddenEdgeCount": 14,
+    "hxxPositionCount": 8,
+    "compileNegativeCount": 8,
+    "independentMutationCount": 21,
+    "targets": [
+      "haxe-interp-4.3.7",
+      "genes-ts-1.36.3-typescript-5.9.3-node-22.17.0",
+      "stock-haxe-php-8.4.7",
+      "react-dom-server-18.3.1",
+      "wordpress-7.0-mariadb-11.4.5"
+    ]
+  },
+  "hostedGate": {
+    "workflow": ".github/workflows/output-context.yml",
+    "job": "output-context",
+    "command": "bash scripts/output-context/test.sh",
+    "status": "configured-pending-first-hosted-run"
+  },
+  "referenceReview": [
+    {
+      "repository": "WordPress/wordpress-develop",
+      "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "path": "src/wp-includes/formatting.php",
+      "gitBlob": "2b32b5aafb05d62fcba3d44a8633b6415e492be0",
+      "sha256": "922d8ce082d25d3375dae336feec1b13288df46e15c9c2dcac013c8cc2c44648",
+      "patternUsed": "native late text-attribute-textarea-URL escaping",
+      "copiedBytes": false
+    },
+    {
+      "repository": "WordPress/wordpress-develop",
+      "commit": "26b68024931348d267b70e2a29910e1320d0094f",
+      "path": "src/wp-includes/kses.php",
+      "gitBlob": "062f85308512fd23b8e81a72eff8a0bfbc139a5a",
+      "sha256": "4220320e7e4c3cc0fb82d76d0bfaeb1ccf49766ee2fea10d9ad0bf93ae2b090d",
+      "patternUsed": "policy-specific rich HTML filtering",
+      "copiedBytes": false
+    },
+    {
+      "repository": "wordpresshx-port",
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "path": "src/wphx/wp/themes/ThemeHxxMarkupPilot.hx",
+      "gitBlob": "e727b5cea46caea6e6b692b898966835b67f39e0",
+      "sha256": "934473f6dcd7b111fa32f55d618e038d3d097a5d599e9d9f1b1768a4e25529c8",
+      "patternUsed": "typed markup nodes and separate escaped-expression intent",
+      "limitationObserved": "one generic attribute escape and manual renderer are insufficient for the SDK",
+      "copiedBytes": false
+    },
+    {
+      "repository": "wordpresshx-port",
+      "commit": "7fdda0aa5ea66900819842aefeac6747421e9130",
+      "path": "tools/security/run-kses-security-corpus.mjs",
+      "gitBlob": "2ea04d7a461d7dd72230f386e3f47419a8348002",
+      "sha256": "efad5768d27f7aa3cd44a2f310cb8f8b3a92fe3808c2d4e01a5cfc58f6ee8022",
+      "patternUsed": "real WordPress KSES and block integration corpus as a scope reference",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "std/rails/action_view/HtmlNode.hx",
+      "gitBlob": "73c50ee6e04937f0ad5aa3450f6283b8808ff242",
+      "sha256": "ce7f1eee8e37d2608b39d8670ee5bf67197b43bcd299ec63a111cb8dcb8c281d",
+      "patternUsed": "compile-time markup AST with typed expressions and native helpers",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.ruby",
+      "commit": "a74818e996b68e467621a76cfaae520f553c6960",
+      "path": "docs/railshx-escape-hatch-security-audit.md",
+      "gitBlob": "383656d68e8f737dff9e9331a3e07c3f1b07b464",
+      "sha256": "96edbbad8a4dccbf53449b27f78fac4ee8a4ae9bc840cad54c40613c0951ecb0",
+      "patternUsed": "named searchable escape boundaries with explicit evidence ownership",
+      "copiedBytes": false
+    },
+    {
+      "repository": "haxe.elixir.codex",
+      "commit": "2030abea264dac770915dbeff427acc349ff082e",
+      "path": "std/phoenix/hxx/ast/HeexNode.hx",
+      "gitBlob": "fef28175b9f2f7176968713e47e8dfb9ce8bace9",
+      "sha256": "5d2e1ac23340d1180a8f89ed898d4aa5cb4a3b0387d389e0633a6a47db0dd41c",
+      "patternUsed": "compile-time-only typed markup AST lowered to framework-native templates",
+      "copiedBytes": false
+    }
+  ],
+  "officialDocumentation": [
+    {
+      "url": "https://developer.wordpress.org/apis/security/escaping/",
+      "retrievedAt": "2026-07-19",
+      "authority": "context-specific late escaping and native function selection"
+    },
+    {
+      "url": "https://developer.wordpress.org/reference/functions/wp_kses_post/",
+      "retrievedAt": "2026-07-19",
+      "authority": "post-content KSES policy semantics"
+    },
+    {
+      "url": "https://developer.wordpress.org/reference/functions/wp_json_encode/",
+      "retrievedAt": "2026-07-19",
+      "authority": "WordPress JSON encoding and failure result"
+    }
+  ],
+  "claims": {
+    "architectureDecision": "proposed-pending-fresh-review",
+    "typeSeparationPrototype": "cross-target-runtime-tested",
+    "wordpressNativeEscaping": "runtime-tested",
+    "reactTextAttributeEscaping": "runtime-tested",
+    "productionSdkTypes": "not-tested",
+    "productionHxxLowerer": "not-tested",
+    "browserRichHtmlPolicy": "not-tested",
+    "php74Runtime": "not-tested",
+    "packedConsumer": "not-tested",
+    "productionSupport": "not-tested"
+  }
+}

@@ -1,0 +1,11 @@
+html-text|server=esc_html|browser=react-child-auto-escape
+html-attribute|server=esc_attr|browser=react-attribute-auto-escape
+html-textarea|server=esc_textarea|browser=react-textarea-value
+html-url|server=esc_url|browser=validated-url-plus-react-attribute
+url-rejection|unsupported-scheme-or-shape
+rich-html|server=wp_kses_post|policy=wordpress-post-content|version=wp70-release|descriptor=profile-native-filterable|browser=policy-proof-required
+rich-html|server=wp_kses_data|policy=wordpress-data|version=wp70-release|descriptor=profile-native-filterable|browser=policy-proof-required
+json-document|server=wp_json_encode-with-failure|schema=todo-card.v1|browser=JSON-stringify-codec
+html-script-data|server=wp_json_encode-hex-flags|schema=todo-card.v1|browser=non-html-string-sink
+css-declarations|server=typed-property-printer-plus-esc_attr|browser=typed-style-object
+compiler-markup|fragment=TodoCard.render@fixture|server=static-html-plus-contextual-segments|browser=typed-hxx

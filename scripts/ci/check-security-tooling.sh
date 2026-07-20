@@ -48,8 +48,8 @@ grep -Fq 'scripts/security/run-beads-gitleaks.sh' scripts/beads/push-safe.sh
 readonly checkout_action="actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0"
 checkout_action_lines="$(grep -E '^[[:space:]]*uses:[[:space:]]+actions/checkout@' .github/workflows/*.yml || true)"
 checkout_action_count="$(printf '%s\n' "${checkout_action_lines}" | awk 'NF { count += 1 } END { print count + 0 }')"
-if [[ "${checkout_action_count}" != "13" ]]; then
-  echo "[security-policy] ERROR: expected 13 reviewed checkout action uses, found ${checkout_action_count}." >&2
+if [[ "${checkout_action_count}" != "14" ]]; then
+  echo "[security-policy] ERROR: expected 14 reviewed checkout action uses, found ${checkout_action_count}." >&2
   exit 1
 fi
 if printf '%s\n' "${checkout_action_lines}" | grep -Fv "${checkout_action}" >/dev/null; then
