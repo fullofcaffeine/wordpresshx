@@ -10,7 +10,6 @@ import wordpress.hx.build._internal.JsonValue;
 import wordpress.hx.build._internal.JsonValue.JsonField;
 import wordpress.hx.gutenberg.block._internal.BlockInputs.digestBytes;
 import wordpress.hx.gutenberg.block._internal.BlockInputs.fail;
-import wordpress.hx.gutenberg.block._internal.BlockModel.BlockAttribute;
 import wordpress.hx.gutenberg.block._internal.BlockModel.BlockContextProvider;
 import wordpress.hx.gutenberg.block._internal.BlockModel.BlockDraft;
 import wordpress.hx.gutenberg.block._internal.BlockModel.BlockSession;
@@ -97,7 +96,7 @@ class BlockEmitter {
 			field("title", StringValue(draft.title)),
 			field("category", StringValue(draft.category)),
 			field("textdomain", StringValue(draft.textdomain)),
-			field("attributes", attributeObject(draft.attributes))
+			field("attributes", BlockSchema.value(draft.attributes))
 		];
 		optionalString(fields, "description", draft.description);
 		optionalString(fields, "icon", draft.icon);
@@ -120,28 +119,6 @@ class BlockEmitter {
 			if (!session.profile.allowedMetadata.exists(entry.name) && entry.name != "$schema") {
 				fail("WPX6034", "emitter produced metadata key outside wp70-release: " + entry.name, draft.position);
 			}
-		}
-		return ObjectValue(fields);
-	}
-
-	static function attributeObject(attributes:Array<BlockAttribute>):JsonValue {
-		return ObjectValue([
-			for (attribute in attributes)
-				field(attribute.name, attributeValue(attribute))
-		]);
-	}
-
-	static function attributeValue(attribute:BlockAttribute):JsonValue {
-		final fields:Array<JsonField> = [field("type", StringValue(attribute.typeName))];
-		if (attribute.enumValues.length > 0) {
-			fields.push(field("enum", ArrayValue([for (value in attribute.enumValues) StringValue(value)])));
-		}
-		optionalString(fields, "source", attribute.source);
-		optionalString(fields, "selector", attribute.selector);
-		optionalString(fields, "attribute", attribute.htmlAttribute);
-		optionalString(fields, "role", attribute.role);
-		if (attribute.defaultValue != null) {
-			fields.push(field("default", attribute.defaultValue.value));
 		}
 		return ObjectValue(fields);
 	}

@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/semantic-plan-architecture.json",
-      "sha256": "8682597131868b05edbca9834472c1bfd20b48a0bb333180df0e408298dc7406"
+      "sha256": "516331fc925fe22c26096c4b7980161a6b012e40e87e452ae4a7030bf62473b0"
     },
     "planSchema": {
       "path": "schemas/semantic-plan.schema.json",
@@ -42,11 +42,11 @@
     },
     "planFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.json",
-      "sha256": "388d500f569a3c78811560ba6779cbe90031507f1d805190accbe524c69db0bf"
+      "sha256": "bb8126ed762c3164b0f9199ee994d5ede77bdf46dc130b88691c4a8dd66f3e51"
     },
     "emissionFixture": {
       "path": "fixtures/semantic-plan/valid/minimal-plugin.emission.json",
-      "sha256": "fd54c5c3e3193d687ad3faa042267ea9dc65cd88c09d4e3ac6a187b36f98408f"
+      "sha256": "713cc6a65a0ab735d3c56bb9e639cf35659d3d1fe7805fcd1706739ea8ec116c"
     },
     "artifactFixture": {
       "path": "fixtures/semantic-plan/expected/acme-observatory.php.txt",
@@ -57,8 +57,8 @@
     "planSchema": "wordpress-hx.semantic-plan.v1",
     "emissionSchema": "wordpress-hx.semantic-emission.v1",
     "canonicalization": "wordpress-hx.canonical-json.v1",
-    "planDigest": "eef0adb9df59dc3995acee913457b7da86a1e6b70250acc17b9fecf41c6b3983",
-    "emissionResultDigest": "5d42355f67687190c96a43e97203e2eddcf2eefcec133ab82656b64f75ffd90a",
+    "planDigest": "782f4902fe9538c90cb134b0006970fc4414c4312801fea1c5c74a45ad56a193",
+    "emissionResultDigest": "382e5ac3621ed31302591e3120841e6fd0fd1bfe8fe303560795fb57a45cc13a",
     "exactProfile": "wp70-release",
     "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61"
   },

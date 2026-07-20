@@ -28,7 +28,7 @@
     },
     "nativeEmitter": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockEmitter.hx",
-      "sha256": "2743ccd8decc2b5bd51f34fb7ee4248295d177a02e5e5f3cb709400223709331"
+      "sha256": "177946233470e93870dcdb336828eef95597054e41a2d80a10a24ec51c1b2e56"
     },
     "haxeFixture": {
       "path": "packages/gutenberg/test/block-metadata-fixture/src/sdk060/fixture/Main.hx",

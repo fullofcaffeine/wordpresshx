@@ -1,0 +1,91 @@
+{
+  "blockMetadata": {
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "attributes": {
+      "label": {
+        "default": "NOTE",
+        "role": "content",
+        "selector": ".wphx-callout__label",
+        "source": "text",
+        "type": "string"
+      },
+      "message": {
+        "default": "",
+        "role": "content",
+        "selector": ".wphx-callout__message",
+        "source": "text",
+        "type": "string"
+      }
+    },
+    "category": "design",
+    "description": "A typed static note with native serialization and migration.",
+    "editorScript": "file:./build/editor.js",
+    "icon": "megaphone",
+    "keywords": ["notice", "migration"],
+    "name": "wordpresshx/callout",
+    "style": "file:./style.css",
+    "supports": {
+      "customClassName": false,
+      "html": false
+    },
+    "textdomain": "wordpresshx",
+    "title": "Durable callout",
+    "version": "1.0.0"
+  },
+  "browserPlan": {
+    "blocks": [
+      {
+        "attributes": {
+          "label": {
+            "default": "NOTE",
+            "role": "content",
+            "selector": ".wphx-callout__label",
+            "source": "text",
+            "type": "string"
+          },
+          "message": {
+            "default": "",
+            "role": "content",
+            "selector": ".wphx-callout__message",
+            "source": "text",
+            "type": "string"
+          }
+        },
+        "deprecations": [
+          {
+            "attributes": {
+              "text": {
+                "default": "",
+                "role": "content",
+                "selector": ".wphx-callout__message",
+                "source": "text",
+                "type": "string"
+              }
+            },
+            "hasEligibility": true,
+            "version": "0.9.0"
+          }
+        ],
+        "name": "wordpresshx/callout",
+        "sourcePath": "test/static-block-fixture/src/sdk061/fixture/Main.hx"
+      }
+    ],
+    "generator": "wordpresshx-sdk061-static-block-v1",
+    "policy": {
+      "deprecations": "ordered-immutable-source-and-byte-fixtures",
+      "editSaveBoundary": "distinct-typed-props",
+      "manualJavaScriptRegistration": false,
+      "missingAttributes": "explicit-default",
+      "nullAttributes": "not-admitted"
+    },
+    "profileId": "wp70-release",
+    "schemaVersion": 1
+  },
+  "serialization": {
+    "currentBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">SHIP NOTE</span><p class=\"wphx-callout__message\">Typed bytes survive.</p></aside>\n<!-- /wp:wordpresshx/callout -->",
+    "defaultBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">NOTE</span><p class=\"wphx-callout__message\">Defaulted label.</p></aside>\n<!-- /wp:wordpresshx/callout -->",
+    "legacyBytes": "<!-- wp:wordpresshx/callout -->\n<div class=\"wp-block-wordpresshx-callout wphx-callout-legacy\"><p class=\"wphx-callout__message\">Legacy bytes.</p></div>\n<!-- /wp:wordpresshx/callout -->",
+    "migratedBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">NOTE</span><p class=\"wphx-callout__message\">Legacy bytes.</p></aside>\n<!-- /wp:wordpresshx/callout -->"
+  }
+}

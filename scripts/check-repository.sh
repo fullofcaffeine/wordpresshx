@@ -310,12 +310,19 @@ required_files=(
   packages/gutenberg/profiles/editor-plugin-strict.hxml
   packages/gutenberg/profiles/hxx-common.hxml
   packages/gutenberg/profiles/hxx-strict.hxml
+  packages/gutenberg/profiles/static-block-strict.hxml
   packages/gutenberg/profiles/strict.hxml
   packages/gutenberg/scripts/test-hxx.sh
   packages/gutenberg/scripts/test-differential.sh
   packages/gutenberg/scripts/test-assets.sh
   packages/gutenberg/scripts/test-editor-plugin.sh
   packages/gutenberg/scripts/test-block-metadata.sh
+  packages/gutenberg/scripts/test-static-block.sh
+  packages/gutenberg/scripts/run-static-block-playwright.mjs
+  packages/gutenberg/scripts/run-wordpress-static-block-lane.sh
+  packages/gutenberg/scripts/verify-static-block-profile.py
+  packages/gutenberg/scripts/verify-static-block-runtime.mjs
+  packages/gutenberg/scripts/verify-static-block.mjs
   packages/gutenberg/scripts/run-wordpress-block-metadata-lane.sh
   packages/gutenberg/scripts/verify-block-metadata.py
   packages/gutenberg/scripts/test.sh
@@ -341,6 +348,14 @@ required_files=(
   packages/gutenberg/src/wordpress/hx/gutenberg/block/Block.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockAlignment.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockCategory.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockElementProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/BlockProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/EditAttributes.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/EditProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/PlainText.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/PlainTextProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/SaveProps.hx
+  packages/gutenberg/src/wordpress/hx/gutenberg/block/StaticBlock.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockAttributeDeriver.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockBuilder.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/BlockEmitter.hx
@@ -372,6 +387,7 @@ required_files=(
   packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-assets.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.block-metadata.json
+  packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.static-block.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.editor-plugin.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json
   packages/gutenberg/src/wordpress/hx/gutenberg/react/DomTypes.hx
@@ -418,6 +434,12 @@ required_files=(
   packages/gutenberg/test/expected/block-metadata.json
   packages/gutenberg/test/block-metadata-fixture/src/sdk060/fixture/Main.hx
   packages/gutenberg/test/block-metadata-runtime/native-wordpress-oracle.php
+  packages/gutenberg/test/static-block-fixture/README.md
+  packages/gutenberg/test/static-block-fixture/src/sdk061/fixture/CalloutBlock.hx
+  packages/gutenberg/test/static-block-fixture/src/sdk061/fixture/Main.hx
+  packages/gutenberg/test/static-block-runtime/setup.php
+  packages/gutenberg/test/static-block-runtime/wordpresshx-sdk061-static-block.php
+  packages/gutenberg/test/expected/static-block.json
   packages/gutenberg/test/runtime/setup.d.ts
   packages/gutenberg/test/runtime/setup.js
   packages/gutenberg/test/runtime/signals.d.ts
@@ -684,6 +706,7 @@ required_files=(
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
   manifests/evidence/sdk-064-typed-data-store.json
   manifests/evidence/sdk-060-typed-block-metadata.json
+  manifests/evidence/sdk-061-static-block.json
   manifests/evidence/g2.4-wordpress-scripts-source-correlation.json
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
@@ -1269,6 +1292,16 @@ sdk060_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-060-typed-block-metadata.json"
     ).read_text(encoding="utf-8")
+)
+sdk061_profile_path = Path(
+    "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
+    "wp70-release.static-block.browser-hxx.json"
+)
+sdk061_profile = json.loads(sdk061_profile_path.read_text(encoding="utf-8"))
+sdk061_receipt = json.loads(
+    Path("manifests/evidence/sdk-061-static-block.json").read_text(
+        encoding="utf-8"
+    )
 )
 sdk063_profile_path = Path(
     "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
@@ -8270,6 +8303,283 @@ else:
     )
     assert sdk060_local["realWordPressRuntime"] == (
         "passed-hosted-clean-runner"
+    )
+
+assert sdk061_receipt["schemaVersion"] == 1
+assert sdk061_receipt["receiptId"] == "SDK-061-STATIC-BLOCK"
+assert sdk061_receipt["bead"] == "wordpresshx-sdk-061"
+assert sdk061_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk061_subject_name, sdk061_subject in sdk061_receipt["subject"].items():
+    if sdk061_subject_name == "package":
+        continue
+    sdk061_subject_path = Path(sdk061_subject["path"])
+    assert hashlib.sha256(sdk061_subject_path.read_bytes()).hexdigest() == (
+        sdk061_subject["sha256"]
+    )
+assert sdk061_profile["schemaVersion"] == 1
+assert sdk061_profile["profileId"] == "wp70-release"
+assert sdk061_profile["catalogId"] == "static-block"
+assert sdk061_profile["catalogRevision"] == "wp70-release/static-block-v1"
+assert sdk061_profile["requiresBaseCatalogRevision"] == lock["entries"][
+    "wp70-release"
+]["catalogRevision"]
+sdk061_provider = sdk061_receipt["provider"]
+assert sdk061_provider["profileId"] == sdk061_profile["profileId"]
+assert sdk061_provider["baseCatalogRevision"] == sdk061_profile[
+    "requiresBaseCatalogRevision"
+]
+assert sdk061_provider["staticBlockCatalogRevision"] == sdk061_profile[
+    "catalogRevision"
+]
+assert sdk061_provider["wordpressVersion"] == sdk061_profile["provider"][
+    "wordpressVersion"
+]
+assert sdk061_provider["wordpressCommit"] == lock["entries"][
+    "wp70-release"
+]["wordpressSource"]["commit"]
+assert sdk061_provider["gutenbergCommit"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["commit"]
+assert sdk061_provider["gutenbergTree"] == lock["entries"][
+    "wp70-release"
+]["embeddedGutenberg"]["tree"]
+assert sdk061_provider["sourceVerifiedCapabilityCount"] == len(
+    sdk061_profile["admittedCapabilities"]
+)
+assert sdk061_provider["privateApisAllowed"] is False
+assert sdk061_provider["experimentalApisAllowed"] is False
+assert all(
+    capability["classification"] == "public"
+    and capability["evidenceStatus"] == "source-verified"
+    for capability in sdk061_profile["admittedCapabilities"]
+)
+assert sdk061_receipt["receiptId"] in lock["entries"]["wp70-release"][
+    "testReceiptIds"
+]
+sdk061_tooling_manifest = json.loads(
+    sdk063_tooling_manifest_path.read_text(encoding="utf-8")
+)
+sdk061_tooling_lock = json.loads(
+    sdk063_tooling_lock_path.read_text(encoding="utf-8")
+)
+assert sdk061_provider["exactWordPressNpmPackages"] == [
+    "@wordpress/block-editor@15.13.0",
+    "@wordpress/blocks@15.13.0",
+]
+for sdk061_package in sdk061_profile["packages"]:
+    sdk061_request = sdk061_package["request"]
+    sdk061_version = sdk061_package["version"]
+    assert sdk061_tooling_manifest["overrides"][sdk061_request] == (
+        sdk061_version
+    )
+    assert sdk061_tooling_lock["packages"][
+        f"node_modules/{sdk061_request}"
+    ]["version"] == sdk061_version
+assert sdk061_receipt["toolchain"]["haxe"] == "4.3.7"
+assert sdk061_receipt["toolchain"]["nodeImage"] == image_lock["images"][
+    "node"
+]["reference"]
+assert sdk061_receipt["toolchain"]["playwrightImage"] == image_lock[
+    "images"
+]["playwright"]["reference"]
+assert sdk061_receipt["toolchain"]["wordpressImage"] == image_lock[
+    "images"
+]["wordpress70Php84"]["reference"]
+assert sdk061_receipt["toolchain"]["mysqlImage"] == image_lock["images"][
+    "mysql"
+]["reference"]
+sdk061_implementation = sdk061_receipt["implementation"]
+assert sdk061_implementation["authoringSurface"] == "haxe-hxx"
+assert sdk061_implementation["missingAttributes"] == "explicit-default"
+assert sdk061_implementation["nullAttributes"] == "not-admitted"
+assert sdk061_implementation[
+    "companionApplicationJavaScriptOrTypeScriptAuthored"
+] is False
+assert sdk061_implementation["shippedBrowserHxxRuntime"] is False
+assert sdk061_implementation["wordpressSpecificGenesBranch"] is False
+sdk061_compilation = sdk061_receipt["compilation"]
+assert sdk061_compilation["blockName"] == "wordpresshx/callout"
+for sdk061_hash_name in (
+    "generatedTreeSha256",
+    "browserPlanSha256",
+    "blockMetadataSha256",
+    "pluginTreeSha256",
+    "developmentBundleSha256",
+    "productionBundleSha256",
+):
+    assert sha256.fullmatch(sdk061_compilation[sdk061_hash_name])
+assert re.fullmatch(
+    r"[0-9a-f]{20}", sdk061_compilation["productionVersion"]
+)
+assert sdk061_compilation["dependencies"] == [
+    "react-jsx-runtime",
+    "wp-block-editor",
+    "wp-blocks",
+]
+assert sdk061_compilation["deprecationVersions"] == ["0.9.0"]
+assert sdk061_compilation["publicWeakTypes"] == []
+assert sdk061_compilation["forbiddenHaxeWeakConstructs"] == []
+assert sdk061_compilation["generatedAndBundleMachinePathLeaks"] == 0
+assert sdk061_compilation["secondCompileMatched"] is True
+assert sdk061_compilation["developmentAndProductionReplayMatched"] is True
+assert sdk061_compilation["generatedPluginReplayMatched"] is True
+sdk061_expected = json.loads(
+    Path("packages/gutenberg/test/expected/static-block.json").read_text(
+        encoding="utf-8"
+    )
+)
+sdk061_serialization = sdk061_receipt["nativeSerialization"]
+assert sdk061_serialization["check"] == (
+    "wordpresshx-sdk061-native-gutenberg-serialization-v1"
+)
+assert sdk061_serialization["currentBytes"] == sdk061_expected[
+    "serialization"
+]["currentBytes"]
+assert sdk061_serialization["defaultBytes"] == sdk061_expected[
+    "serialization"
+]["defaultBytes"]
+assert sdk061_serialization["legacyBytes"] == sdk061_expected[
+    "serialization"
+]["legacyBytes"]
+assert sdk061_serialization["migratedBytes"] == sdk061_expected[
+    "serialization"
+]["migratedBytes"]
+assert sdk061_serialization["currentValid"] is True
+assert sdk061_serialization["legacyValidAndMigrated"] is True
+assert sdk061_serialization["replayByteExact"] is True
+assert sdk061_serialization["outcome"] == "passed"
+sdk061_diagnostics = sdk061_receipt["negativeDiagnostics"]
+assert set(sdk061_diagnostics) == {
+    "WPX6101",
+    "WPX6103",
+    "WPX6105",
+    "WPX6112",
+    "WPX6114",
+    "WPX6116",
+    "negativeCompileFixtureCount",
+    "originalSourcePaths",
+}
+assert sdk061_diagnostics["negativeCompileFixtureCount"] == 6
+assert sdk061_diagnostics["originalSourcePaths"] is True
+sdk061_local = sdk061_receipt["localVerification"]
+assert sdk061_local["deterministicCompilerAndVerifier"] == "passed"
+assert sdk061_local["nativeParserSerializer"] == "passed"
+assert sdk061_local["strictTypeScript"] == "passed"
+assert sdk061_local["phpOracleSyntax"] == "passed"
+assert sdk061_local["forbiddenHaxeWeakConstructs"] == "none"
+assert sdk061_receipt["changeDecision"]["genesSourceChanged"] is False
+assert sdk061_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk061_receipt["changeDecision"]["siblingGenesBuildInput"] is False
+assert sdk061_receipt["changeDecision"]["reflaxePhpSourceChanged"] is False
+assert sdk061_receipt["claims"]["dynamicBlockRendering"] == (
+    "not-tested-owned-by-sdk-062"
+)
+assert sdk061_receipt["claims"]["richerBlockFeatures"] == (
+    "not-tested-owned-by-sdk-065"
+)
+assert sdk061_receipt["claims"]["productionSupport"] == "not-tested"
+assert len(sdk061_receipt["knownLimitations"]) >= 4
+assert "Prove typed static block serialization and migration on WordPress 7.0" in workflow_text
+assert "Test typed static block generation and native serialization" in workflow_text
+assert "bash packages/gutenberg/scripts/test-static-block.sh" in workflow_text
+assert (
+    "bash packages/gutenberg/scripts/test-static-block.sh --skip-wordpress"
+    in workflow_text
+)
+sdk061_runtime = sdk061_receipt["realWordPressRuntime"]
+sdk061_hosted = sdk061_receipt["repositoryHostedVerification"]
+assert sdk061_runtime["check"] == "wordpresshx-sdk061-real-static-block-v1"
+assert sdk061_runtime["wordpressVersion"] == "7.0"
+assert sdk061_hosted["workflow"] == "Repository bootstrap"
+assert sdk061_hosted["required"] is True
+assert sdk061_hosted["haxeJob"] == "haxe"
+assert sdk061_hosted["haxeStep"] == (
+    "Test typed static block generation and native serialization"
+)
+assert sdk061_hosted["wordpressJob"] == "wordpress-runtime"
+assert sdk061_hosted["wordpressStep"] == (
+    "Prove typed static block serialization and migration on WordPress 7.0"
+)
+if sdk061_receipt["status"] == "implemented-hosted-pending":
+    assert sdk061_implementation["commit"] is None
+    assert sdk061_runtime["outcome"] == "pending-hosted-clean-runner"
+    for sdk061_runtime_pending in (
+        "pluginActivated",
+        "insertEditSaveReload",
+        "undoRedo",
+        "currentFrontend",
+        "legacyMigrated",
+        "migrationFrontend",
+        "recoveryWarnings",
+        "consoleErrors",
+        "pageErrors",
+    ):
+        assert sdk061_runtime[sdk061_runtime_pending] is None
+    assert sdk061_local["realWordPressRuntime"] == (
+        "pending-hosted-clean-runner"
+    )
+    assert sdk061_hosted["status"] == "pending-main-push"
+    for sdk061_hosted_pending in (
+        "commit",
+        "runId",
+        "url",
+        "haxeJobId",
+        "wordpressJobId",
+        "jobCount",
+        "allJobsPassed",
+        "artifactHashesMatched",
+        "completedAt",
+    ):
+        assert sdk061_hosted[sdk061_hosted_pending] is None
+    assert sdk061_receipt["claims"][
+        "realWordPressInsertEditSaveReload"
+    ] == "hosted-pending"
+    assert sdk061_receipt["claims"]["realWordPressFrontend"] == (
+        "hosted-pending"
+    )
+    assert sdk061_receipt["claims"]["noValidationRecoveryPrompt"] == (
+        "hosted-pending"
+    )
+else:
+    assert sdk061_receipt["status"] == "verified"
+    assert sha1.fullmatch(sdk061_implementation["commit"])
+    assert sdk061_runtime["outcome"] == "passed"
+    for sdk061_runtime_true in (
+        "pluginActivated",
+        "insertEditSaveReload",
+        "undoRedo",
+        "currentFrontend",
+        "legacyMigrated",
+        "migrationFrontend",
+    ):
+        assert sdk061_runtime[sdk061_runtime_true] is True
+    assert sdk061_runtime["recoveryWarnings"] == 0
+    assert sdk061_runtime["consoleErrors"] == 0
+    assert sdk061_runtime["pageErrors"] == 0
+    assert sdk061_local["realWordPressRuntime"] == (
+        "passed-hosted-clean-runner"
+    )
+    assert sdk061_hosted["commit"] == sdk061_implementation["commit"]
+    assert isinstance(sdk061_hosted["runId"], int)
+    assert isinstance(sdk061_hosted["haxeJobId"], int)
+    assert isinstance(sdk061_hosted["wordpressJobId"], int)
+    assert sdk061_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{sdk061_hosted['runId']}"
+    )
+    assert sdk061_hosted["status"] == "passed"
+    assert sdk061_hosted["jobCount"] == 13
+    assert sdk061_hosted["allJobsPassed"] is True
+    assert sdk061_hosted["artifactHashesMatched"] is True
+    assert sdk061_hosted["completedAt"] == sdk061_receipt["observedAt"]
+    assert sdk061_receipt["claims"][
+        "realWordPressInsertEditSaveReload"
+    ] == "real-wordpress-tested"
+    assert sdk061_receipt["claims"]["realWordPressFrontend"] == (
+        "real-wordpress-tested"
+    )
+    assert sdk061_receipt["claims"]["noValidationRecoveryPrompt"] == (
+        "real-wordpress-tested"
     )
 
 assert sdk063_receipt["schemaVersion"] == 1

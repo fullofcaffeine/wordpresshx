@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-061-STATIC-BLOCK",
+  "bead": "wordpresshx-sdk-061",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-20T23:04:40Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.static-block.browser-hxx.json",
+      "sha256": "86e9832b838e390bffb6ba119e4e1bff0004e85b644d6a380afe03d469412755"
+    },
+    "haxeProfile": {
+      "path": "packages/gutenberg/profiles/static-block-strict.hxml",
+      "sha256": "9b9e6a5e4152235555ae15cdaf1cf41aeda8b016504eee215c73c49e20e51fb1"
+    },
+    "staticBlockMacro": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/StaticBlock.hx",
+      "sha256": "cd8ec96cb7e80e65de626210fe119743c07963d324b8ef5a9567c450d679f7e3"
+    },
+    "editProps": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/EditProps.hx",
+      "sha256": "d23f4ced3c9b21774548110f8c85a39b325a89fa60996bb9ac6aef2b3a1a14a0"
+    },
+    "saveProps": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/SaveProps.hx",
+      "sha256": "72b7d07376f4cca22c7a1ac43f2ad4d2d2395773aabf3baf39dcf961abb1ebfb"
+    },
+    "editAttributes": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/EditAttributes.hx",
+      "sha256": "dbb7e05fdadc612e1586168bf2a25ebfed0298edc15debc1ad0e69f3e8c2425a"
+    },
+    "staticBlockBuilder": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/StaticBlockBuilder.hx",
+      "sha256": "82f91502c569a50141a4cbb82741bde0c9cb69488d43d2dade55d68c9139da37"
+    },
+    "editAttributesBuilder": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/block/_internal/EditAttributesBuilder.hx",
+      "sha256": "049580c332ded7aa9e69bb81ee0809c500c12d8b3662bdff2214f3077469c6e3"
+    },
+    "haxeFixture": {
+      "path": "packages/gutenberg/test/static-block-fixture/src/sdk061/fixture/CalloutBlock.hx",
+      "sha256": "50aa37b7680db002a769cfa7f4df5867894ab8c9618016dfc6497417d2fcba02"
+    },
+    "expectedOutput": {
+      "path": "packages/gutenberg/test/expected/static-block.json",
+      "sha256": "16ab834a2cd4eeaab41a63e41a58281fb5119bbf75ecee4e788fb973c490361e"
+    },
+    "profileVerifier": {
+      "path": "packages/gutenberg/scripts/verify-static-block-profile.py",
+      "sha256": "bca22910581662acf71b9529dcf3c8ee0fd56b99e2a59aed9e1cb74adea9049c"
+    },
+    "nativeRuntimeVerifier": {
+      "path": "packages/gutenberg/scripts/verify-static-block-runtime.mjs",
+      "sha256": "76e4930c7b9707731b16532f609f55ceb26dcdb6ceaa3b860ffc4c1f6a37f845"
+    },
+    "artifactVerifier": {
+      "path": "packages/gutenberg/scripts/verify-static-block.mjs",
+      "sha256": "49b7d20ff72728895e9e6c5516d615f75451123e763958f4944498354ea5ce39"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-static-block.sh",
+      "sha256": "ee6487df30faf453c340427f639549198b3e5b61401666776a13872cc39ed4f2"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-static-block-lane.sh",
+      "sha256": "4b85c8ae0a45922afcd2941b0cbdffa3705b396eab59d334d271772a69248395"
+    },
+    "browserProbe": {
+      "path": "packages/gutenberg/scripts/run-static-block-playwright.mjs",
+      "sha256": "39690c8b84b53fc77e282dfaa991b7ae1bee4a44e3006d2eaf4236c87e44f06c"
+    },
+    "wordpressSetup": {
+      "path": "packages/gutenberg/test/static-block-runtime/setup.php",
+      "sha256": "63c90a0a128b0be0a8e57843b00c2b005c9d2569c8d0ce5939e1384860300c74"
+    },
+    "independentPluginOracle": {
+      "path": "packages/gutenberg/test/static-block-runtime/wordpresshx-sdk061-static-block.php",
+      "sha256": "b1e779640c4eae14998201dbbe5bfad5be7214285ea36597fb3f3b525072ee0c"
+    }
+  },
+  "provider": {
+    "profileId": "wp70-release",
+    "baseCatalogRevision": "wp70-release/catalog-v1",
+    "staticBlockCatalogRevision": "wp70-release/static-block-v1",
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94",
+    "exactWordPressNpmPackages": [
+      "@wordpress/block-editor@15.13.0",
+      "@wordpress/blocks@15.13.0"
+    ],
+    "sourceVerifiedCapabilityCount": 7,
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixNpmPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.36.3",
+      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+    },
+    "node": "22.17.0",
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "webpack": "5.108.4",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "playwrightImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "mysqlImage": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+    "lifecycleScriptsAllowed": false
+  },
+  "implementation": {
+    "authoringSurface": "haxe-hxx",
+    "attributeAuthority": "one nominal Haxe class shared by metadata, edit, save, and serialization",
+    "editSaveBoundary": "distinct nominal props with editor mutation unavailable from save",
+    "attributeUpdate": "compile-time checked direct-field selector lowered to one native partial update",
+    "missingAttributes": "explicit-default",
+    "nullAttributes": "not-admitted",
+    "deprecations": "ordered immutable old schema, old save bytes, migration, and optional eligibility",
+    "nativeRegistries": [
+      "register_block_type",
+      "registerBlockType"
+    ],
+    "companionApplicationJavaScriptOrTypeScriptAuthored": false,
+    "shippedBrowserHxxRuntime": false,
+    "wordpressSpecificGenesBranch": false,
+    "commit": null
+  },
+  "compilation": {
+    "blockName": "wordpresshx/callout",
+    "generatedTreeSha256": "011076d274503fcce4b8b0f75da2ca730ce84e9f1f348bfedad7be9db07208af",
+    "browserPlanSha256": "20839a02230f323b203f625f77271f7ebbddb7f07ea69bbc7da65a590887f45b",
+    "blockMetadataSha256": "5fa4895d87fc50ab69e86859d66deb82011435d84f38f5d858e3aa9e256b6d1b",
+    "pluginTreeSha256": "145a0da960b7cf3c08c88b56667a32264cc8e33141059b5d2990b9d920c616d5",
+    "developmentBundleSha256": "7b4128a29637f67d205e3bd177e1d370471c92a58d7ffb46cc0b73a1ab19c192",
+    "productionBundleSha256": "fc5202ada37c97129e556698496530b11199eb3efb95c9e48790cf755d8ac44d",
+    "productionVersion": "6264bde0e41554cb17ae",
+    "dependencies": [
+      "react-jsx-runtime",
+      "wp-block-editor",
+      "wp-blocks"
+    ],
+    "deprecationVersions": [
+      "0.9.0"
+    ],
+    "publicWeakTypes": [],
+    "forbiddenHaxeWeakConstructs": [],
+    "generatedAndBundleMachinePathLeaks": 0,
+    "secondCompileMatched": true,
+    "developmentAndProductionReplayMatched": true,
+    "generatedPluginReplayMatched": true
+  },
+  "nativeSerialization": {
+    "check": "wordpresshx-sdk061-native-gutenberg-serialization-v1",
+    "parser": "@wordpress/blocks 15.13.0 with @wordpress/block-editor 15.13.0 save filters",
+    "currentBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">SHIP NOTE</span><p class=\"wphx-callout__message\">Typed bytes survive.</p></aside>\n<!-- /wp:wordpresshx/callout -->",
+    "defaultBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">NOTE</span><p class=\"wphx-callout__message\">Defaulted label.</p></aside>\n<!-- /wp:wordpresshx/callout -->",
+    "legacyBytes": "<!-- wp:wordpresshx/callout -->\n<div class=\"wp-block-wordpresshx-callout wphx-callout-legacy\"><p class=\"wphx-callout__message\">Legacy bytes.</p></div>\n<!-- /wp:wordpresshx/callout -->",
+    "migratedBytes": "<!-- wp:wordpresshx/callout -->\n<aside class=\"wp-block-wordpresshx-callout wphx-callout\"><span class=\"wphx-callout__label\">NOTE</span><p class=\"wphx-callout__message\">Legacy bytes.</p></aside>\n<!-- /wp:wordpresshx/callout -->",
+    "currentValid": true,
+    "legacyValidAndMigrated": true,
+    "replayByteExact": true,
+    "outcome": "passed"
+  },
+  "negativeDiagnostics": {
+    "WPX6101": "save props cannot be used as edit props",
+    "WPX6103": "attribute update value differs from the selected field type",
+    "WPX6105": "current or deprecated attribute omits explicit missing-value semantics",
+    "WPX6112": "edit callback accepts the wrong nominal props",
+    "WPX6114": "deprecation marker is missing or spoofed",
+    "WPX6116": "migration does not map the old attribute class to the current class",
+    "negativeCompileFixtureCount": 6,
+    "originalSourcePaths": true
+  },
+  "localVerification": {
+    "commands": [
+      "python3 packages/gutenberg/scripts/verify-static-block-profile.py",
+      "haxelib run formatter --check -s packages/gutenberg/src/wordpress/hx/gutenberg/block -s packages/gutenberg/test/static-block-fixture/src -s packages/gutenberg/test-negative-static-block",
+      "two exact Haxe/Genes compiles, official development/production builds, native parser/serializer executions, and verifier replay",
+      "php -l packages/gutenberg/test/static-block-runtime/setup.php",
+      "php -l packages/gutenberg/test/static-block-runtime/wordpresshx-sdk061-static-block.php"
+    ],
+    "deterministicCompilerAndVerifier": "passed",
+    "nativeParserSerializer": "passed",
+    "strictTypeScript": "passed",
+    "phpOracleSyntax": "passed",
+    "forbiddenHaxeWeakConstructs": "none",
+    "realWordPressRuntime": "pending-hosted-clean-runner",
+    "localDockerDiagnostic": "docker info did not return within the bounded 10-second probe; the exact local Node 22.17.0 fallback passed compiler and native serialization checks, while real WordPress proof remains hosted"
+  },
+  "realWordPressRuntime": {
+    "check": "wordpresshx-sdk061-real-static-block-v1",
+    "outcome": "pending-hosted-clean-runner",
+    "wordpressVersion": "7.0",
+    "pluginActivated": null,
+    "insertEditSaveReload": null,
+    "undoRedo": null,
+    "currentFrontend": null,
+    "legacyMigrated": null,
+    "migrationFrontend": null,
+    "recoveryWarnings": null,
+    "consoleErrors": null,
+    "pageErrors": null
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "url": null,
+    "haxeJob": "haxe",
+    "haxeStep": "Test typed static block generation and native serialization",
+    "haxeJobId": null,
+    "wordpressJob": "wordpress-runtime",
+    "wordpressStep": "Prove typed static block serialization and migration on WordPress 7.0",
+    "wordpressJobId": null,
+    "jobCount": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
+  },
+  "changeDecision": {
+    "genesSourceChanged": false,
+    "genesPullRequest": null,
+    "siblingGenesBuildInput": false,
+    "reflaxePhpSourceChanged": false,
+    "reason": "The exact released Genes compiler already emits the required strict TSX. SDK-061 adds only WordPress-owned Haxe contracts, generation, and evidence; dynamic PHP rendering remains SDK-062."
+  },
+  "claims": {
+    "strictEditSaveBoundary": "compile-and-generated-source-tested",
+    "typedAttributeUpdates": "compile-and-negative-tested",
+    "deterministicSavedMarkup": "native-package-tested",
+    "explicitDefaultMissingNullSemantics": "compile-and-native-package-tested",
+    "immutableDeprecationMigration": "native-package-tested",
+    "realWordPressInsertEditSaveReload": "hosted-pending",
+    "realWordPressFrontend": "hosted-pending",
+    "noValidationRecoveryPrompt": "hosted-pending",
+    "dynamicBlockRendering": "not-tested-owned-by-sdk-062",
+    "richerBlockFeatures": "not-tested-owned-by-sdk-065",
+    "productionSupport": "not-tested"
+  },
+  "knownLimitations": [
+    "SDK-061 proves one static block and one immutable historical version; dynamic rendering belongs to SDK-062 and richer block features belong to SDK-065.",
+    "The PHP files under test/static-block-runtime are independent native test consumers, not application source or a manual-PHP product requirement.",
+    "The fixture stylesheet is a bounded native asset; typed Haxe design-token and style generation belongs to later site-authoring work.",
+    "No package publication or production-support claim is advanced."
+  ]
+}

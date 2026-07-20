@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "profileId": "wp70-release",
+  "catalogId": "static-block",
+  "catalogRevision": "wp70-release/static-block-v1",
+  "requiresBaseCatalogRevision": "wp70-release/catalog-v1",
+  "provider": {
+    "wordpressVersion": "7.0.0",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "gutenbergTree": "8bd91d6b490d79ef991d388409705b5cd06fdc94"
+  },
+  "packages": [
+    {
+      "request": "@wordpress/block-editor",
+      "version": "15.13.0",
+      "packageCapability": "gutenberg.package.@wordpress/block-editor",
+      "wordpressHandle": "wp-block-editor",
+      "handleCapability": "wordpress.script-handle.wp-block-editor",
+      "source": {
+        "path": "packages/block-editor/package.json",
+        "blob": "425851fdb5f5e3894475db4e839cea35c669494d",
+        "sha256": "630c93f164a723c69b608162e34c6814866d408043f0e6e8d5469f03e33c5d75"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/block-editor/-/block-editor-15.13.0.tgz",
+        "integrity": "sha512-84gio2OjIfcs/Kx/R3n+tEOXhTrdZ4YnwMA3p6Yya4m4kJR5Mdn4ysCGieMmQY3zbd2vR38O3mGdGOx47sIMCw==",
+        "shasum": "fe9a272e9f5dcaef40a6f831849cc090c2c9e908"
+      }
+    },
+    {
+      "request": "@wordpress/blocks",
+      "version": "15.13.0",
+      "packageCapability": "gutenberg.package.@wordpress/blocks",
+      "wordpressHandle": "wp-blocks",
+      "handleCapability": "wordpress.script-handle.wp-blocks",
+      "source": {
+        "path": "packages/blocks/package.json",
+        "blob": "edcb7c2cf351dedb4cd9c2c000193af24c86cef0",
+        "sha256": "aa685725ecddb4a60903eeddb5cd5e7a8988261b528ac206a498c86d3eebcf6a"
+      },
+      "npm": {
+        "tarball": "https://registry.npmjs.org/@wordpress/blocks/-/blocks-15.13.0.tgz",
+        "integrity": "sha512-e1OEv472ZGi5zL154TWASO/wYxbH5845C42thbp9sBis1zB31bkUriIxpn2vqmJV22uFnh0L31uBLTkQAp5BiQ==",
+        "shasum": "1bd3f815abc33bce0cff7be9755554ec418c132a"
+      }
+    }
+  ],
+  "admittedCapabilities": [
+    {
+      "capabilityId": "gutenberg.export.@wordpress/block-editor.PlainText",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "gutenberg.export.@wordpress/block-editor.useBlockProps",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "gutenberg.export.@wordpress/blocks.registerBlockType",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "gutenberg.package.@wordpress/block-editor",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "gutenberg.package.@wordpress/blocks",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "wordpress.script-handle.wp-block-editor",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    },
+    {
+      "capabilityId": "wordpress.script-handle.wp-blocks",
+      "classification": "public",
+      "evidenceStatus": "source-verified"
+    }
+  ],
+  "components": [
+    {
+      "tag": "PlainText",
+      "haxeType": "wordpress.hx.gutenberg.block.PlainText",
+      "propsType": "wordpress.hx.gutenberg.block.PlainTextProps",
+      "children": "forbidden",
+      "request": "@wordpress/block-editor",
+      "export": "PlainText",
+      "source": {
+        "path": "packages/block-editor/src/components/plain-text/index.js",
+        "blob": "d28aabebf7a14008ed190f5e82d20723b9de94e0",
+        "sha256": "e09c78584609cbf95f8d856f28c62b02f1aa0b2bd05c674214589f56b3f69969"
+      }
+    }
+  ],
+  "apis": [
+    {
+      "request": "@wordpress/block-editor",
+      "exports": ["PlainText", "useBlockProps"],
+      "source": {
+        "indexPath": "packages/block-editor/src/components/index.js",
+        "indexBlob": "b16b5e8307cd8b9a2eb2139adfddc0de57b8bd3a",
+        "indexSha256": "9742a15845002e494c4b47114a6d59f6efb43cc49e377258c733caa032129d5d",
+        "useBlockPropsPath": "packages/block-editor/src/components/block-list/use-block-props/index.js",
+        "useBlockPropsBlob": "4b4521a089ef15fb417ba07905b767ed058312da",
+        "useBlockPropsSha256": "935cbd0067fccf02d456e5d61bdb8b9e0a644d0dd9709942c8c85b42759b3034"
+      }
+    },
+    {
+      "request": "@wordpress/blocks",
+      "exports": ["registerBlockType"],
+      "source": {
+        "path": "packages/blocks/src/api/registration.js",
+        "blob": "42fba15241200a5e026dc4549af2a1ae9e47481f",
+        "sha256": "f4add09d439b79eb3d1812afd2ceb674f0fe7fd7d0c4dd9e884fb1899fa51007"
+      }
+    }
+  ],
+  "mappings": [
+    { "request": "@wordpress/block-editor", "handle": "wp-block-editor" },
+    { "request": "@wordpress/blocks", "handle": "wp-blocks" },
+    { "request": "@wordpress/element", "handle": "wp-element" },
+    { "request": "react/jsx-runtime", "handle": "react-jsx-runtime" }
+  ],
+  "policy": {
+    "privateApisAllowed": false,
+    "experimentalApisAllowed": false,
+    "componentCatalogGeneratedOrCurated": "curated-exact-source-and-published-runtime",
+    "unknownPropsAllowed": false,
+    "manualRegistrationJavaScriptAllowed": false,
+    "deprecationsOrderedAndImmutable": true
+  }
+}

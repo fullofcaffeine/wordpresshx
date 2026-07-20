@@ -1,0 +1,26 @@
+.wphx-callout {
+	background: #fff8dd;
+	border: 1px solid #172f3f;
+	box-shadow: 5px 5px 0 #e3462d;
+	color: #172f3f;
+	display: grid;
+	gap: .55rem;
+	margin-block: 1.5rem;
+	padding: 1.25rem;
+}
+
+.wphx-callout__eyebrow,
+.wphx-callout__label {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: .75rem;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+.wphx-callout__message {
+	font-family: Georgia, serif;
+	font-size: 1.35rem;
+	line-height: 1.35;
+	margin: 0;
+}

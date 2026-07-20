@@ -1,0 +1,6 @@
+profiles/hxx-common.hxml
+-cp ../build/src
+-D wordpress_hx_browser_hxx_catalog=static-block
+-D js-source-map
+-cp test/static-block-fixture/src
+-main sdk061.fixture.Main

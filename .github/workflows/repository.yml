@@ -149,6 +149,8 @@ jobs:
         run: bash packages/gutenberg/scripts/test-assets.sh
       - name: Prove typed block metadata on WordPress 7.0
         run: bash packages/gutenberg/scripts/test-block-metadata.sh
+      - name: Prove typed static block serialization and migration on WordPress 7.0
+        run: bash packages/gutenberg/scripts/test-static-block.sh
       - name: Prove the typed editor plugin and SlotFill on WordPress 7.0
         run: bash packages/gutenberg/scripts/test-editor-plugin.sh
       - name: Prove the typed native data store on WordPress 7.0
@@ -248,3 +250,5 @@ jobs:
         run: bash packages/gutenberg/scripts/test-differential.sh
       - name: Test typed profile-specific block.json generation
         run: bash packages/gutenberg/scripts/test-block-metadata.sh --skip-wordpress
+      - name: Test typed static block generation and native serialization
+        run: bash packages/gutenberg/scripts/test-static-block.sh --skip-wordpress
