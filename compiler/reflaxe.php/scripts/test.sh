@@ -2,6 +2,7 @@
 set -euo pipefail
 
 package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repository_root="$(git -C "${package_root}" rev-parse --show-toplevel)"
 cd "${package_root}"
 
 haxe_version="$(haxe --version)"
@@ -12,6 +13,8 @@ fi
 
 php -r 'if (PHP_VERSION_ID < 70400) { fwrite(STDERR, "PHP 7.4 or newer is required\n"); exit(1); }'
 haxelib run formatter --check -s src -s test
+python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" --self-test
+python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${package_root}"
 haxe test.hxml
 php -l build/generic-printer-fixture.php
 php -l build/source-correlation-fixture.php

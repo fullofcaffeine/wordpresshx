@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-012-PROFILE-SCHEMA",
   "bead": "wordpresshx-sdk-012",
-  "observedAt": "2026-07-17T15:30:00-06:00",
+  "observedAt": "2026-07-21T09:07:49Z",
   "subject": {
     "profileSchemaPath": "schemas/profile.schema.json",
     "profileSchemaVersion": 1,
@@ -13,7 +13,7 @@
     "profileDecisionLockSha256": "ceccd792dd83fa8048ed70fe060dff037aba7d2801ca6e7a5f9e903c1ee7da60",
     "haxeContractRoot": "packages/core",
     "haxeContractFileCount": 20,
-    "haxeContractContentSha256": "9cf382a6a905579d39497aedd9d6bb9ead7d05e1f03538487a54e88cb3abdc61"
+    "haxeContractContentSha256": "7beda67945b5f59c80e9caf6c98891575867451b009915f0ef5660a92fc0f00b"
   },
   "schemaImplementation": {
     "draft": "https://json-schema.org/draft/2020-12/schema",
@@ -101,7 +101,11 @@
   "haxeValidation": {
     "command": "bash scripts/profiles/test-profile-haxe.sh",
     "scriptPath": "scripts/profiles/test-profile-haxe.sh",
-    "scriptSha256": "9d008db424cb6f40e65bf383a5755512a54ccaef8067d42c8bfc0fcbc9c4e732",
+    "scriptSha256": "ff84363df8251f5ad297887fe9e27dc4c4f58de1971e08561b6ade5e85595391",
+    "weakTypeGuardPath": "scripts/lint/haxe-weak-type-guard.py",
+    "weakTypeGuardSha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5",
+    "weakTypeGuardScannedFileCount": 18,
+    "weakTypeGuardFindingCount": 0,
     "haxeVersion": "4.3.7",
     "formattedHaxeFileCount": 18,
     "positiveContractTests": "passed",
@@ -113,6 +117,20 @@
       "unknownClassificationAlias": "passed"
     },
     "outcome": "passed"
+  },
+  "strictTypingMigration": {
+    "bead": "wordpresshx-sjb",
+    "scope": "packages/core",
+    "reason": "Replace the legacy enum-abstract conversion escape and make the owning SDK-012 gate reject weak Haxe types across every core source and fixture.",
+    "localGate": "passed",
+    "coveredHaxeFileCount": 18,
+    "findingCount": 0,
+    "status": "pending-hosted-verification",
+    "implementationCommit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": false,
+    "completedAt": null
   },
   "capabilityAuthority": {
     "compileTimeAvailability": {

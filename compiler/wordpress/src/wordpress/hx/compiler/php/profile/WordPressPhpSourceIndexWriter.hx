@@ -5,7 +5,14 @@ import haxe.io.Bytes;
 import reflaxe.php.ir.PhpSourceFile;
 import reflaxe.php.ir.PhpStableId;
 import reflaxe.php.map.PhpCanonicalJson;
+import reflaxe.php.map.PhpCanonicalJson.PhpJsonField;
+import reflaxe.php.map.PhpCanonicalJson.PhpJsonValue;
 import reflaxe.php.print.PhpRenderedFile;
+
+private typedef SourceIndexFile = {
+	final id:String;
+	final value:PhpJsonValue;
+}
 
 /** Deterministic one-entry PHP package index for an exact native artifact and external map. **/
 class WordPressPhpSourceIndexWriter {
@@ -51,100 +58,112 @@ class WordPressPhpSourceIndexWriter {
 		final mapPath = rendered.path + ".haxe-map.json";
 		final sourcePath = sourcePackagePath == null ? "external/project/" + source.path : sourcePackagePath + "/" + source.path;
 		final sourceContentPolicy = sourceDistribution == "debug-companion" ? "allowlisted-debug-only" : "omitted";
-		final files:Array<Dynamic> = [
+		final files:Array<SourceIndexFile> = [
 			{
 				id: mapId,
-				path: mapPath,
-				role: "source-map",
-				language: "json",
-				sha256: digest(mapSource),
-				byteLength: Bytes.ofString(mapSource).length,
-				distribution: indexDistribution
+				value: object([
+					field("id", text(mapId)),
+					field("path", text(mapPath)),
+					field("role", text("source-map")),
+					field("language", text("json")),
+					field("sha256", text(digest(mapSource))),
+					field("byteLength", integer(Bytes.ofString(mapSource).length)),
+					field("distribution", text(indexDistribution))
+				])
 			},
 			{
 				id: runtimeId,
-				path: rendered.path,
-				role: "runtime",
-				language: "php",
-				sha256: digest(rendered.source),
-				byteLength: Bytes.ofString(rendered.source).length,
-				distribution: "production"
+				value: object([
+					field("id", text(runtimeId)),
+					field("path", text(rendered.path)),
+					field("role", text("runtime")),
+					field("language", text("php")),
+					field("sha256", text(digest(rendered.source))),
+					field("byteLength", integer(Bytes.ofString(rendered.source).length)),
+					field("distribution", text("production"))
+				])
 			},
 			{
 				id: sourceId,
-				path: sourcePath,
-				role: "source",
-				language: "haxe",
-				sha256: source.sha256,
-				byteLength: source.byteLength,
-				distribution: sourceDistribution,
-				sourceIdentity: {
-					rootId: source.rootId,
-					path: source.path
-				}
+				value: object([
+					field("id", text(sourceId)),
+					field("path", text(sourcePath)),
+					field("role", text("source")),
+					field("language", text("haxe")),
+					field("sha256", text(source.sha256)),
+					field("byteLength", integer(source.byteLength)),
+					field("distribution", text(sourceDistribution)),
+					field("sourceIdentity", object([field("rootId", text(source.rootId)), field("path", text(source.path))]))
+				])
 			}
 		];
-		files.sort((left, right) -> Reflect.compare(left.id, right.id));
+		files.sort((left, right) -> compareText(left.id, right.id));
+		final fileValues = [for (file in files) file.value];
 		final receipts = proofReceiptIds.copy();
 		for (receipt in receipts) {
 			PhpStableId.validate(receipt, "proof receipt ID");
 		}
-		receipts.sort(Reflect.compare);
+		receipts.sort(compareText);
 		for (index in 1...receipts.length) {
 			if (receipts[index - 1] == receipts[index]) {
 				throw "Duplicate PHP source-index proof receipt: " + receipts[index];
 			}
 		}
-		final sourceRoot:Dynamic = {
-			id: source.rootId,
-			kind: "project",
-			resolution: sourceResolution,
-			contentDistribution: sourceDistribution
-		};
+		final sourceRootFields:Array<PhpJsonField> = [
+			field("id", text(source.rootId)),
+			field("kind", text("project")),
+			field("resolution", text(sourceResolution)),
+			field("contentDistribution", text(sourceDistribution))
+		];
 		if (sourcePackagePath != null) {
-			Reflect.setField(sourceRoot, "packagePath", sourcePackagePath);
+			sourceRootFields.push(field("packagePath", text(sourcePackagePath)));
 		}
-		final document:Dynamic = {
-			schemaVersion: 1,
-			format: "wordpresshx.source-correlation-index.v1",
-			sdkVersion: sdkVersion,
-			buildInputsSha256: buildInputsSha256,
-			retention: {
-				profile: retentionProfile,
-				indexDistribution: indexDistribution,
-				mapsInProduction: false,
-				inlineMapsInProduction: false,
-				sourceContentPolicy: sourceContentPolicy,
-				machinePathsAllowed: false,
-				developmentHandler: "disabled",
-				secretScanRequiredForShipping: true
-			},
-			sourceRoots: [sourceRoot],
-			files: files,
-			artifactSetSha256: digest(PhpCanonicalJson.encodeInline(files)),
-			correlations: [
-				{
-					id: "correlation:" + stableEntryId,
-					entryFileId: runtimeId,
-					target: "php",
-					strategy: "php-range-map",
-					status: "bounded-local",
-					layers: [
-						{
-							order: 0,
-							mapFileId: mapId,
-							format: "wordpresshx.php-haxe-range-map.v1",
-							generatedFileId: runtimeId,
-							generatedLanguage: "php",
-							sourceLanguage: "haxe",
-							sourceFileIds: [sourceId]
-						}
-					],
-					proofReceiptIds: receipts
-				}
-			]
-		};
-		Reflect.setField(document, "package", {id: packageId, version: packageVersion, profileId: profileId});
+		final document = object([
+			field("schemaVersion", integer(1)),
+			field("format", text("wordpresshx.source-correlation-index.v1")),
+			field("sdkVersion", text(sdkVersion)),
+			field("buildInputsSha256", text(buildInputsSha256)),
+			field("retention",
+				object([
+					field("profile", text(retentionProfile)),
+					field("indexDistribution", text(indexDistribution)),
+					field("mapsInProduction", boolean(false)),
+					field("inlineMapsInProduction", boolean(false)),
+					field("sourceContentPolicy", text(sourceContentPolicy)),
+					field("machinePathsAllowed", boolean(false)),
+					field("developmentHandler", text("disabled")),
+					field("secretScanRequiredForShipping", boolean(true))
+				])),
+			field("sourceRoots", array([object(sourceRootFields)])),
+			field("files", array(fileValues)),
+			field("artifactSetSha256", text(digest(PhpCanonicalJson.encodeInline(array(fileValues))))),
+			field("correlations", array([
+				object([
+					field("id", text("correlation:" + stableEntryId)),
+					field("entryFileId", text(runtimeId)),
+					field("target", text("php")),
+					field("strategy", text("php-range-map")),
+					field("status", text("bounded-local")),
+					field("layers", array([
+						object([
+							field("order", integer(0)),
+							field("mapFileId", text(mapId)),
+							field("format", text("wordpresshx.php-haxe-range-map.v1")),
+							field("generatedFileId", text(runtimeId)),
+							field("generatedLanguage", text("php")),
+							field("sourceLanguage", text("haxe")),
+							field("sourceFileIds", array([text(sourceId)]))
+						])
+					])),
+					field("proofReceiptIds", array(receipts.map(text)))
+				])
+			])),
+			field("package", object([
+				field("id", text(packageId)),
+				field("version", text(packageVersion)),
+				field("profileId", text(profileId))
+			]))
+		]);
 		return PhpCanonicalJson.encode(document);
 	}
 
@@ -171,5 +190,33 @@ class WordPressPhpSourceIndexWriter {
 			throw "Unsupported PHP source-index " + label + ": " + value;
 		}
 		return value;
+	}
+
+	static inline function field(name:String, value:PhpJsonValue):PhpJsonField {
+		return {name: name, value: value};
+	}
+
+	static inline function object(fields:Array<PhpJsonField>):PhpJsonValue {
+		return ObjectValue(fields);
+	}
+
+	static inline function array(values:Array<PhpJsonValue>):PhpJsonValue {
+		return ArrayValue(values);
+	}
+
+	static inline function text(value:String):PhpJsonValue {
+		return StringValue(value);
+	}
+
+	static inline function integer(value:Int):PhpJsonValue {
+		return IntegerValue(value);
+	}
+
+	static inline function boolean(value:Bool):PhpJsonValue {
+		return BoolValue(value);
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 }

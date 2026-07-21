@@ -15,6 +15,9 @@ haxelib run formatter --check \
   -s "${package_root}/test-positive" \
   -s "${package_root}/test-negative"
 
+python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" --self-test
+python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${package_root}"
+
 (
   cd "${package_root}"
   haxe test.hxml

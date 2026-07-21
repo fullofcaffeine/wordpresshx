@@ -713,6 +713,7 @@ required_files=(
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-027-generic-php-compiler-readiness.json
+  manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
   manifests/evidence/sdk-024-private-php-runtime.json
@@ -962,6 +963,11 @@ sdk027_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-027-generic-php-compiler-readiness.json"
     ).read_text(encoding="utf-8")
+)
+strict_haxe_migration = json.loads(
+    Path("manifests/evidence/strict-haxe-migration.json").read_text(
+        encoding="utf-8"
+    )
 )
 php_quality_toolchain = json.loads(
     Path("tooling/php-quality/toolchain.json").read_text(encoding="utf-8")
@@ -6300,6 +6306,163 @@ assert sdk025_implementation["changeDecision"]["genesPullRequest"] is None
 if sdk025_implementation["implementationCommit"] is not None:
     assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 
+assert strict_haxe_migration["schemaVersion"] == 1
+assert strict_haxe_migration["receiptId"] == "STRICT-HAXE-MIGRATION"
+assert strict_haxe_migration["bead"] == "wordpresshx-sjb"
+assert strict_haxe_migration["status"] in {
+    "implemented-hosted-pending",
+    "verified-hosted",
+}
+strict_haxe_directive = strict_haxe_migration["directive"]
+strict_haxe_tokens = ["Dynamic", "Any", "cast", "Reflect", "untyped"]
+assert strict_haxe_directive["forbiddenTokens"] == strict_haxe_tokens
+assert strict_haxe_directive["typedBoundaryPolicy"] == (
+    "decode-or-construct-closed-values-before-domain-or-compiler-logic"
+)
+assert strict_haxe_directive[
+    "repositoryWideClaimAllowedBeforeZeroFindings"
+] is False
+strict_haxe_subjects = {
+    record["path"]: record["sha256"]
+    for record in strict_haxe_migration["subjects"]
+}
+assert set(strict_haxe_subjects) == {
+    "packages/core/src/wordpress/hx/core/profile/EvidenceStatus.hx",
+    "scripts/profiles/test-profile-haxe.sh",
+    "compiler/reflaxe.php/src/reflaxe/php/map/PhpCanonicalJson.hx",
+    "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx",
+    "compiler/reflaxe.php/scripts/test.sh",
+    (
+        "compiler/wordpress/src/wordpress/hx/compiler/php/profile/"
+        "WordPressPhpSourceIndexWriter.hx"
+    ),
+    "scripts/lint/haxe-weak-type-guard.py",
+}
+for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
+    assert sha256.fullmatch(strict_haxe_digest)
+    assert hashlib.sha256(Path(strict_haxe_path).read_bytes()).hexdigest() == (
+        strict_haxe_digest
+    )
+
+strict_haxe_pattern = re.compile(
+    r"\b(?:" + "|".join(map(re.escape, strict_haxe_tokens)) + r")\b"
+)
+
+
+def strict_haxe_findings(paths):
+    return sum(
+        1
+        for path in paths
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if strict_haxe_pattern.search(line)
+    )
+
+
+strict_haxe_inventory = strict_haxe_migration["inventory"]
+tracked_haxe_paths = [
+    Path(path)
+    for path in subprocess.run(
+        ["git", "ls-files", "--", "*.hx"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+]
+assert strict_haxe_inventory["initialFindingCount"] == 583
+assert strict_haxe_inventory["currentFindingCount"] == strict_haxe_findings(
+    tracked_haxe_paths
+)
+assert strict_haxe_inventory["removedFindingCount"] == (
+    strict_haxe_inventory["initialFindingCount"]
+    - strict_haxe_inventory["currentFindingCount"]
+) == 27
+assert strict_haxe_inventory["complete"] is False
+
+strict_haxe_scopes = {
+    scope["id"]: scope for scope in strict_haxe_migration["completedScopes"]
+}
+strict_haxe_outcome = (
+    "passed-local"
+    if strict_haxe_migration["status"] == "implemented-hosted-pending"
+    else "passed-hosted"
+)
+assert set(strict_haxe_scopes) == {
+    "core-profile-contract",
+    "generic-php-compiler",
+}
+for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate in (
+    (
+        "core-profile-contract",
+        "packages/core",
+        18,
+        "bash scripts/profiles/test-profile-haxe.sh",
+    ),
+    (
+        "generic-php-compiler",
+        "compiler/reflaxe.php",
+        34,
+        "bash compiler/reflaxe.php/scripts/test.sh",
+    ),
+):
+    strict_haxe_scope = strict_haxe_scopes[strict_haxe_scope_id]
+    assert strict_haxe_scope["root"] == strict_haxe_root
+    strict_haxe_scope_paths = sorted(Path(strict_haxe_root).rglob("*.hx"))
+    assert len(strict_haxe_scope_paths) == strict_haxe_count
+    assert strict_haxe_scope["haxeFileCount"] == strict_haxe_count
+    assert strict_haxe_scope["findingCount"] == strict_haxe_findings(
+        strict_haxe_scope_paths
+    ) == 0
+    assert strict_haxe_scope["gate"] == strict_haxe_gate
+    assert strict_haxe_scope["outcome"] == strict_haxe_outcome
+
+assert strict_haxe_migration["typedAdapters"] == [
+    {
+        "id": "wordpress-php-source-index",
+        "path": (
+            "compiler/wordpress/src/wordpress/hx/compiler/php/profile/"
+            "WordPressPhpSourceIndexWriter.hx"
+        ),
+        "genericBoundary": (
+            "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue"
+        ),
+        "gate": "bash compiler/wordpress/scripts/test.sh",
+        "outcome": strict_haxe_outcome,
+        "owningClosureComplete": False,
+    }
+]
+strict_haxe_hosted = strict_haxe_migration["hostedVerification"]
+assert strict_haxe_hosted["workflow"] == "Repository bootstrap"
+assert strict_haxe_hosted["job"] == "haxe"
+assert strict_haxe_hosted["required"] is True
+if strict_haxe_migration["status"] == "implemented-hosted-pending":
+    assert strict_haxe_hosted["implementationCommit"] is None
+    assert strict_haxe_hosted["runId"] is None
+    assert strict_haxe_hosted["jobId"] is None
+    assert strict_haxe_hosted["status"] == "pending-current-subject-run"
+    assert strict_haxe_hosted["allJobsPassed"] is False
+    assert strict_haxe_hosted["completedAt"] is None
+    strict_haxe_claim = "runtime-tested-local"
+else:
+    assert sha1.fullmatch(strict_haxe_hosted["implementationCommit"])
+    assert isinstance(strict_haxe_hosted["runId"], int)
+    assert isinstance(strict_haxe_hosted["jobId"], int)
+    assert strict_haxe_hosted["status"] == "passed"
+    assert strict_haxe_hosted["allJobsPassed"] is True
+    assert strict_haxe_hosted["completedAt"].endswith("Z")
+    strict_haxe_claim = "runtime-tested-hosted"
+for strict_haxe_claim_name in (
+    "coreProfileContractStrict",
+    "genericPhpCompilerStrict",
+    "wordpressSourceIndexTypedAdapter",
+):
+    assert strict_haxe_migration["claims"][strict_haxe_claim_name] == (
+        strict_haxe_claim
+    )
+assert strict_haxe_migration["claims"]["repositoryWideStrictHaxe"] == (
+    "not-yet-remaining-findings"
+)
+assert strict_haxe_migration["claims"]["productionSupport"] == "not-claimed"
+
 sdk025_inputs = sdk025_receipt["authenticatedInputs"]
 assert len({record["path"] for record in sdk025_inputs}) == len(sdk025_inputs)
 sdk024_generic_records = {
@@ -6313,6 +6476,7 @@ for record in sdk025_inputs:
         assert current_sha256 in {
             sdk024_generic_records.get(record["path"]),
             sdk026_input_records.get(record["path"]),
+            strict_haxe_subjects.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 

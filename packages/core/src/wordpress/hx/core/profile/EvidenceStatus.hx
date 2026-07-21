@@ -19,7 +19,8 @@ enum abstract EvidenceStatus(String) to String {
 	}
 
 	public function rank():Int {
-		return switch cast(this, String) {
+		final value:String = this;
+		return switch value {
 			case "inventoried": 0;
 			case "typed": 1;
 			case "generated": 2;

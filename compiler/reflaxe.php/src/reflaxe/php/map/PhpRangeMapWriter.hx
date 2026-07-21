@@ -5,8 +5,16 @@ import haxe.io.Bytes;
 import reflaxe.php.ir.PhpSourceFile;
 import reflaxe.php.ir.PhpSourceKind;
 import reflaxe.php.ir.PhpSourcePosition;
+import reflaxe.php.map.PhpCanonicalJson.PhpJsonField;
+import reflaxe.php.map.PhpCanonicalJson.PhpJsonValue;
 import reflaxe.php.print.PhpRenderedFile;
 import reflaxe.php.print.PhpRenderedMapping;
+
+private typedef PhpTraceAnchor = {
+	final generatedLine:Int;
+	final mappingId:String;
+	final selection:String;
+}
 
 /** Deterministic serializer for authenticated generated-PHP range mappings. **/
 class PhpRangeMapWriter {
@@ -32,23 +40,23 @@ class PhpRangeMapWriter {
 		mappings.sort(compareMappings);
 		validateMappings(mappings, generatedBytes);
 		final sources = collectSources(mappings);
-		final mappingRecords:Array<Dynamic> = [];
-		final traceAnchors:Array<Dynamic> = [];
+		final mappingRecords:Array<PhpJsonValue> = [];
+		final traceAnchors:Array<PhpTraceAnchor> = [];
 		final anchorLines:Map<Int, String> = [];
 		for (mapping in mappings) {
 			final sourceFile = requireSourceFile(mapping);
-			mappingRecords.push({
-				id: mapping.id,
-				generatedSpan: span(generatedBytes, mapping.generatedStartByte, mapping.generatedEndByte),
-				nodeKind: mapping.nodeKind,
-				structuralDepth: mapping.structuralDepth,
-				origin: {
-					kind: sourceKind(sourceFile.kind),
-					sourceId: sourceFile.id,
-					sourceSpan: sourceSpan(mapping),
-					semanticNodeId: mapping.semanticNodeId
-				}
-			});
+			mappingRecords.push(object([
+				field("id", text(mapping.id)),
+				field("generatedSpan", span(generatedBytes, mapping.generatedStartByte, mapping.generatedEndByte)),
+				field("nodeKind", text(mapping.nodeKind)),
+				field("structuralDepth", integer(mapping.structuralDepth)),
+				field("origin", object([
+					field("kind", text(sourceKind(sourceFile.kind))),
+					field("sourceId", text(sourceFile.id)),
+					field("sourceSpan", sourceSpan(mapping)),
+					field("semanticNodeId", text(mapping.semanticNodeId))
+				]))
+			]));
 			if (mapping.traceAnchor) {
 				final line = PhpSourceFile.positionIn(generatedBytes, mapping.generatedStartByte).line;
 				if (anchorLines.exists(line)) {
@@ -58,36 +66,43 @@ class PhpRangeMapWriter {
 				traceAnchors.push({generatedLine: line, mappingId: mapping.id, selection: "emitter-runtime-line"});
 			}
 		}
-		traceAnchors.sort((left, right) -> Reflect.compare(left.generatedLine, right.generatedLine));
+		traceAnchors.sort((left, right) -> compareInts(left.generatedLine, right.generatedLine));
 
-		final document:Dynamic = {
-			schemaVersion: 1,
-			format: config.format,
-			generator: {
-				id: config.generatorId,
-				version: config.generatorVersion,
-				sourceSha256: config.generatorSourceSha256
-			},
-			buildInputsSha256: config.buildInputsSha256,
-			coordinateSystem: {
-				byteEncoding: "utf-8",
-				byteRange: "half-open",
-				lineBase: 1,
-				columnBase: 0,
-				columnEncoding: "utf-8-bytes"
-			},
-			generated: {
-				path: rendered.path,
-				sha256: Sha256.make(generatedBytes).toHex().toLowerCase(),
-				byteLength: generatedBytes.length,
-				lineCount: PhpSourceFile.countLines(generatedBytes),
-				encoding: "utf-8",
-				lineEndings: "lf"
-			},
-			sources: sources.map(source -> sourceRecord(source)),
-			mappings: mappingRecords,
-			traceAnchors: traceAnchors
-		};
+		final document = object([
+			field("schemaVersion", integer(1)),
+			field("format", text(config.format)),
+			field("generator", object([
+				field("id", text(config.generatorId)),
+				field("version", text(config.generatorVersion)),
+				field("sourceSha256", text(config.generatorSourceSha256))
+			])),
+			field("buildInputsSha256", text(config.buildInputsSha256)),
+			field("coordinateSystem", object([
+				field("byteEncoding", text("utf-8")),
+				field("byteRange", text("half-open")),
+				field("lineBase", integer(1)),
+				field("columnBase", integer(0)),
+				field("columnEncoding", text("utf-8-bytes"))
+			])),
+			field("generated", object([
+				field("path", text(rendered.path)),
+				field("sha256", text(Sha256.make(generatedBytes).toHex().toLowerCase())),
+				field("byteLength", integer(generatedBytes.length)),
+				field("lineCount", integer(PhpSourceFile.countLines(generatedBytes))),
+				field("encoding", text("utf-8")),
+				field("lineEndings", text("lf"))
+			])),
+			field("sources", array(sources.map(sourceRecord))),
+			field("mappings", array(mappingRecords)),
+			field("traceAnchors", array([
+				for (anchor in traceAnchors)
+					object([
+						field("generatedLine", integer(anchor.generatedLine)),
+						field("mappingId", text(anchor.mappingId)),
+						field("selection", text(anchor.selection))
+					])
+			]))
+		]);
 		return PhpCanonicalJson.encode(document);
 	}
 
@@ -109,7 +124,7 @@ class PhpRangeMapWriter {
 			}
 		}
 		final sources = [for (source in byId) source];
-		sources.sort((left, right) -> Reflect.compare(left.id, right.id));
+		sources.sort((left, right) -> compareText(left.id, right.id));
 		return sources;
 	}
 
@@ -150,12 +165,12 @@ class PhpRangeMapWriter {
 	}
 
 	static function compareMappings(left:PhpRenderedMapping, right:PhpRenderedMapping):Int {
-		final start = Reflect.compare(left.generatedStartByte, right.generatedStartByte);
+		final start = compareInts(left.generatedStartByte, right.generatedStartByte);
 		if (start != 0) {
 			return start;
 		}
-		final end = Reflect.compare(left.generatedEndByte, right.generatedEndByte);
-		return end != 0 ? end : Reflect.compare(left.id, right.id);
+		final end = compareInts(left.generatedEndByte, right.generatedEndByte);
+		return end != 0 ? end : compareText(left.id, right.id);
 	}
 
 	static function requireSourceFile(mapping:PhpRenderedMapping):PhpSourceFile {
@@ -172,39 +187,70 @@ class PhpRangeMapWriter {
 		}
 	}
 
-	static function sourceRecord(source:PhpSourceFile):Dynamic {
-		return {
-			id: source.id,
-			rootId: source.rootId,
-			path: source.path,
-			kind: switch (source.kind) {
+	static function sourceRecord(source:PhpSourceFile):PhpJsonValue {
+		return object([
+			field("id", text(source.id)),
+			field("rootId", text(source.rootId)),
+			field("path", text(source.path)),
+			field("kind", text(switch (source.kind) {
 				case PhpHaxeSource: "haxe";
 				case PhpNativeSource: "native";
-			},
-			sha256: source.sha256,
-			byteLength: source.byteLength,
-			lineCount: source.lineCount
-		};
+			})),
+			field("sha256", text(source.sha256)),
+			field("byteLength", integer(source.byteLength)),
+			field("lineCount", integer(source.lineCount))
+		]);
 	}
 
-	static function sourceSpan(mapping:PhpRenderedMapping):Dynamic {
+	static function sourceSpan(mapping:PhpRenderedMapping):PhpJsonValue {
 		final source = requireSourceFile(mapping);
 		return span(Bytes.ofString(source.content), mapping.source.startByte, mapping.source.endByte);
 	}
 
-	static function span(bytes:Bytes, startByte:Int, endByte:Int):Dynamic {
+	static function span(bytes:Bytes, startByte:Int, endByte:Int):PhpJsonValue {
 		if (startByte < 0 || endByte <= startByte || endByte > bytes.length) {
 			throw "PHP map span is not non-empty and in bounds";
 		}
-		return {
-			startByte: startByte,
-			endByte: endByte,
-			start: position(PhpSourceFile.positionIn(bytes, startByte)),
-			end: position(PhpSourceFile.positionIn(bytes, endByte))
-		};
+		return object([
+			field("startByte", integer(startByte)),
+			field("endByte", integer(endByte)),
+			field("start", position(PhpSourceFile.positionIn(bytes, startByte))),
+			field("end", position(PhpSourceFile.positionIn(bytes, endByte)))
+		]);
 	}
 
-	static function position(value:PhpSourcePosition):Dynamic {
-		return {line: value.line, columnUtf8: value.columnUtf8};
+	static function position(value:PhpSourcePosition):PhpJsonValue {
+		return object([
+			field("line", integer(value.line)),
+			field("columnUtf8", integer(value.columnUtf8))
+		]);
+	}
+
+	static inline function field(name:String, value:PhpJsonValue):PhpJsonField {
+		return {name: name, value: value};
+	}
+
+	static inline function object(fields:Array<PhpJsonField>):PhpJsonValue {
+		return ObjectValue(fields);
+	}
+
+	static inline function array(values:Array<PhpJsonValue>):PhpJsonValue {
+		return ArrayValue(values);
+	}
+
+	static inline function text(value:String):PhpJsonValue {
+		return StringValue(value);
+	}
+
+	static inline function integer(value:Int):PhpJsonValue {
+		return IntegerValue(value);
+	}
+
+	static function compareInts(left:Int, right:Int):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 }

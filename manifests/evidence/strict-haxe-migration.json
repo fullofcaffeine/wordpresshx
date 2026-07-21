@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "STRICT-HAXE-MIGRATION",
+  "bead": "wordpresshx-sjb",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T09:07:49Z",
+  "directive": {
+    "forbiddenTokens": [
+      "Dynamic",
+      "Any",
+      "cast",
+      "Reflect",
+      "untyped"
+    ],
+    "typedBoundaryPolicy": "decode-or-construct-closed-values-before-domain-or-compiler-logic",
+    "repositoryWideClaimAllowedBeforeZeroFindings": false
+  },
+  "inventory": {
+    "initialFindingCount": 583,
+    "currentFindingCount": 556,
+    "removedFindingCount": 27,
+    "complete": false
+  },
+  "subjects": [
+    {
+      "path": "packages/core/src/wordpress/hx/core/profile/EvidenceStatus.hx",
+      "sha256": "4c12773a5d40a964dd3453374ade65158270031374b52b8346f812f9f8d5bbd9"
+    },
+    {
+      "path": "scripts/profiles/test-profile-haxe.sh",
+      "sha256": "ff84363df8251f5ad297887fe9e27dc4c4f58de1971e08561b6ade5e85595391"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpCanonicalJson.hx",
+      "sha256": "45a0ea59c775fa4bad216e887aaa94fe0c2f033a2005abdeff09788d00b2b146"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx",
+      "sha256": "6c791a26ef87d3db663abe81e306a340e3b9ad54e1a60fb4c1295b6ba60853c3"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test.sh",
+      "sha256": "956f596e3ec009fdb876dabe649c6d55ff8df076eff8941b5fe5d12c63d3f730"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
+      "sha256": "a7fb8e0ec84f5cf19202b0c3a5bcae5eb9bf132ebb124b14bd5c806a74255c61"
+    },
+    {
+      "path": "scripts/lint/haxe-weak-type-guard.py",
+      "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
+    }
+  ],
+  "completedScopes": [
+    {
+      "id": "core-profile-contract",
+      "root": "packages/core",
+      "haxeFileCount": 18,
+      "findingCount": 0,
+      "gate": "bash scripts/profiles/test-profile-haxe.sh",
+      "outcome": "passed-local"
+    },
+    {
+      "id": "generic-php-compiler",
+      "root": "compiler/reflaxe.php",
+      "haxeFileCount": 34,
+      "findingCount": 0,
+      "gate": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed-local"
+    }
+  ],
+  "typedAdapters": [
+    {
+      "id": "wordpress-php-source-index",
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
+      "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
+      "gate": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed-local",
+      "owningClosureComplete": false
+    }
+  ],
+  "hostedVerification": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "required": true,
+    "implementationCommit": null,
+    "runId": null,
+    "jobId": null,
+    "status": "pending-current-subject-run",
+    "allJobsPassed": false,
+    "completedAt": null
+  },
+  "claims": {
+    "coreProfileContractStrict": "runtime-tested-local",
+    "genericPhpCompilerStrict": "runtime-tested-local",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
+    "repositoryWideStrictHaxe": "not-yet-remaining-findings",
+    "productionSupport": "not-claimed"
+  }
+}
