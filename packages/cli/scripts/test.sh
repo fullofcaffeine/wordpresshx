@@ -41,6 +41,7 @@ python3 "${package_root}/scripts/verify-dependency-lock.py"
   lix --silent download
 )
 haxelib run formatter --check -s "${package_root}/src"
+bash "${package_root}/scripts/check-trace-haxe.sh"
 
 bash "${repository_root}/compiler/wordpress/scripts/test.sh"
 

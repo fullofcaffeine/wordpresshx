@@ -2,7 +2,7 @@ package wordpresshx.cli.project;
 
 import wordpresshx.cli.CliEventStream;
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.CliJson;
 
 /** One complete, input-stable build transaction shared by bounded and watch commands. **/
 class ProjectBuild {
@@ -29,7 +29,7 @@ class ProjectBuild {
 			]);
 		}
 		OwnershipPreflight.inspect(context);
-		final stagePayload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
+		final stagePayload = () -> CliJson.object(["mode" => CliJson.text(mode), "buildId" => CliJson.text(buildId)]);
 		events.stageStarted(STAGES[0], stagePayload());
 		compile(context);
 		events.stageCompleted(STAGES[0], stagePayload());
@@ -49,11 +49,11 @@ class ProjectBuild {
 		assertInputsStable(context);
 		events.stageCompleted(STAGES[6], stagePayload());
 		if (dryRun) {
-			events.emit("dry-run-planned", STAGES[6], "passed", OwnershipJson.object([
-				"mode" => "dry-run",
-				"buildId" => buildId,
-				"fingerprint" => context.fingerprint(),
-				"reason" => "complete staged action plan validated; live tree unchanged"
+			events.emit("dry-run-planned", STAGES[6], "passed", CliJson.object([
+				"mode" => CliJson.text("dry-run"),
+				"buildId" => CliJson.text(buildId),
+				"fingerprint" => CliJson.text(context.fingerprint()),
+				"reason" => CliJson.text("complete staged action plan validated; live tree unchanged")
 			]));
 			events.stageSkipped(STAGES[7], "dry-run has no publication authority", "dry-run");
 			return null;
@@ -65,13 +65,17 @@ class ProjectBuild {
 		events.stageStarted(STAGES[7], stagePayload());
 		final publication = BuildPublisher.publish(context);
 		final manifestDigest = ProjectContract.string(publication.manifest, "manifestDigest", "published ownership manifest");
-		events.stageCompleted(STAGES[7], OwnershipJson.object(["mode" => mode, "buildId" => buildId, "reason" => publication.outcome]));
-		events.emit("build-published", STAGES[7], "passed", OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"fingerprint" => context.fingerprint(),
-			"generation" => generation,
-			"manifestDigest" => manifestDigest
+		events.stageCompleted(STAGES[7], CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"reason" => CliJson.text(publication.outcome)
+		]));
+		events.emit("build-published", STAGES[7], "passed", CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"fingerprint" => CliJson.text(context.fingerprint()),
+			"generation" => CliJson.number(generation),
+			"manifestDigest" => CliJson.text(manifestDigest)
 		]));
 		return {manifestDigest: manifestDigest, outcome: publication.outcome};
 	}

@@ -3,6 +3,7 @@ package wordpresshx.cli.project;
 import wordpresshx.cli.CliEventStream;
 import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliInvocation;
+import wordpresshx.cli.CliJson;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.ownership.OwnershipJson;
 
@@ -12,16 +13,16 @@ class ProjectCommands {
 		final events = new CliEventStream(invocation.command, invocation.json);
 		var profile = "unresolved";
 		try {
-			events.emit("command-started", "command", "started", OwnershipJson.object([]));
+			events.emit("command-started", "command", "started", CliJson.object([]));
 			final start = invocation.projectPath == null ? NodeGlobals.process().cwd() : invocation.projectPath;
-			events.stageStarted("configuration", OwnershipJson.object([]));
+			events.stageStarted("configuration", CliJson.object([]));
 			final bootstrap = ProjectLoader.discover(start);
 			profile = ProjectContract.string(ProjectContract.fieldObject(bootstrap.config, "profile", "project configuration"), "id", "project profile");
-			events.stageCompleted("configuration", OwnershipJson.object([]));
-			events.stageStarted("profile-resolution", OwnershipJson.object([]));
+			events.stageCompleted("configuration", CliJson.object([]));
+			events.stageStarted("profile-resolution", CliJson.object([]));
 			final context = ProjectLoader.resolve(bootstrap, invocation.profile);
 			profile = context.profileId();
-			events.stageCompleted("profile-resolution", OwnershipJson.object(["fingerprint" => context.fingerprint()]));
+			events.stageCompleted("profile-resolution", CliJson.object(["fingerprint" => CliJson.text(context.fingerprint())]));
 
 			if (invocation.command == "dev") {
 				DevEngine.start(context, invocation, events);
@@ -40,9 +41,9 @@ class ProjectCommands {
 				case _:
 					throw new CliFailure("WPHX0001", "unsupported command", 2, "command");
 			};
-			events.emit("command-completed", "command", exitCode == 0 ? "passed" : "failed", OwnershipJson.object([
-				"exitCode" => exitCode,
-				"reason" => exitCode == 0 ? invocation.command + " completed" : invocation.command + " reported mismatches"
+			events.emit("command-completed", "command", exitCode == 0 ? "passed" : "failed", CliJson.object([
+				"exitCode" => CliJson.number(exitCode),
+				"reason" => CliJson.text(exitCode == 0 ? invocation.command + " completed" : invocation.command + " reported mismatches")
 			]));
 			return exitCode;
 		} catch (failure:CliFailure) {
@@ -60,9 +61,9 @@ class ProjectCommands {
 	}
 
 	static function runClean(context:ProjectContext, events:CliEventStream):Int {
-		events.stageStarted("ownership-publish", OwnershipJson.object([]));
+		events.stageStarted("ownership-publish", CliJson.object([]));
 		final outcome = BuildPublisher.clean(context);
-		events.stageCompleted("ownership-publish", OwnershipJson.object(["reason" => outcome]));
+		events.stageCompleted("ownership-publish", CliJson.object(["reason" => CliJson.text(outcome)]));
 		return 0;
 	}
 

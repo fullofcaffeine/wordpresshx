@@ -86,7 +86,7 @@ class CliArguments {
 		return new CliInvocation(command, projectPath, profile, json, dryRun, services, positionals);
 	}
 
-	static function usage(message:String):Dynamic {
+	static function usage<T>(message:String):T {
 		throw new CliFailure("WPHX0001", message, 2, "command", null, [
 			"Use: wphx <build|check|inspect|clean|doctor|dev> [--project <path>] [--profile <id>] [--json]."
 		]);

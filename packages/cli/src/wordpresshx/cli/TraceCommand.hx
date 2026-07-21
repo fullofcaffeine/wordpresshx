@@ -5,9 +5,9 @@ import js.node.Path;
 
 /** Preserved SDK-025/034 trace surface behind the final wphx dispatcher. **/
 class TraceCommand {
-	public static function run(arguments:Array<String>):Void {
+	public static function run(arguments:Array<String>, executable:String = "wphx"):Void {
 		if (arguments.length < 3 || arguments[0] != "trace" || (arguments[1] != "php" && arguments[1] != "browser")) {
-			usage();
+			usage(executable);
 		}
 		final target = arguments[1];
 		final stackPath = existingFile(arguments[2], "stack file");
@@ -59,15 +59,20 @@ class TraceCommand {
 		if (indexPath == null) {
 			throw new TraceFailure("trace " + target + " requires --index <source-index>", 2);
 		}
-		final stack:String = cast Fs.readFileSync(stackPath, "utf8");
+		final stack = Fs.readFileSync(stackPath).toString("utf8");
 		if (StringTools.trim(stack).length == 0) {
 			throw new TraceFailure("stack file is empty", 2);
 		}
 		final resolvedIndex = existingFile(indexPath, "source index");
-		final result = target == "php" ? new PhpTraceEngine(resolvedIndex,
-			sourceRoots).trace(stack) : new BrowserTraceEngine(resolvedIndex, sourceRoots).trace(stack);
-		final text = target == "php" ? PhpTraceEngine.text(result) : BrowserTraceEngine.text(result);
-		NodeGlobals.process().stdout.write(outputFormat == "json" ? CanonicalJson.encode(result) + "\n" : text);
+		if (target == "php") {
+			final result = new PhpTraceEngine(resolvedIndex, sourceRoots).trace(stack);
+			NodeGlobals.process()
+				.stdout.write(outputFormat == "json" ? CanonicalJson.encode(PhpTraceEngine.json(result)) + "\n" : PhpTraceEngine.text(result));
+			return;
+		}
+		final result = new BrowserTraceEngine(resolvedIndex, sourceRoots).trace(stack);
+		NodeGlobals.process()
+			.stdout.write(outputFormat == "json" ? CanonicalJson.encode(BrowserTraceEngine.json(result)) + "\n" : BrowserTraceEngine.text(result));
 	}
 
 	static function existingFile(path:String, label:String):String {
@@ -78,7 +83,9 @@ class TraceCommand {
 		return resolved;
 	}
 
-	static function usage():Dynamic {
-		throw new TraceFailure("usage: wphx trace <php|browser> <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]", 2);
+	static function usage<T>(executable:String):T {
+		throw new TraceFailure("usage: "
+			+ executable
+			+ " trace <php|browser> <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]", 2);
 	}
 }

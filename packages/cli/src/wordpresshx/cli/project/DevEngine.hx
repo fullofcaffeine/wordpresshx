@@ -6,8 +6,8 @@ import js.node.events.EventEmitter.Event;
 import wordpresshx.cli.CliEventStream;
 import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliInvocation;
+import wordpresshx.cli.CliJson;
 import wordpresshx.cli.NodeGlobals;
-import wordpresshx.cli.ownership.OwnershipJson;
 import wordpresshx.cli.project.development.DevelopmentPlanReader;
 import wordpresshx.cli.project.development.DevelopmentProject;
 import wordpresshx.cli.project.development.EffectiveInputSnapshot;
@@ -103,9 +103,9 @@ class DevEngine {
 		} else if (services.serviceCount() == 0) {
 			events.stageSkipped("service-start", "current compiler generation contains no admitted development services", "initial");
 		}
-		events.emit("watch-ready", "watching", "ready", OwnershipJson.object([
+		events.emit("watch-ready", "watching", "ready", CliJson.object([
 			"reason" =>
-			invocation.services == "none" ? "effective input graph subscribed after the initial transaction; compile/watch-only mode" : services.serviceCount() == 0 ? "effective input graph subscribed after the initial transaction; no typed services were declared" : "effective input graph subscribed after the initial transaction; typed services are ready"
+			CliJson.text(invocation.services == "none" ? "effective input graph subscribed after the initial transaction; compile/watch-only mode" : services.serviceCount() == 0 ? "effective input graph subscribed after the initial transaction; no typed services were declared" : "effective input graph subscribed after the initial transaction; typed services are ready")
 		]));
 	}
 
@@ -162,12 +162,12 @@ class DevEngine {
 			schedulePending();
 			return;
 		}
-		events.emit("rebuild-scheduled", "watching", "running", OwnershipJson.object([
-			"mode" => "rebuild",
-			"buildId" => buildId,
-			"fingerprint" => attempt.fingerprint(),
-			"changedPaths" => paths,
-			"coalescedChanges" => paths.length
+		events.emit("rebuild-scheduled", "watching", "running", CliJson.object([
+			"mode" => CliJson.text("rebuild"),
+			"buildId" => CliJson.text(buildId),
+			"fingerprint" => CliJson.text(attempt.fingerprint()),
+			"changedPaths" => CliJson.texts(paths),
+			"coalescedChanges" => CliJson.number(paths.length)
 		]));
 		context = attempt;
 		compiler.ensure(attempt, (available, started) -> {
@@ -213,12 +213,12 @@ class DevEngine {
 		if (lastManifestDigest == null) {
 			return;
 		}
-		events.emit("build-retained", "ownership-publish", "retained", OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"fingerprint" => fingerprint,
-			"retainedManifestDigest" => lastManifestDigest,
-			"reason" => reason
+		events.emit("build-retained", "ownership-publish", "retained", CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"fingerprint" => CliJson.text(fingerprint),
+			"retainedManifestDigest" => CliJson.text(lastManifestDigest),
+			"reason" => CliJson.text(reason)
 		]));
 	}
 
@@ -256,7 +256,10 @@ class DevEngine {
 	}
 
 	function emitChanges(paths:Array<String>):Void {
-		events.emit("change-detected", "watching", "running", OwnershipJson.object(["changedPaths" => paths, "coalescedChanges" => paths.length]));
+		events.emit("change-detected", "watching", "running", CliJson.object([
+			"changedPaths" => CliJson.texts(paths),
+			"coalescedChanges" => CliJson.number(paths.length)
+		]));
 	}
 
 	function watcherProblem(message:String):Void {
@@ -273,11 +276,11 @@ class DevEngine {
 
 	function emitCompilerReady(serverContext:ProjectContext):Void {
 		final snapshot = EffectiveInputSnapshot.from(serverContext);
-		events.emit("compiler-server-ready", "compiler-server", "ready", OwnershipJson.object([
-			"serviceId" => "compiler",
-			"serviceKind" => "compiler",
-			"processOwnership" => "owned",
-			"serverCompatibilityDigest" => snapshot.compilerCompatibilityDigest
+		events.emit("compiler-server-ready", "compiler-server", "ready", CliJson.object([
+			"serviceId" => CliJson.text("compiler"),
+			"serviceKind" => CliJson.text("compiler"),
+			"processOwnership" => CliJson.text("owned"),
+			"serverCompatibilityDigest" => CliJson.text(snapshot.compilerCompatibilityDigest)
 		]));
 	}
 
@@ -299,20 +302,20 @@ class DevEngine {
 			debounce = null;
 		}
 		watcher.close();
-		events.emit("shutdown-started", "shutdown", "interrupted", OwnershipJson.object(["mode" => "shutdown", "reason" => signal]));
+		events.emit("shutdown-started", "shutdown", "interrupted", CliJson.object(["mode" => CliJson.text("shutdown"), "reason" => CliJson.text(signal)]));
 		final ownedCompiler = compiler.ownsServer();
 		services.shutdown(() -> {
 			compiler.shutdown(() -> {
 				if (ownedCompiler) {
-					events.emit("service-stopped", "shutdown", "stopped", OwnershipJson.object([
-						"serviceId" => "compiler",
-						"serviceKind" => "compiler",
-						"processOwnership" => "owned"
+					events.emit("service-stopped", "shutdown", "stopped", CliJson.object([
+						"serviceId" => CliJson.text("compiler"),
+						"serviceKind" => CliJson.text("compiler"),
+						"processOwnership" => CliJson.text("owned")
 					]));
 				}
-				events.emit("command-completed", "command", "interrupted", OwnershipJson.object([
-					"exitCode" => exitCode,
-					"reason" => signal + " handled; all owned development processes stopped"
+				events.emit("command-completed", "command", "interrupted", CliJson.object([
+					"exitCode" => CliJson.number(exitCode),
+					"reason" => CliJson.text(signal + " handled; all owned development processes stopped")
 				]));
 				final nodeProcess = NodeGlobals.process();
 				nodeProcess.removeListener(sigintEvent, onSigint);

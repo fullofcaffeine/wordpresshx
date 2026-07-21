@@ -5554,13 +5554,21 @@ sdk026_input_records = {
     record["path"]: record["sha256"]
     for record in sdk026_receipt["authenticatedInputs"]
 }
+sdk045_plugin_subject_records = {
+    record["path"]: record["sha256"]
+    for record in historical_subject_records(sdk045_plugin_receipt["subject"])
+}
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
     assert sha256.fullmatch(sdk026_input_sha256)
-    assert hashlib.sha256(Path(sdk026_input_path).read_bytes()).hexdigest() == (
-        sdk026_input_sha256
-    )
+    sdk026_current_sha256 = hashlib.sha256(
+        Path(sdk026_input_path).read_bytes()
+    ).hexdigest()
+    if sdk026_current_sha256 != sdk026_input_sha256:
+        assert sdk026_current_sha256 == sdk045_plugin_subject_records.get(
+            sdk026_input_path
+        )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
 assert sdk026_hosted["job"] == "haxe"
@@ -6358,6 +6366,23 @@ assert set(strict_haxe_subjects) == {
         "WordPressSourceCorrelationTest.hx"
     ),
     "compiler/wordpress/scripts/test.sh",
+    "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
+    "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx",
+    "packages/cli/src/wordpresshx/cli/CanonicalJson.hx",
+    "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+    "packages/cli/src/wordpresshx/cli/Contract.hx",
+    "packages/cli/src/wordpresshx/cli/Content.hx",
+    "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+    "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+    "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+    "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+    "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+    "packages/cli/src/wordpresshx/cli/CliJson.hx",
+    "packages/cli/src/wordpresshx/cli/Main.hx",
+    "packages/cli/src/wordpresshx/cli/TraceCommand.hx",
+    "packages/cli/scripts/check-trace-haxe.sh",
+    "packages/cli/scripts/test.sh",
+    "packages/cli/scripts/test-browser-source-correlation.sh",
     "scripts/lint/haxe-weak-type-guard.py",
 }
 for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
@@ -6397,7 +6422,7 @@ assert strict_haxe_inventory["currentFindingCount"] == strict_haxe_findings(
 assert strict_haxe_inventory["removedFindingCount"] == (
     strict_haxe_inventory["initialFindingCount"]
     - strict_haxe_inventory["currentFindingCount"]
-) == 56
+) == 220
 assert strict_haxe_inventory["complete"] is False
 
 strict_haxe_scopes = {
@@ -6412,6 +6437,7 @@ assert set(strict_haxe_scopes) == {
     "core-profile-contract",
     "generic-php-compiler",
     "wordpress-php-compiler",
+    "cli-trace-and-shared-json",
 }
 for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate in (
     (
@@ -6449,6 +6475,32 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
     assert strict_haxe_scope["gate"] == strict_haxe_gate
     assert strict_haxe_scope["outcome"] == strict_haxe_outcome
 
+strict_haxe_trace_paths = [
+    "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+    "packages/cli/src/wordpresshx/cli/CanonicalJson.hx",
+    "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+    "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+    "packages/cli/src/wordpresshx/cli/CliJson.hx",
+    "packages/cli/src/wordpresshx/cli/Content.hx",
+    "packages/cli/src/wordpresshx/cli/Contract.hx",
+    "packages/cli/src/wordpresshx/cli/Main.hx",
+    "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+    "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+    "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+    "packages/cli/src/wordpresshx/cli/TraceCommand.hx",
+]
+strict_haxe_trace_scope = strict_haxe_scopes["cli-trace-and-shared-json"]
+assert strict_haxe_trace_scope["root"] == "packages/cli/src/wordpresshx/cli"
+assert strict_haxe_trace_scope["paths"] == strict_haxe_trace_paths
+assert strict_haxe_trace_scope["haxeFileCount"] == len(strict_haxe_trace_paths) == 12
+assert strict_haxe_trace_scope["findingCount"] == strict_haxe_findings(
+    [Path(path) for path in strict_haxe_trace_paths]
+) == 0
+assert strict_haxe_trace_scope["gate"] == (
+    "bash packages/cli/scripts/check-trace-haxe.sh"
+)
+assert strict_haxe_trace_scope["outcome"] == strict_haxe_outcome
+
 assert strict_haxe_migration["typedAdapters"] == [
     {
         "id": "wordpress-php-source-index",
@@ -6460,6 +6512,14 @@ assert strict_haxe_migration["typedAdapters"] == [
             "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue"
         ),
         "gate": "bash compiler/wordpress/scripts/test.sh",
+        "outcome": strict_haxe_outcome,
+        "owningClosureComplete": True,
+    },
+    {
+        "id": "cli-source-correlation-json",
+        "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+        "genericBoundary": "wordpresshx.cli.closedjson.JsonValue",
+        "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
         "outcome": strict_haxe_outcome,
         "owningClosureComplete": True,
     }
@@ -6480,13 +6540,13 @@ if strict_haxe_migration["status"] == "implemented-hosted-pending":
         "workflow": "Repository bootstrap",
         "job": "haxe",
         "implementationCommit": (
-            "825e44d12c201142a8999764d5925f44bca430ca"
+            "31c506a0a3789e84fdcda32f6fc71cf6018629c6"
         ),
-        "runId": 29818067940,
-        "jobId": 88593973805,
-        "status": "passed-before-wordpress-compiler-closure",
+        "runId": 29820264347,
+        "jobId": 88600999236,
+        "status": "passed-before-cli-trace-closure",
         "allJobsPassed": True,
-        "completedAt": "2026-07-21T09:34:17Z",
+        "completedAt": "2026-07-21T10:09:11Z",
     }
 else:
     assert sha1.fullmatch(strict_haxe_hosted["implementationCommit"])
@@ -6501,6 +6561,8 @@ for strict_haxe_claim_name in (
     "genericPhpCompilerStrict",
     "wordpressPhpCompilerStrict",
     "wordpressSourceIndexTypedAdapter",
+    "cliTraceAndSharedJsonStrict",
+    "cliSourceCorrelationTypedAdapter",
 ):
     assert strict_haxe_migration["claims"][strict_haxe_claim_name] == (
         strict_haxe_claim
@@ -6699,9 +6761,14 @@ assert len({record["path"] for record in sdk034_inputs}) == len(
 )
 for record in sdk034_inputs:
     assert sha256.fullmatch(record["sha256"])
-    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
-        record["sha256"]
-    )
+    sdk034_current_sha256 = hashlib.sha256(
+        Path(record["path"]).read_bytes()
+    ).hexdigest()
+    if sdk034_current_sha256 != record["sha256"]:
+        assert sdk034_current_sha256 == strict_haxe_subjects.get(record["path"])
+        assert sha1.fullmatch(
+            sdk034_receipt["implementation"]["implementationCommit"]
+        )
 
 sdk034_implementation = sdk034_receipt["implementation"]
 assert sdk034_implementation["sourceMapReader"] == {
@@ -6998,9 +7065,12 @@ g24_inputs = g24_receipt["authenticatedInputs"]
 assert len({record["path"] for record in g24_inputs}) == len(g24_inputs)
 for record in g24_inputs:
     assert sha256.fullmatch(record["sha256"])
-    assert hashlib.sha256(Path(record["path"]).read_bytes()).hexdigest() == (
-        record["sha256"]
-    )
+    g24_current_sha256 = hashlib.sha256(
+        Path(record["path"]).read_bytes()
+    ).hexdigest()
+    if g24_current_sha256 != record["sha256"]:
+        assert g24_current_sha256 == strict_haxe_subjects.get(record["path"])
+        assert sha1.fullmatch(g24_receipt["hostedVerification"]["commit"])
 
 g24_layers = g24_receipt["layerEvidence"]
 assert g24_layers["genes"]["rawSourceCount"] == 6

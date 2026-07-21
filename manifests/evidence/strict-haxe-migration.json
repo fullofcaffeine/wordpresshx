@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "STRICT-HAXE-MIGRATION",
   "bead": "wordpresshx-sjb",
-  "status": "verified-hosted",
-  "observedAt": "2026-07-21T10:09:56Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T10:35:55Z",
   "directive": {
     "forbiddenTokens": [
       "Dynamic",
@@ -17,8 +17,8 @@
   },
   "inventory": {
     "initialFindingCount": 583,
-    "currentFindingCount": 527,
-    "removedFindingCount": 56,
+    "currentFindingCount": 363,
+    "removedFindingCount": 220,
     "complete": false
   },
   "subjects": [
@@ -75,6 +75,74 @@
       "sha256": "4efdb6b804259a6539bd6709bec27e98d87cf2ccce89f4628bc5eec9c79a8946"
     },
     {
+      "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
+      "sha256": "bd1e38de84fc7b22ef751c9a66140515d6e075f1af2429e71dbb26fec3619ac7"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx",
+      "sha256": "7290b5a1132371122efd4d906edb4911fd0c87b97fdf8183187ddbdb69564964"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/CanonicalJson.hx",
+      "sha256": "53d89da4b651a733578b8a1a8a6319815c8c469a7d17b96851bc79018d860a58"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+      "sha256": "313b4e5e73915e69c71e6cf32a09d79b71779a4ee8feafed45e5cb6ad202113e"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/Contract.hx",
+      "sha256": "ccdccf21b628b3dcacebaddfa395cb901bb68a6bff8181a53866916c6a11f15a"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/Content.hx",
+      "sha256": "5fa00f73bc6d8712645bb68420dc1411721ab3bf0507cee66eb826340f22a3b6"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+      "sha256": "3ab2f4a04247fe96138f2765506432c389e478bb781876f02636ed67ed7dbf3b"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+      "sha256": "4e4f7f1b29a239dc0bef550818abbf1d1606d554d7a3e44f6bf96aab65a0e109"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+      "sha256": "7ce10096ff17cfa90e1f286e7d8656aa910161bb56a1712c51f3c4de0ee9dfa1"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+      "sha256": "4185d0c5632c0ce4a094522d9c4edc06acb4e72c1ed9b3a6e0e431b9a46e20eb"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+      "sha256": "4aa67ee2eeb1774ed9e2ed1aa7eb0bf096a71d261f6ec125c69fd82b7d2c6eb4"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/CliJson.hx",
+      "sha256": "3891f31a80c4b3575cef885abc79341f88fdcb6eb4163712bf7ad78ea99f804d"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/Main.hx",
+      "sha256": "acba318a42be4de229b7c34ef5ca12b691a1eaec41d8c41777984c85269c28cf"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/TraceCommand.hx",
+      "sha256": "18c4d0a84a8eef5f5410fb02338c1df0decf8fcf28fc9ef83a8c22c480ca5546"
+    },
+    {
+      "path": "packages/cli/scripts/check-trace-haxe.sh",
+      "sha256": "2964b53f55e0893471868b5eb47ce7c9be8cf7c053a0c6c2c8098b87247c6ba6"
+    },
+    {
+      "path": "packages/cli/scripts/test.sh",
+      "sha256": "7c7b2250c0806017ccc61cda0f7bbb069ac2cb24eb9ba7ec5b4bd7441589505d"
+    },
+    {
+      "path": "packages/cli/scripts/test-browser-source-correlation.sh",
+      "sha256": "392648cd0705d3cb44480d2f7fd4439180258081213cb29bf5e2321f3e5721b9"
+    },
+    {
       "path": "scripts/lint/haxe-weak-type-guard.py",
       "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
     }
@@ -86,7 +154,7 @@
       "haxeFileCount": 18,
       "findingCount": 0,
       "gate": "bash scripts/profiles/test-profile-haxe.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "generic-php-compiler",
@@ -94,7 +162,7 @@
       "haxeFileCount": 34,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "wordpress-php-compiler",
@@ -102,7 +170,29 @@
       "haxeFileCount": 25,
       "findingCount": 0,
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
+    },
+    {
+      "id": "cli-trace-and-shared-json",
+      "root": "packages/cli/src/wordpresshx/cli",
+      "paths": [
+        "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
+        "packages/cli/src/wordpresshx/cli/CanonicalJson.hx",
+        "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+        "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
+        "packages/cli/src/wordpresshx/cli/CliJson.hx",
+        "packages/cli/src/wordpresshx/cli/Content.hx",
+        "packages/cli/src/wordpresshx/cli/Contract.hx",
+        "packages/cli/src/wordpresshx/cli/Main.hx",
+        "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+        "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+        "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
+        "packages/cli/src/wordpresshx/cli/TraceCommand.hx"
+      ],
+      "haxeFileCount": 12,
+      "findingCount": 0,
+      "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
+      "outcome": "passed-local"
     }
   ],
   "typedAdapters": [
@@ -111,7 +201,15 @@
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
       "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-hosted",
+      "outcome": "passed-local",
+      "owningClosureComplete": true
+    },
+    {
+      "id": "cli-source-correlation-json",
+      "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+      "genericBoundary": "wordpresshx.cli.closedjson.JsonValue",
+      "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
+      "outcome": "passed-local",
       "owningClosureComplete": true
     }
   ],
@@ -119,28 +217,30 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "required": true,
-    "implementationCommit": "31c506a0a3789e84fdcda32f6fc71cf6018629c6",
-    "runId": 29820264347,
-    "jobId": 88600999236,
-    "status": "passed",
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T10:09:11Z"
+    "implementationCommit": null,
+    "runId": null,
+    "jobId": null,
+    "status": "pending-current-subject-run",
+    "allJobsPassed": false,
+    "completedAt": null
   },
   "previousHostedVerification": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "implementationCommit": "825e44d12c201142a8999764d5925f44bca430ca",
-    "runId": 29818067940,
-    "jobId": 88593973805,
-    "status": "passed-before-wordpress-compiler-closure",
+    "implementationCommit": "31c506a0a3789e84fdcda32f6fc71cf6018629c6",
+    "runId": 29820264347,
+    "jobId": 88600999236,
+    "status": "passed-before-cli-trace-closure",
     "allJobsPassed": true,
-    "completedAt": "2026-07-21T09:34:17Z"
+    "completedAt": "2026-07-21T10:09:11Z"
   },
   "claims": {
-    "coreProfileContractStrict": "runtime-tested-hosted",
-    "genericPhpCompilerStrict": "runtime-tested-hosted",
-    "wordpressPhpCompilerStrict": "runtime-tested-hosted",
-    "wordpressSourceIndexTypedAdapter": "runtime-tested-hosted",
+    "coreProfileContractStrict": "runtime-tested-local",
+    "genericPhpCompilerStrict": "runtime-tested-local",
+    "wordpressPhpCompilerStrict": "runtime-tested-local",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
+    "cliTraceAndSharedJsonStrict": "runtime-tested-local",
+    "cliSourceCorrelationTypedAdapter": "runtime-tested-local",
     "repositoryWideStrictHaxe": "not-yet-remaining-findings",
     "productionSupport": "not-claimed"
   }

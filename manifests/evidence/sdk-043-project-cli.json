@@ -2,24 +2,28 @@
   "schemaVersion": 1,
   "receiptId": "SDK-043-PROJECT-CLI",
   "bead": "wordpresshx-sdk-043",
-  "status": "verified",
-  "observedAt": "2026-07-19T07:16:33Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T10:35:55Z",
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "f0209f418ebb9b4105527c25253b8e8e03218e03e7180a31e6d1b5e35190267b"
+      "sha256": "2fc92d12c57d2a1f51c44e52c3598207bbd89e73f0bb50810894584655bdc53b"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "sha256": "00704cefbec74a923ca6963930b77e6155c76822fb577af07dcabc0ec3a9500f"
+      "sha256": "b9c8a65f14a53906ca29f07877d40daea4c936f4bec9468a1921fe3d690a8eaf"
     },
     "arguments": {
       "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
-      "sha256": "5a76f9abf79518d8745d5df27911aecbacf6d32885d4269743d2b1d1b07a763e"
+      "sha256": "313b4e5e73915e69c71e6cf32a09d79b71779a4ee8feafed45e5cb6ad202113e"
     },
     "events": {
       "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
-      "sha256": "1b8b50774f8cc5d39b43498500fff884f421b50c18e2fa148ead2245adfd1ee6"
+      "sha256": "4aa67ee2eeb1774ed9e2ed1aa7eb0bf096a71d261f6ec125c69fd82b7d2c6eb4"
+    },
+    "eventJson": {
+      "path": "packages/cli/src/wordpresshx/cli/CliJson.hx",
+      "sha256": "3891f31a80c4b3575cef885abc79341f88fdcb6eb4163712bf7ad78ea99f804d"
     },
     "resolver": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
@@ -31,7 +35,7 @@
     },
     "commands": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
-      "sha256": "05e0060f9208ed2c5c731151972641501ee0a257f07cbb1d6d650b79b8886b86"
+      "sha256": "382e092e07f0d700c38930bb7caa2d0776b0cb9e6bbea2108951a5dfb686eceb"
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
@@ -39,7 +43,7 @@
     },
     "profile": {
       "path": "packages/cli/profiles/wphx.hxml",
-      "sha256": "4a0d7fcdbcbe48283914ec631ce818abdcfbdc73212a2e5ef8af262f5e64507f"
+      "sha256": "489672ab49cfefff3472bd4cc16aa0964efdd3d57325133f18f36ccff54d83be"
     },
     "packageManifest": {
       "path": "packages/cli/package.json",
@@ -55,7 +59,7 @@
     },
     "validator": {
       "path": "scripts/project-cli/test-production.py",
-      "sha256": "ccf25a8f756b6829870a58370481bd20001f3c76571192b229641c79c2d8318f"
+      "sha256": "df1ba6e3c021d4412074d1222e89efd1b99a98d0d13fddf6a83a832451e35e81"
     },
     "gate": {
       "path": "scripts/project-cli/test-production.sh",
@@ -63,7 +67,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
+      "sha256": "2c3becd0aba5043a2f54f1660ee93d2b388c25cedc3ec673b77a93288f685a26"
     },
     "aggregateToolchainLock": {
       "path": "manifests/toolchain.lock.json",
@@ -118,7 +122,7 @@
     "preservedHistoricalInputs": [
       {
         "path": "packages/cli/src/wordpresshx/cli/Main.hx",
-        "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
+        "sha256": "acba318a42be4de229b7c34ef5ca12b691a1eaec41d8c41777984c85269c28cf"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
@@ -128,12 +132,12 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "218b2cf92e70160349e6a42a0b3b2ac58dc5feec82132328564fee6a0e22c94c",
+    "subjectCommit": null,
+    "subjectContentSha256": "929980d38c217276aaaf59b25632c75e8023cdf9be8e248cd28b89938930d1c3",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
-    "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "implementationCommit": null,
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -238,10 +242,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production project CLI foundation",
-    "runId": 29677693742,
-    "jobId": 88168071123,
-    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
@@ -251,7 +255,7 @@
     "The package remains private and publication is blocked."
   ],
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-hosted",
+    "sdk043ProjectCli": "runtime-tested-local",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

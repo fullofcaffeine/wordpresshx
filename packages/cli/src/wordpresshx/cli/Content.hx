@@ -2,8 +2,21 @@ package wordpresshx.cli;
 
 import haxe.crypto.Sha256;
 import haxe.io.Bytes;
+import wordpresshx.cli.closedjson.JsonValue;
 
-/** UTF-8 content identity, logical-path, and redundant-coordinate checks. **/
+typedef ContentPosition = {
+	final line:Int;
+	final columnUtf8:Int;
+}
+
+typedef ContentSpan = {
+	final startByte:Int;
+	final endByte:Int;
+	final start:ContentPosition;
+	final end:ContentPosition;
+}
+
+/** UTF-8 content identity, logical-path, and redundant-coordinate checks. */
 class Content {
 	static final SHA256 = ~/^[0-9a-f]{64}$/;
 	static final STABLE_ID = ~/^[A-Za-z0-9][A-Za-z0-9._:\/@+\-]{0,255}$/;
@@ -30,7 +43,7 @@ class Content {
 		return lines + (bytes.get(bytes.length - 1) == 0x0a ? 0 : 1);
 	}
 
-	public static function positionAt(value:String, byteOffset:Int):{line:Int, columnUtf8:Int} {
+	public static function positionAt(value:String, byteOffset:Int):ContentPosition {
 		final bytes = Bytes.ofString(value);
 		Contract.require(byteOffset >= 0 && byteOffset <= bytes.length, "byte offset exceeds authenticated UTF-8 content");
 		Contract.require(byteOffset == bytes.length || (bytes.get(byteOffset) & 0xc0) != 0x80, "byte offset splits a UTF-8 sequence");
@@ -45,25 +58,27 @@ class Content {
 		return {line: line, columnUtf8: byteOffset - lastNewline - 1};
 	}
 
-	public static function validateSpan(span:Dynamic, content:Null<String>, byteLength:Int, label:String):Void {
-		Contract.fields(span, ["startByte", "endByte", "start", "end"], label);
-		final startByte = Contract.integer(span, "startByte", label);
-		final endByte = Contract.integer(span, "endByte", label);
+	public static function validateSpan(value:JsonValue, content:Null<String>, byteLength:Int, label:String):ContentSpan {
+		Contract.fields(value, ["startByte", "endByte", "start", "end"], label);
+		final startByte = Contract.integer(value, "startByte", label);
+		final endByte = Contract.integer(value, "endByte", label);
 		Contract.require(startByte >= 0 && endByte > startByte && endByte <= byteLength, label + " is not a non-empty in-bounds byte span");
-		validatePosition(Reflect.field(span, "start"), label + ".start");
-		validatePosition(Reflect.field(span, "end"), label + ".end");
+		final start = validatePosition(Contract.fieldValue(value, "start", label), label + ".start");
+		final end = validatePosition(Contract.fieldValue(value, "end", label), label + ".end");
 		if (content != null) {
 			final expectedStart = positionAt(content, startByte);
 			final expectedEnd = positionAt(content, endByte);
-			Contract.require(Contract.integer(Reflect.field(span, "start"), "line", label + ".start") == expectedStart.line
-				&& Contract.integer(Reflect.field(span, "start"), "columnUtf8", label + ".start") == expectedStart.columnUtf8,
-				label
-				+ " start coordinate contradicts authenticated bytes");
-			Contract.require(Contract.integer(Reflect.field(span, "end"), "line", label + ".end") == expectedEnd.line
-				&& Contract.integer(Reflect.field(span, "end"), "columnUtf8", label + ".end") == expectedEnd.columnUtf8,
-				label
-				+ " end coordinate contradicts authenticated bytes");
+			Contract.require(start.line == expectedStart.line && start.columnUtf8 == expectedStart.columnUtf8,
+				label + " start coordinate contradicts authenticated bytes");
+			Contract.require(end.line == expectedEnd.line && end.columnUtf8 == expectedEnd.columnUtf8,
+				label + " end coordinate contradicts authenticated bytes");
 		}
+		return {
+			startByte: startByte,
+			endByte: endByte,
+			start: start,
+			end: end
+		};
 	}
 
 	public static function safeRelativePath(value:String, label:String):String {
@@ -88,9 +103,15 @@ class Content {
 		return value;
 	}
 
-	static function validatePosition(value:Dynamic, label:String):Void {
+	public static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
+	}
+
+	static function validatePosition(value:JsonValue, label:String):ContentPosition {
 		Contract.fields(value, ["line", "columnUtf8"], label);
-		Contract.require(Contract.integer(value, "line", label) > 0 && Contract.integer(value, "columnUtf8", label) >= 0,
-			label + " is not a valid one-based-line/zero-based-column position");
+		final line = Contract.integer(value, "line", label);
+		final columnUtf8 = Contract.integer(value, "columnUtf8", label);
+		Contract.require(line > 0 && columnUtf8 >= 0, label + " is not a valid one-based-line/zero-based-column position");
+		return {line: line, columnUtf8: columnUtf8};
 	}
 }

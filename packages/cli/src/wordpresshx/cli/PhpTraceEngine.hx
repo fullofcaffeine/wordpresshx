@@ -1,16 +1,57 @@
 package wordpresshx.cli;
 
-import haxe.Json;
 import js.node.Fs;
 import js.node.Path;
+import wordpresshx.cli.Content.ContentPosition;
+import wordpresshx.cli.Content.ContentSpan;
+import wordpresshx.cli.SourceIndex.AvailableSourceCorrelation;
 import wordpresshx.cli.SourceIndex.SourceBinding;
+import wordpresshx.cli.SourceIndex.SourceFileRecord;
+import wordpresshx.cli.SourceIndex.SourcePackageIdentity;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.closedjson.JsonValue.JsonField;
+
+private typedef PhpMapSource = {
+	final id:String;
+	final rootId:String;
+	final path:String;
+	final kind:String;
+	final sha256:String;
+	final byteLength:Int;
+	final lineCount:Int;
+}
+
+private typedef PhpSourceOrigin = {
+	final kind:String;
+	final sourceId:String;
+	final sourceSpan:ContentSpan;
+	final semanticNodeId:String;
+}
+
+private typedef PhpCompilerOrigin = {
+	final reasonClass:String;
+	final reasonId:String;
+	final parentSemanticNodeId:Null<String>;
+}
+
+private enum PhpMappingOrigin {
+	SourceOrigin(value:PhpSourceOrigin);
+	CompilerOrigin(value:PhpCompilerOrigin);
+}
+
+private typedef PhpMapping = {
+	final id:String;
+	final generatedSpan:ContentSpan;
+	final nodeKind:String;
+	final structuralDepth:Int;
+	final origin:PhpMappingOrigin;
+}
 
 private typedef PhpEntry = {
 	final absolutePath:String;
 	final content:String;
-	final map:Dynamic;
-	final anchors:Map<Int, Dynamic>;
-	final mappings:Map<String, Dynamic>;
+	final sourcesById:Map<String, PhpMapSource>;
+	final anchors:Map<Int, PhpMapping>;
 }
 
 private typedef ParsedNativeFrame = {
@@ -19,16 +60,65 @@ private typedef ParsedNativeFrame = {
 	final line:Int;
 }
 
-/** Offline, read-only PHP native-stack correlator for one authenticated package index. **/
+typedef PhpRuntimeFrame = {
+	final file:String;
+	final line:Int;
+}
+
+typedef PhpCorrelatedSource = {
+	final rootId:String;
+	final path:String;
+	final start:ContentPosition;
+	final end:ContentPosition;
+}
+
+typedef PhpCorrelatedFrame = {
+	final mappingId:String;
+	final semanticNodeId:String;
+	final nodeKind:String;
+	final source:PhpCorrelatedSource;
+}
+
+typedef PhpTraceFrame = {
+	final native:String;
+	final status:String;
+	final frame:Null<PhpRuntimeFrame>;
+	final correlated:Null<PhpCorrelatedFrame>;
+}
+
+typedef TraceSummaryEntry = {
+	final status:String;
+	final count:Int;
+}
+
+typedef PhpTraceResult = {
+	final schemaVersion:Int;
+	final command:String;
+	final packageIdentity:SourcePackageIdentity;
+	final frames:Array<PhpTraceFrame>;
+	final summary:Array<TraceSummaryEntry>;
+}
+
+private typedef ValidatedPhpSources = {
+	final byId:Map<String, PhpMapSource>;
+	final bindings:Map<String, SourceBinding>;
+}
+
+private typedef ValidatedPhpMappings = {
+	final ordered:Array<PhpMapping>;
+	final byId:Map<String, PhpMapping>;
+}
+
+/** Offline, read-only PHP native-stack correlator for one authenticated package index. */
 class PhpTraceEngine {
 	static final EXCEPTION_FRAME = ~/ in (.+):([0-9]+)$/;
 	static final STACK_FRAME = ~/^#[0-9]+ (.+)\(([0-9]+)\):/;
 
 	final indexRoot:String;
-	final filesById:Map<String, Dynamic>;
+	final filesById:Map<String, SourceFileRecord>;
 	final sourceBindingsByFileId:Map<String, SourceBinding>;
 	final phpEntriesByPath:Map<String, PhpEntry> = [];
-	final packageIdentity:Dynamic;
+	final packageIdentity:SourcePackageIdentity;
 
 	public function new(indexPath:String, sourceRootArguments:Map<String, String>) {
 		final sourceIndex = new SourceIndex(indexPath, sourceRootArguments);
@@ -37,50 +127,47 @@ class PhpTraceEngine {
 		sourceBindingsByFileId = sourceIndex.sourceBindingsByFileId;
 		packageIdentity = sourceIndex.packageIdentity;
 		for (correlation in sourceIndex.correlations) {
-			if (correlation.target == "php" && correlation.strategy == "php-range-map") {
-				loadPhpEntry(correlation);
+			switch correlation {
+				case AvailableCorrelation(value) if (value.target == "php" && value.strategy == "php-range-map"):
+					loadPhpEntry(value);
+				case _:
 			}
 		}
 	}
 
-	public function trace(stack:String):Dynamic {
+	public function trace(stack:String):PhpTraceResult {
 		final nativeLines = stack.split("\n");
 		if (nativeLines.length > 0 && nativeLines[nativeLines.length - 1] == "") {
 			nativeLines.pop();
 		}
-		final frames:Array<Dynamic> = [];
+		final frames:Array<PhpTraceFrame> = [];
 		final counts:Map<String, Int> = [];
 		for (line in nativeLines) {
 			final parsed = parseNativeFrame(line);
 			final frame = parsed == null ? nativeOnly(line) : correlate(parsed);
 			frames.push(frame);
-			final status:String = frame.status;
-			counts.set(status, (counts.exists(status) ? counts.get(status) : 0) + 1);
+			counts.set(frame.status, (counts.exists(frame.status) ? counts.get(frame.status) : 0) + 1);
 		}
-		final summary:Dynamic = {};
 		final statuses = [for (status in counts.keys()) status];
-		statuses.sort(Reflect.compare);
-		for (status in statuses) {
-			Reflect.setField(summary, status, counts.get(status));
-		}
+		statuses.sort(Content.compareText);
 		return {
 			schemaVersion: 1,
 			command: "trace php",
 			packageIdentity: packageIdentity,
 			frames: frames,
-			summary: summary
+			summary: [for (status in statuses) {status: status, count: counts.get(status)}]
 		};
 	}
 
-	public static function text(result:Dynamic):String {
+	public static function text(result:PhpTraceResult):String {
 		final lines:Array<String> = [];
-		for (frame in cast(Reflect.field(result, "frames"), Array<Dynamic>)) {
+		for (frame in result.frames) {
 			lines.push(frame.native);
-			if (Reflect.hasField(frame, "frame")) {
+			if (frame.frame != null) {
 				var annotation = "  => " + frame.status;
-				if (Reflect.hasField(frame, "correlated")) {
-					final correlated:Dynamic = frame.correlated;
-					final source:Dynamic = correlated.source;
+				if (frame.correlated != null) {
+					final correlated = frame.correlated;
+					final source = correlated.source;
 					annotation += " " + source.rootId + ":" + source.path + ":" + source.start.line + ":" + source.start.columnUtf8 + " semantic="
 						+ correlated.semanticNodeId + " mapping=" + correlated.mappingId;
 				}
@@ -90,8 +177,18 @@ class PhpTraceEngine {
 		return lines.join("\n") + "\n";
 	}
 
-	function loadPhpEntry(correlation:Dynamic):Void {
-		final layer = (cast correlation.layers : Array<Dynamic>)[0];
+	public static function json(result:PhpTraceResult):JsonValue {
+		return object([
+			field("schemaVersion", number(result.schemaVersion)),
+			field("command", textValue(result.command)),
+			field("packageIdentity", packageJson(result.packageIdentity)),
+			field("frames", ArrayValue(result.frames.map(frameJson))),
+			field("summary", ObjectValue([for (entry in result.summary) field(entry.status, number(entry.count))]))
+		]);
+	}
+
+	function loadPhpEntry(correlation:AvailableSourceCorrelation):Void {
+		final layer = correlation.layers[0];
 		Contract.require(layer.format == "wordpresshx.php-haxe-range-map.v1"
 			&& layer.generatedLanguage == "php"
 			&& layer.sourceLanguage == "haxe",
@@ -107,21 +204,19 @@ class PhpTraceEngine {
 		final mapPath = safeResolve(indexRoot, mapRecord.path, "PHP range map");
 		final mapSource = readUtf8(existingFile(mapPath, "PHP range map"), "PHP range map");
 		validateBoundFile(mapRecord, mapSource, "PHP range map");
-		final map = parseJson(mapSource, "PHP range map");
-		final validated = validatePhpMap(map, runtime, runtimeContent, cast layer.sourceFileIds);
+		final validated = validatePhpMap(parseJson(mapSource, "PHP range map"), runtime, runtimeContent, layer.sourceFileIds);
 		final absolutePath = realPath(runtimePath);
 		Contract.require(!phpEntriesByPath.exists(absolutePath), "two PHP entries resolve to one native path", true);
 		phpEntriesByPath.set(absolutePath, {
 			absolutePath: absolutePath,
 			content: runtimeContent,
-			map: map,
-			anchors: validated.anchors,
-			mappings: validated.mappings
+			sourcesById: validated.sources,
+			anchors: validated.anchors
 		});
 	}
 
-	function validatePhpMap(map:Dynamic, runtime:Dynamic, runtimeContent:String,
-			sourceFileIds:Array<String>):{anchors:Map<Int, Dynamic>, mappings:Map<String, Dynamic>} {
+	function validatePhpMap(map:JsonValue, runtime:SourceFileRecord, runtimeContent:String,
+			sourceFileIds:Array<String>):{sources:Map<String, PhpMapSource>, anchors:Map<Int, PhpMapping>} {
 		Contract.fields(map, [
 			"schemaVersion",
 			"format",
@@ -137,111 +232,134 @@ class PhpTraceEngine {
 			&& Contract.string(map, "format", "PHP range map") == "wordpresshx.php-haxe-range-map.v1",
 			"unsupported PHP range-map contract");
 		Content.sha256(Contract.string(map, "buildInputsSha256", "PHP range map"), "PHP map build inputs");
-		validateGenerator(Reflect.field(map, "generator"));
-		validateCoordinateSystem(Reflect.field(map, "coordinateSystem"));
-		validateGeneratedFile(Reflect.field(map, "generated"), runtime, runtimeContent);
-		final mapSources = validateMapSources(Contract.array(map, "sources", "PHP range map"), sourceFileIds);
-		final mappings = validateMappings(Contract.array(map, "mappings", "PHP range map"), runtimeContent, mapSources);
-		final anchors = validateAnchors(Contract.array(map, "traceAnchors", "PHP range map"), runtimeContent, mappings);
-		return {anchors: anchors, mappings: mappings};
+		validateGenerator(Contract.fieldValue(map, "generator", "PHP range map"));
+		validateCoordinateSystem(Contract.fieldValue(map, "coordinateSystem", "PHP range map"));
+		validateGeneratedFile(Contract.fieldValue(map, "generated", "PHP range map"), runtime, runtimeContent);
+		final sources = validateMapSources(Contract.array(map, "sources", "PHP range map"), sourceFileIds);
+		final mappings = validateMappings(Contract.array(map, "mappings", "PHP range map"), runtimeContent, sources.bindings);
+		final anchors = validateAnchors(Contract.array(map, "traceAnchors", "PHP range map"), runtimeContent, mappings.byId);
+		return {sources: sources.byId, anchors: anchors};
 	}
 
-	function validateGenerator(value:Dynamic):Void {
+	function validateGenerator(value:JsonValue):Void {
 		Contract.fields(value, ["id", "version", "sourceSha256"], "PHP map generator");
 		Content.stableId(Contract.string(value, "id", "PHP map generator"), "PHP map generator ID");
 		Contract.string(value, "version", "PHP map generator");
 		Content.sha256(Contract.string(value, "sourceSha256", "PHP map generator"), "PHP map generator source");
 	}
 
-	function validateCoordinateSystem(value:Dynamic):Void {
+	function validateCoordinateSystem(value:JsonValue):Void {
 		Contract.fields(value, ["byteEncoding", "byteRange", "lineBase", "columnBase", "columnEncoding"], "PHP map coordinate system");
-		Contract.require(value.byteEncoding == "utf-8" && value.byteRange == "half-open" && value.lineBase == 1 && value.columnBase == 0
-			&& value.columnEncoding == "utf-8-bytes",
+		Contract.require(Contract.string(value, "byteEncoding", "PHP map coordinate system") == "utf-8"
+			&& Contract.string(value, "byteRange", "PHP map coordinate system") == "half-open"
+			&& Contract.integer(value, "lineBase", "PHP map coordinate system") == 1
+			&& Contract.integer(value, "columnBase", "PHP map coordinate system") == 0
+			&& Contract.string(value, "columnEncoding", "PHP map coordinate system") == "utf-8-bytes",
 			"unsupported PHP map coordinate system");
 	}
 
-	function validateGeneratedFile(value:Dynamic, runtime:Dynamic, content:String):Void {
+	function validateGeneratedFile(value:JsonValue, runtime:SourceFileRecord, content:String):Void {
 		Contract.fields(value, ["path", "sha256", "byteLength", "lineCount", "encoding", "lineEndings"], "PHP map generated file");
-		Contract.require(Content.safeRelativePath(Contract.string(value, "path", "PHP map generated file"), "generated PHP path") == runtime.path,
-			"PHP map generated path disagrees with the source index");
-		Contract.require(value.sha256 == runtime.sha256 && value.byteLength == runtime.byteLength, "PHP map/index generated-content binding mismatch");
-		Contract.require(value.sha256 == Content.digest(content)
-			&& value.byteLength == Content.byteLength(content)
-			&& value.lineCount == Content.lineCount(content),
+		final path = Content.safeRelativePath(Contract.string(value, "path", "PHP map generated file"), "generated PHP path");
+		final sha256 = Content.sha256(Contract.string(value, "sha256", "PHP map generated file"), "generated PHP");
+		final byteLength = Contract.integer(value, "byteLength", "PHP map generated file");
+		Contract.require(path == runtime.path, "PHP map generated path disagrees with the source index");
+		Contract.require(sha256 == runtime.sha256 && byteLength == runtime.byteLength, "PHP map/index generated-content binding mismatch");
+		Contract.require(sha256 == Content.digest(content)
+			&& byteLength == Content.byteLength(content)
+			&& Contract.integer(value, "lineCount", "PHP map generated file") == Content.lineCount(content),
 			"PHP map generated-content identity mismatch");
-		Contract.require(value.encoding == "utf-8" && value.lineEndings == "lf" && content.indexOf("\r") < 0, "generated PHP is not LF-normalized UTF-8");
+		Contract.require(Contract.string(value, "encoding", "PHP map generated file") == "utf-8"
+			&& Contract.string(value, "lineEndings", "PHP map generated file") == "lf"
+			&& content.indexOf("\r") < 0,
+			"generated PHP is not LF-normalized UTF-8");
 	}
 
-	function validateMapSources(sources:Array<Dynamic>, sourceFileIds:Array<String>):Map<String, SourceBinding> {
-		Contract.require(sources.length > 0, "PHP range map must bind source files");
+	function validateMapSources(values:Array<JsonValue>, sourceFileIds:Array<String>):ValidatedPhpSources {
+		Contract.require(values.length > 0, "PHP range map must bind source files");
 		final indexed:Map<String, SourceBinding> = [];
 		for (fileId in sourceFileIds) {
 			Contract.require(sourceBindingsByFileId.exists(fileId), "PHP map source layer does not reference an indexed source file");
 			final binding = sourceBindingsByFileId.get(fileId);
-			final identity:Dynamic = binding.record.sourceIdentity;
+			final identity = binding.record.sourceIdentity;
+			Contract.require(identity != null, "PHP map source lost its source identity");
 			indexed.set(identity.rootId + "\x00" + identity.path + "\x00" + binding.record.sha256, binding);
 		}
-		final result:Map<String, SourceBinding> = [];
+		final sourcesById:Map<String, PhpMapSource> = [];
+		final bindings:Map<String, SourceBinding> = [];
 		var previous = "";
-		for (source in sources) {
-			Contract.fields(source, ["id", "rootId", "path", "kind", "sha256", "byteLength", "lineCount"], "PHP map source");
-			final id = Content.stableId(Contract.string(source, "id", "PHP map source"), "PHP map source ID");
-			Contract.require(previous == "" || Reflect.compare(previous, id) < 0, "PHP map source IDs must be sorted and unique");
-			previous = id;
-			final rootId = Content.stableId(Contract.string(source, "rootId", "PHP map source"), "PHP map source root ID");
-			final path = Content.safeRelativePath(Contract.string(source, "path", "PHP map source"), "PHP map source path");
-			closed(Contract.string(source, "kind", "PHP map source"), ["haxe", "native"], "PHP map source kind");
-			final hash = Content.sha256(Contract.string(source, "sha256", "PHP map source"), "PHP map source");
-			Contract.require(Contract.integer(source, "byteLength", "PHP map source") > 0
-				&& Contract.integer(source, "lineCount", "PHP map source") > 0,
-				"PHP map source dimensions must be positive");
-			final key = rootId + "\x00" + path + "\x00" + hash;
+		for (value in values) {
+			Contract.fields(value, ["id", "rootId", "path", "kind", "sha256", "byteLength", "lineCount"], "PHP map source");
+			final source:PhpMapSource = {
+				id: Content.stableId(Contract.string(value, "id", "PHP map source"), "PHP map source ID"),
+				rootId: Content.stableId(Contract.string(value, "rootId", "PHP map source"), "PHP map source root ID"),
+				path: Content.safeRelativePath(Contract.string(value, "path", "PHP map source"), "PHP map source path"),
+				kind: closed(Contract.string(value, "kind", "PHP map source"), ["haxe", "native"], "PHP map source kind"),
+				sha256: Content.sha256(Contract.string(value, "sha256", "PHP map source"), "PHP map source"),
+				byteLength: Contract.integer(value, "byteLength", "PHP map source"),
+				lineCount: Contract.integer(value, "lineCount", "PHP map source")
+			};
+			Contract.require(previous == ""
+				|| Content.compareText(previous, source.id) < 0, "PHP map source IDs must be sorted and unique");
+			previous = source.id;
+			Contract.require(source.byteLength > 0 && source.lineCount > 0, "PHP map source dimensions must be positive");
+			final key = source.rootId + "\x00" + source.path + "\x00" + source.sha256;
 			Contract.require(indexed.exists(key), "PHP map source identity disagrees with the source index");
 			final binding = indexed.get(key);
 			Contract.require(binding.record.byteLength == source.byteLength, "PHP map/index source byte length mismatch");
-			result.set(id, binding);
+			sourcesById.set(source.id, source);
+			bindings.set(source.id, binding);
 		}
-		Contract.require([for (_ in result.keys()) true].length == sourceFileIds.length, "PHP map/index source binding is incomplete");
-		return result;
+		Contract.require([for (_ in sourcesById.keys()) true].length == sourceFileIds.length, "PHP map/index source binding is incomplete");
+		return {byId: sourcesById, bindings: bindings};
 	}
 
-	function validateMappings(values:Array<Dynamic>, generatedContent:String, sources:Map<String, SourceBinding>):Map<String, Dynamic> {
+	function validateMappings(values:Array<JsonValue>, generatedContent:String, sources:Map<String, SourceBinding>):ValidatedPhpMappings {
 		Contract.require(values.length > 0, "PHP range map must contain mappings");
-		final result:Map<String, Dynamic> = [];
+		final ordered:Array<PhpMapping> = [];
+		final byId:Map<String, PhpMapping> = [];
 		var previousStart = -1;
 		var previousEnd = -1;
 		var previousId = "";
-		for (mapping in values) {
-			Contract.fields(mapping, ["id", "generatedSpan", "nodeKind", "structuralDepth", "origin"], "PHP mapping");
-			final id = Content.stableId(Contract.string(mapping, "id", "PHP mapping"), "PHP mapping ID");
-			Content.validateSpan(mapping.generatedSpan, generatedContent, Content.byteLength(generatedContent), "PHP mapping " + id + " generated span");
-			final start:Int = mapping.generatedSpan.startByte;
-			final end:Int = mapping.generatedSpan.endByte;
-			Contract.require(previousStart < start
-				|| (previousStart == start && (previousEnd < end || (previousEnd == end && Reflect.compare(previousId, id) < 0))),
+		for (value in values) {
+			Contract.fields(value, ["id", "generatedSpan", "nodeKind", "structuralDepth", "origin"], "PHP mapping");
+			final id = Content.stableId(Contract.string(value, "id", "PHP mapping"), "PHP mapping ID");
+			final generatedSpan = Content.validateSpan(Contract.fieldValue(value, "generatedSpan", "PHP mapping"), generatedContent,
+				Content.byteLength(generatedContent), "PHP mapping " + id + " generated span");
+			Contract.require(previousStart < generatedSpan.startByte
+				|| (previousStart == generatedSpan.startByte
+					&& (previousEnd < generatedSpan.endByte
+						|| (previousEnd == generatedSpan.endByte && Content.compareText(previousId, id) < 0))),
 				"PHP mappings are not in deterministic generated-span order");
-			previousStart = start;
-			previousEnd = end;
+			previousStart = generatedSpan.startByte;
+			previousEnd = generatedSpan.endByte;
 			previousId = id;
-			closed(Contract.string(mapping, "nodeKind", "PHP mapping"), [
-				"file",
-				"declaration",
-				"member",
-				"statement",
-				"expression",
-				"markup",
-				"adapter",
-				"compiler-generated"
-			], "PHP mapping node kind");
-			Contract.require(Contract.integer(mapping, "structuralDepth", "PHP mapping") >= 0, "PHP mapping structural depth is negative");
-			validateOrigin(mapping.origin, sources, id);
-			Contract.require(!result.exists(id), "duplicate PHP mapping ID", true);
-			result.set(id, mapping);
+			final mapping:PhpMapping = {
+				id: id,
+				generatedSpan: generatedSpan,
+				nodeKind: closed(Contract.string(value, "nodeKind", "PHP mapping"), [
+					"file",
+					"declaration",
+					"member",
+					"statement",
+					"expression",
+					"markup",
+					"adapter",
+					"compiler-generated"
+				],
+					"PHP mapping node kind"),
+				structuralDepth: Contract.integer(value, "structuralDepth", "PHP mapping"),
+				origin: validateOrigin(Contract.fieldValue(value, "origin", "PHP mapping"), sources, id)
+			};
+			Contract.require(mapping.structuralDepth >= 0, "PHP mapping structural depth is negative");
+			Contract.require(!byId.exists(id), "duplicate PHP mapping ID", true);
+			ordered.push(mapping);
+			byId.set(id, mapping);
 		}
-		for (leftIndex in 0...values.length) {
-			final left = values[leftIndex];
-			for (rightIndex in leftIndex + 1...values.length) {
-				final right = values[rightIndex];
+		for (leftIndex in 0...ordered.length) {
+			final left = ordered[leftIndex];
+			for (rightIndex in leftIndex + 1...ordered.length) {
+				final right = ordered[rightIndex];
 				if (right.generatedSpan.startByte >= left.generatedSpan.endByte) {
 					break;
 				}
@@ -256,53 +374,61 @@ class PhpTraceEngine {
 					"PHP mappings contain an ambiguous equal-span tie", true);
 			}
 		}
-		return result;
+		return {ordered: ordered, byId: byId};
 	}
 
-	function validateOrigin(origin:Dynamic, sources:Map<String, SourceBinding>, mappingId:String):Void {
-		final kind = Contract.string(origin, "kind", "PHP mapping origin");
+	function validateOrigin(value:JsonValue, sources:Map<String, SourceBinding>, mappingId:String):PhpMappingOrigin {
+		final kind = Contract.string(value, "kind", "PHP mapping origin");
 		if (kind == "haxe-source" || kind == "native-source") {
-			Contract.fields(origin, ["kind", "sourceId", "sourceSpan", "semanticNodeId"], "PHP mapping origin");
-			final sourceId = Content.stableId(Contract.string(origin, "sourceId", "PHP mapping origin"), "PHP mapping source ID");
-			Content.stableId(Contract.string(origin, "semanticNodeId", "PHP mapping origin"), "PHP semantic node ID");
+			Contract.fields(value, ["kind", "sourceId", "sourceSpan", "semanticNodeId"], "PHP mapping origin");
+			final sourceId = Content.stableId(Contract.string(value, "sourceId", "PHP mapping origin"), "PHP mapping source ID");
+			final semanticNodeId = Content.stableId(Contract.string(value, "semanticNodeId", "PHP mapping origin"), "PHP semantic node ID");
 			Contract.require(sources.exists(sourceId), "PHP mapping " + mappingId + " references an unknown source");
 			final binding = sources.get(sourceId);
 			final expectedKind = kind == "haxe-source" ? "haxe" : "native";
-			final mapSourceKind:String = Reflect.field(binding.record, "language") == "haxe" ? "haxe" : "native";
+			final mapSourceKind = binding.record.language == "haxe" ? "haxe" : "native";
 			Contract.require(mapSourceKind == expectedKind, "PHP mapping source kind mismatch");
-			Content.validateSpan(origin.sourceSpan, binding.content, binding.record.byteLength, "PHP mapping " + mappingId + " source span");
-		} else if (kind == "compiler-generated") {
-			final hasParent = Reflect.hasField(origin, "parentSemanticNodeId");
-			Contract.fields(origin, hasParent ? ["kind", "reasonClass", "reasonId", "parentSemanticNodeId"] : ["kind", "reasonClass", "reasonId"],
-				"PHP compiler origin");
-			closed(Contract.string(origin, "reasonClass", "PHP compiler origin"), [
-				"file-prologue",
-				"file-epilogue",
-				"namespace-declaration",
-				"import-declaration",
-				"compiler-helper",
-				"runtime-support",
-				"formatting",
-				"target-adapter",
-				"other-reviewed"
-			], "PHP compiler reason class");
-			Content.stableId(Contract.string(origin, "reasonId", "PHP compiler origin"), "PHP compiler reason ID");
-			if (hasParent) {
-				Content.stableId(Contract.string(origin, "parentSemanticNodeId", "PHP compiler origin"), "PHP parent semantic node ID");
-			}
-		} else {
-			Contract.fail("unsupported PHP mapping origin kind: " + kind);
+			return SourceOrigin({
+				kind: kind,
+				sourceId: sourceId,
+				sourceSpan: Content.validateSpan(Contract.fieldValue(value, "sourceSpan", "PHP mapping origin"), binding.content, binding.record.byteLength,
+					"PHP mapping " + mappingId + " source span"),
+				semanticNodeId: semanticNodeId
+			});
 		}
+		if (kind == "compiler-generated") {
+			final hasParent = Contract.has(value, "parentSemanticNodeId", "PHP compiler origin");
+			Contract.fields(value, hasParent ? ["kind", "reasonClass", "reasonId", "parentSemanticNodeId"] : ["kind", "reasonClass", "reasonId"],
+				"PHP compiler origin");
+			return CompilerOrigin({
+				reasonClass: closed(Contract.string(value, "reasonClass", "PHP compiler origin"), [
+					"file-prologue",
+					"file-epilogue",
+					"namespace-declaration",
+					"import-declaration",
+					"compiler-helper",
+					"runtime-support",
+					"formatting",
+					"target-adapter",
+					"other-reviewed"
+				],
+					"PHP compiler reason class"),
+				reasonId: Content.stableId(Contract.string(value, "reasonId", "PHP compiler origin"), "PHP compiler reason ID"),
+				parentSemanticNodeId: hasParent ? Content.stableId(Contract.string(value, "parentSemanticNodeId", "PHP compiler origin"),
+					"PHP parent semantic node ID") : null
+			});
+		}
+		return Contract.fail("unsupported PHP mapping origin kind: " + kind);
 	}
 
-	function validateAnchors(values:Array<Dynamic>, generatedContent:String, mappings:Map<String, Dynamic>):Map<Int, Dynamic> {
-		final result:Map<Int, Dynamic> = [];
+	function validateAnchors(values:Array<JsonValue>, generatedContent:String, mappings:Map<String, PhpMapping>):Map<Int, PhpMapping> {
+		final result:Map<Int, PhpMapping> = [];
 		var previous = 0;
-		for (anchor in values) {
-			Contract.fields(anchor, ["generatedLine", "mappingId", "selection"], "PHP trace anchor");
-			final line = Contract.integer(anchor, "generatedLine", "PHP trace anchor");
-			final mappingId = Content.stableId(Contract.string(anchor, "mappingId", "PHP trace anchor"), "PHP trace-anchor mapping ID");
-			Contract.require(anchor.selection == "emitter-runtime-line", "unsupported PHP trace-anchor selection");
+		for (value in values) {
+			Contract.fields(value, ["generatedLine", "mappingId", "selection"], "PHP trace anchor");
+			final line = Contract.integer(value, "generatedLine", "PHP trace anchor");
+			final mappingId = Content.stableId(Contract.string(value, "mappingId", "PHP trace anchor"), "PHP trace-anchor mapping ID");
+			Contract.require(Contract.string(value, "selection", "PHP trace anchor") == "emitter-runtime-line", "unsupported PHP trace-anchor selection");
 			Contract.require(line > previous, "PHP trace anchors must have sorted unique lines", line == previous);
 			previous = line;
 			Contract.require(mappings.exists(mappingId), "PHP trace anchor references an unknown mapping");
@@ -315,7 +441,7 @@ class PhpTraceEngine {
 		return result;
 	}
 
-	function correlate(frame:ParsedNativeFrame):Dynamic {
+	function correlate(frame:ParsedNativeFrame):PhpTraceFrame {
 		final nativePath = normalizeNativePath(frame.file);
 		if (!phpEntriesByPath.exists(nativePath)) {
 			return parsedResult(frame, "unmapped-no-layer");
@@ -328,33 +454,28 @@ class PhpTraceEngine {
 			return parsedResult(frame, "unmapped-no-anchor");
 		}
 		final mapping = entry.anchors.get(frame.line);
-		final origin:Dynamic = mapping.origin;
-		if (origin.kind != "haxe-source" && origin.kind != "native-source") {
-			return parsedResult(frame, "native-unmapped");
-		}
-		final source = sourceRecordByMapId(entry.map, origin.sourceId);
-		final result = parsedResult(frame, "mapped-trace-anchor");
-		Reflect.setField(result, "correlated", {
-			mappingId: mapping.id,
-			semanticNodeId: origin.semanticNodeId,
-			nodeKind: mapping.nodeKind,
-			source: {
-				rootId: source.rootId,
-				path: source.path,
-				start: origin.sourceSpan.start,
-				end: origin.sourceSpan.end
-			}
-		});
-		return result;
-	}
-
-	function sourceRecordByMapId(map:Dynamic, sourceId:String):Dynamic {
-		for (source in cast(map.sources, Array<Dynamic>)) {
-			if (source.id == sourceId) {
-				return source;
-			}
-		}
-		return Contract.fail("mapped PHP origin lost its source record");
+		return switch mapping.origin {
+			case CompilerOrigin(_): parsedResult(frame, "native-unmapped");
+			case SourceOrigin(origin):
+				Contract.require(entry.sourcesById.exists(origin.sourceId), "mapped PHP origin lost its source record");
+				final source = entry.sourcesById.get(origin.sourceId);
+				{
+					native: frame.raw,
+					status: "mapped-trace-anchor",
+					frame: {file: frame.file, line: frame.line},
+					correlated: {
+						mappingId: mapping.id,
+						semanticNodeId: origin.semanticNodeId,
+						nodeKind: mapping.nodeKind,
+						source: {
+							rootId: source.rootId,
+							path: source.path,
+							start: origin.sourceSpan.start,
+							end: origin.sourceSpan.end
+						}
+					}
+				};
+		};
 	}
 
 	function parseNativeFrame(raw:String):Null<ParsedNativeFrame> {
@@ -369,12 +490,22 @@ class PhpTraceEngine {
 		return null;
 	}
 
-	function nativeOnly(raw:String):Dynamic {
-		return {native: raw, status: "native-unmapped"};
+	function nativeOnly(raw:String):PhpTraceFrame {
+		return {
+			native: raw,
+			status: "native-unmapped",
+			frame: null,
+			correlated: null
+		};
 	}
 
-	function parsedResult(frame:ParsedNativeFrame, status:String):Dynamic {
-		return {native: frame.raw, status: status, frame: {file: frame.file, line: frame.line}};
+	function parsedResult(frame:ParsedNativeFrame, status:String):PhpTraceFrame {
+		return {
+			native: frame.raw,
+			status: status,
+			frame: {file: frame.file, line: frame.line},
+			correlated: null
+		};
 	}
 
 	function normalizeNativePath(value:String):String {
@@ -382,9 +513,8 @@ class PhpTraceEngine {
 		return Fs.existsSync(resolved) ? realPath(resolved) : resolved;
 	}
 
-	function validateBoundFile(record:Dynamic, content:String, label:String):Void {
-		Contract.require(record.sha256 == Content.digest(content), label + " SHA-256 mismatch");
-		Contract.require(record.byteLength == Content.byteLength(content), label + " byte-length mismatch");
+	function validateBoundFile(record:SourceFileRecord, content:String, label:String):Void {
+		SourceIndex.validateBoundFile(record, content, label);
 	}
 
 	function lineInterval(content:String, line:Int):{startByte:Int, endByte:Int} {
@@ -400,25 +530,15 @@ class PhpTraceEngine {
 				startByte = index + 1;
 			}
 		}
-		if (currentLine == line) {
-			return {startByte: startByte, endByte: bytes.length};
-		}
-		return Contract.fail("PHP trace anchor line is out of bounds");
+		return currentLine == line ? {startByte: startByte, endByte: bytes.length} : Contract.fail("PHP trace anchor line is out of bounds");
 	}
 
 	function safeResolve(root:String, relative:String, label:String):String {
-		Content.safeRelativePath(relative, label + " path");
-		final absoluteRoot = Path.resolve(root);
-		final resolved = Path.resolve(absoluteRoot, relative);
-		final back = Path.relative(absoluteRoot, resolved);
-		Contract.require(back.length > 0 && !Path.isAbsolute(back) && back != ".." && !StringTools.startsWith(back, "../"), label + " escapes its root");
-		return resolved;
+		return SourceIndex.safeResolve(root, relative, label);
 	}
 
 	function existingFile(path:String, label:String):String {
-		final resolved = Path.resolve(path);
-		Contract.require(Fs.existsSync(resolved) && Fs.statSync(resolved).isFile(), label + " does not exist: " + path);
-		return resolved;
+		return SourceIndex.existingFile(path, label);
 	}
 
 	function realPath(path:String):String {
@@ -426,23 +546,71 @@ class PhpTraceEngine {
 	}
 
 	function readUtf8(path:String, label:String):String {
-		final value:String = cast Fs.readFileSync(path, "utf8");
-		Contract.require(value.indexOf("\x00") < 0, label + " contains a NUL byte");
-		return value;
+		return SourceIndex.readUtf8(path, label);
 	}
 
-	function parseJson(source:String, label:String):Dynamic {
-		try {
-			return Contract.object(Json.parse(source), label);
-		} catch (failure:TraceFailure) {
-			throw failure;
-		} catch (_:Dynamic) {
-			return Contract.fail(label + " is not valid JSON");
-		}
+	function parseJson(source:String, label:String):JsonValue {
+		return SourceIndex.parseJson(source, label);
 	}
 
 	function closed(value:String, allowed:Array<String>, label:String):String {
 		Contract.require(allowed.indexOf(value) >= 0, "unsupported " + label + ": " + value);
 		return value;
+	}
+
+	static function frameJson(frame:PhpTraceFrame):JsonValue {
+		final fields:Array<JsonField> = [
+			field("native", textValue(frame.native)),
+			field("status", textValue(frame.status))
+		];
+		if (frame.frame != null) {
+			fields.push(field("frame", object([
+				field("file", textValue(frame.frame.file)),
+				field("line", number(frame.frame.line))
+			])));
+		}
+		if (frame.correlated != null) {
+			final correlated = frame.correlated;
+			fields.push(field("correlated", object([
+				field("mappingId", textValue(correlated.mappingId)),
+				field("semanticNodeId", textValue(correlated.semanticNodeId)),
+				field("nodeKind", textValue(correlated.nodeKind)),
+				field("source", object([
+					field("rootId", textValue(correlated.source.rootId)),
+					field("path", textValue(correlated.source.path)),
+					field("start", positionJson(correlated.source.start)),
+					field("end", positionJson(correlated.source.end))
+				]))
+			])));
+		}
+		return object(fields);
+	}
+
+	static function packageJson(value:SourcePackageIdentity):JsonValue {
+		return object([
+			field("id", textValue(value.id)),
+			field("version", textValue(value.version)),
+			field("profileId", textValue(value.profileId))
+		]);
+	}
+
+	static function positionJson(value:ContentPosition):JsonValue {
+		return object([field("line", number(value.line)), field("columnUtf8", number(value.columnUtf8))]);
+	}
+
+	static inline function field(name:String, value:JsonValue):JsonField {
+		return {name: name, value: value};
+	}
+
+	static inline function object(fields:Array<JsonField>):JsonValue {
+		return ObjectValue(fields);
+	}
+
+	static inline function textValue(value:String):JsonValue {
+		return StringValue(value);
+	}
+
+	static inline function number(value:Int):JsonValue {
+		return NumberValue(Std.string(value));
 	}
 }

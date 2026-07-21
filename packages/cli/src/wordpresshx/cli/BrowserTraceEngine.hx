@@ -1,6 +1,19 @@
 package wordpresshx.cli;
 
 import js.Syntax;
+import wordpresshx.cli.SourceIndex.AvailableSourceCorrelation;
+import wordpresshx.cli.SourceIndex.SourceFileRecord;
+import wordpresshx.cli.SourceIndex.SourcePackageIdentity;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.closedjson.JsonValue.JsonField;
+
+private extern class NodeUrl {
+	public function new(value:String);
+	public final protocol:String;
+	public final username:String;
+	public final password:String;
+	public final pathname:String;
+}
 
 private typedef ParsedBrowserFrame = {
 	final raw:String;
@@ -11,14 +24,62 @@ private typedef ParsedBrowserFrame = {
 }
 
 private typedef BrowserEntry = {
-	final correlation:Dynamic;
-	final runtime:Dynamic;
+	final correlation:AvailableSourceCorrelation;
+	final runtime:SourceFileRecord;
 	final runtimeContent:String;
 	final first:SourceMapV3;
 	final second:Null<SourceMapV3>;
 }
 
-/** Offline, read-only browser-stack correlator for authenticated Source Map v3 layers. **/
+typedef BrowserRuntimeFrame = {
+	final url:String;
+	final path:String;
+	final line:Int;
+	final column:Int;
+}
+
+typedef BrowserLayerPoint = {
+	final mapFileId:String;
+	final generatedFileId:String;
+	final sourceFileId:String;
+	final line:Int;
+	final column:Int;
+}
+
+typedef BrowserCorrelatedSource = {
+	final rootId:String;
+	final path:String;
+	final line:Int;
+	final column:Int;
+}
+
+typedef BrowserCorrelatedFrame = {
+	final correlationId:String;
+	final source:BrowserCorrelatedSource;
+	final layers:Array<BrowserLayerPoint>;
+}
+
+typedef BrowserTraceFrame = {
+	final native:String;
+	final status:String;
+	final frame:Null<BrowserRuntimeFrame>;
+	final correlated:Null<BrowserCorrelatedFrame>;
+}
+
+typedef BrowserSummaryEntry = {
+	final status:String;
+	final count:Int;
+}
+
+typedef BrowserTraceResult = {
+	final schemaVersion:Int;
+	final command:String;
+	final packageIdentity:SourcePackageIdentity;
+	final frames:Array<BrowserTraceFrame>;
+	final summary:Array<BrowserSummaryEntry>;
+}
+
+/** Offline, read-only browser-stack correlator for authenticated Source Map v3 layers. */
 class BrowserTraceEngine {
 	static final URL_POSITION = ~/^(https?:\/\/.*):([0-9]+):([0-9]+)$/;
 
@@ -28,60 +89,55 @@ class BrowserTraceEngine {
 	public function new(indexPath:String, sourceRootArguments:Map<String, String>) {
 		sourceIndex = new SourceIndex(indexPath, sourceRootArguments);
 		for (correlation in sourceIndex.correlations) {
-			if (correlation.target != "browser" || correlation.strategy == "unavailable") {
-				continue;
+			switch correlation {
+				case AvailableCorrelation(value) if (value.target == "browser"):
+					final runtime = sourceIndex.file(value.entryFileId);
+					Contract.require(!entriesByPath.exists(runtime.path), "multiple browser correlations resolve to one runtime path", true);
+					entriesByPath.set(runtime.path, {
+						correlation: value,
+						runtime: runtime,
+						runtimeContent: sourceIndex.artifactContent(runtime.id, "browser runtime entry " + runtime.id),
+						first: new SourceMapV3(sourceIndex, value.layers[0]),
+						second: value.layers.length == 2 ? new SourceMapV3(sourceIndex, value.layers[1]) : null
+					});
+				case _:
 			}
-			final runtime = sourceIndex.file(correlation.entryFileId);
-			Contract.require(!entriesByPath.exists(runtime.path), "multiple browser correlations resolve to one runtime path", true);
-			final layers:Array<Dynamic> = cast correlation.layers;
-			entriesByPath.set(runtime.path, {
-				correlation: correlation,
-				runtime: runtime,
-				runtimeContent: sourceIndex.artifactContent(runtime.id, "browser runtime entry " + runtime.id),
-				first: new SourceMapV3(sourceIndex, layers[0]),
-				second: layers.length == 2 ? new SourceMapV3(sourceIndex, layers[1]) : null
-			});
 		}
 	}
 
-	public function trace(stack:String):Dynamic {
+	public function trace(stack:String):BrowserTraceResult {
 		final nativeLines = stack.split("\n");
 		if (nativeLines.length > 0 && nativeLines[nativeLines.length - 1] == "") {
 			nativeLines.pop();
 		}
-		final frames:Array<Dynamic> = [];
+		final frames:Array<BrowserTraceFrame> = [];
 		final counts:Map<String, Int> = [];
 		for (line in nativeLines) {
 			final parsed = parseFrame(line);
 			final frame = parsed == null ? nativeOnly(line) : correlate(parsed);
 			frames.push(frame);
-			final status:String = frame.status;
-			counts.set(status, (counts.exists(status) ? counts.get(status) : 0) + 1);
+			counts.set(frame.status, (counts.exists(frame.status) ? counts.get(frame.status) : 0) + 1);
 		}
-		final summary:Dynamic = {};
 		final statuses = [for (status in counts.keys()) status];
-		statuses.sort(Reflect.compare);
-		for (status in statuses) {
-			Reflect.setField(summary, status, counts.get(status));
-		}
+		statuses.sort(Content.compareText);
 		return {
 			schemaVersion: 1,
 			command: "trace browser",
 			packageIdentity: sourceIndex.packageIdentity,
 			frames: frames,
-			summary: summary
+			summary: [for (status in statuses) {status: status, count: counts.get(status)}]
 		};
 	}
 
-	public static function text(result:Dynamic):String {
+	public static function text(result:BrowserTraceResult):String {
 		final lines:Array<String> = [];
-		for (frame in cast(Reflect.field(result, "frames"), Array<Dynamic>)) {
+		for (frame in result.frames) {
 			lines.push(frame.native);
-			if (Reflect.hasField(frame, "frame")) {
+			if (frame.frame != null) {
 				var annotation = "  => " + frame.status;
-				if (Reflect.hasField(frame, "correlated")) {
-					final correlated:Dynamic = frame.correlated;
-					final source:Dynamic = correlated.source;
+				if (frame.correlated != null) {
+					final correlated = frame.correlated;
+					final source = correlated.source;
 					annotation += " " + source.rootId + ":" + source.path + ":" + source.line + ":" + source.column + " correlation="
 						+ correlated.correlationId;
 				}
@@ -91,7 +147,17 @@ class BrowserTraceEngine {
 		return lines.join("\n") + "\n";
 	}
 
-	function correlate(frame:ParsedBrowserFrame):Dynamic {
+	public static function json(result:BrowserTraceResult):JsonValue {
+		return object([
+			field("schemaVersion", number(result.schemaVersion)),
+			field("command", textValue(result.command)),
+			field("packageIdentity", packageJson(result.packageIdentity)),
+			field("frames", ArrayValue(result.frames.map(frameJson))),
+			field("summary", ObjectValue([for (entry in result.summary) field(entry.status, number(entry.count))]))
+		]);
+	}
+
+	function correlate(frame:ParsedBrowserFrame):BrowserTraceFrame {
 		if (!entriesByPath.exists(frame.path)) {
 			return parsedResult(frame, "unmapped-no-layer");
 		}
@@ -101,7 +167,7 @@ class BrowserTraceEngine {
 		if (first == null) {
 			return parsedResult(frame, "unmapped-no-layer");
 		}
-		final layers:Array<Dynamic> = [
+		final layers:Array<BrowserLayerPoint> = [
 			{
 				mapFileId: entry.first.mapFileId,
 				generatedFileId: entry.first.generatedFileId,
@@ -131,19 +197,28 @@ class BrowserTraceEngine {
 			status = "mapped-two-stage";
 		}
 		final source = sourceIndex.sourceBinding(point.sourceFileId);
-		final identity:Dynamic = source.record.sourceIdentity;
-		final result = parsedResult(frame, status);
-		Reflect.setField(result, "correlated", {
-			correlationId: entry.correlation.id,
-			source: {
-				rootId: identity.rootId,
-				path: identity.path,
-				line: point.line,
-				column: point.column
+		final identity = source.record.sourceIdentity;
+		Contract.require(identity != null, "mapped browser source lost its source identity");
+		return {
+			native: frame.raw,
+			status: status,
+			frame: {
+				url: frame.url,
+				path: frame.path,
+				line: frame.line,
+				column: frame.column
 			},
-			layers: layers
-		});
-		return result;
+			correlated: {
+				correlationId: entry.correlation.id,
+				source: {
+					rootId: identity.rootId,
+					path: identity.path,
+					line: point.line,
+					column: point.column
+				},
+				layers: layers
+			}
+		};
 	}
 
 	function parseFrame(raw:String):Null<ParsedBrowserFrame> {
@@ -169,10 +244,7 @@ class BrowserTraceEngine {
 		}
 		final url = URL_POSITION.matched(1);
 		final path = logicalUrlPath(url);
-		if (path == null) {
-			return null;
-		}
-		return {
+		return path == null ? null : {
 			raw: raw,
 			url: url,
 			path: path,
@@ -183,16 +255,16 @@ class BrowserTraceEngine {
 
 	function logicalUrlPath(value:String):Null<String> {
 		try {
-			final parsed:Dynamic = Syntax.code("new URL({0})", value);
+			final parsed:NodeUrl = Syntax.code("new URL({0})", value);
 			if ((parsed.protocol != "http:" && parsed.protocol != "https:") || parsed.username != "" || parsed.password != "") {
 				return null;
 			}
-			final decoded:String = cast Syntax.code("decodeURIComponent({0})", parsed.pathname);
+			final decoded:String = Syntax.code("decodeURIComponent({0})", parsed.pathname);
 			if (!StringTools.startsWith(decoded, "/") || StringTools.startsWith(decoded, "//")) {
 				return null;
 			}
 			return Content.safeRelativePath(decoded.substr(1), "browser frame URL path");
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			return null;
 		}
 	}
@@ -207,11 +279,16 @@ class BrowserTraceEngine {
 		}
 	}
 
-	function nativeOnly(raw:String):Dynamic {
-		return {native: raw, status: "native-unmapped"};
+	function nativeOnly(raw:String):BrowserTraceFrame {
+		return {
+			native: raw,
+			status: "native-unmapped",
+			frame: null,
+			correlated: null
+		};
 	}
 
-	function parsedResult(frame:ParsedBrowserFrame, status:String):Dynamic {
+	function parsedResult(frame:ParsedBrowserFrame, status:String):BrowserTraceFrame {
 		return {
 			native: frame.raw,
 			status: status,
@@ -220,7 +297,71 @@ class BrowserTraceEngine {
 				path: frame.path,
 				line: frame.line,
 				column: frame.column
-			}
+			},
+			correlated: null
 		};
+	}
+
+	static function frameJson(frame:BrowserTraceFrame):JsonValue {
+		final fields:Array<JsonField> = [
+			field("native", textValue(frame.native)),
+			field("status", textValue(frame.status))
+		];
+		if (frame.frame != null) {
+			fields.push(field("frame", object([
+				field("url", textValue(frame.frame.url)),
+				field("path", textValue(frame.frame.path)),
+				field("line", number(frame.frame.line)),
+				field("column", number(frame.frame.column))
+			])));
+		}
+		if (frame.correlated != null) {
+			final correlated = frame.correlated;
+			fields.push(field("correlated", object([
+				field("correlationId", textValue(correlated.correlationId)),
+				field("source", object([
+					field("rootId", textValue(correlated.source.rootId)),
+					field("path", textValue(correlated.source.path)),
+					field("line", number(correlated.source.line)),
+					field("column", number(correlated.source.column))
+				])),
+				field("layers", ArrayValue(correlated.layers.map(layerJson)))
+			])));
+		}
+		return object(fields);
+	}
+
+	static function layerJson(value:BrowserLayerPoint):JsonValue {
+		return object([
+			field("mapFileId", textValue(value.mapFileId)),
+			field("generatedFileId", textValue(value.generatedFileId)),
+			field("sourceFileId", textValue(value.sourceFileId)),
+			field("line", number(value.line)),
+			field("column", number(value.column))
+		]);
+	}
+
+	static function packageJson(value:SourcePackageIdentity):JsonValue {
+		return object([
+			field("id", textValue(value.id)),
+			field("version", textValue(value.version)),
+			field("profileId", textValue(value.profileId))
+		]);
+	}
+
+	static inline function field(name:String, value:JsonValue):JsonField {
+		return {name: name, value: value};
+	}
+
+	static inline function object(fields:Array<JsonField>):JsonValue {
+		return ObjectValue(fields);
+	}
+
+	static inline function textValue(value:String):JsonValue {
+		return StringValue(value);
+	}
+
+	static inline function number(value:Int):JsonValue {
+		return NumberValue(Std.string(value));
 	}
 }

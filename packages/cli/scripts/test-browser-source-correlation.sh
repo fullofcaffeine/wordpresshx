@@ -44,6 +44,7 @@ python3 "${repository_root}/scripts/docker/check-image-lock.py"
 haxelib run formatter --check \
   -s "${package_root}/src" \
   -s "${package_root}/test/browser-source-correlation/src"
+bash "${package_root}/scripts/check-trace-haxe.sh"
 
 lix_haxe_root="$(
   node -e '

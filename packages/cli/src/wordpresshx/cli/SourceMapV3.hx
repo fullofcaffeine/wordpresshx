@@ -1,6 +1,9 @@
 package wordpresshx.cli;
 
 import wordpresshx.cli.SourceIndex.SourceBinding;
+import wordpresshx.cli.SourceIndex.SourceCorrelationLayer;
+import wordpresshx.cli.SourceIndex.SourceFileRecord;
+import wordpresshx.cli.closedjson.JsonValue;
 
 typedef SourceMapPoint = {
 	final sourceFileId:String;
@@ -17,7 +20,7 @@ private typedef DecodedSegment = {
 	final nameIndex:Null<Int>;
 }
 
-/** Strict regular Source Map v3 reader and exact same-line point lookup. **/
+/** Strict regular Source Map v3 reader and exact same-line point lookup. */
 class SourceMapV3 {
 	static final BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -26,21 +29,20 @@ class SourceMapV3 {
 
 	final sourceIndex:SourceIndex;
 	final sourceFileIds:Array<String> = [];
-	final sourceRecords:Array<Dynamic> = [];
+	final sourceRecords:Array<SourceFileRecord> = [];
 	final sourceBindings:Array<Null<SourceBinding>> = [];
 	final sourceContents:Array<Null<String>> = [];
 	final names:Array<String> = [];
 	final lines:Array<Array<DecodedSegment>> = [];
 
-	public function new(index:SourceIndex, layer:Dynamic) {
+	public function new(index:SourceIndex, layer:SourceCorrelationLayer) {
 		sourceIndex = index;
 		mapFileId = layer.mapFileId;
 		generatedFileId = layer.generatedFileId;
 		final mapRecord = index.file(mapFileId);
 		final generatedRecord = index.file(generatedFileId);
 		final source = index.artifactContent(mapFileId, "Source Map v3 " + mapFileId);
-		final map = SourceIndex.parseJson(source, "Source Map v3 " + mapFileId);
-		validateShape(map, mapRecord, generatedRecord, cast layer.sourceFileIds);
+		validateShape(SourceIndex.parseJson(source, "Source Map v3 " + mapFileId), mapRecord, generatedRecord, layer.sourceFileIds);
 	}
 
 	public function lookup(generatedLine:Int, generatedColumn:Int):Null<SourceMapPoint> {
@@ -59,19 +61,20 @@ class SourceMapV3 {
 		if (selected == null || selected.sourceIndex == null) {
 			return null;
 		}
-		final mappedLine:Int = cast selected.originalLine;
-		final mappedColumn:Int = cast selected.originalColumn;
-		validateMappedPosition(sourceContents[cast selected.sourceIndex], mappedLine + 1, mappedColumn);
+		final selectedSource = requireIndex(selected.sourceIndex, "Source Map selected segment lost its source index");
+		final mappedLine = requireIndex(selected.originalLine, "Source Map selected segment lost its original line");
+		final mappedColumn = requireIndex(selected.originalColumn, "Source Map selected segment lost its original column");
+		validateMappedPosition(sourceContents[selectedSource], mappedLine + 1, mappedColumn);
 		return {
-			sourceFileId: sourceFileIds[cast selected.sourceIndex],
+			sourceFileId: sourceFileIds[selectedSource],
 			line: mappedLine + 1,
 			column: mappedColumn,
-			name: selected.nameIndex == null ? null : names[cast selected.nameIndex]
+			name: selected.nameIndex == null ? null : names[requireIndex(selected.nameIndex, "Source Map selected name index is invalid")]
 		};
 	}
 
-	function validateShape(map:Dynamic, mapRecord:Dynamic, generatedRecord:Dynamic, allowedSourceIds:Array<String>):Void {
-		final hasSourcesContent = Reflect.hasField(map, "sourcesContent");
+	function validateShape(map:JsonValue, mapRecord:SourceFileRecord, generatedRecord:SourceFileRecord, allowedSourceIds:Array<String>):Void {
+		final hasSourcesContent = Contract.has(map, "sourcesContent", "Source Map v3");
 		Contract.fields(map, hasSourcesContent ? [
 			"version",
 			"file",
@@ -85,24 +88,22 @@ class SourceMapV3 {
 		final file = Contract.string(map, "file", "Source Map v3");
 		Contract.require(file == basename(generatedRecord.path) && file.indexOf("/") < 0 && file.indexOf("\\") < 0,
 			"Source Map file does not identify its exact generated file");
-		final sourceRoot:Dynamic = Reflect.field(map, "sourceRoot");
-		Contract.require(Std.isOfType(sourceRoot, String) && sourceRoot == "", "Source Map sourceRoot must be empty");
+		Contract.require(Contract.text(map, "sourceRoot", "Source Map v3") == "", "Source Map sourceRoot must be empty");
 		validateNames(Contract.array(map, "names", "Source Map v3"));
 		validateSources(Contract.array(map, "sources", "Source Map v3"), allowedSourceIds, mapRecord.path);
 		validateSourcesContent(map, hasSourcesContent);
-		final mappings:Dynamic = Reflect.field(map, "mappings");
-		Contract.require(Std.isOfType(mappings, String) && mappings.length > 0, "Source Map mappings must be a non-empty string");
-		decodeMappings(cast mappings);
+		decodeMappings(Contract.string(map, "mappings", "Source Map v3"));
 	}
 
-	function validateNames(values:Array<Dynamic>):Void {
-		for (value in values) {
-			Contract.require(Std.isOfType(value, String) && value.length > 0 && !hasControl(value), "Source Map name must be a non-empty safe string");
+	function validateNames(values:Array<JsonValue>):Void {
+		for (index in 0...values.length) {
+			final value = Contract.stringValue(values[index], "Source Map name");
+			Contract.require(!hasControl(value), "Source Map name must be a non-empty safe string");
 			names.push(value);
 		}
 	}
 
-	function validateSources(values:Array<Dynamic>, allowedSourceIds:Array<String>, mapPath:String):Void {
+	function validateSources(values:Array<JsonValue>, allowedSourceIds:Array<String>, mapPath:String):Void {
 		Contract.require(values.length > 0
 			&& values.length == allowedSourceIds.length, "Source Map source inventory disagrees with its correlation layer");
 		final allowed:Map<String, Bool> = [];
@@ -112,9 +113,9 @@ class SourceMapV3 {
 			allowed.set(id, true);
 		}
 		final seen:Map<String, Bool> = [];
-		for (value in values) {
-			Contract.require(Std.isOfType(value, String), "Source Map source must be a string");
-			final logicalPath = resolveLogical(mapPath, value);
+		for (index in 0...values.length) {
+			final sourceReference = Contract.stringValue(values[index], "Source Map source");
+			final logicalPath = resolveLogical(mapPath, sourceReference);
 			Contract.require(sourceIndex.filesByPath.exists(logicalPath), "Source Map source is not an indexed logical file: " + logicalPath);
 			final record = sourceIndex.filesByPath.get(logicalPath);
 			Contract.require(allowed.exists(record.id), "Source Map source is outside its admitted layer");
@@ -135,7 +136,7 @@ class SourceMapV3 {
 		Contract.require([for (_ in seen.keys()) true].length == allowedSourceIds.length, "Source Map source binding is incomplete");
 	}
 
-	function validateSourcesContent(map:Dynamic, present:Bool):Void {
+	function validateSourcesContent(map:JsonValue, present:Bool):Void {
 		if (!present) {
 			return;
 		}
@@ -144,14 +145,15 @@ class SourceMapV3 {
 		final values = Contract.array(map, "sourcesContent", "Source Map v3");
 		Contract.require(values.length == sourceRecords.length, "Source Map sourcesContent length differs from sources");
 		for (index in 0...values.length) {
-			final value = values[index];
-			if (value == null) {
-				continue;
+			switch values[index] {
+				case NullValue:
+				case StringValue(content):
+					final record = sourceRecords[index];
+					Contract.require(record.distribution == "debug-companion", "embedded source content is not allowlisted for the debug companion");
+					SourceIndex.validateBoundFile(record, content, "Source Map embedded source " + record.id);
+				case _:
+					Contract.fail("Source Map embedded source content must be a string or null");
 			}
-			Contract.require(Std.isOfType(value, String), "Source Map embedded source content must be a string or null");
-			final record = sourceRecords[index];
-			Contract.require(record.distribution == "debug-companion", "embedded source content is not allowlisted for the debug companion");
-			SourceIndex.validateBoundFile(record, value, "Source Map embedded source " + record.id);
 		}
 	}
 
@@ -269,6 +271,13 @@ class SourceMapV3 {
 			}
 		}
 		return Content.safeRelativePath(parts.join("/"), "resolved Source Map source");
+	}
+
+	static function requireIndex(value:Null<Int>, message:String):Int {
+		if (value == null) {
+			return Contract.fail(message);
+		}
+		return value;
 	}
 
 	static function basename(value:String):String {

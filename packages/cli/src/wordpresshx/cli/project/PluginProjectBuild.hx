@@ -1,19 +1,19 @@
 package wordpresshx.cli.project;
 
 import wordpresshx.cli.CliEventStream;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.CliJson;
 
 /** Complete stages after Haxe has collected one typed plugin definition. */
 class PluginProjectBuild {
 	public static function finish(context:ProjectContext, plan:PluginPlan, events:CliEventStream, mode:String, buildId:String, publish:Bool, dryRun:Bool,
 			generation:Int):Null<ProjectBuildResult> {
-		final payload = () -> OwnershipJson.object(["mode" => mode, "buildId" => buildId]);
+		final payload = () -> CliJson.object(["mode" => CliJson.text(mode), "buildId" => CliJson.text(buildId)]);
 		events.stageStarted(ProjectBuild.STAGES[1], payload());
 		final emission = PluginEmitter.emit(context, plan);
-		events.stageCompleted(ProjectBuild.STAGES[1], OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"reason" => "structured public PHP bootstrap emitted from the typed plugin plan"
+		events.stageCompleted(ProjectBuild.STAGES[1], CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"reason" => CliJson.text("structured public PHP bootstrap emitted from the typed plugin plan")
 		]));
 		events.stageSkipped(ProjectBuild.STAGES[2], "plugin bootstrap declares no browser target", mode);
 		events.stageStarted(ProjectBuild.STAGES[3], payload());
@@ -21,23 +21,23 @@ class PluginProjectBuild {
 		events.stageCompleted(ProjectBuild.STAGES[3], payload());
 		events.stageStarted(ProjectBuild.STAGES[4], payload());
 		final quality = PluginPhpQuality.validate(context, emission);
-		events.stageCompleted(ProjectBuild.STAGES[4], OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"reason" => "pinned lint, formatter, WPCS, compatibility, PHPStan, symbol, and autoload gates passed",
-			"policySha256" => quality.policySha256,
-			"reportSha256" => quality.reportSha256
+		events.stageCompleted(ProjectBuild.STAGES[4], CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"reason" => CliJson.text("pinned lint, formatter, WPCS, compatibility, PHPStan, symbol, and autoload gates passed"),
+			"policySha256" => CliJson.text(quality.policySha256),
+			"reportSha256" => CliJson.text(quality.reportSha256)
 		]));
 		events.stageSkipped(ProjectBuild.STAGES[5], "plugin bootstrap declares no browser asset target", mode);
 		events.stageStarted(ProjectBuild.STAGES[6], payload());
 		assertInputsStable(context);
 		events.stageCompleted(ProjectBuild.STAGES[6], payload());
 		if (dryRun) {
-			events.emit("dry-run-planned", ProjectBuild.STAGES[6], "passed", OwnershipJson.object([
-				"mode" => "dry-run",
-				"buildId" => buildId,
-				"fingerprint" => context.fingerprint(),
-				"reason" => "complete plugin generation validated in memory; live tree unchanged"
+			events.emit("dry-run-planned", ProjectBuild.STAGES[6], "passed", CliJson.object([
+				"mode" => CliJson.text("dry-run"),
+				"buildId" => CliJson.text(buildId),
+				"fingerprint" => CliJson.text(context.fingerprint()),
+				"reason" => CliJson.text("complete plugin generation validated in memory; live tree unchanged")
 			]));
 			events.stageSkipped(ProjectBuild.STAGES[7], "dry-run has no publication authority", "dry-run");
 			return null;
@@ -48,13 +48,17 @@ class PluginProjectBuild {
 		}
 		events.stageStarted(ProjectBuild.STAGES[7], payload());
 		final publication = PluginBuildPublisher.publish(context, emission, quality);
-		events.stageCompleted(ProjectBuild.STAGES[7], OwnershipJson.object(["mode" => mode, "buildId" => buildId, "reason" => publication.outcome]));
-		events.emit("build-published", ProjectBuild.STAGES[7], "passed", OwnershipJson.object([
-			"mode" => mode,
-			"buildId" => buildId,
-			"fingerprint" => context.fingerprint(),
-			"generation" => generation,
-			"manifestDigest" => publication.manifestDigest
+		events.stageCompleted(ProjectBuild.STAGES[7], CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"reason" => CliJson.text(publication.outcome)
+		]));
+		events.emit("build-published", ProjectBuild.STAGES[7], "passed", CliJson.object([
+			"mode" => CliJson.text(mode),
+			"buildId" => CliJson.text(buildId),
+			"fingerprint" => CliJson.text(context.fingerprint()),
+			"generation" => CliJson.number(generation),
+			"manifestDigest" => CliJson.text(publication.manifestDigest)
 		]));
 		return publication;
 	}
