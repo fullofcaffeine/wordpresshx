@@ -4325,11 +4325,16 @@ assert set(sdk044_plugin_receipt["subject"]) == {
     "documentation",
 }
 verify_versioned_subject(sdk044_plugin_receipt)
-assert sdk044_plugin_receipt["subject"]["implementationManifest"][
-    "sha256"
-] == hashlib.sha256(
-    Path("manifests/plugin-development-implementation.json").read_bytes()
-).hexdigest()
+if sdk044_plugin_receipt["status"] == "implemented-hosted-pending":
+    assert sdk044_plugin_receipt["subject"]["implementationManifest"][
+        "sha256"
+    ] == hashlib.sha256(
+        Path("manifests/plugin-development-implementation.json").read_bytes()
+    ).hexdigest()
+else:
+    assert sdk044_plugin_receipt["historicalVerification"][
+        "subjectCommit"
+    ] == sdk044_plugin_receipt["evidenceCommit"]
 assert sdk044_plugin_receipt["verification"] == (
     sdk044_plugin_verification
 )
@@ -4618,11 +4623,16 @@ assert sdk045_receipt["bead"] == "wordpresshx-sdk-045.1"
 assert sdk045_receipt["status"] in {"implemented-hosted-pending", "verified"}
 
 verify_versioned_subject(sdk045_receipt)
-assert sdk045_receipt["subject"]["implementationManifest"]["sha256"] == (
-    hashlib.sha256(
+if sdk045_receipt["status"] == "implemented-hosted-pending":
+    assert sdk045_receipt["subject"]["implementationManifest"][
+        "sha256"
+    ] == hashlib.sha256(
         Path("manifests/scaffold-implementation.json").read_bytes()
     ).hexdigest()
-)
+else:
+    assert sdk045_receipt["historicalVerification"]["subjectCommit"] == (
+        sdk045_receipt["hostedWorkflow"]["commit"]
+    )
 assert sdk045_receipt["implementation"]["applicationLanguage"] == "Haxe"
 assert sdk045_receipt["implementation"]["javascriptCompiler"] == "Genes"
 assert sdk045_receipt["implementation"]["strictHaxeBoundary"] is True
@@ -5923,11 +5933,16 @@ assert set(sdk042_receipt["subject"]) == {
 }
 assert len(sdk042_receipt["subject"]["ownershipFixtures"]) == 3
 verify_versioned_subject(sdk042_receipt)
-assert sdk042_receipt["subject"]["architecture"]["sha256"] == (
-    hashlib.sha256(
-        Path("manifests/deterministic-build-implementation.json").read_bytes()
-    ).hexdigest()
-)
+if sdk042_receipt["status"] == "implemented-hosted-pending":
+    assert sdk042_receipt["subject"]["architecture"]["sha256"] == (
+        hashlib.sha256(
+            Path("manifests/deterministic-build-implementation.json").read_bytes()
+        ).hexdigest()
+    )
+else:
+    assert sdk042_receipt["historicalVerification"]["subjectCommit"] == (
+        sdk042_receipt["hostedWorkflow"]["commit"]
+    )
 
 sdk042_receipt_implementation = sdk042_receipt["implementation"]
 assert sdk042_receipt_implementation["applicationLanguage"] == "Haxe"
@@ -6017,7 +6032,7 @@ elif sdk042_hosted["status"] == "passed":
     assert sdk042_hosted["commit"] == (
         sdk042_receipt_implementation["implementationCommit"]
     )
-    assert sdk042_hosted["jobCount"] == 11
+    assert sdk042_hosted["jobCount"] == 13
     assert sdk042_hosted["allJobsPassed"] is True
     sdk042_evidence_level = "runtime-tested-hosted"
 else:

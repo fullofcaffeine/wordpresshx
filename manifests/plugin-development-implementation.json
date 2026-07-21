@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-044.3",
-  "status": "implemented-sdk044-plugin-development-hosted-pending",
+  "status": "implemented-sdk044-plugin-development-hosted-verified",
   "scope": "compiler-inferred-generated-plugin-wordpress-development",
   "haxeFirstErgonomics": {
     "maintainedAuthority": "WordPress.plugin()",
@@ -103,15 +103,15 @@
     "strictHaxeBoundaryGuard": "passed",
     "regressionCommand": "bash scripts/dev-loop/test-production.sh",
     "controlledServiceAndChromiumRegression": "passed",
-    "outcome": "passed-local"
+    "outcome": "passed-hosted"
   },
   "claims": {
-    "zeroAdditionalDeclarationPluginDevelopment": "runtime-tested-local",
-    "realWordPress70MariaDbDevelopment": "runtime-tested-local",
-    "activationBeforeReadiness": "runtime-tested-local",
-    "lastGoodPluginRetentionAndReload": "runtime-tested-local",
-    "completeOwnedResourceCleanup": "runtime-tested-local",
-    "explicitServicePlanPrecedence": "source-reviewed-and-explicit-plan-regression-local",
+    "zeroAdditionalDeclarationPluginDevelopment": "runtime-tested-hosted",
+    "realWordPress70MariaDbDevelopment": "runtime-tested-hosted",
+    "activationBeforeReadiness": "runtime-tested-hosted",
+    "lastGoodPluginRetentionAndReload": "runtime-tested-hosted",
+    "completeOwnedResourceCleanup": "runtime-tested-hosted",
+    "explicitServicePlanPrecedence": "source-reviewed-and-explicit-plan-regression-hosted",
     "nextjsDevelopmentService": "not-implemented",
     "completeGeneratedSiteDevelopment": "not-implemented",
     "publicPackagePublication": "blocked",

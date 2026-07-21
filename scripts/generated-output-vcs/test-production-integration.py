@@ -410,10 +410,6 @@ def validate_receipt_provenance(
             records.append(section)
     assert len(records) == 32
     assert len({record["path"] for record in records}) == len(records)
-    for record in records:
-        subject = ROOT / record["path"]
-        assert subject.is_file(), record["path"]
-        assert sha256(subject.read_bytes()) == record["sha256"], record["path"]
     historical_verification = receipt["historicalVerification"]
     assert historical_verification["algorithm"] == (
         "sha256-lines-of-sha256-two-spaces-path-lf-v1"
@@ -436,6 +432,12 @@ def validate_receipt_provenance(
         "cleanLocalTarballInstallation",
     )
     if receipt["status"] == "verified-local-pending-hosted":
+        for record in records:
+            subject = ROOT / record["path"]
+            assert subject.is_file(), record["path"]
+            assert sha256(subject.read_bytes()) == record["sha256"], record[
+                "path"
+            ]
         assert receipt["implementationCommit"] is None
         assert historical_verification["subjectCommit"] is None
         assert hosted == {

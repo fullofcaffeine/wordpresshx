@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "STRICT-HAXE-MIGRATION",
   "bead": "wordpresshx-sjb",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-21T11:55:09Z",
+  "status": "verified-hosted",
+  "observedAt": "2026-07-21T12:30:03Z",
   "directive": {
     "forbiddenTokens": [
       "Dynamic",
@@ -206,7 +206,7 @@
       "haxeFileCount": 18,
       "findingCount": 0,
       "gate": "bash scripts/profiles/test-profile-haxe.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "generic-php-compiler",
@@ -214,7 +214,7 @@
       "haxeFileCount": 34,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "wordpress-php-compiler",
@@ -222,7 +222,7 @@
       "haxeFileCount": 25,
       "findingCount": 0,
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "cli-trace-and-shared-json",
@@ -244,7 +244,7 @@
       "haxeFileCount": 12,
       "findingCount": 0,
       "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "cli-ownership-contract",
@@ -264,7 +264,7 @@
       "haxeFileCount": 10,
       "findingCount": 0,
       "gate": "bash packages/cli/scripts/check-ownership-haxe.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "cli-project-and-development",
@@ -273,7 +273,7 @@
       "haxeFileCount": 66,
       "findingCount": 0,
       "gate": "bash packages/cli/scripts/check-project-haxe.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     }
   ],
   "typedAdapters": [
@@ -282,7 +282,7 @@
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
       "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-local",
+      "outcome": "passed-hosted",
       "owningClosureComplete": true
     },
     {
@@ -290,7 +290,7 @@
       "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
       "genericBoundary": "wordpresshx.cli.closedjson.JsonValue",
       "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
-      "outcome": "passed-local",
+      "outcome": "passed-hosted",
       "owningClosureComplete": true
     }
   ],
@@ -298,12 +298,12 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "required": true,
-    "implementationCommit": null,
-    "runId": null,
-    "jobId": null,
-    "status": "pending-current-subject-run",
-    "allJobsPassed": false,
-    "completedAt": null
+    "implementationCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+    "runId": 29829506192,
+    "jobId": 88630562921,
+    "status": "passed",
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T12:30:03Z"
   },
   "previousHostedVerification": {
     "workflow": "Repository bootstrap",
@@ -316,15 +316,15 @@
     "completedAt": "2026-07-21T11:01:03Z"
   },
   "claims": {
-    "coreProfileContractStrict": "runtime-tested-local",
-    "genericPhpCompilerStrict": "runtime-tested-local",
-    "wordpressPhpCompilerStrict": "runtime-tested-local",
-    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
-    "cliTraceAndSharedJsonStrict": "runtime-tested-local",
-    "cliSourceCorrelationTypedAdapter": "runtime-tested-local",
-    "cliOwnershipContractStrict": "runtime-tested-local",
-    "cliProjectWorkflowStrict": "runtime-tested-local",
-    "repositoryWideStrictHaxe": "runtime-tested-local",
+    "coreProfileContractStrict": "runtime-tested-hosted",
+    "genericPhpCompilerStrict": "runtime-tested-hosted",
+    "wordpressPhpCompilerStrict": "runtime-tested-hosted",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-hosted",
+    "cliTraceAndSharedJsonStrict": "runtime-tested-hosted",
+    "cliSourceCorrelationTypedAdapter": "runtime-tested-hosted",
+    "cliOwnershipContractStrict": "runtime-tested-hosted",
+    "cliProjectWorkflowStrict": "runtime-tested-hosted",
+    "repositoryWideStrictHaxe": "runtime-tested-hosted",
     "productionSupport": "not-claimed"
   }
 }

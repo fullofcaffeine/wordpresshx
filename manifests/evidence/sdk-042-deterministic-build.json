@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-042-DETERMINISTIC-BUILD",
   "bead": "wordpresshx-sdk-042",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
@@ -81,12 +81,12 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
+    "subjectCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
     "subjectContentSha256": "56b9dc079e74a7b00d48be5406462bc30489b33957c284e4f770ada1dcacc046",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -126,18 +126,20 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test deterministic build and unsigned archive replay",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
-    "required": true
+    "runId": 29829506192,
+    "jobId": 88630562921,
+    "commit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+    "status": "passed",
+    "required": true,
+    "jobCount": 13,
+    "allJobsPassed": true
   },
   "claims": {
-    "sdk042DeterministicBuild": "runtime-tested-local",
-    "effectiveInputFingerprint": "runtime-tested-local",
-    "ownedGenerationDeterminism": "runtime-tested-local",
-    "unsignedArchiveDeterminism": "runtime-tested-local",
-    "actionableDifferenceReport": "runtime-tested-local",
+    "sdk042DeterministicBuild": "runtime-tested-hosted",
+    "effectiveInputFingerprint": "runtime-tested-hosted",
+    "ownedGenerationDeterminism": "runtime-tested-hosted",
+    "unsignedArchiveDeterminism": "runtime-tested-hosted",
+    "actionableDifferenceReport": "runtime-tested-hosted",
     "targetEmitterIntegration": "not-tested",
     "deployableWordPressPackage": "not-tested",
     "deployableNextjsPackage": "not-tested",
@@ -150,5 +152,5 @@
     "WordPress, Next.js, package installation, signing, and production deployment are not tested.",
     "Public package publication remains blocked."
   ],
-  "observedAt": "2026-07-21T11:58:50Z"
+  "observedAt": "2026-07-21T12:30:03Z"
 }

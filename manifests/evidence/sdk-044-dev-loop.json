@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-21T11:58:50Z",
-  "implementationCommit": null,
+  "status": "verified",
+  "observedAt": "2026-07-21T12:30:03Z",
+  "implementationCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
@@ -183,7 +183,7 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
+    "subjectCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
     "subjectContentSha256": "a75a1ac1d46460801dd6ba724ae94f74b573942992484d03a0d77f338783e141",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
@@ -267,10 +267,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29829506192,
+    "jobId": 88630562921,
+    "commit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+    "status": "passed",
     "required": true
   },
   "limitations": [
@@ -281,17 +281,17 @@
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-local",
-    "atomicIncrementalPublication": "runtime-tested-local",
-    "lastGoodRetention": "runtime-tested-local",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
-    "externalDevelopmentService": "controlled-process-runtime-tested-local",
-    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
+    "productionWphxDevCompileWatch": "runtime-tested-hosted",
+    "atomicIncrementalPublication": "runtime-tested-hosted",
+    "lastGoodRetention": "runtime-tested-hosted",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
+    "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
-    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",
