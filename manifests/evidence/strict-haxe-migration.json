@@ -56,7 +56,7 @@
     },
     {
       "path": "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
-      "sha256": "b4aaa3c4955531781c4c5a5707ce6feee5c62d23d87637df8a6c160753d617c1"
+      "sha256": "d274806fe5ae2ac89709f8568797723dee701044ec31cfe6ceeccd58f38cb833"
     },
     {
       "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx",

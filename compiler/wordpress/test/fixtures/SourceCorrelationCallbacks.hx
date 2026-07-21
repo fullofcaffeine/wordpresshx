@@ -1,14 +1,5 @@
 package fixtures.sourcecorrelation;
 
-private typedef SourceCorrelationAttribute = {
-	final name:String;
-	final value:String;
-}
-
-private class SourceCorrelationRestRequest {}
-private class SourceCorrelationRestResponse {}
-private class SourceCorrelationBlock {}
-
 /** Haxe-only application surface used to prove PHP failure correlation. **/
 class SourceCorrelationCallbacks {
 	public static function failHook():Void {
@@ -35,3 +26,12 @@ class SourceCorrelationCallbacks {
 		throw new haxe.Exception("private failure");
 	}
 }
+
+private typedef SourceCorrelationAttribute = {
+	final name:String;
+	final value:String;
+}
+
+private class SourceCorrelationRestRequest {}
+private class SourceCorrelationRestResponse {}
+private class SourceCorrelationBlock {}
