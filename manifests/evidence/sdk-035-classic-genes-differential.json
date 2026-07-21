@@ -50,7 +50,7 @@
       },
       {
         "path": "packages/gutenberg/test/expected/differential.json",
-        "sha256": "b4e6bdc24bb8bb4456c9da91d5f7deaaf3dc3879b87d7062521d48f976e2af55"
+        "sha256": "1d36b8c908b648a295382dd34f7dd022fbff3b82eb573e2653ada814242295c1"
       }
     ]
   },
@@ -220,14 +220,14 @@
       "unexplainedSemanticDifferenceCount": 0
     },
     "artifacts": {
-      "generatedTreeSha256": "33fe5430a23c837d7fea3aa9771abd099413e9a02a8a80d97e2a163d6bff3bf4",
+      "generatedTreeSha256": "0063a76bb3f4b5326cf201208bf8ddd0ed21122de71ed22fa19afef4b31f7438",
       "strictBundle": {
-        "bytes": 12294,
-        "sha256": "f0700b1584463fb1cb5b42f016b85ccb53ec67675d9a79c53f7da2f7c84470c2"
+        "bytes": 12249,
+        "sha256": "1c4fc43077710ebfc8f873f309fd715d0b54928761426901da40a26af1907f35"
       },
       "classicBundle": {
-        "bytes": 12364,
-        "sha256": "558b0b4f7cec15ebee0f9387fef4d5c34669caf4802e02c711d057730a1086a6"
+        "bytes": 12337,
+        "sha256": "1172921830a8867982107e9e3240f9f35b0421570c0217b4cf52e6cc712e8303"
       },
       "machineLocalPathLeaks": 0
     },
@@ -251,6 +251,22 @@
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29654043752",
     "allJobsPassed": true,
     "artifactHashesMatched": true
+  },
+  "correctiveVerification": {
+    "reason": "Regenerate the deterministic differential artifacts after the shared typed React state representation changed generated output without changing the public contract or runtime transcript.",
+    "observedAt": "2026-07-21T04:47:04Z",
+    "localGate": "passed",
+    "localGeneratedTreeSha256": "0063a76bb3f4b5326cf201208bf8ddd0ed21122de71ed22fa19afef4b31f7438",
+    "localStrictBundleSha256": "1c4fc43077710ebfc8f873f309fd715d0b54928761426901da40a26af1907f35",
+    "localClassicBundleSha256": "1172921830a8867982107e9e3240f9f35b0421570c0217b4cf52e6cc712e8303",
+    "runtimeTranscriptChanged": false,
+    "publicContractChanged": false,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "changeDecision": {
     "genesSourceChanged": false,
