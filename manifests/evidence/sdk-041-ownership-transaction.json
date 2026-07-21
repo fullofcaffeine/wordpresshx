@@ -38,7 +38,7 @@
     },
     "isolationScanner": {
       "path": "scripts/ownership/check-isolation.py",
-      "sha256": "ebfc9b047736ac6022cfb099400b69c5c01f669b20f4944a3d1f8e41ecff5d0f"
+      "sha256": "7793bf6cf1dfbb42fcb0eddce021d1c3b5e11543ce9b2fd8151987544ad96c75"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -100,7 +100,7 @@
     "productionClosureSourceCount": 8,
     "allowedNodeCapabilityCount": 5,
     "auditedProcessBoundaryCount": 1,
-    "forbiddenSelfTestCount": 31,
+    "forbiddenSelfTestCount": 39,
     "importAliasRegression": "passed",
     "transitiveWrapperRegression": "passed",
     "methodFalsePositiveRegression": "passed",

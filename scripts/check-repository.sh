@@ -3078,7 +3078,7 @@ assert sdk041_corrective["productionClosureAuthority"] == (
 assert sdk041_corrective["productionClosureSourceCount"] == 8
 assert sdk041_corrective["allowedNodeCapabilityCount"] == 5
 assert sdk041_corrective["auditedProcessBoundaryCount"] == 1
-assert sdk041_corrective["forbiddenSelfTestCount"] == 31
+assert sdk041_corrective["forbiddenSelfTestCount"] == 39
 for sdk041_corrective_regression in (
     "importAliasRegression",
     "transitiveWrapperRegression",

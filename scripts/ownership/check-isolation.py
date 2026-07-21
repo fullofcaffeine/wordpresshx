@@ -202,6 +202,14 @@ def scan_source(source_path: Path, source_root: Path) -> list[str]:
             re.compile(r"\bjs\.(?:Browser|html(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\b"),
         ),
         (
+            "ambient JavaScript capability",
+            re.compile(r"\bjs\.(?:Lib|Node|lib\.Function)\b"),
+        ),
+        (
+            "standard-library network capability",
+            re.compile(r"\b(?:haxe\.Http|sys\.Http|sys\.net(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\b"),
+        ),
+        (
             "browser network API",
             re.compile(
                 r"(?<![A-Za-z0-9_.])fetch\s*\("
@@ -261,6 +269,27 @@ def scan_source(source_path: Path, source_root: Path) -> list[str]:
 
     syntax_owners = {"js.Syntax"} | aliases_for(source_imports, "js.Syntax")
     allowed_syntax = ALLOWED_SYNTAX_CALLS.get(relative, set())
+    syntax_owner_alternatives = "|".join(
+        sorted(map(re.escape, syntax_owners), key=len, reverse=True)
+    )
+    syntax_member = re.compile(
+        rf"\b(?:{syntax_owner_alternatives})\.(?P<member>[A-Za-z_][A-Za-z0-9_]*)\b"
+    )
+    for match in syntax_member.finditer(masked):
+        if match.group("member") not in {"code", "plainCode"}:
+            violations.append(
+                f"{source_path}:{line_at(masked, match.start())}: "
+                f"forbidden raw JavaScript syntax API: {match.group(0)}"
+            )
+    for binding in source_imports:
+        if binding.path.startswith("js.Syntax.") and binding.path not in {
+            "js.Syntax.code",
+            "js.Syntax.plainCode",
+        }:
+            violations.append(
+                f"{source_path}:1: forbidden raw JavaScript syntax import: "
+                f"{binding.path}"
+            )
     for method in ("code", "plainCode"):
         pattern = member_pattern(syntax_owners, method)
         for match in pattern.finditer(masked):
@@ -285,6 +314,40 @@ def scan_source(source_path: Path, source_root: Path) -> list[str]:
                     f"{source_path}:{line_at(masked, match.start())}: "
                     f"forbidden raw JavaScript syntax escape: {method}({rendered})"
                 )
+
+    node_globals_aliases = aliases_for(
+        source_imports, "wordpresshx.cli.NodeGlobals"
+    )
+    node_globals_owners = {"wordpresshx.cli.NodeGlobals"} | node_globals_aliases
+    node_globals_calls = list(
+        member_pattern(node_globals_owners, "process").finditer(masked)
+    )
+    artifact_owner = Path("wordpresshx/cli/ownership/ArtifactOwner.hx")
+    if relative == artifact_owner:
+        exact_calls = list(
+            re.finditer(r"\bNodeGlobals\.process\s*\(\s*\)", masked)
+        )
+        process_value_references = list(re.finditer(r"\bnodeProcess\b", masked))
+        platform_references = list(
+            re.finditer(r"\bnodeProcess\.platform\b", masked)
+        )
+        if (
+            len(node_globals_calls) != 2
+            or len(exact_calls) != 2
+            or len(process_value_references) != 4
+            or len(platform_references) != 2
+        ):
+            violations.append(
+                f"{source_path}:1: audited Node process boundary changed; "
+                "expected two direct process reads, one local binding, one "
+                "version interpolation, and two platform reads"
+            )
+    else:
+        for match in node_globals_calls:
+            violations.append(
+                f"{source_path}:{line_at(masked, match.start())}: "
+                f"forbidden unaudited Node process boundary: {match.group(0)}"
+            )
 
     return violations
 
@@ -419,6 +482,14 @@ def self_test() -> int:
         'import js.Syntax; Syntax.code("process.exit(1)");',
         'import js.Syntax as Escape; Escape.plainCode("process.exit(1)");',
         'import js.Syntax.code as emit; emit("process.exit(1)");',
+        'import js.Syntax; Syntax.field({}, "process");',
+        'import js.Syntax.field as field; field({}, "process");',
+        'js.Lib.dynamicImport("node:child_process");',
+        'js.Node.global;',
+        'final request = new haxe.Http("https://example.invalid");',
+        'import sys.net.Socket;',
+        'import js.lib.Function;',
+        'import wordpresshx.cli.NodeGlobals; NodeGlobals.process().kill(1);',
         '@:jsRequire("node:http") extern class HttpModule {}',
         '@:native("process") extern class NativeProcess {}',
         'extern class LocalEscape {}',
