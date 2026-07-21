@@ -256,13 +256,13 @@
     "localScannedHaxeFileCount": 100,
     "localGeneratedTreeSha256": "5295b7b416f594a53f34f3b5cf6eab7e87adc4a6e11cf6adbe1700e767fde3b9",
     "localProductionBundleSha256": "fc5202ada37c97129e556698496530b11199eb3efb95c9e48790cf755d8ac44d",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "wordpressJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "91f2e5e7af041db50625fbf9d8f07e6a208f9b12",
+    "runId": 29804398703,
+    "haxeJobId": 88551889189,
+    "wordpressJobId": 88551889182,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:46:37Z"
   },
   "claims": {
     "strictEditSaveBoundary": "compile-and-generated-source-tested",

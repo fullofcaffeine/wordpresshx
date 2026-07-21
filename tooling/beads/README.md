@@ -37,3 +37,15 @@ bash scripts/beads/test-history-reader.sh
 
 The final command scans the real local history but compares the decoded live
 issue state before and after, failing if it changed.
+
+Hosted security also runs the cold builder-only contract:
+
+```bash
+bash scripts/beads/test-history-reader.sh --build-only
+```
+
+That mode does not require or inspect a live Beads database. It builds in a
+fresh cache, runs the pinned upstream regression, and requires stdout to contain
+exactly one executable path. The security-policy check selects this mode only
+for the hosted `security` job so other repository jobs do not repeat the costly
+cold Go build.

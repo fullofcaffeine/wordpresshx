@@ -94,12 +94,12 @@
     "localGate": "passed",
     "allowedNodeCapabilityCount": 5,
     "forbiddenSelfTestCount": 21,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "91f2e5e7af041db50625fbf9d8f07e6a208f9b12",
+    "runId": 29804398703,
+    "haxeJobId": 88551889189,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:46:37Z"
   },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",

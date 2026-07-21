@@ -82,7 +82,7 @@ fi
 
 python3 scripts/ci/check-checkout-action.py
 
-if [[ "${CI:-}" == "true" ]]; then
+if [[ "${CI:-}" == "true" && "${GITHUB_JOB:-}" == "security" ]]; then
   bash scripts/beads/test-history-reader.sh --build-only
 fi
 
