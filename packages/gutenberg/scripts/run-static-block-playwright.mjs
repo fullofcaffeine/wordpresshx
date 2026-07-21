@@ -23,6 +23,8 @@ page.on("pageerror", (error) => pageErrors.push(error.message));
 
 const expectedCurrent =
   '<!-- wp:wordpresshx/callout -->\n<aside class="wp-block-wordpresshx-callout wphx-callout"><span class="wphx-callout__label">SHIP READY</span><p class="wphx-callout__message">Typed editor round trip.</p></aside>\n<!-- /wp:wordpresshx/callout -->';
+const expectedLegacy =
+  '<!-- wp:wordpresshx/callout -->\n<div class="wp-block-wordpresshx-callout wphx-callout-legacy"><p class="wphx-callout__message">Legacy bytes.</p></div>\n<!-- /wp:wordpresshx/callout -->';
 const expectedMigrated =
   '<!-- wp:wordpresshx/callout -->\n<aside class="wp-block-wordpresshx-callout wphx-callout"><span class="wphx-callout__label">NOTE</span><p class="wphx-callout__message">Legacy bytes.</p></aside>\n<!-- /wp:wordpresshx/callout -->';
 
@@ -227,8 +229,26 @@ assert.equal(
   await legacyMessageInput.inputValue(),
   "Legacy bytes.",
 );
-assert.equal(await editedContent(), expectedMigrated);
+// Gutenberg migrates a valid deprecated block into current in-memory
+// attributes, but preserves the post's original bytes until an actual edit
+// makes the post dirty. Exercise the typed onChange boundary, restore the
+// migrated value, and then require current save bytes.
+assert.equal(await editedContent(), expectedLegacy);
 await assertNoRecoveryWarning();
+await legacyLabelInput.fill("MIGRATION CHECK");
+await page.waitForFunction(
+  () =>
+    window.wp.data.select("core/block-editor").getBlocks()[0]?.attributes
+      .label === "MIGRATION CHECK",
+);
+await legacyLabelInput.fill("NOTE");
+await page.waitForFunction(
+  () =>
+    window.wp.data.select("core/block-editor").getBlocks()[0]?.attributes
+      .label === "NOTE" &&
+    window.wp.data.select("core/editor").isEditedPostDirty(),
+);
+assert.equal(await editedContent(), expectedMigrated);
 await savePost();
 assert.equal(await persistedContent(legacyPostId), expectedMigrated);
 
