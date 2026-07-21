@@ -3,7 +3,7 @@
   "receiptId": "SDK-063-EDITOR-PLUGIN-SLOTFILL",
   "bead": "wordpresshx-sdk-063",
   "status": "verified",
-  "observedAt": "2026-07-21T03:29:58Z",
+  "observedAt": "2026-07-21T05:03:08Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -140,7 +140,7 @@
     "translationsExtractedFromHaxe": true,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5"
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc"
   },
   "exactProfileVerification": {
     "publicPackages": [
@@ -165,11 +165,11 @@
     "outcome": "passed"
   },
   "compilation": {
-    "generatedTreeSha256": "311e6527f1bdaa9ec6b84d768588fd59b9cb383f4f6bdfd7eb5824a34ce2665e",
-    "developmentBundleSha256": "bec71ed6bdfea15d92c4ed99d985dd6c5fbb6cb3b60f82a795874ced4df00b31",
-    "productionBundleSha256": "9d09332fb1a1d0bbd9b23779ff3b2d1885a2f94a86bc23032f3c4f8b211cb3a2",
-    "productionVersion": "47d41252f6acf5bb9e72",
-    "assetPlanSha256": "15c74fc96184b0a1e175fa7378a6977b25feca6e255ddff49119d0bffe51d5bf",
+    "generatedTreeSha256": "916231c68eb4a335254308667d8a5a06ff6ebbf1c4d5b05742a6950db141a7ca",
+    "developmentBundleSha256": "cbdd656f8f90659c497a5eb82d4f3e8d925b3dd635c580a16b8cd1ae18eaf82c",
+    "productionBundleSha256": "039e6d14ab70f2afe9334e70c71e2deeb18535caacea49b3506e1dc9c9c530e9",
+    "productionVersion": "d2e243905db435269902",
+    "assetPlanSha256": "40e9bcf1ef4fc662fb33090f302938294e62b007bda4f610cd0d359ec2c16f58",
     "dependencies": [
       "react-jsx-runtime",
       "wp-components",
@@ -247,17 +247,17 @@
     "step": "Prove the typed editor plugin and SlotFill on WordPress 7.0",
     "required": true,
     "status": "passed",
-    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
-    "runId": 29798179019,
-    "jobId": 88533738433,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29798179019",
-    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29798179019/job/88533738433",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "jobId": 88545733904,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29802354848",
+    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29802354848/job/88545733904",
     "jobCount": 13,
-    "generatedTreeSha256": "311e6527f1bdaa9ec6b84d768588fd59b9cb383f4f6bdfd7eb5824a34ce2665e",
-    "productionBundleSha256": "9d09332fb1a1d0bbd9b23779ff3b2d1885a2f94a86bc23032f3c4f8b211cb3a2",
+    "generatedTreeSha256": "916231c68eb4a335254308667d8a5a06ff6ebbf1c4d5b05742a6950db141a7ca",
+    "productionBundleSha256": "039e6d14ab70f2afe9334e70c71e2deeb18535caacea49b3506e1dc9c9c530e9",
     "allJobsPassed": true,
     "artifactHashesMatched": true,
-    "completedAt": "2026-07-21T03:29:58Z"
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -272,13 +272,13 @@
     "localGate": "passed",
     "localGeneratedTreeSha256": "916231c68eb4a335254308667d8a5a06ff6ebbf1c4d5b05742a6950db141a7ca",
     "localProductionBundleSha256": "039e6d14ab70f2afe9334e70c71e2deeb18535caacea49b3506e1dc9c9c530e9",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "wordpressJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "haxeJobId": 88545733938,
+    "wordpressJobId": 88545733904,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "claims": {
     "typedEditorPluginRegistration": "compile-and-runtime-tested",

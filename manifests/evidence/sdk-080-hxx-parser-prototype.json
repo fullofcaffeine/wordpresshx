@@ -284,12 +284,12 @@
     "reason": "Replace macro casts, Reflect comparison, and the untyped open-spread negative fixture with typed snapshot constructors, deterministic comparison, and a generic open boundary.",
     "observedAt": "2026-07-21T04:23:12Z",
     "localGate": "passed",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "haxeJobId": 88545733938,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "knownLimitations": [
     "The serialized semantic snapshot is evidence-only; it is not a runtime node model or supported public renderer.",

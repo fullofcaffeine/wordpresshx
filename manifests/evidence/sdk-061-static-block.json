@@ -3,7 +3,7 @@
   "receiptId": "SDK-061-STATIC-BLOCK",
   "bead": "wordpresshx-sdk-061",
   "status": "verified",
-  "observedAt": "2026-07-21T03:29:58Z",
+  "observedAt": "2026-07-21T05:03:08Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -146,11 +146,11 @@
     "companionApplicationJavaScriptOrTypeScriptAuthored": false,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5"
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc"
   },
   "compilation": {
     "blockName": "wordpresshx/callout",
-    "generatedTreeSha256": "011076d274503fcce4b8b0f75da2ca730ce84e9f1f348bfedad7be9db07208af",
+    "generatedTreeSha256": "5295b7b416f594a53f34f3b5cf6eab7e87adc4a6e11cf6adbe1700e767fde3b9",
     "browserPlanSha256": "20839a02230f323b203f625f77271f7ebbddb7f07ea69bbc7da65a590887f45b",
     "blockMetadataSha256": "5fa4895d87fc50ab69e86859d66deb82011435d84f38f5d858e3aa9e256b6d1b",
     "pluginTreeSha256": "145a0da960b7cf3c08c88b56667a32264cc8e33141059b5d2990b9d920c616d5",
@@ -228,19 +228,19 @@
     "workflow": "Repository bootstrap",
     "required": true,
     "status": "passed",
-    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
-    "runId": 29798179019,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29798179019",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29802354848",
     "haxeJob": "haxe",
     "haxeStep": "Test typed static block generation and native serialization",
-    "haxeJobId": 88533738394,
+    "haxeJobId": 88545733938,
     "wordpressJob": "wordpress-runtime",
     "wordpressStep": "Prove typed static block serialization and migration on WordPress 7.0",
-    "wordpressJobId": 88533738433,
+    "wordpressJobId": 88545733904,
     "jobCount": 13,
     "allJobsPassed": true,
     "artifactHashesMatched": true,
-    "completedAt": "2026-07-21T03:29:58Z"
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -255,13 +255,13 @@
     "localGate": "passed",
     "localGeneratedTreeSha256": "5295b7b416f594a53f34f3b5cf6eab7e87adc4a6e11cf6adbe1700e767fde3b9",
     "localProductionBundleSha256": "fc5202ada37c97129e556698496530b11199eb3efb95c9e48790cf755d8ac44d",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "wordpressJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "haxeJobId": 88545733938,
+    "wordpressJobId": 88545733904,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "claims": {
     "strictEditSaveBoundary": "compile-and-generated-source-tested",

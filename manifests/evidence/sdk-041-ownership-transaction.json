@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-21T03:29:58Z",
+  "observedAt": "2026-07-21T05:03:08Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
@@ -73,9 +73,9 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "runId": 29798179019,
-    "jobId": 88533738394,
-    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
+    "runId": 29802354848,
+    "jobId": 88545733938,
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
     "status": "passed",
     "required": true
   },
@@ -92,12 +92,12 @@
     "reason": "Cover the typed hxnodejs js.node.ChildProcess spelling and self-test every prohibited network/process spelling.",
     "observedAt": "2026-07-21T04:23:12Z",
     "localGate": "passed",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "haxeJobId": 88545733938,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",

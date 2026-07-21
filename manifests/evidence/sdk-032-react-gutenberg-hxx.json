@@ -378,12 +378,12 @@
     "reason": "Remove weak Haxe types across the complete HXX/Gutenberg compilation closure and make the closure-wide guard part of the base gate.",
     "observedAt": "2026-07-21T04:23:12Z",
     "localGate": "passed",
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": null,
-    "completedAt": null
+    "status": "passed",
+    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
+    "runId": 29802354848,
+    "haxeJobId": 88545733938,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T05:03:08Z"
   },
   "claims": {
     "directReturnMarkupErgonomics": "compile-tested",
