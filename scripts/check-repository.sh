@@ -503,6 +503,7 @@ required_files=(
   scripts/generated-output-vcs/test-production-integration.py
   scripts/generated-output-vcs/test-policy.py
   scripts/ownership/test-adr-contract.sh
+  scripts/ownership/check-isolation.py
   scripts/ownership/test-contract.py
   scripts/ownership/test-production.py
   scripts/ownership/test.sh
@@ -2992,6 +2993,7 @@ assert set(sdk041_receipt["subject"]) == {
     "compileProfile",
     "productionCorpus",
     "gate",
+    "isolationScanner",
     "manifestSchema",
     "journalSchema",
 }
@@ -3068,6 +3070,38 @@ assert sdk041_receipt["discardedHostedAttempts"] == [
         ),
     }
 ]
+sdk041_corrective = sdk041_receipt["correctiveVerification"]
+assert sdk041_corrective["localGate"] == "passed"
+assert sdk041_corrective["productionClosureAuthority"] == (
+    "haxe-dump-dependencies"
+)
+assert sdk041_corrective["productionClosureSourceCount"] == 8
+assert sdk041_corrective["allowedNodeCapabilityCount"] == 5
+assert sdk041_corrective["auditedProcessBoundaryCount"] == 1
+assert sdk041_corrective["forbiddenSelfTestCount"] == 31
+for sdk041_corrective_regression in (
+    "importAliasRegression",
+    "transitiveWrapperRegression",
+    "methodFalsePositiveRegression",
+):
+    assert sdk041_corrective[sdk041_corrective_regression] == "passed"
+if sdk041_corrective["status"] == "pending-corrective-hosted-verification":
+    assert sdk041_corrective["commit"] is None
+    assert sdk041_corrective["runId"] is None
+    assert sdk041_corrective["haxeJobId"] is None
+    assert sdk041_corrective["allJobsPassed"] is False
+    assert sdk041_corrective["completedAt"] is None
+elif sdk041_corrective["status"] == "passed":
+    assert sha1.fullmatch(sdk041_corrective["commit"])
+    assert isinstance(sdk041_corrective["runId"], int)
+    assert isinstance(sdk041_corrective["haxeJobId"], int)
+    assert sdk041_corrective["allJobsPassed"] is True
+    assert re.fullmatch(
+        r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z",
+        sdk041_corrective["completedAt"],
+    )
+else:
+    raise AssertionError("SDK-041 corrective hosted status is invalid")
 for sdk041_proven_claim in (
     "sdk041ArtifactOwner",
     "processFailureAtomicity",

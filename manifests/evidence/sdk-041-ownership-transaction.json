@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-21T05:03:08Z",
+  "observedAt": "2026-07-21T06:22:05Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
@@ -34,7 +34,11 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "d7e5ccf86dee2bb35e374bc40e9c2c26481ab7553aa762e719991f843aed5ff6"
+      "sha256": "5bd66ddd6f9109ff42a6c1aedd6c805c8167fde9fc9a968881aecb76e736f596"
+    },
+    "isolationScanner": {
+      "path": "scripts/ownership/check-isolation.py",
+      "sha256": "ebfc9b047736ac6022cfb099400b69c5c01f669b20f4944a3d1f8e41ecff5d0f"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -89,17 +93,23 @@
     }
   ],
   "correctiveVerification": {
-    "reason": "Replace the network/process denylist with a fail-closed Node-capability allowlist and reject raw process, require, syntax, metadata, extern, and browser-network escapes after fresh review found nested hxnodejs bypasses.",
-    "observedAt": "2026-07-21T05:28:13Z",
+    "reason": "Replace the source-folder lexical scan after fresh review proved that imported aliases and a transitive local wrapper bypassed it. The corrected gate scans Haxe's compiler-emitted production dependency closure and resolves imported capability aliases.",
+    "observedAt": "2026-07-21T06:22:05Z",
     "localGate": "passed",
+    "productionClosureAuthority": "haxe-dump-dependencies",
+    "productionClosureSourceCount": 8,
     "allowedNodeCapabilityCount": 5,
-    "forbiddenSelfTestCount": 21,
-    "status": "passed",
-    "commit": "91f2e5e7af041db50625fbf9d8f07e6a208f9b12",
-    "runId": 29804398703,
-    "haxeJobId": 88551889189,
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T05:46:37Z"
+    "auditedProcessBoundaryCount": 1,
+    "forbiddenSelfTestCount": 31,
+    "importAliasRegression": "passed",
+    "transitiveWrapperRegression": "passed",
+    "methodFalsePositiveRegression": "passed",
+    "status": "pending-corrective-hosted-verification",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": false,
+    "completedAt": null
   },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",
