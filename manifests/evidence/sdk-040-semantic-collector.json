@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
   "bead": "wordpresshx-sdk-040",
-  "observedAt": "2026-07-21T03:14:05Z",
+  "observedAt": "2026-07-21T03:29:58Z",
   "subject": {
     "architecture": {
       "path": "manifests/semantic-collector-architecture.json",
@@ -129,10 +129,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "semantic-plan",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29798179019,
+    "jobId": 88533738393,
+    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
+    "status": "passed",
     "required": true
   },
   "limitations": [

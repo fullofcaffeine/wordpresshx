@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-061-STATIC-BLOCK",
   "bead": "wordpresshx-sdk-061",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-21T00:32:20Z",
+  "status": "verified",
+  "observedAt": "2026-07-21T03:29:58Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -134,7 +134,7 @@
     "companionApplicationJavaScriptOrTypeScriptAuthored": false,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": null
+    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5"
   },
   "compilation": {
     "blockName": "wordpresshx/callout",
@@ -195,40 +195,40 @@
     "strictTypeScript": "passed",
     "phpOracleSyntax": "passed",
     "forbiddenHaxeWeakConstructs": "none",
-    "realWordPressRuntime": "pending-hosted-clean-runner",
-    "localDockerDiagnostic": "docker info did not return within the bounded 10-second probe; the exact local Node 22.17.0 fallback passed compiler and native serialization checks, while corrected fail-closed weak-type scanning and real WordPress proof remain hosted"
+    "realWordPressRuntime": "passed-hosted-clean-runner",
+    "localDockerDiagnostic": "the exact local Docker compiler and native serialization gate passed with the fail-closed weak-type guard; real WordPress proof passed on the hosted clean runner"
   },
   "realWordPressRuntime": {
     "check": "wordpresshx-sdk061-real-static-block-v1",
-    "outcome": "pending-hosted-clean-runner",
+    "outcome": "passed",
     "wordpressVersion": "7.0",
-    "pluginActivated": null,
-    "insertEditSaveReload": null,
-    "undoRedo": null,
-    "currentFrontend": null,
-    "legacyMigrated": null,
-    "migrationFrontend": null,
-    "recoveryWarnings": null,
-    "consoleErrors": null,
-    "pageErrors": null
+    "pluginActivated": true,
+    "insertEditSaveReload": true,
+    "undoRedo": true,
+    "currentFrontend": true,
+    "legacyMigrated": true,
+    "migrationFrontend": true,
+    "recoveryWarnings": 0,
+    "consoleErrors": 0,
+    "pageErrors": 0
   },
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "url": null,
+    "status": "passed",
+    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
+    "runId": 29798179019,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29798179019",
     "haxeJob": "haxe",
     "haxeStep": "Test typed static block generation and native serialization",
-    "haxeJobId": null,
+    "haxeJobId": 88533738394,
     "wordpressJob": "wordpress-runtime",
     "wordpressStep": "Prove typed static block serialization and migration on WordPress 7.0",
-    "wordpressJobId": null,
-    "jobCount": null,
-    "allJobsPassed": null,
-    "artifactHashesMatched": null,
-    "completedAt": null
+    "wordpressJobId": 88533738433,
+    "jobCount": 13,
+    "allJobsPassed": true,
+    "artifactHashesMatched": true,
+    "completedAt": "2026-07-21T03:29:58Z"
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -243,9 +243,9 @@
     "deterministicSavedMarkup": "native-package-tested",
     "explicitDefaultMissingNullSemantics": "compile-and-native-package-tested",
     "immutableDeprecationMigration": "native-package-tested",
-    "realWordPressInsertEditSaveReload": "hosted-pending",
-    "realWordPressFrontend": "hosted-pending",
-    "noValidationRecoveryPrompt": "hosted-pending",
+    "realWordPressInsertEditSaveReload": "real-wordpress-tested",
+    "realWordPressFrontend": "real-wordpress-tested",
+    "noValidationRecoveryPrompt": "real-wordpress-tested",
     "dynamicBlockRendering": "not-tested-owned-by-sdk-062",
     "richerBlockFeatures": "not-tested-owned-by-sdk-065",
     "productionSupport": "not-tested"

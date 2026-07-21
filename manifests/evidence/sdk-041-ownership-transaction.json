@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-21T02:55:27Z",
+  "observedAt": "2026-07-21T03:29:58Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
@@ -73,10 +73,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 29798179019,
+    "jobId": 88533738394,
+    "commit": "c2cbc90a78fc384c96429452fed45d0dbdec16a5",
+    "status": "passed",
     "required": true
   },
   "discardedHostedAttempts": [
@@ -89,10 +89,10 @@
     }
   ],
   "claims": {
-    "sdk041ArtifactOwner": "runtime-tested-local",
-    "processFailureAtomicity": "runtime-tested-local",
-    "processCrashConsistency": "runtime-tested-local",
-    "cleanAndAdopt": "runtime-tested-local",
+    "sdk041ArtifactOwner": "runtime-tested-hosted",
+    "processFailureAtomicity": "runtime-tested-hosted",
+    "processCrashConsistency": "runtime-tested-hosted",
+    "cleanAndAdopt": "runtime-tested-hosted",
     "powerLossDurability": "not-tested",
     "windowsFilesystem": "not-tested",
     "networkFilesystem": "not-tested",
