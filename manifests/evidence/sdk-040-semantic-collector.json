@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
   "bead": "wordpresshx-sdk-040",
-  "observedAt": "2026-07-19T03:14:47Z",
+  "observedAt": "2026-07-21T03:14:05Z",
   "subject": {
     "architecture": {
       "path": "manifests/semantic-collector-architecture.json",
@@ -26,7 +26,11 @@
     },
     "gate": {
       "path": "scripts/semantic-collector/test.sh",
-      "sha256": "a41516aca0b3c0576ace7b37c929e3a677e48140686d14c6a2c89db362259ed9"
+      "sha256": "335ce364bafd4e66d7048f79080adde5f14aedbf11a5b8ad482b5f38c60f1e76"
+    },
+    "weakTypeGuard": {
+      "path": "scripts/lint/haxe-weak-type-guard.py",
+      "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
     },
     "configFixture": {
       "path": "fixtures/semantic-collector/config.json",
@@ -125,10 +129,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "semantic-plan",
-    "runId": 29685883258,
-    "jobId": 88189926812,
-    "commit": "cde457fcb2f89fee17c69560c4f82c57f20d9bfe",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
     "required": true
   },
   "limitations": [

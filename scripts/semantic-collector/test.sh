@@ -4,6 +4,13 @@ set -euo pipefail
 repository_root="$(git rev-parse --show-toplevel)"
 cd "${repository_root}"
 
+for command_name in grep python3; do
+  if ! command -v "${command_name}" >/dev/null 2>&1; then
+    echo "semantic collector gate requires ${command_name}" >&2
+    exit 1
+  fi
+done
+
 unset REQUIRED_PUBLIC_VALUE SITE_LOCALE
 
 test_root="$(mktemp -d)"
@@ -125,19 +132,34 @@ run_negative unlocked_external_service WPHX4188
 run_negative unadmitted_external_component WPHX4189
 run_negative service_cycle WPHX4203
 
-if rg -n '(sys\.net|haxe\.Http|curl|wget|Socket)' packages/build/src; then
-  echo "semantic collector source contains a network-capable dependency" >&2
-  exit 1
-fi
+assert_no_pattern() {
+  local description="$1"
+  local pattern="$2"
+  shift 2
+  if grep -R -n -E "${pattern}" "$@"; then
+    echo "${description}" >&2
+    return 1
+  else
+    local scan_status="$?"
+    if [[ "${scan_status}" -ne 1 ]]; then
+      echo "${description}: scanner failed with status ${scan_status}" >&2
+      return 1
+    fi
+  fi
+}
 
-if rg -n '\b(Dynamic|Any|cast|Reflect|untyped)\b' packages/build/src --glob '*.hx'; then
-  echo "build package contains a prohibited untyped Haxe construct" >&2
-  exit 1
-fi
+assert_no_pattern \
+  "semantic collector source contains a network-capable dependency" \
+  '(sys\.net|haxe\.Http|curl|wget|Socket)' \
+  packages/build/src
 
-if rg -n '(wordpress[._]hx[._]build|SemanticCollector|ModuleDeclaration|HookDeclaration|BuildInputDeclaration)' "${test_root}/direct-a/runtime.js"; then
-  echo "semantic collector leaked into runtime JavaScript" >&2
-  exit 1
-fi
+python3 scripts/lint/haxe-weak-type-guard.py --self-test
+python3 scripts/lint/haxe-weak-type-guard.py packages/build/src
 
+assert_no_pattern \
+  "semantic collector leaked into runtime JavaScript" \
+  '(wordpress[._]hx[._]build|SemanticCollector|ModuleDeclaration|HookDeclaration|BuildInputDeclaration)' \
+  "${test_root}/direct-a/runtime.js"
+
+echo "semantic collector source and runtime isolation scans passed"
 echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":18,\"outcome\":\"passed\",\"serverBuildCount\":2}"
