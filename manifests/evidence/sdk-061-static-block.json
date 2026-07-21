@@ -62,9 +62,21 @@
       "path": "scripts/lint/haxe-weak-type-guard.py",
       "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
     },
+    "sharedHxxParserAdapter": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
+      "sha256": "d7acb8aba7878feee09ade23bef1030f176b44f2ac6d96632e0bd6f93f7cb19c"
+    },
+    "browserHxxLowerer": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
+      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
+    },
+    "reactTypes": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx",
+      "sha256": "18d8739434921852ad4293569eb124a724fc547aa228e7b8d8e40e6ec7c86376"
+    },
     "gate": {
       "path": "packages/gutenberg/scripts/test-static-block.sh",
-      "sha256": "d949df628a1339ac13753e2bb0e7d9e6fa0c2ca435927e399562bf817c86aa5d"
+      "sha256": "beb6c398f032d4388521d7014b19ad945e59a71ea146483b2abd10f56d563c16"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-static-block-lane.sh",
@@ -236,6 +248,20 @@
     "siblingGenesBuildInput": false,
     "reflaxePhpSourceChanged": false,
     "reason": "The exact released Genes compiler already emits the required strict TSX. SDK-061 adds only WordPress-owned Haxe contracts, generation, and evidence; dynamic PHP rendering remains SDK-062."
+  },
+  "correctiveVerification": {
+    "reason": "Expand the weak-type scan from selected block files to the full HXX/Gutenberg compilation closure and replace every discovered weak construct with typed equivalents.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "localGeneratedTreeSha256": "5295b7b416f594a53f34f3b5cf6eab7e87adc4a6e11cf6adbe1700e767fde3b9",
+    "localProductionBundleSha256": "fc5202ada37c97129e556698496530b11199eb3efb95c9e48790cf755d8ac44d",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "wordpressJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "strictEditSaveBoundary": "compile-and-generated-source-tested",

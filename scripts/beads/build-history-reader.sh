@@ -77,7 +77,7 @@ echo "[beads-history-reader] Running the upstream embedded-Dolt NULL-history reg
   BEADS_TEST_EMBEDDED_DOLT=1 \
     CGO_ENABLED="${cgo_enabled}" \
     GOTOOLCHAIN=auto \
-    go test -tags "${build_tags}" "${test_package}" -run "^${test_name}$" -count=1
+    go test -tags "${build_tags}" "${test_package}" -run "^${test_name}$" -count=1 >&2
   CGO_ENABLED="${cgo_enabled}" \
     GOTOOLCHAIN=auto \
     go build -tags "${build_tags}" -ldflags "-X main.Build=${fix_commit:0:12}" -o "${temporary_root}/bd" ./cmd/bd

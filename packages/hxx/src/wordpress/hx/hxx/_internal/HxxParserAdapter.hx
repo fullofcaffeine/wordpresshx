@@ -91,9 +91,9 @@ class HxxParserAdapter {
 
 		return switch target {
 			case Server:
-				macro @:pos(markup.pos) (cast $v{snapshot} : wordpress.hx.hxx.prototype.ServerSnapshot);
+				macro @:pos(markup.pos) wordpress.hx.hxx.prototype.ServerSnapshot.fromSerialized($v{snapshot});
 			case Browser:
-				macro @:pos(markup.pos) (cast $v{snapshot} : wordpress.hx.hxx.prototype.BrowserSnapshot);
+				macro @:pos(markup.pos) wordpress.hx.hxx.prototype.BrowserSnapshot.fromSerialized($v{snapshot});
 		}
 	}
 
@@ -398,7 +398,7 @@ private class SnapshotBuilder {
 						Context.error('WPXHXX1104 attribute spread on <$owner> must be a closed structural type', expression.pos);
 				}
 				final fields = anonymous.fields.copy();
-				fields.sort((left, right) -> Reflect.compare(left.name, right.name));
+				fields.sort((left, right) -> compareText(left.name, right.name));
 				fields;
 			default:
 				Context.error('WPXHXX1103 attribute spread on <$owner> must be a closed structural type, found ${typeName(actualType)}', expression.pos);
@@ -465,7 +465,7 @@ private class SnapshotBuilder {
 			}
 		}
 		Context.error('WPXHXX1105 unknown prop $name on <$owner>', position);
-		return cast null;
+		throw new haxe.Exception("unreachable after Context.error");
 	}
 
 	private static function requireNoExplicitDuplicate(explicit:Map<String, Bool>, name:String, owner:String, position:Position):Void {
@@ -478,6 +478,10 @@ private class SnapshotBuilder {
 		if (spread.exists(name)) {
 			Context.warning('WPXHXX1107 explicit prop $name overrides a spread value on <$owner>', position);
 		}
+	}
+
+	private static function compareText(left:String, right:String):Int {
+		return left == right ? 0 : left < right ? -1 : 1;
 	}
 
 	private static function componentContract(name:String):Null<ComponentContract> {

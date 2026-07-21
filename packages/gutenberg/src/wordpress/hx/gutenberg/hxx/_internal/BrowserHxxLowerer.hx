@@ -128,12 +128,12 @@ class BrowserHxxLowerer {
 	private function lowerComponent(node:HxxSyntaxNode):Expr {
 		final tag = try {
 			Context.parse(node.name.value, node.name.pos);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			Context.error('WPX3207: unknown browser HXX component <${node.name.value}>.', node.name.pos);
 		}
 		final tagType = try {
 			Context.typeof(tag);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			Context.error('WPX3207: unknown browser HXX component <${node.name.value}>.', node.name.pos);
 		}
 		final component = BrowserHxxProfile.component(profile, node.name.value);
@@ -314,7 +314,7 @@ class BrowserHxxLowerer {
 	private function propsFromType(path:String, position:Position):Array<PropContract> {
 		final type = try {
 			Context.getType(path);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			Context.error('WPX3223: browser HXX props type ${path} is unavailable.', position);
 		}
 		return propsFromTypeValue(type, path, position);
@@ -336,7 +336,7 @@ class BrowserHxxLowerer {
 					pos: field.pos
 				}
 		];
-		output.sort((left, right) -> Reflect.compare(left.name, right.name));
+		output.sort((left, right) -> compareText(left.name, right.name));
 		return output;
 	}
 
@@ -349,13 +349,13 @@ class BrowserHxxLowerer {
 	}
 
 	private function jsx(tag:Expr, props:Array<Expr>, children:Array<Expr>, position:Position):Expr {
-		final propArray = dynamicArray(props, position);
-		final childArray = dynamicArray(children, position);
+		final propArray = expressionArray(props, position);
+		final childArray = expressionArray(children, position);
 		return at(macro genes.react.internal.Jsx.__jsx($tag, $propArray, $childArray), position);
 	}
 
 	private function fragment(children:Array<Expr>, position:Position):Expr {
-		final childArray = dynamicArray(children, position);
+		final childArray = expressionArray(children, position);
 		return at(macro genes.react.internal.Jsx.__frag($childArray), position);
 	}
 
@@ -478,9 +478,12 @@ class BrowserHxxLowerer {
 		return expression;
 	}
 
-	private static function dynamicArray(items:Array<Expr>, position:Position):Expr {
-		final values:Expr = {expr: EArrayDecl(items), pos: position};
-		return {expr: ECheckType(values, macro :Array<Dynamic>), pos: position};
+	private static function compareText(left:String, right:String):Int {
+		return left == right ? 0 : left < right ? -1 : 1;
+	}
+
+	private static function expressionArray(items:Array<Expr>, position:Position):Expr {
+		return {expr: EArrayDecl(items), pos: position};
 	}
 }
 #end

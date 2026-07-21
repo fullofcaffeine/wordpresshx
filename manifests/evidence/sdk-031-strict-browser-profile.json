@@ -13,7 +13,7 @@
     },
     "exportDirective": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx",
-      "sha256": "33c290d38082be4415edde8e544099e95fe666d8a8e6868ae162cf5153d42d31"
+      "sha256": "79d81ad14230c7ae941c06e216cd4f09f88b80d9ac72271c75c52cd1d535ef82"
     },
     "expectedArtifacts": {
       "path": "packages/gutenberg/test/expected/browser-profile.json",
@@ -269,6 +269,17 @@
         "reason": "the gate invoked setup-haxe instead of the Lix shim after scoped dependencies were downloaded; all other hosted jobs passed"
       }
     ]
+  },
+  "correctiveVerification": {
+    "reason": "Replace Reflect.compare in the browser export directive while preserving the admitted compiler boundary.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "immutableCompilerAdmission": "verified",

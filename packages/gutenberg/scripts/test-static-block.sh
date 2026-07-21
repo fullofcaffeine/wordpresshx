@@ -115,7 +115,8 @@ haxelib run formatter --check \
 weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
 python3 "${weak_type_guard}" --self-test
 python3 "${weak_type_guard}" \
-  "${package_root}/src/wordpress/hx/gutenberg/block" \
+  "${repository_root}/packages/hxx/src" \
+  "${package_root}/src" \
   "${package_root}/test/static-block-fixture/src" \
   "${package_root}/test-negative-static-block"
 

@@ -4,7 +4,7 @@ import wordpress.hx.gutenberg.components.Button;
 class Main {
 	public static function main():Void {}
 
-	public static function view(attributes:Dynamic):BrowserNode {
+	public static function view<Attributes>(attributes:Attributes):BrowserNode {
 		return <Button {...attributes}>Unsafe spread</Button>;
 	}
 }

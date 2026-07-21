@@ -1,20 +1,35 @@
 package wordpress.hx.gutenberg.react;
 
 import genes.ts.Unknown;
+import haxe.extern.EitherType;
 import wordpress.hx.gutenberg.browser.BrowserNode;
+
+@:genes.compilerInternal
+@:genes.semanticOnly
+private typedef ReactNodeScalar = EitherType<BrowserNode, EitherType<String, EitherType<Float, Bool>>>;
+
+@:genes.compilerInternal
+@:genes.semanticOnly
+private abstract ReactNodeList(Array<ReactNode>) from Array<ReactNode> {}
+
+@:genes.compilerInternal
+@:genes.semanticOnly
+private typedef ReactNodeValue = EitherType<ReactNodeScalar, ReactNodeList>;
 
 /** Canonical React child boundary retained in generated TypeScript. */
 @:ts.type("import('react').ReactNode")
-abstract ReactNode(Dynamic) from String from Int from Float from Bool from BrowserNode to Dynamic {
+@:genes.jsxNode
+abstract ReactNode(ReactNodeValue) from String from Float from Bool from BrowserNode from ReactNodeList {
 	@:from
 	public static inline function fromChildren(value:Array<ReactNode>):ReactNode {
-		return cast value;
+		final children:ReactNodeList = value;
+		return children;
 	}
 }
 
 /** React reconciliation identity retained as the canonical string/number union. */
 @:ts.type("import('react').Key")
-abstract ReactKey(Dynamic) from String from Int to Dynamic {}
+abstract ReactKey(EitherType<String, Int>) from String from Int {}
 
 /** React synthetic mouse event with its concrete DOM target preserved. */
 @:ts.type("import('react').MouseEvent<$0>")
@@ -44,22 +59,25 @@ extern class ReactContext<T> {}
 @:ts.type("import('react').DependencyList")
 typedef HookDependencies = Array<Unknown>;
 
-/**
- * Typed view over the tuple returned by React's `useState`.
- *
- * The dynamic storage is erased by the canonical TypeScript tuple projection;
- * callers only see `value` and the typed setter.
- */
+@:genes.compilerInternal
+private typedef StateStorage<T> = {
+	@:native("[0]")
+	var current:T;
+
+	@:native("[1]")
+	var replace:T->Void;
+}
+
+/** Typed view over the tuple returned by React's `useState`. */
 @:ts.type("[ $0, import('react').Dispatch<import('react').SetStateAction<$0>> ]")
-abstract State<T>(Array<Dynamic>) {
+abstract State<T>(StateStorage<T>) {
 	public var value(get, never):T;
 
 	private inline function get_value():T {
-		return cast this[0];
+		return this.current;
 	}
 
 	public inline function set(next:T):Void {
-		final setter:T->Void = cast this[1];
-		setter(next);
+		this.replace(next);
 	}
 }

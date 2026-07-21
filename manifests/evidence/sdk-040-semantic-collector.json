@@ -137,7 +137,7 @@
   },
   "limitations": [
     "The implemented breadth is module, hook, resource, public-build-environment, and typed local-development-service collection.",
-    "The collector writes intermediate build artifacts only; SDK-041 has not yet proven fail-closed target publication.",
+    "The collector writes intermediate build artifacts only; fail-closed target publication is outside SDK-040 and is owned and evidenced separately by SDK-041.",
     "SDK-040 only declares and collects the typed service plan; SDK-044 separately owns process supervision, the Haxe-derived WordPress provider, collision-safe ports, readiness, and post-publication reload requests.",
     "Next.js is not coupled to the core collector; any future integration must register through an optional package and its own evidence.",
     "No production emitter, packaged consumer, WordPress runtime, Next.js runtime, Windows watcher, or production-support claim is made."

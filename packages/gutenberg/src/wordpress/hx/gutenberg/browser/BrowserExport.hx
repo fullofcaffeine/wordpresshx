@@ -35,7 +35,7 @@ class BrowserExport {
 		}
 
 		final capabilityRefs = profileCapabilityRefs.copy();
-		capabilityRefs.sort(Reflect.compare);
+		capabilityRefs.sort(compareText);
 		for (index in 0...capabilityRefs.length) {
 			final capabilityId = capabilityRefs[index];
 			if (!CAPABILITY_ID.match(capabilityId)) {
@@ -104,7 +104,7 @@ class BrowserExport {
 			Context.error("WPX3106: genes.library requires wordpress_hx_browser_export_manifest.", Context.currentPos());
 		}
 
-		entries.sort((left, right) -> Reflect.compare(left.stableExportId, right.stableExportId));
+		entries.sort((left, right) -> compareText(left.stableExportId, right.stableExportId));
 		final parent = Path.directory(outputPath);
 		if (parent.length > 0 && !FileSystem.exists(parent)) {
 			FileSystem.createDirectory(parent);
@@ -116,6 +116,10 @@ class BrowserExport {
 			entries: entries
 		};
 		File.saveContent(outputPath, Json.stringify(payload, null, "  ") + "\n");
+	}
+
+	private static function compareText(left:String, right:String):Int {
+		return left == right ? 0 : left < right ? -1 : 1;
 	}
 	#end
 }

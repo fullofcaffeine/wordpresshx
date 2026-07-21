@@ -43,6 +43,14 @@ python3 "${package_root}/scripts/verify-hxx-profile.py"
     -s "${repository_root}/packages/hxx/src"
 )
 
+weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
+python3 "${weak_type_guard}" --self-test
+python3 "${weak_type_guard}" \
+  "${repository_root}/packages/hxx/src" \
+  "${package_root}/src" \
+  "${package_root}/test/hxx-fixture/src" \
+  "${package_root}/test-negative-hxx"
+
 temporary_parent="${package_root}/.sdk032-tmp"
 mkdir -p "${temporary_parent}"
 build_root="$(mktemp -d "${temporary_parent}/wordpresshx-sdk032-build.XXXXXX")"

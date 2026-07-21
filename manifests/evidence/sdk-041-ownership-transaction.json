@@ -34,7 +34,7 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "e6a4c63c15e2736d5b77a78cff96dcc6eb12b637e8e2ab5c4943d6897d7f261c"
+      "sha256": "b50c22a27cff36a1a9a8a1313e471bbad786f4528142f04837cd0672fb278f30"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -88,6 +88,17 @@
       "failure": "locked Node container wrote root-owned mode-0600 evidence files; the generalized harness now runs the runtime as the invoking POSIX uid:gid"
     }
   ],
+  "correctiveVerification": {
+    "reason": "Cover the typed hxnodejs js.node.ChildProcess spelling and self-test every prohibited network/process spelling.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
+  },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",
     "processFailureAtomicity": "runtime-tested-hosted",

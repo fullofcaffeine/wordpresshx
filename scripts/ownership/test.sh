@@ -72,11 +72,23 @@ node_image="docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc
 docker run --rm --network none "${node_image}" node --version | grep -Fx 'v22.17.0' >/dev/null
 python3 scripts/ownership/test-production.py "${evidence_root}/runtime"
 
-isolation_pattern='js\.node\.(Dns|Http|Https|Net|Tls)|child_process|(^|[^[:alnum:]_])fetch([^[:alnum:]_]|$)|XMLHttpRequest|WebSocket'
-if ! printf '%s\n' 'import js.node.Http;' | grep -E "${isolation_pattern}" >/dev/null; then
-  echo "SDK-041 production owner isolation scan failed its forbidden-input self-test" >&2
-  exit 1
-fi
+isolation_pattern='js\.node\.(ChildProcess|Dns|Http|Https|Net|Tls)|child_process|(^|[^[:alnum:]_])fetch([^[:alnum:]_]|$)|XMLHttpRequest|WebSocket'
+for forbidden_input in \
+  'import js.node.ChildProcess;' \
+  'import js.node.Dns;' \
+  'import js.node.Http;' \
+  'import js.node.Https;' \
+  'import js.node.Net;' \
+  'import js.node.Tls;' \
+  'require("child_process")' \
+  'fetch("https://example.invalid")' \
+  'new XMLHttpRequest()' \
+  'new WebSocket("wss://example.invalid")'; do
+  if ! printf '%s\n' "${forbidden_input}" | grep -E "${isolation_pattern}" >/dev/null; then
+    echo "SDK-041 production owner isolation scan missed forbidden self-test input: ${forbidden_input}" >&2
+    exit 1
+  fi
+done
 if printf '%s\n' 'final fetcher = new LocalFetcher();' | grep -E "${isolation_pattern}" >/dev/null; then
   echo "SDK-041 production owner isolation scan failed its allowed-input self-test" >&2
   exit 1

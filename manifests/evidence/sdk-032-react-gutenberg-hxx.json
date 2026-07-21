@@ -17,7 +17,7 @@
     },
     "lowerer": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
-      "sha256": "d9144c7e1cdc5f167b77f0195f3947e90f0f98444a994d5a967cc1aade9e9f32"
+      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
     },
     "profileResolver": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx",
@@ -25,7 +25,15 @@
     },
     "parserAdapter": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
-      "sha256": "079e2cb49bf311dcf8383e6b7117675a529b68698443dafbacd50970d67d15c0"
+      "sha256": "d7acb8aba7878feee09ade23bef1030f176b44f2ac6d96632e0bd6f93f7cb19c"
+    },
+    "reactTypes": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx",
+      "sha256": "18d8739434921852ad4293569eb124a724fc547aa228e7b8d8e40e6ec7c86376"
+    },
+    "openSpreadNegative": {
+      "path": "packages/gutenberg/test-negative-hxx/open_spread/Main.hx",
+      "sha256": "1a4886f2012698e997ee754b6927235e1544d583c954cc6bcbeb144faa1e7a09"
     },
     "neutralSyntax": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxSyntax.hx",
@@ -168,19 +176,23 @@
       },
       "gateScript": {
         "path": "packages/gutenberg/scripts/test-hxx.sh",
-        "sha256": "c513348bf2841e761fafb00a894a93ad3241f425ca132293fddc6fcd31e1b334"
+        "sha256": "7adef7920c550622b397ea743aea894cd5ca1334fd1516c464727f068f6a92c7"
+      },
+      "weakTypeGuard": {
+        "path": "scripts/lint/haxe-weak-type-guard.py",
+        "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
       }
     },
     "generatedArtifacts": {
-      "treeSha256": "ae53b1e699bb52c58432383c7c170697420e1681ae19521535516a26f8670373",
-      "mainTsxSha256": "11a8cbc1f6817dbc70b5e952e9dcf2bb6742f67081203692d4d564e585b4981c",
+      "treeSha256": "90e82b00c33e55b94648aca11cd71aff43fc0ba2082d644b66266ba4108b9e69",
+      "mainTsxSha256": "c59ca3bec2957365f920c1c5d05ebcc884f8d1d42e5ba2ef74bdc8b7f52bba9a",
       "runtimeBundle": {
-        "bytes": 1428876,
-        "sha256": "c4b9bcecdc68332540e2562efc998e0c9aa9c1a6e7595b5950614bee458f8ef8"
+        "bytes": 1428790,
+        "sha256": "b765b24f3dbcb3d6ca79c44484403b6aae0ce96a62fe44daf8e5ece98b2c2f38"
       },
       "visualJavascript": {
-        "bytes": 617227,
-        "sha256": "8405985795fe71d60400e45a8e2b6b4ab1896357769a54c0c72c999fdfbd1a47"
+        "bytes": 617141,
+        "sha256": "2c492db9c2e80d72197b9d7787c63d380fa5df55d578233d526af8dbaec695ce"
       },
       "visualCss": {
         "bytes": 118036,
@@ -301,6 +313,16 @@
       "blob": "fa2f0cc700bc33bd8afe217e50db1073692fd1ee",
       "use": "positioned AST construction and explicit-return loop mapper pattern"
     },
+    "nextJsHxWorkingTree": {
+      "observedBaseCommit": "8c2468364c823231bef4b85b0cd7c1f9da36a67f",
+      "checkoutState": "user-owned modified and untracked files; read only and excluded from build inputs",
+      "files": {
+        "src/nextjs/raw/react/ReactNode.hx": "22aecd8f198c0f005f20505e303ece8102354fd062a4eb60bc21e5af6e46b7c6",
+        "src/nextjs/raw/types/Tuple2.hx": "cbaac2548a4bf95c602edc8006ae63c17f7f40f1d9b4c064659a2f3fdf1caf38",
+        "src/nextjs/client/State.hx": "55d86fdfc670be27f06c0cf6f03134036cd388cb976c00c9a64e126baa7439e8"
+      },
+      "use": "typed-union and native-index storage concepts only"
+    },
     "copiedBytes": false,
     "buildInput": false
   },
@@ -351,6 +373,17 @@
     "tinkHxxForkCreated": false,
     "wordpressSpecificCompilerBranch": false,
     "reason": "the admitted public parser and released Genes marker contract support the bounded typed surface without a generic compiler change"
+  },
+  "correctiveVerification": {
+    "reason": "Remove weak Haxe types across the complete HXX/Gutenberg compilation closure and make the closure-wide guard part of the base gate.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "directReturnMarkupErgonomics": "compile-tested",

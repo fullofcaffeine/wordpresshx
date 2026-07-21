@@ -97,12 +97,8 @@ fi
 weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
 python3 "${weak_type_guard}" --self-test
 python3 "${weak_type_guard}" \
-  "${package_root}/src/wordpress/hx/gutenberg/editor" \
-  "${package_root}/src/wordpress/hx/gutenberg/components/PanelBody.hx" \
-  "${package_root}/src/wordpress/hx/gutenberg/components/PanelBodyProps.hx" \
-  "${package_root}/src/wordpress/hx/gutenberg/components/ToggleControl.hx" \
-  "${package_root}/src/wordpress/hx/gutenberg/components/ToggleControlProps.hx" \
-  "${package_root}/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx" \
+  "${repository_root}/packages/hxx/src" \
+  "${package_root}/src" \
   "${package_root}/test/editor-plugin-fixture/src" \
   "${package_root}/test-negative-editor"
 

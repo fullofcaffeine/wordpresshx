@@ -12,7 +12,15 @@
     },
     "adapter": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
-      "sha256": "079e2cb49bf311dcf8383e6b7117675a529b68698443dafbacd50970d67d15c0"
+      "sha256": "d7acb8aba7878feee09ade23bef1030f176b44f2ac6d96632e0bd6f93f7cb19c"
+    },
+    "serverSnapshotType": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/prototype/ServerSnapshot.hx",
+      "sha256": "e00edb9a471ec7a16929dc32198bf4820c8e049d369cfa489c5cafafe2a5aa39"
+    },
+    "browserSnapshotType": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/prototype/BrowserSnapshot.hx",
+      "sha256": "1b85a32664385144b4047081ed723b0458e86d2acb5db6ab86cbf03014496c76"
     },
     "neutralSyntax": {
       "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxSyntax.hx",
@@ -271,6 +279,17 @@
     "publicTinkTypesAdded": false,
     "sdk080SnapshotsChanged": false,
     "sdk080GateReplayed": "passed"
+  },
+  "correctiveVerification": {
+    "reason": "Replace macro casts, Reflect comparison, and the untyped open-spread negative fixture with typed snapshot constructors, deterministic comparison, and a generic open boundary.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "knownLimitations": [
     "The serialized semantic snapshot is evidence-only; it is not a runtime node model or supported public renderer.",

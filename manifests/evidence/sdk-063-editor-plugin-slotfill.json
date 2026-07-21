@@ -50,9 +50,21 @@
       "path": "scripts/lint/haxe-weak-type-guard.py",
       "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
     },
+    "sharedHxxParserAdapter": {
+      "path": "packages/hxx/src/wordpress/hx/hxx/_internal/HxxParserAdapter.hx",
+      "sha256": "d7acb8aba7878feee09ade23bef1030f176b44f2ac6d96632e0bd6f93f7cb19c"
+    },
+    "browserHxxLowerer": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
+      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
+    },
+    "reactTypes": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx",
+      "sha256": "18d8739434921852ad4293569eb124a724fc547aa228e7b8d8e40e6ec7c86376"
+    },
     "gate": {
       "path": "packages/gutenberg/scripts/test-editor-plugin.sh",
-      "sha256": "9d2e1b1ee93d0c37d6ac7504821218054b9f1cede184486689087376511dc987"
+      "sha256": "69789bd8abff4b4e03fb26ec4131761faab87a7139c11367eb5f3f2b55db7552"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-editor-lane.sh",
@@ -253,6 +265,20 @@
     "wordpressSpecificGenesBranch": false,
     "siblingGenesBuildInput": false,
     "reason": "Released Genes 1.36.3 already emits the typed HXX and exact WordPress imports needed by the bounded editor extension."
+  },
+  "correctiveVerification": {
+    "reason": "Expand the weak-type scan from selected editor files to the full HXX/Gutenberg compilation closure and replace every discovered weak construct with typed equivalents.",
+    "observedAt": "2026-07-21T04:23:12Z",
+    "localGate": "passed",
+    "localGeneratedTreeSha256": "916231c68eb4a335254308667d8a5a06ff6ebbf1c4d5b05742a6950db141a7ca",
+    "localProductionBundleSha256": "039e6d14ab70f2afe9334e70c71e2deeb18535caacea49b3506e1dc9c9c530e9",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "wordpressJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "typedEditorPluginRegistration": "compile-and-runtime-tested",
