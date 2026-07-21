@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-043-PROJECT-CLI",
   "bead": "wordpresshx-sdk-043",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-21T10:35:55Z",
+  "status": "verified",
+  "observedAt": "2026-07-21T11:01:04Z",
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
@@ -132,12 +132,12 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": null,
+    "subjectCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
     "subjectContentSha256": "929980d38c217276aaaf59b25632c75e8023cdf9be8e248cd28b89938930d1c3",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -242,10 +242,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production project CLI foundation",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-main-run",
+    "runId": 29823692811,
+    "jobId": 88612005313,
+    "commit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
+    "status": "passed",
     "required": true
   },
   "limitations": [
@@ -255,7 +255,7 @@
     "The package remains private and publication is blocked."
   ],
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-local",
+    "sdk043ProjectCli": "runtime-tested-hosted",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

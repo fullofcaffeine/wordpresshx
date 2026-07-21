@@ -3597,11 +3597,17 @@ assert sdk043_receipt["status"] in {
 }
 
 verify_versioned_subject(sdk043_receipt)
-assert sdk043_receipt["subject"]["architecture"]["sha256"] == (
-    hashlib.sha256(
-        Path("manifests/project-cli-implementation.json").read_bytes()
-    ).hexdigest()
-)
+sdk043_current_architecture_sha256 = hashlib.sha256(
+    Path("manifests/project-cli-implementation.json").read_bytes()
+).hexdigest()
+if sdk043_receipt["status"] == "implemented-hosted-pending":
+    assert sdk043_receipt["subject"]["architecture"]["sha256"] == (
+        sdk043_current_architecture_sha256
+    )
+else:
+    assert sdk043_receipt["historicalVerification"]["subjectCommit"] == (
+        sdk043_receipt["hostedWorkflow"]["commit"]
+    )
 assert sdk043_receipt["implementation"]["binary"] == "wphx"
 assert sdk043_receipt["implementation"]["legacyTraceBinary"] == "wphx-sdk"
 assert sdk043_receipt["implementation"]["genesSourceChanged"] is False
@@ -3981,11 +3987,17 @@ assert sdk044_receipt["bead"] == "wordpresshx-sdk-044"
 assert sdk044_receipt["status"] in {"implemented-hosted-pending", "verified"}
 
 verify_versioned_subject(sdk044_receipt)
-assert sdk044_receipt["subject"]["implementationManifest"]["sha256"] == (
-    hashlib.sha256(
-        Path("manifests/dev-loop-implementation.json").read_bytes()
-    ).hexdigest()
-)
+sdk044_current_implementation_sha256 = hashlib.sha256(
+    Path("manifests/dev-loop-implementation.json").read_bytes()
+).hexdigest()
+if sdk044_receipt["status"] == "implemented-hosted-pending":
+    assert sdk044_receipt["subject"]["implementationManifest"]["sha256"] == (
+        sdk044_current_implementation_sha256
+    )
+else:
+    assert sdk044_receipt["historicalVerification"]["subjectCommit"] == (
+        sdk044_receipt["hostedWorkflow"]["commit"]
+    )
 assert sdk044_receipt["verification"] == {
     "command": "bash scripts/dev-loop/test-production.sh",
     "outcome": "passed",

@@ -3,7 +3,7 @@
   "receiptId": "SDK-045-3-GENERATED-OUTPUT-VCS",
   "bead": "wordpresshx-sdk-045.3",
   "status": "verified-local-pending-hosted",
-  "observedAt": "2026-07-21T10:35:55Z",
+  "observedAt": "2026-07-21T11:03:29Z",
   "implementationCommit": null,
   "subject": {
     "digestAlgorithm": "sha256-file-bytes-v1",
@@ -133,7 +133,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "50857bb1b2aeed9c564a5aa719110a62a4637329b0a98038fd85712932321852"
+      "sha256": "f1615fa64c18651e69ee5af64defae6cf941aed965bc5f26e9a50fe1e724ee55"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -153,7 +153,7 @@
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
     "subjectCommit": null,
-    "subjectContentSha256": "1c3bccea326c78e32b872a091cef173f3aa26d2f591d950992e43ffc590169fc",
+    "subjectContentSha256": "70966604f5c7bb48db62abf359285f7c5f63257d786718b1a4e237319abe4330",
     "depthOneFallback": "self-contained-subject-inventory-plus-full-history-security-job"
   },
   "contract": {
@@ -249,13 +249,13 @@
   },
   "supersededStrictHaxeMigrationWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": 29820264347,
+    "runId": 29823692811,
     "job": "haxe",
-    "jobId": 88600999236,
+    "jobId": 88612005313,
     "step": "Test Haxe-first site scaffolding",
-    "commit": "31c506a0a3789e84fdcda32f6fc71cf6018629c6",
-    "status": "passed-before-cli-trace-strict-haxe-extension",
-    "reason": "The strict Haxe migration extended the content-bound repository validator to the CLI trace and shared JSON closure after this exact run; current receipt subjects require a fresh hosted run."
+    "commit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
+    "status": "passed-before-hosted-status-promotion-validator",
+    "reason": "The content-bound repository validator learned to distinguish implementation subjects from status-only evidence promotion after this exact run; current receipt subjects require a fresh hosted run."
   },
   "supersededHostedWorkflow": {
     "workflow": "Repository bootstrap",

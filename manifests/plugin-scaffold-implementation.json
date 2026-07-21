@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-045.2",
-  "status": "implemented-sdk045-plugin-hosted-pending",
+  "status": "implemented-sdk045-plugin-hosted-verified",
   "scope": "haxe-first-native-plugin-scaffold",
   "contract": {
     "command": "wphx new plugin <name>",
@@ -154,12 +154,12 @@
     "strictHaxeBoundaryGuard": "passed"
   },
   "claims": {
-    "haxeOnlyPluginScaffold": "runtime-tested-local",
-    "derivedPluginMetadata": "compile-tested-local",
-    "nativePhpEmission": "runtime-tested-local",
-    "deterministicPluginPackaging": "runtime-tested-local",
-    "compileWatchReuse": "runtime-tested-local",
-    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-local",
+    "haxeOnlyPluginScaffold": "runtime-tested-hosted",
+    "derivedPluginMetadata": "compile-tested-hosted",
+    "nativePhpEmission": "runtime-tested-hosted",
+    "deterministicPluginPackaging": "runtime-tested-hosted",
+    "compileWatchReuse": "runtime-tested-hosted",
+    "wordpress70DiscoveryActivationAndRequest": "runtime-tested-hosted",
     "typedHooksBeyondBootstrap": "not-implemented",
     "publicPackageInstallation": "blocked",
     "productionSupport": "not-tested"
