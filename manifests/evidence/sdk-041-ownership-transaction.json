@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-18T22:17:24Z",
+  "observedAt": "2026-07-21T02:55:27Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
@@ -34,7 +34,7 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "d13128d03481e3e49e3b0f7082e3a6821b0ef59d8f6fbb3d7bb14de811507834"
+      "sha256": "e6a4c63c15e2736d5b77a78cff96dcc6eb12b637e8e2ab5c4943d6897d7f261c"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -73,10 +73,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "runId": 29663047090,
-    "jobId": 88128812752,
-    "commit": "0c9653ed823989f79c35ed0ee2254b03d4f19efc",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
     "required": true
   },
   "discardedHostedAttempts": [
@@ -89,10 +89,10 @@
     }
   ],
   "claims": {
-    "sdk041ArtifactOwner": "runtime-tested-hosted",
-    "processFailureAtomicity": "runtime-tested-hosted",
-    "processCrashConsistency": "runtime-tested-hosted",
-    "cleanAndAdopt": "runtime-tested-hosted",
+    "sdk041ArtifactOwner": "runtime-tested-local",
+    "processFailureAtomicity": "runtime-tested-local",
+    "processCrashConsistency": "runtime-tested-local",
+    "cleanAndAdopt": "runtime-tested-local",
     "powerLossDurability": "not-tested",
     "windowsFilesystem": "not-tested",
     "networkFilesystem": "not-tested",

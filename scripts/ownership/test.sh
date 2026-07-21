@@ -6,7 +6,7 @@ cd "${repository_root}"
 
 bash scripts/ownership/test-adr-contract.sh
 
-for command_name in diff docker haxe haxelib lix node python3 realpath; do
+for command_name in diff docker grep haxe haxelib lix node python3 realpath; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "SDK-041 production ownership gate requires ${command_name}" >&2
     exit 1
@@ -72,11 +72,33 @@ node_image="docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc
 docker run --rm --network none "${node_image}" node --version | grep -Fx 'v22.17.0' >/dev/null
 python3 scripts/ownership/test-production.py "${evidence_root}/runtime"
 
-if rg -n \
-  'js\.node\.(Dns|Http|Https|Net|Tls)|child_process|\bfetch\b|XMLHttpRequest|WebSocket' \
+isolation_pattern='js\.node\.(Dns|Http|Https|Net|Tls)|child_process|(^|[^[:alnum:]_])fetch([^[:alnum:]_]|$)|XMLHttpRequest|WebSocket'
+if ! printf '%s\n' 'import js.node.Http;' | grep -E "${isolation_pattern}" >/dev/null; then
+  echo "SDK-041 production owner isolation scan failed its forbidden-input self-test" >&2
+  exit 1
+fi
+if printf '%s\n' 'final fetcher = new LocalFetcher();' | grep -E "${isolation_pattern}" >/dev/null; then
+  echo "SDK-041 production owner isolation scan failed its allowed-input self-test" >&2
+  exit 1
+else
+  allowed_self_test_status="$?"
+  if [[ "${allowed_self_test_status}" -ne 1 ]]; then
+    echo "SDK-041 production owner isolation scanner failed with status ${allowed_self_test_status}" >&2
+    exit 1
+  fi
+fi
+
+if grep -R -n -E "${isolation_pattern}" \
   packages/cli/src/wordpresshx/cli/ownership >/dev/null; then
   echo "SDK-041 production owner unexpectedly imports network or child-process APIs" >&2
   exit 1
+else
+  isolation_scan_status="$?"
+  if [[ "${isolation_scan_status}" -ne 1 ]]; then
+    echo "SDK-041 production owner isolation scanner failed with status ${isolation_scan_status}" >&2
+    exit 1
+  fi
 fi
 
+echo "SDK-041 ownership runtime-isolation source scan passed"
 echo "SDK-041 Haxe ownership transaction gate passed"
