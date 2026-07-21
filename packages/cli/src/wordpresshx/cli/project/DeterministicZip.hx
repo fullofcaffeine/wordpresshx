@@ -32,7 +32,7 @@ class DeterministicZip {
 			fail("archive entry count is outside deterministic ZIP32 bounds");
 		}
 		final entries = rawEntries.copy();
-		entries.sort((left, right) -> Reflect.compare(left.path, right.path));
+		entries.sort((left, right) -> ProjectJson.compareText(left.path, right.path));
 		var previous:Null<String> = null;
 		var previousFolded:Null<String> = null;
 		final localChunks:Array<Buffer> = [];
@@ -42,7 +42,7 @@ class DeterministicZip {
 		for (entry in entries) {
 			ProjectContract.relativePath(entry.path, "archive entry path");
 			final folded = entry.path.toLowerCase();
-			if (previous != null && Reflect.compare(previous, entry.path) >= 0) {
+			if (previous != null && ProjectJson.compareText(previous, entry.path) >= 0) {
 				fail("archive entries are not a sorted unique set", entry.path);
 			}
 			if (previousFolded == folded) {
@@ -147,12 +147,12 @@ class DeterministicZip {
 		Syntax.code("{0}.writeUInt16LE({1}, {2})", buffer, value, offset);
 	}
 
-	static inline function writeUInt32(buffer:Buffer, value:Dynamic, offset:Int):Void {
-		final normalized:Dynamic = Std.isOfType(value, Int) ? unsigned(cast value) : value;
+	static inline function writeUInt32(buffer:Buffer, value:Float, offset:Int):Void {
+		final normalized = value < 0 ? 4294967296.0 + value : value;
 		Syntax.code("{0}.writeUInt32LE({1}, {2})", buffer, normalized, offset);
 	}
 
-	static function fail(message:String, ?path:String):Dynamic {
+	static function fail<T>(message:String, ?path:String):T {
 		throw new CliFailure("WPHX3200", message, 5, "artifact-validation", path, [
 			"Keep package entries portable and below ZIP32 limits, then rerun a clean deterministic build."
 		]);

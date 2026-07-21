@@ -2,35 +2,35 @@
   "schemaVersion": 1,
   "receiptId": "SDK-042-DETERMINISTIC-BUILD",
   "bead": "wordpresshx-sdk-042",
-  "status": "verified",
+  "status": "implemented-hosted-pending",
   "subject": {
     "architecture": {
       "path": "manifests/deterministic-build-implementation.json",
-      "sha256": "8ef299c21c86218463028afa278eb1215e97ce05941c515410e39c4a99f0029f"
+      "sha256": "e5890c8f421f6ecdfaf17e628c95241f29b544eee1ad12858b53a84dc7a9499f"
     },
     "reportBuilder": {
       "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
-      "sha256": "12978c7801361be5954aba63237b88ef1b2241ddbccc217ae84da7090ada44ff"
+      "sha256": "f1a329e3832f59143d80c30686c66c8fe4c984279905a3fb14041e92b9403772"
     },
     "archiveWriter": {
       "path": "packages/cli/src/wordpresshx/cli/project/DeterministicZip.hx",
-      "sha256": "e4c0bedf1607eb7409bb585eb2a341ea582e5e558f6079cad5c3f264927c168f"
+      "sha256": "d9496e0514429a5c6ce6e5589af6f86b2048d4d49b0cfbceea2ae9e75470a89a"
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
-      "sha256": "1b912e545f882c1a883df616c4563f4f1f00ab809a234742bc983e8ae37c4232"
+      "sha256": "fcd1889d601089eaaf071eb33be5d9899212657605106bf5cce8060b52809b73"
     },
     "ownershipPaths": {
       "path": "packages/cli/src/wordpresshx/cli/project/OwnershipPaths.hx",
-      "sha256": "3d5f002cb258212e9485a33caae5bc5b70e1de75dc08558efb55e5ba2e177b0b"
+      "sha256": "c462f0a5103160a47c380b1892982bcb43abb212ececc12274ebe624b73d1828"
     },
     "ownershipPreflight": {
       "path": "packages/cli/src/wordpresshx/cli/project/OwnershipPreflight.hx",
-      "sha256": "095594995dc0ce448209fb818295f0bc8d5941203e7f914be29c9879425bbc55"
+      "sha256": "4986da7c15a8c8685945e2094664478dc4484b0c6003ddadc6788a09c311bca7"
     },
     "artifactOwner": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
-      "sha256": "e4286bcf305b51dda199e875905e1014544d1270f1ec267bc9ee3980dd816619"
+      "sha256": "a61ea508b7b3701f036d022d8cbdb5e71c6230fb9cc49c184bb822c2a78fa272"
     },
     "reportSchema": {
       "path": "schemas/reproducible-build.schema.json",
@@ -42,7 +42,7 @@
     },
     "productionCorpus": {
       "path": "scripts/determinism/test-production.py",
-      "sha256": "99e43d6c4ba7ac29bd864dd021cf2676f49c9d4024296ddf089f0a3f66cc10c2"
+      "sha256": "5d2fc8a1d1c6a7c73c2a8a6f03d595734fee950fb9acd7aac4611b5f494cd3ba"
     },
     "gate": {
       "path": "scripts/determinism/test-production.sh",
@@ -50,7 +50,7 @@
     },
     "projectCliCorpus": {
       "path": "scripts/project-cli/test-production.py",
-      "sha256": "ccf25a8f756b6829870a58370481bd20001f3c76571192b229641c79c2d8318f"
+      "sha256": "df1ba6e3c021d4412074d1222e89efd1b99a98d0d13fddf6a83a832451e35e81"
     },
     "ownershipContract": {
       "path": "scripts/ownership/test-contract.py",
@@ -72,21 +72,21 @@
     ],
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
+      "sha256": "2c3becd0aba5043a2f54f1660ee93d2b388c25cedc3ec673b77a93288f685a26"
     },
     "architectureDocumentation": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "4c93c4d2d03e9384dfd4cf5eab3e2ddb1da88144fcff43343df194e77e6b958e"
+      "sha256": "c2c1bf33e792d286e682fba3c83152bf13e535cba42e89f219863062db9cd4b7"
     }
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "b229933713e8fcb919913c13e26b7dbf1a807d45b89b6c4b6f6e06ac6b47e061",
+    "subjectCommit": null,
+    "subjectContentSha256": "56b9dc079e74a7b00d48be5406462bc30489b33957c284e4f770ada1dcacc046",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
-    "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+    "implementationCommit": null,
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -126,20 +126,18 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test deterministic build and unsigned archive replay",
-    "runId": 29677693742,
-    "jobId": 88168071123,
-    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
-    "status": "passed",
-    "required": true,
-    "jobCount": 11,
-    "allJobsPassed": true
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
+    "required": true
   },
   "claims": {
-    "sdk042DeterministicBuild": "runtime-tested-hosted",
-    "effectiveInputFingerprint": "runtime-tested-hosted",
-    "ownedGenerationDeterminism": "runtime-tested-hosted",
-    "unsignedArchiveDeterminism": "runtime-tested-hosted",
-    "actionableDifferenceReport": "runtime-tested-hosted",
+    "sdk042DeterministicBuild": "runtime-tested-local",
+    "effectiveInputFingerprint": "runtime-tested-local",
+    "ownedGenerationDeterminism": "runtime-tested-local",
+    "unsignedArchiveDeterminism": "runtime-tested-local",
+    "actionableDifferenceReport": "runtime-tested-local",
     "targetEmitterIntegration": "not-tested",
     "deployableWordPressPackage": "not-tested",
     "deployableNextjsPackage": "not-tested",
@@ -151,5 +149,6 @@
     "The runtime corpus uses exact Linux Node 22.17.0; Windows and network filesystems are not tested.",
     "WordPress, Next.js, package installation, signing, and production deployment are not tested.",
     "Public package publication remains blocked."
-  ]
+  ],
+  "observedAt": "2026-07-21T11:58:50Z"
 }

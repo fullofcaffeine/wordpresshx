@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-043",
-  "status": "implemented-sdk043-hosted-verified",
+  "status": "implemented-sdk043-local-verified",
   "scope": "bounded-project-command-foundation",
   "contracts": {
     "project": {
@@ -153,7 +153,7 @@
     },
     "ownershipCanonicalJsonPreserved": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
-      "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+      "sha256": "dc8b71f17e90251e28f27091b8e57fa89017c967a9759621487bf73f47030a72"
     },
     "legacyTraceAliasRetained": true,
     "traceSuitesRequired": [
@@ -212,10 +212,11 @@
     "deterministicCompilerReplay": "passed",
     "eventContractValidation": "passed",
     "historicalTraceCompatibility": "php-and-browser-suites-passed",
+    "strictHaxeBoundaryGuard": "passed",
     "outcome": "passed"
   },
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-hosted",
+    "sdk043ProjectCli": "runtime-tested-local",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

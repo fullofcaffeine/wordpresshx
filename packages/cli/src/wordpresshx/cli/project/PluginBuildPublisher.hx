@@ -7,12 +7,13 @@ import js.node.Fs;
 import js.node.Os;
 import js.node.Path;
 import wordpresshx.cli.CliFailure;
+import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.closedjson.JsonParser;
 import wordpresshx.cli.closedjson.JsonReader;
 import wordpresshx.cli.ownership.ArtifactOwner;
 import wordpresshx.cli.ownership.OwnershipContract;
 import wordpresshx.cli.ownership.OwnershipFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.ownership.OwnershipResult;
 import wordpresshx.cli.ownership.StageValidator;
 
@@ -177,7 +178,7 @@ class PluginBuildPublisher {
 	}
 
 	static function manifest(context:ProjectContext, emission:PluginEmission, paths:ProjectOwnershipPaths, artifacts:Array<PreparedArtifact>,
-			quality:Null<PluginPhpQualityResult>) {
+			quality:Null<PluginPhpQualityResult>):JsonValue {
 		final lock = PluginLockReader.read(context);
 		final sourceBytes = ProjectFiles.read(context.bootstrap.root, emission.plan.sourcePath, "plugin declaration", "artifact-validation");
 		final sourceSpan = OwnershipJson.object([
@@ -188,7 +189,7 @@ class PluginBuildPublisher {
 			"symbol" => "Site.definition"
 		]);
 		final ownerNodeId = "plugin/" + emission.plan.slug;
-		final files = [
+		final files:Array<JsonValue> = [
 			for (artifact in artifacts)
 				OwnershipJson.object([
 					"path" => artifact.path,
@@ -203,7 +204,7 @@ class PluginBuildPublisher {
 					"validatorIds" => artifact.validatorIds
 				])
 		];
-		final validators = [
+		final validators:Array<JsonValue> = [
 			validator("wphx.deterministic-archive", "@wordpress-hx/cli deterministic ZIP32 validator", "zip32-stored-v1", lock, context,
 				"complete-staged-tree"),
 			validator("wphx.effective-inputs", "@wordpress-hx/cli effective-input validator", "v1", lock, context, "complete-staged-tree")
@@ -247,7 +248,7 @@ class PluginBuildPublisher {
 				"sourceTreeSha256" => context.fingerprint(),
 				"semanticPlanSha256" => emission.planSha256,
 				"emissionResultSha256s" => [emission.resultSha256],
-				"generationSha256" => OwnershipContract.generationDigest(files),
+				"generationSha256" => OwnershipJson.generationDigest(files),
 				"profile" => OwnershipJson.object([
 					"profileId" => emission.plan.profile,
 					"catalogRevision" => lock.catalogRevision,
@@ -258,12 +259,12 @@ class PluginBuildPublisher {
 			"validators" => validators,
 			"files" => files
 		]);
-		final result = OwnershipContract.withDigest(manifest, "manifestDigest");
-		OwnershipContract.validateManifest(result);
+		final result = OwnershipJson.withDigest(manifest, "manifestDigest");
+		OwnershipContract.validateManifest(OwnershipJson.closed(result));
 		return result;
 	}
 
-	static function validator(id:String, tool:String, version:String, lock:PluginLockIdentity, context:ProjectContext, scope:String) {
+	static function validator(id:String, tool:String, version:String, lock:PluginLockIdentity, context:ProjectContext, scope:String):JsonValue {
 		return OwnershipJson.object([
 			"validatorId" => id,
 			"tool" => tool,
@@ -288,7 +289,7 @@ class PluginBuildPublisher {
 		throw new CliFailure("WPHX3307", "plugin build requires the declared output root " + id, 3, "configuration", "wordpress-hx.json");
 	}
 
-	static function endPosition(bytes:Buffer) {
+	static function endPosition(bytes:Buffer):JsonValue {
 		var line = 1;
 		var column = 0;
 		for (index in 0...bytes.length) {
@@ -302,7 +303,7 @@ class PluginBuildPublisher {
 		return OwnershipJson.object(["offset" => bytes.length, "line" => line, "column" => column]);
 	}
 
-	static function manifestDigest(manifest):String {
+	static function manifestDigest(manifest:JsonValue):String {
 		final value = JsonParser.parse(OwnershipJson.encode(manifest));
 		return JsonReader.from(value, "plugin ownership manifest", "WPHX3308").string("manifestDigest", "WPHX3308");
 	}

@@ -5,7 +5,7 @@ import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.CliInvocation;
 import wordpresshx.cli.CliJson;
 import wordpresshx.cli.NodeGlobals;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Stable bounded commands plus the long-running development entry. **/
 class ProjectCommands {
@@ -72,13 +72,12 @@ class ProjectCommands {
 		if (json) {
 			NodeGlobals.process().stdout.write(OwnershipJson.encode(result.report) + "\n");
 		} else {
-			NodeGlobals.process().stdout.write("Doctor: " + Reflect.field(result.report, "status") + "\n");
-			final checks:Array<Dynamic> = cast Reflect.field(result.report, "checks");
-			for (check in checks) {
-				final marker = Reflect.field(check, "status") == "passed" ? "✓" : "✗";
-				NodeGlobals.process().stdout.write("  " + marker + " " + Reflect.field(check, "id") + ": " + Reflect.field(check, "actual") + "\n");
+			NodeGlobals.process().stdout.write("Doctor: " + result.status + "\n");
+			for (check in result.checks) {
+				final marker = check.status == "passed" ? "✓" : "✗";
+				NodeGlobals.process().stdout.write("  " + marker + " " + check.id + ": " + check.actual + "\n");
 				if (marker == "✗") {
-					NodeGlobals.process().stdout.write("    fix: " + Reflect.field(check, "remediation") + "\n");
+					NodeGlobals.process().stdout.write("    fix: " + check.remediation + "\n");
 				}
 			}
 		}

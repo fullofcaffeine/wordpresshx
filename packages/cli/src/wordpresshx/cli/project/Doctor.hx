@@ -2,11 +2,22 @@ package wordpresshx.cli.project;
 
 import js.Syntax;
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 typedef DoctorResult = {
-	final report:Dynamic;
+	final report:JsonValue;
 	final passed:Bool;
+	final status:String;
+	final checks:Array<DoctorCheck>;
+}
+
+typedef DoctorCheck = {
+	final id:String;
+	final actual:String;
+	final status:String;
+	final remediation:String;
+	final json:JsonValue;
 }
 
 /** Read-only exact-pin and ownership diagnosis; it never installs or recovers. **/
@@ -14,9 +25,9 @@ class Doctor {
 	static final LIX_CLI_BY_PACKAGE:Map<String, String> = ["15.12.4" => "15.12.2"];
 
 	public static function inspect(context:ProjectContext):DoctorResult {
-		final checks:Array<Dynamic> = [];
+		final checks:Array<DoctorCheck> = [];
 		var passed = true;
-		final components = new Map<String, Dynamic>();
+		final components = new Map<String, JsonValue>();
 		for (component in ProjectContract.array(context.lock, "components", "project lock", "profile-resolution")) {
 			components.set(ProjectContract.string(component, "id", "project lock component", "profile-resolution"), component);
 		}
@@ -51,26 +62,31 @@ class Doctor {
 		try {
 			final manifest = OwnershipPreflight.inspect(context);
 			checks.push(check("ownership.current", "exact manifest-owned bytes",
-				manifest == null ? "no published generation" : "manifest " + ProjectContract.string(manifest, "manifestDigest", "ownership manifest"),
-				"passed", "No action required."));
+				manifest == null ? "no published generation" : "manifest " + manifest.manifestDigest, "passed", "No action required."));
 		} catch (failure:CliFailure) {
 			checks.push(check("ownership.current", "exact manifest-owned bytes", failure.code + ": " + failure.message, "failed",
 				failure.remediations.length == 0 ? "Diagnose the ownership manifest." : failure.remediations[0]));
 			passed = false;
 		}
-		checks.sort((left, right) -> Reflect.compare(Reflect.field(left, "id"), Reflect.field(right, "id")));
+		checks.sort((left, right) -> ProjectJson.compareText(left.id, right.id));
+		final status = passed ? "passed" : "failed";
 		final report = OwnershipJson.object([
 			"schema" => "wordpress-hx.doctor.v1",
 			"projectId" => ProjectContract.string(context.bootstrap.config, "projectId", "project configuration"),
 			"profile" => context.profileId(),
 			"fingerprint" => context.fingerprint(),
-			"status" => passed ? "passed" : "failed",
-			"checks" => checks
+			"status" => status,
+			"checks" => [for (check in checks) check.json]
 		]);
-		return {report: report, passed: passed};
+		return {
+			report: report,
+			passed: passed,
+			status: status,
+			checks: checks
+		};
 	}
 
-	static function version(components:Map<String, Dynamic>, id:String):String {
+	static function version(components:Map<String, JsonValue>, id:String):String {
 		final component = components.get(id);
 		if (component == null) {
 			throw new CliFailure("WPHX1014", "project lock is missing component " + id, 3, "profile-resolution");
@@ -78,19 +94,25 @@ class Doctor {
 		return ProjectContract.string(component, "version", "project lock component", "profile-resolution");
 	}
 
-	static function add(checks:Array<Dynamic>, id:String, expected:String, actual:Null<String>, remediation:String):Bool {
+	static function add(checks:Array<DoctorCheck>, id:String, expected:String, actual:Null<String>, remediation:String):Bool {
 		final ok = actual == expected;
 		checks.push(check(id, expected, actual == null ? "not found" : actual, ok ? "passed" : "failed", ok ? "No action required." : remediation));
 		return ok;
 	}
 
-	static function check(id:String, expected:String, actual:String, status:String, remediation:String):Dynamic {
-		return OwnershipJson.object([
-			"id" => id,
-			"expected" => expected,
-			"actual" => actual,
-			"status" => status,
-			"remediation" => remediation
-		]);
+	static function check(id:String, expected:String, actual:String, status:String, remediation:String):DoctorCheck {
+		return {
+			id: id,
+			actual: actual,
+			status: status,
+			remediation: remediation,
+			json: OwnershipJson.object([
+				"id" => id,
+				"expected" => expected,
+				"actual" => actual,
+				"status" => status,
+				"remediation" => remediation
+			])
+		};
 	}
 }

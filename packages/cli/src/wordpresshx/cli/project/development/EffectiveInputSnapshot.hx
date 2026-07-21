@@ -5,7 +5,7 @@ import wordpresshx.cli.closedjson.JsonParser;
 import wordpresshx.cli.closedjson.JsonParser.JsonParseError;
 import wordpresshx.cli.closedjson.JsonReader;
 import wordpresshx.cli.closedjson.JsonReader.JsonReadError;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.project.ProjectContext;
 
 /** Typed projection of the legacy effective-input boundary used by the watcher. */

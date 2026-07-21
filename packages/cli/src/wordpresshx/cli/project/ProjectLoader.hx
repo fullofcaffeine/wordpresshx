@@ -4,8 +4,9 @@ import js.node.Buffer;
 import js.node.Fs;
 import js.node.Path;
 import wordpresshx.cli.CliFailure;
+import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.ownership.OwnershipFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Discover and authenticate the small bootstrap before any compiler runs. **/
 class ProjectLoader {
@@ -73,7 +74,7 @@ class ProjectLoader {
 			["Run the command inside a WordPressHx project or pass --project <directory>."]);
 	}
 
-	static function validateConfig(root:String, config:Dynamic, configBytes:Buffer):ProjectBootstrap {
+	static function validateConfig(root:String, config:JsonValue, configBytes:Buffer):ProjectBootstrap {
 		ProjectContract.exactFields(config, [
 			"schema",
 			"projectId",
@@ -124,10 +125,10 @@ class ProjectLoader {
 			ProjectContract.exactFields(output, ["id", "path"], "project output root");
 			final id = ProjectContract.stableId(ProjectContract.string(output, "id", "project output root"), "project output root.id");
 			final path = ProjectContract.relativePath(ProjectContract.string(output, "path", "project output root"), "project output root.path");
-			if (previousOutputId != null && Reflect.compare(previousOutputId, id) >= 0) {
+			if (previousOutputId != null && ProjectJson.compareText(previousOutputId, id) >= 0) {
 				ProjectContract.fail("WPHX1006", "output roots must be sorted by unique ID", 3, "configuration");
 			}
-			if (previousOutputPath != null && Reflect.compare(previousOutputPath, path) >= 0) {
+			if (previousOutputPath != null && ProjectJson.compareText(previousOutputPath, path) >= 0) {
 				ProjectContract.fail("WPHX1006", "output-root paths must be a sorted unique set", 3, "configuration");
 			}
 			previousOutputId = id;
@@ -199,7 +200,7 @@ class ProjectLoader {
 		}
 	}
 
-	static function validateEnvironment(config:Dynamic):Void {
+	static function validateEnvironment(config:JsonValue):Void {
 		final environment = ProjectContract.fieldObject(config, "environment", "project configuration");
 		ProjectContract.exactFields(environment, ["build", "runtime"], "project environment");
 		final build = ProjectContract.array(environment, "build", "project environment");
@@ -208,21 +209,22 @@ class ProjectLoader {
 		var previousBuild:Null<String> = null;
 		for (index in 0...build.length) {
 			final item = ProjectContract.object(build[index], "build environment declaration");
-			final expected = Reflect.hasField(item, "default") ? ["name", "required", "classification", "default"] : ["name", "required", "classification"];
+			final hasDefault = ProjectContract.has(item, "default", "build environment declaration");
+			final expected = hasDefault ? ["name", "required", "classification", "default"] : ["name", "required", "classification"];
 			ProjectContract.exactFields(item, expected, "build environment declaration");
 			final name = environmentName(ProjectContract.string(item, "name", "build environment declaration"));
-			if (previousBuild != null && Reflect.compare(previousBuild, name) >= 0) {
+			if (previousBuild != null && ProjectJson.compareText(previousBuild, name) >= 0) {
 				ProjectContract.fail("WPHX1006", "build environment declarations must be sorted and unique", 3, "configuration");
 			}
 			previousBuild = name;
 			names.set(name, true);
 			ProjectContract.expect(ProjectContract.string(item, "classification", "build environment declaration"), "public-build",
 				"build environment classification");
-			if (ProjectContract.boolean(item, "required", "build environment declaration") && Reflect.hasField(item, "default")) {
+			if (ProjectContract.boolean(item, "required", "build environment declaration") && hasDefault) {
 				ProjectContract.fail("WPHX1003", "required build environment declarations cannot define a default", 3, "configuration");
 			}
-			if (Reflect.hasField(item, "default") && !Std.isOfType(Reflect.field(item, "default"), String)) {
-				ProjectContract.fail("WPHX1003", "build environment default must be a string", 3, "configuration");
+			if (hasDefault) {
+				ProjectContract.optionalString(item, "default", "build environment declaration");
 			}
 		}
 		var previousRuntime:Null<String> = null;
@@ -230,7 +232,7 @@ class ProjectLoader {
 			final item = ProjectContract.object(runtime[index], "runtime environment declaration");
 			ProjectContract.exactFields(item, ["name", "required", "classification", "services"], "runtime environment declaration");
 			final name = environmentName(ProjectContract.string(item, "name", "runtime environment declaration"));
-			if (previousRuntime != null && Reflect.compare(previousRuntime, name) >= 0) {
+			if (previousRuntime != null && ProjectJson.compareText(previousRuntime, name) >= 0) {
 				ProjectContract.fail("WPHX1006", "runtime environment declarations must be sorted and unique", 3, "configuration");
 			}
 			if (names.exists(name)) {
@@ -283,7 +285,7 @@ class ProjectLoader {
 		}
 	}
 
-	static function validateLock(bootstrap:ProjectBootstrap, lock:Dynamic):Void {
+	static function validateLock(bootstrap:ProjectBootstrap, lock:JsonValue):Void {
 		ProjectContract.exactFields(lock, [
 			"schema",
 			"canonicalization",
@@ -302,8 +304,7 @@ class ProjectLoader {
 		ProjectContract.expect(ProjectContract.string(lock, "lockDigestAlgorithm", "project lock", "profile-resolution"),
 			"sha256-canonical-json-without-lockDigest-v1", "project lock.lockDigestAlgorithm", "profile-resolution");
 		final lockDigest = ProjectContract.sha256(ProjectContract.string(lock, "lockDigest", "project lock", "profile-resolution"), "project lock digest");
-		final lockMaterial = OwnershipJson.clone(lock);
-		Reflect.deleteField(lockMaterial, "lockDigest");
+		final lockMaterial = OwnershipJson.withoutField(lock, "lockDigest");
 		if (lockDigest != OwnershipJson.digestValue(lockMaterial)) {
 			throw new CliFailure("WPHX1011", "project lock self-digest mismatch", 3, "profile-resolution", bootstrap.lockPath,
 				["Run the explicit lock command and review the resulting lock diff."]);
@@ -334,7 +335,7 @@ class ProjectLoader {
 		validatePackageGraph(bootstrap, lock);
 	}
 
-	static function validateComponents(lock:Dynamic):Void {
+	static function validateComponents(lock:JsonValue):Void {
 		final components = ProjectContract.array(lock, "components", "project lock", "profile-resolution");
 		final ids:Array<String> = [];
 		var previous:Null<String> = null;
@@ -344,7 +345,7 @@ class ProjectLoader {
 				"profile-resolution");
 			final id = ProjectContract.stableId(ProjectContract.string(component, "id", "project lock component", "profile-resolution"), "component ID",
 				"profile-resolution");
-			if (previous != null && Reflect.compare(previous, id) >= 0) {
+			if (previous != null && ProjectJson.compareText(previous, id) >= 0) {
 				ProjectContract.fail("WPHX1014", "project lock components must be sorted and unique", 3, "profile-resolution");
 			}
 			previous = id;
@@ -373,8 +374,7 @@ class ProjectLoader {
 			}
 			final entryDigest = ProjectContract.sha256(ProjectContract.string(component, "lockEntrySha256", "project lock component", "profile-resolution"),
 				"component lock-entry digest");
-			final material = OwnershipJson.clone(component);
-			Reflect.deleteField(material, "lockEntrySha256");
+			final material = OwnershipJson.withoutField(component, "lockEntrySha256");
 			if (entryDigest != OwnershipJson.digestValue(material)) {
 				throw new CliFailure("WPHX1016", "component lock-entry digest mismatch: " + id, 3, "profile-resolution", null,
 					["Regenerate the exact project lock and review the component identity."]);
@@ -386,7 +386,7 @@ class ProjectLoader {
 		}
 	}
 
-	static function validatePackageGraph(bootstrap:ProjectBootstrap, lock:Dynamic):Void {
+	static function validatePackageGraph(bootstrap:ProjectBootstrap, lock:JsonValue):Void {
 		final graph = ProjectContract.fieldObject(lock, "packageGraph", "project lock");
 		ProjectContract.exactFields(graph, ["manager", "version", "manifest", "lockfile", "lifecycleScriptsAllowed"], "project lock.packageGraph",
 			"profile-resolution");
@@ -413,7 +413,7 @@ class ProjectLoader {
 		}
 	}
 
-	static function parseStrict(buffer:Buffer, label:String, stage:String):Dynamic {
+	static function parseStrict(buffer:Buffer, label:String, stage:String):JsonValue {
 		try {
 			return ProjectJson.parseStrict(buffer, label);
 		} catch (failure:OwnershipFailure) {
@@ -421,7 +421,7 @@ class ProjectLoader {
 		}
 	}
 
-	static function parseCanonical(buffer:Buffer, label:String, stage:String):Dynamic {
+	static function parseCanonical(buffer:Buffer, label:String, stage:String):JsonValue {
 		try {
 			return OwnershipJson.parseCanonical(buffer, label);
 		} catch (failure:OwnershipFailure) {

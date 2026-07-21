@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "receiptId": "SDK-045-SCAFFOLD",
   "bead": "wordpresshx-sdk-045.1",
-  "status": "verified",
-  "observedAt": "2026-07-19T07:16:33Z",
-  "implementationCommit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T11:58:50Z",
+  "implementationCommit": null,
   "subject": {
     "implementationManifest": {
       "path": "manifests/scaffold-implementation.json",
-      "sha256": "93ae75ebf556ab68e30db1e227d02812158a826e14d367ad7fa2f37ecec80122"
+      "sha256": "2a4fcf9700b6549e19651890b765c6fb2e7efd8fe1851d18bde4b0f157033466"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "sha256": "00704cefbec74a923ca6963930b77e6155c76822fb577af07dcabc0ec3a9500f"
+      "sha256": "400a5aa4504aa58dec8f4faa3af58c21eeea756c3949aaee6b731e3f34dde5ba"
     },
     "compilerBoundary": {
       "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
-      "sha256": "9da6b4ed15a2056daee1d94c605ee11875181fadcf7a20324b524461b0ccace7"
+      "sha256": "892c925134753b32258f914aa8d4337f74c16e0608c2a622d025b9e6439823e2"
     },
     "scaffoldFiles": [
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldArguments.hx",
-        "sha256": "6fdb7f2c103c0f6fc3a461e07977a6169bb85474ded60f0ab084ea17f16cf43b"
+        "sha256": "f5dc96c34e868a1c4f4f4f24425cf465caaa5aec8484a12b7c3c19e3f515a2a2"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldCommands.hx",
-        "sha256": "a622dfdce1c0532487f1d84b54dd93aea95980c55be01143919549ed6ce03887"
+        "sha256": "1582d3039791128e6bdac3af6a94b83667856fe37b441807cab93cd35e28e0e5"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldFile.hx",
@@ -41,11 +41,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldMarker.hx",
-        "sha256": "f52da2815e5a897bf7bff5b31d02054e5cbb9dff1cd5e6160008d4370fa4f902"
+        "sha256": "5bff72d09be95efe60853a3ce2a143b422c039e0224b445ddf7952ef7f17bc1f"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPlan.hx",
-        "sha256": "14635fc3fa4b4ab25e4b0b6a909aeaadae8301aa215639951766412207e20135"
+        "sha256": "52d4796c207eeac3a799e821cf1edc3aedfc6f2905f7cc4720080c6aef32b67f"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldProjection.hx",
@@ -53,15 +53,15 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldPublisher.hx",
-        "sha256": "c64ed50f0372458b3f1aedbc09c5994222a4e3450b3458279503809206b3fe86"
+        "sha256": "0096fbf4725c5f9efcc00cc80e776bdf6b7ad772368d634eeeea665a67491112"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRenderer.hx",
-        "sha256": "3fa003b7956ff6429bb41fcd2ce49fa1bad39a8ed1b9864c42f19012caa4609b"
+        "sha256": "e47a52f16f95251386459ccf7fa7e69d4b3b8396875f9a9c3c7efb0a414a41e7"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldRequest.hx",
-        "sha256": "c480d731c9f107c04eefd5b67a58dbf7d87aff365042d81050e218e8fd1bd46b"
+        "sha256": "8f0d22e824e4e330b0531ba87886ba681f3a3b94737267f3abcdf9a79ee76eee"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/scaffold/ScaffoldToolchain.hx",
@@ -70,19 +70,19 @@
     ],
     "schema": {
       "path": "schemas/scaffold-plan.schema.json",
-      "sha256": "31849e3cde994ab2b8f4e048a6a942e7309a4c3b50d6aac2cb4d304f07fc8ea7"
+      "sha256": "901839c7eeaac0d941d73ba4ff16ae842b0b75f556f6752fb7763b0091fab297"
     },
     "validator": {
       "path": "scripts/scaffold/test-production.py",
-      "sha256": "687f68b472eaab289bdd577a4d76146b206c4b42e49ac6cdd47810a8e147fa99"
+      "sha256": "d2d82684f8e0250ab08ce89f5275ddfacdb8f493905219ead035ee8b5108a20a"
     },
     "gate": {
       "path": "scripts/scaffold/test-production.sh",
-      "sha256": "f0d39f8ae486469921a20c172b45bfea3b9d235adb2e566df6a9a59e8a3d4c65"
+      "sha256": "4803db556c1a472c6b30690a665f15def65b7e71997336b894e13489c651164f"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "ecccf91a6a225a46c37ab9b7bb9a3cbc0b5398907f7a67b2d20e8dadf4de77fb"
+      "sha256": "2c3becd0aba5043a2f54f1660ee93d2b388c25cedc3ec673b77a93288f685a26"
     },
     "projectionCompatibility": [
       {
@@ -105,8 +105,8 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "660eb981d4cd8333b16e4000f19a8019b5ab6478",
-    "subjectContentSha256": "1fe9b393d32c0adad3a00fbc25dd7da12385153548a0eee10a9d7a91ad5e0b16",
+    "subjectCommit": null,
+    "subjectContentSha256": "1751e176f66db2d93efa918c151b50b2eb5ed3d957931ab1993b11ef186c16ca",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -180,10 +180,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test Haxe-first site scaffolding",
-    "runId": 29677693742,
-    "jobId": 88168071123,
-    "commit": "40e7ac92bc0edc6aa113e3a2bb9d38a57d8ec155",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
@@ -193,10 +193,10 @@
     "WordPress runtime behavior, Windows, network filesystems, deployment, and production support remain untested."
   ],
   "claims": {
-    "newAndInitSiteFoundation": "runtime-tested-hosted",
-    "deterministicScaffold": "runtime-tested-hosted",
-    "actualGeneratedHaxeTyping": "compile-tested-hosted",
-    "currentDoctorCheckBuildConsumer": "runtime-tested-hosted",
+    "newAndInitSiteFoundation": "runtime-tested-local",
+    "deterministicScaffold": "runtime-tested-local",
+    "actualGeneratedHaxeTyping": "compile-tested-local",
+    "currentDoctorCheckBuildConsumer": "runtime-tested-local",
     "nativeWordPressSiteProducer": "not-tested",
     "installedConsumer": "not-tested",
     "wordpressRuntimeCompatibility": "not-tested",

@@ -9,7 +9,7 @@ import wordpresshx.cli.closedjson.JsonParser.JsonParseError;
 import wordpresshx.cli.closedjson.JsonReader;
 import wordpresshx.cli.closedjson.JsonReader.JsonReadError;
 import wordpresshx.cli.closedjson.JsonValue;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.project.PluginCompilationRegistry;
 import wordpresshx.cli.project.ProjectContext;
 

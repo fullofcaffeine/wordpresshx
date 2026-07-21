@@ -1,9 +1,10 @@
 package wordpresshx.cli.project;
 
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.closedjson.JsonValue.JsonField;
 
-/** Closed bootstrap/lock helpers which never include absolute paths in errors. **/
+/** Checked access to closed project JSON plus portable configuration invariants. **/
 class ProjectContract {
 	public static final STABLE_ID = new EReg("^[a-z][a-z0-9]*(?:[._:/-][a-z0-9]+)*$", "");
 	public static final HAXE_TYPE = new EReg("^(?:[a-z][A-Za-z0-9_]*\\.)+[A-Z][A-Za-z0-9_]*$", "");
@@ -16,58 +17,78 @@ class ProjectContract {
 		"lpt6", "lpt7", "lpt8", "lpt9"
 	];
 
-	public static function object(value:Dynamic, label:String):Dynamic {
-		if (value == null || !Reflect.isObject(value) || Std.isOfType(value, Array) || Std.isOfType(value, String)) {
-			fail("WPHX1002", label + " must be an object", 3, "configuration");
-		}
-		return value;
+	public static function object(value:JsonValue, label:String):JsonValue {
+		return switch value {
+			case ObjectValue(_): value;
+			case _: fail("WPHX1002", label + " must be an object", 3, "configuration");
+		};
 	}
 
-	public static function exactFields(value:Dynamic, expected:Array<String>, label:String, stage:String = "configuration"):Void {
-		object(value, label);
-		final actual = Reflect.fields(value);
-		actual.sort(Reflect.compare);
+	public static function exactFields(value:JsonValue, expected:Array<String>, label:String, stage:String = "configuration"):Void {
+		final actual = fieldNames(value, label);
+		actual.sort(ProjectJson.compareText);
 		final wanted = expected.copy();
-		wanted.sort(Reflect.compare);
+		wanted.sort(ProjectJson.compareText);
 		if (actual.join("\x00") != wanted.join("\x00")) {
 			fail("WPHX1003", label + " fields differ; expected " + wanted.join(", ") + ", found " + actual.join(", "), 3, stage);
 		}
 	}
 
-	public static function string(value:Dynamic, field:String, label:String, stage:String = "configuration"):String {
-		final child = Reflect.field(object(value, label), field);
-		if (!Std.isOfType(child, String) || child.length == 0) {
-			fail("WPHX1003", label + "." + field + " must be a non-empty string", 3, stage);
-		}
-		return cast child;
+	public static function has(value:JsonValue, name:String, label:String):Bool {
+		return find(value, name, label) != null;
 	}
 
-	public static function boolean(value:Dynamic, field:String, label:String, stage:String = "configuration"):Bool {
-		final child = Reflect.field(object(value, label), field);
-		if (!Std.isOfType(child, Bool)) {
-			fail("WPHX1003", label + "." + field + " must be a boolean", 3, stage);
-		}
-		return cast child;
+	public static function field(value:JsonValue, name:String, label:String, stage:String = "configuration"):JsonValue {
+		final child = find(value, name, label);
+		return child == null ? fail("WPHX1003", label + "." + name + " is required", 3, stage) : child;
 	}
 
-	public static function integer(value:Dynamic, field:String, label:String, stage:String = "configuration"):Int {
-		final child = Reflect.field(object(value, label), field);
-		if (!OwnershipJson.isSafeInteger(child)) {
-			fail("WPHX1003", label + "." + field + " must be a safe integer", 3, stage);
-		}
-		return cast child;
+	public static function string(value:JsonValue, name:String, label:String, stage:String = "configuration"):String {
+		return switch field(value, name, label, stage) {
+			case StringValue(child) if (child.length > 0): child;
+			case _: fail("WPHX1003", label + "." + name + " must be a non-empty string", 3, stage);
+		};
 	}
 
-	public static function array(value:Dynamic, field:String, label:String, stage:String = "configuration"):Array<Dynamic> {
-		final child = Reflect.field(object(value, label), field);
-		if (!Std.isOfType(child, Array)) {
-			fail("WPHX1003", label + "." + field + " must be an array", 3, stage);
+	public static function optionalString(value:JsonValue, name:String, label:String, stage:String = "configuration"):Null<String> {
+		final child = find(value, name, label);
+		if (child == null) {
+			return null;
 		}
-		return cast child;
+		return switch child {
+			case StringValue(text): text;
+			case _: fail("WPHX1003", label + "." + name + " must be a string", 3, stage);
+		};
 	}
 
-	public static function fieldObject(value:Dynamic, field:String, label:String):Dynamic {
-		return object(Reflect.field(object(value, label), field), label + "." + field);
+	public static function boolean(value:JsonValue, name:String, label:String, stage:String = "configuration"):Bool {
+		return switch field(value, name, label, stage) {
+			case BoolValue(child): child;
+			case _: fail("WPHX1003", label + "." + name + " must be a boolean", 3, stage);
+		};
+	}
+
+	public static function integer(value:JsonValue, name:String, label:String, stage:String = "configuration"):Int {
+		return switch field(value, name, label, stage) {
+			case NumberValue(source):
+				final child = Std.parseInt(source);
+				if (child == null || Std.string(child) != source) {
+					fail("WPHX1003", label + "." + name + " must be a supported integer", 3, stage);
+				}
+				child;
+			case _: fail("WPHX1003", label + "." + name + " must be a safe integer", 3, stage);
+		};
+	}
+
+	public static function array(value:JsonValue, name:String, label:String, stage:String = "configuration"):Array<JsonValue> {
+		return switch field(value, name, label, stage) {
+			case ArrayValue(children): children;
+			case _: fail("WPHX1003", label + "." + name + " must be an array", 3, stage);
+		};
+	}
+
+	public static inline function fieldObject(value:JsonValue, name:String, label:String, stage:String = "configuration"):JsonValue {
+		return object(field(value, name, label, stage), label + "." + name);
 	}
 
 	public static function expect(value:String, expected:String, label:String, stage:String = "configuration"):Void {
@@ -98,7 +119,7 @@ class ProjectContract {
 	}
 
 	public static function relativePath(value:String, label:String):String {
-		if (value == null || value.length == 0 || OwnershipJson.nfc(value) != value || StringTools.startsWith(value, "/") || value.indexOf("\\") >= 0
+		if (value == null || value.length == 0 || ProjectJson.nfc(value) != value || StringTools.startsWith(value, "/") || value.indexOf("\\") >= 0
 			|| value.indexOf("\x00") >= 0) {
 			fail("WPHX1005", label + " must be an NFC project-relative POSIX path", 3, "configuration", value);
 		}
@@ -112,16 +133,16 @@ class ProjectContract {
 		return value;
 	}
 
-	public static function sortedUniqueStrings(values:Array<Dynamic>, label:String, validator:(String, String) -> String):Array<String> {
+	public static function sortedUniqueStrings(values:Array<JsonValue>, label:String, validator:(String, String) -> String):Array<String> {
 		final result:Array<String> = [];
 		var previous:Null<String> = null;
 		for (index in 0...values.length) {
-			if (!Std.isOfType(values[index], String)) {
-				fail("WPHX1003", label + "[" + index + "] must be a string", 3, "configuration");
-			}
-			final value:String = cast values[index];
+			final value = switch values[index] {
+				case StringValue(text): text;
+				case _: fail("WPHX1003", label + "[" + index + "] must be a string", 3, "configuration");
+			};
 			validator(value, label + "[" + index + "]");
-			if (previous != null && Reflect.compare(previous, value) >= 0) {
+			if (previous != null && ProjectJson.compareText(previous, value) >= 0) {
 				fail("WPHX1006", label + " must be a sorted unique set", 3, "configuration");
 			}
 			previous = value;
@@ -144,7 +165,30 @@ class ProjectContract {
 		return true;
 	}
 
-	public static function fail(code:String, message:String, exitCode:Int, stage:String, ?path:String, ?remediations:Array<String>):Dynamic {
+	public static function fail<T>(code:String, message:String, exitCode:Int, stage:String, ?path:String, ?remediations:Array<String>):T {
 		throw new CliFailure(code, message, exitCode, stage, path, remediations);
+	}
+
+	static function fieldNames(value:JsonValue, label:String):Array<String> {
+		return switch value {
+			case ObjectValue(fields): [for (field in fields) field.name];
+			case _: fail("WPHX1002", label + " must be an object", 3, "configuration");
+		};
+	}
+
+	static function find(value:JsonValue, name:String, label:String):Null<JsonValue> {
+		return switch value {
+			case ObjectValue(fields): findIn(fields, name);
+			case _: fail("WPHX1002", label + " must be an object", 3, "configuration");
+		};
+	}
+
+	static function findIn(fields:Array<JsonField>, name:String):Null<JsonValue> {
+		for (field in fields) {
+			if (field.name == name) {
+				return field.value;
+			}
+		}
+		return null;
 	}
 }

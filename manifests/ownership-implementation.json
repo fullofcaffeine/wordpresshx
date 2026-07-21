@@ -68,6 +68,7 @@
       "finalize-complete-next",
       "rollback-partial"
     ],
+    "strictHaxeBoundaryGuard": "passed",
     "outcome": "passed"
   },
   "claims": {

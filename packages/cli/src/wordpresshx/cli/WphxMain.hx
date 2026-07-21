@@ -1,6 +1,6 @@
 package wordpresshx.cli;
 
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.generatedoutput.GeneratedOutputCommands;
 import wordpresshx.cli.project.ProjectCommands;
 import wordpresshx.cli.scaffold.ScaffoldCommands;
@@ -70,7 +70,7 @@ class WphxMain {
 				"exitCode" => failure.exitCode,
 				"stage" => failure.stage,
 				"message" => failure.message,
-				"path" => failure.relativePath,
+				"path" => OwnershipJson.nullableText(failure.relativePath),
 				"remediations" => failure.remediations
 			])) + "\n");
 			return;

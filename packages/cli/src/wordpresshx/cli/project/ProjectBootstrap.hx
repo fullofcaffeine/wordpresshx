@@ -1,8 +1,10 @@
 package wordpresshx.cli.project;
 
+import wordpresshx.cli.closedjson.JsonValue;
+
 class ProjectBootstrap {
 	public final root:String;
-	public final config:Dynamic;
+	public final config:JsonValue;
 	public final configBytes:js.node.Buffer;
 	public final outputRoots:Array<ProjectOutputRoot>;
 	public final sourceRoots:Array<String>;
@@ -14,7 +16,7 @@ class ProjectBootstrap {
 	public final packageManifestPath:String;
 	public final packageLockPath:String;
 
-	public function new(root:String, config:Dynamic, configBytes:js.node.Buffer, outputRoots:Array<ProjectOutputRoot>, sourceRoots:Array<String>,
+	public function new(root:String, config:JsonValue, configBytes:js.node.Buffer, outputRoots:Array<ProjectOutputRoot>, sourceRoots:Array<String>,
 			testRoots:Array<String>, assetRoots:Array<String>, stateRoot:String, distributionRoot:String, lockPath:String, packageManifestPath:String,
 			packageLockPath:String) {
 		this.root = root;

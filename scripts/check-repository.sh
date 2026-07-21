@@ -116,6 +116,8 @@ required_files=(
   packages/cli/profiles/wphx.hxml
   packages/cli/project-api/wordpresshx/WordPress.hx
   packages/cli/scripts/add-node-shebang.py
+  packages/cli/scripts/check-ownership-haxe.sh
+  packages/cli/scripts/check-project-haxe.sh
   packages/cli/scripts/create-browser-trace-mutations.py
   packages/cli/scripts/package-browser-source-correlation.py
   packages/cli/scripts/test-browser-source-correlation.sh
@@ -2955,6 +2957,7 @@ assert sdk041_verification["recoveryModes"] == [
     "finalize-complete-next",
     "rollback-partial",
 ]
+assert sdk041_verification["strictHaxeBoundaryGuard"] == "passed"
 assert sdk041_verification["outcome"] == "passed"
 for sdk041_local_claim in (
     "sdk041ArtifactOwner",
@@ -2994,6 +2997,8 @@ assert sdk041_receipt["bead"] == "wordpresshx-sdk-041"
 assert set(sdk041_receipt["subject"]) == {
     "architecture",
     "processBoundary",
+    "closedJsonParser",
+    "closedJsonValue",
     "owner",
     "contract",
     "ownershipFailure",
@@ -3007,6 +3012,7 @@ assert set(sdk041_receipt["subject"]) == {
     "gate",
     "isolationScanner",
     "emittedIsolationCompilerProbes",
+    "strictHaxeGuard",
     "manifestSchema",
     "journalSchema",
 }
@@ -3014,8 +3020,17 @@ for sdk041_subject in sdk041_receipt["subject"].values():
     assert hashlib.sha256(Path(sdk041_subject["path"]).read_bytes()).hexdigest() == (
         sdk041_subject["sha256"]
     )
+assert sdk041_receipt["subject"]["strictHaxeGuard"]["path"] == (
+    "packages/cli/scripts/check-ownership-haxe.sh"
+)
 sdk041_closure_subjects = {
     "processBoundary": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",
+    "closedJsonParser": (
+        "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx"
+    ),
+    "closedJsonValue": (
+        "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx"
+    ),
     "owner": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
     "contract": (
         "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx"
@@ -3069,6 +3084,7 @@ assert sdk041_receipt_verification["directVsReplayGeneratedTree"] == (
 for sdk041_receipt_proof in (
     "diagnosticAbsolutePathPrivacy",
     "noNetworkOrChildProcessImplementation",
+    "strictHaxeBoundaryGuard",
 ):
     assert sdk041_receipt_verification[sdk041_receipt_proof] == "passed"
 assert sdk041_receipt_verification["outcome"] == "passed"
@@ -3126,8 +3142,8 @@ assert sdk041_corrective["emittedCapabilityAuthority"] == (
 assert sdk041_corrective["repositoryDependencyBoundary"] == (
     "production-root-plus-one-exact-harness-entry"
 )
-assert sdk041_corrective["productionClosureSourceCount"] == 8
-assert sdk041_corrective["emittedProductionModuleCount"] == 4
+assert sdk041_corrective["productionClosureSourceCount"] == 10
+assert sdk041_corrective["emittedProductionModuleCount"] == 6
 assert sdk041_corrective["allowedNodeCapabilityCount"] == 5
 assert sdk041_corrective["auditedProcessBoundaryCount"] == 1
 assert sdk041_corrective["sourceForbiddenSelfTestCount"] == 40
@@ -3556,6 +3572,7 @@ assert sdk043_verification["acceptedFixtureEffectiveFingerprint"] == (
 assert sdk043_verification["historicalTraceCompatibility"] == (
     "php-and-browser-suites-passed"
 )
+assert sdk043_verification["strictHaxeBoundaryGuard"] == "passed"
 assert sdk043_verification["outcome"] == "passed"
 sdk043_adoption = project_cli_implementation["aggregateLockAdoption"]
 assert sdk043_adoption["toolchainLockSha256"] == hashlib.sha256(
@@ -3597,6 +3614,9 @@ assert sdk043_receipt["status"] in {
 }
 
 verify_versioned_subject(sdk043_receipt)
+assert sdk043_receipt["subject"]["strictHaxeGuard"]["path"] == (
+    "packages/cli/scripts/check-project-haxe.sh"
+)
 sdk043_current_architecture_sha256 = hashlib.sha256(
     Path("manifests/project-cli-implementation.json").read_bytes()
 ).hexdigest()
@@ -3623,6 +3643,9 @@ assert sdk043_receipt["verification"]["legacyPhpTrace"]["outcome"] == (
     "passed"
 )
 assert sdk043_receipt["verification"]["legacyBrowserTrace"]["outcome"] == (
+    "passed"
+)
+assert sdk043_receipt["verification"]["strictHaxeBoundaryGuard"] == (
     "passed"
 )
 for sdk043_aggregate_gate in (
@@ -6393,6 +6416,19 @@ assert set(strict_haxe_subjects) == {
     "packages/cli/src/wordpresshx/cli/Main.hx",
     "packages/cli/src/wordpresshx/cli/TraceCommand.hx",
     "packages/cli/scripts/check-trace-haxe.sh",
+    "packages/cli/scripts/check-ownership-haxe.sh",
+    "packages/cli/scripts/check-project-haxe.sh",
+    "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+    "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
+    "packages/cli/src/wordpresshx/cli/project/ProjectJson.hx",
+    "packages/cli/src/wordpresshx/cli/project/ProjectContract.hx",
+    "packages/cli/src/wordpresshx/cli/project/ProjectContext.hx",
+    "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
+    "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
+    "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
+    "packages/cli/src/wordpresshx/cli/WphxMain.hx",
     "packages/cli/scripts/test.sh",
     "packages/cli/scripts/test-browser-source-correlation.sh",
     "scripts/lint/haxe-weak-type-guard.py",
@@ -6434,8 +6470,8 @@ assert strict_haxe_inventory["currentFindingCount"] == strict_haxe_findings(
 assert strict_haxe_inventory["removedFindingCount"] == (
     strict_haxe_inventory["initialFindingCount"]
     - strict_haxe_inventory["currentFindingCount"]
-) == 220
-assert strict_haxe_inventory["complete"] is False
+) == 583
+assert strict_haxe_inventory["complete"] is True
 
 strict_haxe_scopes = {
     scope["id"]: scope for scope in strict_haxe_migration["completedScopes"]
@@ -6450,6 +6486,8 @@ assert set(strict_haxe_scopes) == {
     "generic-php-compiler",
     "wordpress-php-compiler",
     "cli-trace-and-shared-json",
+    "cli-ownership-contract",
+    "cli-project-and-development",
 }
 for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate in (
     (
@@ -6513,6 +6551,61 @@ assert strict_haxe_trace_scope["gate"] == (
 )
 assert strict_haxe_trace_scope["outcome"] == strict_haxe_outcome
 
+strict_haxe_ownership_paths = [
+    "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx",
+    "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
+    "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
+]
+strict_haxe_ownership_scope = strict_haxe_scopes["cli-ownership-contract"]
+assert strict_haxe_ownership_scope["root"] == (
+    "packages/cli/src/wordpresshx/cli/ownership"
+)
+assert strict_haxe_ownership_scope["paths"] == strict_haxe_ownership_paths
+assert strict_haxe_ownership_scope["haxeFileCount"] == 10
+assert strict_haxe_ownership_scope["findingCount"] == strict_haxe_findings(
+    [Path(path) for path in strict_haxe_ownership_paths]
+) == 0
+assert strict_haxe_ownership_scope["gate"] == (
+    "bash packages/cli/scripts/check-ownership-haxe.sh"
+)
+assert strict_haxe_ownership_scope["outcome"] == strict_haxe_outcome
+
+strict_haxe_project_paths = sorted(
+    path
+    for path in tracked_haxe_paths
+    if str(path).startswith("packages/cli/src/wordpresshx/cli/project/")
+)
+strict_haxe_project_paths.append(
+    Path("packages/cli/src/wordpresshx/cli/WphxMain.hx")
+)
+strict_haxe_project_scope = strict_haxe_scopes[
+    "cli-project-and-development"
+]
+assert strict_haxe_project_scope["root"] == (
+    "packages/cli/src/wordpresshx/cli/project"
+)
+assert strict_haxe_project_scope["entryPath"] == (
+    "packages/cli/src/wordpresshx/cli/WphxMain.hx"
+)
+assert strict_haxe_project_scope["haxeFileCount"] == len(
+    strict_haxe_project_paths
+) == 66
+assert strict_haxe_project_scope["findingCount"] == strict_haxe_findings(
+    strict_haxe_project_paths
+) == 0
+assert strict_haxe_project_scope["gate"] == (
+    "bash packages/cli/scripts/check-project-haxe.sh"
+)
+assert strict_haxe_project_scope["outcome"] == strict_haxe_outcome
+assert strict_haxe_findings(tracked_haxe_paths) == 0
+
 assert strict_haxe_migration["typedAdapters"] == [
     {
         "id": "wordpress-php-source-index",
@@ -6552,13 +6645,13 @@ if strict_haxe_migration["status"] == "implemented-hosted-pending":
         "workflow": "Repository bootstrap",
         "job": "haxe",
         "implementationCommit": (
-            "31c506a0a3789e84fdcda32f6fc71cf6018629c6"
+            "201f8387cdff6b49ce755d22a93cc9f0377b1c47"
         ),
-        "runId": 29820264347,
-        "jobId": 88600999236,
-        "status": "passed-before-cli-trace-closure",
+        "runId": 29823692811,
+        "jobId": 88612005313,
+        "status": "passed-before-repository-closure",
         "allJobsPassed": True,
-        "completedAt": "2026-07-21T10:09:11Z",
+        "completedAt": "2026-07-21T11:01:03Z",
     }
 else:
     assert sha1.fullmatch(strict_haxe_hosted["implementationCommit"])
@@ -6575,13 +6668,13 @@ for strict_haxe_claim_name in (
     "wordpressSourceIndexTypedAdapter",
     "cliTraceAndSharedJsonStrict",
     "cliSourceCorrelationTypedAdapter",
+    "cliOwnershipContractStrict",
+    "cliProjectWorkflowStrict",
+    "repositoryWideStrictHaxe",
 ):
     assert strict_haxe_migration["claims"][strict_haxe_claim_name] == (
         strict_haxe_claim
     )
-assert strict_haxe_migration["claims"]["repositoryWideStrictHaxe"] == (
-    "not-yet-remaining-findings"
-)
 assert strict_haxe_migration["claims"]["productionSupport"] == "not-claimed"
 
 sdk025_inputs = sdk025_receipt["authenticatedInputs"]

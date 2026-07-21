@@ -4,7 +4,8 @@ import js.node.Buffer;
 import js.node.Fs;
 import js.node.Path;
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Canonical build report plus the exact normalized unsigned archive it binds. **/
 class ReproducibleBuild {
@@ -16,8 +17,8 @@ class ReproducibleBuild {
 			fail("a reproducible package requires at least one generated payload");
 		}
 		final sorted = payloads.copy();
-		sorted.sort((left, right) -> Reflect.compare(left.path, right.path));
-		final reportEntries:Array<Dynamic> = [];
+		sorted.sort((left, right) -> ProjectJson.compareText(left.path, right.path));
+		final reportEntries:Array<JsonValue> = [];
 		final archiveEntries:Array<DeterministicZipEntry> = [];
 		var previous:Null<String> = null;
 		var previousFolded:Null<String> = null;
@@ -25,7 +26,7 @@ class ReproducibleBuild {
 			ProjectContract.relativePath(payload.path, "reproducible payload path");
 			final folded = payload.path.toLowerCase();
 			if (payload.path == REPORT_ARCHIVE_PATH
-				|| (previous != null && Reflect.compare(previous, payload.path) >= 0)
+				|| (previous != null && ProjectJson.compareText(previous, payload.path) >= 0)
 				|| previousFolded == folded) {
 				fail("reproducible payload paths are duplicate, colliding, or reserved", payload.path);
 			}
@@ -64,7 +65,7 @@ class ReproducibleBuild {
 		]);
 		final reportBytes = OwnershipJson.encodeDocument(report);
 		archiveEntries.push({path: REPORT_ARCHIVE_PATH, bytes: reportBytes});
-		archiveEntries.sort((left, right) -> Reflect.compare(left.path, right.path));
+		archiveEntries.sort((left, right) -> ProjectJson.compareText(left.path, right.path));
 		final archiveBytes = DeterministicZip.create(archiveEntries);
 		final allNames = [for (entry in archiveEntries) entry.path];
 		return {
@@ -103,7 +104,7 @@ class ReproducibleBuild {
 		return Fs.readFileSync(absolute);
 	}
 
-	static function fail(message:String, ?path:String):Dynamic {
+	static function fail<T>(message:String, ?path:String):T {
 		throw new CliFailure("WPHX3201", message, 5, "artifact-validation", path, [
 			"Run a clean build and inspect the first differing report entry before publication."
 		]);

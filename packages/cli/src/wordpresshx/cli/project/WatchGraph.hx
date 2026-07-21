@@ -5,6 +5,7 @@ import js.node.Path;
 import js.node.fs.FSWatcher;
 import js.node.fs.FSWatcher.FSWatcherEvent;
 import js.node.fs.Stats;
+import wordpresshx.cli.closedjson.JsonValue;
 
 private typedef WatchRule = {
 	final path:String;
@@ -36,8 +37,8 @@ class WatchGraph {
 		}
 		rules = readRules(context.effectiveInputs);
 		restartFiles = readRestartFiles(context.effectiveInputs);
-		ignored = cast ProjectContract.array(context.effectiveInputs, "ignoredRoots", "effective inputs").copy();
-		ignored.sort(Reflect.compare);
+		ignored = strings(context.effectiveInputs, "ignoredRoots", "effective inputs");
+		ignored.sort(ProjectJson.compareText);
 		final desired = desiredSubscriptions();
 		final removals:Array<String> = [];
 		for (absolute => _ in watchers) {
@@ -45,7 +46,7 @@ class WatchGraph {
 				removals.push(absolute);
 			}
 		}
-		removals.sort(Reflect.compare);
+		removals.sort(ProjectJson.compareText);
 		for (absolute in removals) {
 			final watcher = watchers.get(absolute);
 			if (watcher != null) {
@@ -60,7 +61,7 @@ class WatchGraph {
 				additions.push(absolute);
 			}
 		}
-		additions.sort(Reflect.compare);
+		additions.sort(ProjectJson.compareText);
 		for (absolute in additions) {
 			addWatcher(absolute);
 		}
@@ -73,7 +74,7 @@ class WatchGraph {
 		}
 		closed = true;
 		final paths = [for (absolute in watchers.keys()) absolute];
-		paths.sort(Reflect.compare);
+		paths.sort(ProjectJson.compareText);
 		for (absolute in paths) {
 			final watcher = watchers.get(absolute);
 			if (watcher != null) {
@@ -82,7 +83,7 @@ class WatchGraph {
 		}
 		watchers.clear();
 		final polledPaths = [for (absolute in pollers.keys()) absolute];
-		polledPaths.sort(Reflect.compare);
+		polledPaths.sort(ProjectJson.compareText);
 		for (absolute in polledPaths) {
 			final listener = pollers.get(absolute);
 			if (listener != null) {
@@ -101,7 +102,7 @@ class WatchGraph {
 				if (!stats.isSymbolicLink() && stats.isFile()) {
 					desired.set(absolute, relative);
 				}
-			} catch (_:Dynamic) {}
+			} catch (_:haxe.Exception) {}
 		}
 		final removals:Array<String> = [];
 		for (absolute => _ in pollers) {
@@ -156,23 +157,23 @@ class WatchGraph {
 				onProblem(error.message);
 			});
 			watchers.set(absolute, watcher);
-		} catch (failure:Dynamic) {
+		} catch (failure:haxe.Exception) {
 			onProblem("could not subscribe to an effective-input directory");
 		}
 	}
 
-	function changedPath(directory:String, filename:Dynamic):Null<String> {
-		if (filename == null || Std.string(filename).length == 0) {
+	function changedPath(directory:String, filename:String):Null<String> {
+		if (filename == null || filename.length == 0) {
 			return "wordpress-hx.json";
 		}
-		final absolute = Path.resolve(directory, Std.string(filename));
+		final absolute = Path.resolve(directory, filename);
 		var relative = Path.relative(root, absolute).split("\\").join("/");
 		if (relative.length == 0 || relative == "." || StringTools.startsWith(relative, "../") || relative == "..") {
 			return "wordpress-hx.json";
 		}
 		try {
 			return ProjectContract.relativePath(relative, "watch event path");
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			return null;
 		}
 	}
@@ -235,7 +236,7 @@ class WatchGraph {
 			if (!stats.isSymbolicLink() && stats.isFile()) {
 				result.set(absolute, true);
 			}
-		} catch (_:Dynamic) {}
+		} catch (_:haxe.Exception) {}
 	}
 
 	function collectDirectories(relative:String, result:Map<String, Bool>):Void {
@@ -254,7 +255,7 @@ class WatchGraph {
 		}
 		result.set(absolute, true);
 		final names = Fs.readdirSync(absolute);
-		names.sort(Reflect.compare);
+		names.sort(ProjectJson.compareText);
 		for (name in names) {
 			final childRelative = relative == "." ? name : relative + "/" + name;
 			if (isIgnored(childRelative)) {
@@ -266,7 +267,7 @@ class WatchGraph {
 				if (!childStats.isSymbolicLink() && childStats.isDirectory()) {
 					collectDirectories(childRelative, result);
 				}
-			} catch (_:Dynamic) {}
+			} catch (_:haxe.Exception) {}
 		}
 	}
 
@@ -283,7 +284,7 @@ class WatchGraph {
 			if (!stats.isSymbolicLink() && stats.isDirectory()) {
 				result.set(candidate, true);
 			}
-		} catch (_:Dynamic) {}
+		} catch (_:haxe.Exception) {}
 	}
 
 	function isIgnored(relative:String):Bool {
@@ -295,11 +296,11 @@ class WatchGraph {
 		return false;
 	}
 
-	static function readRules(effectiveInputs:Dynamic):Array<WatchRule> {
+	static function readRules(effectiveInputs:JsonValue):Array<WatchRule> {
 		final result:Array<WatchRule> = [];
 		for (value in ProjectContract.array(effectiveInputs, "discoveryRoots", "effective inputs")) {
 			final path = ProjectContract.string(value, "path", "discovery root");
-			final includes:Array<String> = cast ProjectContract.array(value, "includes", "discovery root").copy();
+			final includes = strings(value, "includes", "discovery root");
 			var recursive = false;
 			for (include in includes) {
 				if (StringTools.startsWith(include, "**/")) {
@@ -308,13 +309,13 @@ class WatchGraph {
 			}
 			result.push({path: path, includes: includes, recursive: recursive});
 		}
-		result.sort((left, right) -> Reflect.compare(left.path, right.path));
+		result.sort((left, right) -> ProjectJson.compareText(left.path, right.path));
 		return result;
 	}
 
-	static function readRestartFiles(effectiveInputs:Dynamic):Array<String> {
+	static function readRestartFiles(effectiveInputs:JsonValue):Array<String> {
 		final compileServer = ProjectContract.fieldObject(effectiveInputs, "compileServer", "effective inputs");
-		final roles:Array<String> = cast ProjectContract.array(compileServer, "restartFileRoles", "effective inputs.compileServer").copy();
+		final roles = strings(compileServer, "restartFileRoles", "effective inputs.compileServer");
 		final result:Array<String> = [];
 		for (value in ProjectContract.array(effectiveInputs, "files", "effective inputs")) {
 			final role = ProjectContract.string(value, "role", "effective input file");
@@ -322,7 +323,11 @@ class WatchGraph {
 				result.push(ProjectContract.string(value, "path", "effective input file"));
 			}
 		}
-		result.sort(Reflect.compare);
+		result.sort(ProjectJson.compareText);
 		return result;
+	}
+
+	static function strings(value:JsonValue, name:String, label:String):Array<String> {
+		return ProjectContract.sortedUniqueStrings(ProjectContract.array(value, name, label), label + "." + name, (item, _) -> item);
 	}
 }

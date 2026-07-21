@@ -1,14 +1,15 @@
 package wordpresshx.cli.project;
 
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Deterministically place global ownership metadata inside one declared root. **/
 class OwnershipPaths {
 	public static function resolve(bootstrap:ProjectBootstrap):ProjectOwnershipPaths {
 		final roots = bootstrap.outputRoots.copy();
 		roots.sort((left, right) -> {
-			final byPath = Reflect.compare(left.path, right.path);
-			return byPath == 0 ? Reflect.compare(left.id, right.id) : byPath;
+			final byPath = ProjectJson.compareText(left.path, right.path);
+			return byPath == 0 ? ProjectJson.compareText(left.id, right.id) : byPath;
 		});
 		final metadataRoot = roots[0];
 		final usedIds = new Map<String, Bool>();
@@ -34,8 +35,8 @@ class OwnershipPaths {
 		};
 	}
 
-	public static function manifestRoots(bootstrap:ProjectBootstrap, paths:ProjectOwnershipPaths):Array<Dynamic> {
-		final roots:Array<Dynamic> = [
+	public static function manifestRoots(bootstrap:ProjectBootstrap, paths:ProjectOwnershipPaths):Array<JsonValue> {
+		final roots:Array<JsonValue> = [
 			for (root in bootstrap.outputRoots)
 				OwnershipJson.object([
 					"rootId" => root.id,
@@ -49,27 +50,10 @@ class OwnershipPaths {
 			"ownershipMode" => "exact-file-manifest-coexists-with-unowned"
 		]));
 		roots.sort((left, right) -> {
-			final leftKey = Reflect.field(left, "path") + "\x00" + Reflect.field(left, "rootId");
-			final rightKey = Reflect.field(right, "path") + "\x00" + Reflect.field(right, "rootId");
-			return Reflect.compare(leftKey, rightKey);
+			final leftKey = ProjectContract.string(left, "path", "ownership root") + "\x00" + ProjectContract.string(left, "rootId", "ownership root");
+			final rightKey = ProjectContract.string(right, "path", "ownership root") + "\x00" + ProjectContract.string(right, "rootId", "ownership root");
+			return ProjectJson.compareText(leftKey, rightKey);
 		});
 		return roots;
-	}
-
-	public static function isAdditiveRootSet(current:Array<Dynamic>, expected:Array<Dynamic>):Bool {
-		if (expected.length <= current.length) {
-			return false;
-		}
-		final expectedById = new Map<String, Dynamic>();
-		for (root in expected) {
-			expectedById.set(cast Reflect.field(root, "rootId"), root);
-		}
-		for (root in current) {
-			final candidate = expectedById.get(cast Reflect.field(root, "rootId"));
-			if (candidate == null || OwnershipJson.encode(root) != OwnershipJson.encode(candidate)) {
-				return false;
-			}
-		}
-		return true;
 	}
 }

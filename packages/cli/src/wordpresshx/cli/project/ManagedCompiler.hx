@@ -11,7 +11,7 @@ import js.node.child_process.ChildProcess as SpawnedProcess;
 import js.node.child_process.ChildProcess.ChildProcessEvent;
 import js.node.net.Server.ServerEvent;
 import wordpresshx.cli.NodeGlobals;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Disposable project-local Haxe wait server with an exact compatibility lease. **/
 class ManagedCompiler {
@@ -66,7 +66,7 @@ class ManagedCompiler {
 		}
 		try {
 			CompilerRunner.typeProjectWithServer(context, port);
-		} catch (failure:Dynamic) {
+		} catch (failure:haxe.Exception) {
 			if (CompilerRunner.probeServer(context, port)) {
 				throw failure;
 			}
@@ -107,7 +107,7 @@ class ManagedCompiler {
 				cwd: context.bootstrap.root,
 				stdio: "ignore"
 			});
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			fallback(context, digest, callback, "could not start the exact project Haxe cache");
 			return;
 		}
@@ -141,7 +141,7 @@ class ManagedCompiler {
 					ready = true;
 					fallbackDigest = null;
 					callback(true, true);
-				} catch (_:Dynamic) {
+				} catch (_:haxe.Exception) {
 					fallback(context, digest, callback, "could not authenticate the project-local Haxe cache lease");
 				}
 				return;
@@ -198,20 +198,19 @@ class ManagedCompiler {
 		try {
 			final existingBytes = Fs.readFileSync(cookiePath);
 			final existing = OwnershipJson.parseCanonical(existingBytes, "compiler server lease");
-			if (Reflect.field(existing, "schema") != "wordpress-hx.compiler-server-lease.v1"
-				|| Reflect.field(existing, "projectRootDigest") != rootDigest(context)
-				|| !OwnershipJson.isSafeInteger(Reflect.field(existing, "ownerPid"))) {
+			if (ProjectContract.string(existing, "schema", "compiler server lease") != "wordpress-hx.compiler-server-lease.v1"
+				|| ProjectContract.string(existing, "projectRootDigest", "compiler server lease") != rootDigest(context)) {
 				warning("the project Haxe cache lease is malformed or belongs to a moved project; direct compilation is safer");
 				return false;
 			}
-			final ownerPid:Int = cast Reflect.field(existing, "ownerPid");
+			final ownerPid = ProjectContract.integer(existing, "ownerPid", "compiler server lease");
 			if (processAlive(ownerPid)) {
 				warning("another live development command owns the project Haxe cache lease; this session will compile directly");
 				return false;
 			}
 			Fs.unlinkSync(cookiePath);
 			return true;
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			warning("the project Haxe cache lease could not be authenticated; this session will compile directly");
 			return false;
 		}
@@ -276,7 +275,7 @@ class ManagedCompiler {
 		current.once(ChildProcessEvent.Close, (_:Int, _:String) -> finish());
 		try {
 			current.kill("SIGTERM");
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			finish();
 			return;
 		}
@@ -284,7 +283,7 @@ class ManagedCompiler {
 			if (!completed) {
 				try {
 					current.kill("SIGKILL");
-				} catch (_:Dynamic) {}
+				} catch (_:haxe.Exception) {}
 				Timer.delay(finish, 50);
 			}
 		}, STOP_TIMEOUT_MS);
@@ -297,7 +296,7 @@ class ManagedCompiler {
 		if (current != null) {
 			try {
 				current.kill("SIGTERM");
-			} catch (_:Dynamic) {}
+			} catch (_:haxe.Exception) {}
 		}
 	}
 
@@ -308,7 +307,7 @@ class ManagedCompiler {
 				if (OwnershipJson.digest(current) == OwnershipJson.digest(cookieBytes)) {
 					Fs.unlinkSync(cookiePath);
 				}
-			} catch (_:Dynamic) {}
+			} catch (_:haxe.Exception) {}
 		}
 		cookieBytes = null;
 		cookiePath = null;
@@ -317,7 +316,7 @@ class ManagedCompiler {
 				if (Fs.readdirSync(runtimePath).length == 0) {
 					Fs.rmdirSync(runtimePath);
 				}
-			} catch (_:Dynamic) {}
+			} catch (_:haxe.Exception) {}
 		}
 		runtimePath = null;
 		runtimeCreated = false;
@@ -345,7 +344,7 @@ class ManagedCompiler {
 		try {
 			Syntax.code("process.kill({0}, 0)", pid);
 			return true;
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			return false;
 		}
 	}

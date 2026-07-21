@@ -39,6 +39,7 @@ docker info >/dev/null
   cd packages/cli
   lix --silent download
 )
+bash packages/cli/scripts/check-ownership-haxe.sh
 haxelib run formatter --check \
   -s packages/cli/src/wordpresshx/cli/ownership \
   -s packages/cli/test/ownership/src

@@ -1,7 +1,7 @@
 package wordpresshx.cli.project.development;
 
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.project.PluginEmitter;
 import wordpresshx.cli.project.PluginPlan;
 import wordpresshx.cli.project.ProjectContext;

@@ -7,6 +7,14 @@ import js.node.Fs;
 import js.node.Path;
 import js.node.fs.Stats;
 import wordpresshx.cli.NodeGlobals;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipAction;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipContentState;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipFile;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipJournal;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipManifest;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipMode;
+import wordpresshx.cli.ownership.OwnershipContract.OwnershipPhase;
 
 /**
 	Exact path+hash ownership and journaled manifest-last publication.
@@ -54,7 +62,7 @@ class ArtifactOwner {
 		}
 		this.rootDevice = canonicalStats.dev;
 		this.rootInode = canonicalStats.ino;
-		final effective:OwnershipLayout = layout == null ? cast {
+		final effective:OwnershipLayout = layout == null ? {
 			manifestPath: "build/_GeneratedFiles.json",
 			transactionRoot: "build/.wphx-transactions"
 		} : layout;
@@ -79,7 +87,7 @@ class ArtifactOwner {
 		final next = readExternalManifest(nextManifestFile, "next ownership manifest");
 		ensureLayout(next);
 		final staged = validateCallerStage(callerStageRoot, next, validators);
-		return transact(next, staged, "build", []);
+		return transact(next, staged, Build, []);
 	}
 
 	/** Remove only exact currently owned files and publish an empty ownership set. **/
@@ -90,8 +98,7 @@ class ArtifactOwner {
 			return NoOp;
 		}
 		final next = OwnershipContract.deriveManifest(current, []);
-		OwnershipContract.validateManifest(next);
-		return transact(next, new Map<String, Buffer>(), "clean", []);
+		return transact(next, new Map<String, Buffer>(), Clean, []);
 	}
 
 	/** Relinquish exact current entries without rewriting or deleting their bytes. **/
@@ -114,12 +121,11 @@ class ArtifactOwner {
 			relinquished.set(path, true);
 		}
 		final retained = [for (path => _ in currentFiles) if (!relinquished.exists(path)) path];
-		retained.sort(Reflect.compare);
+		retained.sort(compareText);
 		final sortedRelinquished = [for (path => _ in relinquished) path];
-		sortedRelinquished.sort(Reflect.compare);
+		sortedRelinquished.sort(compareText);
 		final next = OwnershipContract.deriveManifest(current, retained);
-		OwnershipContract.validateManifest(next);
-		return transact(next, new Map<String, Buffer>(), "adopt-generated", sortedRelinquished);
+		return transact(next, new Map<String, Buffer>(), AdoptGenerated, sortedRelinquished);
 	}
 
 	/** Resolve a durable journal by exact hashes, or refuse to guess. **/
@@ -147,21 +153,20 @@ class ArtifactOwner {
 		return RolledBack;
 	}
 
-	public function inspectCurrentManifest():Null<Dynamic> {
+	public function inspectCurrentManifest():Null<JsonValue> {
 		preflightRecovery();
 		final current = readCurrentManifest();
-		return current == null ? null : OwnershipJson.clone(current);
+		return current == null ? null : OwnershipJson.clone(current.json);
 	}
 
-	function transact(next:Dynamic, staged:Map<String, Buffer>, mode:String, relinquished:Array<String>):OwnershipResult {
-		OwnershipContract.validateManifest(next);
+	function transact(next:OwnershipManifest, staged:Map<String, Buffer>, mode:OwnershipMode, relinquished:Array<String>):OwnershipResult {
 		ensureLayout(next);
 		final liveCurrent = readCurrentManifest();
 		if (liveCurrent != null) {
-			if (OwnershipJson.encode(Reflect.field(liveCurrent, "locations")) != OwnershipJson.encode(Reflect.field(next, "locations"))) {
+			if (OwnershipJson.encode(liveCurrent.locations.json) != OwnershipJson.encode(next.locations.json)) {
 				fail("v1 cannot migrate ownership metadata locations implicitly", "layout-migration");
 			}
-			if (OwnershipJson.encode(Reflect.field(liveCurrent, "outputRoots")) != OwnershipJson.encode(Reflect.field(next, "outputRoots"))
+			if (OwnershipJson.encode(ArrayValue([for (root in liveCurrent.outputRoots) root.json])) != OwnershipJson.encode(ArrayValue([for (root in next.outputRoots) root.json]))
 				&& !isAdditiveRootMigration(liveCurrent, next)) {
 				fail("v1 only permits an additive exact output-root migration", "root-migration");
 			}
@@ -172,9 +177,7 @@ class ArtifactOwner {
 		validateMode(mode, liveCurrent, current, next, staged, relinquished);
 		validateDestinations(mode, current, next, staged);
 
-		if (liveCurrent != null
-			&& OwnershipContract.string(liveCurrent, "manifestDigest", "current manifest") == OwnershipContract.string(next, "manifestDigest", "next manifest")
-			&& relinquished.length == 0) {
+		if (liveCurrent != null && liveCurrent.manifestDigest == next.manifestDigest && relinquished.length == 0) {
 			return NoOp;
 		}
 
@@ -185,81 +188,89 @@ class ArtifactOwner {
 			verifyOwnedTree(current);
 			revalidateProjectRoot();
 			final journal = OwnershipContract.makeJournal(liveCurrent, next, transactionId, mode, relinquished);
-			OwnershipContract.validateJournal(journal);
 			OwnershipContract.validateJournalPlan(journal, liveCurrent, next);
-			workRoot = OwnershipContract.string(Reflect.field(journal, "locations"), "workRoot", "journal locations");
+			workRoot = journal.locations.workRoot;
 			if (lexists(relativeAbsolute(workRoot))) {
 				fail("fresh transaction work root already exists", "transaction-collision");
 			}
 			ensureDirectory(workRoot);
 			if (liveCurrent != null) {
-				atomicWrite(OwnershipContract.string(Reflect.field(journal, "priorManifest"), "storagePath", "prior manifest"),
-					OwnershipJson.encodeDocument(liveCurrent), GENERATED_FILE_MODE);
+				atomicWrite(journal.priorManifest.storagePath, OwnershipJson.encodeDocument(liveCurrent.json), GENERATED_FILE_MODE);
 			}
-			atomicWrite(OwnershipContract.string(Reflect.field(journal, "nextManifest"), "storagePath", "next manifest"), OwnershipJson.encodeDocument(next),
-				GENERATED_FILE_MODE);
-			if (mode == "build") {
-				final stageRoot = OwnershipContract.string(Reflect.field(journal, "locations"), "stageRoot", "journal locations");
+			atomicWrite(journal.nextManifest.storagePath, OwnershipJson.encodeDocument(next.json), GENERATED_FILE_MODE);
+			if (mode == Build) {
+				final stageRoot = journal.locations.stageRoot;
 				for (path => buffer in staged) {
 					atomicWrite(stageRoot + "/" + path, buffer, GENERATED_FILE_MODE);
 				}
 				verifyPrivateStage(stageRoot, next);
 			}
-			atomicWrite(journalPath, OwnershipJson.encodeDocument(journal));
+			atomicWrite(journalPath, OwnershipJson.encodeDocument(journal.json));
 			checkpoint("after-journal-prepared");
 			return commit(journal);
-		} catch (failure:Dynamic) {
+		} catch (failure:OwnershipFailure) {
 			if (lexists(relativeAbsolute(journalPath))) {
 				try {
 					final outcome = recover();
 					if (outcome == Finalized) {
 						return PublishedRecovered;
 					}
-				} catch (recoveryFailure:Dynamic) {
+				} catch (_:haxe.Exception) {
 					throw new OwnershipFailure("publication failed and exact automatic recovery requires diagnosis", "recovery-required");
 				}
 			} else {
 				cleanupPreJournal(workRoot);
 			}
-			if (Std.isOfType(failure, OwnershipFailure)) {
-				throw failure;
+			throw failure;
+		} catch (_:js.lib.Error) {
+			if (lexists(relativeAbsolute(journalPath))) {
+				try {
+					if (recover() == Finalized) {
+						return PublishedRecovered;
+					}
+				} catch (_:haxe.Exception) {
+					throw new OwnershipFailure("publication failed and exact automatic recovery requires diagnosis", "recovery-required");
+				}
+			} else {
+				cleanupPreJournal(workRoot);
 			}
 			throw new OwnershipFailure("ownership publication failed before commit", "publication-failed");
 		}
 	}
 
-	function isAdditiveRootMigration(current:Dynamic, next:Dynamic):Bool {
-		final currentRoots = OwnershipContract.array(current, "outputRoots", "current manifest");
-		final nextRoots = OwnershipContract.array(next, "outputRoots", "next manifest");
+	function isAdditiveRootMigration(current:OwnershipManifest, next:OwnershipManifest):Bool {
+		final currentRoots = current.outputRoots;
+		final nextRoots = next.outputRoots;
 		if (nextRoots.length <= currentRoots.length) {
 			return false;
 		}
-		final nextById = new Map<String, Dynamic>();
+		final nextById = new Map<String, wordpresshx.cli.ownership.OwnershipContract.OwnershipOutputRoot>();
 		for (root in nextRoots) {
-			nextById.set(OwnershipContract.string(root, "rootId", "next output root"), root);
+			nextById.set(root.rootId, root);
 		}
 		for (root in currentRoots) {
-			final id = OwnershipContract.string(root, "rootId", "current output root");
+			final id = root.rootId;
 			final candidate = nextById.get(id);
-			if (candidate == null || OwnershipJson.encode(root) != OwnershipJson.encode(candidate)) {
+			if (candidate == null || OwnershipJson.encode(root.json) != OwnershipJson.encode(candidate.json)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	function validateMode(mode:String, liveCurrent:Null<Dynamic>, current:Dynamic, next:Dynamic, staged:Map<String, Buffer>, relinquished:Array<String>):Void {
+	function validateMode(mode:OwnershipMode, liveCurrent:Null<OwnershipManifest>, current:OwnershipManifest, next:OwnershipManifest,
+			staged:Map<String, Buffer>, relinquished:Array<String>):Void {
 		final currentFiles = OwnershipContract.fileMap(current);
 		final nextFiles = OwnershipContract.fileMap(next);
-		if (mode == "build") {
+		if (mode == Build) {
 			if (relinquished.length != 0) {
 				fail("build cannot relinquish ownership", "invalid-mode");
 			}
-		} else if (mode == "clean") {
+		} else if (mode == Clean) {
 			if (nextFiles.keys().hasNext() || staged.keys().hasNext() || relinquished.length != 0) {
 				fail("clean requires an empty next ownership set", "invalid-mode");
 			}
-		} else if (mode == "adopt-generated") {
+		} else if (mode == AdoptGenerated) {
 			if (liveCurrent == null || relinquished.length == 0 || staged.keys().hasNext()) {
 				fail("adopt-generated requires exact current entries and no staged bytes", "invalid-mode");
 			}
@@ -273,7 +284,7 @@ class ArtifactOwner {
 					if (fresh != null) {
 						fail("adopt-generated retained a relinquished entry", "invalid-adoption", path);
 					}
-				} else if (fresh == null || OwnershipJson.encode(item) != OwnershipJson.encode(fresh)) {
+				} else if (fresh == null || OwnershipJson.encode(item.json) != OwnershipJson.encode(fresh.json)) {
 					fail("adopt-generated changed a retained entry", "invalid-adoption", path);
 				}
 			}
@@ -282,7 +293,7 @@ class ArtifactOwner {
 		}
 	}
 
-	function validateDestinations(mode:String, current:Dynamic, next:Dynamic, staged:Map<String, Buffer>):Void {
+	function validateDestinations(mode:OwnershipMode, current:OwnershipManifest, next:OwnershipManifest, staged:Map<String, Buffer>):Void {
 		final currentFiles = OwnershipContract.fileMap(current);
 		final nextFiles = OwnershipContract.fileMap(next);
 		for (path => item in nextFiles) {
@@ -290,14 +301,14 @@ class ArtifactOwner {
 			if (!currentFiles.exists(path) && lexists(relativeAbsolute(path))) {
 				fail("unowned destination already exists: " + path, "unowned-collision", path);
 			}
-			if (mode == "build") {
+			if (mode == Build) {
 				final buffer = staged.get(path);
-				if (buffer == null || !stateEquals(OwnershipJson.contentState(buffer), descriptorForManifestFile(item))) {
+				if (buffer == null || !stateEquals(OwnershipContract.contentState(buffer), descriptorForManifestFile(item))) {
 					fail("staged bytes do not match next manifest: " + path, "staged-mismatch", path);
 				}
 			}
 		}
-		if (mode == "build") {
+		if (mode == Build) {
 			var count = 0;
 			for (path => _ in staged) {
 				count++;
@@ -317,24 +328,24 @@ class ArtifactOwner {
 		}
 	}
 
-	function commit(initialJournal:Dynamic):OwnershipResult {
-		var journal = updatePhase(initialJournal, "publishing");
+	function commit(initialJournal:OwnershipJournal):OwnershipResult {
+		var journal = updatePhase(initialJournal, Publishing);
 		checkpoint("after-publishing-phase");
-		final operations:Array<Dynamic> = OwnershipContract.array(journal, "operations", "journal");
+		final operations = journal.operations;
 		var published = 0;
 		for (operation in operations) {
-			final action = OwnershipContract.string(operation, "action", "journal operation");
-			if (action == "relinquish") {
+			final action = operation.action;
+			if (action == Relinquish) {
 				continue;
 			}
 			revalidateProjectRoot();
-			final path = OwnershipContract.string(operation, "path", "journal operation");
+			final path = operation.path;
 			assertSafeComponents(path, "live destination");
-			final oldContent = Reflect.field(operation, "oldContent");
-			final newContent = Reflect.field(operation, "newContent");
-			if (OwnershipContract.string(oldContent, "state", "old content") == "file") {
+			final oldContent = operation.oldContent;
+			final newContent = operation.newContent;
+			if (OwnershipContract.isFile(oldContent)) {
 				requireState(path, oldContent, "live bytes changed after transaction preflight");
-				final backupPath = OwnershipContract.string(operation, "backupPath", "journal operation");
+				final backupPath = operation.backupPath;
 				if (lexists(relativeAbsolute(backupPath))) {
 					fail("transaction backup path already exists", "transaction-collision", path);
 				}
@@ -343,8 +354,8 @@ class ArtifactOwner {
 			} else if (lexists(relativeAbsolute(path))) {
 				fail("unowned destination appeared during publication", "concurrent-collision", path);
 			}
-			if (OwnershipContract.string(newContent, "state", "new content") == "file") {
-				final stagedPath = OwnershipContract.string(operation, "stagedPath", "journal operation");
+			if (OwnershipContract.isFile(newContent)) {
+				final stagedPath = operation.stagedPath;
 				requireState(stagedPath, newContent, "private staged bytes changed during publication");
 				ensureParent(path);
 				renameRelative(stagedPath, path);
@@ -352,36 +363,35 @@ class ArtifactOwner {
 			published++;
 			checkpoint("after-operation-" + published);
 		}
-		final nextManifest = Reflect.field(journal, "nextManifest");
-		final nextStorage = OwnershipContract.string(nextManifest, "storagePath", "journal nextManifest");
-		requireState(nextStorage, Reflect.field(nextManifest, "content"), "staged next manifest changed before publication");
-		requireState(manifestPath, Reflect.field(Reflect.field(journal, "priorManifest"), "content"), "ownership manifest changed during publication");
+		final nextStorage = journal.nextManifest.storagePath;
+		requireState(nextStorage, journal.nextManifest.content, "staged next manifest changed before publication");
+		requireState(manifestPath, journal.priorManifest.content, "ownership manifest changed during publication");
 		ensureParent(manifestPath);
 		renameRelative(nextStorage, manifestPath);
 		checkpoint("after-manifest-rename");
-		journal = updatePhase(journal, "manifest-published");
+		journal = updatePhase(journal, ManifestPublished);
 		checkpoint("after-manifest-phase");
 		cleanupTransaction(journal);
 		return Published;
 	}
 
-	function rollback(journal:Dynamic, prior:Null<Dynamic>):Void {
-		final operations:Array<Dynamic> = OwnershipContract.array(journal, "operations", "journal");
+	function rollback(journal:OwnershipJournal, prior:Null<OwnershipManifest>):Void {
+		final operations = journal.operations;
 		var index = operations.length;
 		while (index > 0) {
 			index--;
 			final operation = operations[index];
-			if (OwnershipContract.string(operation, "action", "journal operation") == "relinquish") {
+			if (operation.action == Relinquish) {
 				continue;
 			}
-			final path = OwnershipContract.string(operation, "path", "journal operation");
-			final backupPath = OwnershipContract.string(operation, "backupPath", "journal operation");
-			final oldContent = Reflect.field(operation, "oldContent");
-			final newContent = Reflect.field(operation, "newContent");
+			final path = operation.path;
+			final backupPath = operation.backupPath;
+			final oldContent = operation.oldContent;
+			final newContent = operation.newContent;
 			if (lexists(relativeAbsolute(backupPath))) {
 				requireState(backupPath, oldContent, "rollback backup bytes are unexpected");
 				final live = regularState(path, "rollback live path");
-				if (OwnershipContract.string(live, "state", "live content") != "absent") {
+				if (!OwnershipContract.isAbsent(live)) {
 					if (!stateEquals(live, newContent)) {
 						fail("rollback found unexpected live bytes", "recovery-conflict", path);
 					}
@@ -389,23 +399,23 @@ class ArtifactOwner {
 				}
 				ensureParent(path);
 				renameRelative(backupPath, path);
-			} else if (OwnershipContract.string(oldContent, "state", "old content") == "absent") {
+			} else if (OwnershipContract.isAbsent(oldContent)) {
 				unlinkMatching(path, newContent);
 			} else if (!stateEquals(regularState(path, "rollback live path"), oldContent)) {
 				fail("rollback lost both old live bytes and exact backup", "recovery-conflict", path);
 			}
 		}
 
-		final priorState = Reflect.field(Reflect.field(journal, "priorManifest"), "content");
+		final priorState = journal.priorManifest.content;
 		final currentState = regularState(manifestPath, "ownership manifest");
-		if (OwnershipContract.string(priorState, "state", "prior manifest content") == "absent") {
-			unlinkMatching(manifestPath, Reflect.field(Reflect.field(journal, "nextManifest"), "content"));
+		if (OwnershipContract.isAbsent(priorState)) {
+			unlinkMatching(manifestPath, journal.nextManifest.content);
 		} else if (!stateEquals(currentState, priorState)) {
-			final nextState = Reflect.field(Reflect.field(journal, "nextManifest"), "content");
-			if (OwnershipContract.string(currentState, "state", "manifest content") != "absent" && !stateEquals(currentState, nextState)) {
+			final nextState = journal.nextManifest.content;
+			if (!OwnershipContract.isAbsent(currentState) && !stateEquals(currentState, nextState)) {
 				fail("rollback found an unexpected ownership manifest", "recovery-conflict", manifestPath);
 			}
-			final priorStorage = OwnershipContract.string(Reflect.field(journal, "priorManifest"), "storagePath", "journal priorManifest");
+			final priorStorage = journal.priorManifest.storagePath;
 			requireState(priorStorage, priorState, "rollback prior manifest backup is missing");
 			ensureParent(manifestPath);
 			renameRelative(priorStorage, manifestPath);
@@ -416,22 +426,18 @@ class ArtifactOwner {
 		cleanupTransaction(journal);
 	}
 
-	function liveNextIsComplete(journal:Dynamic, next:Dynamic):Bool {
-		if (!stateEquals(regularState(manifestPath, "ownership manifest"), Reflect.field(Reflect.field(journal, "nextManifest"), "content"))) {
+	function liveNextIsComplete(journal:OwnershipJournal, next:OwnershipManifest):Bool {
+		if (!stateEquals(regularState(manifestPath, "ownership manifest"), journal.nextManifest.content)) {
 			return false;
 		}
 		try {
 			verifyOwnedTree(next);
-			for (operation in OwnershipContract.array(journal, "operations", "journal")) {
-				final action = OwnershipContract.string(operation, "action", "journal operation");
-				if (action == "remove"
-					&& OwnershipContract.string(regularState(OwnershipContract.string(operation, "path", "journal operation"), "removed path"), "state",
-						"removed content") != "absent") {
+			for (operation in journal.operations) {
+				final action = operation.action;
+				if (action == Remove && !OwnershipContract.isAbsent(regularState(operation.path, "removed path"))) {
 					return false;
 				}
-				if (action == "relinquish"
-					&& !stateEquals(regularState(OwnershipContract.string(operation, "path", "journal operation"), "relinquished path"),
-						Reflect.field(operation, "newContent"))) {
+				if (action == Relinquish && !stateEquals(regularState(operation.path, "relinquished path"), operation.newContent)) {
 					return false;
 				}
 			}
@@ -441,9 +447,9 @@ class ArtifactOwner {
 		return true;
 	}
 
-	function validateBoundJournal(journal:Dynamic):{prior:Null<Dynamic>, next:Dynamic} {
-		final prior = journalManifest(journal, "priorManifest", false);
-		final next = journalManifest(journal, "nextManifest", true);
+	function validateBoundJournal(journal:OwnershipJournal):{prior:Null<OwnershipManifest>, next:OwnershipManifest} {
+		final prior = journalManifest(journal, journal.priorManifest, false, "priorManifest");
+		final next = journalManifest(journal, journal.nextManifest, true, "nextManifest");
 		if (next == null) {
 			fail("journal next manifest must be present", "invalid-journal");
 		}
@@ -451,13 +457,13 @@ class ArtifactOwner {
 		return {prior: prior, next: next};
 	}
 
-	function journalManifest(journal:Dynamic, field:String, requirePresent:Bool):Null<Dynamic> {
-		final state = Reflect.field(journal, field);
-		final expected = Reflect.field(state, "content");
-		final storagePath = OwnershipContract.string(state, "storagePath", "journal " + field);
+	function journalManifest(journal:OwnershipJournal, state:wordpresshx.cli.ownership.OwnershipContract.OwnershipManifestState, requirePresent:Bool,
+			field:String):Null<OwnershipManifest> {
+		final expected = state.content;
+		final storagePath = state.storagePath;
 		final stored = regularState(storagePath, "journal " + field + " storage");
-		if (OwnershipContract.string(expected, "state", "journal manifest content") == "absent") {
-			if (OwnershipContract.string(stored, "state", "stored manifest content") != "absent") {
+		if (OwnershipContract.isAbsent(expected)) {
+			if (!OwnershipContract.isAbsent(stored)) {
 				fail("absent journal manifest unexpectedly has stored bytes", "invalid-journal", storagePath);
 			}
 			if (requirePresent) {
@@ -468,59 +474,49 @@ class ArtifactOwner {
 		var sourcePath:Null<String> = null;
 		if (stateEquals(stored, expected)) {
 			sourcePath = storagePath;
-		} else if (OwnershipContract.string(stored, "state", "stored manifest content") == "absent"
-			&& stateEquals(regularState(manifestPath, "live ownership manifest"), expected)) {
+		} else if (OwnershipContract.isAbsent(stored) && stateEquals(regularState(manifestPath, "live ownership manifest"), expected)) {
 			sourcePath = manifestPath;
 		} else {
 			fail("journal-bound manifest bytes are missing or unexpected", "invalid-journal", storagePath);
 		}
-		final value = readCanonicalRelative(sourcePath, field);
-		OwnershipContract.validateManifest(value);
+		final value = OwnershipContract.validateManifest(readCanonicalRelative(sourcePath, field));
 		ensureLayout(value);
 		return value;
 	}
 
-	function readCurrentManifest():Null<Dynamic> {
+	function readCurrentManifest():Null<OwnershipManifest> {
 		if (!lexists(relativeAbsolute(manifestPath))) {
 			return null;
 		}
-		final value = readCanonicalRelative(manifestPath, "ownership manifest");
-		OwnershipContract.validateManifest(value);
+		final value = OwnershipContract.validateManifest(readCanonicalRelative(manifestPath, "ownership manifest"));
 		ensureLayout(value);
 		return value;
 	}
 
-	function readJournal():Dynamic {
-		final value = readCanonicalRelative(journalPath, "ownership journal");
-		OwnershipContract.validateJournal(value);
-		final locations = Reflect.field(value, "locations");
-		if (OwnershipContract.string(locations, "manifestPath", "journal locations") != manifestPath
-			|| OwnershipContract.string(locations, "transactionRoot", "journal locations") != transactionRoot
-			|| OwnershipContract.string(locations, "lockPath", "journal locations") != lockPath
-			|| OwnershipContract.string(locations, "journalPath", "journal locations") != journalPath) {
+	function readJournal():OwnershipJournal {
+		final value = OwnershipContract.validateJournal(readCanonicalRelative(journalPath, "ownership journal"));
+		if (value.locations.manifestPath != manifestPath
+			|| value.locations.transactionRoot != transactionRoot
+			|| value.locations.lockPath != lockPath
+			|| value.locations.journalPath != journalPath) {
 			fail("journal does not match the configured ownership layout", "invalid-journal");
 		}
 		return value;
 	}
 
-	function readExternalManifest(path:String, label:String):Dynamic {
+	function readExternalManifest(path:String, label:String):OwnershipManifest {
 		final resolved = Path.resolve(path);
 		final stats = lstatAbsolute(resolved, label);
 		if (stats == null || stats.isSymbolicLink() || !stats.isFile()) {
 			fail(label + " must be a real regular file", "invalid-manifest-input");
 		}
-		final value = OwnershipJson.parseCanonical(readBufferAbsolute(resolved), label);
-		OwnershipContract.validateManifest(value);
-		return value;
+		return OwnershipContract.validateManifest(OwnershipJson.parseCanonical(readBufferAbsolute(resolved), label));
 	}
 
-	function validateCallerStage(root:String, next:Dynamic, validators:Array<StageValidator>):Map<String, Buffer> {
+	function validateCallerStage(root:String, next:OwnershipManifest, validators:Array<StageValidator>):Map<String, Buffer> {
 		final resolved = Path.resolve(root);
 		var files = scanStage(resolved, next);
-		final expectedIds = [
-			for (validator in OwnershipContract.array(next, "validators", "manifest"))
-				OwnershipContract.string(validator, "validatorId", "manifest validator")
-		];
+		final expectedIds = [for (validator in next.validators) validator.validatorId];
 		final actualIds:Array<String> = [];
 		final callbacks = new Map<String, StageValidator>();
 		for (validator in validators) {
@@ -530,14 +526,14 @@ class ArtifactOwner {
 			callbacks.set(validator.validatorId, validator);
 			actualIds.push(validator.validatorId);
 		}
-		actualIds.sort(Reflect.compare);
+		actualIds.sort(compareText);
 		if (actualIds.join("\x00") != expectedIds.join("\x00")) {
 			fail("staged validator callbacks do not exactly match the next manifest", "validator-mismatch");
 		}
 		for (validatorId in expectedIds) {
 			try {
 				callbacks.get(validatorId).run(resolved);
-			} catch (_:Dynamic) {
+			} catch (_:haxe.Exception) {
 				fail("staged validator failed: " + validatorId, "validator-failed");
 			}
 		}
@@ -545,7 +541,7 @@ class ArtifactOwner {
 		return files;
 	}
 
-	function scanStage(root:String, next:Dynamic):Map<String, Buffer> {
+	function scanStage(root:String, next:OwnershipManifest):Map<String, Buffer> {
 		final rootStats = lstatAbsolute(root, "caller stage root");
 		if (rootStats == null || rootStats.isSymbolicLink() || !rootStats.isDirectory()) {
 			fail("caller stage root must be a real directory", "unsafe-stage");
@@ -568,7 +564,7 @@ class ArtifactOwner {
 		}
 		for (path => item in expected) {
 			final buffer = files.get(path);
-			if (buffer == null || !stateEquals(OwnershipJson.contentState(buffer), descriptorForManifestFile(item))) {
+			if (buffer == null || !stateEquals(OwnershipContract.contentState(buffer), descriptorForManifestFile(item))) {
 				fail("staged file is missing or does not match its manifest: " + path, "staged-mismatch", path);
 			}
 		}
@@ -583,7 +579,7 @@ class ArtifactOwner {
 	function scanStageDirectory(root:String, relative:String, files:Map<String, Buffer>, directories:Array<String>):Void {
 		final absolute = relative.length == 0 ? root : Path.resolve(root, relative);
 		final names = Fs.readdirSync(absolute);
-		names.sort(Reflect.compare);
+		names.sort(compareText);
 		for (name in names) {
 			final childRelative = relative.length == 0 ? name : relative + "/" + name;
 			OwnershipContract.relative(childRelative, "staged path");
@@ -602,25 +598,25 @@ class ArtifactOwner {
 		}
 	}
 
-	function verifyPrivateStage(stageRoot:String, next:Dynamic):Void {
+	function verifyPrivateStage(stageRoot:String, next:OwnershipManifest):Void {
 		final expected = OwnershipContract.fileMap(next);
 		for (path => item in expected) {
 			requireState(stageRoot + "/" + path, descriptorForManifestFile(item), "private stage is incomplete or changed");
 		}
 	}
 
-	function verifyOwnedTree(manifest:Dynamic):Void {
-		for (item in OwnershipContract.array(manifest, "files", "manifest")) {
-			final path = OwnershipContract.string(item, "path", "manifest file");
+	function verifyOwnedTree(manifest:OwnershipManifest):Void {
+		for (item in manifest.files) {
+			final path = item.path;
 			if (!stateEquals(regularState(path, "owned file"), descriptorForManifestFile(item))) {
 				fail("owned file is missing or modified: " + path, "modified-owned-file", path);
 			}
 		}
 	}
 
-	function checkRootSafety(manifest:Dynamic):Void {
-		for (root in OwnershipContract.array(manifest, "outputRoots", "manifest")) {
-			final path = OwnershipContract.string(root, "path", "output root");
+	function checkRootSafety(manifest:OwnershipManifest):Void {
+		for (root in manifest.outputRoots) {
+			final path = root.path;
 			assertSafeComponents(path, "output root");
 			var probe = relativeAbsolute(path);
 			var stats = lstatAbsolute(probe, "output root");
@@ -645,12 +641,12 @@ class ArtifactOwner {
 		}
 	}
 
-	function ensureLayout(manifest:Dynamic):Void {
-		final locations = Reflect.field(manifest, "locations");
-		if (OwnershipContract.string(locations, "manifestPath", "manifest locations") != manifestPath
-			|| OwnershipContract.string(locations, "transactionRoot", "manifest locations") != transactionRoot
-			|| OwnershipContract.string(locations, "lockPath", "manifest locations") != lockPath
-			|| OwnershipContract.string(locations, "journalPath", "manifest locations") != journalPath) {
+	function ensureLayout(manifest:OwnershipManifest):Void {
+		final locations = manifest.locations;
+		if (locations.manifestPath != manifestPath
+			|| locations.transactionRoot != transactionRoot
+			|| locations.lockPath != lockPath
+			|| locations.journalPath != journalPath) {
 			fail("manifest does not match the configured ownership layout", "invalid-layout");
 		}
 	}
@@ -670,34 +666,29 @@ class ArtifactOwner {
 		}
 		ensureParent(lockPath);
 		final lock = OwnershipJson.object([
-			"schema" => "wordpress-hx.ownership-lock.v1",
-			"transactionId" => transactionId,
-			"pid" => NodeGlobals.process().pid,
-			"projectDevice" => rootDevice,
-			"projectInode" => rootInode
+			"schema" => OwnershipJson.text("wordpress-hx.ownership-lock.v1"),
+			"transactionId" => OwnershipJson.text(transactionId),
+			"pid" => OwnershipJson.number(NodeGlobals.process().pid),
+			"projectDevice" => OwnershipJson.number(rootDevice),
+			"projectInode" => OwnershipJson.numberFromFloat(rootInode, "project inode")
 		]);
 		writeExclusive(lockPath, OwnershipJson.encodeDocument(lock));
 	}
 
-	function validateLock(journal:Dynamic):Void {
-		final lock = readCanonicalRelative(lockPath, "ownership lock");
-		OwnershipContract.exactFields(lock, ["schema", "transactionId", "pid", "projectDevice", "projectInode"], "ownership lock");
-		if (OwnershipContract.string(lock, "schema", "ownership lock") != "wordpress-hx.ownership-lock.v1"
-			|| OwnershipContract.string(lock, "transactionId", "ownership lock") != OwnershipContract.string(journal, "transactionId", "journal")
-			|| OwnershipContract.integer(lock, "pid", "ownership lock") <= 0
-			|| OwnershipContract.integer(lock, "projectDevice", "ownership lock") != rootDevice
-			|| OwnershipContract.integer(lock, "projectInode", "ownership lock") != rootInode) {
+	function validateLock(journal:OwnershipJournal):Void {
+		final lock = OwnershipContract.decodeLock(readCanonicalRelative(lockPath, "ownership lock"));
+		if (lock.transactionId != journal.transactionId
+			|| lock.pid <= 0
+			|| lock.projectDevice != rootDevice
+			|| lock.projectInode != rootInode) {
 			fail("ownership lock does not bind the journal and project root", "invalid-lock");
 		}
 	}
 
-	function updatePhase(journal:Dynamic, phase:String):Dynamic {
-		requireState(journalPath, OwnershipJson.contentState(OwnershipJson.encodeDocument(journal)), "ownership journal changed during publication");
-		final updated = OwnershipJson.clone(journal);
-		Reflect.setField(updated, "phase", phase);
-		final digested = OwnershipContract.withDigest(updated, "journalDigest");
-		OwnershipContract.validateJournal(digested);
-		atomicWrite(journalPath, OwnershipJson.encodeDocument(digested));
+	function updatePhase(journal:OwnershipJournal, phase:OwnershipPhase):OwnershipJournal {
+		requireState(journalPath, OwnershipContract.contentState(OwnershipJson.encodeDocument(journal.json)), "ownership journal changed during publication");
+		final digested = OwnershipContract.withPhase(journal, phase);
+		atomicWrite(journalPath, OwnershipJson.encodeDocument(digested.json));
 		return digested;
 	}
 
@@ -716,16 +707,16 @@ class ArtifactOwner {
 		pruneEmptyMetadataParents();
 	}
 
-	function cleanupTransaction(journal:Dynamic):Void {
+	function cleanupTransaction(journal:OwnershipJournal):Void {
 		validateLock(journal);
-		requireState(journalPath, OwnershipJson.contentState(OwnershipJson.encodeDocument(journal)), "ownership journal changed before cleanup");
+		requireState(journalPath, OwnershipContract.contentState(OwnershipJson.encodeDocument(journal.json)), "ownership journal changed before cleanup");
 		final cleanupManifest = journalManifestForCleanup(journal);
-		final workRoot = OwnershipContract.string(Reflect.field(journal, "locations"), "workRoot", "journal locations");
+		final workRoot = journal.locations.workRoot;
 		if (lexists(relativeAbsolute(workRoot))) {
 			removePrivateTree(workRoot);
 		}
 		if (lexists(relativeAbsolute(journalPath))) {
-			requireState(journalPath, OwnershipJson.contentState(OwnershipJson.encodeDocument(journal)), "ownership journal changed before cleanup");
+			requireState(journalPath, OwnershipContract.contentState(OwnershipJson.encodeDocument(journal.json)), "ownership journal changed before cleanup");
 			unlinkRelative(journalPath);
 		}
 		releaseLock();
@@ -744,7 +735,7 @@ class ArtifactOwner {
 		}
 		if (stats.isDirectory()) {
 			final children = Fs.readdirSync(absolute);
-			children.sort(Reflect.compare);
+			children.sort(compareText);
 			for (child in children) {
 				removePrivateTree(relative + "/" + child);
 			}
@@ -777,15 +768,15 @@ class ArtifactOwner {
 		}
 	}
 
-	function pruneEmptyGeneratedParents(journal:Dynamic, next:Null<Dynamic>):Void {
+	function pruneEmptyGeneratedParents(journal:OwnershipJournal, next:Null<OwnershipManifest>):Void {
 		final roots:Array<String> = [];
 		if (next != null) {
-			for (root in OwnershipContract.array(next, "outputRoots", "manifest")) {
-				roots.push(OwnershipContract.string(root, "path", "output root"));
+			for (root in next.outputRoots) {
+				roots.push(root.path);
 			}
 		}
-		for (operation in OwnershipContract.array(journal, "operations", "journal")) {
-			final path = OwnershipContract.string(operation, "path", "journal operation");
+		for (operation in journal.operations) {
+			final path = operation.path;
 			for (root in roots) {
 				if (!OwnershipContract.atOrBelow(path, root)) {
 					continue;
@@ -800,17 +791,16 @@ class ArtifactOwner {
 		}
 	}
 
-	function journalManifestForCleanup(journal:Dynamic):Null<Dynamic> {
+	function journalManifestForCleanup(journal:OwnershipJournal):Null<OwnershipManifest> {
 		try {
-			final nextState = Reflect.field(journal, "nextManifest");
-			final storage = OwnershipContract.string(nextState, "storagePath", "journal next manifest");
+			final storage = journal.nextManifest.storagePath;
 			if (lexists(relativeAbsolute(storage))) {
-				return readCanonicalRelative(storage, "next manifest");
+				return OwnershipContract.validateManifest(readCanonicalRelative(storage, "next manifest"));
 			}
 			if (lexists(relativeAbsolute(manifestPath))) {
-				return readCanonicalRelative(manifestPath, "live manifest");
+				return OwnershipContract.validateManifest(readCanonicalRelative(manifestPath, "live manifest"));
 			}
-		} catch (_:Dynamic) {}
+		} catch (_:haxe.Exception) {}
 		return null;
 	}
 
@@ -825,12 +815,12 @@ class ArtifactOwner {
 		try {
 			Fs.rmdirSync(relativeAbsolute(relative));
 			fsyncDirectory(Path.dirname(relativeAbsolute(relative)));
-		} catch (_:Dynamic) {}
+		} catch (_:js.lib.Error) {}
 	}
 
-	function unlinkMatching(relative:String, expected:Dynamic):Void {
+	function unlinkMatching(relative:String, expected:OwnershipContentState):Void {
 		final actual = regularState(relative, "recovery path");
-		if (OwnershipContract.string(actual, "state", "actual content") == "absent") {
+		if (OwnershipContract.isAbsent(actual)) {
 			return;
 		}
 		if (!stateEquals(actual, expected)) {
@@ -878,7 +868,7 @@ class ArtifactOwner {
 		final absolute = relativeAbsolute(relative);
 		var descriptor:Null<Int> = null;
 		try {
-			descriptor = Fs.openSync(absolute, cast "wx", mode);
+			descriptor = Fs.openSync(absolute, "wx", mode);
 			var offset = 0;
 			while (offset < buffer.length) {
 				final written = Fs.writeSync(descriptor, buffer, offset, buffer.length - offset, offset);
@@ -888,11 +878,11 @@ class ArtifactOwner {
 				offset += written;
 			}
 			Fs.fsyncSync(descriptor);
-		} catch (failure:Dynamic) {
+		} catch (failure:js.lib.Error) {
 			if (descriptor != null) {
 				try {
 					Fs.closeSync(descriptor);
-				} catch (_:Dynamic) {}
+				} catch (_:js.lib.Error) {}
 			}
 			throw failure;
 		}
@@ -946,43 +936,39 @@ class ArtifactOwner {
 		}
 	}
 
-	function regularState(relative:String, label:String):Dynamic {
+	function regularState(relative:String, label:String):OwnershipContentState {
 		assertSafeComponents(relative, label);
 		final absolute = relativeAbsolute(relative);
 		final stats = lstatAbsolute(absolute, label);
 		if (stats == null) {
-			return OwnershipJson.contentState();
+			return OwnershipContract.contentState();
 		}
 		if (stats.isSymbolicLink() || !stats.isFile()) {
 			fail(label + " is not a regular file", "unexpected-file-type", relative);
 		}
-		return OwnershipJson.contentState(readBufferAbsolute(absolute));
+		return OwnershipContract.contentState(readBufferAbsolute(absolute));
 	}
 
-	function requireState(relative:String, expected:Dynamic, message:String):Void {
+	function requireState(relative:String, expected:OwnershipContentState, message:String):Void {
 		if (!stateEquals(regularState(relative, "content path"), expected)) {
 			fail(message + ": " + relative, "content-mismatch", relative);
 		}
 	}
 
-	function readCanonicalRelative(relative:String, label:String):Dynamic {
+	function readCanonicalRelative(relative:String, label:String):JsonValue {
 		final state = regularState(relative, label);
-		if (OwnershipContract.string(state, "state", label + " state") != "file") {
+		if (!OwnershipContract.isFile(state)) {
 			fail(label + " is absent", "missing-metadata", relative);
 		}
 		return OwnershipJson.parseCanonical(readBufferAbsolute(relativeAbsolute(relative)), label);
 	}
 
-	function descriptorForManifestFile(item:Dynamic):Dynamic {
-		return OwnershipJson.object([
-			"state" => "file",
-			"sha256" => OwnershipContract.string(item, "contentSha256", "manifest file"),
-			"sizeBytes" => OwnershipContract.integer(item, "sizeBytes", "manifest file")
-		]);
+	function descriptorForManifestFile(item:OwnershipFile):OwnershipContentState {
+		return FileContent(item.contentSha256, item.sizeBytes);
 	}
 
-	function stateEquals(left:Dynamic, right:Dynamic):Bool {
-		return OwnershipJson.encode(left) == OwnershipJson.encode(right);
+	function stateEquals(left:OwnershipContentState, right:OwnershipContentState):Bool {
+		return OwnershipContract.contentEquals(left, right);
 	}
 
 	function relativeAbsolute(relative:String):String {
@@ -999,8 +985,9 @@ class ArtifactOwner {
 	function lstatAbsolute(path:String, label:String):Null<Stats> {
 		try {
 			return Fs.lstatSync(path);
-		} catch (failure:Dynamic) {
-			final code:Dynamic = Reflect.field(failure, "code");
+		} catch (failure:js.lib.Error) {
+			// hxnodejs omits Node's fs error `code`; this exact read is immediately narrowed to Null<String>.
+			final code:Null<String> = Syntax.code("{0}.code", failure);
 			if (code == "ENOENT" || code == "ENOTDIR") {
 				return null;
 			}
@@ -1019,14 +1006,14 @@ class ArtifactOwner {
 	function fsyncDirectory(path:String):Void {
 		var descriptor:Null<Int> = null;
 		try {
-			descriptor = Fs.openSync(path, cast "r");
+			descriptor = Fs.openSync(path, "r");
 			Fs.fsyncSync(descriptor);
 			Fs.closeSync(descriptor);
-		} catch (_:Dynamic) {
+		} catch (_:js.lib.Error) {
 			if (descriptor != null) {
 				try {
 					Fs.closeSync(descriptor);
-				} catch (_:Dynamic) {}
+				} catch (_:js.lib.Error) {}
 			}
 			throw new OwnershipFailure("supported filesystem profile requires directory fsync", "unsupported-filesystem");
 		}
@@ -1040,7 +1027,11 @@ class ArtifactOwner {
 		#end
 	}
 
-	function fail(message:String, code:String, ?path:String):Dynamic {
+	function fail<T>(message:String, code:String, ?path:String):T {
 		throw new OwnershipFailure(message, code, path);
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 }

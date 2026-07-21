@@ -28,6 +28,7 @@ ALLOWED_SYNTAX_CALLS = {
     NODE_GLOBALS: {("code", '"process"')},
     Path("wordpresshx/cli/ownership/ArtifactOwner.hx"): {
         ("code", '"{0}.versions.node"'),
+        ("code", '"{0}.code"'),
     },
     Path("wordpresshx/cli/ownership/OwnershipJson.hx"): {
         ("code", '"Object.create(null)"'),
@@ -46,6 +47,7 @@ ALLOWED_JAVASCRIPT_IMPORTS_BY_SOURCE = {
         "./OwnershipFailure.js",
         "./OwnershipJson.js",
         "../../../Reflect.js",
+        "../../../Std.js",
         "../../../genes/Register.js",
         "../../../haxe/Exception.js",
         "../../../haxe/ds/StringMap.js",
@@ -67,12 +69,24 @@ ALLOWED_JAVASCRIPT_IMPORTS_BY_SOURCE = {
     Path("wordpresshx/cli/ownership/OwnershipJson.hx"): {
         "buffer",
         "./OwnershipFailure.js",
+        "../../../EReg.js",
         "../../../HxOverrides.js",
         "../../../Reflect.js",
         "../../../genes/Register.js",
         "../../../haxe/crypto/Sha256.js",
+        "../../../haxe/Exception.js",
         "../../../haxe/ds/StringMap.js",
         "../../../js/node/buffer/Buffer.js",
+    },
+    Path("wordpresshx/cli/closedjson/JsonParser.hx"): {
+        "../../../HxOverrides.js",
+        "../../../StringBuf.js",
+        "../../../genes/Register.js",
+        "../../../haxe/Exception.js",
+        "../../../haxe/ds/StringMap.js",
+    },
+    Path("wordpresshx/cli/closedjson/JsonValue.hx"): {
+        "../../../genes/Register.js",
     },
     Path("probe/Main.hx"): {"../genes/Register.js"},
 }
@@ -801,7 +815,9 @@ def scan_process_boundary(
 
 
 def scan_javascript_module(
-    module: Path, relative_source: Path
+    module: Path,
+    relative_source: Path,
+    allowed_local_modules: set[Path],
 ) -> list[str]:
     source = module.read_text(encoding="utf-8")
     masked, template_offsets = mask_javascript(source)
@@ -811,6 +827,10 @@ def scan_javascript_module(
         relative_source, set()
     )
     for imported, offset in javascript_imports(source):
+        if imported.startswith(".") and (module.parent / imported).resolve() in (
+            allowed_local_modules
+        ):
+            continue
         if imported in allowed_modules:
             continue
         violations.append(
@@ -874,13 +894,21 @@ def scan_emitted_modules(
         )
     violations: list[str] = []
     module_count = 0
+    modules = [
+        generated_module_path(source, source_root, javascript_root)
+        for source in sources
+        if generated_module_path(source, source_root, javascript_root).is_file()
+    ]
+    allowed_local_modules = {module.resolve() for module in modules}
     for source in sources:
         module = generated_module_path(source, source_root, javascript_root)
-        if not module.is_file():
+        if module not in modules:
             continue
         module_count += 1
         relative = source.resolve().relative_to(source_root.resolve())
-        violations.extend(scan_javascript_module(module, relative))
+        violations.extend(
+            scan_javascript_module(module, relative, allowed_local_modules)
+        )
     if module_count == 0:
         raise IsolationConfigurationError(
             "compiler closure maps to no emitted repository JavaScript modules"
@@ -1015,19 +1043,28 @@ def self_test() -> int:
 
         javascript_root = root / "runtime"
         safe_source = source_root / "wordpresshx" / "cli" / "Safe.hx"
+        local_source = source_root / "wordpresshx" / "cli" / "Local.hx"
         safe_source.write_text("class Safe {}\n", encoding="utf-8")
+        local_source.write_text("class Local {}\n", encoding="utf-8")
         safe_module = generated_module_path(safe_source, source_root, javascript_root)
+        local_module = generated_module_path(
+            local_source, source_root, javascript_root
+        )
         safe_module.parent.mkdir(parents=True)
         safe_module.write_text(
+            'import {Local} from "./Local.js";\n'
             "// process.exit(91); require('child_process')\n"
             'const note = "fetch globalThis process.exit require";\n'
-            "export class Safe { check(store) { store.lookup(); this.requireState(); } }\n",
+            "export class Safe { check(store) { Local.check(); store.lookup(); this.requireState(); } }\n",
             encoding="utf-8",
         )
-        emitted_violations, emitted_count = scan_emitted_modules(
-            [safe_source], source_root, javascript_root
+        local_module.write_text(
+            "export class Local { static check() {} }\n", encoding="utf-8"
         )
-        if emitted_violations or emitted_count != 1:
+        emitted_violations, emitted_count = scan_emitted_modules(
+            [safe_source, local_source], source_root, javascript_root
+        )
+        if emitted_violations or emitted_count != 2:
             raise RuntimeError("safe emitted capability self-test was rejected")
 
         emitted_forbidden = (

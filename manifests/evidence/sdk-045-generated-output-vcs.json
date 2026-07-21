@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "receiptId": "SDK-045-3-GENERATED-OUTPUT-VCS",
   "bead": "wordpresshx-sdk-045.3",
-  "status": "verified-hosted",
-  "observedAt": "2026-07-21T11:17:48Z",
-  "implementationCommit": "e38b33469e1d0cacc14bdb113cb9d6a43fec8fea",
+  "status": "verified-local-pending-hosted",
+  "observedAt": "2026-07-21T11:58:50Z",
+  "implementationCommit": null,
   "subject": {
     "digestAlgorithm": "sha256-file-bytes-v1",
     "implementationManifest": {
       "path": "manifests/generated-output-vcs-implementation.json",
-      "sha256": "011e401cf4872dbb9910b775a4fcb4c387658f7c3795493949d85d799c9fc12e"
+      "sha256": "00d325a58b3c0aadcfc1d479d41027a5b6a8a0706dc305e8df6b71f7fbb873a6"
     },
     "commandBoundary": [
       {
         "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-        "sha256": "b9c8a65f14a53906ca29f07877d40daea4c936f4bec9468a1921fe3d690a8eaf"
+        "sha256": "400a5aa4504aa58dec8f4faa3af58c21eeea756c3949aaee6b731e3f34dde5ba"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonDocument.hx",
@@ -133,7 +133,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "f1615fa64c18651e69ee5af64defae6cf941aed965bc5f26e9a50fe1e724ee55"
+      "sha256": "e2f95e40ee01a9364a789bcc79e0fb721308602e2e06e2cd731739b5d5fd5cee"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -152,8 +152,8 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "e38b33469e1d0cacc14bdb113cb9d6a43fec8fea",
-    "subjectContentSha256": "70966604f5c7bb48db62abf359285f7c5f63257d786718b1a4e237319abe4330",
+    "subjectCommit": null,
+    "subjectContentSha256": "f276288a6b2ff611b5bc5de44496349e4b7f5f29256d5b5045a25773b8d18fa4",
     "depthOneFallback": "self-contained-subject-inventory-plus-full-history-security-job"
   },
   "contract": {
@@ -185,7 +185,7 @@
     "repositoryCommand": "bash scripts/check-repository.sh",
     "focusedCommand": "python3 scripts/generated-output-vcs/test-production-integration.py <compiled-runtime-root>",
     "summarySchema": "wordpress-hx.sdk0453-generated-output-summary.v1",
-    "outcome": "passed-hosted",
+    "outcome": "passed-local",
     "positiveCases": 8,
     "negativeCases": 16,
     "negativeCorpusCases": 13,
@@ -202,8 +202,8 @@
     "gitOnlyDeployment": "manifest-bound-generated-native-php-executed-without-build",
     "releaseDistributionTracked": false,
     "checkoutMutation": "none",
-    "repositoryGate": "passed-hosted",
-    "completeScaffoldAndPluginGate": "passed-hosted",
+    "repositoryGate": "passed-local",
+    "completeScaffoldAndPluginGate": "passed-local",
     "strictHaxeBoundaryGuard": "passed"
   },
   "review": {
@@ -239,12 +239,12 @@
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": 29824836099,
+    "runId": null,
     "job": "haxe",
-    "jobId": 88615674316,
+    "jobId": null,
     "step": "Test Haxe-first site scaffolding",
-    "commit": "e38b33469e1d0cacc14bdb113cb9d6a43fec8fea",
-    "status": "passed",
+    "commit": null,
+    "status": "pending-current-subject-run",
     "required": true
   },
   "supersededStrictHaxeMigrationWorkflow": {
@@ -268,13 +268,13 @@
     "reason": "The repository validator subject changed after this run; current receipt subjects require a fresh exact-commit hosted run."
   },
   "claims": {
-    "productionWphxIntegration": "runtime-tested-hosted",
-    "realGitCleanHeadRegeneration": "runtime-tested-hosted",
-    "generatedPhpGitOnlyConsumer": "runtime-tested-hosted",
-    "defaultIgnoreAndRegenerate": "runtime-tested-hosted",
-    "generatedConsumerCi": "runtime-tested-hosted",
-    "cleanLocalTarballInstallation": "runtime-tested-hosted",
-    "hostedVerification": "runtime-tested-hosted",
+    "productionWphxIntegration": "runtime-tested-local",
+    "realGitCleanHeadRegeneration": "runtime-tested-local",
+    "generatedPhpGitOnlyConsumer": "runtime-tested-local",
+    "defaultIgnoreAndRegenerate": "runtime-tested-local",
+    "generatedConsumerCi": "runtime-tested-local",
+    "cleanLocalTarballInstallation": "runtime-tested-local",
+    "hostedVerification": "pending-current-subject-run",
     "releaseIntegration": "not-implemented-sdk-101",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-claimed"

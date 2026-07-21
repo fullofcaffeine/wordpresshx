@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "STRICT-HAXE-MIGRATION",
   "bead": "wordpresshx-sjb",
-  "status": "verified-hosted",
-  "observedAt": "2026-07-21T11:01:04Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T11:55:09Z",
   "directive": {
     "forbiddenTokens": [
       "Dynamic",
@@ -17,9 +17,9 @@
   },
   "inventory": {
     "initialFindingCount": 583,
-    "currentFindingCount": 363,
-    "removedFindingCount": 220,
-    "complete": false
+    "currentFindingCount": 0,
+    "removedFindingCount": 583,
+    "complete": true
   },
   "subjects": [
     {
@@ -135,6 +135,58 @@
       "sha256": "2964b53f55e0893471868b5eb47ce7c9be8cf7c053a0c6c2c8098b87247c6ba6"
     },
     {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+      "sha256": "a61ea508b7b3701f036d022d8cbdb5e71c6230fb9cc49c184bb822c2a78fa272"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+      "sha256": "a6d78a7929bcbb7b09206f0954bc9c63715d4c5b10993921a8d4a1918402c3bc"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+      "sha256": "dc8b71f17e90251e28f27091b8e57fa89017c967a9759621487bf73f47030a72"
+    },
+    {
+      "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
+      "sha256": "53379d6b896e973379cf3caec83e1cc8ca8ed5b193b26936895f079da96a91ae"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectJson.hx",
+      "sha256": "4a38c174e92b3c90859776b6be783af737b3871e399b33c7c99d2daa971493af"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectContract.hx",
+      "sha256": "075707f1f5f2f9237f47d21ee121b1c7290aaeea51ff325e0f29b5d930e092e9"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectContext.hx",
+      "sha256": "28c88663f189a647f7f1756d7f3545068dc1fa6b808ba3fee1cd2d9a7c57065b"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
+      "sha256": "bf81c5462adfb734e658efd89387d2b60d3c7493aea37ada95cd0ecbe3e67c04"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
+      "sha256": "6605ecbfb4ee178aea3ce7bfb98e1955e084c57aa3d8e1ee4111a491d5951292"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
+      "sha256": "495146fe3017d20efb867c40ab66ddad36fd9e17904bed5950c6a5f8afaa43c8"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+      "sha256": "400a5aa4504aa58dec8f4faa3af58c21eeea756c3949aaee6b731e3f34dde5ba"
+    },
+    {
+      "path": "packages/cli/scripts/check-ownership-haxe.sh",
+      "sha256": "b39fc9afdf5c67d214a5d925c57df08384a18f7df88e02ddaab61b91fd24f4d4"
+    },
+    {
+      "path": "packages/cli/scripts/check-project-haxe.sh",
+      "sha256": "1a81d27dab27f47676b39a186223624fd06e38d6930d3b77670699558a25cde2"
+    },
+    {
       "path": "packages/cli/scripts/test.sh",
       "sha256": "7c7b2250c0806017ccc61cda0f7bbb069ac2cb24eb9ba7ec5b4bd7441589505d"
     },
@@ -154,7 +206,7 @@
       "haxeFileCount": 18,
       "findingCount": 0,
       "gate": "bash scripts/profiles/test-profile-haxe.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "generic-php-compiler",
@@ -162,7 +214,7 @@
       "haxeFileCount": 34,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "wordpress-php-compiler",
@@ -170,7 +222,7 @@
       "haxeFileCount": 25,
       "findingCount": 0,
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "cli-trace-and-shared-json",
@@ -192,7 +244,36 @@
       "haxeFileCount": 12,
       "findingCount": 0,
       "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
+    },
+    {
+      "id": "cli-ownership-contract",
+      "root": "packages/cli/src/wordpresshx/cli/ownership",
+      "paths": [
+        "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx",
+        "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+        "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
+        "packages/cli/test/ownership/src/sdk041/fixture/Main.hx"
+      ],
+      "haxeFileCount": 10,
+      "findingCount": 0,
+      "gate": "bash packages/cli/scripts/check-ownership-haxe.sh",
+      "outcome": "passed-local"
+    },
+    {
+      "id": "cli-project-and-development",
+      "root": "packages/cli/src/wordpresshx/cli/project",
+      "entryPath": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
+      "haxeFileCount": 66,
+      "findingCount": 0,
+      "gate": "bash packages/cli/scripts/check-project-haxe.sh",
+      "outcome": "passed-local"
     }
   ],
   "typedAdapters": [
@@ -201,7 +282,7 @@
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
       "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-hosted",
+      "outcome": "passed-local",
       "owningClosureComplete": true
     },
     {
@@ -209,7 +290,7 @@
       "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
       "genericBoundary": "wordpresshx.cli.closedjson.JsonValue",
       "gate": "bash packages/cli/scripts/check-trace-haxe.sh",
-      "outcome": "passed-hosted",
+      "outcome": "passed-local",
       "owningClosureComplete": true
     }
   ],
@@ -217,31 +298,33 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "required": true,
-    "implementationCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
-    "runId": 29823692811,
-    "jobId": 88612005313,
-    "status": "passed",
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T11:01:03Z"
+    "implementationCommit": null,
+    "runId": null,
+    "jobId": null,
+    "status": "pending-current-subject-run",
+    "allJobsPassed": false,
+    "completedAt": null
   },
   "previousHostedVerification": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "implementationCommit": "31c506a0a3789e84fdcda32f6fc71cf6018629c6",
-    "runId": 29820264347,
-    "jobId": 88600999236,
-    "status": "passed-before-cli-trace-closure",
+    "implementationCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
+    "runId": 29823692811,
+    "jobId": 88612005313,
+    "status": "passed-before-repository-closure",
     "allJobsPassed": true,
-    "completedAt": "2026-07-21T10:09:11Z"
+    "completedAt": "2026-07-21T11:01:03Z"
   },
   "claims": {
-    "coreProfileContractStrict": "runtime-tested-hosted",
-    "genericPhpCompilerStrict": "runtime-tested-hosted",
-    "wordpressPhpCompilerStrict": "runtime-tested-hosted",
-    "wordpressSourceIndexTypedAdapter": "runtime-tested-hosted",
-    "cliTraceAndSharedJsonStrict": "runtime-tested-hosted",
-    "cliSourceCorrelationTypedAdapter": "runtime-tested-hosted",
-    "repositoryWideStrictHaxe": "not-yet-remaining-findings",
+    "coreProfileContractStrict": "runtime-tested-local",
+    "genericPhpCompilerStrict": "runtime-tested-local",
+    "wordpressPhpCompilerStrict": "runtime-tested-local",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
+    "cliTraceAndSharedJsonStrict": "runtime-tested-local",
+    "cliSourceCorrelationTypedAdapter": "runtime-tested-local",
+    "cliOwnershipContractStrict": "runtime-tested-local",
+    "cliProjectWorkflowStrict": "runtime-tested-local",
+    "repositoryWideStrictHaxe": "runtime-tested-local",
     "productionSupport": "not-claimed"
   }
 }

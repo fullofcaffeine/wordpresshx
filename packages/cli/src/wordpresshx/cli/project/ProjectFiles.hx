@@ -29,7 +29,7 @@ class ProjectFiles {
 		final absoluteRoot = requireDirectory(root, relativeRoot, roleLabel);
 		final result:Array<String> = [];
 		walk(root, absoluteRoot, relativeRoot, extensions, result);
-		result.sort(Reflect.compare);
+		result.sort(ProjectJson.compareText);
 		return result;
 	}
 
@@ -38,7 +38,7 @@ class ProjectFiles {
 			final absolute = safeAbsolute(root, relative, "project file", "configuration");
 			final stats = Fs.lstatSync(absolute);
 			return stats.isFile() && !stats.isSymbolicLink();
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			return false;
 		}
 	}
@@ -49,7 +49,7 @@ class ProjectFiles {
 
 	static function walk(root:String, absolute:String, relative:String, extensions:Null<Array<String>>, result:Array<String>):Void {
 		final names = Fs.readdirSync(absolute);
-		names.sort(Reflect.compare);
+		names.sort(ProjectJson.compareText);
 		for (name in names) {
 			final childRelative = relative + "/" + name;
 			ProjectContract.relativePath(childRelative, "discovered input");
@@ -91,12 +91,12 @@ class ProjectFiles {
 	static function lstat(absolute:String, label:String, relative:String, stage:String):js.node.fs.Stats {
 		try {
 			return Fs.lstatSync(absolute);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			throw new CliFailure("WPHX1007", label + " is missing", 3, stage, relative, ["Restore the file or rerun the explicit lock/scaffold command."]);
 		}
 	}
 
-	static function fail(message:String, relative:String, stage:String):Dynamic {
+	static function fail<T>(message:String, relative:String, stage:String):T {
 		throw new CliFailure("WPHX1008", message + ": " + relative, 3, stage, relative,
 			["Replace links or special files with regular project-local files and retry."]);
 	}

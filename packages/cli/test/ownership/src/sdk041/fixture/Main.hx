@@ -6,6 +6,7 @@ import wordpresshx.cli.ownership.ArtifactOwner;
 import wordpresshx.cli.ownership.OwnershipFailure;
 import wordpresshx.cli.ownership.OwnershipJson;
 import wordpresshx.cli.ownership.StageValidator;
+import wordpresshx.cli.closedjson.JsonValue;
 
 /** Subprocess entry used to prove the production Haxe ownership transaction. **/
 class Main {
@@ -55,17 +56,18 @@ class Main {
 						throw new OwnershipFailure("inspect takes no additional arguments", "usage");
 					}
 					final manifest = owner.inspectCurrentManifest();
-					nodeProcess.stdout.write(OwnershipJson.encode(OwnershipJson.object(["manifest" => manifest])) + "\n");
+					final manifestValue:JsonValue = manifest == null ? NullValue : manifest;
+					nodeProcess.stdout.write(OwnershipJson.encode(OwnershipJson.object(["manifest" => manifestValue])) + "\n");
 					return;
 				case _:
 					throw new OwnershipFailure("unknown ownership fixture command", "usage");
 			}
-			nodeProcess.stdout.write(OwnershipJson.encode(OwnershipJson.object(["outcome" => outcome])) + "\n");
+			nodeProcess.stdout.write(OwnershipJson.encode(OwnershipJson.object(["outcome" => OwnershipJson.text(outcome)])) + "\n");
 		} catch (failure:OwnershipFailure) {
 			final report = OwnershipJson.object([
-				"code" => failure.code,
-				"message" => failure.message,
-				"path" => failure.relativePath
+				"code" => OwnershipJson.text(failure.code),
+				"message" => OwnershipJson.text(failure.message),
+				"path" => OwnershipJson.nullableText(failure.relativePath)
 			]);
 			nodeProcess.stderr.write(OwnershipJson.encode(report) + "\n");
 			nodeProcess.exit(failure.code == "usage" ? 2 : 3);

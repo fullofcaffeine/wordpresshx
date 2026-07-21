@@ -4,13 +4,23 @@ import haxe.Json;
 import haxe.crypto.Sha256;
 import js.Syntax;
 import js.node.Buffer;
+import wordpresshx.cli.closedjson.JsonParser;
+import wordpresshx.cli.closedjson.JsonParser.JsonParseError;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.closedjson.JsonValue.JsonField;
 
-/** Strict canonical JSON used by ownership manifests, journals, and locks. **/
+/** Strict canonical JSON for ownership data, represented by a closed value algebra. **/
 class OwnershipJson {
-	public static function parseCanonical(buffer:Buffer, label:String):Dynamic {
+	static final INTEGER = ~/^(?:0|-?[1-9][0-9]*)$/;
+
+	public static function parseCanonical(buffer:Buffer, label:String):JsonValue {
 		final source = decodeUtf8(buffer, label);
-		final parser = new StrictOwnershipJsonParser(source, label);
-		final value = parser.parse();
+		final value = try {
+			JsonParser.parse(source);
+		} catch (failure:JsonParseError) {
+			fail(label + " " + failure.message, "malformed-json");
+		}
+		validateValue(value, "$");
 		final expected = Buffer.from(encode(value) + "\n", "utf8");
 		if (Buffer.compareBuffers(buffer, expected) != 0) {
 			fail(label + " must use wordpress-hx.canonical-json.v1 plus exactly one final LF", "non-canonical-json");
@@ -18,108 +28,72 @@ class OwnershipJson {
 		return value;
 	}
 
-	public static function encode(value:Dynamic):String {
+	public static function encode(value:JsonValue):String {
+		validateValue(value, "$");
 		return encodeValue(value, "$");
 	}
 
-	public static function encodeDocument(value:Dynamic):Buffer {
+	public static function encodeDocument(value:JsonValue):Buffer {
 		return Buffer.from(encode(value) + "\n", "utf8");
 	}
 
-	public static function clone(value:Dynamic):Dynamic {
-		return new StrictOwnershipJsonParser(encode(value), "canonical clone").parse();
+	public static function clone(value:JsonValue):JsonValue {
+		return JsonParser.parse(encode(value));
 	}
 
 	public static function digest(buffer:Buffer):String {
 		return Sha256.make(buffer.hxToBytes()).toHex().toLowerCase();
 	}
 
-	public static function digestValue(value:Dynamic):String {
+	public static function digestValue(value:JsonValue):String {
 		return digest(Buffer.from(encode(value), "utf8"));
 	}
 
-	public static function contentState(?buffer:Buffer):Dynamic {
-		if (buffer == null) {
-			return object(["state" => "absent"]);
-		}
-		return object(["state" => "file", "sha256" => digest(buffer), "sizeBytes" => buffer.length]);
+	public static function contentState(?buffer:Buffer):JsonValue {
+		return buffer == null ? object(["state" => text("absent")]) : object([
+			"state" => text("file"),
+			"sha256" => text(digest(buffer)),
+			"sizeBytes" => number(buffer.length)
+		]);
 	}
 
-	public static function object(fields:Map<String, Dynamic>):Dynamic {
-		final value:Dynamic = Syntax.code("Object.create(null)");
-		for (field => child in fields) {
-			Reflect.setField(value, field, child);
+	public static function object(fields:Map<String, OwnershipJsonField>):JsonValue {
+		return ObjectValue([for (name => value in fields) {name: name, value: value.json()}]);
+	}
+
+	public static inline function array(values:Array<JsonValue>):JsonValue {
+		return ArrayValue(values);
+	}
+
+	public static inline function text(value:String):JsonValue {
+		return StringValue(value);
+	}
+
+	public static inline function number(value:Int):JsonValue {
+		return NumberValue(Std.string(value));
+	}
+
+	public static function numberFromFloat(value:Float, label:String):JsonValue {
+		if (!isSafeInteger(value)) {
+			return fail(label + " must be a safe integer", "contract-shape");
 		}
-		return value;
+		return NumberValue(Std.string(value));
+	}
+
+	public static inline function boolean(value:Bool):JsonValue {
+		return BoolValue(value);
+	}
+
+	public static inline function nullableText(value:Null<String>):JsonValue {
+		return value == null ? NullValue : StringValue(value);
 	}
 
 	public static function nfc(value:String):String {
 		return Syntax.code("{0}.normalize('NFC')", value);
 	}
 
-	public static function isSafeInteger(value:Dynamic):Bool {
+	public static function isSafeInteger(value:Float):Bool {
 		return Syntax.code("Number.isSafeInteger({0})", value);
-	}
-
-	public static function hasOwn(value:Dynamic, field:String):Bool {
-		return Syntax.code("Object.prototype.hasOwnProperty.call({0}, {1})", value, field);
-	}
-
-	public static function fail(message:String, code:String = "ownership-json"):Dynamic {
-		throw new OwnershipFailure(message, code);
-	}
-
-	static function decodeUtf8(buffer:Buffer, label:String):String {
-		final value = buffer.toString("utf8");
-		if (Buffer.compareBuffers(buffer, Buffer.from(value, "utf8")) != 0) {
-			fail(label + " is not valid UTF-8", "invalid-utf8");
-		}
-		return value;
-	}
-
-	static function encodeValue(value:Dynamic, location:String):String {
-		if (value == null) {
-			return "null";
-		}
-		if (Std.isOfType(value, String)) {
-			final text:String = cast value;
-			validateUnicode(text, location);
-			if (nfc(text) != text) {
-				fail(location + " contains a non-NFC string", "non-nfc-json");
-			}
-			return Json.stringify(text);
-		}
-		if (Std.isOfType(value, Bool)) {
-			return value ? "true" : "false";
-		}
-		if (Std.isOfType(value, Int) || Std.isOfType(value, Float)) {
-			if (!isSafeInteger(value)) {
-				fail(location + " contains a floating-point or unsafe JSON number", "non-integer-json");
-			}
-			return Syntax.code("String({0})", value);
-		}
-		if (Std.isOfType(value, Array)) {
-			final items:Array<Dynamic> = cast value;
-			final encoded = [
-				for (index in 0...items.length)
-					encodeValue(items[index], location + "[" + index + "]")
-			];
-			return "[" + encoded.join(",") + "]";
-		}
-		if (!Reflect.isObject(value)) {
-			fail(location + " contains an unsupported JSON value", "unsupported-json-value");
-		}
-		final fields = Reflect.fields(value);
-		fields.sort(Reflect.compare);
-		final encoded = [];
-		for (field in fields) {
-			validateUnicode(field, location + " key");
-			if (nfc(field) != field) {
-				fail(location + " contains a non-NFC object key", "non-nfc-json");
-			}
-			encoded.push(Json.stringify(field) + ":" + encodeValue(Reflect.field(value, field), location + "." + field));
-		}
-		return "{" + encoded.join(",") + "}";
 	}
 
 	public static function validateUnicode(value:String, label:String):Void {
@@ -143,203 +117,113 @@ class OwnershipJson {
 			index++;
 		}
 	}
+
+	public static function fail<T>(message:String, code:String = "ownership-json"):T {
+		throw new OwnershipFailure(message, code);
+	}
+
+	static function decodeUtf8(buffer:Buffer, label:String):String {
+		final value = buffer.toString("utf8");
+		if (Buffer.compareBuffers(buffer, Buffer.from(value, "utf8")) != 0) {
+			fail(label + " is not valid UTF-8", "invalid-utf8");
+		}
+		return value;
+	}
+
+	static function validateValue(value:JsonValue, location:String):Void {
+		switch value {
+			case NullValue | BoolValue(_):
+			case NumberValue(source):
+				if (!INTEGER.match(source)) {
+					fail(location + " contains a floating-point JSON number", "non-integer-json");
+				}
+				final parsed = Std.parseFloat(source);
+				if (!isSafeInteger(parsed)) {
+					fail(location + " contains an unsafe JSON number", "non-integer-json");
+				}
+			case StringValue(value):
+				validateUnicode(value, location);
+				if (nfc(value) != value) {
+					fail(location + " contains a non-NFC string", "non-nfc-json");
+				}
+			case ArrayValue(values):
+				for (index in 0...values.length) {
+					validateValue(values[index], location + "[" + index + "]");
+				}
+			case ObjectValue(fields):
+				final normalized = new Map<String, Bool>();
+				for (field in fields) {
+					validateUnicode(field.name, location + " key");
+					final name = nfc(field.name);
+					if (name != field.name) {
+						fail(location + " contains a non-NFC object key", "non-nfc-json");
+					}
+					if (normalized.exists(name)) {
+						fail(location + " contains a duplicate object key after NFC normalization: " + name, "malformed-json");
+					}
+					normalized.set(name, true);
+					validateValue(field.value, location + "." + name);
+				}
+		}
+	}
+
+	static function encodeValue(value:JsonValue, location:String):String {
+		return switch value {
+			case NullValue: "null";
+			case BoolValue(value): value ? "true" : "false";
+			case NumberValue(source): source;
+			case StringValue(value): Json.stringify(value);
+			case ArrayValue(values):
+				"[" + [
+					for (index in 0...values.length)
+						encodeValue(values[index], location + "[" + index + "]")
+				].join(",") + "]";
+			case ObjectValue(fields):
+				final sorted:Array<JsonField> = fields.copy();
+				sorted.sort((left, right) -> compareText(left.name, right.name));
+				"{" + [
+					for (field in sorted)
+						Json.stringify(field.name) + ":" + encodeValue(field.value, location + "." + field.name)
+				].join(",") + "}";
+		};
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
+	}
 }
 
-private class StrictOwnershipJsonParser {
-	final source:String;
-	final label:String;
-	var offset:Int = 0;
-
-	public function new(source:String, label:String) {
-		this.source = source;
-		this.label = label;
+/** Closed ergonomic inputs accepted by the canonical ownership object builder. **/
+abstract OwnershipJsonField(JsonValue) {
+	public inline function json():JsonValue {
+		return this;
 	}
 
-	public function parse():Dynamic {
-		skipWhitespace();
-		final value = parseValue("$");
-		skipWhitespace();
-		if (offset != source.length) {
-			fail("contains trailing JSON content");
-		}
-		return value;
+	@:from public static inline function fromJson(value:JsonValue):OwnershipJsonField {
+		return new OwnershipJsonField(value);
 	}
 
-	function parseValue(location:String):Dynamic {
-		if (offset >= source.length) {
-			fail("ends before a JSON value");
-		}
-		return switch (source.charAt(offset)) {
-			case "{": parseObject(location);
-			case "[": parseArray(location);
-			case '"': parseString(location);
-			case "t": parseKeyword("true", true);
-			case "f": parseKeyword("false", false);
-			case "n": parseKeyword("null", null);
-			case "-": parseNumber(location);
-			case digit if (digit >= "0" && digit <= "9"): parseNumber(location);
-			case _: fail("contains an invalid JSON token at byte-like offset " + offset);
-		}
+	@:from public static inline function fromString(value:String):OwnershipJsonField {
+		return new OwnershipJsonField(StringValue(value));
 	}
 
-	function parseObject(location:String):Dynamic {
-		offset++;
-		final result:Dynamic = Syntax.code("Object.create(null)");
-		skipWhitespace();
-		if (take("}")) {
-			return result;
-		}
-		while (true) {
-			if (offset >= source.length || source.charAt(offset) != '"') {
-				fail("contains an object key that is not a JSON string");
-			}
-			final rawKey:String = parseString(location + " key");
-			final key = OwnershipJson.nfc(rawKey);
-			if (OwnershipJson.hasOwn(result, key)) {
-				fail("contains a duplicate object key after NFC normalization: " + key);
-			}
-			skipWhitespace();
-			expect(":");
-			skipWhitespace();
-			Reflect.setField(result, key, parseValue(location + "." + key));
-			skipWhitespace();
-			if (take("}")) {
-				return result;
-			}
-			expect(",");
-			skipWhitespace();
-		}
-		return result;
+	@:from public static inline function fromInt(value:Int):OwnershipJsonField {
+		return new OwnershipJsonField(NumberValue(Std.string(value)));
 	}
 
-	function parseArray(location:String):Array<Dynamic> {
-		offset++;
-		final result:Array<Dynamic> = [];
-		skipWhitespace();
-		if (take("]")) {
-			return result;
-		}
-		while (true) {
-			result.push(parseValue(location + "[" + result.length + "]"));
-			skipWhitespace();
-			if (take("]")) {
-				return result;
-			}
-			expect(",");
-			skipWhitespace();
-		}
-		return result;
+	@:from public static inline function fromBool(value:Bool):OwnershipJsonField {
+		return new OwnershipJsonField(BoolValue(value));
 	}
 
-	function parseString(location:String):String {
-		final start = offset;
-		offset++;
-		while (offset < source.length) {
-			final code = source.charCodeAt(offset);
-			if (code == 0x22) {
-				offset++;
-				final value:Dynamic = Json.parse(source.substring(start, offset));
-				if (!Std.isOfType(value, String)) {
-					fail("contains an invalid JSON string");
-				}
-				final text:String = cast value;
-				OwnershipJson.validateUnicode(text, location);
-				return text;
-			}
-			if (code < 0x20) {
-				fail("contains an unescaped JSON string control character");
-			}
-			if (code == 0x5c) {
-				offset++;
-				if (offset >= source.length) {
-					fail("ends in a JSON string escape");
-				}
-				final escape = source.charAt(offset);
-				if (escape == "u") {
-					if (offset + 4 >= source.length) {
-						fail("contains a truncated Unicode escape");
-					}
-					for (index in offset + 1...offset + 5) {
-						final hex = source.charAt(index).toLowerCase();
-						if (!((hex >= "0" && hex <= "9") || (hex >= "a" && hex <= "f"))) {
-							fail("contains an invalid Unicode escape");
-						}
-					}
-					offset += 5;
-					continue;
-				}
-				if ('"\\/bfnrt'.indexOf(escape) < 0) {
-					fail("contains an invalid JSON string escape");
-				}
-			}
-			offset++;
-		}
-		return fail("contains an unterminated JSON string");
+	@:from public static function fromStrings(values:Array<String>):OwnershipJsonField {
+		return new OwnershipJsonField(ArrayValue([for (value in values) StringValue(value)]));
 	}
 
-	function parseNumber(location:String):Dynamic {
-		final start = offset;
-		if (take("-")) {}
-		if (offset >= source.length) {
-			fail("ends in a JSON number");
-		}
-		if (take("0")) {
-			if (offset < source.length && isDigit(source.charAt(offset))) {
-				fail("contains a JSON number with a leading zero");
-			}
-		} else {
-			final first = source.charAt(offset);
-			if (first < "1" || first > "9") {
-				fail("contains an invalid JSON number");
-			}
-			offset++;
-			while (offset < source.length && isDigit(source.charAt(offset))) {
-				offset++;
-			}
-		}
-		if (offset < source.length && (source.charAt(offset) == "." || source.charAt(offset).toLowerCase() == "e")) {
-			fail(location + " uses a floating-point JSON number");
-		}
-		final value:Dynamic = Std.parseFloat(source.substring(start, offset));
-		if (!OwnershipJson.isSafeInteger(value)) {
-			fail(location + " uses an unsafe JSON integer");
-		}
-		return value;
+	@:from public static inline function fromJsonValues(values:Array<JsonValue>):OwnershipJsonField {
+		return new OwnershipJsonField(ArrayValue(values));
 	}
 
-	function parseKeyword(token:String, value:Dynamic):Dynamic {
-		if (source.substr(offset, token.length) != token) {
-			fail("contains an invalid JSON keyword");
-		}
-		offset += token.length;
-		return value;
-	}
-
-	function skipWhitespace():Void {
-		while (offset < source.length && " \t\r\n".indexOf(source.charAt(offset)) >= 0) {
-			offset++;
-		}
-	}
-
-	function take(token:String):Bool {
-		if (source.substr(offset, token.length) != token) {
-			return false;
-		}
-		offset += token.length;
-		return true;
-	}
-
-	function expect(token:String):Void {
-		if (!take(token)) {
-			fail("expected '" + token + "' at byte-like offset " + offset);
-		}
-	}
-
-	inline function isDigit(value:String):Bool {
-		return value >= "0" && value <= "9";
-	}
-
-	function fail(message:String):Dynamic {
-		return OwnershipJson.fail(label + " " + message, "malformed-json");
+	inline function new(value:JsonValue) {
+		this = value;
 	}
 }

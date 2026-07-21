@@ -4,7 +4,9 @@ import js.Syntax;
 import js.node.Buffer;
 import js.node.Path;
 import wordpresshx.cli.CliFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
+import wordpresshx.cli.project.ProjectJson.ProjectJsonField;
 
 /** Deterministic discovery graph shared by bounded builds and the later watcher. **/
 class EffectiveInputs {
@@ -24,9 +26,9 @@ class EffectiveInputs {
 		"project-lock"
 	];
 
-	public static function build(bootstrap:ProjectBootstrap, lock:Dynamic, lockBytes:Buffer):Dynamic {
+	public static function build(bootstrap:ProjectBootstrap, lock:JsonValue, lockBytes:Buffer):JsonValue {
 		final resolvedEnvironment = resolveBuildEnvironment(bootstrap.config);
-		final records:Array<Dynamic> = [];
+		final records:Array<JsonValue> = [];
 		final seen = new Map<String, Bool>();
 		addFile(records, seen, bootstrap, ".haxerc", "haxe-config", ["browser", "metadata", "php", "plan"]);
 		final hxmlFiles = ProjectFiles.discover(bootstrap.root, ".wphx/bootstrap", [".hxml"], "Haxe bootstrap root");
@@ -57,11 +59,13 @@ class EffectiveInputs {
 				addFile(records, seen, bootstrap, path, "asset", ["assets"]);
 			}
 		}
-		records.sort((left, right) -> Reflect.compare(Reflect.field(left, "path"), Reflect.field(right, "path")));
+		records.sort((left,
+				right) -> ProjectJson.compareText(ProjectContract.string(left, "path", "effective input"),
+				ProjectContract.string(right, "path", "effective input")));
 
 		final components = ProjectContract.array(lock, "components", "project lock", "profile-resolution");
-		final componentById = new Map<String, Dynamic>();
-		final toolchain:Array<Dynamic> = [];
+		final componentById = new Map<String, JsonValue>();
+		final toolchain:Array<JsonValue> = [];
 		for (component in components) {
 			final id = ProjectContract.string(component, "id", "project lock component", "profile-resolution");
 			componentById.set(id, component);
@@ -71,21 +75,22 @@ class EffectiveInputs {
 				"lockEntrySha256" => ProjectContract.string(component, "lockEntrySha256", "project lock component", "profile-resolution")
 			]));
 		}
-		toolchain.sort((left, right) -> Reflect.compare(Reflect.field(left, "id"), Reflect.field(right, "id")));
+		toolchain.sort((left,
+				right) -> ProjectJson.compareText(ProjectContract.string(left, "id", "effective tool"), ProjectContract.string(right, "id", "effective tool")));
 
 		final projectLock = ProjectContract.fieldObject(lock, "project", "project lock");
-		final compatibilityFiles:Array<Dynamic> = [];
+		final compatibilityFiles:Array<JsonValue> = [];
 		for (record in records) {
-			final role:String = cast Reflect.field(record, "role");
+			final role = ProjectContract.string(record, "role", "effective input");
 			if (RESTART_FILE_ROLES.indexOf(role) >= 0) {
 				compatibilityFiles.push(object([
-					"path" => Reflect.field(record, "path"),
+					"path" => ProjectContract.string(record, "path", "effective input"),
 					"role" => role,
-					"sha256" => Reflect.field(record, "sha256")
+					"sha256" => ProjectContract.string(record, "sha256", "effective input")
 				]));
 			}
 		}
-		final compatibilityTools:Array<Dynamic> = [];
+		final compatibilityTools:Array<JsonValue> = [];
 		for (id in COMPATIBILITY_COMPONENTS) {
 			final component = componentById.get(id);
 			compatibilityTools.push(object([
@@ -115,8 +120,8 @@ class EffectiveInputs {
 		}
 		sortUnique(ignoredRoots, "ignored roots");
 		final rootExcludes = [for (root in ignoredRoots) root + "/**"];
-		rootExcludes.sort(Reflect.compare);
-		final discoveryRoots:Array<Dynamic> = [
+		rootExcludes.sort(ProjectJson.compareText);
+		final discoveryRoots:Array<JsonValue> = [
 			object([
 				"path" => ".",
 				"includes" => sorted([
@@ -159,15 +164,20 @@ class EffectiveInputs {
 				"targets" => ["test"]
 			]));
 		}
-		discoveryRoots.sort((left, right) -> Reflect.compare(Reflect.field(left, "path"), Reflect.field(right, "path")));
+		discoveryRoots.sort((left,
+				right) -> ProjectJson.compareText(ProjectContract.string(left, "path", "discovery root"), ProjectContract.string(right, "path",
+				"discovery root")));
 		for (index in 1...discoveryRoots.length) {
-			if (Reflect.field(discoveryRoots[index - 1], "path") == Reflect.field(discoveryRoots[index], "path")) {
-				throw new CliFailure("WPHX1021", "configured discovery roots overlap roles: " + Reflect.field(discoveryRoots[index], "path"), 3,
-					"configuration", cast Reflect.field(discoveryRoots[index], "path"),
+			final path = ProjectContract.string(discoveryRoots[index], "path", "discovery root");
+			if (ProjectContract.string(discoveryRoots[index - 1], "path", "discovery root") == path) {
+				throw new CliFailure("WPHX1021", "configured discovery roots overlap roles: " + path, 3, "configuration", path,
 					["Give source, test, and asset roots distinct project-relative paths."]);
 			}
 		}
-		final watchRoots = [for (root in discoveryRoots) cast(Reflect.field(root, "path"), String)];
+		final watchRoots = [
+			for (root in discoveryRoots)
+				ProjectContract.string(root, "path", "discovery root")
+		];
 		sortUnique(watchRoots, "watch roots");
 
 		final runtimeDeclarations = ProjectContract.array(ProjectContract.fieldObject(bootstrap.config, "environment", "project configuration"), "runtime",
@@ -176,7 +186,7 @@ class EffectiveInputs {
 			for (declaration in runtimeDeclarations)
 				ProjectContract.string(declaration, "name", "runtime environment declaration")
 		];
-		runtimeExcluded.sort(Reflect.compare);
+		runtimeExcluded.sort(ProjectJson.compareText);
 		final profile = OwnershipJson.clone(ProjectContract.fieldObject(lock, "profile", "project lock"));
 		final document = object([
 			"schema" => "wordpress-hx.effective-inputs.v1",
@@ -207,25 +217,24 @@ class EffectiveInputs {
 				"directBuildDefault" => true
 			])
 		]);
-		final fingerprintMaterial = OwnershipJson.clone(document);
-		Reflect.deleteField(fingerprintMaterial, "fingerprint");
-		Reflect.setField(document, "fingerprint", OwnershipJson.digestValue(fingerprintMaterial));
-		return document;
+		final fingerprintMaterial = OwnershipJson.withoutField(document, "fingerprint");
+		return OwnershipJson.setField(document, "fingerprint", OwnershipJson.text(OwnershipJson.digestValue(fingerprintMaterial)));
 	}
 
-	static function resolveBuildEnvironment(config:Dynamic):Array<Dynamic> {
+	static function resolveBuildEnvironment(config:JsonValue):Array<JsonValue> {
 		final declarations = ProjectContract.array(ProjectContract.fieldObject(config, "environment", "project configuration"), "build", "project environment");
-		final result:Array<Dynamic> = [];
+		final result:Array<JsonValue> = [];
 		for (declaration in declarations) {
 			final name = ProjectContract.string(declaration, "name", "build environment declaration");
-			final processValue:Dynamic = Syntax.code("process.env[{0}]", name);
+			final processValue:Null<String> = Syntax.code("process.env[{0}]", name);
 			var value:String;
 			var source:String;
 			if (processValue != null) {
-				value = cast processValue;
+				value = processValue;
 				source = "process";
-			} else if (Reflect.hasField(declaration, "default")) {
-				value = cast Reflect.field(declaration, "default");
+			} else if (ProjectContract.has(declaration, "default", "build environment declaration")) {
+				final configuredDefault = ProjectContract.optionalString(declaration, "default", "build environment declaration");
+				value = configuredDefault == null ? "" : configuredDefault;
 				source = "default";
 			} else if (ProjectContract.boolean(declaration, "required", "build environment declaration")) {
 				throw new CliFailure("WPHX1022", "required public build environment input is missing: " + name, 3, "configuration", null, [
@@ -244,7 +253,8 @@ class EffectiveInputs {
 		return result;
 	}
 
-	static function addFile(records:Array<Dynamic>, seen:Map<String, Bool>, bootstrap:ProjectBootstrap, path:String, role:String, targets:Array<String>):Void {
+	static function addFile(records:Array<JsonValue>, seen:Map<String, Bool>, bootstrap:ProjectBootstrap, path:String, role:String,
+			targets:Array<String>):Void {
 		final collision = path.toLowerCase();
 		if (seen.exists(collision)) {
 			throw new CliFailure("WPHX1023", "duplicate or case-colliding effective input: " + path, 3, "configuration", path,
@@ -252,7 +262,7 @@ class EffectiveInputs {
 		}
 		seen.set(collision, true);
 		final bytes = ProjectFiles.read(bootstrap.root, path, "effective input");
-		targets.sort(Reflect.compare);
+		targets.sort(ProjectJson.compareText);
 		records.push(object([
 			"path" => path,
 			"sha256" => OwnershipJson.digest(bytes),
@@ -262,7 +272,7 @@ class EffectiveInputs {
 		]));
 	}
 
-	static function object(fields:Map<String, Dynamic>):Dynamic {
+	static function object(fields:Map<String, ProjectJsonField>):JsonValue {
 		return OwnershipJson.object(fields);
 	}
 
@@ -288,12 +298,12 @@ class EffectiveInputs {
 	}
 
 	static function sorted(values:Array<String>):Array<String> {
-		values.sort(Reflect.compare);
+		values.sort(ProjectJson.compareText);
 		return values;
 	}
 
 	static function sortUnique(values:Array<String>, label:String):Void {
-		values.sort(Reflect.compare);
+		values.sort(ProjectJson.compareText);
 		for (index in 1...values.length) {
 			if (values[index - 1] == values[index]) {
 				throw new CliFailure("WPHX1023", label + " contain a duplicate path: " + values[index], 3, "configuration", values[index]);

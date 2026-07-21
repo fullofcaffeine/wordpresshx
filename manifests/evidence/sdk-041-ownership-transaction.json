@@ -2,23 +2,31 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-21T06:22:05Z",
+  "observedAt": "2026-07-21T11:58:50Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
-      "sha256": "5e48c13e63f924e67afc39531cbe488ab0f3a8d5f36091cfd767c390989f4c8f"
+      "sha256": "ddb7dea16b3203511990825e964cad89a75942f9e367ad22195b72cc5d3f58e1"
     },
     "processBoundary": {
       "path": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",
       "sha256": "3719f31087df848cae1f1203ce3fac6e8c1f2ae6dc668afd823446890a149636"
     },
+    "closedJsonParser": {
+      "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonParser.hx",
+      "sha256": "7290b5a1132371122efd4d906edb4911fd0c87b97fdf8183187ddbdb69564964"
+    },
+    "closedJsonValue": {
+      "path": "packages/cli/src/wordpresshx/cli/closedjson/JsonValue.hx",
+      "sha256": "bd1e38de84fc7b22ef751c9a66140515d6e075f1af2429e71dbb26fec3619ac7"
+    },
     "owner": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
-      "sha256": "e4286bcf305b51dda199e875905e1014544d1270f1ec267bc9ee3980dd816619"
+      "sha256": "a61ea508b7b3701f036d022d8cbdb5e71c6230fb9cc49c184bb822c2a78fa272"
     },
     "contract": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
-      "sha256": "71293cc7a2582054c5fac68c7b8016685f1f8939988a501a54577433f712c864"
+      "sha256": "a6d78a7929bcbb7b09206f0954bc9c63715d4c5b10993921a8d4a1918402c3bc"
     },
     "ownershipFailure": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
@@ -26,7 +34,7 @@
     },
     "canonicalJson": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
-      "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+      "sha256": "dc8b71f17e90251e28f27091b8e57fa89017c967a9759621487bf73f47030a72"
     },
     "ownershipLayout": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
@@ -42,7 +50,7 @@
     },
     "fixtureEntry": {
       "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
-      "sha256": "f5aac99233cb8ac8d9c2dc5b55fc042f0cad861ded98b967d4a9ea295d005271"
+      "sha256": "53379d6b896e973379cf3caec83e1cc8ca8ed5b193b26936895f079da96a91ae"
     },
     "compileProfile": {
       "path": "packages/cli/profiles/ownership-test.hxml",
@@ -54,15 +62,19 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "a2016d754541d3de9c5f5bacfd84601559b107014096273753c19807651b9691"
+      "sha256": "05f9b5cd1e7a99a74878cd2cfb7749ace076a2011f71d820b8e9dcec57ac44fe"
     },
     "isolationScanner": {
       "path": "scripts/ownership/check-isolation.py",
-      "sha256": "428dd06d3be6c5c45dd6c49e6b2dde697ddfda7f4be097d5a056341876048bf9"
+      "sha256": "442be3b25b94687521f1a13ccef3d5f6f1e64872d2152b250f3470dd31a058e5"
     },
     "emittedIsolationCompilerProbes": {
       "path": "scripts/ownership/test-emitted-isolation.py",
       "sha256": "08abf12a17d03e535ed57ce135f6b68d9ec98ebce72901acd62a2ff00fad1c53"
+    },
+    "strictHaxeGuard": {
+      "path": "packages/cli/scripts/check-ownership-haxe.sh",
+      "sha256": "b39fc9afdf5c67d214a5d925c57df08384a18f7df88e02ddaab61b91fd24f4d4"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -75,6 +87,8 @@
   },
   "productionClosureSubjects": [
     "processBoundary",
+    "closedJsonParser",
+    "closedJsonValue",
     "owner",
     "contract",
     "ownershipFailure",
@@ -97,6 +111,7 @@
     "directVsReplayGeneratedTree": "byte-identical",
     "diagnosticAbsolutePathPrivacy": "passed",
     "noNetworkOrChildProcessImplementation": "passed",
+    "strictHaxeBoundaryGuard": "passed",
     "outcome": "passed"
   },
   "sdk042CompatibilityReverification": {
@@ -111,10 +126,10 @@
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "runId": 29802354848,
-    "jobId": 88545733938,
-    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
     "required": true
   },
   "discardedHostedAttempts": [
@@ -134,8 +149,8 @@
     "productionClosureContentBinding": "receipt-sha256-for-every-compiler-discovered-repository-source",
     "emittedCapabilityAuthority": "genes-javascript-modules-mapped-from-haxe-dump-dependencies",
     "repositoryDependencyBoundary": "production-root-plus-one-exact-harness-entry",
-    "productionClosureSourceCount": 8,
-    "emittedProductionModuleCount": 4,
+    "productionClosureSourceCount": 10,
+    "emittedProductionModuleCount": 6,
     "allowedNodeCapabilityCount": 5,
     "auditedProcessBoundaryCount": 1,
     "sourceForbiddenSelfTestCount": 40,
@@ -156,18 +171,18 @@
     "exactRelativeImportRegression": "passed",
     "outOfRootDependencyRegression": "passed",
     "nodeNetworkGlobalRegression": "passed",
-    "status": "passed",
-    "commit": "144ede850fcc4feaae3e69ccbb9b8880bd5133fe",
-    "runId": 29814878812,
-    "haxeJobId": 88583796122,
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T08:47:57Z"
+    "status": "pending-corrective-hosted-verification",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": false,
+    "completedAt": null
   },
   "claims": {
-    "sdk041ArtifactOwner": "runtime-tested-hosted",
-    "processFailureAtomicity": "runtime-tested-hosted",
-    "processCrashConsistency": "runtime-tested-hosted",
-    "cleanAndAdopt": "runtime-tested-hosted",
+    "sdk041ArtifactOwner": "runtime-tested-local",
+    "processFailureAtomicity": "runtime-tested-local",
+    "processCrashConsistency": "runtime-tested-local",
+    "cleanAndAdopt": "runtime-tested-local",
     "powerLossDurability": "not-tested",
     "windowsFilesystem": "not-tested",
     "networkFilesystem": "not-tested",

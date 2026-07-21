@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "SDK-043-PROJECT-CLI",
   "bead": "wordpresshx-sdk-043",
-  "status": "verified",
-  "observedAt": "2026-07-21T11:01:04Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T11:58:50Z",
   "subject": {
     "architecture": {
       "path": "manifests/project-cli-implementation.json",
-      "sha256": "2fc92d12c57d2a1f51c44e52c3598207bbd89e73f0bb50810894584655bdc53b"
+      "sha256": "fade7124803c9675c4cbecf6fcf546f49272996cdb64dc474f11ccff1a9bf7cb"
     },
     "entry": {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "sha256": "b9c8a65f14a53906ca29f07877d40daea4c936f4bec9468a1921fe3d690a8eaf"
+      "sha256": "400a5aa4504aa58dec8f4faa3af58c21eeea756c3949aaee6b731e3f34dde5ba"
     },
     "arguments": {
       "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
@@ -27,19 +27,19 @@
     },
     "resolver": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectLoader.hx",
-      "sha256": "288af7dfe096503949a9b767f09783f570b5110551b6fff7a4e038babbf2efec"
+      "sha256": "bf81c5462adfb734e658efd89387d2b60d3c7493aea37ada95cd0ecbe3e67c04"
     },
     "effectiveInputs": {
       "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
-      "sha256": "267bdeabd0b0cfa71e4e6f4fc4ec8c36a2133609c7a75fcb1b170d6d2423ccce"
+      "sha256": "6605ecbfb4ee178aea3ce7bfb98e1955e084c57aa3d8e1ee4111a491d5951292"
     },
     "commands": {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
-      "sha256": "382e092e07f0d700c38930bb7caa2d0776b0cb9e6bbea2108951a5dfb686eceb"
+      "sha256": "5ae0aa11a0a142eee58f745bb325a944eb13448b3312fd14a9590654ff875aee"
     },
     "publisher": {
       "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
-      "sha256": "1b912e545f882c1a883df616c4563f4f1f00ab809a234742bc983e8ae37c4232"
+      "sha256": "fcd1889d601089eaaf071eb33be5d9899212657605106bf5cce8060b52809b73"
     },
     "profile": {
       "path": "packages/cli/profiles/wphx.hxml",
@@ -63,7 +63,11 @@
     },
     "gate": {
       "path": "scripts/project-cli/test-production.sh",
-      "sha256": "828c705afa2074c75332f1a4e4fb4a2df6327573a621f944c77fd41a423f8e2d"
+      "sha256": "a52db7e7d1b0a23ee143631572395f3cd6779181920a62bf7a1a4c829370bf41"
+    },
+    "strictHaxeGuard": {
+      "path": "packages/cli/scripts/check-project-haxe.sh",
+      "sha256": "1a81d27dab27f47676b39a186223624fd06e38d6930d3b77670699558a25cde2"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -126,18 +130,18 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
-        "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
+        "sha256": "dc8b71f17e90251e28f27091b8e57fa89017c967a9759621487bf73f47030a72"
       }
     ]
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
-    "subjectContentSha256": "929980d38c217276aaaf59b25632c75e8023cdf9be8e248cd28b89938930d1c3",
+    "subjectCommit": null,
+    "subjectContentSha256": "5038e09d62a16ea53c9b2e417ef3650527ae4ea46af5e1e5c7a734116c2de589",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
-    "implementationCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
+    "implementationCommit": null,
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
     "runtime": "Node ESM",
@@ -198,6 +202,7 @@
     "semanticPlanContractGate": "passed",
     "ownershipContractGate": "passed",
     "repositoryAggregateGate": "passed",
+    "strictHaxeBoundaryGuard": "passed",
     "legacyPhpTrace": {
       "command": "bash packages/cli/scripts/test.sh",
       "outcome": "passed"
@@ -242,10 +247,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production project CLI foundation",
-    "runId": 29823692811,
-    "jobId": 88612005313,
-    "commit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
@@ -255,7 +260,7 @@
     "The package remains private and publication is blocked."
   ],
   "claims": {
-    "sdk043ProjectCli": "runtime-tested-hosted",
+    "sdk043ProjectCli": "runtime-tested-local",
     "exactProjectAndLockResolution": "runtime-tested-local",
     "effectiveInputGraph": "runtime-tested-local",
     "directHaxeTyping": "compile-tested",

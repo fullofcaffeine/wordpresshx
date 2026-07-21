@@ -5,23 +5,24 @@ import js.node.Fs;
 import js.node.Os;
 import js.node.Path;
 import wordpresshx.cli.CliFailure;
+import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.ownership.ArtifactOwner;
 import wordpresshx.cli.ownership.OwnershipContract;
 import wordpresshx.cli.ownership.OwnershipFailure;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.ownership.OwnershipResult;
 import wordpresshx.cli.ownership.StageValidator;
 
 typedef BuildPublication = {
 	final outcome:String;
-	final manifest:Dynamic;
+	final manifest:JsonValue;
 }
 
 /** Foundation metadata emitter plus the sole live-tree publication boundary. **/
 class BuildPublisher {
 	public static function currentManifestDigest(context:ProjectContext):Null<String> {
 		final manifest = OwnershipPreflight.inspect(context);
-		return manifest == null ? null : ProjectContract.string(manifest, "manifestDigest", "ownership manifest");
+		return manifest == null ? null : manifest.manifestDigest;
 	}
 
 	public static function recover(context:ProjectContext):String {
@@ -36,7 +37,7 @@ class BuildPublisher {
 		}
 	}
 
-	public static function plan(context:ProjectContext):Dynamic {
+	public static function plan(context:ProjectContext):JsonValue {
 		return prepare(context).manifest;
 	}
 
@@ -71,7 +72,7 @@ class BuildPublisher {
 			throw new CliFailure("WPHX3001", failure.message, 5, "ownership-publish", failure.relativePath, [
 				"Run wphx doctor, restore exact owned bytes, and retry without editing generated files."
 			]);
-		} catch (failure:Dynamic) {
+		} catch (failure:haxe.Exception) {
 			removeTemporary(temporaryRoot);
 			throw failure;
 		}
@@ -122,7 +123,7 @@ class BuildPublisher {
 				validatorIds: ["wphx.deterministic-archive"]
 			}
 		];
-		artifacts.sort((left, right) -> Reflect.compare(left.path, right.path));
+		artifacts.sort((left, right) -> ProjectJson.compareText(left.path, right.path));
 		return {
 			paths: paths,
 			artifacts: artifacts,
@@ -131,7 +132,7 @@ class BuildPublisher {
 		};
 	}
 
-	static function manifest(context:ProjectContext, paths:ProjectOwnershipPaths, artifacts:Array<PreparedArtifact>):Dynamic {
+	static function manifest(context:ProjectContext, paths:ProjectOwnershipPaths, artifacts:Array<PreparedArtifact>):JsonValue {
 		final bootstrap = context.bootstrap;
 		final configDigest = OwnershipJson.digest(bootstrap.configBytes);
 		final sdkComponent = component(context.lock, "sdk.wordpress-hx");
@@ -143,7 +144,7 @@ class BuildPublisher {
 			"symbol" => "wordpress-hx.project"
 		]);
 		final projectNodeId = "project/" + ProjectContract.string(bootstrap.config, "projectId", "project configuration");
-		final files:Array<Dynamic> = [];
+		final files:Array<JsonValue> = [];
 		for (artifact in artifacts) {
 			files.push(OwnershipJson.object([
 				"path" => artifact.path,
@@ -172,7 +173,7 @@ class BuildPublisher {
 				emissionDigests.push(digest);
 			}
 		}
-		emissionDigests.sort(Reflect.compare);
+		emissionDigests.sort(ProjectJson.compareText);
 		final manifest = OwnershipJson.object([
 			"schema" => OwnershipContract.MANIFEST_SCHEMA,
 			"canonicalization" => OwnershipContract.CANONICALIZATION,
@@ -198,7 +199,7 @@ class BuildPublisher {
 				"sourceTreeSha256" => context.fingerprint(),
 				"semanticPlanSha256" => OwnershipJson.digestValue(semanticSentinel),
 				"emissionResultSha256s" => emissionDigests,
-				"generationSha256" => OwnershipContract.generationDigest(files),
+				"generationSha256" => OwnershipJson.generationDigest(files),
 				"profile" => OwnershipJson.object([
 					"profileId" => ProjectContract.string(profile, "id", "project lock.profile", "profile-resolution"),
 					"catalogRevision" => ProjectContract.string(profile, "catalogRevision", "project lock.profile", "profile-resolution"),
@@ -228,12 +229,12 @@ class BuildPublisher {
 			],
 			"files" => files
 		]);
-		final result = OwnershipContract.withDigest(manifest, "manifestDigest");
-		OwnershipContract.validateManifest(result);
+		final result = OwnershipJson.withDigest(manifest, "manifestDigest");
+		OwnershipContract.validateManifest(OwnershipJson.closed(result));
 		return result;
 	}
 
-	static function component(lock:Dynamic, id:String):Dynamic {
+	static function component(lock:JsonValue, id:String):JsonValue {
 		for (value in ProjectContract.array(lock, "components", "project lock", "profile-resolution")) {
 			if (ProjectContract.string(value, "id", "project lock component", "profile-resolution") == id) {
 				return value;
@@ -249,8 +250,7 @@ class BuildPublisher {
 			|| ProjectContract.string(value, "fingerprint", "effective inputs") != fingerprint) {
 			throw new OwnershipFailure("staged effective-input identity mismatch", "effective-input-validator", relative);
 		}
-		final material = OwnershipJson.clone(value);
-		Reflect.deleteField(material, "fingerprint");
+		final material = OwnershipJson.withoutField(value, "fingerprint");
 		if (OwnershipJson.digestValue(material) != fingerprint) {
 			throw new OwnershipFailure("staged effective-input fingerprint mismatch", "effective-input-validator", relative);
 		}
@@ -291,7 +291,7 @@ class BuildPublisher {
 			throw new CliFailure("WPHX3003", "private build staging changed to a special file", 70, "ownership-publish");
 		}
 		final names = Fs.readdirSync(absolute);
-		names.sort(Reflect.compare);
+		names.sort(ProjectJson.compareText);
 		for (name in names) {
 			removeTree(Path.join(absolute, name));
 		}

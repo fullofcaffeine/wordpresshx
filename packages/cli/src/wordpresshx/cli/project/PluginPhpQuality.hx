@@ -13,7 +13,7 @@ import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.Content;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.closedjson.JsonValue;
-import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.scaffold.ScaffoldJson;
 
 /** Run the pinned generated-PHP gate without project-authored PHP configuration. */

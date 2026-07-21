@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "verified",
-  "observedAt": "2026-07-21T11:01:04Z",
-  "implementationCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T11:58:50Z",
+  "implementationCommit": null,
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
@@ -25,11 +25,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/WatchGraph.hx",
-        "sha256": "096a33205582be6ceaf43353c138a7f6a09958f7eeef778b2519eb87c26ff91d"
+        "sha256": "495146fe3017d20efb867c40ab66ddad36fd9e17904bed5950c6a5f8afaa43c8"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/ManagedCompiler.hx",
-        "sha256": "3edee3b541df600a078917b2d85299728cc2cbe66ce2704c975ab8dcbc448c44"
+        "sha256": "6acff8c2e03978ac42bbf2349abeb79e7c3679a0cab26f2f0e31e02e9db8dc2e"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx",
@@ -37,11 +37,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/EffectiveInputs.hx",
-        "sha256": "267bdeabd0b0cfa71e4e6f4fc4ec8c36a2133609c7a75fcb1b170d6d2423ccce"
+        "sha256": "6605ecbfb4ee178aea3ce7bfb98e1955e084c57aa3d8e1ee4111a491d5951292"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/ProjectCommands.hx",
-        "sha256": "382e092e07f0d700c38930bb7caa2d0776b0cb9e6bbea2108951a5dfb686eceb"
+        "sha256": "5ae0aa11a0a142eee58f745bb325a944eb13448b3312fd14a9590654ff875aee"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/CliEventStream.hx",
@@ -89,11 +89,11 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProject.hx",
-        "sha256": "47757cd2e82567a5944ca3f1d256bc1c8dd52cbe6cf3ab159c7c9f74d48b0e99"
+        "sha256": "8a3328ced146cebef42c8e27595e9ecfe42c7b28ea84bb278c55f86523c26086"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/EffectiveInputSnapshot.hx",
-        "sha256": "4519d9ed174e4ba7fafc592bd27d2c28519d01590edc117541a7cf7f11369d18"
+        "sha256": "699f8f1d5b15ecb34e0b8fb1fd060c2570f29cf09701d5086dab122cf7bd7348"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/PortAllocator.hx",
@@ -183,8 +183,8 @@
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
-    "subjectContentSha256": "a1f6e52476987de5b00532c171088d529ef5126a5c9833e23da009c6a604699c",
+    "subjectCommit": null,
+    "subjectContentSha256": "a75a1ac1d46460801dd6ba724ae94f74b573942992484d03a0d77f338783e141",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -267,10 +267,10 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": 29823692811,
-    "jobId": 88612005313,
-    "commit": "201f8387cdff6b49ce755d22a93cc9f0377b1c47",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-main-run",
     "required": true
   },
   "limitations": [
@@ -281,17 +281,17 @@
     "Windows, network filesystems, abrupt host failure, installed consumers, package publication, and production deployment remain untested."
   ],
   "claims": {
-    "productionWphxDevCompileWatch": "runtime-tested-hosted",
-    "atomicIncrementalPublication": "runtime-tested-hosted",
-    "lastGoodRetention": "runtime-tested-hosted",
-    "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
-    "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
-    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
+    "productionWphxDevCompileWatch": "runtime-tested-local",
+    "atomicIncrementalPublication": "runtime-tested-local",
+    "lastGoodRetention": "runtime-tested-local",
+    "managedCompilerLifecycle": "controlled-process-runtime-tested-local",
+    "externalDevelopmentService": "controlled-process-runtime-tested-local",
+    "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-local",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
-    "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
+    "postPublishReloadRequest": "controlled-event-runtime-tested-local",
     "wordpressDevelopmentService": "not-tested",
     "nextjsDevelopmentService": "not-tested",
-    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-hosted",
+    "automaticBrowserReload": "controlled-wordpress-boundary-real-chromium-runtime-tested-local",
     "windowsWatcherAndProcessBehavior": "not-tested",
     "networkFilesystemBehavior": "not-tested",
     "publicPackagePublication": "blocked",

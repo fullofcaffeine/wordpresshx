@@ -36,6 +36,7 @@ fi
   lix --silent download
 )
 haxelib run formatter --check -s "${package_root}/src"
+bash "${package_root}/scripts/check-project-haxe.sh"
 
 mkdir -p "${test_root}/runtime-a" "${test_root}/runtime-b"
 (
