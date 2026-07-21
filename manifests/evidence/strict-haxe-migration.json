@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "STRICT-HAXE-MIGRATION",
   "bead": "wordpresshx-sjb",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-21T09:42:05Z",
+  "status": "verified-hosted",
+  "observedAt": "2026-07-21T10:09:56Z",
   "directive": {
     "forbiddenTokens": [
       "Dynamic",
@@ -86,7 +86,7 @@
       "haxeFileCount": 18,
       "findingCount": 0,
       "gate": "bash scripts/profiles/test-profile-haxe.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "generic-php-compiler",
@@ -94,7 +94,7 @@
       "haxeFileCount": 34,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     },
     {
       "id": "wordpress-php-compiler",
@@ -102,7 +102,7 @@
       "haxeFileCount": 25,
       "findingCount": 0,
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-local"
+      "outcome": "passed-hosted"
     }
   ],
   "typedAdapters": [
@@ -111,7 +111,7 @@
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
       "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-local",
+      "outcome": "passed-hosted",
       "owningClosureComplete": true
     }
   ],
@@ -119,12 +119,12 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "required": true,
-    "implementationCommit": null,
-    "runId": null,
-    "jobId": null,
-    "status": "pending-current-subject-run",
-    "allJobsPassed": false,
-    "completedAt": null
+    "implementationCommit": "31c506a0a3789e84fdcda32f6fc71cf6018629c6",
+    "runId": 29820264347,
+    "jobId": 88600999236,
+    "status": "passed",
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T10:09:11Z"
   },
   "previousHostedVerification": {
     "workflow": "Repository bootstrap",
@@ -137,10 +137,10 @@
     "completedAt": "2026-07-21T09:34:17Z"
   },
   "claims": {
-    "coreProfileContractStrict": "runtime-tested-local",
-    "genericPhpCompilerStrict": "runtime-tested-local",
-    "wordpressPhpCompilerStrict": "runtime-tested-local",
-    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
+    "coreProfileContractStrict": "runtime-tested-hosted",
+    "genericPhpCompilerStrict": "runtime-tested-hosted",
+    "wordpressPhpCompilerStrict": "runtime-tested-hosted",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-hosted",
     "repositoryWideStrictHaxe": "not-yet-remaining-findings",
     "productionSupport": "not-claimed"
   }
