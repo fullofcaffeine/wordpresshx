@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-061-STATIC-BLOCK",
   "bead": "wordpresshx-sdk-061",
-  "status": "verified",
-  "observedAt": "2026-07-21T00:18:45Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T00:32:20Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -58,9 +58,13 @@
       "path": "packages/gutenberg/scripts/verify-static-block.mjs",
       "sha256": "49b7d20ff72728895e9e6c5516d615f75451123e763958f4944498354ea5ce39"
     },
+    "weakTypeGuard": {
+      "path": "scripts/lint/haxe-weak-type-guard.py",
+      "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
+    },
     "gate": {
       "path": "packages/gutenberg/scripts/test-static-block.sh",
-      "sha256": "ee6487df30faf453c340427f639549198b3e5b61401666776a13872cc39ed4f2"
+      "sha256": "d949df628a1339ac13753e2bb0e7d9e6fa0c2ca435927e399562bf817c86aa5d"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-static-block-lane.sh",
@@ -130,7 +134,7 @@
     "companionApplicationJavaScriptOrTypeScriptAuthored": false,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": "03869124b6fc2d22852a46a9a14f59ae635d3121"
+    "commit": null
   },
   "compilation": {
     "blockName": "wordpresshx/callout",
@@ -191,40 +195,40 @@
     "strictTypeScript": "passed",
     "phpOracleSyntax": "passed",
     "forbiddenHaxeWeakConstructs": "none",
-    "realWordPressRuntime": "passed-hosted-clean-runner",
-    "localDockerDiagnostic": "docker info did not return within the bounded 10-second probe; the exact local Node 22.17.0 fallback passed compiler and native serialization checks, and real WordPress proof ran on the hosted clean runner"
+    "realWordPressRuntime": "pending-hosted-clean-runner",
+    "localDockerDiagnostic": "docker info did not return within the bounded 10-second probe; the exact local Node 22.17.0 fallback passed compiler and native serialization checks, while corrected fail-closed weak-type scanning and real WordPress proof remain hosted"
   },
   "realWordPressRuntime": {
     "check": "wordpresshx-sdk061-real-static-block-v1",
-    "outcome": "passed",
+    "outcome": "pending-hosted-clean-runner",
     "wordpressVersion": "7.0",
-    "pluginActivated": true,
-    "insertEditSaveReload": true,
-    "undoRedo": true,
-    "currentFrontend": true,
-    "legacyMigrated": true,
-    "migrationFrontend": true,
-    "recoveryWarnings": 0,
-    "consoleErrors": 0,
-    "pageErrors": 0
+    "pluginActivated": null,
+    "insertEditSaveReload": null,
+    "undoRedo": null,
+    "currentFrontend": null,
+    "legacyMigrated": null,
+    "migrationFrontend": null,
+    "recoveryWarnings": null,
+    "consoleErrors": null,
+    "pageErrors": null
   },
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "passed",
-    "commit": "03869124b6fc2d22852a46a9a14f59ae635d3121",
-    "runId": 29789348862,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29789348862",
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "url": null,
     "haxeJob": "haxe",
     "haxeStep": "Test typed static block generation and native serialization",
-    "haxeJobId": 88507548985,
+    "haxeJobId": null,
     "wordpressJob": "wordpress-runtime",
     "wordpressStep": "Prove typed static block serialization and migration on WordPress 7.0",
-    "wordpressJobId": 88507548988,
-    "jobCount": 13,
-    "allJobsPassed": true,
-    "artifactHashesMatched": true,
-    "completedAt": "2026-07-21T00:18:45Z"
+    "wordpressJobId": null,
+    "jobCount": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
   },
   "changeDecision": {
     "genesSourceChanged": false,
@@ -239,9 +243,9 @@
     "deterministicSavedMarkup": "native-package-tested",
     "explicitDefaultMissingNullSemantics": "compile-and-native-package-tested",
     "immutableDeprecationMigration": "native-package-tested",
-    "realWordPressInsertEditSaveReload": "real-wordpress-tested",
-    "realWordPressFrontend": "real-wordpress-tested",
-    "noValidationRecoveryPrompt": "real-wordpress-tested",
+    "realWordPressInsertEditSaveReload": "hosted-pending",
+    "realWordPressFrontend": "hosted-pending",
+    "noValidationRecoveryPrompt": "hosted-pending",
     "dynamicBlockRendering": "not-tested-owned-by-sdk-062",
     "richerBlockFeatures": "not-tested-owned-by-sdk-065",
     "productionSupport": "not-tested"
@@ -250,6 +254,7 @@
     "SDK-061 proves one static block and one immutable historical version; dynamic rendering belongs to SDK-062 and richer block features belong to SDK-065.",
     "The PHP files under test/static-block-runtime are independent native test consumers, not application source or a manual-PHP product requirement.",
     "The fixture stylesheet is a bounded native asset; typed Haxe design-token and style generation belongs to later site-authoring work.",
+    "EditProps and SaveProps enforce capability separation, while deterministic fixtures prove the reviewed callbacks; Haxe has no general effect system, so arbitrary user save and migration callback purity is not statically claimed.",
     "No package publication or production-support claim is advanced."
   ]
 }

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-063-EDITOR-PLUGIN-SLOTFILL",
   "bead": "wordpresshx-sdk-063",
-  "status": "verified",
-  "observedAt": "2026-07-20T07:08:17Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T00:32:20Z",
   "subject": {
     "package": "packages/gutenberg",
     "profile": {
@@ -46,9 +46,13 @@
       "path": "packages/gutenberg/scripts/emit-editor-plugin.py",
       "sha256": "8dbd9bd5133a912d6e59629e796dac33eb939bd29139d5cc606c8bc1e70c6324"
     },
+    "weakTypeGuard": {
+      "path": "scripts/lint/haxe-weak-type-guard.py",
+      "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
+    },
     "gate": {
       "path": "packages/gutenberg/scripts/test-editor-plugin.sh",
-      "sha256": "98d0be2f848c387377d1ca75abf8e743410af675a93311368ec24e0d77e11b95"
+      "sha256": "9d2e1b1ee93d0c37d6ac7504821218054b9f1cede184486689087376511dc987"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-editor-lane.sh",
@@ -124,7 +128,7 @@
     "translationsExtractedFromHaxe": true,
     "shippedBrowserHxxRuntime": false,
     "wordpressSpecificGenesBranch": false,
-    "commit": "0c4bb0437581dd0e3d9dd00449855d5898eb3349"
+    "commit": null
   },
   "exactProfileVerification": {
     "publicPackages": [
@@ -230,18 +234,18 @@
     "job": "wordpress-runtime",
     "step": "Prove the typed editor plugin and SlotFill on WordPress 7.0",
     "required": true,
-    "status": "passed",
-    "commit": "0c4bb0437581dd0e3d9dd00449855d5898eb3349",
-    "runId": 29723189010,
-    "jobId": 88290358461,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29723189010",
-    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29723189010/job/88290358461",
-    "jobCount": 13,
-    "generatedTreeSha256": "311e6527f1bdaa9ec6b84d768588fd59b9cb383f4f6bdfd7eb5824a34ce2665e",
-    "productionBundleSha256": "9d09332fb1a1d0bbd9b23779ff3b2d1885a2f94a86bc23032f3c4f8b211cb3a2",
-    "allJobsPassed": true,
-    "artifactHashesMatched": true,
-    "completedAt": "2026-07-20T07:08:17Z"
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null,
+    "jobUrl": null,
+    "jobCount": null,
+    "generatedTreeSha256": null,
+    "productionBundleSha256": null,
+    "allJobsPassed": null,
+    "artifactHashesMatched": null,
+    "completedAt": null
   },
   "changeDecision": {
     "genesSourceChanged": false,

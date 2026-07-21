@@ -112,14 +112,12 @@ haxelib run formatter --check \
   -s "${package_root}/test/static-block-fixture/src" \
   -s "${package_root}/test-negative-static-block"
 
-if rg -n --glob '*.hx' \
-  '\b(Dynamic|Any|cast|Reflect|untyped)\b' \
+weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
+python3 "${weak_type_guard}" --self-test
+python3 "${weak_type_guard}" \
   "${package_root}/src/wordpress/hx/gutenberg/block" \
   "${package_root}/test/static-block-fixture/src" \
-  "${package_root}/test-negative-static-block"; then
-  echo "SDK-061 Haxe source contains a forbidden weak-type construct" >&2
-  exit 1
-fi
+  "${package_root}/test-negative-static-block"
 
 temporary_parent="${package_root}/.sdk061-tmp"
 mkdir -p "${temporary_parent}"

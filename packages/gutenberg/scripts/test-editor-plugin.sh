@@ -94,8 +94,9 @@ fi
     -s "${package_root}/test-negative-editor"
 )
 
-if rg -n --glob '*.hx' \
-  '\b(Dynamic|Any|cast|Reflect|untyped)\b' \
+weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
+python3 "${weak_type_guard}" --self-test
+python3 "${weak_type_guard}" \
   "${package_root}/src/wordpress/hx/gutenberg/editor" \
   "${package_root}/src/wordpress/hx/gutenberg/components/PanelBody.hx" \
   "${package_root}/src/wordpress/hx/gutenberg/components/PanelBodyProps.hx" \
@@ -103,10 +104,7 @@ if rg -n --glob '*.hx' \
   "${package_root}/src/wordpress/hx/gutenberg/components/ToggleControlProps.hx" \
   "${package_root}/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx" \
   "${package_root}/test/editor-plugin-fixture/src" \
-  "${package_root}/test-negative-editor"; then
-  echo "SDK-063 Haxe source contains a forbidden weak-type construct" >&2
-  exit 1
-fi
+  "${package_root}/test-negative-editor"
 
 temporary_parent="${package_root}/.sdk063-tmp"
 mkdir -p "${temporary_parent}"

@@ -265,10 +265,17 @@ Omit `--skip-wordpress` to install the generated metadata on exact WordPress
 
 SDK-061 connects that metadata to a real Haxe/HXX block implementation. Edit
 and save are separate nominal boundaries: only `EditProps<Attributes>` exposes
-the native partial-update capability, while `SaveProps<Attributes>` is a pure
-serialization input. `EditAttributes.set` selects one field through a typed
-Haxe expression, checks the new value against that field at compile time, and
-emits the small native `setAttributes({ field: value })` call Gutenberg expects.
+the native partial-update capability, while `SaveProps<Attributes>` is a
+read-only serialization input. `EditAttributes.set` selects one field through a
+typed Haxe expression, checks the new value against that field at compile time,
+and emits the small native `setAttributes({ field: value })` call Gutenberg
+expects.
+
+This boundary prevents an edit setter from leaking into save code; it is not a
+general Haxe effect system. Application `save` and migration callbacks must
+still follow Gutenberg's side-effect-free contract. The SDK-061 fixture proves
+that property for its reviewed callbacks and replays their exact native bytes,
+but does not claim to prove arbitrary user callback purity.
 
 ```haxe
 public static function edit(props:EditProps<CalloutAttributes>):BrowserNode {
