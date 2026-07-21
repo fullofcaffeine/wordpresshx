@@ -156,12 +156,12 @@
     "exactRelativeImportRegression": "passed",
     "outOfRootDependencyRegression": "passed",
     "nodeNetworkGlobalRegression": "passed",
-    "status": "pending-corrective-hosted-verification",
-    "commit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": false,
-    "completedAt": null
+    "status": "passed",
+    "commit": "144ede850fcc4feaae3e69ccbb9b8880bd5133fe",
+    "runId": 29814878812,
+    "haxeJobId": 88583796122,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T08:47:57Z"
   },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",
