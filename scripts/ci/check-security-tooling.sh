@@ -82,4 +82,8 @@ fi
 
 python3 scripts/ci/check-checkout-action.py
 
+if [[ "${CI:-}" == "true" ]]; then
+  bash scripts/beads/test-history-reader.sh --build-only
+fi
+
 echo "[security-policy] OK"

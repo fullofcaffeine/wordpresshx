@@ -116,6 +116,7 @@ weak_type_guard="${repository_root}/scripts/lint/haxe-weak-type-guard.py"
 python3 "${weak_type_guard}" --self-test
 python3 "${weak_type_guard}" \
   "${repository_root}/packages/hxx/src" \
+  "${repository_root}/packages/build/src" \
   "${package_root}/src" \
   "${package_root}/test/static-block-fixture/src" \
   "${package_root}/test-negative-static-block"

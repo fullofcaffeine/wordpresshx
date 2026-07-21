@@ -76,7 +76,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-static-block.sh",
-      "sha256": "beb6c398f032d4388521d7014b19ad945e59a71ea146483b2abd10f56d563c16"
+      "sha256": "183ae24d6f6c2d307cb6ac5fc272c5d9e6ef12e43f38b8fbfee74433243ffe00"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-static-block-lane.sh",
@@ -250,18 +250,19 @@
     "reason": "The exact released Genes compiler already emits the required strict TSX. SDK-061 adds only WordPress-owned Haxe contracts, generation, and evidence; dynamic PHP rendering remains SDK-062."
   },
   "correctiveVerification": {
-    "reason": "Expand the weak-type scan from selected block files to the full HXX/Gutenberg compilation closure and replace every discovered weak construct with typed equivalents.",
-    "observedAt": "2026-07-21T04:23:12Z",
+    "reason": "Expand the weak-type scan across HXX, Gutenberg, fixtures, negatives, and packages/build/src after fresh review identified the build macro classpath as part of the SDK-061 compilation closure.",
+    "observedAt": "2026-07-21T05:28:13Z",
     "localGate": "passed",
+    "localScannedHaxeFileCount": 100,
     "localGeneratedTreeSha256": "5295b7b416f594a53f34f3b5cf6eab7e87adc4a6e11cf6adbe1700e767fde3b9",
     "localProductionBundleSha256": "fc5202ada37c97129e556698496530b11199eb3efb95c9e48790cf755d8ac44d",
-    "status": "passed",
-    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
-    "runId": 29802354848,
-    "haxeJobId": 88545733938,
-    "wordpressJobId": 88545733904,
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T05:03:08Z"
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "wordpressJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "strictEditSaveBoundary": "compile-and-generated-source-tested",

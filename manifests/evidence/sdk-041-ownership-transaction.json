@@ -34,7 +34,7 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "b50c22a27cff36a1a9a8a1313e471bbad786f4528142f04837cd0672fb278f30"
+      "sha256": "d7e5ccf86dee2bb35e374bc40e9c2c26481ab7553aa762e719991f843aed5ff6"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -89,15 +89,17 @@
     }
   ],
   "correctiveVerification": {
-    "reason": "Cover the typed hxnodejs js.node.ChildProcess spelling and self-test every prohibited network/process spelling.",
-    "observedAt": "2026-07-21T04:23:12Z",
+    "reason": "Replace the network/process denylist with a fail-closed Node-capability allowlist and reject raw process, require, syntax, metadata, extern, and browser-network escapes after fresh review found nested hxnodejs bypasses.",
+    "observedAt": "2026-07-21T05:28:13Z",
     "localGate": "passed",
-    "status": "passed",
-    "commit": "4efc171c4e0b86ac188bb969a55fdc3b8c80fbdc",
-    "runId": 29802354848,
-    "haxeJobId": 88545733938,
-    "allJobsPassed": true,
-    "completedAt": "2026-07-21T05:03:08Z"
+    "allowedNodeCapabilityCount": 5,
+    "forbiddenSelfTestCount": 21,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "haxeJobId": null,
+    "allJobsPassed": null,
+    "completedAt": null
   },
   "claims": {
     "sdk041ArtifactOwner": "runtime-tested-hosted",
