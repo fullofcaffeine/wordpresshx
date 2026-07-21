@@ -69,18 +69,18 @@ class Main {
 			]);
 			nodeProcess.stderr.write(OwnershipJson.encode(report) + "\n");
 			nodeProcess.exit(failure.code == "usage" ? 2 : 3);
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			nodeProcess.stderr.write('{"code":"unexpected","message":"unexpected ownership fixture failure","path":null}\n');
 			nodeProcess.exit(4);
 		}
 	}
 
 	static function checkpoint(name:String):Void {
-		final configured:Dynamic = Syntax.code("process.env.WPHX_OWNERSHIP_FAULT");
+		final configured:Null<String> = Syntax.code("process.env.WPHX_OWNERSHIP_FAULT");
 		if (configured == null) {
 			return;
 		}
-		final value:String = cast configured;
+		final value:String = configured;
 		final separator = value.indexOf(":");
 		if (separator <= 0 || value.substr(separator + 1) != name) {
 			return;

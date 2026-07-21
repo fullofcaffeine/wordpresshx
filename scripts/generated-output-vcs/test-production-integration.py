@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -98,6 +99,15 @@ def git(repository: Path, *arguments: str) -> str:
         capture_output=True,
         check=True,
     ).stdout.strip()
+
+
+def git_bytes(repository: Path, *arguments: str) -> bytes:
+    return subprocess.run(
+        ["git", *arguments],
+        cwd=repository,
+        capture_output=True,
+        check=True,
+    ).stdout
 
 
 def initialize(repository: Path) -> None:
@@ -379,10 +389,9 @@ def validate_manifest_bound_tree(project: Path) -> None:
     assert not (project / "build/wordpress/.wphx-transactions").exists()
 
 
-def validate_evidence_receipt(
-    runtime: Runtime, negative_corpus_cases: int
-) -> None:
-    receipt = json.loads(EVIDENCE_RECEIPT.read_text())
+def validate_receipt_provenance(
+    receipt: dict[str, object], *, require_history: bool
+) -> list[dict[str, str]]:
     assert receipt["schemaVersion"] == 1
     assert receipt["receiptId"] == "SDK-045-3-GENERATED-OUTPUT-VCS"
     assert receipt["bead"] == "wordpresshx-sdk-045.3"
@@ -405,6 +414,86 @@ def validate_evidence_receipt(
         subject = ROOT / record["path"]
         assert subject.is_file(), record["path"]
         assert sha256(subject.read_bytes()) == record["sha256"], record["path"]
+    historical_verification = receipt["historicalVerification"]
+    assert historical_verification["algorithm"] == (
+        "sha256-lines-of-sha256-two-spaces-path-lf-v1"
+    )
+    material = "".join(
+        f"{record['sha256']}  {record['path']}\n"
+        for record in sorted(records, key=lambda record: record["path"])
+    ).encode()
+    assert sha256(material) == historical_verification["subjectContentSha256"]
+    assert historical_verification["depthOneFallback"] == (
+        "self-contained-subject-inventory-plus-full-history-security-job"
+    )
+    hosted = receipt["hostedWorkflow"]
+    hosted_claims = (
+        "productionWphxIntegration",
+        "realGitCleanHeadRegeneration",
+        "generatedPhpGitOnlyConsumer",
+        "defaultIgnoreAndRegenerate",
+        "generatedConsumerCi",
+        "cleanLocalTarballInstallation",
+    )
+    if receipt["status"] == "verified-local-pending-hosted":
+        assert receipt["implementationCommit"] is None
+        assert historical_verification["subjectCommit"] is None
+        assert hosted == {
+            "workflow": "Repository bootstrap",
+            "runId": None,
+            "job": "haxe",
+            "jobId": None,
+            "step": "Test Haxe-first site scaffolding",
+            "commit": None,
+            "status": "pending-current-subject-run",
+            "required": True,
+        }
+        for claim in hosted_claims:
+            assert receipt["claims"][claim] == "runtime-tested-local"
+        assert receipt["claims"]["hostedVerification"] == (
+            "pending-current-subject-run"
+        )
+    else:
+        implementation_commit = receipt["implementationCommit"]
+        assert re.fullmatch(r"[0-9a-f]{40}", implementation_commit)
+        assert historical_verification["subjectCommit"] == implementation_commit
+        assert hosted["status"] == "passed"
+        assert hosted["commit"] == implementation_commit
+        assert isinstance(hosted["runId"], int)
+        assert isinstance(hosted["jobId"], int)
+        history_available = (
+            subprocess.run(
+                ["git", "cat-file", "-e", f"{implementation_commit}^{{commit}}"],
+                cwd=ROOT,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            ).returncode
+            == 0
+        )
+        if require_history:
+            assert history_available
+        if history_available:
+            for record in records:
+                historical = git_bytes(
+                    ROOT,
+                    "show",
+                    f"{implementation_commit}:{record['path']}",
+                )
+                assert sha256(historical) == record["sha256"], record["path"]
+        for claim in hosted_claims:
+            assert receipt["claims"][claim] == "runtime-tested-hosted"
+        assert receipt["claims"]["hostedVerification"] == (
+            "runtime-tested-hosted"
+        )
+    return records
+
+
+def validate_evidence_receipt(
+    runtime: Runtime, negative_corpus_cases: int
+) -> None:
+    receipt = json.loads(EVIDENCE_RECEIPT.read_text())
+    validate_receipt_provenance(receipt, require_history=False)
     verification = receipt["verification"]
     assert verification["positiveCases"] == runtime.positive
     assert verification["negativeCases"] == runtime.negative
@@ -899,8 +988,27 @@ def run_gate(runtime_root: Path) -> dict[str, object]:
 
 
 def main() -> None:
+    if sys.argv[1:] == ["--verify-receipt-provenance"]:
+        receipt = json.loads(EVIDENCE_RECEIPT.read_text())
+        records = validate_receipt_provenance(receipt, require_history=True)
+        print(
+            "SDK-045.3 exact-commit receipt provenance passed: "
+            f"{len(records)} subjects"
+        )
+        return
+    if sys.argv[1:] == ["--verify-receipt-current"]:
+        receipt = json.loads(EVIDENCE_RECEIPT.read_text())
+        records = validate_receipt_provenance(receipt, require_history=False)
+        print(
+            "SDK-045.3 current-subject receipt validation passed: "
+            f"{len(records)} subjects"
+        )
+        return
     if len(sys.argv) != 2:
-        raise SystemExit("usage: test-production-integration.py <compiled-runtime-root>")
+        raise SystemExit(
+            "usage: test-production-integration.py <compiled-runtime-root> "
+            "| --verify-receipt-provenance | --verify-receipt-current"
+        )
     print(json.dumps(run_gate(Path(sys.argv[1])), sort_keys=True, separators=(",", ":")))
 
 

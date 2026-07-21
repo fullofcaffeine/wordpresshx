@@ -504,6 +504,7 @@ required_files=(
   scripts/generated-output-vcs/test-policy.py
   scripts/ownership/test-adr-contract.sh
   scripts/ownership/check-isolation.py
+  scripts/ownership/test-emitted-isolation.py
   scripts/ownership/test-contract.py
   scripts/ownership/test-production.py
   scripts/ownership/test.sh
@@ -2986,14 +2987,20 @@ assert sdk041_receipt["receiptId"] == "SDK-041-OWNERSHIP-TRANSACTION"
 assert sdk041_receipt["bead"] == "wordpresshx-sdk-041"
 assert set(sdk041_receipt["subject"]) == {
     "architecture",
+    "processBoundary",
     "owner",
     "contract",
+    "ownershipFailure",
     "canonicalJson",
+    "ownershipLayout",
+    "ownershipResult",
+    "stageValidator",
     "fixtureEntry",
     "compileProfile",
     "productionCorpus",
     "gate",
     "isolationScanner",
+    "emittedIsolationCompilerProbes",
     "manifestSchema",
     "journalSchema",
 }
@@ -3001,6 +3008,35 @@ for sdk041_subject in sdk041_receipt["subject"].values():
     assert hashlib.sha256(Path(sdk041_subject["path"]).read_bytes()).hexdigest() == (
         sdk041_subject["sha256"]
     )
+sdk041_closure_subjects = {
+    "processBoundary": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",
+    "owner": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+    "contract": (
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx"
+    ),
+    "ownershipFailure": (
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx"
+    ),
+    "canonicalJson": (
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx"
+    ),
+    "ownershipLayout": (
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx"
+    ),
+    "ownershipResult": (
+        "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx"
+    ),
+    "stageValidator": (
+        "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx"
+    ),
+}
+assert sdk041_receipt["productionClosureSubjects"] == list(
+    sdk041_closure_subjects
+)
+assert {
+    name: sdk041_receipt["subject"][name]["path"]
+    for name in sdk041_closure_subjects
+} == sdk041_closure_subjects
 sdk041_receipt_verification = sdk041_receipt["verification"]
 for sdk041_count in (
     "compileReplayCount",
@@ -3075,14 +3111,38 @@ assert sdk041_corrective["localGate"] == "passed"
 assert sdk041_corrective["productionClosureAuthority"] == (
     "haxe-dump-dependencies"
 )
+assert sdk041_corrective["productionClosureContentBinding"] == (
+    "receipt-sha256-for-every-compiler-discovered-repository-source"
+)
+assert sdk041_corrective["emittedCapabilityAuthority"] == (
+    "genes-javascript-modules-mapped-from-haxe-dump-dependencies"
+)
+assert sdk041_corrective["repositoryDependencyBoundary"] == (
+    "production-root-plus-one-exact-harness-entry"
+)
 assert sdk041_corrective["productionClosureSourceCount"] == 8
+assert sdk041_corrective["emittedProductionModuleCount"] == 4
 assert sdk041_corrective["allowedNodeCapabilityCount"] == 5
 assert sdk041_corrective["auditedProcessBoundaryCount"] == 1
-assert sdk041_corrective["forbiddenSelfTestCount"] == 39
+assert sdk041_corrective["sourceForbiddenSelfTestCount"] == 40
+assert sdk041_corrective["emittedSyntheticForbiddenSelfTestCount"] == 19
+assert sdk041_corrective["emittedCompileConfirmedForbiddenCount"] == 11
+assert sdk041_corrective["outOfRootCompileConfirmedForbiddenCount"] == 1
 for sdk041_corrective_regression in (
     "importAliasRegression",
     "transitiveWrapperRegression",
     "methodFalsePositiveRegression",
+    "extensionMethodRegression",
+    "syntaxTypedefRegression",
+    "wildcardImportRegression",
+    "interpolationRegression",
+    "untypedRegression",
+    "processMethodReferenceRegression",
+    "regexLiteralFalsePositiveRegression",
+    "escapedIdentifierRegression",
+    "exactRelativeImportRegression",
+    "outOfRootDependencyRegression",
+    "nodeNetworkGlobalRegression",
 ):
     assert sdk041_corrective[sdk041_corrective_regression] == "passed"
 if sdk041_corrective["status"] == "pending-corrective-hosted-verification":

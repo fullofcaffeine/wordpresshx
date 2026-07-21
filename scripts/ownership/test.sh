@@ -79,7 +79,14 @@ python3 scripts/ownership/test-production.py "${evidence_root}/runtime"
 python3 scripts/ownership/check-isolation.py \
   --source-root packages/cli/src \
   --entry-root packages/cli/src/wordpresshx/cli/ownership \
-  --dependencies "${evidence_root}/compiler-dump/js/dependencies.dump"
+  --dependencies "${evidence_root}/compiler-dump/js/dependencies.dump" \
+  --javascript-root "${evidence_root}/runtime" \
+  --receipt manifests/evidence/sdk-041-ownership-transaction.json \
+  --repository-root "${repository_root}"
+python3 scripts/ownership/test-emitted-isolation.py \
+  --haxe "${lix_haxe}" \
+  --package-root packages/cli \
+  --temporary-root "${evidence_root}/emitted-negative"
 
-echo "SDK-041 ownership runtime-isolation allowlist scan passed"
+echo "SDK-041 compiler-output runtime-isolation gate passed"
 echo "SDK-041 Haxe ownership transaction gate passed"

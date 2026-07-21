@@ -8,6 +8,10 @@
       "path": "manifests/ownership-implementation.json",
       "sha256": "5e48c13e63f924e67afc39531cbe488ab0f3a8d5f36091cfd767c390989f4c8f"
     },
+    "processBoundary": {
+      "path": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",
+      "sha256": "3719f31087df848cae1f1203ce3fac6e8c1f2ae6dc668afd823446890a149636"
+    },
     "owner": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
       "sha256": "e4286bcf305b51dda199e875905e1014544d1270f1ec267bc9ee3980dd816619"
@@ -16,13 +20,29 @@
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
       "sha256": "71293cc7a2582054c5fac68c7b8016685f1f8939988a501a54577433f712c864"
     },
+    "ownershipFailure": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipFailure.hx",
+      "sha256": "a02c36068a58ba5384e0aa5a3feae99254adfde27d9e96a37db1ace80e702b0f"
+    },
     "canonicalJson": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx",
       "sha256": "803095dbe6474ae2b20c52b551ce7229dae24e0d5320c04164ee987fec870c1a"
     },
+    "ownershipLayout": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
+      "sha256": "f40d7e9e08a6943764df12060af1aed9a293717a7c8945ca290925422945bd31"
+    },
+    "ownershipResult": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+      "sha256": "3bf1a33e9f8d6c45876941bf15d954feae7674f13670b96a179447644cde2ab9"
+    },
+    "stageValidator": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
+      "sha256": "aa6777d9854fe730c5b9a4513dcbf9b4ec526eb7f243a35cb41e8855c4703e63"
+    },
     "fixtureEntry": {
       "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
-      "sha256": "e6b3d96f27b383ff209c70e1789138e4b8c984025e181cf439af16652d71bcb9"
+      "sha256": "f5aac99233cb8ac8d9c2dc5b55fc042f0cad861ded98b967d4a9ea295d005271"
     },
     "compileProfile": {
       "path": "packages/cli/profiles/ownership-test.hxml",
@@ -34,11 +54,15 @@
     },
     "gate": {
       "path": "scripts/ownership/test.sh",
-      "sha256": "5bd66ddd6f9109ff42a6c1aedd6c805c8167fde9fc9a968881aecb76e736f596"
+      "sha256": "a2016d754541d3de9c5f5bacfd84601559b107014096273753c19807651b9691"
     },
     "isolationScanner": {
       "path": "scripts/ownership/check-isolation.py",
-      "sha256": "7793bf6cf1dfbb42fcb0eddce021d1c3b5e11543ce9b2fd8151987544ad96c75"
+      "sha256": "428dd06d3be6c5c45dd6c49e6b2dde697ddfda7f4be097d5a056341876048bf9"
+    },
+    "emittedIsolationCompilerProbes": {
+      "path": "scripts/ownership/test-emitted-isolation.py",
+      "sha256": "08abf12a17d03e535ed57ce135f6b68d9ec98ebce72901acd62a2ff00fad1c53"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -49,6 +73,16 @@
       "sha256": "94ac4fe3665342c4fff8cef5d91c3d1496ddf2d25465bae2b13c4ffc608aa5af"
     }
   },
+  "productionClosureSubjects": [
+    "processBoundary",
+    "owner",
+    "contract",
+    "ownershipFailure",
+    "canonicalJson",
+    "ownershipLayout",
+    "ownershipResult",
+    "stageValidator"
+  ],
   "verification": {
     "command": "bash scripts/ownership/test.sh",
     "compileReplayCount": 2,
@@ -93,17 +127,35 @@
     }
   ],
   "correctiveVerification": {
-    "reason": "Replace the source-folder lexical scan after fresh review proved that imported aliases and a transitive local wrapper bypassed it. The corrected gate scans Haxe's compiler-emitted production dependency closure and resolves imported capability aliases.",
-    "observedAt": "2026-07-21T06:22:05Z",
+    "reason": "Fresh review proved that legal Haxe aliases, extension methods, interpolation, weak typing, and process function references could bypass a source-text matcher. Source scanning is now defense in depth; the authority is the executable JavaScript Genes emits for the compiler-discovered production closure.",
+    "observedAt": "2026-07-21T07:12:03Z",
     "localGate": "passed",
     "productionClosureAuthority": "haxe-dump-dependencies",
+    "productionClosureContentBinding": "receipt-sha256-for-every-compiler-discovered-repository-source",
+    "emittedCapabilityAuthority": "genes-javascript-modules-mapped-from-haxe-dump-dependencies",
+    "repositoryDependencyBoundary": "production-root-plus-one-exact-harness-entry",
     "productionClosureSourceCount": 8,
+    "emittedProductionModuleCount": 4,
     "allowedNodeCapabilityCount": 5,
     "auditedProcessBoundaryCount": 1,
-    "forbiddenSelfTestCount": 39,
+    "sourceForbiddenSelfTestCount": 40,
+    "emittedSyntheticForbiddenSelfTestCount": 19,
+    "emittedCompileConfirmedForbiddenCount": 11,
+    "outOfRootCompileConfirmedForbiddenCount": 1,
     "importAliasRegression": "passed",
     "transitiveWrapperRegression": "passed",
     "methodFalsePositiveRegression": "passed",
+    "extensionMethodRegression": "passed",
+    "syntaxTypedefRegression": "passed",
+    "wildcardImportRegression": "passed",
+    "interpolationRegression": "passed",
+    "untypedRegression": "passed",
+    "processMethodReferenceRegression": "passed",
+    "regexLiteralFalsePositiveRegression": "passed",
+    "escapedIdentifierRegression": "passed",
+    "exactRelativeImportRegression": "passed",
+    "outOfRootDependencyRegression": "passed",
+    "nodeNetworkGlobalRegression": "passed",
     "status": "pending-corrective-hosted-verification",
     "commit": null,
     "runId": null,

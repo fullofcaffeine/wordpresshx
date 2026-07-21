@@ -13,6 +13,7 @@ required_files=(
   scripts/beads/test-history-reader.sh
   scripts/beads/verify-history-reader-lock.py
   scripts/ci/install-gitleaks.sh
+  scripts/generated-output-vcs/test-production-integration.py
   scripts/hooks/install.sh
   scripts/hooks/pre-commit
   scripts/hooks/pre-push
@@ -81,6 +82,12 @@ if [[ -n "${unlocked_actions}" ]]; then
 fi
 
 python3 scripts/ci/check-checkout-action.py
+receipt_provenance_mode="--verify-receipt-current"
+if [[ "${CI:-}" == "true" && "${GITHUB_JOB:-}" == "security" ]]; then
+  receipt_provenance_mode="--verify-receipt-provenance"
+fi
+python3 scripts/generated-output-vcs/test-production-integration.py \
+  "${receipt_provenance_mode}"
 
 if [[ "${CI:-}" == "true" && "${GITHUB_JOB:-}" == "security" ]]; then
   bash scripts/beads/test-history-reader.sh --build-only

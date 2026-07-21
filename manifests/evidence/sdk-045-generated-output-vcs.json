@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "receiptId": "SDK-045-3-GENERATED-OUTPUT-VCS",
   "bead": "wordpresshx-sdk-045.3",
-  "status": "verified-hosted",
-  "observedAt": "2026-07-19T22:17:48Z",
-  "implementationCommit": "b61e1cecf6e631469754849cf3bfee0102974c41",
+  "status": "verified-local-pending-hosted",
+  "observedAt": "2026-07-21T07:18:03Z",
+  "implementationCommit": null,
   "subject": {
     "digestAlgorithm": "sha256-file-bytes-v1",
     "implementationManifest": {
@@ -116,7 +116,7 @@
     "consumerGates": [
       {
         "path": "scripts/generated-output-vcs/test-production-integration.py",
-        "sha256": "1b3f5473f1626725274d5e88857a801d9e71928c212b31c96397305e5fbeca20"
+        "sha256": "aa5131bfc0e0c777e935551f560e9ae933d03f7de5d2725604dad47cf6ac7861"
       },
       {
         "path": "scripts/scaffold/test-production.py",
@@ -133,7 +133,7 @@
     ],
     "repositoryValidator": {
       "path": "scripts/check-repository.sh",
-      "sha256": "1f00ab2bddaceef267d17008b1dd88b74d6316588a4ce16879f5436f8013848c"
+      "sha256": "e48540f7802c07c79e4b87c06840078c203a2314832213c4a4bbce3cb33809ab"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -149,6 +149,12 @@
         "sha256": "28f8868f2e476149f9189fe8f8e24d85e1923daa01adfa10dd55808c83660069"
       }
     ]
+  },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": null,
+    "subjectContentSha256": "55808901e0eb255cc3f82ce8923ce14dc26fff52b90fd5d302325d54153617dd",
+    "depthOneFallback": "self-contained-subject-inventory-plus-full-history-security-job"
   },
   "contract": {
     "defaultConsumerMode": "ignore-and-regenerate",
@@ -179,7 +185,7 @@
     "repositoryCommand": "bash scripts/check-repository.sh",
     "focusedCommand": "python3 scripts/generated-output-vcs/test-production-integration.py <compiled-runtime-root>",
     "summarySchema": "wordpress-hx.sdk0453-generated-output-summary.v1",
-    "outcome": "passed-hosted",
+    "outcome": "passed-local",
     "positiveCases": 8,
     "negativeCases": 16,
     "negativeCorpusCases": 13,
@@ -233,22 +239,32 @@
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
+    "runId": null,
+    "job": "haxe",
+    "jobId": null,
+    "step": "Test Haxe-first site scaffolding",
+    "commit": null,
+    "status": "pending-current-subject-run",
+    "required": true
+  },
+  "supersededHostedWorkflow": {
+    "workflow": "Repository bootstrap",
     "runId": 29705613498,
     "job": "haxe",
     "jobId": 88241958950,
     "step": "Test Haxe-first site scaffolding",
     "commit": "b61e1cecf6e631469754849cf3bfee0102974c41",
-    "status": "passed",
-    "required": true
+    "status": "passed-historical-subjects-only",
+    "reason": "The repository validator subject changed after this run; current receipt subjects require a fresh exact-commit hosted run."
   },
   "claims": {
-    "productionWphxIntegration": "runtime-tested-hosted",
-    "realGitCleanHeadRegeneration": "runtime-tested-hosted",
-    "generatedPhpGitOnlyConsumer": "runtime-tested-hosted",
-    "defaultIgnoreAndRegenerate": "runtime-tested-hosted",
-    "generatedConsumerCi": "runtime-tested-hosted",
-    "cleanLocalTarballInstallation": "runtime-tested-hosted",
-    "hostedVerification": "runtime-tested-hosted",
+    "productionWphxIntegration": "runtime-tested-local",
+    "realGitCleanHeadRegeneration": "runtime-tested-local",
+    "generatedPhpGitOnlyConsumer": "runtime-tested-local",
+    "defaultIgnoreAndRegenerate": "runtime-tested-local",
+    "generatedConsumerCi": "runtime-tested-local",
+    "cleanLocalTarballInstallation": "runtime-tested-local",
+    "hostedVerification": "pending-current-subject-run",
     "releaseIntegration": "not-implemented-sdk-101",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-claimed"
