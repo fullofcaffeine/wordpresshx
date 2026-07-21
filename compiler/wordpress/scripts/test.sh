@@ -12,6 +12,8 @@ fi
 
 php -r 'if (PHP_VERSION_ID < 70400) { fwrite(STDERR, "PHP 7.4 or newer is required\n"); exit(1); }'
 haxelib run formatter --check -s src -s test
+python3 ../../scripts/lint/haxe-weak-type-guard.py --self-test
+python3 ../../scripts/lint/haxe-weak-type-guard.py src test
 rm -rf -- build/source-correlation
 haxe test.hxml
 

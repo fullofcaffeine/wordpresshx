@@ -147,11 +147,11 @@ class WordPressPhpProfileTest {
 		}
 	}
 
-	static function assertThrows(run:() -> Dynamic, label:String):Void {
+	static function assertThrows<T>(run:() -> T, label:String):Void {
 		var threw = false;
 		try {
 			run();
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			threw = true;
 		}
 		if (!threw) {

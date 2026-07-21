@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "STRICT-HAXE-MIGRATION",
   "bead": "wordpresshx-sjb",
-  "status": "verified-hosted",
-  "observedAt": "2026-07-21T09:34:17Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-21T09:42:05Z",
   "directive": {
     "forbiddenTokens": [
       "Dynamic",
@@ -17,8 +17,8 @@
   },
   "inventory": {
     "initialFindingCount": 583,
-    "currentFindingCount": 556,
-    "removedFindingCount": 27,
+    "currentFindingCount": 527,
+    "removedFindingCount": 56,
     "complete": false
   },
   "subjects": [
@@ -47,6 +47,34 @@
       "sha256": "a7fb8e0ec84f5cf19202b0c3a5bcae5eb9bf132ebb124b14bd5c806a74255c61"
     },
     {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx",
+      "sha256": "1c0b1b0b57a2c02e77abe8ac8316b62a5c4afe48a0b62b989a81a061ad7ec39f"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx",
+      "sha256": "2c6b8684967e618494ff6874872e2795031dcc6f7259e23c3ed3ba70491e17d1"
+    },
+    {
+      "path": "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
+      "sha256": "b4aaa3c4955531781c4c5a5707ce6feee5c62d23d87637df8a6c160753d617c1"
+    },
+    {
+      "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx",
+      "sha256": "614cc1dc56b535bb7c3deb6a5322178be0c529900b20655fa9845d85b064b807"
+    },
+    {
+      "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx",
+      "sha256": "7e30c336434539b3b568346e9d78e7c71d20ec2b5dbf4fff769c17e49e2ab2bf"
+    },
+    {
+      "path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressSourceCorrelationTest.hx",
+      "sha256": "97aabb472dd179d102f542094cfa7dd67098928c16a35db58155d2c342be98c7"
+    },
+    {
+      "path": "compiler/wordpress/scripts/test.sh",
+      "sha256": "4efdb6b804259a6539bd6709bec27e98d87cf2ccce89f4628bc5eec9c79a8946"
+    },
+    {
       "path": "scripts/lint/haxe-weak-type-guard.py",
       "sha256": "0df870ecc32c3487e82c8be2169ba3e3041b1d975094afc5146fc16d107cfdc5"
     }
@@ -58,7 +86,7 @@
       "haxeFileCount": 18,
       "findingCount": 0,
       "gate": "bash scripts/profiles/test-profile-haxe.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
     },
     {
       "id": "generic-php-compiler",
@@ -66,7 +94,15 @@
       "haxeFileCount": 34,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
-      "outcome": "passed-hosted"
+      "outcome": "passed-local"
+    },
+    {
+      "id": "wordpress-php-compiler",
+      "root": "compiler/wordpress",
+      "haxeFileCount": 25,
+      "findingCount": 0,
+      "gate": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed-local"
     }
   ],
   "typedAdapters": [
@@ -75,25 +111,36 @@
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
       "genericBoundary": "reflaxe.php.map.PhpCanonicalJson.PhpJsonValue",
       "gate": "bash compiler/wordpress/scripts/test.sh",
-      "outcome": "passed-hosted",
-      "owningClosureComplete": false
+      "outcome": "passed-local",
+      "owningClosureComplete": true
     }
   ],
   "hostedVerification": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "required": true,
+    "implementationCommit": null,
+    "runId": null,
+    "jobId": null,
+    "status": "pending-current-subject-run",
+    "allJobsPassed": false,
+    "completedAt": null
+  },
+  "previousHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
     "implementationCommit": "825e44d12c201142a8999764d5925f44bca430ca",
     "runId": 29818067940,
     "jobId": 88593973805,
-    "status": "passed",
+    "status": "passed-before-wordpress-compiler-closure",
     "allJobsPassed": true,
     "completedAt": "2026-07-21T09:34:17Z"
   },
   "claims": {
-    "coreProfileContractStrict": "runtime-tested-hosted",
-    "genericPhpCompilerStrict": "runtime-tested-hosted",
-    "wordpressSourceIndexTypedAdapter": "runtime-tested-hosted",
+    "coreProfileContractStrict": "runtime-tested-local",
+    "genericPhpCompilerStrict": "runtime-tested-local",
+    "wordpressPhpCompilerStrict": "runtime-tested-local",
+    "wordpressSourceIndexTypedAdapter": "runtime-tested-local",
     "repositoryWideStrictHaxe": "not-yet-remaining-findings",
     "productionSupport": "not-claimed"
   }

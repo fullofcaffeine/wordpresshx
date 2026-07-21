@@ -2,6 +2,63 @@ package wordpress.hx.compiler.php.profile;
 
 import haxe.Json;
 
+typedef WordPressPluginManifestSource = {
+	final file:String;
+	final startLine:Int;
+	final startColumn:Int;
+	final endLine:Int;
+	final endColumn:Int;
+}
+
+typedef WordPressPluginManifestDeclaration = {
+	final stableName:String;
+	final source:WordPressPluginManifestSource;
+	final generatedStartLine:Int;
+	final generatedEndLine:Int;
+}
+
+typedef WordPressPluginManifestFile = {
+	final path:String;
+	final role:String;
+	final classification:String;
+	final bytes:Int;
+	final sha256:String;
+	final declarations:Array<WordPressPluginManifestDeclaration>;
+}
+
+typedef WordPressPluginManifest = {
+	final schemaVersion:Int;
+	final manifestId:String;
+	final schemaStatus:String;
+	final profileId:String;
+	final classification:String;
+	final plugin:{
+		final slug:String;
+		final rootPath:String;
+		final textDomain:String;
+		final requiresWordPress:String;
+		final requiresPhp:String;
+		final bootstrapClass:String;
+		final autoloadPath:String;
+	};
+	final files:Array<WordPressPluginManifestFile>;
+	final boundary:{
+		final semanticPlanClassification:String;
+		final semanticPlanSchema:String;
+		final ownershipTransaction:String;
+		final rawPhpSegments:Int;
+		final stockHaxePhpFiles:Int;
+		final buildTimeServerDependency:Bool;
+		final runtimeHxxDependency:Bool;
+	};
+	final claims:{
+		final generation:String;
+		final wordpress70Activation:String;
+		final productionSupport:String;
+		final publicationAuthorized:Bool;
+	};
+}
+
 /** Deterministic in-memory public PHP artifact and provenance manifest. **/
 class WordPressPluginArtifact {
 	public final plan:PluginBootstrapPlan;
@@ -15,7 +72,7 @@ class WordPressPluginArtifact {
 			throw "WordPress plugin artifact requires a plan and files";
 		}
 		final values = files.copy();
-		values.sort((left, right) -> Reflect.compare(left.path, right.path));
+		values.sort((left, right) -> compareText(left.path, right.path));
 		final paths:Map<String, Bool> = [];
 		final roles:Map<String, Bool> = [];
 		for (file in values) {
@@ -66,9 +123,13 @@ class WordPressPluginArtifact {
 	}
 
 	public function manifestSource():String {
-		final fileRecords:Array<Dynamic> = [];
+		return Json.stringify(manifest(), null, "  ") + "\n";
+	}
+
+	public function manifest():WordPressPluginManifest {
+		final fileRecords:Array<WordPressPluginManifestFile> = [];
 		for (file in fileValues) {
-			final declarations:Array<Dynamic> = [];
+			final declarations:Array<WordPressPluginManifestDeclaration> = [];
 			for (declaration in file.rendered) {
 				declarations.push({
 					stableName: declaration.stableName,
@@ -93,7 +154,7 @@ class WordPressPluginArtifact {
 			});
 		}
 
-		final manifest:Dynamic = {
+		return {
 			schemaVersion: 1,
 			manifestId: "wordpresshx-public-php-artifact-v1",
 			schemaStatus: "internal-sdk022-evidence",
@@ -125,6 +186,9 @@ class WordPressPluginArtifact {
 				publicationAuthorized: false
 			}
 		};
-		return Json.stringify(manifest, null, "  ") + "\n";
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 }

@@ -1,20 +1,29 @@
 package fixtures.sourcecorrelation;
 
+private typedef SourceCorrelationAttribute = {
+	final name:String;
+	final value:String;
+}
+
+private class SourceCorrelationRestRequest {}
+private class SourceCorrelationRestResponse {}
+private class SourceCorrelationBlock {}
+
 /** Haxe-only application surface used to prove PHP failure correlation. **/
 class SourceCorrelationCallbacks {
 	public static function failHook():Void {
 		throw new haxe.Exception("hook failure");
 	}
 
-	public static function allowRest(request:Dynamic):Bool {
+	public static function allowRest(request:SourceCorrelationRestRequest):Bool {
 		return true;
 	}
 
-	public static function failRest(request:Dynamic):Dynamic {
+	public static function failRest(request:SourceCorrelationRestRequest):SourceCorrelationRestResponse {
 		throw new haxe.Exception("rest failure");
 	}
 
-	public static function failRender(attributes:Array<Dynamic>, content:String, block:Dynamic):String {
+	public static function failRender(attributes:Array<SourceCorrelationAttribute>, content:String, block:SourceCorrelationBlock):String {
 		throw new haxe.Exception("render failure");
 	}
 

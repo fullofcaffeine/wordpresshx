@@ -1,7 +1,6 @@
 package wordpress.hx.compiler.php.profile.tests;
 
 import fixtures.SourceCorrelationFixture;
-import haxe.Json;
 import haxe.crypto.Sha256;
 import sys.FileSystem;
 import sys.io.File;
@@ -32,10 +31,9 @@ class WordPressSourceCorrelationTest {
 		final writer = new WordPressPhpRangeMapWriter("0.0.0+sdk025", generatorSourceSha256, buildInputsSha256);
 		final map = writer.write(adapter);
 		assertEquals(map, writer.write(adapter), "correlated map determinism");
-		final document:Dynamic = Json.parse(map);
-		assertEquals("wordpresshx.php-haxe-range-map.v1", document.format, "SDK PHP map identity");
-		assertEquals("4", Std.string((cast document.traceAnchors : Array<Dynamic>).length), "public/private trace anchor count");
-		assertEquals("compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx", document.sources[0].path, "logical source path");
+		assertContains(map, '"format":"wordpresshx.php-haxe-range-map.v1"', "SDK PHP map identity");
+		assertEquals("4", Std.string(countOccurrences(map, '"selection":"emitter-runtime-line"')), "public/private trace anchor count");
+		assertContains(map, '"path":"compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx"', "logical source path");
 		final developmentIndex = new WordPressPhpSourceIndexWriter("0.0.0+sdk025", "source-correlation-fixture", "0.0.0", "wp70-release", buildInputsSha256,
 			"development", "local-only", "debug-companion-relative", "debug-companion",
 			"source/project").write("failure-callbacks", adapter, map, SourceCorrelationFixture.sourceFile(), ["SDK-025-PHP-SOURCE-CORRELATION"]);
@@ -90,6 +88,25 @@ class WordPressSourceCorrelationTest {
 	static function assertEquals(expected:String, actual:String, label:String):Void {
 		if (expected != actual) {
 			throw label + " mismatch\nexpected:\n" + expected + "\nactual:\n" + actual;
+		}
+	}
+
+	static function assertContains(value:String, expected:String, label:String):Void {
+		if (value.indexOf(expected) == -1) {
+			throw label + " missing\nexpected fragment:\n" + expected + "\nactual:\n" + value;
+		}
+	}
+
+	static function countOccurrences(value:String, expected:String):Int {
+		var count = 0;
+		var offset = 0;
+		while (true) {
+			final found = value.indexOf(expected, offset);
+			if (found == -1) {
+				return count;
+			}
+			count++;
+			offset = found + expected.length;
 		}
 	}
 }

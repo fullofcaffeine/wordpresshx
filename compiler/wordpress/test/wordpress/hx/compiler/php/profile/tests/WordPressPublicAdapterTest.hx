@@ -1,7 +1,6 @@
 package wordpress.hx.compiler.php.profile.tests;
 
 import fixtures.AcmeBooksAdapters;
-import haxe.Json;
 import reflaxe.php.ir.PhpMethod;
 import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpType;
@@ -95,13 +94,13 @@ class WordPressPublicAdapterTest {
 	}
 
 	static function assertManifest(artifact:WordPressPublicAdapterArtifact):Void {
-		final manifest:Dynamic = Json.parse(artifact.manifestSource());
+		final manifest = artifact.manifest();
 		assertEquals("wordpresshx-public-php-adapters-v1", manifest.manifestId, "adapter manifest identity");
-		assertEquals("5", Std.string((cast manifest.files : Array<Dynamic>).length), "adapter manifest file count");
-		assertEquals("2", Std.string((cast manifest.hooks : Array<Dynamic>).length), "adapter manifest hook count");
-		assertEquals("1", Std.string((cast manifest.restRoutes : Array<Dynamic>).length), "adapter manifest REST route count");
-		assertEquals("1", Std.string((cast manifest.blocks : Array<Dynamic>).length), "adapter manifest block count");
-		assertEquals("3", Std.string((cast manifest.publicExports : Array<Dynamic>).length), "adapter manifest export count");
+		assertEquals("5", Std.string(manifest.files.length), "adapter manifest file count");
+		assertEquals("2", Std.string(manifest.hooks.length), "adapter manifest hook count");
+		assertEquals("1", Std.string(manifest.restRoutes.length), "adapter manifest REST route count");
+		assertEquals("1", Std.string(manifest.blocks.length), "adapter manifest block count");
+		assertEquals("3", Std.string(manifest.publicExports.length), "adapter manifest export count");
 		assertEquals("2", Std.string(manifest.boundary.privateImplementationMethods), "private implementation method count");
 	}
 
@@ -231,11 +230,11 @@ class WordPressPublicAdapterTest {
 		}
 	}
 
-	static function assertThrows(run:() -> Dynamic, label:String):Void {
+	static function assertThrows<T>(run:() -> T, label:String):Void {
 		var threw = false;
 		try {
 			run();
-		} catch (_:Dynamic) {
+		} catch (_:haxe.Exception) {
 			threw = true;
 		}
 		if (!threw) {

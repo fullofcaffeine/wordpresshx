@@ -5,6 +5,102 @@ import reflaxe.php.ir.PhpMethod;
 import reflaxe.php.ir.PhpVisibility;
 import wordpress.hx.compiler.php.profile.WordPressRestMethod.WordPressRestMethodTools;
 
+typedef WordPressPublicAdapterManifestSource = {
+	final file:String;
+	final startLine:Int;
+	final startColumn:Int;
+	final endLine:Int;
+	final endColumn:Int;
+}
+
+typedef WordPressPublicAdapterManifestDeclaration = {
+	final stableName:String;
+	final source:WordPressPublicAdapterManifestSource;
+	final generatedStartLine:Int;
+	final generatedEndLine:Int;
+}
+
+typedef WordPressPublicAdapterManifestFile = {
+	final path:String;
+	final role:String;
+	final classification:String;
+	final bytes:Int;
+	final sha256:String;
+	final declarations:Array<WordPressPublicAdapterManifestDeclaration>;
+}
+
+typedef WordPressPublicAdapterManifestHook = {
+	final kind:String;
+	final hook:String;
+	final callback:String;
+	final priority:Int;
+	final acceptedArgs:Int;
+}
+
+typedef WordPressPublicAdapterManifestRoute = {
+	final namespace:String;
+	final route:String;
+	final method:String;
+	final callback:String;
+	final permissionCallback:String;
+}
+
+typedef WordPressPublicAdapterManifestBlock = {
+	final name:String;
+	final renderCallback:String;
+}
+
+typedef WordPressPublicAdapterManifestParameter = {
+	final name:String;
+	final type:String;
+	final byReference:Bool;
+	final variadic:Bool;
+	final hasDefault:Bool;
+}
+
+typedef WordPressPublicAdapterManifestExport = {
+	final stableName:String;
+	final parameters:Array<WordPressPublicAdapterManifestParameter>;
+	final returnsByReference:Bool;
+	final returnType:String;
+}
+
+typedef WordPressPublicAdapterManifest = {
+	final schemaVersion:Int;
+	final manifestId:String;
+	final schemaStatus:String;
+	final profileId:String;
+	final classification:String;
+	final plugin:{
+		final slug:String;
+		final rootPath:String;
+		final adapterClass:String;
+		final adapterPath:String;
+		final registrationPath:String;
+	};
+	final files:Array<WordPressPublicAdapterManifestFile>;
+	final hooks:Array<WordPressPublicAdapterManifestHook>;
+	final restRoutes:Array<WordPressPublicAdapterManifestRoute>;
+	final blocks:Array<WordPressPublicAdapterManifestBlock>;
+	final publicExports:Array<WordPressPublicAdapterManifestExport>;
+	final boundary:{
+		final semanticPlanClassification:String;
+		final semanticPlanSchema:String;
+		final ownershipTransaction:String;
+		final rawPhpSegments:Int;
+		final stockHaxePhpFiles:Int;
+		final buildTimeServerDependency:Bool;
+		final runtimeHxxDependency:Bool;
+		final privateImplementationMethods:Int;
+	};
+	final claims:{
+		final generation:String;
+		final wordpress70Runtime:String;
+		final productionSupport:String;
+		final publicationAuthorized:Bool;
+	};
+}
+
 /** Deterministic SDK-023 public adapter artifact and ABI evidence manifest. **/
 class WordPressPublicAdapterArtifact {
 	public final plan:WordPressPublicAdapterPlan;
@@ -18,7 +114,7 @@ class WordPressPublicAdapterArtifact {
 			throw "WordPress public adapter artifact requires plan and files";
 		}
 		final values = files.copy();
-		values.sort((left, right) -> Reflect.compare(left.path, right.path));
+		values.sort((left, right) -> compareText(left.path, right.path));
 		final expected = [
 			"plugin-root" => plan.plugin.rootPath,
 			"autoload" => plan.plugin.autoloadPath,
@@ -60,9 +156,13 @@ class WordPressPublicAdapterArtifact {
 	}
 
 	public function manifestSource():String {
-		final fileRecords:Array<Dynamic> = [];
+		return Json.stringify(manifest(), null, "  ") + "\n";
+	}
+
+	public function manifest():WordPressPublicAdapterManifest {
+		final fileRecords:Array<WordPressPublicAdapterManifestFile> = [];
 		for (file in fileValues) {
-			final declarations:Array<Dynamic> = [];
+			final declarations:Array<WordPressPublicAdapterManifestDeclaration> = [];
 			for (declaration in file.rendered) {
 				declarations.push({
 					stableName: declaration.stableName,
@@ -87,7 +187,7 @@ class WordPressPublicAdapterArtifact {
 			});
 		}
 
-		final hookRecords:Array<Dynamic> = [];
+		final hookRecords:Array<WordPressPublicAdapterManifestHook> = [];
 		for (hook in plan.hooks) {
 			hookRecords.push({
 				kind: hook.kind == Action ? "action" : "filter",
@@ -97,7 +197,7 @@ class WordPressPublicAdapterArtifact {
 				acceptedArgs: hook.acceptedArgs
 			});
 		}
-		final routeRecords:Array<Dynamic> = [];
+		final routeRecords:Array<WordPressPublicAdapterManifestRoute> = [];
 		for (route in plan.restRoutes) {
 			routeRecords.push({
 				namespace: route.namespace,
@@ -107,20 +207,20 @@ class WordPressPublicAdapterArtifact {
 				permissionCallback: plan.absoluteAdapterClass + "::" + route.permissionCallback.value
 			});
 		}
-		final blockRecords:Array<Dynamic> = [];
+		final blockRecords:Array<WordPressPublicAdapterManifestBlock> = [];
 		for (block in plan.blocks) {
 			blockRecords.push({
 				name: block.blockName,
 				renderCallback: plan.absoluteAdapterClass + "::" + block.renderCallback.value
 			});
 		}
-		final exportRecords:Array<Dynamic> = [];
+		final exportRecords:Array<WordPressPublicAdapterManifestExport> = [];
 		for (export in plan.exports) {
 			final method = plan.method(export.method);
 			exportRecords.push(exportRecord(plan, method));
 		}
 
-		final manifest:Dynamic = {
+		return {
 			schemaVersion: 1,
 			manifestId: "wordpresshx-public-php-adapters-v1",
 			schemaStatus: "internal-sdk023-evidence",
@@ -155,11 +255,10 @@ class WordPressPublicAdapterArtifact {
 				publicationAuthorized: false
 			}
 		};
-		return Json.stringify(manifest, null, "  ") + "\n";
 	}
 
-	static function exportRecord(plan:WordPressPublicAdapterPlan, method:PhpMethod):Dynamic {
-		final parameters:Array<Dynamic> = [];
+	static function exportRecord(plan:WordPressPublicAdapterPlan, method:PhpMethod):WordPressPublicAdapterManifestExport {
+		final parameters:Array<WordPressPublicAdapterManifestParameter> = [];
 		for (parameter in method.parameters) {
 			parameters.push({
 				name: parameter.name.value,
@@ -187,6 +286,10 @@ class WordPressPublicAdapterArtifact {
 			}
 		}
 		return count;
+	}
+
+	static function compareText(left:String, right:String):Int {
+		return left < right ? -1 : left > right ? 1 : 0;
 	}
 
 	function get_files():Array<WordPressPublicAdapterFile> {

@@ -6336,6 +6336,28 @@ assert set(strict_haxe_subjects) == {
         "compiler/wordpress/src/wordpress/hx/compiler/php/profile/"
         "WordPressPhpSourceIndexWriter.hx"
     ),
+    (
+        "compiler/wordpress/src/wordpress/hx/compiler/php/profile/"
+        "WordPressPluginArtifact.hx"
+    ),
+    (
+        "compiler/wordpress/src/wordpress/hx/compiler/php/profile/"
+        "WordPressPublicAdapterArtifact.hx"
+    ),
+    "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
+    (
+        "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/"
+        "WordPressPublicAdapterTest.hx"
+    ),
+    (
+        "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/"
+        "WordPressPhpProfileTest.hx"
+    ),
+    (
+        "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/"
+        "WordPressSourceCorrelationTest.hx"
+    ),
+    "compiler/wordpress/scripts/test.sh",
     "scripts/lint/haxe-weak-type-guard.py",
 }
 for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
@@ -6375,7 +6397,7 @@ assert strict_haxe_inventory["currentFindingCount"] == strict_haxe_findings(
 assert strict_haxe_inventory["removedFindingCount"] == (
     strict_haxe_inventory["initialFindingCount"]
     - strict_haxe_inventory["currentFindingCount"]
-) == 27
+) == 56
 assert strict_haxe_inventory["complete"] is False
 
 strict_haxe_scopes = {
@@ -6389,6 +6411,7 @@ strict_haxe_outcome = (
 assert set(strict_haxe_scopes) == {
     "core-profile-contract",
     "generic-php-compiler",
+    "wordpress-php-compiler",
 }
 for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate in (
     (
@@ -6403,10 +6426,21 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
         34,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
+    (
+        "wordpress-php-compiler",
+        "compiler/wordpress",
+        25,
+        "bash compiler/wordpress/scripts/test.sh",
+    ),
 ):
     strict_haxe_scope = strict_haxe_scopes[strict_haxe_scope_id]
     assert strict_haxe_scope["root"] == strict_haxe_root
-    strict_haxe_scope_paths = sorted(Path(strict_haxe_root).rglob("*.hx"))
+    strict_haxe_scope_prefix = strict_haxe_root + "/"
+    strict_haxe_scope_paths = sorted(
+        path
+        for path in tracked_haxe_paths
+        if str(path).startswith(strict_haxe_scope_prefix)
+    )
     assert len(strict_haxe_scope_paths) == strict_haxe_count
     assert strict_haxe_scope["haxeFileCount"] == strict_haxe_count
     assert strict_haxe_scope["findingCount"] == strict_haxe_findings(
@@ -6427,7 +6461,7 @@ assert strict_haxe_migration["typedAdapters"] == [
         ),
         "gate": "bash compiler/wordpress/scripts/test.sh",
         "outcome": strict_haxe_outcome,
-        "owningClosureComplete": False,
+        "owningClosureComplete": True,
     }
 ]
 strict_haxe_hosted = strict_haxe_migration["hostedVerification"]
@@ -6442,6 +6476,18 @@ if strict_haxe_migration["status"] == "implemented-hosted-pending":
     assert strict_haxe_hosted["allJobsPassed"] is False
     assert strict_haxe_hosted["completedAt"] is None
     strict_haxe_claim = "runtime-tested-local"
+    assert strict_haxe_migration["previousHostedVerification"] == {
+        "workflow": "Repository bootstrap",
+        "job": "haxe",
+        "implementationCommit": (
+            "825e44d12c201142a8999764d5925f44bca430ca"
+        ),
+        "runId": 29818067940,
+        "jobId": 88593973805,
+        "status": "passed-before-wordpress-compiler-closure",
+        "allJobsPassed": True,
+        "completedAt": "2026-07-21T09:34:17Z",
+    }
 else:
     assert sha1.fullmatch(strict_haxe_hosted["implementationCommit"])
     assert isinstance(strict_haxe_hosted["runId"], int)
@@ -6453,6 +6499,7 @@ else:
 for strict_haxe_claim_name in (
     "coreProfileContractStrict",
     "genericPhpCompilerStrict",
+    "wordpressPhpCompilerStrict",
     "wordpressSourceIndexTypedAdapter",
 ):
     assert strict_haxe_migration["claims"][strict_haxe_claim_name] == (
