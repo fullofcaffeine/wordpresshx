@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-012-PROFILE-SCHEMA",
   "bead": "wordpresshx-sdk-012",
-  "observedAt": "2026-07-21T09:07:49Z",
+  "observedAt": "2026-07-21T09:34:17Z",
   "subject": {
     "profileSchemaPath": "schemas/profile.schema.json",
     "profileSchemaVersion": 1,
@@ -125,12 +125,12 @@
     "localGate": "passed",
     "coveredHaxeFileCount": 18,
     "findingCount": 0,
-    "status": "pending-hosted-verification",
-    "implementationCommit": null,
-    "runId": null,
-    "haxeJobId": null,
-    "allJobsPassed": false,
-    "completedAt": null
+    "status": "passed",
+    "implementationCommit": "825e44d12c201142a8999764d5925f44bca430ca",
+    "runId": 29818067940,
+    "haxeJobId": 88593973805,
+    "allJobsPassed": true,
+    "completedAt": "2026-07-21T09:34:17Z"
   },
   "capabilityAuthority": {
     "compileTimeAvailability": {
