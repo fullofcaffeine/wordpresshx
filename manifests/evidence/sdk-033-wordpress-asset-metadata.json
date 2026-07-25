@@ -282,7 +282,7 @@
       ],
       "auditFixApplied": false,
       "deterministicGateDependsOnLiveRegistryAudit": false,
-      "followUpBead": "wordpresshx-g2.3"
+      "resolutionReceiptId": "G2.3-WP70-BUILD-TOOL-ADVISORIES"
     },
     "mitigations": {
       "immutableContainer": true,
@@ -365,7 +365,7 @@
     "This receipt proves classic WordPress scripts; the Script Modules API remains a separate profile and evidence lane.",
     "The SDK-owned TSX mount entry and JSON fixture plan are build-boundary proof inputs; later scaffolding must generate them from typed Haxe declarations before claiming a complete Haxe-only project surface.",
     "SDK-055 owns typed message keys, plural/context contracts, extraction, and production translation catalogs.",
-    "The exact provider build graph has known non-critical development-tool advisories tracked by wordpresshx-g2.3; no advisory-free or general untrusted-input build claim is made.",
+    "The exact provider build graph has classified non-critical development-tool advisories under G2.3-WP70-BUILD-TOOL-ADVISORIES; no advisory-free or general untrusted-input build claim is made.",
     "Official source correlation is bounded to this exact entry and both named modes by G2.4; unrelated entries, adapters, and general production support remain untested.",
     "Public package publication and production support remain blocked."
   ],

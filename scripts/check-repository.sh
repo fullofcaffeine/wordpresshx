@@ -57,6 +57,7 @@ required_files=(
   docs/release/README.md
   docs/release/release-checklist.md
   docs/release/rollback-checklist.md
+  docs/security/wp70-build-tool-advisories.md
   packages/README.md
   packages/contracts/README.md
   packages/contracts/test.hxml
@@ -705,6 +706,7 @@ required_files=(
   manifests/evidence/sdk-031-strict-browser-profile.json
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
+  manifests/evidence/g2.3-wp70-build-tool-advisories.json
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
@@ -833,6 +835,7 @@ required_files=(
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
+  scripts/gates/check-g2-build-advisories.py
   scripts/gates/test-g0-baseline.py
   scripts/ci/check-checkout-action.py
   scripts/ci/check-security-tooling.sh
@@ -8449,7 +8452,9 @@ assert sdk033_security["audit"]["counts"] == {
 }
 assert sdk033_security["audit"]["auditFixApplied"] is False
 assert sdk033_security["audit"]["deterministicGateDependsOnLiveRegistryAudit"] is False
-assert sdk033_security["audit"]["followUpBead"] == "wordpresshx-g2.3"
+assert sdk033_security["audit"]["resolutionReceiptId"] == (
+    "G2.3-WP70-BUILD-TOOL-ADVISORIES"
+)
 assert sdk033_security["mitigations"]["npmLifecycleScriptsAllowed"] is False
 assert sdk033_security["mitigations"]["nodeModulesShipped"] is False
 assert sdk033_security["mitigations"]["publicationAuthorized"] is False
@@ -11179,6 +11184,7 @@ python3 -m py_compile scripts/project-cli/test-production.py
 python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
+python3 scripts/gates/check-g2-build-advisories.py
 python3 packages/cli/scripts/verify-dependency-lock.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only
 

@@ -15,6 +15,7 @@ The repository is still establishing its durable documentation structure.
 - [Haxe-first complete-site authoring](architecture/haxe-first-site-authoring.md)
 - [Reference application architectures and plugin shortlist](architecture/reference-application-architectures.md)
 - [Build and development loop](architecture/build-and-dev-loop.md)
+- [WordPress 7.0 build-tool advisory policy](security/wp70-build-tool-advisories.md)
 - [Source-map and trace-correlation decision](adr/014-source-maps-and-php-trace-correlation.md)
 - [PHP source-correlation guide](php-source-correlation.md)
 - [Feasibility gate records](gates/README.md)
