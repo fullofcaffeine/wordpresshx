@@ -113,6 +113,15 @@ therefore get a separate stricter lane with that option enabled and zero public
 `any` or `unknown` types. WordPressHx does not patch `node_modules` or publish
 normalized declarations whose semantics it cannot independently guarantee.
 
+Genes 1.36.3 also retains three private `any[]` evaluation carriers in this
+fixture. They come from its legacy heterogeneous JSX marker arrays; the live
+verifier binds their exact method/name/type inventory and still requires zero
+public weak types. Removing an annotation or inlining a carrier would lose
+index-sensitive typing or once-only evaluation. The generalized linked-carrier
+replacement already shipped upstream, and
+[`G2.1`](../../docs/compiler/g2.1-legacy-jsx-carriers.md) explains why its
+adoption is a coherent compiler-line migration rather than a local patch.
+
 ## Same-source strict/classic differential
 
 SDK-035 adds a deliberately small cross-printer contract on top of the SDK-032

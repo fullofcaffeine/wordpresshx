@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G2.1-LEGACY-JSX-MARKER-TEMPORARIES",
+  "bead": "wordpresshx-g2.1",
+  "status": "verified-bounded-generated-legacy-inventory",
+  "profileId": "wp70-release",
+  "observedAt": "2026-07-25",
+  "subjects": {
+    "dependencyLock": {
+      "path": "packages/gutenberg/dependency-lock.json",
+      "sha256": "8161ff0a60ca0a764d2133f2a3d84f046046eb0513846071fb32c170b328bd74"
+    },
+    "genesPin": {
+      "path": "packages/gutenberg/haxe_libraries/genes-ts.hxml",
+      "sha256": "feef219cfe23eeb995e0b0a088fc52d691f730db89aa378ea75bd11aaf56069f"
+    },
+    "adapter": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
+      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
+    },
+    "liveVerifier": {
+      "path": "packages/gutenberg/scripts/verify-hxx.mjs",
+      "sha256": "91878816767ebe78419e5c96a4ed697104b95e526492a061160df74ae915b178"
+    }
+  },
+  "currentCompiler": {
+    "name": "genes-ts",
+    "version": "1.36.3",
+    "tag": "v1.36.3",
+    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+    "markerBoundary": {
+      "tag": "Dynamic",
+      "props": "Array<Dynamic>",
+      "children": "Array<Dynamic>"
+    }
+  },
+  "generatedWeakInventory": {
+    "public": [],
+    "internal": [
+      "Main.App:tmp:any[]",
+      "Main.ProofCheckRow:tmp1:any[]",
+      "Main.ProofCheckRow:tmp:any[]"
+    ],
+    "exactCount": 3,
+    "authoredHaxeWeakTypesAdded": 0
+  },
+  "compilerReason": {
+    "classification": "legacy-generic-jsx-marker-protocol",
+    "temporaryPurpose": [
+      "evaluate each embedded value exactly once",
+      "preserve parent-prop, nested-child, and sibling source order"
+    ],
+    "annotationRemovalSafe": false,
+    "annotationRemovalReason": "A mutable heterogeneous array does not become a fixed index-sensitive tuple when its any[] annotation is omitted.",
+    "initializerInliningSafe": false,
+    "initializerInliningReason": "Inlining can repeat or reorder calls, getters, proxy reads, mutations, and exceptions.",
+    "wordpressSpecificCompilerPatchAllowed": false
+  },
+  "generalizedUpstreamResolution": {
+    "pullRequest": {
+      "number": 10,
+      "url": "https://github.com/fullofcaffeine/genes-ts/pull/10",
+      "title": "feat(react): type-check HXX in Haxe",
+      "featureCommit": "d117086246d27228b40b35771df2571280b84861",
+      "featureTree": "63d7c1db8c5cf95a51582714a6d485dfcbc59946",
+      "reviewedTipCommit": "b13960f8ce2d4624640bc51d1beef8930a90b259",
+      "reviewedTipTree": "5b1bcf54cb679a80541dcdabca788f5f7be7e027",
+      "mergeCommit": "da383b180f1423d42c8ed0b70fabd9ae447b5142",
+      "hostedChecksPassed": true,
+      "wordpressSymbolsInCompilerOrFixtures": false
+    },
+    "protocol": "generic-linked-prop-and-child-carriers",
+    "firstRelease": {
+      "version": "1.37.0",
+      "tag": "v1.37.0",
+      "commit": "107491cb115ba7abd5628a1f3bcb338aa8cf2685",
+      "tree": "795e3294664afc947911d090355b83359b12531a",
+      "artifactSizeBytes": 283647,
+      "artifactSha256": "f95725673ad2515e9913f09f0390392bf77ff291bca43e891be4ce7afc1a63de"
+    },
+    "verifiedCandidateRelease": {
+      "version": "1.37.1",
+      "tag": "v1.37.1",
+      "commit": "3da1e2fd4a472b3b1a16f291238a5c9886a304a5",
+      "tree": "80341a29be627595e83163b76e91c6cddf7cb48c",
+      "artifactSizeBytes": 302055,
+      "artifactSha256": "23045b6c31d529abd106d6b5e18053a7834255002d0cca412081c208352d8cf7"
+    }
+  },
+  "localVerification": {
+    "upstreamWorktree": {
+      "base": "b4779baac3b7c5a71a9c104cf0491982e0a645fe",
+      "command": "yarn test:genes-ts:tsx",
+      "outcome": "passed",
+      "durationSeconds": 288.27,
+      "generatedAnyArrayLocalsInMainFixture": 0
+    },
+    "downstreamCompatibilityProbe": {
+      "command": "haxe profiles/hxx-strict.hxml -cp <genes-main>/src -js <isolated-output>/index.tsx",
+      "outcome": "failed-closed-before-publication",
+      "diagnostic": "Arrays of mixed types are only allowed if the type is forced to Array<Dynamic>",
+      "reason": "The WordPressHx adapter still emits the removed 1.36 marker-array protocol."
+    }
+  },
+  "decision": {
+    "legacyInventoryRetained": true,
+    "newGenesPatchRequired": false,
+    "currentGenesPinChanged": false,
+    "migrationOwner": "wordpresshx-g2.5",
+    "migrationScope": "adapter plus repository-wide compiler provenance and regression receipts"
+  }
+}

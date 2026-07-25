@@ -837,6 +837,7 @@ required_files=(
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
+  scripts/gates/check-g2-legacy-jsx-carriers.py
   scripts/gates/check-g2-build-advisories.py
   scripts/gates/check-g2-provider-exact-optionals.py
   scripts/gates/test-g0-baseline.py
@@ -11199,6 +11200,7 @@ python3 -m py_compile scripts/project-cli/test-production.py
 python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
+python3 scripts/gates/check-g2-legacy-jsx-carriers.py
 python3 scripts/gates/check-g2-build-advisories.py
 python3 scripts/gates/check-g2-provider-exact-optionals.py
 python3 packages/cli/scripts/verify-dependency-lock.py
