@@ -106,9 +106,12 @@ python3 -m http.server 41732 --directory packages/gutenberg/sdk032-preview
 The verifier builds the visual entry with the automatic React JSX runtime and
 the exact Gutenberg component stylesheet. The provider declaration graph also
 gets a full `skipLibCheck: false` lane. Its upstream Ariakit declarations do
-not support `exactOptionalPropertyTypes`; generated user modules therefore get
-a separate stricter lane with that option enabled and zero public `any` or
-`unknown` types.
+not support `exactOptionalPropertyTypes`; a provider-only reproduction binds
+the current 26 diagnostics to Ariakit file/code/span identities and fails if
+the mismatch changes or escapes that provider boundary. Generated user modules
+therefore get a separate stricter lane with that option enabled and zero public
+`any` or `unknown` types. WordPressHx does not patch `node_modules` or publish
+normalized declarations whose semantics it cannot independently guarantee.
 
 ## Same-source strict/classic differential
 

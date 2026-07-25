@@ -172,7 +172,7 @@
     "verifiers": {
       "compilerRuntime": {
         "path": "packages/gutenberg/scripts/verify-hxx.mjs",
-        "sha256": "cf2bc40dcbb3fa29b393e237bb206296b81607d28be8121271ca6ce42ab38353"
+        "sha256": "91878816767ebe78419e5c96a4ed697104b95e526492a061160df74ae915b178"
       },
       "gateScript": {
         "path": "packages/gutenberg/scripts/test-hxx.sh",
@@ -219,6 +219,9 @@
         "noUncheckedIndexedAccess": true,
         "verbatimModuleSyntax": true,
         "skipLibCheck": false,
+        "exactOptionalReproductionReceiptId": "G2.2-PROVIDER-EXACT-OPTIONAL-COMPATIBILITY",
+        "exactOptionalDiagnosticCount": 26,
+        "exactOptionalDiagnosticOwner": "exact-provider-ariakit-declarations",
         "outcome": "passed"
       },
       "publicWeakTypes": [],
@@ -400,7 +403,7 @@
   "knownLimitations": [
     "The first profile curates Button and Notice plus a bounded native-HTML surface; additional Gutenberg components remain later generated or curated work.",
     "switch and let controls are rejected in the SDK-032 browser subset; conditions and Array loops are admitted.",
-    "The exact provider Ariakit declarations do not typecheck with exactOptionalPropertyTypes enabled, so generated user modules and full provider declarations use separate strict lanes rather than weakening both.",
+    "G2.2 proves that the exact provider Ariakit declarations produce 26 stable exactOptionalPropertyTypes diagnostics while the same complete graph passes with skipLibCheck disabled and exact optionals off; generated user modules and provider declarations remain separate strict lanes rather than patching node_modules or weakening both.",
     "Three internal any[] locals are exact Genes marker-protocol evaluation-order storage; the verifier inventories them and rejects any public any or unknown.",
     "The real-browser screenshots and color-contrast audit are local review evidence rather than a content-addressed browser CI lane.",
     "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings.",

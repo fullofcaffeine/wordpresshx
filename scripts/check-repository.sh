@@ -343,6 +343,7 @@ required_files=(
   packages/gutenberg/scripts/verify-editor-profile.py
   packages/gutenberg/scripts/verify-editor.mjs
   packages/gutenberg/scripts/verify-hxx-profile.py
+  packages/gutenberg/test/expected/provider-exact-optional-diagnostics.json
   packages/gutenberg/scripts/verify-hxx.mjs
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx
   packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserNode.hx
@@ -705,6 +706,7 @@ required_files=(
   manifests/evidence/sdk-030-genes-ts-v1.33.0.json
   manifests/evidence/sdk-031-strict-browser-profile.json
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
+  manifests/evidence/g2.2-provider-exact-optional-compatibility.json
   manifests/evidence/sdk-033-wordpress-asset-metadata.json
   manifests/evidence/g2.3-wp70-build-tool-advisories.json
   manifests/evidence/sdk-034-browser-source-correlation.json
@@ -836,6 +838,7 @@ required_files=(
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
   scripts/gates/check-g2-build-advisories.py
+  scripts/gates/check-g2-provider-exact-optionals.py
   scripts/gates/test-g0-baseline.py
   scripts/ci/check-checkout-action.py
   scripts/ci/check-security-tooling.sh
@@ -7987,6 +7990,18 @@ assert sdk032_local["typechecks"]["generatedSource"][
     "exactOptionalPropertyTypes"
 ] is True
 assert sdk032_local["typechecks"]["providerDeclarations"]["skipLibCheck"] is False
+assert sdk032_local["typechecks"]["providerDeclarations"][
+    "exactOptionalPropertyTypes"
+] is False
+assert sdk032_local["typechecks"]["providerDeclarations"][
+    "exactOptionalDiagnosticCount"
+] == 26
+assert sdk032_local["typechecks"]["providerDeclarations"][
+    "exactOptionalDiagnosticOwner"
+] == "exact-provider-ariakit-declarations"
+assert sdk032_local["typechecks"]["providerDeclarations"][
+    "exactOptionalReproductionReceiptId"
+] == "G2.2-PROVIDER-EXACT-OPTIONAL-COMPATIBILITY"
 assert all(
     result == "passed"
     for result in sdk032_local["runtime"].values()
@@ -11185,6 +11200,7 @@ python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 scripts/gates/check-g2-build-advisories.py
+python3 scripts/gates/check-g2-provider-exact-optionals.py
 python3 packages/cli/scripts/verify-dependency-lock.py
 python3 packages/gutenberg/scripts/verify-dependency-lock.py --metadata-only
 

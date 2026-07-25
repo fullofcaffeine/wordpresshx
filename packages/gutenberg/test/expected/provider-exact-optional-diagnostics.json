@@ -1,0 +1,158 @@
+[
+  {
+    "code": 2430,
+    "file": "@ariakit/core/esm/menu/menu-store.d.ts",
+    "line": 10,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/core/esm/menu/menu-store.d.ts",
+    "line": 67,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/core/esm/tooltip/tooltip-store.d.ts",
+    "line": 7,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/core/esm/tooltip/tooltip-store.d.ts",
+    "line": 28,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/combobox/combobox-item.d.ts",
+    "line": 42,
+    "character": 18
+  },
+  {
+    "code": 2344,
+    "file": "@ariakit/react-core/esm/combobox/combobox.d.ts",
+    "line": 139,
+    "character": 36
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/composite/composite-item.d.ts",
+    "line": 45,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/composite/composite-separator.d.ts",
+    "line": 38,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/composite/composite.d.ts",
+    "line": 35,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/form/form-submit.d.ts",
+    "line": 38,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/hovercard/hovercard.d.ts",
+    "line": 34,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-button.d.ts",
+    "line": 41,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-description.d.ts",
+    "line": 35,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-dismiss.d.ts",
+    "line": 34,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-heading.d.ts",
+    "line": 35,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-item-checkbox.d.ts",
+    "line": 65,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-item-radio.d.ts",
+    "line": 52,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-store.d.ts",
+    "line": 33,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu-store.d.ts",
+    "line": 37,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/menu/menu.d.ts",
+    "line": 43,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/select/select-popover.d.ts",
+    "line": 38,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/tab/tab.d.ts",
+    "line": 38,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/tooltip/tooltip-anchor.d.ts",
+    "line": 38,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/tooltip/tooltip-store.d.ts",
+    "line": 20,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/tooltip/tooltip-store.d.ts",
+    "line": 24,
+    "character": 18
+  },
+  {
+    "code": 2430,
+    "file": "@ariakit/react-core/esm/tooltip/tooltip.d.ts",
+    "line": 38,
+    "character": 18
+  }
+]

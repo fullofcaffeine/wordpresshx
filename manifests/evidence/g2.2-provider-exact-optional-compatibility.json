@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G2.2-PROVIDER-EXACT-OPTIONAL-COMPATIBILITY",
+  "bead": "wordpresshx-g2.2",
+  "status": "verified-precise-provider-limitation",
+  "observedAt": "2026-07-25T15:31:00-06:00",
+  "profileId": "wp70-release",
+  "subjects": {
+    "gate": {
+      "path": "scripts/gates/check-g2-provider-exact-optionals.py",
+      "sha256": "9edfc01ddeee7e9f24bd9c92293ce149287d617f1707a8370608fb24e7e084eb"
+    },
+    "verifier": {
+      "path": "packages/gutenberg/scripts/verify-hxx.mjs",
+      "sha256": "91878816767ebe78419e5c96a4ed697104b95e526492a061160df74ae915b178"
+    },
+    "diagnostics": {
+      "path": "packages/gutenberg/test/expected/provider-exact-optional-diagnostics.json",
+      "sha256": "d7ca78a3eab7ac84720fb445c3ce8dd67448df680fa7c9096eb62f760fe0d5d0"
+    },
+    "manifest": {
+      "path": "packages/gutenberg/hxx-tooling/package.json",
+      "sha256": "164edb641502bf77cb5df246a1384ac737c02f488f12c2fdb0da7459baeae501"
+    },
+    "lock": {
+      "path": "packages/gutenberg/hxx-tooling/package-lock.json",
+      "sha256": "48ad5675e26b86e96bc6371bf3146f783ba3a7f2df18f25e69b5af2d3071f8df"
+    },
+    "profile": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/profile/wp70-release.browser-hxx.json",
+      "sha256": "e805417cbf00eb9a3a729d9a1d896bddfb7554ca6a13694c357da858dcb09ed1"
+    },
+    "sdk032Receipt": {
+      "path": "manifests/evidence/sdk-032-react-gutenberg-hxx.json",
+      "sha256": "302eb58c4d21e998e39565b49d5eb5372298f5d215a2eab1084e06277f58c7e3"
+    }
+  },
+  "exactProvider": {
+    "wordpressComponents": "32.2.0",
+    "ariakitReact": "0.4.21",
+    "ariakitReactCore": "0.4.21",
+    "ariakitCore": "0.4.18",
+    "typescript": "5.9.3",
+    "gutenbergCommit": "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd",
+    "dependencyLockSha256": "48a76d63400289c1e80ca9685651157fd49d7eded233a68cb19ced59f78cc9ee"
+  },
+  "providerOnlyReproduction": {
+    "entry": "import \"@wordpress/components\";",
+    "rootFileCount": 1,
+    "baseline": {
+      "strict": true,
+      "skipLibCheck": false,
+      "exactOptionalPropertyTypes": false,
+      "diagnosticCount": 0,
+      "outcome": "passed"
+    },
+    "probe": {
+      "strict": true,
+      "skipLibCheck": false,
+      "exactOptionalPropertyTypes": true,
+      "diagnosticCount": 26,
+      "outcome": "expected-provider-mismatch"
+    },
+    "exactOptionalDiagnosticCount": 26,
+    "diagnosticCodes": {
+      "TS2344": 1,
+      "TS2430": 25
+    },
+    "diagnosticPackageCounts": {
+      "@ariakit/core": 4,
+      "@ariakit/react-core": 22
+    }
+  },
+  "classification": {
+    "owner": "exact-provider-ariakit-declarations",
+    "wordpressHxGeneratorOwned": false,
+    "genesOwned": false,
+    "adoptionConfigurationOwned": false,
+    "reason": "The same one-file provider import passes with skipLibCheck disabled until exactOptionalPropertyTypes is enabled; every resulting diagnostic is inside the exact Ariakit declaration closure.",
+    "providerSemanticProblem": "Derived Ariakit interfaces redeclare required base properties as optional, and one React aria-autocomplete constraint includes undefined under exact optional semantics."
+  },
+  "newerAriakitCandidate": {
+    "version": "0.4.35",
+    "registryObservedAt": "2026-07-25T15:22:00-06:00",
+    "tarball": "https://registry.npmjs.org/@ariakit/react/-/react-0.4.35.tgz",
+    "integrity": "sha512-f/bCg+kw7YgBM5sElc5eHeACb8OxP54mN5w3igu6vg/JBFstDUBnhMeTWZU6NhOqMPUrZIgJYhry9i0Gl9TrVg==",
+    "candidateManifestSha256": "53858fed68b8cde47af297bd68ad64e389df2f2ae6752bbfbdfb60d01d2354c2",
+    "candidateLockSha256": "2ce990668f741da803885c6c6e76e45c0607bbacd498ac30a9caef29ddfb6552",
+    "node": "22.17.0",
+    "npm": "10.9.2",
+    "typescript": "5.9.3",
+    "diagnosticCount": 28,
+    "additionalIncompatibilities": [
+      "@ariakit/react-utils expects React.ActionDispatch, which is absent from the exact React 18 type profile",
+      "@wordpress/components imports the removed @ariakit/react-core/utils/types declaration path"
+    ],
+    "outcome": "rejected-incompatible-and-not-corrective"
+  },
+  "admittedLanes": {
+    "generatedSource": {
+      "exactOptionalPropertyTypes": true,
+      "skipLibCheck": true
+    },
+    "completeProviderDeclarations": {
+      "exactOptionalPropertyTypes": false,
+      "skipLibCheck": false
+    }
+  },
+  "decision": {
+    "nodeModulesPatched": false,
+    "normalizedDeclarationsPublished": false,
+    "providerDiagnosticsSuppressed": false,
+    "providerUpgradeAdmitted": false,
+    "reason": "WordPressHx does not own enough Ariakit semantics to rewrite 26 inherited public contracts safely. The precise provider-only inventory is retained until an exact provider profile genuinely passes or a generalized upstream correction is admitted.",
+    "recheckTrigger": "A new exact WordPress provider lock, Ariakit declaration release, React type profile, or TypeScript compiler version changes the diagnostic inventory."
+  },
+  "claims": {
+    "generatedWordPressHxSourceExactOptionals": "verified",
+    "completeProviderGraphSkipLibCheckFalse": "verified",
+    "completeProviderGraphExactOptionals": "unsupported-by-exact-provider",
+    "productionSupport": "not-authorized"
+  }
+}

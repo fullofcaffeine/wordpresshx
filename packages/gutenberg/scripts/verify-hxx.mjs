@@ -30,6 +30,10 @@ const fixtureSource = path.join(
 const runtimeEntrySource = path.join(toolingRoot, "runtime-entry.tsx");
 const visualEntrySource = path.join(toolingRoot, "visual-entry.tsx");
 const visualHtmlSource = path.join(packageRoot, "test/hxx-runtime/index.html");
+const providerExactOptionalDiagnosticsPath = path.join(
+  packageRoot,
+  "test/expected/provider-exact-optional-diagnostics.json"
+);
 
 assert.equal(process.version, "v22.17.0", "unexpected Node runtime");
 assert.equal(
@@ -432,6 +436,69 @@ runTypecheck(
   "provider declaration compatibility typecheck failed"
 );
 
+function normalizeProviderDiagnostic(diagnostic) {
+  assert.ok(diagnostic.file, "provider diagnostic is missing its source file");
+  assert.notEqual(diagnostic.start, undefined, "provider diagnostic is missing its span");
+  const normalizedPath = diagnostic.file.fileName.split(path.sep).join("/");
+  const marker = "node_modules/";
+  const markerIndex = normalizedPath.lastIndexOf(marker);
+  assert.notEqual(markerIndex, -1, `provider diagnostic escaped node_modules: ${normalizedPath}`);
+  const position = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+  return {
+    code: diagnostic.code,
+    file: normalizedPath.slice(markerIndex + marker.length),
+    line: position.line + 1,
+    character: position.character + 1,
+  };
+}
+
+function verifyProviderExactOptionals(root) {
+  const runtimeRoot = path.join(root, "runtime");
+  fs.mkdirSync(runtimeRoot, { recursive: true });
+  const providerEntry = path.join(runtimeRoot, "provider-only.ts");
+  fs.writeFileSync(providerEntry, 'import "@wordpress/components";\n');
+  const compatibleProgram = ts.createProgram({
+    rootNames: [providerEntry],
+    options: compilerOptions(root, false, false),
+  });
+  const compatibleDiagnostics = ts.getPreEmitDiagnostics(compatibleProgram);
+  assert.equal(
+    compatibleDiagnostics.length,
+    0,
+    `provider-only declaration baseline failed\n${formatDiagnostics(compatibleDiagnostics)}`
+  );
+
+  const exactProgram = ts.createProgram({
+    rootNames: [providerEntry],
+    options: compilerOptions(root, true, false),
+  });
+  const exactDiagnostics = ts
+    .getPreEmitDiagnostics(exactProgram)
+    .map(normalizeProviderDiagnostic);
+  const expectedDiagnostics = readJson(providerExactOptionalDiagnosticsPath);
+  assert.deepEqual(
+    exactDiagnostics,
+    expectedDiagnostics,
+    "provider exact-optional diagnostic inventory changed"
+  );
+  assert.ok(
+    exactDiagnostics.every(({ file }) => file.startsWith("@ariakit/")),
+    "exact-optional mismatch escaped the Ariakit provider boundary"
+  );
+  return {
+    compatibleWithoutExactOptionalPropertyTypes: true,
+    exactOptionalPropertyTypes: false,
+    skipLibCheck: false,
+    exactOptionalDiagnosticCount: exactDiagnostics.length,
+    exactOptionalDiagnosticInventorySha256: sha256(
+      fs.readFileSync(providerExactOptionalDiagnosticsPath)
+    ),
+    owner: "exact-provider-ariakit-declarations",
+  };
+}
+
+const providerDeclarations = verifyProviderExactOptionals(workRoot);
+
 async function buildRuntime(root) {
   const runtimeDirectory = path.join(root, "runtime");
   fs.mkdirSync(runtimeDirectory, { recursive: true });
@@ -755,6 +822,7 @@ try {
     },
     publicWeakTypes,
     internalWeakInventory,
+    providerDeclarations,
     runtime: {
       componentCount: 2,
       context: true,
