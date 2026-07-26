@@ -27,9 +27,11 @@ TypeScript/Node, and stock-Haxe PHP must emit identical bytes.
 `runtime/browser.mjs` and `runtime/wordpress-probe.php` both consume those
 exact bytes and return the plan digest. This prevents a handwritten runtime
 fixture from accidentally testing different payloads than the Haxe layer.
-Twenty-four negative fixtures prove cross-context substitutions, direct
+Twenty-five negative fixtures prove cross-context substitutions, direct
 construction, and unsupported security-sensitive HXX positions fail during
-Haxe typing.
+Haxe typing. The custom KSES authority exposes no mutable rule, attribute, or
+protocol arrays after hashing; its sink plan is derived from private final
+fields.
 
 Run the complete proof from the repository root:
 

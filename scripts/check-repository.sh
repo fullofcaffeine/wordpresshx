@@ -638,6 +638,7 @@ required_files=(
   fixtures/output-context/test-negative/hxx_void_child/Main.hx
   fixtures/output-context/test-negative/json_as_script/Main.hx
   fixtures/output-context/test-negative/kses_as_compiler_markup/Main.hx
+  fixtures/output-context/test-negative/kses_post_hash_mutation/Main.hx
   fixtures/output-context/test-negative/plain_as_rich_html/Main.hx
   fixtures/output-context/test-negative/script_as_rest/Main.hx
   fixtures/output-context/test-negative/stylesheet_as_inline/Main.hx
@@ -757,6 +758,9 @@ required_files=(
   review/oracle/results/adr012-rereview-7029e35/ORACLE-REREVIEW.md
   review/oracle/results/adr012-rereview-7029e35/adr012-decision.json
   review/oracle/results/adr012-rereview-7029e35/reviewed-inputs.sha256
+  review/oracle/results/adr012-rereview-2-0bc2349/ORACLE-REREVIEW-2.md
+  review/oracle/results/adr012-rereview-2-0bc2349/adr012-decision-2.json
+  review/oracle/results/adr012-rereview-2-0bc2349/reviewed-inputs.sha256
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -2328,7 +2332,7 @@ else:
 assert output_context_architecture["schemaVersion"] == 1
 assert output_context_architecture["decisionId"] == "ADR-012"
 assert output_context_architecture["status"] == (
-    "second-review-corrections-applied-pending-rereview"
+    "third-review-correction-applied-pending-rereview"
 )
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
@@ -2347,7 +2351,7 @@ assert output_prototype["contextCount"] == 11
 assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
 assert output_prototype["hxxPositionCount"] == 18
-assert output_prototype["compileNegativeCount"] == 24
+assert output_prototype["compileNegativeCount"] == 25
 assert output_prototype["independentMutationCount"] == 36
 assert len(output_context_architecture["referenceReview"]) == 7
 for output_reference in output_context_architecture["referenceReview"]:
@@ -2363,6 +2367,7 @@ assert adr012_receipt["status"] in {
     "implemented-review-pending",
     "implemented-rereview-pending",
     "second-corrections-rereview-pending",
+    "immutable-policy-rereview-pending",
     "verified",
 }
 for adr012_subject in adr012_receipt["subject"].values():
@@ -2379,7 +2384,7 @@ assert adr012_verification["contextCount"] == 11
 assert adr012_verification["allowedEdgeCount"] == 12
 assert adr012_verification["forbiddenEdgeCount"] == 15
 assert adr012_verification["hxxPositionCount"] == 18
-assert adr012_verification["compileNegativeCount"] == 24
+assert adr012_verification["compileNegativeCount"] == 25
 assert adr012_verification["independentMutationCount"] == 36
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
@@ -2402,8 +2407,8 @@ adr012_hosted = adr012_receipt["hostedWorkflow"]
 assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
-if adr012_hosted["status"] == "second-corrections-passed":
-    assert adr012_receipt["status"] == "second-corrections-rereview-pending"
+if adr012_hosted["status"] == "second-corrections-passed-superseded-by-immutable-policy-fix":
+    assert adr012_receipt["status"] == "immutable-policy-rereview-pending"
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
     assert sha1.fullmatch(adr012_hosted["commit"])
@@ -2413,6 +2418,8 @@ if adr012_hosted["status"] == "second-corrections-passed":
     assert isinstance(adr012_hosted["firstCorrectionRunId"], int)
     assert isinstance(adr012_hosted["firstCorrectionJobId"], int)
     assert sha1.fullmatch(adr012_hosted["firstCorrectionCommit"])
+    assert adr012_hosted["immutablePolicyCommit"] is None
+    assert adr012_hosted["immutablePolicyStatus"] == "pending-first-hosted-main-run"
 elif adr012_hosted["status"] == "pending-first-hosted-main-run":
     assert adr012_receipt["status"] == "implemented-hosted-pending"
     assert adr012_hosted["runId"] is None

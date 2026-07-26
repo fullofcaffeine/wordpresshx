@@ -68,7 +68,9 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   runtime plan is consumed by Genes/React and stock-Haxe PHP/clean WordPress
   7.0. Production SDK types and HXX lowering remain follow-up work. The first
   corrected hosted gate passed, then Oracle required a second correction pass.
-  Its exact hosted gate now passes; fresh rereview remains pending.
+  Its exact hosted gate passed; a second Oracle rereview then exposed one
+  post-hash policy mutability gap. The immutable-policy correction's hosted
+  gate and final rereview remain pending.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.

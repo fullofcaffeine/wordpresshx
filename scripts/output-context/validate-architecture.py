@@ -89,6 +89,7 @@ def validate_model(model: dict[str, object]) -> None:
         "proposed-pending-fresh-review",
         "review-corrections-applied-pending-rereview",
         "second-review-corrections-applied-pending-rereview",
+        "third-review-correction-applied-pending-rereview",
         "accepted-after-review",
     }:
         raise ValidationError("output-context architecture status is invalid")
@@ -330,7 +331,7 @@ def validate_model(model: dict[str, object]) -> None:
     ):
         raise ValidationError("native KSES policy semantics changed")
     if wordpress.get("customKsesPolicyAuthority") != (
-        "canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity"
+        "immutable-canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity"
     ):
         raise ValidationError("custom KSES policy semantics changed")
     if wordpress.get("escUrlRawIsNotAnOutputFunction") is not True:
@@ -356,7 +357,7 @@ def validate_model(model: dict[str, object]) -> None:
         "allowedEdgeCount": 12,
         "forbiddenEdgeCount": 15,
         "hxxPositionCount": 18,
-        "compileNegativeCount": 24,
+        "compileNegativeCount": 25,
         "independentMutationCount": 36,
     }
     for field, expected in expected_evidence.items():
@@ -384,7 +385,7 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "second-corrections-passed",
+        "status": "second-corrections-passed-superseded-by-immutable-policy-fix",
         "runId": 30222742845,
         "jobId": 89847822705,
         "commit": "68e5effa9d9a07163eafbd08864ccc872f76e0ad",
@@ -394,6 +395,8 @@ def validate_model(model: dict[str, object]) -> None:
         "historicalRunId": 29713766565,
         "historicalJobId": 88262490140,
         "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+        "immutablePolicyCommit": None,
+        "immutablePolicyStatus": "pending-first-hosted-main-run",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 

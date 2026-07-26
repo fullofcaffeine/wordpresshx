@@ -1,6 +1,6 @@
 # ADR-012: Output-context safety
 
-- Status: second Oracle corrections applied; fresh rereview pending
+- Status: immutable-policy correction applied; final rereview pending
 - Date: 2026-07-19
 - Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; corrections pending rereview)
 - Bead: `wordpresshx-adr-012`
@@ -269,7 +269,7 @@ The corrected bounded prototype is in
 [`fixtures/output-context`](../../fixtures/output-context/README.md). Its
 terminal constructors are private, compiler markup is owned by an exact
 generated fragment class, and it contains no repository-forbidden weak Haxe
-operation. Twenty-four compile-negative fixtures cover cross-context
+operation. Twenty-five compile-negative fixtures cover cross-context
 substitution, direct construction, and the closed HXX rejection categories.
 One canonical native-runtime plan is byte-identical on Haxe 4.3.7
 interpretation, Genes 1.38.0 plus TypeScript 5.9.3/Node 22.17.0, and
@@ -369,3 +369,12 @@ property-specific inline and stylesheet enums/printers; normalizes policy
 duplicates; and derives the exact `wp_kses` allowlist and protocols from the
 Haxe plan. This ADR remains unaccepted until those changes pass hosted evidence
 and a fresh Oracle rereview.
+
+The second rereview closed F001, F003, and F005, leaving only F006 open. It
+demonstrated that public mutable policy arrays could be changed after their
+digest was computed. The final correction stores policy semantics only as
+private final booleans and immutable strings; neither the custom policy nor its
+terminal exposes rules, attributes, or protocol arrays. The sink derives fresh
+JSON arrays from that immutable representation, and a compile-negative fixture
+proves post-hash mutation is inaccessible. The second hosted run therefore
+remains historical until this final correction receives its own hosted result.

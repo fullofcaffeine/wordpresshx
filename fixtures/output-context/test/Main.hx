@@ -9,7 +9,6 @@ import wordpress.hx.output.prototype.Output.InlineDeclaration;
 import wordpress.hx.output.prototype.Output.JsonEncoding;
 import wordpress.hx.output.prototype.Output.KsesAttribute;
 import wordpress.hx.output.prototype.Output.KsesProtocol;
-import wordpress.hx.output.prototype.Output.KsesRule;
 import wordpress.hx.output.prototype.Output.KsesTag;
 import wordpress.hx.output.prototype.Output.OutputCodec;
 import wordpress.hx.output.prototype.Output.StylesheetDeclaration;
@@ -145,15 +144,8 @@ final class Main {
 			new JsonField("policyVersion", PlanJson.quote(value.policyVersion)),
 			new JsonField("nativeFunction", PlanJson.quote(value.nativeFunction)),
 			new JsonField("canonicalPolicy", PlanJson.quote(value.canonicalPolicy)),
-			new JsonField("rules", PlanJson.array(value.rules.map(ksesRule))),
-			new JsonField("protocols", PlanJson.array(value.protocols.map(PlanJson.quote)))
-		]);
-	}
-
-	static function ksesRule(value:KsesRule):String {
-		return PlanJson.object([
-			new JsonField("name", PlanJson.quote(value.name)),
-			new JsonField("attributes", PlanJson.array(value.attributes.map(PlanJson.quote)))
+			new JsonField("rules", value.rulesJson),
+			new JsonField("protocols", value.protocolsJson)
 		]);
 	}
 

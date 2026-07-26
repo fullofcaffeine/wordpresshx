@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "second-review-corrections-applied-pending-rereview",
+  "status": "third-review-correction-applied-pending-rereview",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
@@ -321,7 +321,7 @@
     "translationOrder": "translate-then-contextually-escape",
     "ksesIsPolicySanitizationNotUniversalTrust": true,
     "nativeKsesPolicyAuthority": "exact-profile-filterable-runtime-semantics",
-    "customKsesPolicyAuthority": "canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity",
+    "customKsesPolicyAuthority": "immutable-canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity",
     "escUrlIncludesProtocolFiltering": true,
     "escUrlRawIsNotAnOutputFunction": true,
     "wpJsonEncodeFailureMustBeHandled": true,
@@ -336,13 +336,13 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "5ac0b7ceeb3a01e922d2028dc246c6c648f232132bb20799c319dfde665d4b75",
+    "sourceTreeSha256": "95eaed6e05f788068a665b3bc7800e97390b4b041cd2db5696b471a6e96e9155",
     "transcriptSha256": "95eb7931a6fdd4761f79d7e897b45fb63f5ccd4d43d6d854d38390bceff16d43",
     "contextCount": 11,
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 24,
+    "compileNegativeCount": 25,
     "independentMutationCount": 36,
     "targets": [
       "haxe-interp-4.3.7",
@@ -356,7 +356,7 @@
     "workflow": ".github/workflows/output-context.yml",
     "job": "output-context",
     "command": "bash scripts/output-context/test.sh",
-    "status": "second-corrections-passed",
+    "status": "second-corrections-passed-superseded-by-immutable-policy-fix",
     "runId": 30222742845,
     "jobId": 89847822705,
     "commit": "68e5effa9d9a07163eafbd08864ccc872f76e0ad",
@@ -365,7 +365,9 @@
     "firstCorrectionCommit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
     "historicalRunId": 29713766565,
     "historicalJobId": 88262490140,
-    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a"
+    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+    "immutablePolicyCommit": null,
+    "immutablePolicyStatus": "pending-first-hosted-main-run"
   },
   "referenceReview": [
     {
@@ -451,7 +453,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "second-review-corrections-applied-pending-rereview",
+    "architectureDecision": "third-review-correction-applied-pending-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

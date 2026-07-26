@@ -42,16 +42,19 @@ final class Output {
 	}
 
 	public static function postContent(value:String):KsesHtml<PostContentPolicy> {
-		return new KsesHtml(value, new KsesPolicy("wordpress-post-content", "wp70-release", "wp_kses_post", "profile-native-filterable", [], []));
+		return new KsesHtml(value,
+			new KsesPolicy("wordpress-post-content", "wp70-release", "wp_kses_post", "profile-native-filterable", false, false, false, false, false, false));
 	}
 
 	public static function dataHtml(value:String):KsesHtml<DataHtmlPolicy> {
-		return new KsesHtml(value, new KsesPolicy("wordpress-data", "wp70-release", "wp_kses_data", "profile-native-filterable", [], []));
+		return new KsesHtml(value,
+			new KsesPolicy("wordpress-data", "wp70-release", "wp_kses_data", "profile-native-filterable", false, false, false, false, false, false));
 	}
 
 	public static function customContent(value:String, policy:CustomKsesPolicy):KsesHtml<CustomContentPolicy> {
 		return new KsesHtml(value,
-			new KsesPolicy("custom:" + policy.digest, policy.version, "wp_kses", policy.canonicalDocument, policy.rules.copy(), policy.protocols.copy()));
+			new KsesPolicy("custom:" + policy.digest, policy.version, "wp_kses", policy.canonicalDocument, policy.paragraph, policy.strong, policy.linkHref,
+				policy.linkTitle, policy.http, policy.https));
 	}
 
 	public static function customKsesPolicy(version:String, tags:Array<KsesTag>, protocols:Array<KsesProtocol>):CustomKsesPolicy {
@@ -125,25 +128,36 @@ enum KsesProtocol {
 	Https;
 }
 
+@:allow(wordpress.hx.output.prototype.Output)
 final class CustomKsesPolicy {
 	public final version:String;
 	public final canonicalDocument:String;
 	public final digest:String;
-	public final rules:Array<KsesRule>;
-	public final protocols:Array<String>;
 
-	private function new(version:String, canonicalDocument:String, rules:Array<KsesRule>, protocols:Array<String>) {
+	final paragraph:Bool;
+	final strong:Bool;
+	final linkHref:Bool;
+	final linkTitle:Bool;
+	final http:Bool;
+	final https:Bool;
+
+	private function new(version:String, canonicalDocument:String, paragraph:Bool, strong:Bool, linkHref:Bool, linkTitle:Bool, http:Bool, https:Bool) {
 		this.version = version;
 		this.canonicalDocument = canonicalDocument;
 		this.digest = Sha256.encode(canonicalDocument);
-		this.rules = rules;
-		this.protocols = protocols;
+		this.paragraph = paragraph;
+		this.strong = strong;
+		this.linkHref = linkHref;
+		this.linkTitle = linkTitle;
+		this.http = http;
+		this.https = https;
 	}
 
 	public static function create(version:String, tags:Array<KsesTag>, protocols:Array<KsesProtocol>):CustomKsesPolicy {
 		var paragraph = false;
 		var strong = false;
-		final linkAttributes:Array<String> = [];
+		var linkHref = false;
+		var linkTitle = false;
 		for (tag in tags) {
 			switch tag {
 				case Paragraph:
@@ -152,82 +166,80 @@ final class CustomKsesPolicy {
 					strong = true;
 				case Link(attributes):
 					for (attribute in attributes) {
-						addUnique(linkAttributes, attributeName(attribute));
+						switch attribute {
+							case Href:
+								linkHref = true;
+							case Title:
+								linkTitle = true;
+						}
 					}
 			}
 		}
-		linkAttributes.sort(compare);
-		final rules:Array<KsesRule> = [];
-		if (linkAttributes.length > 0) {
-			rules.push(new KsesRule("a", linkAttributes));
+		final tagDocuments:Array<String> = [];
+		if (linkHref || linkTitle) {
+			final linkAttributes:Array<String> = [];
+			if (linkHref) {
+				linkAttributes.push("href");
+			}
+			if (linkTitle) {
+				linkAttributes.push("title");
+			}
+			tagDocuments.push("a[" + linkAttributes.join(",") + "]");
 		}
 		if (paragraph) {
-			rules.push(new KsesRule("p", []));
+			tagDocuments.push("p");
 		}
 		if (strong) {
-			rules.push(new KsesRule("strong", []));
+			tagDocuments.push("strong");
+		}
+		var http = false;
+		var https = false;
+		for (protocol in protocols) {
+			switch protocol {
+				case Http:
+					http = true;
+				case Https:
+					https = true;
+			}
 		}
 		final protocolNames:Array<String> = [];
-		for (protocol in protocols) {
-			addUnique(protocolNames, protocolName(protocol));
+		if (http) {
+			protocolNames.push("http");
 		}
-		protocolNames.sort(compare);
-		final tagDocuments = rules.map(rule -> rule.name + (rule.attributes.length == 0 ? "" : "[" + rule.attributes.join(",") + "]"));
+		if (https) {
+			protocolNames.push("https");
+		}
 		final canonicalDocument = "profile=wp70-release;version=" + version + ";tags=" + tagDocuments.join(",") + ";protocols=" + protocolNames.join(",");
-		return new CustomKsesPolicy(version, canonicalDocument, rules, protocolNames);
-	}
-
-	static function attributeName(attribute:KsesAttribute):String {
-		return switch attribute {
-			case Href: "href";
-			case Title: "title";
-		};
-	}
-
-	static function protocolName(protocol:KsesProtocol):String {
-		return switch protocol {
-			case Http: "http";
-			case Https: "https";
-		};
-	}
-
-	static function compare(left:String, right:String):Int {
-		return left < right ? -1 : left > right ? 1 : 0;
-	}
-
-	static function addUnique(values:Array<String>, candidate:String):Void {
-		if (values.indexOf(candidate) < 0) {
-			values.push(candidate);
-		}
-	}
-}
-
-final class KsesRule {
-	public final name:String;
-	public final attributes:Array<String>;
-
-	public function new(name:String, attributes:Array<String>) {
-		this.name = name;
-		this.attributes = attributes.copy();
+		return new CustomKsesPolicy(version, canonicalDocument, paragraph, strong, linkHref, linkTitle, http, https);
 	}
 }
 
 @:allow(wordpress.hx.output.prototype.Output)
+@:allow(wordpress.hx.output.prototype.OutputSinks)
 final class KsesPolicy<Policy> {
-	public final identity:String;
-	public final version:String;
-	public final nativeFunction:String;
-	public final canonicalDocument:String;
-	public final rules:Array<KsesRule>;
-	public final protocols:Array<String>;
+	final identity:String;
+	final version:String;
+	final nativeFunction:String;
+	final canonicalDocument:String;
+	final paragraph:Bool;
+	final strong:Bool;
+	final linkHref:Bool;
+	final linkTitle:Bool;
+	final http:Bool;
+	final https:Bool;
 
-	private function new(identity:String, version:String, nativeFunction:String, canonicalDocument:String, rules:Array<KsesRule>, protocols:Array<String>) {
+	private function new(identity:String, version:String, nativeFunction:String, canonicalDocument:String, paragraph:Bool, strong:Bool, linkHref:Bool,
+			linkTitle:Bool, http:Bool, https:Bool) {
 		this.identity = identity;
 		this.version = version;
 		this.nativeFunction = nativeFunction;
 		this.canonicalDocument = canonicalDocument;
-		this.rules = rules;
-		this.protocols = protocols;
+		this.paragraph = paragraph;
+		this.strong = strong;
+		this.linkHref = linkHref;
+		this.linkTitle = linkTitle;
+		this.http = http;
+		this.https = https;
 	}
 }
 
@@ -276,7 +288,7 @@ final class HtmlUrl {
 final class KsesHtml<Policy> {
 	final value:String;
 
-	public final policy:KsesPolicy<Policy>;
+	final policy:KsesPolicy<Policy>;
 
 	private function new(value:String, policy:KsesPolicy<Policy>) {
 		this.value = value;

@@ -1,0 +1,64 @@
+{
+  "schema": "wordpress-hx.oracle-adr012-rereview.v2",
+  "reviewedCommit": "0bc2349f359668180d92f1309a4be207c0c12adf",
+  "reviewer": {
+    "model": "GPT-5.6",
+    "provider": "OpenAI",
+    "role": "independent-oracle-agent"
+  },
+  "inputs": {
+    "packetSha256": "9a752664f2cfd97960c91aefafdc74f33483c30fe9be4c7d738cb19c2ae1b410",
+    "promptSha256": "c077fea427243916800d026f0d388d9b8984c2e67616d3a0c55c32a75d1e45bb",
+    "repositorySnapshotSha256": "0481b9318ba872c62bdfe531bd97e63002e1583096e236a6be454769defe6dc8"
+  },
+  "priorFindingDispositions": [
+    {
+      "id": "ADR012-F001",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F002",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F003",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F004",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F005",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F006",
+      "disposition": "open",
+      "severity": "blocking",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F007",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F008",
+      "disposition": "closed",
+      "confidence": "high"
+    },
+    {
+      "id": "ADR012-F009",
+      "disposition": "closed",
+      "confidence": "high"
+    }
+  ],
+  "newFindings": [],
+  "finalDecision": "changes-required"
+}

@@ -177,6 +177,8 @@ assert_compile_failure direct_terminal_construction \
 	'Cannot access private constructor of wordpress.hx.output.prototype.HtmlText'
 assert_compile_failure kses_as_compiler_markup \
 	'KsesHtml<wordpress.hx.output.prototype.PostContentPolicy> should be wordpress.hx.output.prototype.CompilerMarkup'
+assert_compile_failure kses_post_hash_mutation \
+	'Cannot access private field https'
 assert_compile_failure css_from_string \
 	'String should be Array<wordpress.hx.output.prototype.InlineDeclaration>'
 assert_compile_failure css_property_value_mismatch \

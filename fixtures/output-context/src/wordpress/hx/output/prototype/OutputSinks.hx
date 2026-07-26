@@ -16,7 +16,7 @@ import wordpress.hx.output.prototype.Output.InlineStyle;
 import wordpress.hx.output.prototype.Output.JsonDocument;
 import wordpress.hx.output.prototype.Output.JsonEncoding;
 import wordpress.hx.output.prototype.Output.KsesHtml;
-import wordpress.hx.output.prototype.Output.KsesRule;
+import wordpress.hx.output.prototype.Output.KsesPolicy;
 import wordpress.hx.output.prototype.Output.ResolvedMarkupAttribute;
 import wordpress.hx.output.prototype.Output.ResolvedMarkupNode;
 import wordpress.hx.output.prototype.Output.ResolvedMarkupTag;
@@ -49,7 +49,7 @@ final class OutputSinks {
 
 	public static function richHtml<Policy>(value:KsesHtml<Policy>):RichHtmlPlan {
 		return new RichHtmlPlan(value.value, value.policy.identity, value.policy.version, value.policy.nativeFunction, value.policy.canonicalDocument,
-			value.policy.rules.copy(), value.policy.protocols.copy());
+			ksesRulesJson(value.policy), ksesProtocolsJson(value.policy));
 	}
 
 	public static function restJson(value:JsonDocument):JsonPlan {
@@ -79,6 +79,38 @@ final class OutputSinks {
 			case EncodedJson(value): JsonPlan.success(schemaId, value);
 			case EncodingFailure(reason): JsonPlan.failure(schemaId, reason);
 		};
+	}
+
+	static function ksesRulesJson<Policy>(policy:KsesPolicy<Policy>):String {
+		final rules:Array<String> = [];
+		if (policy.linkHref || policy.linkTitle) {
+			final attributes:Array<String> = [];
+			if (policy.linkHref) {
+				attributes.push('"href"');
+			}
+			if (policy.linkTitle) {
+				attributes.push('"title"');
+			}
+			rules.push('{"name":"a","attributes":[' + attributes.join(",") + "]}");
+		}
+		if (policy.paragraph) {
+			rules.push('{"name":"p","attributes":[]}');
+		}
+		if (policy.strong) {
+			rules.push('{"name":"strong","attributes":[]}');
+		}
+		return "[" + rules.join(",") + "]";
+	}
+
+	static function ksesProtocolsJson<Policy>(policy:KsesPolicy<Policy>):String {
+		final protocols:Array<String> = [];
+		if (policy.http) {
+			protocols.push('"http"');
+		}
+		if (policy.https) {
+			protocols.push('"https"');
+		}
+		return "[" + protocols.join(",") + "]";
 	}
 
 	static function printRule(rule:CssRule):String {
@@ -202,18 +234,18 @@ final class RichHtmlPlan {
 	public final policyVersion:String;
 	public final nativeFunction:String;
 	public final canonicalPolicy:String;
-	public final rules:Array<KsesRule>;
-	public final protocols:Array<String>;
+	public final rulesJson:String;
+	public final protocolsJson:String;
 
-	public function new(value:String, policyIdentity:String, policyVersion:String, nativeFunction:String, canonicalPolicy:String, rules:Array<KsesRule>,
-			protocols:Array<String>) {
+	public function new(value:String, policyIdentity:String, policyVersion:String, nativeFunction:String, canonicalPolicy:String, rulesJson:String,
+			protocolsJson:String) {
 		this.value = value;
 		this.policyIdentity = policyIdentity;
 		this.policyVersion = policyVersion;
 		this.nativeFunction = nativeFunction;
 		this.canonicalPolicy = canonicalPolicy;
-		this.rules = rules;
-		this.protocols = protocols;
+		this.rulesJson = rulesJson;
+		this.protocolsJson = protocolsJson;
 	}
 }
 
