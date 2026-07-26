@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "ADR-019",
+  "status": "proposed-pending-independent-review",
+  "policyId": "wordpress-hx-unsafe-boundary-v1",
+  "authority": {
+    "defaultDisposition": "blocked",
+    "inventoryModel": "detector-declarations-reconciled-to-one-closed-inventory",
+    "waiverEffect": "temporary-visible-exception-not-safety-support-or-type-authority",
+    "waiverMayOverridePublicApiProhibition": false,
+    "waiverMayOverrideApplicationOrExampleHaxeStrictness": false,
+    "waiverMayOverrideCriticalOrHighVulnerabilityStop": false,
+    "waiverMayAuthorizeUnknownBoundary": false,
+    "omittedDetectionAllowed": false,
+    "clockAuthority": "explicit-utc-instant-recorded-by-gate",
+    "sourceAndArtifactInventoriesSeparate": true,
+    "generatedAndFinalArtifactScanRequired": true
+  },
+  "categories": [
+    {
+      "id": "generated-raw-target",
+      "detectors": ["emitter-segment-kind", "generated-artifact-token-scan"],
+      "allowedScopes": ["generated-private-adapter"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": false,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "haxe-weak-type",
+      "detectors": ["haxe-ast", "haxe-token-guard"],
+      "allowedScopes": ["generated-interop-internal"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": true,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "javascript-raw-segment",
+      "detectors": ["emitter-segment-kind", "javascript-artifact-token-scan"],
+      "allowedScopes": ["generated-private-adapter"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": false,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "php-raw-segment",
+      "detectors": ["emitter-segment-kind", "php-artifact-token-scan"],
+      "allowedScopes": ["compiler-private-adapter", "generated-private-adapter"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": false,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "private-upstream-api",
+      "detectors": ["profile-classification", "provider-contract-scan"],
+      "allowedScopes": ["experimental-opt-in", "generated-private-adapter"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": false,
+      "stableWithCurrentWaiverAllowed": false,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "profile-unsafe-entry",
+      "detectors": ["profile-classification"],
+      "allowedScopes": ["experimental-opt-in"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": false,
+      "stableWithCurrentWaiverAllowed": false,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "typescript-any",
+      "detectors": ["typescript-compiler-api", "typescript-declaration-token-scan"],
+      "allowedScopes": ["generated-interop-internal"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": true,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": true
+    },
+    {
+      "id": "typescript-unknown",
+      "detectors": ["typescript-compiler-api", "typescript-declaration-token-scan"],
+      "allowedScopes": ["decoded-foreign-boundary"],
+      "waiverRequired": false,
+      "decoderEvidenceRequired": true,
+      "stableWithCurrentWaiverAllowed": true,
+      "independentSecurityReviewRequired": false
+    },
+    {
+      "id": "unchecked-external-contract",
+      "detectors": ["adoption-contract-validator", "provider-contract-scan"],
+      "allowedScopes": ["experimental-opt-in", "generated-interop-internal"],
+      "waiverRequired": true,
+      "decoderEvidenceRequired": true,
+      "stableWithCurrentWaiverAllowed": false,
+      "independentSecurityReviewRequired": true
+    }
+  ],
+  "prohibitedScopes": [
+    "application-source",
+    "example-recommended-authoring",
+    "public-api",
+    "public-type-signature",
+    "routine-hxx-expression"
+  ],
+  "waiverContract": {
+    "schema": "schemas/unsafe-boundary-waiver.schema.json",
+    "idPattern": "^WPHX-UNSAFE-[0-9]{4}$",
+    "boundaryIdPattern": "^UB-[A-Z0-9][A-Z0-9-]*$",
+    "sourceBinding": "repository-relative-path-full-file-sha256-and-line-range",
+    "requiredEvidenceCountMinimum": 1,
+    "ownerKind": "named-accountable-human-or-maintainer-role",
+    "reviewerMustDifferFromOwner": true,
+    "independentOracleReviewerAllowed": true,
+    "selfApprovalAllowed": false,
+    "maximumInitialLifetimeDays": 90,
+    "renewal": "new-waiver-id-review-and-source-binding-required",
+    "vagueOrReleaseRelativeExpiryAllowed": false,
+    "removalBeadRequired": true,
+    "removalDeadlineMayExceedExpiry": false
+  },
+  "lifecycle": {
+    "states": ["active", "expired", "revoked", "superseded"],
+    "activeConditions": [
+      "approved-review",
+      "evaluation-before-expiry",
+      "source-binding-matches",
+      "scope-matches",
+      "category-matches",
+      "removal-bead-open-or-in-progress",
+      "risk-below-high",
+      "all-required-evidence-matches"
+    ],
+    "expiredWaiverEffect": "all-builds-fail",
+    "revokedWaiverEffect": "all-builds-fail",
+    "sourceDriftEffect": "all-builds-fail",
+    "scopeDriftEffect": "all-builds-fail",
+    "renewalCarriesPriorApproval": false,
+    "historyMutable": false
+  },
+  "inventoryContract": {
+    "schemaVersion": 1,
+    "closedFields": true,
+    "requiredGrouping": ["package", "category", "owner", "releaseBlocker"],
+    "requiredRecordFields": [
+      "boundaryId",
+      "category",
+      "detector",
+      "scope",
+      "source",
+      "disposition",
+      "owner",
+      "releaseBlocker",
+      "waiverId",
+      "decoderEvidence",
+      "generatedArtifacts"
+    ],
+    "detectedWithoutRecord": "blocked",
+    "recordWithoutDetection": "blocked-stale-record",
+    "duplicateBoundaryId": "blocked",
+    "duplicateSourceLocation": "blocked",
+    "unknownCategoryOrDetector": "blocked",
+    "typedUnknownDisposition": "inventoried-decoded-boundary",
+    "falsePositiveDisposition": "reviewed-record-retained",
+    "sourceInventoryRequired": true,
+    "generatedInventoryRequired": true,
+    "finalArtifactInventoryRequired": true,
+    "sourceToGeneratedBoundaryIdsRequired": true,
+    "finalArtifactManifestCarriesWaiverIdsAndDigests": true
+  },
+  "reviewTriggers": [
+    "boundary-added-removed-or-changed",
+    "category-or-scope-change",
+    "compiler-adds-new-native-emission-kind",
+    "generated-inventory-diff",
+    "profile-or-provider-version-change",
+    "public-api-or-example-exposure",
+    "security-sensitive-auth-authorization-sql-html-js-update-install-path",
+    "source-evidence-or-artifact-digest-drift",
+    "waiver-within-fourteen-days-of-expiry",
+    "waiver-renewal-revocation-or-supersession"
+  ],
+  "gatePolicy": {
+    "development": [
+      "detectors-reconcile-exactly-with-inventory",
+      "unknown-boundaries-block",
+      "expired-revoked-source-drifted-or-scope-drifted-waivers-block",
+      "prohibited-scopes-block-even-with-waiver"
+    ],
+    "package": [
+      "source-and-generated-inventories-reconcile",
+      "final-artifact-boundary-manifest-is-complete",
+      "current-waiver-and-evidence-digests-match",
+      "no-high-or-critical-risk"
+    ],
+    "stableRelease": [
+      "package-gate-passes",
+      "inventory-diff-reviewed",
+      "category-allows-stable-with-current-waiver",
+      "required-independent-security-review-current",
+      "no-open-critical-or-high-vulnerability",
+      "external-security-review-current-for-security-sensitive-generators",
+      "release-support-policy-unsafe-inventory-requirement-passes"
+    ]
+  },
+  "diagnostics": {
+    "missingInventory": "WPX1901",
+    "staleInventory": "WPX1902",
+    "missingWaiver": "WPX1903",
+    "expiredWaiver": "WPX1904",
+    "sourceDrift": "WPX1905",
+    "scopeMismatch": "WPX1906",
+    "prohibitedScope": "WPX1907",
+    "selfApproval": "WPX1908",
+    "invalidExpiry": "WPX1909",
+    "missingArtifactMapping": "WPX1910",
+    "riskReleaseStop": "WPX1911",
+    "reviewRequired": "WPX1912"
+  },
+  "claims": {
+    "architectureDecision": "proposed-pending-independent-review",
+    "prototypePolicyValidator": "implemented",
+    "productionSourceScanner": "not-tested",
+    "productionGeneratedScanner": "not-tested",
+    "productionArtifactInventory": "not-tested",
+    "productionWaiverApi": "withheld",
+    "stableReleaseAuthorized": false,
+    "productionSupport": "not-tested"
+  }
+}

@@ -9,6 +9,7 @@ required_files=(
   .github/workflows/adoption-contract.yml
   .github/workflows/output-context.yml
   .github/workflows/repository.yml
+  .github/workflows/unsafe-boundary-policy.yml
   .beads/hooks/pre-commit
   .beads/hooks/pre-push
   AGENTS.md
@@ -43,6 +44,7 @@ required_files=(
   docs/adr/015-interop-and-adoption-contract-format.md
   docs/adr/016-project-and-cli-configuration.md
   docs/adr/017-generated-output-version-control-policy.md
+  docs/adr/019-security-and-unsafe-boundary-governance.md
   docs/adr/020-licensing-and-generated-output.md
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
@@ -702,6 +704,7 @@ required_files=(
   manifests/evidence/adr-006-semantic-plan-contract.json
 	manifests/evidence/adr-009-schema-codec-authority.json
   manifests/evidence/adr-012-output-context-safety.json
+  manifests/evidence/adr-019-unsafe-boundary-governance.json
   manifests/evidence/adr-015-interop-adoption-contract.json
   manifests/evidence/adr-018-runtime-support-packaging.json
   manifests/evidence/sdk-040-semantic-collector.json
@@ -904,6 +907,7 @@ required_files=(
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
   scripts/release/test-governance.py
+  scripts/security/test-unsafe-boundary-policy.py
   scripts/licenses/check-license-policy.py
   scripts/licenses/test-license-policy.py
   scripts/php-quality/expose-runtime.sh
@@ -916,6 +920,9 @@ required_files=(
   scripts/security/run-beads-gitleaks.sh
   scripts/security/run-gitleaks.sh
   scripts/security/run-local-path-audit.sh
+  schemas/unsafe-boundary-waiver.schema.json
+  manifests/unsafe-boundary-policy.json
+  fixtures/unsafe-boundary/scenarios.json
   scripts/wordpress/reset-harness.sh
   scripts/wordpress/run-harness.sh
   scripts/wordpress/test-harness.sh
@@ -1176,6 +1183,14 @@ adr012_receipt = json.loads(
     Path("manifests/evidence/adr-012-output-context-safety.json").read_text(
         encoding="utf-8"
     )
+)
+unsafe_boundary_policy = json.loads(
+    Path("manifests/unsafe-boundary-policy.json").read_text(encoding="utf-8")
+)
+adr019_receipt = json.loads(
+    Path(
+        "manifests/evidence/adr-019-unsafe-boundary-governance.json"
+    ).read_text(encoding="utf-8")
 )
 adoption_architecture = json.loads(
     Path("manifests/adoption-contract-architecture.json").read_text(
@@ -2518,6 +2533,106 @@ elif adr012_hosted["status"] == "passed":
     assert sha1.fullmatch(adr012_hosted["commit"])
 else:
     raise AssertionError("output-context hosted status is invalid")
+
+assert unsafe_boundary_policy["schemaVersion"] == 1
+assert unsafe_boundary_policy["decisionId"] == "ADR-019"
+assert unsafe_boundary_policy["status"] in {
+    "proposed-pending-independent-review",
+    "accepted-after-independent-review",
+}
+assert unsafe_boundary_policy["policyId"] == (
+    "wordpress-hx-unsafe-boundary-v1"
+)
+assert adr019_receipt["schemaVersion"] == 1
+assert adr019_receipt["receiptId"] == (
+    "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE"
+)
+assert adr019_receipt["bead"] == "wordpresshx-adr-019"
+assert adr019_receipt["status"] in {
+    "implemented-hosted-pending",
+    "implemented-review-pending",
+    "verified",
+}
+for adr019_subject in adr019_receipt["subject"].values():
+    assert hashlib.sha256(Path(adr019_subject["path"]).read_bytes()).hexdigest() == (
+        adr019_subject["sha256"]
+    )
+adr019_verification = adr019_receipt["verification"]
+adr019_source_paths = (
+    "manifests/unsafe-boundary-policy.json",
+    "schemas/unsafe-boundary-waiver.schema.json",
+    "fixtures/unsafe-boundary/scenarios.json",
+    "scripts/security/test-unsafe-boundary-policy.py",
+)
+adr019_source_lines = sorted(
+    f"{hashlib.sha256(Path(path).read_bytes()).hexdigest()}  {Path(path).name}\n"
+    for path in adr019_source_paths
+)
+assert hashlib.sha256("".join(adr019_source_lines).encode("utf-8")).hexdigest() == (
+    adr019_verification["sourceTreeSha256"]
+)
+assert adr019_verification["sourceTreeDigestAlgorithm"] == (
+    "sha256-sorted-policy-schema-scenarios-validator-subject-list-v1"
+)
+assert adr019_verification["policyDigest"] == (
+    "9a577e5a2e992f2a99f815a19570b23045a5589e59574a641f349ee014d10c7d"
+)
+assert adr019_verification["scenarioDigest"] == (
+    "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf"
+)
+assert adr019_verification["categoryCount"] == 9
+assert adr019_verification["scenarioCount"] == 14
+assert adr019_verification["failClosedMutationCount"] == 35
+assert adr019_verification["waiverSchemaClosed"] is True
+assert adr019_verification["sourceGeneratedAndFinalInventoriesRequired"] is True
+assert adr019_verification["prohibitedScopesRemainUnwaivable"] is True
+assert adr019_verification["expiredRevokedAndDriftedWaiversFailAllBuilds"] is True
+adr019_authority = adr019_receipt["authority"]
+assert adr019_authority["waiverConveysSafetyOrSupport"] is False
+assert adr019_authority["publicApiOrRecommendedExampleWaiverAllowed"] is False
+assert adr019_authority["criticalOrHighRiskWaiverAllowed"] is False
+assert adr019_authority["maximumInitialLifetimeDays"] == 90
+assert adr019_authority["absoluteUtcExpiryRequired"] is True
+assert adr019_authority["independentReviewRequired"] is True
+assert adr019_authority["manualHumanReviewRequired"] is False
+assert adr019_authority["accountableHumanOrMaintainerRoleRequired"] is True
+assert adr019_receipt["relationships"] == {
+    "adr008UnsafeClassificationRemainsUnsupported": True,
+    "adr012RawOutputConstructorRemainsWithheld": True,
+    "adr021UnsafeInventoryReleaseRequirementPreserved": True,
+    "sdk052ProductionBoundaryImplementationRequired": True,
+    "sdk093ProductionScannerAndCorpusRequired": True,
+}
+adr019_claims = adr019_receipt["claims"]
+for unproven_unsafe_claim in (
+    "productionSourceScanner",
+    "productionGeneratedScanner",
+    "productionArtifactInventory",
+    "productionSupport",
+):
+    assert adr019_claims[unproven_unsafe_claim] == "not-tested"
+assert adr019_claims["productionWaiverApi"] == "withheld"
+assert adr019_claims["stableReleaseAuthorized"] is False
+assert adr019_claims["publicationAuthorized"] is False
+adr019_hosted = adr019_receipt["hostedWorkflow"]
+assert adr019_hosted["workflow"] == "Unsafe-boundary policy"
+assert adr019_hosted["job"] == "unsafe-boundary-policy"
+assert adr019_hosted["required"] is True
+if adr019_hosted["status"] == "pending-first-hosted-main-run":
+    assert adr019_receipt["status"] == "implemented-hosted-pending"
+    assert adr019_hosted["runId"] is None
+    assert adr019_hosted["jobId"] is None
+    assert adr019_hosted["commit"] is None
+elif adr019_hosted["status"] == "passed":
+    assert adr019_receipt["status"] in {
+        "implemented-review-pending",
+        "verified",
+    }
+    assert isinstance(adr019_hosted["runId"], int)
+    assert isinstance(adr019_hosted["jobId"], int)
+    assert sha1.fullmatch(adr019_hosted["commit"])
+else:
+    raise AssertionError("unsafe-boundary hosted status is invalid")
 
 assert adoption_architecture["schemaVersion"] == 1
 assert adoption_architecture["decisionId"] == "ADR-015"
@@ -11696,6 +11811,7 @@ python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/check-generated-catalogs.py
 python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py
+python3 scripts/security/test-unsafe-boundary-policy.py
 python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
 python3 scripts/runtime-support/test-policy.py

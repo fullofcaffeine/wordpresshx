@@ -49,6 +49,7 @@ decision.
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-009: Schema and codec authority](009-schema-and-codec-authority.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
+- [ADR-012: Output-context safety](012-output-context-safety.md)
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-014: Source maps and PHP trace correlation](014-source-maps-and-php-trace-correlation.md)
 - [ADR-016: Project and CLI configuration](016-project-and-cli-configuration.md)
@@ -58,6 +59,6 @@ decision.
 
 ## Proposed records
 
-- [ADR-012: Output-context safety](012-output-context-safety.md) — Oracle review returned changes required; ADR012-F001–F009 are tracked by `wordpresshx-g4.1`.
 - [ADR-015: Interop and adoption contract format](015-interop-and-adoption-contract-format.md) — Oracle review returned changes required; ADR015-F001–F010 are tracked by `wordpresshx-g6.1`.
+- [ADR-019: Security and unsafe-boundary governance](019-security-and-unsafe-boundary-governance.md) — executable policy prototype complete; independent Oracle review pending.
 - [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — Oracle review returned changes required and publication remains blocked; ADR020-F001–F008 are tracked by `wordpresshx-sdk-plan.2`.

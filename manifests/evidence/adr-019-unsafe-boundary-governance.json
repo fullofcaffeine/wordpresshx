@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
+  "bead": "wordpresshx-adr-019",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-26T23:07:14Z",
+  "subject": {
+    "adr": {
+      "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
+      "sha256": "a20101a32374fe43286ac381f18ab1c4847d429671ff6206d179306fde6b0a0f"
+    },
+    "policy": {
+      "path": "manifests/unsafe-boundary-policy.json",
+      "sha256": "209c134af0c94c7711fdc8b2d17278b4ef2dc9e1c9433f52e1649942082b339f"
+    },
+    "schema": {
+      "path": "schemas/unsafe-boundary-waiver.schema.json",
+      "sha256": "ed4f9128e30561319d0045bdeca372cb48973b14bb6f0297744b30d9064efb5d"
+    },
+    "scenarios": {
+      "path": "fixtures/unsafe-boundary/scenarios.json",
+      "sha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
+    },
+    "validator": {
+      "path": "scripts/security/test-unsafe-boundary-policy.py",
+      "sha256": "daa98636f33f06f3184870ab007e16e4e69058f7d84a5d60a23f12447d8e8958"
+    },
+    "workflow": {
+      "path": ".github/workflows/unsafe-boundary-policy.yml",
+      "sha256": "72dc85760cf3ad12673eff819b364d21120c58b4ee35f77acc54ae98c855cb2f"
+    },
+    "releasePolicy": {
+      "path": "manifests/release-support-policy.json",
+      "sha256": "c9d96cad1be1c77cb1741da77b8f957a6be496f7a35e9726a8cbb35c43812f87"
+    }
+  },
+  "authority": {
+    "policyId": "wordpress-hx-unsafe-boundary-v1",
+    "defaultDisposition": "blocked",
+    "waiverConveysSafetyOrSupport": false,
+    "publicApiOrRecommendedExampleWaiverAllowed": false,
+    "criticalOrHighRiskWaiverAllowed": false,
+    "maximumInitialLifetimeDays": 90,
+    "absoluteUtcExpiryRequired": true,
+    "independentReviewRequired": true,
+    "manualHumanReviewRequired": false,
+    "accountableHumanOrMaintainerRoleRequired": true
+  },
+  "verification": {
+    "commands": [
+      "python3 scripts/security/test-unsafe-boundary-policy.py",
+      "bash scripts/check-repository.sh"
+    ],
+    "sourceTreeDigestAlgorithm": "sha256-sorted-policy-schema-scenarios-validator-subject-list-v1",
+    "sourceTreeSha256": "76ea519a581c43e157401c9f904b53e2ca7d2040ad4c328802196a5778ae0133",
+    "policyDigestAlgorithm": "sha256-canonical-json-v1",
+    "policyDigest": "9a577e5a2e992f2a99f815a19570b23045a5589e59574a641f349ee014d10c7d",
+    "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
+    "scenarioDigest": "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf",
+    "categoryCount": 9,
+    "scenarioCount": 14,
+    "failClosedMutationCount": 35,
+    "waiverSchemaClosed": true,
+    "sourceGeneratedAndFinalInventoriesRequired": true,
+    "prohibitedScopesRemainUnwaivable": true,
+    "expiredRevokedAndDriftedWaiversFailAllBuilds": true,
+    "localOutcome": "passed"
+  },
+  "review": {
+    "selfAdversarialReview": "completed-non-independent",
+    "freshIndependentOracleReview": "pending",
+    "acceptanceAuthorized": false
+  },
+  "relationships": {
+    "adr008UnsafeClassificationRemainsUnsupported": true,
+    "adr012RawOutputConstructorRemainsWithheld": true,
+    "adr021UnsafeInventoryReleaseRequirementPreserved": true,
+    "sdk052ProductionBoundaryImplementationRequired": true,
+    "sdk093ProductionScannerAndCorpusRequired": true
+  },
+  "hostedWorkflow": {
+    "workflow": "Unsafe-boundary policy",
+    "job": "unsafe-boundary-policy",
+    "required": true,
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run"
+  },
+  "limitations": [
+    "The executable fixture proves a bounded governance model, not a production source/generated/final-artifact scanner.",
+    "No public unsafe constructor or production waiver API is published.",
+    "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
+    "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
+    "Independent Oracle review is required before ADR acceptance."
+  ],
+  "claims": {
+    "architectureDecision": "proposed-pending-independent-review",
+    "waiverSchemaAndPolicyPrototype": "implemented",
+    "deterministicFailClosedScenarios": "passed-local",
+    "productionSourceScanner": "not-tested",
+    "productionGeneratedScanner": "not-tested",
+    "productionArtifactInventory": "not-tested",
+    "productionWaiverApi": "withheld",
+    "stableReleaseAuthorized": false,
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

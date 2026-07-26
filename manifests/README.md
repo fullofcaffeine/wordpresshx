@@ -73,6 +73,12 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   gate passed, and the final Oracle rereview accepted the bounded architecture
   with F001 through F009 closed. Production SDK types and lowerers remain
   follow-up implementation work.
+- `unsafe-boundary-policy.json` is ADR-019's proposed closed waiver,
+  reconciliation, expiry, artifact-propagation, and release-stop authority. A
+  waiver is temporary visibility, never a safe type or support claim; public
+  APIs, recommended examples, routine HXX, and critical/high risk remain
+  unwaivable. Its bounded validator passes locally while hosted evidence and
+  independent Oracle review remain pending.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.

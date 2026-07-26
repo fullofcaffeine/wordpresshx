@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpresshx.dev/schemas/unsafe-boundary-waiver.schema.json",
+  "title": "WordPressHx unsafe-boundary waiver",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "boundaryId",
+    "category",
+    "reason",
+    "owner",
+    "review",
+    "createdAt",
+    "expiresAt",
+    "risk",
+    "source",
+    "scope",
+    "evidence",
+    "removal"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^WPHX-UNSAFE-[0-9]{4}$"
+    },
+    "boundaryId": {
+      "$ref": "#/$defs/boundaryId"
+    },
+    "category": {
+      "$ref": "#/$defs/category"
+    },
+    "reason": {
+      "$ref": "#/$defs/nonEmpty"
+    },
+    "owner": {
+      "$ref": "#/$defs/nonEmpty"
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "reviewedAt", "decision", "evidenceSha256"],
+      "properties": {
+        "reviewer": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/utcInstant"
+        },
+        "decision": {
+          "const": "approved"
+        },
+        "evidenceSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "createdAt": {
+      "$ref": "#/$defs/utcInstant"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/utcInstant"
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "threat", "mitigation"],
+      "properties": {
+        "severity": {
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "threat": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "mitigation": {
+          "$ref": "#/$defs/nonEmpty"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "startLine", "endLine"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "startLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package", "layer", "profiles", "targets"],
+      "properties": {
+        "package": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "layer": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "profiles": {
+          "$ref": "#/$defs/nonEmptyStringSet"
+        },
+        "targets": {
+          "$ref": "#/$defs/nonEmptyStringSet"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "$ref": "#/$defs/repositoryPath"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        }
+      }
+    },
+    "removal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bead", "deadline", "successCondition"],
+      "properties": {
+        "bead": {
+          "type": "string",
+          "pattern": "^wordpresshx-[a-z0-9.-]+$"
+        },
+        "deadline": {
+          "$ref": "#/$defs/utcInstant"
+        },
+        "successCondition": {
+          "$ref": "#/$defs/nonEmpty"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmpty": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "utcInstant": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "boundaryId": {
+      "type": "string",
+      "pattern": "^UB-[A-Z0-9][A-Z0-9-]*$"
+    },
+    "category": {
+      "enum": [
+        "generated-raw-target",
+        "haxe-weak-type",
+        "javascript-raw-segment",
+        "php-raw-segment",
+        "private-upstream-api",
+        "profile-unsafe-entry",
+        "typescript-any",
+        "typescript-unknown",
+        "unchecked-external-contract"
+      ]
+    },
+    "nonEmptyStringSet": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmpty"
+      }
+    }
+  }
+}
