@@ -3,21 +3,23 @@
 ## Current record
 
 - Review status: **pending**
-- Qualified reviewer: **unassigned**
-- Reviewer qualification: **unrecorded**
+- Independent Oracle: **unassigned**
+- Model/prompt/input identities: **unrecorded**
 - Review date: **unrecorded**
 - Product-owner approval: **not granted**
 - Root license grant: **absent**
 - Publication: **blocked**
 
-Codex prepared provenance, inventory, proposed policy, and automated consistency
-checks. Codex is not recorded as the qualified licensing reviewer and has not
-accepted ADR-020.
+Codex prepared provenance, inventory, proposed policy, and automated
+consistency checks. The implementation context cannot review its own work and
+has not accepted ADR-020.
 
 ## Reviewer scope
 
-The named reviewer must be qualified to evaluate open-source licensing and the
-distribution model for the actual artifacts. The review must cover:
+The separate Oracle must act from a software-licensing review perspective and
+challenge the distribution model for the actual artifacts. Its model, prompt,
+repository snapshot, evidence paths, findings, and decision must be recorded.
+The review must cover:
 
 1. ownership and contributor rights for repository-original work;
 2. compatibility and wording of the candidate GPL-2.0-or-later grants;
@@ -60,8 +62,9 @@ upstream positions; this file does not independently decide their application.
 Acceptance must update the closed machine-readable policy and record all of:
 
 ```text
-reviewer name:
-qualification/basis:
+reviewer name and exact model:
+assigned expert perspective:
+prompt and repository snapshot SHA-256:
 scope reviewed:
 exact repository commit:
 exact artifact hashes reviewed:
@@ -80,8 +83,10 @@ blocking finding remains is invalid.
 
 ## Handoff to SDK-002
 
-ADR-020 may be accepted only after the reviewer resolves the policy questions.
+ADR-020 may be accepted only after the Oracle review resolves or explicitly
+classifies the policy questions and the product owner makes the publication
+decision. The Oracle output is technical risk evidence, not legal advice.
 SDK-002 then applies the accepted result to real pack manifests, license texts,
 notices, SBOMs, source archives, generated packages, and publication gates. No
 registry credentials or public release should be exercised merely to prepare
-the legal review.
+the review.

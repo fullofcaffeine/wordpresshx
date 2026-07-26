@@ -941,8 +941,8 @@ def validate_repository_state(audit: Audit, components: dict[str, dict[str, Any]
         ],
         "LICENSES/QUALIFIED_REVIEW.md": [
             "Review status: **pending**",
-            "Qualified reviewer: **unassigned**",
-            "Codex is not recorded as the qualified licensing reviewer",
+            "Independent Oracle: **unassigned**",
+            "implementation context cannot review its own work",
         ],
         "docs/adr/020-licensing-and-generated-output.md": [
             "Status: proposed",

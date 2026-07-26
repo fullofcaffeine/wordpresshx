@@ -5,7 +5,7 @@
   "status": "verified",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
-    "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
+    "sha256": "5d499aaed2be94a1397c5b8b85cee42d49b68bd35b0f72b11f964d02286b9a65",
     "section": "Gate G3 — Semantic plan and fail-closed ownership"
   },
   "evidenceReceipts": [

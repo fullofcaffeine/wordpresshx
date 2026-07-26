@@ -110,6 +110,7 @@
         "name",
         "role",
         "wordpressPhpExperience",
+        "reviewContext",
         "independence"
       ],
       "properties": {
@@ -125,8 +126,41 @@
           "type": "string",
           "minLength": 24
         },
+        "reviewContext": {
+          "$ref": "#/$defs/reviewContext"
+        },
         "independence": {
           "$ref": "#/$defs/independence"
+        }
+      }
+    },
+    "reviewContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "provider",
+        "model",
+        "promptSha256",
+        "repositorySnapshotSha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "oracle-agent"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 2
+        },
+        "model": {
+          "type": "string",
+          "minLength": 2
+        },
+        "promptSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "repositorySnapshotSha256": {
+          "$ref": "#/$defs/sha256"
         }
       }
     },

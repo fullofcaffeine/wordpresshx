@@ -276,8 +276,9 @@ Gate G1 must add executable evidence for:
   bootstrap cost;
 - two-plugin namespace/runtime-conflict coverage when the private lane is used;
   and
-- sign-off by at least one WordPress/PHP reviewer who did not implement the
-  emitter, specifically covering readability and debuggability.
+- sign-off from a separate Oracle/review context acting as an experienced
+  WordPress/PHP reviewer. It must not have implemented the emitter or prepared
+  its evidence, and must specifically cover readability and debuggability.
 
 Compiler snapshots, PHP lint, mocked WordPress APIs, or Haxe-origin calls alone
 cannot promote the public WordPress claim. The ordinary PHP caller and real

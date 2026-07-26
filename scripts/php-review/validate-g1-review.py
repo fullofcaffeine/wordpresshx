@@ -33,13 +33,6 @@ PLACEHOLDER = re.compile(
     r"(?:replace|placeholder|todo|tbd|unknown|unassigned|0000-00-00)",
     re.IGNORECASE,
 )
-AUTOMATED_REVIEWER = re.compile(
-    r"(?:\bcodex\b|\bchatgpt\b|\bopenai\b|\bai reviewer\b|"
-    r"\bartificial intelligence\b)",
-    re.IGNORECASE,
-)
-
-
 class ReviewError(ValueError):
     pass
 
@@ -331,7 +324,13 @@ def validate_final(
 
     reviewer = require_keys(
         receipt["reviewer"],
-        {"name", "role", "wordpressPhpExperience", "independence"},
+        {
+            "name",
+            "role",
+            "wordpressPhpExperience",
+            "reviewContext",
+            "independence",
+        },
         "reviewer",
     )
     reviewer_name = require_string(reviewer["name"], "reviewer.name", 2)
@@ -341,8 +340,26 @@ def validate_final(
         "reviewer.wordpressPhpExperience",
         24,
     )
-    if AUTOMATED_REVIEWER.search(reviewer_name):
-        raise ReviewError("an automated system cannot be the independent reviewer")
+    review_context = require_keys(
+        reviewer["reviewContext"],
+        {
+            "kind",
+            "provider",
+            "model",
+            "promptSha256",
+            "repositorySnapshotSha256",
+        },
+        "reviewer.reviewContext",
+    )
+    if review_context["kind"] != "oracle-agent":
+        raise ReviewError("independent review must use a separate Oracle agent")
+    require_string(review_context["provider"], "reviewContext.provider", 2)
+    require_string(review_context["model"], "reviewContext.model", 2)
+    for field in ("promptSha256", "repositorySnapshotSha256"):
+        if not isinstance(review_context[field], str) or not SHA256.fullmatch(
+            review_context[field]
+        ):
+            raise ReviewError(f"reviewContext.{field} must be a SHA-256 digest")
     ineligible = {
         name.strip().casefold()
         for name in manifest["reviewPolicy"]["ineligibleReviewerNames"]
@@ -606,11 +623,18 @@ def self_test(manifest: dict[str, object]) -> None:
         "receiptId": "g1-php-readability-validator-fixture",
         "packet": packet,
         "reviewer": {
-            "name": "Independent Fixture Reviewer",
+            "name": "Oracle",
             "role": "Senior WordPress and PHP reviewer",
             "wordpressPhpExperience": (
                 "Maintains native WordPress plugins and reviews PHP APIs."
             ),
+            "reviewContext": {
+                "kind": "oracle-agent",
+                "provider": "OpenAI",
+                "model": "GPT-5.6",
+                "promptSha256": "1" * 64,
+                "repositorySnapshotSha256": "2" * 64,
+            },
             "independence": {
                 "implementedEmitter": False,
                 "contributedToReviewedCommit": False,
@@ -647,8 +671,16 @@ def self_test(manifest: dict[str, object]) -> None:
         mutations.append((label, value))
 
     mutate(
-        "automated-reviewer",
-        lambda value: value["reviewer"].__setitem__("name", "Codex reviewer"),
+        "missing-oracle-context",
+        lambda value: value["reviewer"]["reviewContext"].__setitem__(
+            "kind", "implementation-turn"
+        ),
+    )
+    mutate(
+        "stale-oracle-input",
+        lambda value: value["reviewer"]["reviewContext"].__setitem__(
+            "repositorySnapshotSha256", "not-a-digest"
+        ),
     )
     mutate(
         "implementation-author",

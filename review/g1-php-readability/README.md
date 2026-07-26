@@ -4,9 +4,11 @@ This review answers one narrow question: can an experienced WordPress/PHP
 developer understand, debug, and safely call the public PHP emitted by
 WordPressHx without knowing Haxe internals?
 
-The compiler and SDK owner prepares the packet, but cannot approve it. A
-reviewer is eligible only if they did not implement the emitter, contribute to
-the reviewed implementation commit, or prepare this packet.
+The compiler and SDK owner prepares the packet, but cannot approve it. The
+normal reviewer is a separate Oracle/agent context instructed to act as an
+experienced WordPress/PHP developer. It is eligible only if it did not
+implement the emitter, contribute to the reviewed implementation commit, or
+prepare this packet. A human reviewer is optional, not required.
 
 ## Review packet
 
@@ -44,8 +46,8 @@ category to the smallest useful set of files.
 
 The validator rejects placeholders, self-review, incomplete category coverage,
 open blocking findings, a stale packet identity, and publication or production
-support claims. Automated validation proves receipt consistency; the named
-reviewer remains responsible for the technical judgment.
+support claims. Automated validation proves receipt consistency; the separate
+review context remains responsible for the technical judgment.
 
 ## Rebuild the packet
 
@@ -63,6 +65,6 @@ second command runs fresh PHP exceptions in the exact locked containers,
 correlates their native frames, replaces only this packet directory, and
 recomputes its manifest.
 
-G1.2 and aggregate G1 remain open until an eligible human reviewer supplies an
-accepted receipt. This packet does not authorize publication or claim
-production support.
+G1.2 and aggregate G1 remain open until an eligible separate Oracle/review
+context supplies an accepted receipt. This packet does not authorize
+publication or claim production support.

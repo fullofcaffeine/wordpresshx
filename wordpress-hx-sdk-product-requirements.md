@@ -1972,7 +1972,14 @@ Generated output requirements:
 - deterministic package archives with normalized file order, permissions, and timestamps;
 - double-build byte comparison in CI.
 
-Readability is evaluated by a human review gate: a WordPress/PHP developer should be able to identify registration, permission, render, and facade behavior without understanding Haxe compiler internals.
+Readability is evaluated by an independent review context acting from the
+perspective of an experienced WordPress/PHP developer. The reviewer may be a
+separate Oracle agent: it receives a content-addressed evidence bundle, does
+not participate in implementation or packet preparation, and records its
+model, prompt, input hashes, findings, and decision. It should be able to
+identify registration, permission, render, and facade behavior without
+understanding Haxe compiler internals. Human participation is optional unless
+the product owner explicitly requests it.
 
 ## 16.8 Development versus production output
 
@@ -3804,7 +3811,12 @@ The SDK should not require a central `wordpress-hx-runtime` Composer package on 
 
 ## 24.9 Licensing decision
 
-Licensing is unresolved and requires a dedicated ADR plus qualified review before public release. The decision must separately address:
+Licensing is unresolved and requires a dedicated ADR plus an independent
+Oracle review before public release. The Oracle must adopt a software-licensing
+review perspective and challenge the complete origin, grant, output, and notice
+evidence. This review is technical risk evidence rather than legal advice; the
+product owner remains the publication authority. The decision must separately
+address:
 
 - SDK Haxe source and WordPress-facing APIs;
 - generic compiler packages;
@@ -3976,7 +3988,9 @@ Milestones are gates, not calendar promises. A gate closes only with executable 
 - plugin installs/activates in real WordPress 7.0;
 - public reflection and non-Haxe PHP caller tests pass;
 - representative stack trace maps to Haxe;
-- generated PHP is judged readable by at least one reviewer comfortable with WordPress/PHP but not involved in emitter implementation;
+- generated PHP is judged readable by an independent review context acting as
+  a reviewer experienced with WordPress/PHP and not involved in emitter
+  implementation or evidence preparation;
 - generic compiler changes are extracted/pinned outside WordPress profile code.
 
 **Stop condition:** if public PHP requires pervasive raw templates, leaks opaque runtime wrappers into WordPress APIs, cannot meet the syntax floor, or cannot produce understandable stack frames, pause product breadth and redesign the PHP lane.
@@ -4104,7 +4118,9 @@ Milestones are gates, not calendar promises. A gate closes only with executable 
 - unsafe and `any`/`unknown` inventories approved and ideally empty for examples/public APIs;
 - support/version/license/security/release policies published;
 - claim-evidence matrix contains no unsupported marketing statement;
-- independent review challenges output readability, ownership safety, compatibility claims, and full-port separation.
+- independent Oracle review challenges output readability, ownership safety,
+  compatibility claims, and full-port separation from a separate,
+  content-addressed review context.
 
 **Non-acceptance:** passing examples on a developer checkout without installed-package and final-ZIP evidence is not G8.
 

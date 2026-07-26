@@ -8,8 +8,8 @@ and WordPress plugin/theme/site ZIPs remain blocked by ADR-020 and SDK-002.
 The provisional recommendation is GPL-2.0-or-later for repository-original SDK,
 CLI, compiler, documentation, examples, scaffolds, templates, and default
 WordPress packages. That recommendation has not been accepted. It requires
-contributor-rights confirmation, a named qualified licensing reviewer, product
-owner approval, resolution of the recorded upstream discrepancies, final
+contributor-rights confirmation, a content-addressed Oracle licensing-risk
+review, product-owner approval, resolution of the recorded upstream discrepancies, final
 license texts/notices, and evidence from the exact packed artifacts.
 
 ## Review artifacts
@@ -19,9 +19,9 @@ license texts/notices, and evidence from the exact packed artifacts.
 - `components.json` inventories repository origins and exact third-party/build
   inputs, including unresolved evidence conflicts.
 - `GENERATED_OUTPUT.md` explains the proposed origin-sensitive output model.
-- `THIRD_PARTY_NOTICES.md` is the human review ledger. It is not yet a final
+- `THIRD_PARTY_NOTICES.md` is the review ledger. It is not yet a final
   notice bundle.
-- `QUALIFIED_REVIEW.md` defines the human review and acceptance record that is
+- `QUALIFIED_REVIEW.md` defines the independent Oracle review and owner-acceptance record that is
   still missing.
 - `docs/adr/020-licensing-and-generated-output.md` records the proposed decision
   and alternatives. Its status must remain `proposed` while review is pending.

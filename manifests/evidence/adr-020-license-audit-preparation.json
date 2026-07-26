@@ -7,7 +7,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/020-licensing-and-generated-output.md",
-      "sha256": "27520f59ba2890d61be4224d85e3eb9c034853f5aa5d62b5b21b4ea5dad2fcc6"
+      "sha256": "03d4c554dc74070850ecf9c47b69c83cf1c8b531f51306a79516d829deaa0afe"
     },
     "components": {
       "path": "LICENSES/components.json",
@@ -35,7 +35,7 @@
     },
     "qualifiedReview": {
       "path": "LICENSES/QUALIFIED_REVIEW.md",
-      "sha256": "4e4a82f9c7dc6f98bf71808d40c85aca2b3907f9331bf50346b9bc576d57132b"
+      "sha256": "b023e05bbb762965d9bed4c26ce5d0f09dac186b6728971c6eafe5cc9575ebe9"
     },
     "thirdPartyNotices": {
       "path": "LICENSES/THIRD_PARTY_NOTICES.md",
@@ -43,7 +43,7 @@
     },
     "validator": {
       "path": "scripts/licenses/check-license-policy.py",
-      "sha256": "514a43f6fda3c036965c43945560d6545ef7bb6943a853611f1b0466a00bd92c"
+      "sha256": "20400bc5e1db769c3fe5ed1af42e6f34baa5b1738fb35fc274ea080b70fa009b"
     },
     "validatorTests": {
       "path": "scripts/licenses/test-license-policy.py",

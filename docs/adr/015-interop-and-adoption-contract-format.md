@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product direction), Codex (architecture and executable-fixture implementation), fresh independent review pending
+- Owners/reviewers: Marcelo Serpa (product direction), Codex (architecture and executable-fixture implementation), separate Oracle interop review pending
 - Bead: `wordpresshx-adr-015`
 - Profiles/layers: PHP adoption, JavaScript/TypeScript adoption, WordPress plugins, application facades, reusable companion packages, CLI generation, runtime capabilities
 - Supersedes: none; makes PRD §29.1's adoption boundary concrete

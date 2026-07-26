@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Date: 2026-07-18
-- Owners/reviewers: Marcelo Serpa (product owner; approval pending), qualified licensing reviewer (unassigned), Codex (provenance and policy preparation only; not the qualified reviewer)
+- Owners/reviewers: Marcelo Serpa (product owner; approval pending), separate Oracle acting from a software-licensing review perspective (pending), Codex (provenance and policy preparation only; not the independent reviewer)
 - Bead: `wordpresshx-adr-020`
 - Profiles/layers: repository source, SDK/CLI/compiler, HXX and Genes toolchains, derived profile catalogs, generated application output, examples/scaffolds/templates, WordPress packages, notices, and publication
 - Supersedes: provisional no-license placeholder only after acceptance
@@ -30,9 +30,11 @@ the Unlicense; several Haxelib archives declare MIT but omit a license text; and
 commit inspected. Generated runtime/standard-library/boilerplate bytes and the
 legal treatment of derived catalogs have not yet been closed.
 
-Automated checks can prove this inventory remains internally consistent. They
-cannot supply contributor rights, interpret the law for the final artifacts, or
-act as the required qualified reviewer.
+Automated checks can prove this inventory remains internally consistent. A
+separate Oracle can challenge the inventory, reasoning, and proposed policy
+from a software-licensing review perspective, but it cannot supply contributor
+rights, provide legal advice, or authorize publication. The product owner
+retains those decisions.
 
 ## Proposed decision
 
@@ -56,12 +58,13 @@ This section is a candidate for qualified review, not an accepted grant.
    applicable license texts, and third-party notices from the exact packed bytes.
    A repository-wide dependency list is insufficient.
 5. Fail publication on unknown origins, missing evidence, metadata/text
-   conflicts, unreviewed new dependencies, or absent human approvals. Raw
+   conflicts, unreviewed new dependencies, or absent independent Oracle review
+   and product-owner approval. Raw
    metadata overrides cannot manufacture a license conclusion.
 6. Keep all registry publication, promoted downloads, WordPress.org submissions,
-   and release archives blocked until a named qualified reviewer and the product
-   owner approve the exact policy and SDK-002 proves its application to packed
-   artifacts.
+   and release archives blocked until a content-addressed Oracle review
+   challenges the exact policy, the product owner approves it, and SDK-002
+   proves its application to packed artifacts.
 
 No root `LICENSE` is added by this proposed ADR. Acceptance must add the reviewed
 grant and complete notices together so repository metadata cannot imply a

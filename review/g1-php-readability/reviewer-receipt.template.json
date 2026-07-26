@@ -12,6 +12,13 @@
     "name": "REPLACE_WITH_REVIEWER_NAME",
     "role": "REPLACE_WITH_RELEVANT_WORDPRESS_PHP_ROLE",
     "wordpressPhpExperience": "REPLACE_WITH_RELEVANT_WORDPRESS_AND_PHP_EXPERIENCE",
+    "reviewContext": {
+      "kind": "oracle-agent",
+      "provider": "REPLACE_WITH_ORACLE_PROVIDER",
+      "model": "REPLACE_WITH_EXACT_MODEL_IDENTITY",
+      "promptSha256": "REPLACE_WITH_REVIEW_PROMPT_SHA256",
+      "repositorySnapshotSha256": "REPLACE_WITH_REPOMIX_SHA256"
+    },
     "independence": {
       "implementedEmitter": false,
       "contributedToReviewedCommit": false,

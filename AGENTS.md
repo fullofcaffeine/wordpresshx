@@ -30,6 +30,21 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - Use a pull request only when the user explicitly requests one or for unusually hard, isolated upstream work in another project (for example, a generalized change to `../genes`). Follow that project's contribution workflow.
 - If a pull request is created, do not leave it closed without merging: make its gates pass and merge it unless the user explicitly directs otherwise.
 
+## Independent Review
+
+- Never make progress depend on a manual human review merely because the
+  reviewer is human. When independent judgment is required, prepare a
+  content-addressed evidence bundle and ask a separate Oracle/review agent to
+  adopt the relevant expert perspective.
+- The review agent must not share the implementation turn, author the reviewed
+  change, prepare its own evidence, or receive hidden conclusions. Record its
+  model identity, review prompt, immutable input hashes, findings, and decision.
+- Treat an Oracle review as technical evidence, not as a legal opinion or an
+  automatic publication decision. The product owner retains decisions that
+  require owner authority. A human specialist may be consulted voluntarily or
+  when the user explicitly requests one, but human participation is not a
+  default blocking gate.
+
 ## Strictly Typed Haxe
 
 - Do not use `Dynamic`, `Any`, `cast`, `Reflect`, or `untyped` in Haxe code. Leverage concrete types, typedefs, enums, abstracts, generics, typed adapters/codecs, and compiler-checked pattern matching instead.

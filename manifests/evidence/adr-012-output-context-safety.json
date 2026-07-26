@@ -7,7 +7,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "ae63307bb511334c040d048cd21442d9c57cb19bb89ef09865309d8e6819efde"
+      "sha256": "1f5bcf54af1422b62eafd034b520dc32a3f9f4a1c3f5588eb9219ab5a1206603"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",

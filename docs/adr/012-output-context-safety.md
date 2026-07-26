@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), fresh independent review pending
+- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), separate Oracle security review pending
 - Bead: `wordpresshx-adr-012`
 - Profiles/layers: shared output contracts, PHP compiler, WordPress profile, HXX lowering, Genes browser output, REST, blocks, admin UI
 - Supersedes: none; makes PRD §29.1 and ADR-011's contextual-lowering requirement concrete

@@ -30,7 +30,12 @@ When a decision is accepted, create a numbered immutable record in this director
 ## Follow-up beads
 ```
 
-Decisions involving licensing, security, public support, or compatibility claims require appropriate qualified review. Prototypes and comments are supporting evidence, not acceptance by themselves.
+Decisions involving licensing, security, public support, or compatibility
+claims require an independent, content-addressed Oracle review from the
+relevant expert perspective. Prototypes and comments are supporting evidence,
+not acceptance by themselves. Oracle licensing review is technical risk
+evidence rather than legal advice; publication remains a product-owner
+decision.
 
 ## Accepted records
 
