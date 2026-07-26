@@ -2393,13 +2393,14 @@ adr012_hosted = adr012_receipt["hostedWorkflow"]
 assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
-if adr012_hosted["status"] == "historical-passed-superseded":
+if adr012_hosted["status"] == "corrected-passed":
     assert adr012_receipt["status"] == "implemented-rereview-pending"
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
     assert sha1.fullmatch(adr012_hosted["commit"])
-    assert adr012_hosted["correctedCommit"] is None
-    assert adr012_hosted["correctedStatus"] == "pending-first-hosted-main-run"
+    assert isinstance(adr012_hosted["historicalRunId"], int)
+    assert isinstance(adr012_hosted["historicalJobId"], int)
+    assert sha1.fullmatch(adr012_hosted["historicalCommit"])
 elif adr012_hosted["status"] == "pending-first-hosted-main-run":
     assert adr012_receipt["status"] == "implemented-hosted-pending"
     assert adr012_hosted["runId"] is None

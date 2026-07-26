@@ -298,8 +298,11 @@ independent review are separate gates. Historical public run
 [`29713766565`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29713766565),
 job `88262490140`, passed the complete corpus at commit
 `11ec7cc273ca65130c1fcd79505347390dba3d9a`; it predates and is superseded by
-the Oracle corrections. The corrected commit still needs its first hosted run
-and fresh independent rereview before this ADR can move to accepted.
+the Oracle corrections. Corrected commit
+`60e0516db0b1542e7eeba9da02254e115b1abaab` passed public run
+[`30221651100`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30221651100),
+job `89845003958`. Fresh independent rereview remains required before this ADR
+can move to accepted.
 
 The design follows the official
 [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/),

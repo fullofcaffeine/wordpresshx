@@ -365,12 +365,13 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "historical-passed-superseded",
-        "runId": 29713766565,
-        "jobId": 88262490140,
-        "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
-        "correctedCommit": None,
-        "correctedStatus": "pending-first-hosted-main-run",
+        "status": "corrected-passed",
+        "runId": 30221651100,
+        "jobId": 89845003958,
+        "commit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
+        "historicalRunId": 29713766565,
+        "historicalJobId": 88262490140,
+        "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 

@@ -66,9 +66,8 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   terminal and non-interchangeable; inline styles and stylesheet assets have
   separate grammars, and the unsafe raw target remains withheld. Its generated
   runtime plan is consumed by Genes/React and stock-Haxe PHP/clean WordPress
-  7.0. Production SDK types and HXX lowering remain follow-up work. The prior
-  hosted run is historical evidence; the corrected commit and fresh Oracle
-  rereview remain pending.
+  7.0. Production SDK types and HXX lowering remain follow-up work. The
+  corrected focused hosted gate passes; fresh Oracle rereview remains pending.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.
