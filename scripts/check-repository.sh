@@ -727,6 +727,13 @@ required_files=(
   manifests/evidence/sdk-024-private-php-runtime.json
   manifests/evidence/sdk-025-php-source-correlation.json
   manifests/evidence/sdk-026-generated-php-quality.json
+  schemas/php-readability-review.schema.json
+  scripts/php-review/build-g1-packet.py
+  scripts/php-review/validate-g1-review.py
+  review/g1-php-readability/README.md
+  review/g1-php-readability/packet-guide.md
+  review/g1-php-readability/reviewer-receipt.template.json
+  review/g1-php-readability/packet/packet-manifest.json
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -11536,6 +11543,13 @@ python3 scripts/licenses/test-license-policy.py
 python3 scripts/php/test-emission-policy.py
 python3 scripts/runtime-support/test-policy.py
 python3 scripts/source-correlation/validate-contracts.py
+python3 scripts/php-review/validate-g1-review.py --self-test
+python3 scripts/php-review/validate-g1-review.py --template \
+  review/g1-php-readability/reviewer-receipt.template.json
+if [[ -f review/g1-php-readability/reviewer-receipt.json ]]; then
+  python3 scripts/php-review/validate-g1-review.py \
+    review/g1-php-readability/reviewer-receipt.json
+fi
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/contracts/validate-schema-authority.py
 python3 scripts/output-context/validate-architecture.py
@@ -11586,6 +11600,13 @@ if git grep -nE "${floating_reflaxe_dependency_pattern}" -- \
   sed -n '1,80p' "${scan_output}" >&2
   exit 1
 fi
+
+while IFS= read -r -d '' packet_path; do
+  if ! git ls-files --error-unmatch -- "${packet_path}" >/dev/null 2>&1; then
+    echo "G1 review packet file is not tracked: ${packet_path}" >&2
+    exit 1
+  fi
+done < <(find review/g1-php-readability/packet -type f -print0)
 
 git diff --check HEAD
 

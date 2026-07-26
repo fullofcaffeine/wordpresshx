@@ -1,0 +1,4 @@
+RuntimeException: hook failure in /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php:9
+Stack trace:
+#0 /repo/compiler/wordpress/runtime/source-correlation-caller.php(31): Fixture\Correlation\FailureCallbacks::failHook()
+#1 {main}

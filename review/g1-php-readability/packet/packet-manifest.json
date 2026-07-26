@@ -1,0 +1,293 @@
+{
+  "files": [
+    {
+      "bytes": 3522,
+      "lines": 91,
+      "path": "README.md",
+      "role": "guide",
+      "sha256": "8b23c7c59311e7ce7acaa5da4aada5dcb10fe6d617bf72fae9e287a18cc06327"
+    },
+    {
+      "bytes": 5043,
+      "lines": 176,
+      "path": "artifact-manifests/wordpresshx-public-php-adapters.v1.json",
+      "role": "artifact-manifests",
+      "sha256": "06ea4964b85bfd0621784dd6c326c120ef25ad8f4c6ef0dfc49b4b5b10b94944"
+    },
+    {
+      "bytes": 1635,
+      "lines": 57,
+      "path": "callers/native-adapter-caller.php",
+      "role": "callers",
+      "sha256": "578061e4d01a66d35b7b315ed4add9b676353ec315515f4954aa43fca3ed83d9"
+    },
+    {
+      "bytes": 3287,
+      "lines": 93,
+      "path": "callers/probe-adapters.php",
+      "role": "callers",
+      "sha256": "2da1ddd74953c35be738f21fa97b75ca0614364930011a9da35e1219ed3c04fc"
+    },
+    {
+      "bytes": 3709,
+      "lines": 118,
+      "path": "callers/probe-source-correlation.php",
+      "role": "callers",
+      "sha256": "997c3a22d5053e6face9db1ad81d8a34162b4b2273df42824f3c5f949a44a957"
+    },
+    {
+      "bytes": 1136,
+      "lines": 52,
+      "path": "callers/source-correlation-caller.php",
+      "role": "callers",
+      "sha256": "384de8dd80b2be142665faaf35b719ec58aa73b9ff92091395339f165173bb8a"
+    },
+    {
+      "bytes": 7320,
+      "lines": 1,
+      "path": "debug/includes/FailureCallbacks.php.haxe-map.json",
+      "role": "debug",
+      "sha256": "ce46582290e053a6ed434e8215394d3d6e6fc4599de1e182ce42b319c2a80bd9"
+    },
+    {
+      "bytes": 2188,
+      "lines": 1,
+      "path": "debug/source-index.json",
+      "role": "debug",
+      "sha256": "dff3159cf59634ffe195593bcfdfa43cdd56ec910a65540a8d6e766758faa5b4"
+    },
+    {
+      "bytes": 8452,
+      "lines": 241,
+      "path": "evidence/g1.3-wordpress-activation-hook.json",
+      "role": "evidence",
+      "sha256": "a0bad6f867420d2b80ba199621811e8b4b415d2474be045e4327c047d93066da"
+    },
+    {
+      "bytes": 20665,
+      "lines": 513,
+      "path": "evidence/sdk-023-wordpress-public-php-adapters.json",
+      "role": "evidence",
+      "sha256": "9506479199eab6dcf40eaf1647c590c478a90f440517bf21342f73fb415ae10d"
+    },
+    {
+      "bytes": 11095,
+      "lines": 262,
+      "path": "evidence/sdk-024-private-php-runtime.json",
+      "role": "evidence",
+      "sha256": "e7d19344cd23a36b40a13cce0464b6f47e961a7c3ca8c3f5f0186be52562585e"
+    },
+    {
+      "bytes": 13751,
+      "lines": 359,
+      "path": "evidence/sdk-025-php-source-correlation.json",
+      "role": "evidence",
+      "sha256": "bfc58a06b95b9d0167b685ecaeb3cdfa350632e352c59cdd6f6393f3a947ffc1"
+    },
+    {
+      "bytes": 8317,
+      "lines": 203,
+      "path": "evidence/sdk-026-generated-php-quality.json",
+      "role": "evidence",
+      "sha256": "534639a9b04455be48e35697a08a2258492aa1709bdb3eb066fd78fdc63cb20f"
+    },
+    {
+      "bytes": 1025,
+      "lines": 29,
+      "path": "haxe/compiler/WordPressPluginActivationCallback.hx",
+      "role": "haxe",
+      "sha256": "18ec55a4e2cd4e94918dfcf014868b6c67c61ffe7491ad19442b84e01a073ecd"
+    },
+    {
+      "bytes": 9558,
+      "lines": 249,
+      "path": "haxe/compiler/WordPressPublicAdapterPlan.hx",
+      "role": "haxe",
+      "sha256": "8e6b5193656814969e652437991147a7125a410ccae5c388e7cb288478ff25e8"
+    },
+    {
+      "bytes": 2735,
+      "lines": 64,
+      "path": "haxe/compiler/Wp70PhpProfile.hx",
+      "role": "haxe",
+      "sha256": "7d62843f4cc2b993eea4f78583c2be66eea6bff0ee891abd900d7afbd43597c3"
+    },
+    {
+      "bytes": 5573,
+      "lines": 139,
+      "path": "haxe/compiler/Wp70PublicAdapterProfile.hx",
+      "role": "haxe",
+      "sha256": "ef4d28bed904c0e1fed1f3d962c4d3b6c3421ac8f8d35a14c8383c76fbb1ab08"
+    },
+    {
+      "bytes": 8013,
+      "lines": 169,
+      "path": "haxe/fixtures/AcmeBooksAdapters.hx",
+      "role": "haxe",
+      "sha256": "d2211a98e21c8d2426e44ea92a314f1c05c9377b7730b64ece8aaa5f568a7b82"
+    },
+    {
+      "bytes": 1061,
+      "lines": 37,
+      "path": "haxe/fixtures/SourceCorrelationCallbacks.hx",
+      "role": "haxe",
+      "sha256": "d274806fe5ae2ac89709f8568797723dee701044ec31cfe6ceeccd58f38cb833"
+    },
+    {
+      "bytes": 6418,
+      "lines": 129,
+      "path": "haxe/fixtures/SourceCorrelationFixture.hx",
+      "role": "haxe",
+      "sha256": "5c4fb59d2e2942c90012442eea6722a54847bd223ca93a82611ada28aa24fbc2"
+    },
+    {
+      "bytes": 562,
+      "lines": 19,
+      "path": "php/acme-books-adapters/acme-books-adapters.php",
+      "role": "php",
+      "sha256": "80d391382d521b418909b9dc44c3ec70038f13762c9c6fad6b300e0654f05563"
+    },
+    {
+      "bytes": 300,
+      "lines": 20,
+      "path": "php/acme-books-adapters/includes/Bootstrap.php",
+      "role": "php",
+      "sha256": "73de73330bf0556b50f793fc60274117d2d5fe0e822b0aa61b6b4d3214ac3c45"
+    },
+    {
+      "bytes": 2840,
+      "lines": 105,
+      "path": "php/acme-books-adapters/includes/PublicAdapters.php",
+      "role": "php",
+      "sha256": "b748db52cf280e028d3113caeb2d71367ba5fbfd3096e0cd2b9e3babbb9bedd2"
+    },
+    {
+      "bytes": 169,
+      "lines": 7,
+      "path": "php/acme-books-adapters/includes/autoload.php",
+      "role": "php",
+      "sha256": "888a9acac1473d6fe7be2bb448cdd793211bdacae3680d9c9d418699ef24987d"
+    },
+    {
+      "bytes": 439,
+      "lines": 8,
+      "path": "php/acme-books-adapters/includes/register-adapters.php",
+      "role": "php",
+      "sha256": "facdef81121c9f8d27b9ea079131778268addc2a49e53691f3605636804fd307"
+    },
+    {
+      "bytes": 301,
+      "lines": 20,
+      "path": "php/source-correlation/includes/Bootstrap.php",
+      "role": "php",
+      "sha256": "1f3082236fb696de00038a2683d112009ebf82861ca179cf634df78c848415e0"
+    },
+    {
+      "bytes": 1472,
+      "lines": 55,
+      "path": "php/source-correlation/includes/FailureCallbacks.php",
+      "role": "php",
+      "sha256": "d3534a6374ebec4ded2265850d93fb0be6f2b73c55f4ac213cbb6e811db00dc2"
+    },
+    {
+      "bytes": 171,
+      "lines": 7,
+      "path": "php/source-correlation/includes/autoload.php",
+      "role": "php",
+      "sha256": "26079dacd3f24507fd0630025903f113a48fcc35e6244d47b00f5cf57d013c92"
+    },
+    {
+      "bytes": 369,
+      "lines": 7,
+      "path": "php/source-correlation/includes/register-adapters.php",
+      "role": "php",
+      "sha256": "1663b64e7135e03b6a5b788c03db215dd8fc925eb3a221d232f4ef1030edf02b"
+    },
+    {
+      "bytes": 443,
+      "lines": 18,
+      "path": "php/source-correlation/source-correlation.php",
+      "role": "php",
+      "sha256": "732b331e17391d7a3c9935f25ff766a888d0426a9f510c3347214b76f8ffcf15"
+    },
+    {
+      "bytes": 1197,
+      "lines": 1,
+      "path": "traces/hook.correlated.json",
+      "role": "traces",
+      "sha256": "b0a1c8374e8bab7f869aa3f87b740d2ffe600f417b869add8075b1376e79c414"
+    },
+    {
+      "bytes": 271,
+      "lines": 4,
+      "path": "traces/hook.native.stack",
+      "role": "traces",
+      "sha256": "d003d4f296c503f6259484632c4468e784ac336da3a7e5d8e698d02aea990340"
+    },
+    {
+      "bytes": 1557,
+      "lines": 1,
+      "path": "traces/private.correlated.json",
+      "role": "traces",
+      "sha256": "b0dffbe6bc77a3996d00f9395c9b5728a3c9d2a8d8f49ca45ab2ce2120c9ff07"
+    },
+    {
+      "bytes": 433,
+      "lines": 5,
+      "path": "traces/private.native.stack",
+      "role": "traces",
+      "sha256": "b3dc8cbfc20337eccc78225cc6359d8e97e97217d17bad3a9c69b38a8bb2c18a"
+    },
+    {
+      "bytes": 1225,
+      "lines": 1,
+      "path": "traces/render.correlated.json",
+      "role": "traces",
+      "sha256": "ce643a4bd196d6900e0eaca60f5df1c84047b17bfb83cc2bfca02b88f6cadd8b"
+    },
+    {
+      "bytes": 292,
+      "lines": 4,
+      "path": "traces/render.native.stack",
+      "role": "traces",
+      "sha256": "06ce75c4ca86d30cbdac06ac5c9e21b3717a6ce4e15bf4be9f92a6ada2bdab15"
+    },
+    {
+      "bytes": 1205,
+      "lines": 1,
+      "path": "traces/rest.correlated.json",
+      "role": "traces",
+      "sha256": "2514962dfcf7d91348a8de77138cf50c73818582340facb01473ec514bd2a9a8"
+    },
+    {
+      "bytes": 276,
+      "lines": 4,
+      "path": "traces/rest.native.stack",
+      "role": "traces",
+      "sha256": "8bf6dd27dcefed6d944beb8c166ee0018c65cf7d697780ddcb534b9a004c9724"
+    }
+  ],
+  "implementationCommit": "d6f74f9ac009862f0f65b2a46c67b69999b7fea9",
+  "implementationTree": "ed0048d0756c855de5e2fff14eb552a836fd8b32",
+  "packetDigest": "d107a8d8f7cfd0668b1281161fd37e9ec267e23170372d84168adf2a19b06a6b",
+  "packetDigestAlgorithm": "sha256 over canonical JSON of packetId, implementationCommit, implementationTree, and files",
+  "packetId": "wordpresshx-g1-php-readability-v1",
+  "reviewPolicy": {
+    "blockingFindingsMustBeResolved": true,
+    "independentReviewerRequired": true,
+    "ineligibleReviewerNames": [
+      "Marcelo Serpa"
+    ],
+    "productionSupportClaimed": false,
+    "publicationAuthorized": false,
+    "requiredCategories": [
+      "ordinary-php-naming-and-shape",
+      "wordpress-conventions",
+      "control-flow-and-bootstrap",
+      "adapters-and-private-boundary",
+      "errors-and-native-stack-frames",
+      "haxe-source-correlation"
+    ]
+  },
+  "schemaVersion": 1
+}

@@ -1,0 +1,105 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Acme\BooksAdapters;
+
+class PublicAdapters {
+	private static bool $initialized = false;
+
+	public static function activate(): void {
+		\update_option( 'acme_books_adapters_schema_version', '1', false );
+	}
+
+	public static function onInit(): void {
+		self::$initialized = true;
+	}
+
+	public static function isInitialized(): bool {
+		return self::$initialized;
+	}
+
+	public static function filterTitle(string $title, int $postId): string {
+		unset( $postId );
+		return self::normalizeTitleImpl( $title );
+	}
+
+	public static function restPermission(\WP_REST_Request $request): bool {
+		unset( $request );
+		return \current_user_can( 'read' );
+	}
+
+	/**
+	 * Serve one typed book response.
+	 *
+	 * @return \WP_Error|\WP_REST_Response The response or a validated request error.
+	 */
+	public static function restBook(\WP_REST_Request $request) {
+		$id = (int) $request->get_param( 'id' );
+		$payload = self::bookPayload( $id );
+		if ( \is_wp_error( $payload ) ) {
+			return $payload;
+		}
+		return new \WP_REST_Response( $payload, 200 );
+	}
+
+	/**
+	 * Render the typed book summary block.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes keyed by name.
+	 */
+	public static function renderSummary(array $attributes, string $content, \WP_Block $block): string {
+		unset( $content );
+		unset( $block );
+		$title = $attributes['title'] ?? 'Books';
+		return \sprintf( '<section class="acme-books-summary">%s</section>', \esc_html( (string) $title ) );
+	}
+
+	/**
+	 * Append one typed public label.
+	 *
+	 * @param array<int, string> $labels Mutable ordered labels.
+	 */
+	public static function appendLabel(array &$labels, string $label): void {
+		$labels[] = $label;
+	}
+
+	public static function normalizeTitle(string $title): string {
+		return self::normalizeTitleImpl( $title );
+	}
+
+	private static function normalizeTitleImpl(string $title): string {
+		return \strtoupper( \trim( $title ) );
+	}
+
+	/**
+	 * Create one typed book payload.
+	 *
+	 * @return \WP_Error|array<string, mixed> The payload or a validated identifier error.
+	 */
+	private static function bookPayload(int $id) {
+		if ( $id <= 0 ) {
+			return new \WP_Error( 'acme_books_invalid_id', 'Book ID must be positive.', array(
+				'status' => 400,
+			) );
+		}
+		return array(
+			'id'    => $id,
+			'title' => 'Book ' . (string) $id,
+		);
+	}
+
+	public static function registerRestRoutes(): void {
+		\register_rest_route( 'acme-books/v1', '/books/(?P<id>[\\d]+)', array(
+			'methods'             => \WP_REST_Server::READABLE,
+			'callback'            => array( self::class, 'restBook' ),
+			'permission_callback' => array( self::class, 'restPermission' ),
+		) );
+	}
+
+	public static function registerBlocks(): void {
+		\register_block_type( 'acme-books/summary', array(
+			'render_callback' => array( self::class, 'renderSummary' ),
+		) );
+	}
+}

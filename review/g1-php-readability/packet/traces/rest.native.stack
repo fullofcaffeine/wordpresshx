@@ -1,0 +1,4 @@
+RuntimeException: rest failure in /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php:19
+Stack trace:
+#0 /repo/compiler/wordpress/runtime/source-correlation-caller.php(34): Fixture\Correlation\FailureCallbacks::failRest(NULL)
+#1 {main}

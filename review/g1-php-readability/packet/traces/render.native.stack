@@ -1,0 +1,4 @@
+RuntimeException: render failure in /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php:31
+Stack trace:
+#0 /repo/compiler/wordpress/runtime/source-correlation-caller.php(37): Fixture\Correlation\FailureCallbacks::failRender(NULL, NULL, NULL)
+#1 {main}

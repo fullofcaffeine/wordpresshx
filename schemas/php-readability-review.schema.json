@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpress-hx.dev/schemas/php-readability-review.schema.json",
+  "title": "WordPressHx independent PHP readability review receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "schemaVersion",
+    "receiptId",
+    "packet",
+    "reviewer",
+    "reviewedAt",
+    "decision",
+    "categories",
+    "findings",
+    "confirmation",
+    "receiptDigest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "wordpress-hx.php-readability-review.v1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "receiptId": {
+      "type": "string",
+      "pattern": "^g1-php-readability-[a-z0-9][a-z0-9.-]*$"
+    },
+    "packet": {
+      "$ref": "#/$defs/packet"
+    },
+    "reviewer": {
+      "$ref": "#/$defs/reviewer"
+    },
+    "reviewedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "decision": {
+      "enum": [
+        "pending",
+        "accepted",
+        "changes-required"
+      ]
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/category"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "confirmation": {
+      "$ref": "#/$defs/confirmation"
+    },
+    "receiptDigest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packetId",
+        "implementationCommit",
+        "manifestSha256",
+        "packetDigest"
+      ],
+      "properties": {
+        "packetId": {
+          "const": "wordpresshx-g1-php-readability-v1"
+        },
+        "implementationCommit": {
+          "$ref": "#/$defs/sha1"
+        },
+        "manifestSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "packetDigest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "role",
+        "wordpressPhpExperience",
+        "independence"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2
+        },
+        "role": {
+          "type": "string",
+          "minLength": 8
+        },
+        "wordpressPhpExperience": {
+          "type": "string",
+          "minLength": 24
+        },
+        "independence": {
+          "$ref": "#/$defs/independence"
+        }
+      }
+    },
+    "independence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementedEmitter",
+        "contributedToReviewedCommit",
+        "preparedPacket",
+        "statement"
+      ],
+      "properties": {
+        "implementedEmitter": {
+          "type": "boolean"
+        },
+        "contributedToReviewedCommit": {
+          "type": "boolean"
+        },
+        "preparedPacket": {
+          "type": "boolean"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 32
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "outcome",
+        "notes",
+        "evidencePaths",
+        "findingIds"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "ordinary-php-naming-and-shape",
+            "wordpress-conventions",
+            "control-flow-and-bootstrap",
+            "adapters-and-private-boundary",
+            "errors-and-native-stack-frames",
+            "haxe-source-correlation"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "pending",
+            "accepted",
+            "changes-required"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 16
+        },
+        "evidencePaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "findingIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^g1-finding-[0-9]{3}$"
+          }
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "severity",
+        "summary",
+        "evidencePaths",
+        "resolution",
+        "resolutionNotes",
+        "resolutionEvidencePaths"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^g1-finding-[0-9]{3}$"
+        },
+        "category": {
+          "enum": [
+            "ordinary-php-naming-and-shape",
+            "wordpress-conventions",
+            "control-flow-and-bootstrap",
+            "adapters-and-private-boundary",
+            "errors-and-native-stack-frames",
+            "haxe-source-correlation"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "blocking",
+            "non-blocking",
+            "observation"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 16
+        },
+        "evidencePaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "resolution": {
+          "enum": [
+            "open",
+            "resolved",
+            "accepted-non-blocking"
+          ]
+        },
+        "resolutionNotes": {
+          "type": "string"
+        },
+        "resolutionEvidencePaths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allBlockingFindingsResolved",
+        "publicationAuthorized",
+        "productionSupportClaimed",
+        "attestation"
+      ],
+      "properties": {
+        "allBlockingFindingsResolved": {
+          "type": "boolean"
+        },
+        "publicationAuthorized": {
+          "const": false
+        },
+        "productionSupportClaimed": {
+          "const": false
+        },
+        "attestation": {
+          "type": "string",
+          "minLength": 32
+        }
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    }
+  }
+}

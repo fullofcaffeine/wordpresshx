@@ -111,6 +111,16 @@ WordPress 7.0 MySQL/MariaDB runtime lanes. The bounded receipt is
 SDK-034 still owns browser stack parsing, composed/two-stage lookup, and
 development/minified throw evidence.
 
+[`php-readability-review.schema.json`](php-readability-review.schema.json)
+closes the G1.2 independent-review receipt. It binds one named reviewer to the
+exact content-addressed PHP packet, six required readability/debuggability
+categories, every classified finding, and resolution evidence. The companion
+validator rejects emitter authors, packet preparers, automated reviewers,
+placeholders, stale packet identities, unresolved blockers, and publication or
+production-support claims. The schema and template are preparation evidence;
+G1.2 remains open until an eligible WordPress/PHP reviewer submits an accepted
+receipt.
+
 [`adoption-contract.schema.json`](adoption-contract.schema.json),
 [`adoption-capability.schema.json`](adoption-capability.schema.json), and
 [`adoption-review.schema.json`](adoption-review.schema.json) are ADR-015's

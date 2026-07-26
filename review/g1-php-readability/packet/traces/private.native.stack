@@ -1,0 +1,5 @@
+RuntimeException: private failure in /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php:39
+Stack trace:
+#0 /repo/compiler/wordpress/build/source-correlation/development/includes/FailureCallbacks.php(35): Fixture\Correlation\FailureCallbacks::privateFailure()
+#1 /repo/compiler/wordpress/runtime/source-correlation-caller.php(40): Fixture\Correlation\FailureCallbacks::failPrivate()
+#2 {main}

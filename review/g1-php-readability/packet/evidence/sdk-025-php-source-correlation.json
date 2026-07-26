@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-025-PHP-SOURCE-CORRELATION",
+  "bead": "wordpresshx-sdk-025",
+  "status": "verified",
+  "observedAt": "2026-07-18T14:57:30Z",
+  "subject": {
+    "architecture": "manifests/source-correlation-architecture.json",
+    "genericCompiler": "compiler/reflaxe.php",
+    "genericCompilerPackageFileCount": 37,
+    "genericCompilerPackageDigestAlgorithm": "sha256 over sorted lines: <file-sha256><two spaces><repo-relative-path><newline>; build/ excluded",
+    "genericCompilerPackageContentSha256": "4d43afdc4f35cb45e55ab760e982d213a2c0749dc4f0c1b72790c30a64287294",
+    "wordpressProfile": "compiler/wordpress",
+    "cliPackage": "packages/cli",
+    "phpMapSchema": "schemas/php-haxe-map.schema.json",
+    "sourceIndexSchema": "schemas/source-correlation-index.schema.json",
+    "profileId": "wp70-release"
+  },
+  "publicContracts": {
+    "phpMapFormat": "wordpresshx.php-haxe-range-map.v1",
+    "sourceIndexFormat": "wordpresshx.source-correlation-index.v1",
+    "genericMapFixtureFormat": "reflaxe.php-range-map.v1",
+    "traceCommand": "wphx-sdk trace php <stack-file> --index <source-index> [--source-root <id>=<path>] [--format text|json]",
+    "coordinates": "authenticated half-open UTF-8 byte ranges with one-based lines and zero-based UTF-8 byte columns",
+    "nativeLineLookup": "unique emitter-owned trace anchor only",
+    "pathLookup": "complete normalized logical relative identity only"
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "formatter": "1.18.0",
+    "genes": {
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
+    },
+    "hxnodejs": "10.0.0",
+    "node": {
+      "version": "22.17.0",
+      "image": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0"
+    },
+    "php74": {
+      "version": "7.4.33",
+      "image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5"
+    },
+    "php84": {
+      "version": "8.4.7",
+      "image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367"
+    },
+    "wordpress": {
+      "version": "7.0",
+      "phpVersion": "8.4.23",
+      "image": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161"
+    },
+    "mysql": "docker.io/library/mysql@sha256:c592c15aaf4a1961e15d82eb31ea5987dda862d1c4b1e93424438c0e91dc1f8d",
+    "mariadb": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b"
+  },
+  "implementation": {
+    "implementationCommit": "3fc02d0168d929993e42226db6e419a229b50267",
+    "genericCompiler": {
+      "exactSourceIdentity": true,
+      "contentAuthenticatedSources": true,
+      "declarationMemberAndStatementMappings": true,
+      "semanticNodeIds": true,
+      "traceAnchorIntent": true,
+      "deterministicCanonicalMapWriter": true,
+      "wordpressKnowledge": false
+    },
+    "wordpressProjection": {
+      "formatIdentityOwnedBySdk": true,
+      "packageSourceIndexWriter": true,
+      "developmentProfile": true,
+      "packagedDebugCompanionProfile": true,
+      "productionInstallProfile": true
+    },
+    "cli": {
+      "applicationLanguage": "Haxe",
+      "javascriptCompiler": "Genes",
+      "runtime": "Node ESM",
+      "offline": true,
+      "readOnly": true,
+      "networkLookup": false,
+      "textOutput": true,
+      "canonicalJsonOutput": true,
+      "exitCodes": {
+        "processed": 0,
+        "usageOrStackInput": 2,
+        "integrityOrSchema": 3,
+        "ambiguousContract": 4
+      }
+    },
+    "changeDecision": {
+      "genesSourceChanged": false,
+      "genesPullRequest": null,
+      "wordpressSpecificGenesBranch": false,
+      "reason": "Genes 1.38.0 emits the required deterministic Node ESM CLI; no WordPress-specific compiler branch is present."
+    }
+  },
+  "authenticatedInputs": [
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceFile.hx",
+      "sha256": "5c4b5dd8c31c2020b3d40fd75b33fe766d2ef6fa5d9e636c13b53abbe6abff48"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceRange.hx",
+      "sha256": "9605a543a6698e4f5ff611340f6a3861a4af070668965899d09e5fa952bb8d46"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+      "sha256": "7d7a03340da9bf73a1cd3154c33897113550fc5212ffe010b41c640d566bd189"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx",
+      "sha256": "6c791a26ef87d3db663abe81e306a340e3b9ad54e1a60fb4c1295b6ba60853c3"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpRangeMapWriter.hx",
+      "sha256": "841ecaa28ee4a441a43bb3d1a1608b9ed63363744af1f3dd785985b4dbe3f63e"
+    },
+    {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
+      "sha256": "a7fb8e0ec84f5cf19202b0c3a5bcae5eb9bf132ebb124b14bd5c806a74255c61"
+    },
+    {
+      "path": "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
+      "sha256": "d274806fe5ae2ac89709f8568797723dee701044ec31cfe6ceeccd58f38cb833"
+    },
+    {
+      "path": "compiler/wordpress/test/fixtures/SourceCorrelationFixture.hx",
+      "sha256": "e0351d4e74cc9da90980252a2e2f6252e918215ebe8fa9a2c256da21528112ce"
+    },
+    {
+      "path": "compiler/wordpress/runtime/probe-source-correlation.php",
+      "sha256": "997c3a22d5053e6face9db1ad81d8a34162b4b2273df42824f3c5f949a44a957"
+    },
+    {
+      "path": "compiler/wordpress/scripts/package-source-correlation.py",
+      "sha256": "14fe7721d9b138b6192c372bfb83535465b779ffa7bec9a4b787356ef300dfb4"
+    },
+    {
+      "path": "scripts/source-correlation/validate-sdk025.py",
+      "sha256": "a80c61b99fd2fe1f6e38834dac39323db7bdf1dd7a339c3477c26e72a580f6c7"
+    },
+    {
+      "path": "packages/cli/dependency-lock.json",
+      "sha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/Main.hx",
+      "sha256": "acba318a42be4de229b7c34ef5ca12b691a1eaec41d8c41777984c85269c28cf"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
+      "sha256": "4e4f7f1b29a239dc0bef550818abbf1d1606d554d7a3e44f6bf96aab65a0e109"
+    },
+    {
+      "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
+      "sha256": "3ab2f4a04247fe96138f2765506432c389e478bb781876f02636ed67ed7dbf3b"
+    },
+    {
+      "path": "packages/cli/scripts/test.sh",
+      "sha256": "7c7b2250c0806017ccc61cda0f7bbb069ac2cb24eb9ba7ec5b4bd7441589505d"
+    },
+    {
+      "path": "packages/cli/scripts/verify-dependency-lock.py",
+      "sha256": "232f725869bfe0bc89a775bee2fca20ece5d1f56305dcd0156e7fc25d4d8941e"
+    },
+    {
+      "path": "packages/cli/scripts/verify-php-trace.py",
+      "sha256": "0f4618aac61eadd3ddc73e430b4420d7c36f95dc272064d3b47e3aba53fa0d03"
+    },
+    {
+      "path": "schemas/php-haxe-map.schema.json",
+      "sha256": "485ce03425ba37902a3d13edc21fbe41af4c8cf7ce01a5a34ade9e63e344d091"
+    },
+    {
+      "path": "schemas/source-correlation-index.schema.json",
+      "sha256": "90b30232f638d3ec999aaab45a007c8a63a48d6cfba7425f2f6fea2060290b3d"
+    }
+  ],
+  "fixtureEvidence": {
+    "haxeSourcePath": "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
+    "haxeSourceSha256": "cb6f9608f2cebf705e76426fe5e2d611b01a6b1a1b202a552e1e21b9435dd1bc",
+    "generatedPhpPath": "includes/FailureCallbacks.php",
+    "generatedPhpSha256": "e2612cf416877983e712c930ee6fc0e36ccd3f37c451b964a8f5af990ee7e157",
+    "mapSha256": "7cbfd547caeca5855ae31b609a56ba72b664efb2def20eea7c925395d1e5e35b",
+    "developmentIndexSha256": "456e7589a58b97d24678cd3da76b2018dfbb44867e39066e72faaea5466a731f",
+    "packagedIndexSha256": "d8793861684212877e95f256ee0ab69c5f95150427ea6657a7033f28af77f333",
+    "mappingCount": 13,
+    "traceAnchorCount": 4,
+    "failureModes": [
+      "hook",
+      "rest",
+      "render",
+      "private"
+    ],
+    "privateFailureProducesHonestPartialFrame": true,
+    "multibyteGenericFixture": "café"
+  },
+  "verification": {
+    "genericCompiler": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed",
+      "wordpressIsolationScan": "passed",
+      "deterministicMapReplay": "passed"
+    },
+    "wordpressProfile": {
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed",
+      "closedIndexes": 2,
+      "exactMaps": 2,
+      "productionMapCount": 0,
+      "productionSourceIndexCount": 0,
+      "productionHaxeSourceCount": 0
+    },
+    "exactPhpMatrix": {
+      "command": "bash compiler/wordpress/scripts/test-php-matrix.sh",
+      "containerNetwork": "none",
+      "profiles": [
+        "development",
+        "packaged-evidence",
+        "production-plugin"
+      ],
+      "failureModesPerProfile": 4,
+      "php74": "passed",
+      "php84": "passed"
+    },
+    "wordpressMatrix": {
+      "command": "bash compiler/wordpress/scripts/test-wordpress.sh",
+      "wordpressVersion": "7.0",
+      "plugin": "source-correlation/source-correlation.php",
+      "generatedPhpFileCount": 5,
+      "activationOutputBytes": 0,
+      "failureModes": [
+        "hook",
+        "rest",
+        "render",
+        "private"
+      ],
+      "nativeStackPreserved": true,
+      "lanes": [
+        {
+          "database": "mysql",
+          "freshInstall": "passed",
+          "activation": "passed",
+          "freshRequestProbe": "passed",
+          "volumeResetBeforeAndAfter": "passed"
+        },
+        {
+          "database": "mariadb",
+          "freshInstall": "passed",
+          "activation": "passed",
+          "freshRequestProbe": "passed",
+          "volumeResetBeforeAndAfter": "passed"
+        }
+      ]
+    },
+    "traceCli": {
+      "command": "bash packages/cli/scripts/test.sh",
+      "outcome": "passed",
+      "nativeStackCount": 8,
+      "mappedTraceAnchorCount": 8,
+      "honestPrivatePartialFrameCount": 2,
+      "nativeLinesPreservedByteForByte": true,
+      "developmentAndPackagedSemanticsMatch": true,
+      "stableTextOutput": true,
+      "canonicalJsonOutput": true,
+      "secondGenesCompileMatched": true
+    },
+    "failClosed": {
+      "staleMapExit": 3,
+      "dishonestCoordinateExit": 3,
+      "ambiguousAnchorExit": 4,
+      "absolutePathExit": 3,
+      "unknownFieldExit": 3,
+      "staleGeneratedPhpExit": 3,
+      "invalidSourceRootIdExit": 2,
+      "unknownSourceRootIdExit": 2,
+      "emptyStackExit": 2,
+      "missingIndexExit": 2,
+      "outOfRangeFrameExit": 2,
+      "basenameOnlyPath": "unmapped-no-layer",
+      "nearestLineFallback": false,
+      "machinePathLeakCount": 0
+    }
+  },
+  "packaging": {
+    "productionZipSha256": "b3a753f1a34783dfc5395a8e26ae689237517f1423ed9ff2709bc20fc8073829",
+    "productionEntries": [
+      "includes/Bootstrap.php",
+      "includes/FailureCallbacks.php",
+      "includes/autoload.php",
+      "includes/register-adapters.php",
+      "source-correlation.php"
+    ],
+    "debugCompanionZipSha256": "d59c578d853e81b306ca10468011b5dbe6cfbcaf9780bd704e1771ff66b83530",
+    "debugCompanionEntries": [
+      "includes/FailureCallbacks.php.haxe-map.json",
+      "source-index.json"
+    ],
+    "deterministicReplay": "passed",
+    "mapsInProduction": false,
+    "sourceIndexInProduction": false,
+    "sourceContentIncluded": false,
+    "developmentHandlerIncluded": false,
+    "debugCompanionBoundToProductionPhp": true
+  },
+  "hostedVerification": {
+    "status": "passed",
+    "workflow": "Repository bootstrap",
+    "commit": "95de6f37f2e85878439563722ab157cd4e2b5bc6",
+    "runId": 29648907754,
+    "fullMatrixStatus": "passed",
+    "jobCount": 10,
+    "haxeJobId": 88091750488,
+    "cliStep": "Test Haxe and Genes PHP trace CLI",
+    "reverificationReason": "The shared CLI dependency lock and verifier now authenticate the exact per-platform Playwright browser matrix introduced by SDK-034",
+    "previousPassedVerification": {
+      "commit": "3fc02d0168d929993e42226db6e419a229b50267",
+      "runId": 29644917228,
+      "fullMatrixStatus": "passed",
+      "jobCount": 10,
+      "haxeJobId": 88081445092
+    },
+    "discardedAttempts": [
+      {
+        "runId": 29644579049,
+        "commit": "08b785fa92e6e43cedb1f49154b577bc5e069c44",
+        "outcome": "failed-before-cli-compile",
+        "reason": "the hosted gate invoked setup-haxe instead of the authenticated Lix shim after scoped dependencies were downloaded; all other nine hosted jobs passed"
+      }
+    ]
+  },
+  "sdk043CompatibilityReverification": {
+    "observedAt": "2026-07-18T23:01:29Z",
+    "reason": "The private trace bin remains exact while SDK-043 adds the final wphx project bin to the same package manifest.",
+    "requiredBins": {
+      "wphx": "build/wphx.js",
+      "wphx-sdk": "build/index.js"
+    },
+    "command": "bash packages/cli/scripts/test.sh",
+    "outcome": "passed-local",
+    "hostedEvidenceOwner": "SDK-043-PROJECT-CLI"
+  },
+  "claims": {
+    "deterministicPhpRangeMap": "emitted-and-independently-validated",
+    "projectRelativePathPrivacy": "negative-tested",
+    "phpTraceCli": "controlled-runtime-tested",
+    "nativeFramePreservation": "controlled-and-wordpress-runtime-tested",
+    "representativeWordpressFailures": "runtime-tested-on-two-database-lanes",
+    "debugCompanionRetention": "package-tested",
+    "browserTraceCorrelation": "implemented-by-sdk-034-not-part-of-sdk-025-hosted-claim",
+    "wordpressDevelopmentHandler": "not-implemented-optional",
+    "arbitraryHaxePhpCompilation": "not-claimed",
+    "productionSupport": "not-tested",
+    "publicPackagePublication": "blocked"
+  }
+}

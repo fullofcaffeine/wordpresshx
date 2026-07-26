@@ -424,4 +424,13 @@ MariaDB lanes verify a durable option on a fresh request. The receipt changes
 neither the generic PHP compiler nor the still-pending independent G1.2
 readability review, publication, or production-support claims.
 
+The G1.2 review materials live under `review/g1-php-readability/`. The tracked
+packet binds ordinary generated PHP, non-Haxe callers, native exception stacks,
+exact Haxe correlations, authoring sources, and evidence receipts to
+implementation commit `d6f74f9ac009862f0f65b2a46c67b69999b7fea9`. Its
+machine-checked template cannot approve the emitter: a completed receipt must
+name an experienced WordPress/PHP reviewer who neither implemented the emitter,
+contributed to that commit, nor prepared the packet. G1 remains open until such
+a reviewer accepts all six categories and every blocking finding is resolved.
+
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

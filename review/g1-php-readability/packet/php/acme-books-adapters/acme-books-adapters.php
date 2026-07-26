@@ -1,0 +1,19 @@
+<?php
+/**
+ * Plugin Name: Acme Books Adapters
+ * Description: Typed SDK-023 native WordPress adapter fixture.
+ * Version: 0.0.0
+ * Requires at least: 7.0
+ * Requires PHP: 7.4
+ * Author: WordPressHx SDK fixture
+ * License: LicenseRef-WordPressHx-Review-Pending
+ * Text Domain: acme-books-adapters
+ * Domain Path: /languages
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
+require_once __DIR__ . '/includes/autoload.php';
+\register_activation_hook( __FILE__, array( \Acme\BooksAdapters\PublicAdapters::class, 'activate' ) );
+\Acme\BooksAdapters\Bootstrap::boot();

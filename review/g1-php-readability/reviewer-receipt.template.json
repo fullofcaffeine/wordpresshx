@@ -1,0 +1,101 @@
+{
+  "schema": "wordpress-hx.php-readability-review.v1",
+  "schemaVersion": 1,
+  "receiptId": "g1-php-readability-replace-me",
+  "packet": {
+    "packetId": "wordpresshx-g1-php-readability-v1",
+    "implementationCommit": "d6f74f9ac009862f0f65b2a46c67b69999b7fea9",
+    "manifestSha256": "787f3a9e787f1576758122436658487f3b972d7c636657be63335cec83204c31",
+    "packetDigest": "d107a8d8f7cfd0668b1281161fd37e9ec267e23170372d84168adf2a19b06a6b"
+  },
+  "reviewer": {
+    "name": "REPLACE_WITH_REVIEWER_NAME",
+    "role": "REPLACE_WITH_RELEVANT_WORDPRESS_PHP_ROLE",
+    "wordpressPhpExperience": "REPLACE_WITH_RELEVANT_WORDPRESS_AND_PHP_EXPERIENCE",
+    "independence": {
+      "implementedEmitter": false,
+      "contributedToReviewedCommit": false,
+      "preparedPacket": false,
+      "statement": "REPLACE_WITH_A_DIRECT_INDEPENDENCE_STATEMENT"
+    }
+  },
+  "reviewedAt": "0000-00-00",
+  "decision": "pending",
+  "categories": [
+    {
+      "id": "ordinary-php-naming-and-shape",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_PHP_NAMING_AND_SHAPE",
+      "evidencePaths": [
+        "php/acme-books-adapters/includes/PublicAdapters.php",
+        "callers/native-adapter-caller.php"
+      ],
+      "findingIds": []
+    },
+    {
+      "id": "wordpress-conventions",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_WORDPRESS_CONVENTIONS",
+      "evidencePaths": [
+        "php/acme-books-adapters/acme-books-adapters.php",
+        "php/acme-books-adapters/includes/register-adapters.php",
+        "callers/probe-adapters.php"
+      ],
+      "findingIds": []
+    },
+    {
+      "id": "control-flow-and-bootstrap",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_CONTROL_FLOW_AND_BOOTSTRAP",
+      "evidencePaths": [
+        "php/acme-books-adapters/acme-books-adapters.php",
+        "php/acme-books-adapters/includes/autoload.php",
+        "php/acme-books-adapters/includes/Bootstrap.php"
+      ],
+      "findingIds": []
+    },
+    {
+      "id": "adapters-and-private-boundary",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_ADAPTER_AND_PRIVATE_BOUNDARIES",
+      "evidencePaths": [
+        "php/source-correlation/includes/FailureCallbacks.php",
+        "callers/source-correlation-caller.php",
+        "evidence/sdk-024-private-php-runtime.json"
+      ],
+      "findingIds": []
+    },
+    {
+      "id": "errors-and-native-stack-frames",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_ERRORS_AND_NATIVE_STACK_FRAMES",
+      "evidencePaths": [
+        "traces/hook.native.stack",
+        "traces/private.native.stack",
+        "traces/render.native.stack",
+        "traces/rest.native.stack"
+      ],
+      "findingIds": []
+    },
+    {
+      "id": "haxe-source-correlation",
+      "outcome": "pending",
+      "notes": "REPLACE_WITH_REVIEW_NOTES_FOR_HAXE_SOURCE_CORRELATION",
+      "evidencePaths": [
+        "debug/source-index.json",
+        "debug/includes/FailureCallbacks.php.haxe-map.json",
+        "haxe/fixtures/SourceCorrelationCallbacks.hx",
+        "traces/private.correlated.json"
+      ],
+      "findingIds": []
+    }
+  ],
+  "findings": [],
+  "confirmation": {
+    "allBlockingFindingsResolved": false,
+    "publicationAuthorized": false,
+    "productionSupportClaimed": false,
+    "attestation": "REPLACE_AFTER_REVIEW_WITH_A_DIRECT_ATTESTATION"
+  },
+  "receiptDigest": null
+}
