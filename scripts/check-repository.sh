@@ -923,6 +923,8 @@ required_files=(
   schemas/unsafe-boundary-waiver.schema.json
   manifests/unsafe-boundary-policy.json
   fixtures/unsafe-boundary/scenarios.json
+  fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json
+  fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt
   scripts/wordpress/reset-harness.sh
   scripts/wordpress/run-harness.sh
   scripts/wordpress/test-harness.sh
@@ -2562,6 +2564,8 @@ adr019_source_paths = (
     "manifests/unsafe-boundary-policy.json",
     "schemas/unsafe-boundary-waiver.schema.json",
     "fixtures/unsafe-boundary/scenarios.json",
+    "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json",
+    "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
     "scripts/security/test-unsafe-boundary-policy.py",
 )
 adr019_source_lines = sorted(
@@ -2572,7 +2576,7 @@ assert hashlib.sha256("".join(adr019_source_lines).encode("utf-8")).hexdigest() 
     adr019_verification["sourceTreeSha256"]
 )
 assert adr019_verification["sourceTreeDigestAlgorithm"] == (
-    "sha256-sorted-policy-schema-scenarios-validator-subject-list-v1"
+    "sha256-sorted-policy-schema-scenarios-waiver-source-validator-subject-list-v1"
 )
 assert adr019_verification["policyDigest"] == (
     "9a577e5a2e992f2a99f815a19570b23045a5589e59574a641f349ee014d10c7d"
@@ -2580,9 +2584,12 @@ assert adr019_verification["policyDigest"] == (
 assert adr019_verification["scenarioDigest"] == (
     "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf"
 )
+assert adr019_verification["waiverDigest"] == (
+    "f2ef3ea415b3526b6a0d67df4512ffa81e01377d1230c771c0bf693b829ba229"
+)
 assert adr019_verification["categoryCount"] == 9
 assert adr019_verification["scenarioCount"] == 14
-assert adr019_verification["failClosedMutationCount"] == 35
+assert adr019_verification["failClosedMutationCount"] == 51
 assert adr019_verification["waiverSchemaClosed"] is True
 assert adr019_verification["sourceGeneratedAndFinalInventoriesRequired"] is True
 assert adr019_verification["prohibitedScopesRemainUnwaivable"] is True
@@ -2618,11 +2625,18 @@ adr019_hosted = adr019_receipt["hostedWorkflow"]
 assert adr019_hosted["workflow"] == "Unsafe-boundary policy"
 assert adr019_hosted["job"] == "unsafe-boundary-policy"
 assert adr019_hosted["required"] is True
-if adr019_hosted["status"] == "pending-first-hosted-main-run":
+if adr019_hosted["status"] in {
+    "pending-first-hosted-main-run",
+    "pending-canonical-waiver-hosted-run",
+}:
     assert adr019_receipt["status"] == "implemented-hosted-pending"
     assert adr019_hosted["runId"] is None
     assert adr019_hosted["jobId"] is None
     assert adr019_hosted["commit"] is None
+    if adr019_hosted["status"] == "pending-canonical-waiver-hosted-run":
+        assert isinstance(adr019_hosted["historicalRunId"], int)
+        assert isinstance(adr019_hosted["historicalJobId"], int)
+        assert sha1.fullmatch(adr019_hosted["historicalCommit"])
 elif adr019_hosted["status"] == "passed":
     assert adr019_receipt["status"] in {
         "implemented-review-pending",

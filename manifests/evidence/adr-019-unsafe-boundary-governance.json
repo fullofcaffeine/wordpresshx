@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-review-pending",
-  "observedAt": "2026-07-26T23:15:26Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-26T23:22:29Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "bc8c0695fe087d3d04f13b14f68c1513de00b97fa75e179270aa931bd2b35ff7"
+      "sha256": "f7f64b8b8a568b837b7d8f96911032238cf0df37e2881bfb3940b22887c00259"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -21,9 +21,17 @@
       "path": "fixtures/unsafe-boundary/scenarios.json",
       "sha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
     },
+    "canonicalWaiver": {
+      "path": "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json",
+      "sha256": "c31667450c474fcd2abe2d8923ad2e83c00f18d761639d6363b52574a0c78a79"
+    },
+    "canonicalWaiverSource": {
+      "path": "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
+      "sha256": "94d447a48c98cf2ffcb56fc713fa17eaedc9799381b28f01b82b0e0013e2e11c"
+    },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "daa98636f33f06f3184870ab007e16e4e69058f7d84a5d60a23f12447d8e8958"
+      "sha256": "9a25bdfc672c0e75750ebbeaa2cb1c64bbbcc54999460fdeb92f2ac34de8bad9"
     },
     "workflow": {
       "path": ".github/workflows/unsafe-boundary-policy.yml",
@@ -51,15 +59,17 @@
       "python3 scripts/security/test-unsafe-boundary-policy.py",
       "bash scripts/check-repository.sh"
     ],
-    "sourceTreeDigestAlgorithm": "sha256-sorted-policy-schema-scenarios-validator-subject-list-v1",
-    "sourceTreeSha256": "76ea519a581c43e157401c9f904b53e2ca7d2040ad4c328802196a5778ae0133",
+    "sourceTreeDigestAlgorithm": "sha256-sorted-policy-schema-scenarios-waiver-source-validator-subject-list-v1",
+    "sourceTreeSha256": "4a32e450cfa3962a5b9c71ec11b073aa55a6a37396351da7948420e883710459",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
     "policyDigest": "9a577e5a2e992f2a99f815a19570b23045a5589e59574a641f349ee014d10c7d",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
     "scenarioDigest": "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf",
+    "waiverDigestAlgorithm": "sha256-canonical-json-v1",
+    "waiverDigest": "f2ef3ea415b3526b6a0d67df4512ffa81e01377d1230c771c0bf693b829ba229",
     "categoryCount": 9,
     "scenarioCount": 14,
-    "failClosedMutationCount": 35,
+    "failClosedMutationCount": 51,
     "waiverSchemaClosed": true,
     "sourceGeneratedAndFinalInventoriesRequired": true,
     "prohibitedScopesRemainUnwaivable": true,
@@ -82,22 +92,25 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": 30224851347,
-    "jobId": 89853259064,
-    "commit": "1d1296a9078a6e4834fb2d1f5900e568aa74c4f8",
-    "status": "passed"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-canonical-waiver-hosted-run",
+    "historicalRunId": 30224851347,
+    "historicalJobId": 89853259064,
+    "historicalCommit": "1d1296a9078a6e4834fb2d1f5900e568aa74c4f8"
   },
   "limitations": [
     "The executable fixture proves a bounded governance model, not a production source/generated/final-artifact scanner.",
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The focused hosted policy gate passes; independent Oracle review is still required before ADR acceptance."
+    "The initial focused hosted policy gate predates the canonical waiver fixture; a current hosted run and independent Oracle review are required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
-    "deterministicFailClosedScenarios": "passed-local-and-hosted",
+    "deterministicFailClosedScenarios": "passed-local-current-hosted-pending",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",
     "productionArtifactInventory": "not-tested",

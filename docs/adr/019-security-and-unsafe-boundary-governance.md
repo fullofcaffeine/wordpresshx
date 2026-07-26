@@ -284,19 +284,25 @@ Machine authority:
 - [`unsafe-boundary-policy.json`](../../manifests/unsafe-boundary-policy.json)
 - [`unsafe-boundary-waiver.schema.json`](../../schemas/unsafe-boundary-waiver.schema.json)
 - [`scenarios.json`](../../fixtures/unsafe-boundary/scenarios.json)
+- [`WPHX-UNSAFE-9999.json`](../../fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json)
 - [`test-unsafe-boundary-policy.py`](../../scripts/security/test-unsafe-boundary-policy.py)
 
-The simulation covers a current narrow waiver, missing/stale inventory, expiry,
-source and scope drift, a prohibited public Haxe type, self-approval, missing
-waiver, missing generated mapping, high/critical risk, missing independent
-review, decoded TypeScript `unknown`, and overlong expiry. The policy validator
-also applies independent fail-closed mutations to the authority, categories,
-lifecycle, inventory, gates, diagnostics, and claims.
+The canonical waiver is explicitly synthetic and authorizes no repository or
+release boundary. It nevertheless exercises the closed record against real
+repository-relative source/evidence files and exact hashes. The simulation
+covers a current narrow waiver, missing/stale inventory, expiry, source and
+scope drift, a prohibited public Haxe type, self-approval, missing waiver,
+missing generated mapping, high/critical risk, missing independent review,
+decoded TypeScript `unknown`, and overlong expiry. The policy validator also
+applies fifty-one fail-closed mutations to the authority, categories, lifecycle,
+inventory, gates, diagnostics, schema, canonical waiver, and claims.
 
-Focused public workflow
+The initial focused public workflow
 [`30224851347`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30224851347),
 job `89853259064`, passed the exact policy, schema, scenarios, and mutation
-validator at commit `1d1296a9078a6e4834fb2d1f5900e568aa74c4f8`.
+validator at commit `1d1296a9078a6e4834fb2d1f5900e568aa74c4f8`. It predates
+the canonical waiver-instance fixture and its additional mutations; a current
+hosted run is required before review.
 
 Acceptance commands:
 

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "WPHX-UNSAFE-9999",
+  "boundaryId": "UB-SYNTHETIC-COMPILER-PRIVATE-ADAPTER",
+  "category": "php-raw-segment",
+  "reason": "Synthetic fixture proving the closed ADR-019 record; it authorizes no repository or release boundary.",
+  "owner": "Marcelo Serpa",
+  "review": {
+    "reviewer": "independent-oracle-fixture",
+    "reviewedAt": "2026-07-20T00:00:00Z",
+    "decision": "approved",
+    "evidenceSha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
+  },
+  "createdAt": "2026-07-20T00:00:00Z",
+  "expiresAt": "2026-09-01T00:00:00Z",
+  "risk": {
+    "severity": "medium",
+    "threat": "A raw compiler-private segment could bypass typed emission if this were a production boundary.",
+    "mitigation": "The fixture is non-executable and the production API remains withheld."
+  },
+  "source": {
+    "path": "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
+    "sha256": "94d447a48c98cf2ffcb56fc713fa17eaedc9799381b28f01b82b0e0013e2e11c",
+    "startLine": 1,
+    "endLine": 3
+  },
+  "scope": {
+    "package": "compiler/reflaxe.php",
+    "layer": "compiler-private-adapter",
+    "profiles": ["generic-php"],
+    "targets": ["php"]
+  },
+  "evidence": [
+    {
+      "path": "fixtures/unsafe-boundary/scenarios.json",
+      "sha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
+    }
+  ],
+  "removal": {
+    "bead": "wordpresshx-sdk-052",
+    "deadline": "2026-09-01T00:00:00Z",
+    "successCondition": "Replace the synthetic fixture with production declaration and inventory evidence or remove it before SDK-052 closure."
+  }
+}

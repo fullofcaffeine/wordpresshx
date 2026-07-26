@@ -15,6 +15,13 @@ ROOT = Path(__file__).resolve().parents[2]
 POLICY_PATH = ROOT / "manifests" / "unsafe-boundary-policy.json"
 SCHEMA_PATH = ROOT / "schemas" / "unsafe-boundary-waiver.schema.json"
 SCENARIOS_PATH = ROOT / "fixtures" / "unsafe-boundary" / "scenarios.json"
+WAIVER_PATH = (
+    ROOT
+    / "fixtures"
+    / "unsafe-boundary"
+    / "waivers"
+    / "WPHX-UNSAFE-9999.json"
+)
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 UTC_INSTANT = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
@@ -114,6 +121,20 @@ def digest(value: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def repository_path(value: object, label: str) -> Path:
+    text = string_value(value, label)
+    if (
+        text.startswith("/")
+        or "\\" in text
+        or any(part == ".." for part in text.split("/"))
+    ):
+        raise ValidationError(f"{label} escapes the repository")
+    path = ROOT / text
+    if not path.is_file():
+        raise ValidationError(f"{label} does not name a file: {text}")
+    return path
+
+
 def validate_schema(schema: dict[str, object], category_ids: list[str]) -> None:
     exact_keys(
         schema,
@@ -170,6 +191,156 @@ def validate_schema(schema: dict[str, object], category_ids: list[str]) -> None:
         field = object_value(properties.get(closed_object), closed_object)
         if field.get("additionalProperties") is not False:
             raise ValidationError(f"{closed_object} schema must be closed")
+
+
+def validate_waiver_instance(
+    waiver: dict[str, object],
+    categories: dict[str, dict[str, object]],
+    evaluation_at: datetime,
+) -> None:
+    exact_keys(
+        waiver,
+        {
+            "schemaVersion",
+            "id",
+            "boundaryId",
+            "category",
+            "reason",
+            "owner",
+            "review",
+            "createdAt",
+            "expiresAt",
+            "risk",
+            "source",
+            "scope",
+            "evidence",
+            "removal",
+        },
+        "waiver",
+    )
+    if waiver["schemaVersion"] != 1:
+        raise ValidationError("waiver schema version changed")
+    waiver_id = string_value(waiver["id"], "waiver id")
+    if re.fullmatch(r"WPHX-UNSAFE-[0-9]{4}", waiver_id) is None:
+        raise ValidationError("waiver ID is invalid")
+    boundary_id = string_value(waiver["boundaryId"], "boundary ID")
+    if re.fullmatch(r"UB-[A-Z0-9][A-Z0-9-]*", boundary_id) is None:
+        raise ValidationError("boundary ID is invalid")
+    category_id = string_value(waiver["category"], "waiver category")
+    category = categories.get(category_id)
+    if category is None or category["waiverRequired"] is not True:
+        raise ValidationError("waiver category is unknown or does not use waivers")
+    string_value(waiver["reason"], "waiver reason")
+    owner = string_value(waiver["owner"], "waiver owner")
+
+    review = object_value(waiver["review"], "waiver review")
+    exact_keys(
+        review,
+        {"reviewer", "reviewedAt", "decision", "evidenceSha256"},
+        "waiver review",
+    )
+    reviewer = string_value(review["reviewer"], "waiver reviewer")
+    if reviewer == owner:
+        raise ValidationError("waiver owner cannot self-approve")
+    if review["decision"] != "approved":
+        raise ValidationError("waiver review is not approved")
+    review_evidence = string_value(
+        review["evidenceSha256"], "review evidence SHA-256"
+    )
+    if SHA256.fullmatch(review_evidence) is None:
+        raise ValidationError("review evidence SHA-256 is invalid")
+
+    created_at = parse_utc(waiver["createdAt"], "waiver createdAt")
+    reviewed_at = parse_utc(review["reviewedAt"], "waiver reviewedAt")
+    expires_at = parse_utc(waiver["expiresAt"], "waiver expiresAt")
+    if not (
+        created_at <= reviewed_at <= evaluation_at < expires_at
+        and expires_at - created_at <= timedelta(days=90)
+    ):
+        raise ValidationError("waiver timestamps are invalid or non-current")
+
+    risk = object_value(waiver["risk"], "waiver risk")
+    exact_keys(risk, {"severity", "threat", "mitigation"}, "waiver risk")
+    if risk["severity"] not in {"low", "medium"}:
+        raise ValidationError("high or critical risk cannot be waived")
+    string_value(risk["threat"], "waiver threat")
+    string_value(risk["mitigation"], "waiver mitigation")
+
+    source = object_value(waiver["source"], "waiver source")
+    exact_keys(
+        source, {"path", "sha256", "startLine", "endLine"}, "waiver source"
+    )
+    source_path = repository_path(source["path"], "waiver source path")
+    source_hash = string_value(source["sha256"], "waiver source SHA-256")
+    if (
+        SHA256.fullmatch(source_hash) is None
+        or hashlib.sha256(source_path.read_bytes()).hexdigest() != source_hash
+    ):
+        raise ValidationError("waiver source digest drifted")
+    start_line = integer_value(source["startLine"], "waiver source startLine")
+    end_line = integer_value(source["endLine"], "waiver source endLine")
+    source_line_count = len(source_path.read_text(encoding="utf-8").splitlines())
+    if not (1 <= start_line <= end_line <= source_line_count):
+        raise ValidationError("waiver source line range is invalid")
+
+    scope = object_value(waiver["scope"], "waiver scope")
+    exact_keys(
+        scope, {"package", "layer", "profiles", "targets"}, "waiver scope"
+    )
+    string_value(scope["package"], "waiver package")
+    layer = string_value(scope["layer"], "waiver layer")
+    if layer not in set(
+        unique_strings(category["allowedScopes"], "category allowed scopes")
+    ):
+        raise ValidationError("waiver layer is outside the category scope")
+    for field in ("profiles", "targets"):
+        values = unique_strings(scope[field], f"waiver {field}")
+        if values != sorted(values) or not values:
+            raise ValidationError(f"waiver {field} must be sorted and non-empty")
+
+    evidence_values = array_value(waiver["evidence"], "waiver evidence")
+    if not evidence_values:
+        raise ValidationError("waiver evidence is empty")
+    evidence_hashes: list[str] = []
+    evidence_paths: list[str] = []
+    for index, raw_evidence in enumerate(evidence_values):
+        evidence = object_value(raw_evidence, f"waiver evidence[{index}]")
+        exact_keys(evidence, {"path", "sha256"}, f"waiver evidence[{index}]")
+        evidence_path_text = string_value(
+            evidence["path"], f"waiver evidence[{index}] path"
+        )
+        evidence_path = repository_path(
+            evidence_path_text, f"waiver evidence[{index}] path"
+        )
+        evidence_hash = string_value(
+            evidence["sha256"], f"waiver evidence[{index}] SHA-256"
+        )
+        if (
+            SHA256.fullmatch(evidence_hash) is None
+            or hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+            != evidence_hash
+        ):
+            raise ValidationError(f"waiver evidence[{index}] digest drifted")
+        evidence_paths.append(evidence_path_text)
+        evidence_hashes.append(evidence_hash)
+    if len(evidence_paths) != len(set(evidence_paths)):
+        raise ValidationError("waiver evidence paths contain duplicates")
+    if review_evidence not in evidence_hashes:
+        raise ValidationError("review digest is not one of the waiver evidence files")
+
+    removal = object_value(waiver["removal"], "waiver removal")
+    exact_keys(
+        removal, {"bead", "deadline", "successCondition"}, "waiver removal"
+    )
+    bead = string_value(removal["bead"], "waiver removal bead")
+    if re.fullmatch(r"wordpresshx-[a-z0-9.-]+", bead) is None:
+        raise ValidationError("waiver removal Bead ID is invalid")
+    removal_deadline = parse_utc(
+        removal["deadline"], "waiver removal deadline"
+    )
+    if removal_deadline > expires_at:
+        raise ValidationError("waiver removal deadline exceeds expiry")
+    string_value(removal["successCondition"], "waiver removal success condition")
 
 
 def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
@@ -959,25 +1130,127 @@ def run_schema_mutations(
     return len(mutations)
 
 
+def run_waiver_mutations(
+    waiver: dict[str, object],
+    categories: dict[str, dict[str, object]],
+    evaluation_at: datetime,
+) -> int:
+    def expect_failure(label: str, mutate: object) -> None:
+        candidate = copy.deepcopy(waiver)
+        if not callable(mutate):
+            raise RuntimeError(f"{label}: mutation is not callable")
+        mutate(candidate)
+        try:
+            validate_waiver_instance(candidate, categories, evaluation_at)
+        except (ValidationError, KeyError):
+            return
+        raise AssertionError(f"waiver mutation passed unexpectedly: {label}")
+
+    def child(candidate: dict[str, object], key: str) -> dict[str, object]:
+        return object_value(candidate[key], f"waiver {key}")
+
+    mutations = [
+        ("bad waiver ID", lambda value: value.__setitem__("id", "WAIVER-1")),
+        ("bad boundary ID", lambda value: value.__setitem__("boundaryId", "x")),
+        (
+            "unknown category",
+            lambda value: value.__setitem__("category", "unknown"),
+        ),
+        (
+            "self approval",
+            lambda value: child(value, "review").__setitem__(
+                "reviewer", value["owner"]
+            ),
+        ),
+        (
+            "rejected review",
+            lambda value: child(value, "review").__setitem__(
+                "decision", "rejected"
+            ),
+        ),
+        (
+            "relative expiry",
+            lambda value: value.__setitem__("expiresAt", "before-1.0"),
+        ),
+        (
+            "overlong lifetime",
+            lambda value: value.__setitem__("expiresAt", "2027-09-01T00:00:00Z"),
+        ),
+        (
+            "high risk",
+            lambda value: child(value, "risk").__setitem__("severity", "high"),
+        ),
+        (
+            "absolute source path",
+            lambda value: child(value, "source").__setitem__(
+                "path", "/tmp/boundary.txt"
+            ),
+        ),
+        (
+            "source path traversal",
+            lambda value: child(value, "source").__setitem__(
+                "path", "../boundary.txt"
+            ),
+        ),
+        (
+            "source digest drift",
+            lambda value: child(value, "source").__setitem__("sha256", "0" * 64),
+        ),
+        (
+            "reversed line range",
+            lambda value: child(value, "source").__setitem__("startLine", 4),
+        ),
+        (
+            "scope mismatch",
+            lambda value: child(value, "scope").__setitem__("layer", "public-api"),
+        ),
+        (
+            "evidence removed",
+            lambda value: value.__setitem__("evidence", []),
+        ),
+        (
+            "review evidence detached",
+            lambda value: child(value, "review").__setitem__(
+                "evidenceSha256", "0" * 64
+            ),
+        ),
+        (
+            "removal after expiry",
+            lambda value: child(value, "removal").__setitem__(
+                "deadline", "2026-09-02T00:00:00Z"
+            ),
+        ),
+    ]
+    for label, mutate in mutations:
+        expect_failure(label, mutate)
+    return len(mutations)
+
+
 def main() -> None:
     policy = object_value(strict_json(POLICY_PATH), "policy")
     schema = object_value(strict_json(SCHEMA_PATH), "schema")
     scenarios = object_value(strict_json(SCENARIOS_PATH), "scenarios")
+    waiver = object_value(strict_json(WAIVER_PATH), "waiver")
     categories = validate_policy(policy)
     validate_schema(schema, list(categories))
+    evaluation_at = parse_utc(scenarios["evaluationAt"], "scenario evaluationAt")
+    validate_waiver_instance(waiver, categories, evaluation_at)
     results = validate_scenarios(scenarios, policy, categories)
     mutation_count = run_policy_mutations(policy) + run_schema_mutations(
         schema, list(categories)
-    )
+    ) + run_waiver_mutations(waiver, categories, evaluation_at)
     summary = {
         "categoryCount": len(categories),
         "mutationCount": mutation_count,
         "policyDigest": digest(policy),
         "scenarioCount": len(results),
         "scenarioDigest": digest(results),
+        "waiverDigest": digest(waiver),
     }
     if not SHA256.fullmatch(summary["policyDigest"]) or not SHA256.fullmatch(
         summary["scenarioDigest"]
+    ) or not SHA256.fullmatch(
+        summary["waiverDigest"]
     ):
         raise AssertionError("summary digest generation failed")
     print(
