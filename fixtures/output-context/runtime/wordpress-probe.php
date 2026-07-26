@@ -11,6 +11,46 @@ $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 
 require_once '/var/www/html/wp-load.php';
 
+function wordpresshx_kses_allowlist(array $rules): array
+{
+    $allowlist = array();
+    foreach ($rules as $rule) {
+        $attributes = array();
+        foreach ($rule['attributes'] as $attribute) {
+            $attributes[(string) $attribute] = true;
+        }
+        $allowlist[(string) $rule['name']] = $attributes;
+    }
+    return $allowlist;
+}
+
+function wordpresshx_render_markup_node(array $node): string
+{
+    if ('text' === $node['kind'] || 'static-text' === $node['kind']) {
+        return esc_html((string) $node['value']);
+    }
+    if ('element' !== $node['kind'] || ! in_array($node['tag'], array('article', 'h2', 'a'), true)) {
+        throw new RuntimeException('Generated HXX plan contains an unadmitted element');
+    }
+    $attributes = '';
+    foreach ($node['attributes'] as $attribute) {
+        $name = (string) $attribute['name'];
+        if ('attribute' === $attribute['kind'] && in_array($name, array('class', 'aria-label'), true)) {
+            $attributes .= ' ' . $name . '="' . esc_attr((string) $attribute['value']) . '"';
+        } elseif ('url' === $attribute['kind'] && 'href' === $name) {
+            $attributes .= ' href="' . esc_url((string) $attribute['value']) . '"';
+        } else {
+            throw new RuntimeException('Generated HXX plan contains an unadmitted attribute');
+        }
+    }
+    $children = '';
+    foreach ($node['children'] as $child) {
+        $children .= wordpresshx_render_markup_node($child);
+    }
+    $tag = (string) $node['tag'];
+    return '<' . $tag . $attributes . '>' . $children . '</' . $tag . '>';
+}
+
 $plan_path = '/opt/wordpresshx/output-context-plan.json';
 $plan_bytes = file_get_contents($plan_path);
 if (false === $plan_bytes) {
@@ -28,25 +68,35 @@ $payload = (string) $plan['text'];
 $attribute_payload = (string) $plan['attribute'];
 $textarea_payload = (string) $plan['textarea'];
 $rich_plans = $plan['richHtml'];
-if (! is_array($rich_plans) || 3 !== count($rich_plans)) {
+if (! is_array($rich_plans) || 4 !== count($rich_plans)) {
     throw new RuntimeException('Haxe-generated rich HTML plan differs');
 }
 $rich_payload = (string) $rich_plans[0]['value'];
 if (
     $rich_payload !== $rich_plans[1]['value']
     || $rich_payload !== $rich_plans[2]['value']
+    || $rich_payload !== $rich_plans[3]['value']
 ) {
     throw new RuntimeException('KSES policies did not receive one generated payload');
 }
 
 $custom_policy = (string) $rich_plans[2]['canonicalPolicy'];
-$expected_custom_policy = 'version=todo-rich.v1;tags=a[href,title],p,strong;protocols=http,https';
+$expected_custom_policy = 'profile=wp70-release;version=todo-rich.v1;tags=a[href,title],p,strong;protocols=http,https';
 if ($expected_custom_policy !== $custom_policy) {
     throw new RuntimeException('Custom KSES policy canonical document differs');
 }
 $custom_digest = hash('sha256', $custom_policy);
 if ('custom:' . $custom_digest !== $rich_plans[2]['policyIdentity']) {
     throw new RuntimeException('Custom KSES policy digest differs');
+}
+if ($rich_plans[2]['policyIdentity'] === $rich_plans[3]['policyIdentity']) {
+    throw new RuntimeException('Custom KSES policy mutations retained one identity');
+}
+$custom_allowlist = wordpresshx_kses_allowlist($rich_plans[2]['rules']);
+$restricted_allowlist = wordpresshx_kses_allowlist($rich_plans[3]['rules']);
+$compiler_markup = wordpresshx_render_markup_node($plan['markup']['root']);
+if (hash('sha256', (string) $plan['markup']['canonicalAst']) !== $plan['markup']['astSha256']) {
+    throw new RuntimeException('Generated HXX AST digest differs');
 }
 
 $rest_value = json_decode((string) $plan['restJson']['encoded'], true, 512, JSON_THROW_ON_ERROR);
@@ -167,18 +217,20 @@ $result = array(
         'data' => wp_kses_data($rich_payload),
         'custom' => wp_kses(
             $rich_payload,
-            array(
-                'p' => array(),
-                'strong' => array(),
-                'a' => array('href' => true),
-            ),
-            array('http', 'https')
+            $custom_allowlist,
+            $rich_plans[2]['protocols']
+        ),
+        'customRestricted' => wp_kses(
+            $rich_payload,
+            $restricted_allowlist,
+            $rich_plans[3]['protocols']
         ),
     ),
     'scriptJson' => $script_json,
     'inlineStyle' => esc_attr((string) $plan['inlineStyle']),
     'stylesheet' => (string) $plan['stylesheet'],
     'markupProvenance' => $plan['markup'],
+    'compilerMarkup' => $compiler_markup,
     'blockMarkup' => $block_markup,
     'rest' => array(
         'status' => $rest_response->get_status(),

@@ -1,6 +1,6 @@
 # ADR-012: Output-context safety
 
-- Status: review corrections applied; fresh Oracle rereview pending
+- Status: second Oracle corrections applied; fresh rereview pending
 - Date: 2026-07-19
 - Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; corrections pending rereview)
 - Bead: `wordpresshx-adr-012`
@@ -124,11 +124,13 @@ raw `style`, `script`, `iframe`, and `textarea` children, and non-literal
 position names fail closed until a dedicated typed grammar is admitted.
 
 The exact compiler-generated fragment class creates `CompilerMarkup` only
-after resolving and typing the HXX AST, retaining fragment identity and source
-span. Application code cannot call that private constructor or supply its own
-provenance. The constructor never accepts a string that happens to contain
-markup. This keeps the common `return <markup>` path dense while making unusual
-trust transitions explicit and searchable.
+after resolving and typing the HXX AST, retaining fragment identity, source
+span, structural digest, and typed contextual segments. Application code
+cannot call that private constructor or supply its own provenance. The PHP and
+React probes lower the same generated tree and apply text, attribute, and URL
+operations according to each typed segment. The constructor never accepts a
+string that happens to contain markup. This keeps the common `return <markup>`
+path dense while making unusual trust transitions explicit and searchable.
 
 ### JSON is data until its final embedding context
 
@@ -267,7 +269,7 @@ The corrected bounded prototype is in
 [`fixtures/output-context`](../../fixtures/output-context/README.md). Its
 terminal constructors are private, compiler markup is owned by an exact
 generated fragment class, and it contains no repository-forbidden weak Haxe
-operation. Nineteen compile-negative fixtures cover cross-context
+operation. Twenty-four compile-negative fixtures cover cross-context
 substitution, direct construction, and the closed HXX rejection categories.
 One canonical native-runtime plan is byte-identical on Haxe 4.3.7
 interpretation, Genes 1.38.0 plus TypeScript 5.9.3/Node 22.17.0, and
@@ -277,8 +279,8 @@ The React and WordPress probes consume that exact Haxe-generated plan and
 return its digest, connecting typed terminals to the tested native sinks. The
 runtime corpus checks React DOM Server 18.3.1 and a clean pinned WordPress
 7.0/MariaDB installation. The WordPress probe exercises text, attribute,
-textarea, accepted and adversarial URLs, three KSES policies including the
-canonical digest-bound custom policy, successful and failed JSON codecs,
+textarea, accepted and adversarial URLs, two native and two canonical
+digest-bound custom KSES policies, successful and failed JSON codecs,
 script data, a native dynamic-block callback, a REST response, and
 `wp_admin_notice`. The browser probe exercises the same plan through React
 text, attribute, textarea, validated URL, typed inline CSS, stylesheet output,
@@ -292,7 +294,7 @@ bash scripts/check-repository.sh
 
 The independent Python validator authenticates the fixture tree and expected
 transcript, asserts the complete context/conversion model, and rejects
-thirty mutations. The combined gate is configured as the `output-context`
+thirty-six mutations. The combined gate is configured as the `output-context`
 job in the focused output-context workflow. Hosted evidence and a fresh
 independent review are separate gates. Historical public run
 [`29713766565`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29713766565),
@@ -302,7 +304,8 @@ the Oracle corrections. Corrected commit
 `60e0516db0b1542e7eeba9da02254e115b1abaab` passed public run
 [`30221651100`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30221651100),
 job `89845003958`. Fresh independent rereview remains required before this ADR
-can move to accepted.
+can move to accepted. That run predates the second correction pass; its exact
+commit must be replaced by new hosted evidence before the next rereview.
 
 The design follows the official
 [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/),
@@ -349,6 +352,18 @@ implement content-addressed custom KSES policy, strengthen browser negatives,
 remove exact-tool drift, and state non-cacheability as an enforceable policy
 rather than a linear-type guarantee.
 
-The corrections are implemented in the bounded evidence fixture. This ADR
-remains unaccepted until the corrected content-addressed packet passes a fresh
-Oracle review.
+The first correction pass was independently rereviewed from immutable packet
+`c39ed85e6b293357cc74c82b835a8fd9650fd21c2b91231a42c2229e93dc5676`.
+That rereview closed F002, F004, F007, F008, and F009, but kept F001, F003,
+F005, and F006 open: namespace/ancestor state was incomplete, compiler markup
+did not retain a typed AST, CSS property/value combinations remained
+interchangeable, and the custom KSES document did not drive the native
+allowlist.
+
+The second correction pass makes namespace state explicit and rejects unknown
+attributes, unknown children, and void-element children; retains a
+content-addressed typed markup AST lowered by both runtimes; uses distinct
+property-specific inline and stylesheet enums/printers; normalizes policy
+duplicates; and derives the exact `wp_kses` allowlist and protocols from the
+Haxe plan. This ADR remains unaccepted until those changes pass hosted evidence
+and a fresh Oracle rereview.

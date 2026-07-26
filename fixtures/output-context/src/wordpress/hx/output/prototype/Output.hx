@@ -42,15 +42,16 @@ final class Output {
 	}
 
 	public static function postContent(value:String):KsesHtml<PostContentPolicy> {
-		return new KsesHtml(value, new KsesPolicy("wordpress-post-content", "wp70-release", "wp_kses_post", "profile-native-filterable"));
+		return new KsesHtml(value, new KsesPolicy("wordpress-post-content", "wp70-release", "wp_kses_post", "profile-native-filterable", [], []));
 	}
 
 	public static function dataHtml(value:String):KsesHtml<DataHtmlPolicy> {
-		return new KsesHtml(value, new KsesPolicy("wordpress-data", "wp70-release", "wp_kses_data", "profile-native-filterable"));
+		return new KsesHtml(value, new KsesPolicy("wordpress-data", "wp70-release", "wp_kses_data", "profile-native-filterable", [], []));
 	}
 
 	public static function customContent(value:String, policy:CustomKsesPolicy):KsesHtml<CustomContentPolicy> {
-		return new KsesHtml(value, new KsesPolicy("custom:" + policy.digest, policy.version, "wp_kses", policy.canonicalDocument));
+		return new KsesHtml(value,
+			new KsesPolicy("custom:" + policy.digest, policy.version, "wp_kses", policy.canonicalDocument, policy.rules.copy(), policy.protocols.copy()));
 	}
 
 	public static function customKsesPolicy(version:String, tags:Array<KsesTag>, protocols:Array<KsesProtocol>):CustomKsesPolicy {
@@ -65,7 +66,7 @@ final class Output {
 		return new HtmlScriptData(codec.schemaId(), codec.encode(value));
 	}
 
-	public static function inlineStyle(declarations:Array<CssDeclaration>):InlineStyle {
+	public static function inlineStyle(declarations:Array<InlineDeclaration>):InlineStyle {
 		return new InlineStyle(declarations.copy());
 	}
 
@@ -128,31 +129,52 @@ final class CustomKsesPolicy {
 	public final version:String;
 	public final canonicalDocument:String;
 	public final digest:String;
+	public final rules:Array<KsesRule>;
+	public final protocols:Array<String>;
 
-	private function new(version:String, canonicalDocument:String) {
+	private function new(version:String, canonicalDocument:String, rules:Array<KsesRule>, protocols:Array<String>) {
 		this.version = version;
 		this.canonicalDocument = canonicalDocument;
 		this.digest = Sha256.encode(canonicalDocument);
+		this.rules = rules;
+		this.protocols = protocols;
 	}
 
 	public static function create(version:String, tags:Array<KsesTag>, protocols:Array<KsesProtocol>):CustomKsesPolicy {
-		final tagNames = tags.map(tagName);
-		final protocolNames = protocols.map(protocolName);
-		tagNames.sort(compare);
+		var paragraph = false;
+		var strong = false;
+		final linkAttributes:Array<String> = [];
+		for (tag in tags) {
+			switch tag {
+				case Paragraph:
+					paragraph = true;
+				case Strong:
+					strong = true;
+				case Link(attributes):
+					for (attribute in attributes) {
+						addUnique(linkAttributes, attributeName(attribute));
+					}
+			}
+		}
+		linkAttributes.sort(compare);
+		final rules:Array<KsesRule> = [];
+		if (linkAttributes.length > 0) {
+			rules.push(new KsesRule("a", linkAttributes));
+		}
+		if (paragraph) {
+			rules.push(new KsesRule("p", []));
+		}
+		if (strong) {
+			rules.push(new KsesRule("strong", []));
+		}
+		final protocolNames:Array<String> = [];
+		for (protocol in protocols) {
+			addUnique(protocolNames, protocolName(protocol));
+		}
 		protocolNames.sort(compare);
-		final canonicalDocument = "version=" + version + ";tags=" + tagNames.join(",") + ";protocols=" + protocolNames.join(",");
-		return new CustomKsesPolicy(version, canonicalDocument);
-	}
-
-	static function tagName(tag:KsesTag):String {
-		return switch tag {
-			case Paragraph: "p";
-			case Strong: "strong";
-			case Link(attributes):
-				final names = attributes.map(attributeName);
-				names.sort(compare);
-				"a[" + names.join(",") + "]";
-		};
+		final tagDocuments = rules.map(rule -> rule.name + (rule.attributes.length == 0 ? "" : "[" + rule.attributes.join(",") + "]"));
+		final canonicalDocument = "profile=wp70-release;version=" + version + ";tags=" + tagDocuments.join(",") + ";protocols=" + protocolNames.join(",");
+		return new CustomKsesPolicy(version, canonicalDocument, rules, protocolNames);
 	}
 
 	static function attributeName(attribute:KsesAttribute):String {
@@ -172,6 +194,22 @@ final class CustomKsesPolicy {
 	static function compare(left:String, right:String):Int {
 		return left < right ? -1 : left > right ? 1 : 0;
 	}
+
+	static function addUnique(values:Array<String>, candidate:String):Void {
+		if (values.indexOf(candidate) < 0) {
+			values.push(candidate);
+		}
+	}
+}
+
+final class KsesRule {
+	public final name:String;
+	public final attributes:Array<String>;
+
+	public function new(name:String, attributes:Array<String>) {
+		this.name = name;
+		this.attributes = attributes.copy();
+	}
 }
 
 @:allow(wordpress.hx.output.prototype.Output)
@@ -180,12 +218,16 @@ final class KsesPolicy<Policy> {
 	public final version:String;
 	public final nativeFunction:String;
 	public final canonicalDocument:String;
+	public final rules:Array<KsesRule>;
+	public final protocols:Array<String>;
 
-	private function new(identity:String, version:String, nativeFunction:String, canonicalDocument:String) {
+	private function new(identity:String, version:String, nativeFunction:String, canonicalDocument:String, rules:Array<KsesRule>, protocols:Array<String>) {
 		this.identity = identity;
 		this.version = version;
 		this.nativeFunction = nativeFunction;
 		this.canonicalDocument = canonicalDocument;
+		this.rules = rules;
+		this.protocols = protocols;
 	}
 }
 
@@ -266,41 +308,40 @@ final class HtmlScriptData {
 	}
 }
 
-enum CssProperty {
-	Color;
-	BackgroundColor;
-	Display;
-	Gap;
-}
-
-enum CssValue {
+enum CssColor {
 	AccentColor;
-	Pixels(value:Int);
-	Keyword(value:CssKeyword);
 }
 
-enum CssKeyword {
+enum CssDisplay {
 	Block;
 	Grid;
 	Flex;
 	None;
 }
 
-final class CssDeclaration {
-	public final property:CssProperty;
-	public final value:CssValue;
+enum CssLength {
+	Pixels(value:Int);
+}
 
-	public function new(property:CssProperty, value:CssValue) {
-		this.property = property;
-		this.value = value;
-	}
+enum InlineDeclaration {
+	InlineColor(value:CssColor);
+	InlineBackgroundColor(value:CssColor);
+	InlineDisplay(value:CssDisplay);
+	InlineGap(value:CssLength);
+}
+
+enum StylesheetDeclaration {
+	StylesheetColor(value:CssColor);
+	StylesheetBackgroundColor(value:CssColor);
+	StylesheetDisplay(value:CssDisplay);
+	StylesheetGap(value:CssLength);
 }
 
 final class CssRule {
 	public final selector:CssSelector;
-	public final declarations:Array<CssDeclaration>;
+	public final declarations:Array<StylesheetDeclaration>;
 
-	public function new(selector:CssSelector, declarations:Array<CssDeclaration>) {
+	public function new(selector:CssSelector, declarations:Array<StylesheetDeclaration>) {
 		this.selector = selector;
 		this.declarations = declarations.copy();
 	}
@@ -314,9 +355,9 @@ enum CssSelector {
 @:allow(wordpress.hx.output.prototype.Output)
 @:allow(wordpress.hx.output.prototype.OutputSinks)
 final class InlineStyle {
-	final declarations:Array<CssDeclaration>;
+	final declarations:Array<InlineDeclaration>;
 
-	private function new(declarations:Array<CssDeclaration>) {
+	private function new(declarations:Array<InlineDeclaration>) {
 		this.declarations = declarations;
 	}
 }
@@ -331,22 +372,60 @@ final class Stylesheet {
 	}
 }
 
-/**
-	Compiler-owned provenance retained by a generated HXX fragment.
+enum ResolvedMarkupTag {
+	Article;
+	Heading2;
+	Anchor;
+}
 
-	Only the exact generated TodoCardMarkup class is allowed to construct it.
+enum ResolvedTextAttributeName {
+	ClassName;
+	AriaLabel;
+}
+
+enum ResolvedUrlAttributeName {
+	Href;
+}
+
+enum ResolvedMarkupAttribute {
+	TextAttribute(name:ResolvedTextAttributeName, value:HtmlAttribute);
+	UrlAttribute(name:ResolvedUrlAttributeName, value:HtmlUrl);
+}
+
+enum ResolvedMarkupNode {
+	Element(tag:ResolvedMarkupTag, attributes:Array<ResolvedMarkupAttribute>, children:Array<ResolvedMarkupNode>);
+	TextNode(value:HtmlText);
+	StaticText(value:String);
+}
+
+@:allow(wordpress.hx.output.generated.TodoCardMarkup)
+@:allow(wordpress.hx.output.prototype.OutputSinks)
+final class ResolvedHxxAst {
+	final root:ResolvedMarkupNode;
+
+	private function new(root:ResolvedMarkupNode) {
+		this.root = root;
+	}
+}
+
+/**
+	Compiler-owned typed AST and provenance retained by a generated HXX fragment.
 **/
 @:allow(wordpress.hx.output.generated.TodoCardMarkup)
+@:allow(wordpress.hx.output.prototype.OutputSinks)
 final class CompilerMarkup {
 	public final fragmentId:String;
 	public final sourceFile:String;
 	public final sourceLine:Int;
 	public final sourceColumn:Int;
 
-	private function new(fragmentId:String, sourceFile:String, sourceLine:Int, sourceColumn:Int) {
+	final ast:ResolvedHxxAst;
+
+	private function new(fragmentId:String, sourceFile:String, sourceLine:Int, sourceColumn:Int, ast:ResolvedHxxAst) {
 		this.fragmentId = fragmentId;
 		this.sourceFile = sourceFile;
 		this.sourceLine = sourceLine;
 		this.sourceColumn = sourceColumn;
+		this.ast = ast;
 	}
 }

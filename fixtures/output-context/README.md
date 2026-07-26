@@ -11,8 +11,10 @@ fixture-local typed stand-in for ADR-009's `ContractCodec<T>` authority and
 retain either encoded output or an explicit failure. Native KSES policies have
 distinct brands; a custom policy has a canonical allowlist/protocol document
 and digest. Constructors are private, terminal values expose no raw conversion,
-and only an exact generated fragment class can create compiler markup with
-source provenance.
+and only an exact generated fragment class can create compiler markup with a
+resolved typed AST, structural digest, contextual segments, and source
+provenance. Inline CSS and stylesheet declarations use separate
+property-specific enums and separate printers.
 
 The proof has one data flow:
 
@@ -25,7 +27,7 @@ TypeScript/Node, and stock-Haxe PHP must emit identical bytes.
 `runtime/browser.mjs` and `runtime/wordpress-probe.php` both consume those
 exact bytes and return the plan digest. This prevents a handwritten runtime
 fixture from accidentally testing different payloads than the Haxe layer.
-Nineteen negative fixtures prove cross-context substitutions, direct
+Twenty-four negative fixtures prove cross-context substitutions, direct
 construction, and unsupported security-sensitive HXX positions fail during
 Haxe typing.
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "review-corrections-applied-pending-rereview",
+  "status": "second-review-corrections-applied-pending-rereview",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
@@ -128,7 +128,7 @@
     {
       "id": "css-inline-style",
       "terminalContract": "InlineStyle",
-      "acceptedSource": "closed-typed-property-and-value-AST",
+      "acceptedSource": "inline-only-property-specific-value-AST",
       "serverLowering": "typed-CSS-printer-then-esc_attr",
       "browserLowering": "typed-React-style-object",
       "sinks": [
@@ -139,7 +139,7 @@
     {
       "id": "css-stylesheet",
       "terminalContract": "Stylesheet",
-      "acceptedSource": "closed-typed-selector-property-and-value-AST",
+      "acceptedSource": "stylesheet-only-selector-and-property-specific-value-AST",
       "serverLowering": "typed-stylesheet-printer-without-HTML-attribute-escaping",
       "browserLowering": "typed-stylesheet-asset-printer",
       "sinks": [
@@ -254,7 +254,7 @@
     },
     {
       "position": "svg-math-namespace-attribute",
-      "input": "none",
+      "input": "resolved-namespace-and-ancestor-state",
       "result": "compile-error"
     },
     {
@@ -276,6 +276,21 @@
       "position": "dynamic-position-name",
       "input": "none",
       "result": "compile-error"
+    },
+    {
+      "position": "unknown-attribute",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "unknown-child",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "void-element-child",
+      "input": "none",
+      "result": "compile-error"
     }
   ],
   "trustConstructors": [
@@ -283,7 +298,7 @@
       "id": "compiler-resolved-hxx",
       "acceptsRawMarkupString": false,
       "constructorAuthority": "exact-generated-fragment-class-only",
-      "provenanceRequired": "Haxe-source-span-fragment-identity-and-typed-AST"
+      "provenanceRequired": "Haxe-source-span-fragment-identity-content-addressed-resolved-typed-AST-and-contextual-segments"
     },
     {
       "id": "wordpress-kses-policy",
@@ -306,7 +321,7 @@
     "translationOrder": "translate-then-contextually-escape",
     "ksesIsPolicySanitizationNotUniversalTrust": true,
     "nativeKsesPolicyAuthority": "exact-profile-filterable-runtime-semantics",
-    "customKsesPolicyAuthority": "content-addressed-tags-attributes-and-explicit-protocols",
+    "customKsesPolicyAuthority": "canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity",
     "escUrlIncludesProtocolFiltering": true,
     "escUrlRawIsNotAnOutputFunction": true,
     "wpJsonEncodeFailureMustBeHandled": true,
@@ -321,14 +336,14 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "77356a8c7dda53f8af3322d810d51c6823c9465c1209062488fec94e7a53de82",
-    "transcriptSha256": "6437cec402df7e4f075271764a4960e4941a764c21c82f0d8672ecb0824f2c4f",
+    "sourceTreeSha256": "5ac0b7ceeb3a01e922d2028dc246c6c648f232132bb20799c319dfde665d4b75",
+    "transcriptSha256": "95eb7931a6fdd4761f79d7e897b45fb63f5ccd4d43d6d854d38390bceff16d43",
     "contextCount": 11,
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
-    "hxxPositionCount": 15,
-    "compileNegativeCount": 19,
-    "independentMutationCount": 30,
+    "hxxPositionCount": 18,
+    "compileNegativeCount": 24,
+    "independentMutationCount": 36,
     "targets": [
       "haxe-interp-4.3.7",
       "genes-ts-1.38.0-typescript-5.9.3-node-22.17.0",
@@ -341,13 +356,15 @@
     "workflow": ".github/workflows/output-context.yml",
     "job": "output-context",
     "command": "bash scripts/output-context/test.sh",
-    "status": "corrected-passed",
+    "status": "corrected-passed-superseded-by-second-corrections",
     "runId": 30221651100,
     "jobId": 89845003958,
     "commit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
     "historicalRunId": 29713766565,
     "historicalJobId": 88262490140,
-    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a"
+    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+    "secondCorrectionCommit": null,
+    "secondCorrectionStatus": "pending-first-hosted-main-run"
   },
   "referenceReview": [
     {
@@ -433,7 +450,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "review-corrections-applied-pending-rereview",
+    "architectureDecision": "second-review-corrections-applied-pending-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

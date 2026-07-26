@@ -79,7 +79,7 @@ if probe.get("planSha256") != hashlib.sha256(plan_bytes).hexdigest():
     raise SystemExit(f"ADR-012 WordPress did not consume the generated plan: {probe!r}")
 
 payload_markers = ("<script", "javascript:")
-for field in ("text", "attribute", "textarea", "blockMarkup", "adminNotice"):
+for field in ("text", "attribute", "textarea", "blockMarkup", "adminNotice", "compilerMarkup"):
     value = probe.get(field)
     if not isinstance(value, str):
         raise SystemExit(f"ADR-012 {field} is not a string: {value!r}")
@@ -111,7 +111,7 @@ if urls.get("relative") != "/todos/7?mode=edit&#038;from=hxx":
     raise SystemExit(f"ADR-012 relative URL escaping differed: {urls!r}")
 
 rich = probe.get("richHtml")
-if not isinstance(rich, dict) or set(rich) != {"post", "data", "custom"}:
+if not isinstance(rich, dict) or set(rich) != {"post", "data", "custom", "customRestricted"}:
     raise SystemExit(f"ADR-012 rich HTML policies differed: {rich!r}")
 for policy, value in rich.items():
     lowered = value.lower()
@@ -119,6 +119,14 @@ for policy, value in rich.items():
         raise SystemExit(f"ADR-012 {policy} policy retained executable markup: {value!r}")
 if "<strong>kept</strong>" not in rich["post"]:
     raise SystemExit(f"ADR-012 post policy removed admitted markup: {rich['post']!r}")
+if 'title="kept-title"' not in rich["custom"]:
+    raise SystemExit(f"ADR-012 generated custom policy omitted its title attribute: {rich['custom']!r}")
+if 'href="http://example.test"' not in rich["custom"]:
+    raise SystemExit(f"ADR-012 generated custom policy omitted its HTTP protocol: {rich['custom']!r}")
+if 'title=' in rich["customRestricted"] or 'href="http://example.test"' in rich["customRestricted"]:
+    raise SystemExit(f"ADR-012 restricted policy mutation was not executed: {rich['customRestricted']!r}")
+if 'href="//example.test"' not in rich["customRestricted"]:
+    raise SystemExit(f"ADR-012 restricted policy did not retain exact native protocol filtering semantics: {rich['customRestricted']!r}")
 
 script_json = probe.get("scriptJson")
 if not isinstance(script_json, str) or "</script" in script_json.lower():
@@ -148,6 +156,13 @@ if probe.get("stylesheet") != plan["stylesheet"]:
     raise SystemExit(f"ADR-012 stylesheet lowering differed: {probe!r}")
 if probe.get("markupProvenance") != plan["markup"]:
     raise SystemExit(f"ADR-012 compiler-markup provenance differed: {probe!r}")
+compiler_markup = probe.get("compilerMarkup", "")
+if not compiler_markup.startswith('<article class="todo-card&quot; data-forged=&quot;true">'):
+    raise SystemExit(f"ADR-012 generated compiler markup did not use contextual attribute lowering: {compiler_markup!r}")
+if "&lt;script&gt;alert(&quot;markup&quot;)&lt;/script&gt;" not in compiler_markup:
+    raise SystemExit(f"ADR-012 generated compiler markup did not use contextual text lowering: {compiler_markup!r}")
+if 'href="https://example.test/todos/7?mode=edit&#038;from=hxx"' not in compiler_markup:
+    raise SystemExit(f"ADR-012 generated compiler markup did not use contextual URL lowering: {compiler_markup!r}")
 
 print(json.dumps({
     "admin": "wp_admin_notice-wp_kses_post",

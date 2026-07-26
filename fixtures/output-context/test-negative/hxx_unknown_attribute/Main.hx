@@ -2,6 +2,6 @@ import wordpress.hx.output.prototype.HxxPositionGuard;
 
 final class Main {
 	static function main():Void {
-		HxxPositionGuard.child("html", "script");
+		HxxPositionGuard.attribute("html", "video", "poster");
 	}
 }

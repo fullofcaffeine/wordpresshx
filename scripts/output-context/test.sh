@@ -178,7 +178,11 @@ assert_compile_failure direct_terminal_construction \
 assert_compile_failure kses_as_compiler_markup \
 	'KsesHtml<wordpress.hx.output.prototype.PostContentPolicy> should be wordpress.hx.output.prototype.CompilerMarkup'
 assert_compile_failure css_from_string \
-	'String should be Array<wordpress.hx.output.prototype.CssDeclaration>'
+	'String should be Array<wordpress.hx.output.prototype.InlineDeclaration>'
+assert_compile_failure css_property_value_mismatch \
+	'CssLength should be wordpress.hx.output.prototype.CssColor'
+assert_compile_failure stylesheet_as_inline \
+	'StylesheetDeclaration should be wordpress.hx.output.prototype.InlineDeclaration'
 assert_compile_failure script_as_rest \
 	'HtmlScriptData should be wordpress.hx.output.prototype.JsonDocument'
 assert_compile_failure direct_markup_construction \
@@ -203,6 +207,12 @@ assert_compile_failure hxx_textarea_child \
 	'HXX textarea children require the typed TextareaText terminal'
 assert_compile_failure hxx_dynamic_position \
 	'HXX attribute must be a compile-time string literal'
+assert_compile_failure hxx_unknown_attribute \
+	'HXX attribute is not in the closed ordinary-attribute grammar'
+assert_compile_failure hxx_unknown_child \
+	'HXX element is not in the closed child grammar'
+assert_compile_failure hxx_void_child \
+	'HXX void elements cannot receive children'
 
 browser_json="$("${node_command}" "${fixture_root}/runtime/browser.mjs" "${typescript_root}" "${test_root}/interp.txt")"
 python3 - "${browser_json}" "${test_root}/interp.txt" <<'PY'

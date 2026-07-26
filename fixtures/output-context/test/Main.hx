@@ -1,19 +1,23 @@
 import wordpress.hx.output.generated.TodoCardMarkup;
 import wordpress.hx.output.prototype.Output;
-import wordpress.hx.output.prototype.Output.CssDeclaration;
-import wordpress.hx.output.prototype.Output.CssKeyword;
-import wordpress.hx.output.prototype.Output.CssProperty;
+import wordpress.hx.output.prototype.Output.CssColor;
+import wordpress.hx.output.prototype.Output.CssDisplay;
+import wordpress.hx.output.prototype.Output.CssLength;
 import wordpress.hx.output.prototype.Output.CssRule;
 import wordpress.hx.output.prototype.Output.CssSelector;
-import wordpress.hx.output.prototype.Output.CssValue;
+import wordpress.hx.output.prototype.Output.InlineDeclaration;
 import wordpress.hx.output.prototype.Output.JsonEncoding;
 import wordpress.hx.output.prototype.Output.KsesAttribute;
 import wordpress.hx.output.prototype.Output.KsesProtocol;
+import wordpress.hx.output.prototype.Output.KsesRule;
 import wordpress.hx.output.prototype.Output.KsesTag;
 import wordpress.hx.output.prototype.Output.OutputCodec;
+import wordpress.hx.output.prototype.Output.StylesheetDeclaration;
 import wordpress.hx.output.prototype.Output.UrlValidation;
 import wordpress.hx.output.prototype.OutputSinks;
 import wordpress.hx.output.prototype.OutputSinks.JsonPlan;
+import wordpress.hx.output.prototype.OutputSinks.MarkupPlanAttribute;
+import wordpress.hx.output.prototype.OutputSinks.MarkupPlanNode;
 import wordpress.hx.output.prototype.OutputSinks.MarkupPlan;
 import wordpress.hx.output.prototype.OutputSinks.RichHtmlPlan;
 import wordpress.hx.output.prototype.HxxPositionGuard;
@@ -45,9 +49,9 @@ final class TodoCardCodec implements OutputCodec<TodoCard> {
 
 final class Main {
 	static function main():Void {
-		HxxPositionGuard.child("section");
-		HxxPositionGuard.attribute("section", "aria-label");
-		HxxPositionGuard.attribute("a", "href");
+		HxxPositionGuard.child("html", "section");
+		HxxPositionGuard.attribute("html", "section", "aria-label");
+		HxxPositionGuard.attribute("html", "a", "href");
 		final acceptedUrl = requireAcceptedUrl("https://example.test/todos/7?mode=edit&from=hxx");
 		final todo:TodoCard = {
 			id: 7,
@@ -58,26 +62,26 @@ final class Main {
 			title: "invalid\x00title"
 		};
 		final todoCodec = new TodoCardCodec();
-		final richPayload = '<p><strong>kept</strong><script>alert("rich")</script>' + '<a href="javascript:alert(1)" onmouseover="alert(2)">link</a></p>';
-		final customPolicy = Output.customKsesPolicy("todo-rich.v1", [Paragraph, Strong, Link([Href, Title])], [Http, Https]);
-		final inlineDeclarations = [
-			new CssDeclaration(Color, AccentColor),
-			new CssDeclaration(Display, Keyword(Grid)),
-			new CssDeclaration(Gap, Pixels(16))
-		];
-		final markup = OutputSinks.markup(TodoCardMarkup.create());
+		final richPayload = '<p><strong>kept</strong><script>alert("rich")</script>'
+			+ '<a href="http://example.test" title="kept-title" onmouseover="alert(2)">link</a></p>';
+		final customPolicy = Output.customKsesPolicy("todo-rich.v1", [Paragraph, Strong, Link([Href, Title, Href]), Paragraph], [Http, Https, Http]);
+		final restrictedPolicy = Output.customKsesPolicy("todo-rich.v2", [Paragraph, Strong, Link([Href])], [Https]);
+		final inlineDeclarations = [InlineColor(AccentColor), InlineDisplay(Grid), InlineGap(Pixels(16))];
+		final markup = OutputSinks.markup(TodoCardMarkup.create(Output.text('<script>alert("markup")</script>'),
+			Output.attribute('todo-card" data-forged="true'), Output.url(acceptedUrl)));
 		final richPlans = PlanJson.array([
 			richPlan(OutputSinks.richHtml(Output.postContent(richPayload))),
 			richPlan(OutputSinks.richHtml(Output.dataHtml(richPayload))),
-			richPlan(OutputSinks.richHtml(Output.customContent(richPayload, customPolicy)))
+			richPlan(OutputSinks.richHtml(Output.customContent(richPayload, customPolicy))),
+			richPlan(OutputSinks.richHtml(Output.customContent(richPayload, restrictedPolicy)))
 		]);
 		final restJson = jsonPlan(OutputSinks.restJson(Output.jsonDocument(todoCodec, todo)));
 		final scriptData = jsonPlan(OutputSinks.scriptData(Output.scriptData(todoCodec, todo)));
 		final encodingFailure = jsonPlan(OutputSinks.restJson(Output.jsonDocument(todoCodec, invalidTodo)));
 		final inlineStyle = OutputSinks.inlineStyle(Output.inlineStyle(inlineDeclarations));
 		final stylesheet = OutputSinks.stylesheet(Output.stylesheet([
-			new CssRule(TodoCard, inlineDeclarations),
-			new CssRule(TodoTitle, [new CssDeclaration(Display, Keyword(Block))])
+			new CssRule(TodoCard, [StylesheetColor(AccentColor), StylesheetDisplay(Grid), StylesheetGap(Pixels(16))]),
+			new CssRule(TodoTitle, [StylesheetDisplay(Block)])
 		]));
 
 		Sys.println(PlanJson.object([
@@ -140,7 +144,16 @@ final class Main {
 			new JsonField("policyIdentity", PlanJson.quote(value.policyIdentity)),
 			new JsonField("policyVersion", PlanJson.quote(value.policyVersion)),
 			new JsonField("nativeFunction", PlanJson.quote(value.nativeFunction)),
-			new JsonField("canonicalPolicy", PlanJson.quote(value.canonicalPolicy))
+			new JsonField("canonicalPolicy", PlanJson.quote(value.canonicalPolicy)),
+			new JsonField("rules", PlanJson.array(value.rules.map(ksesRule))),
+			new JsonField("protocols", PlanJson.array(value.protocols.map(PlanJson.quote)))
+		]);
+	}
+
+	static function ksesRule(value:KsesRule):String {
+		return PlanJson.object([
+			new JsonField("name", PlanJson.quote(value.name)),
+			new JsonField("attributes", PlanJson.array(value.attributes.map(PlanJson.quote)))
 		]);
 	}
 
@@ -157,8 +170,50 @@ final class Main {
 			new JsonField("fragmentId", PlanJson.quote(value.fragmentId)),
 			new JsonField("sourceFile", PlanJson.quote(value.sourceFile)),
 			new JsonField("sourceLine", Std.string(value.sourceLine)),
-			new JsonField("sourceColumn", Std.string(value.sourceColumn))
+			new JsonField("sourceColumn", Std.string(value.sourceColumn)),
+			new JsonField("canonicalAst", PlanJson.quote(value.canonicalAst)),
+			new JsonField("astSha256", PlanJson.quote(value.astSha256)),
+			new JsonField("root", markupNode(value.root))
 		]);
+	}
+
+	static function markupNode(value:MarkupPlanNode):String {
+		return switch value {
+			case PlannedElement(tag, attributes, children):
+				PlanJson.object([
+					new JsonField("kind", PlanJson.quote("element")),
+					new JsonField("tag", PlanJson.quote(tag)),
+					new JsonField("attributes", PlanJson.array(attributes.map(markupAttribute))),
+					new JsonField("children", PlanJson.array(children.map(markupNode)))
+				]);
+			case PlannedText(text):
+				PlanJson.object([
+					new JsonField("kind", PlanJson.quote("text")),
+					new JsonField("value", PlanJson.quote(text))
+				]);
+			case PlannedStaticText(text):
+				PlanJson.object([
+					new JsonField("kind", PlanJson.quote("static-text")),
+					new JsonField("value", PlanJson.quote(text))
+				]);
+		};
+	}
+
+	static function markupAttribute(value:MarkupPlanAttribute):String {
+		return switch value {
+			case PlannedAttribute(name, content):
+				PlanJson.object([
+					new JsonField("kind", PlanJson.quote("attribute")),
+					new JsonField("name", PlanJson.quote(name)),
+					new JsonField("value", PlanJson.quote(content))
+				]);
+			case PlannedUrl(name, content):
+				PlanJson.object([
+					new JsonField("kind", PlanJson.quote("url")),
+					new JsonField("name", PlanJson.quote(name)),
+					new JsonField("value", PlanJson.quote(content))
+				]);
+		};
 	}
 }
 

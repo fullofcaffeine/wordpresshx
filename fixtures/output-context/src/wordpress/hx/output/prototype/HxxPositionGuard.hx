@@ -14,14 +14,18 @@ using StringTools;
 	executable positions fail closed until a dedicated typed terminal exists.
 **/
 final class HxxPositionGuard {
-	public static macro function attribute(tagExpression:ExprOf<String>, attributeExpression:ExprOf<String>):Expr {
+	public static macro function attribute(namespaceExpression:ExprOf<String>, tagExpression:ExprOf<String>, attributeExpression:ExprOf<String>):Expr {
+		final namespace = literal(namespaceExpression, "HXX namespace").toLowerCase();
 		final tag = literal(tagExpression, "HXX tag");
 		final attribute = literal(attributeExpression, "HXX attribute");
 		final normalizedTag = tag.toLowerCase();
 		final normalizedAttribute = attribute.toLowerCase();
 
-		if (normalizedTag == "svg" || normalizedTag == "math") {
+		if (namespace != "html") {
 			Context.error("HXX nested namespace attributes require a dedicated typed profile", attributeExpression.pos);
+		}
+		if (normalizedAttribute.indexOf(":") >= 0) {
+			Context.error("HXX namespaced attributes require a dedicated typed profile", attributeExpression.pos);
 		}
 		if (normalizedAttribute.startsWith("on")) {
 			Context.error("HXX event attributes cannot contain server/browser string handlers", attributeExpression.pos);
@@ -50,12 +54,19 @@ final class HxxPositionGuard {
 					Context.error("HXX formaction is admitted only for exact typed submit controls", attributeExpression.pos);
 				}
 			default:
+				if (!ordinaryAttribute(normalizedAttribute)) {
+					Context.error("HXX attribute is not in the closed ordinary-attribute grammar", attributeExpression.pos);
+				}
 		}
 		return macro null;
 	}
 
-	public static macro function child(tagExpression:ExprOf<String>):Expr {
+	public static macro function child(namespaceExpression:ExprOf<String>, tagExpression:ExprOf<String>):Expr {
+		final namespace = literal(namespaceExpression, "HXX namespace").toLowerCase();
 		final tag = literal(tagExpression, "HXX child tag").toLowerCase();
+		if (namespace != "html") {
+			Context.error("HXX nested namespace children require a dedicated typed profile", tagExpression.pos);
+		}
 		switch tag {
 			case "script":
 				Context.error("HXX script children require the typed HtmlScriptData terminal", tagExpression.pos);
@@ -65,7 +76,12 @@ final class HxxPositionGuard {
 				Context.error("HXX iframe children are a nested document and are not admitted", tagExpression.pos);
 			case "textarea":
 				Context.error("HXX textarea children require the typed TextareaText terminal", tagExpression.pos);
+			case "img" | "input":
+				Context.error("HXX void elements cannot receive children", tagExpression.pos);
+			case "article" | "section" | "div" | "span" | "h1" | "h2" | "p" | "a" | "button" | "form" | "label" | "ul" | "li" | "strong" | "em":
+				null;
 			default:
+				Context.error("HXX element is not in the closed child grammar", tagExpression.pos);
 		}
 		return macro null;
 	}
@@ -77,6 +93,14 @@ final class HxxPositionGuard {
 			default:
 				Context.error(label + " must be a compile-time string literal", expression.pos);
 				"";
+		};
+	}
+
+	static function ordinaryAttribute(attribute:String):Bool {
+		return switch attribute {
+			case "class" | "id" | "title" | "role" | "name" | "value" | "type" | "disabled" | "checked" | "readonly" | "placeholder":
+				true;
+			default: attribute.startsWith("aria-") || attribute.startsWith("data-");
 		};
 	}
 	#end

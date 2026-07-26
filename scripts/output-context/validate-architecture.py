@@ -88,6 +88,7 @@ def validate_model(model: dict[str, object]) -> None:
     if model.get("status") not in {
         "proposed-pending-fresh-review",
         "review-corrections-applied-pending-rereview",
+        "second-review-corrections-applied-pending-rereview",
         "accepted-after-review",
     }:
         raise ValidationError("output-context architecture status is invalid")
@@ -177,6 +178,14 @@ def validate_model(model: dict[str, object]) -> None:
         "String-plus-named-profile-native-or-content-addressed-custom-KSES-policy"
     ):
         raise ValidationError("rich HTML policy authority changed")
+    if by_context["css-inline-style"].get("acceptedSource") != (
+        "inline-only-property-specific-value-AST"
+    ):
+        raise ValidationError("inline CSS property grammar changed")
+    if by_context["css-stylesheet"].get("acceptedSource") != (
+        "stylesheet-only-selector-and-property-specific-value-AST"
+    ):
+        raise ValidationError("stylesheet CSS property grammar changed")
     if by_context["unsafe-raw-target"].get("sinks") != []:
         raise ValidationError("unsafe raw target gained a published sink")
 
@@ -246,6 +255,9 @@ def validate_model(model: dict[str, object]) -> None:
         "iframe-child",
         "raw-textarea-child",
         "dynamic-position-name",
+        "unknown-attribute",
+        "unknown-child",
+        "void-element-child",
     }
     if set(hxx) != required_hxx_positions:
         raise ValidationError("HXX position inventory changed")
@@ -263,9 +275,16 @@ def validate_model(model: dict[str, object]) -> None:
         "iframe-child",
         "raw-textarea-child",
         "dynamic-position-name",
+        "unknown-attribute",
+        "unknown-child",
+        "void-element-child",
     ):
         if hxx[rejected_position].get("result") != "compile-error":
             raise ValidationError(f"HXX admitted {rejected_position}")
+    if hxx["svg-math-namespace-attribute"].get("input") != (
+        "resolved-namespace-and-ancestor-state"
+    ):
+        raise ValidationError("HXX namespace classification lost resolved state")
 
     constructors = require_list(model.get("trustConstructors"), "trustConstructors")
     by_constructor: dict[str, dict[str, object]] = {}
@@ -289,7 +308,7 @@ def validate_model(model: dict[str, object]) -> None:
     ):
         raise ValidationError("compiler HXX constructor authority changed")
     if by_constructor["compiler-resolved-hxx"].get("provenanceRequired") != (
-        "Haxe-source-span-fragment-identity-and-typed-AST"
+        "Haxe-source-span-fragment-identity-content-addressed-resolved-typed-AST-and-contextual-segments"
     ):
         raise ValidationError("compiler HXX provenance changed")
     if by_constructor["admitted-native-provider"].get("acceptsRawMarkupString") is not False:
@@ -311,7 +330,7 @@ def validate_model(model: dict[str, object]) -> None:
     ):
         raise ValidationError("native KSES policy semantics changed")
     if wordpress.get("customKsesPolicyAuthority") != (
-        "content-addressed-tags-attributes-and-explicit-protocols"
+        "canonical-profile-version-tags-attributes-and-protocols-drive-wp-kses-and-content-addressed-identity"
     ):
         raise ValidationError("custom KSES policy semantics changed")
     if wordpress.get("escUrlRawIsNotAnOutputFunction") is not True:
@@ -336,9 +355,9 @@ def validate_model(model: dict[str, object]) -> None:
         "contextCount": 11,
         "allowedEdgeCount": 12,
         "forbiddenEdgeCount": 15,
-        "hxxPositionCount": 15,
-        "compileNegativeCount": 19,
-        "independentMutationCount": 30,
+        "hxxPositionCount": 18,
+        "compileNegativeCount": 24,
+        "independentMutationCount": 36,
     }
     for field, expected in expected_evidence.items():
         if evidence.get(field) != expected:
@@ -365,13 +384,15 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "corrected-passed",
+        "status": "corrected-passed-superseded-by-second-corrections",
         "runId": 30221651100,
         "jobId": 89845003958,
         "commit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
         "historicalRunId": 29713766565,
         "historicalJobId": 88262490140,
         "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+        "secondCorrectionCommit": None,
+        "secondCorrectionStatus": "pending-first-hosted-main-run",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 
@@ -458,6 +479,12 @@ def mutation_cases(model: dict[str, object]) -> list[tuple[str, dict[str, object
     changed("dynamic-position-admitted")["hxxResolution"][14]["result"] = "html-attribute"
     changed("forgeable-compiler-markup")["trustConstructors"][0]["constructorAuthority"] = "public-factory"
     changed("implicit-json-failure")["wordpressSemantics"]["wpJsonEncodeFailureMustBeHandled"] = False
+    changed("unknown-attribute-admitted")["hxxResolution"][15]["result"] = "html-attribute"
+    changed("unknown-child-admitted")["hxxResolution"][16]["result"] = "html-text"
+    changed("void-child-admitted")["hxxResolution"][17]["result"] = "html-text"
+    changed("namespace-state-erased")["hxxResolution"][10]["input"] = "current-tag-only"
+    changed("generic-inline-css-values")["contexts"][7]["acceptedSource"] = "property-plus-generic-value"
+    changed("custom-policy-not-runtime-bound")["wordpressSemantics"]["customKsesPolicyAuthority"] = "digest-metadata-only"
     return mutations
 
 
@@ -468,7 +495,7 @@ def main() -> None:
     )
     validate_model(model)
     mutations = mutation_cases(model)
-    if len(mutations) != 30:
+    if len(mutations) != 36:
         raise ValidationError("independent mutation inventory changed")
     for label, mutation in mutations:
         try:

@@ -15,6 +15,24 @@ const toolingRequire = createRequire(
 const React = toolingRequire("react");
 const { renderToStaticMarkup } = toolingRequire("react-dom/server");
 
+function renderMarkupNode(node) {
+  if (node.kind === "text" || node.kind === "static-text") {
+    return node.value;
+  }
+  assert.equal(node.kind, "element");
+  const properties = {};
+  for (const attribute of node.attributes) {
+    assert.ok(attribute.kind === "attribute" || attribute.kind === "url");
+    const name = attribute.name === "class" ? "className" : attribute.name;
+    properties[name] = attribute.value;
+  }
+  return React.createElement(
+    node.tag,
+    properties,
+    ...node.children.map(renderMarkupNode)
+  );
+}
+
 const planBytes = readFileSync(planPath);
 const plan = JSON.parse(planBytes);
 assert.equal(plan.schema, "wordpresshx.output-context-runtime-plan.v2");
@@ -22,6 +40,12 @@ assert.equal(plan.restJson.failureReason, "");
 assert.equal(plan.scriptData.failureReason, "");
 assert.equal(plan.encodingFailure.failureReason, "invalid-control-character");
 assert.equal(plan.encodingFailure.encoded, "");
+assert.equal(plan.richHtml.length, 4);
+assert.equal(
+  plan.richHtml[2].canonicalPolicy,
+  "profile=wp70-release;version=todo-rich.v1;tags=a[href,title],p,strong;protocols=http,https"
+);
+assert.notEqual(plan.richHtml[2].policyIdentity, plan.richHtml[3].policyIdentity);
 
 for (const accepted of ["https", "schemeCase", "relative", "fragment"]) {
   assert.equal(plan.urlMatrix[accepted].accepted, true);
@@ -67,6 +91,7 @@ const markup = renderToStaticMarkup(
     })
   )
 );
+const generatedMarkup = renderToStaticMarkup(renderMarkupNode(plan.markup.root));
 
 const scriptData = JSON.stringify(JSON.parse(plan.scriptData.encoded))
   .replaceAll("<", "\\u003c")
@@ -80,18 +105,26 @@ assert.equal(markup.includes(' onfocus="alert(1)"'), false);
 assert.equal(markup.includes("javascript:"), false);
 assert.equal(scriptData.includes("</script>"), false);
 assert.equal(
+  createHash("sha256").update(plan.markup.canonicalAst).digest("hex"),
+  plan.markup.astSha256
+);
+assert.equal(
+  plan.markup.canonicalAst,
+  "article[class:attribute](h2[](text),a[href:url](static-text))"
+);
+assert.equal(generatedMarkup.includes("<script>"), false);
+assert.equal(generatedMarkup.includes('data-forged="true"'), false);
+assert.equal(generatedMarkup.includes("javascript:"), false);
+assert.equal(
   plan.stylesheet,
   ".todo-card{color:#c43b27;display:grid;gap:16px;}.todo-card__title{display:block;}"
 );
-assert.deepEqual(plan.markup, {
-  fragmentId: "TodoCard.render@fixture",
-  sourceFile: "fixtures/output-context/test/Main.hx",
-  sourceLine: 68,
-  sourceColumn: 41
-});
+assert.equal(plan.markup.fragmentId, "TodoCard.render@fixture");
+assert.equal(plan.markup.sourceFile, "fixtures/output-context/test/Main.hx");
 
 console.log(JSON.stringify({
   check: "wordpresshx-adr012-browser-output-context-v1",
+  generatedMarkup,
   markup,
   planSha256: createHash("sha256").update(planBytes).digest("hex"),
   scriptData,

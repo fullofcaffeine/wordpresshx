@@ -620,6 +620,7 @@ required_files=(
   fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx
   fixtures/output-context/test/Main.hx
   fixtures/output-context/test-negative/css_from_string/Main.hx
+  fixtures/output-context/test-negative/css_property_value_mismatch/Main.hx
   fixtures/output-context/test-negative/direct_markup_construction/Main.hx
   fixtures/output-context/test-negative/direct_terminal_construction/Main.hx
   fixtures/output-context/test-negative/hxx_dynamic_position/Main.hx
@@ -632,10 +633,14 @@ required_files=(
   fixtures/output-context/test-negative/hxx_style_child/Main.hx
   fixtures/output-context/test-negative/hxx_svg_url/Main.hx
   fixtures/output-context/test-negative/hxx_textarea_child/Main.hx
+  fixtures/output-context/test-negative/hxx_unknown_attribute/Main.hx
+  fixtures/output-context/test-negative/hxx_unknown_child/Main.hx
+  fixtures/output-context/test-negative/hxx_void_child/Main.hx
   fixtures/output-context/test-negative/json_as_script/Main.hx
   fixtures/output-context/test-negative/kses_as_compiler_markup/Main.hx
   fixtures/output-context/test-negative/plain_as_rich_html/Main.hx
   fixtures/output-context/test-negative/script_as_rest/Main.hx
+  fixtures/output-context/test-negative/stylesheet_as_inline/Main.hx
   fixtures/output-context/test-negative/text_as_attribute/Main.hx
   fixtures/output-context/test-negative/url_as_text/Main.hx
   fixtures/adoption-contract/README.md
@@ -749,6 +754,9 @@ required_files=(
   review/g1-php-readability/packet-guide.md
   review/g1-php-readability/reviewer-receipt.template.json
   review/g1-php-readability/packet/packet-manifest.json
+  review/oracle/results/adr012-rereview-7029e35/ORACLE-REREVIEW.md
+  review/oracle/results/adr012-rereview-7029e35/adr012-decision.json
+  review/oracle/results/adr012-rereview-7029e35/reviewed-inputs.sha256
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -2320,7 +2328,7 @@ else:
 assert output_context_architecture["schemaVersion"] == 1
 assert output_context_architecture["decisionId"] == "ADR-012"
 assert output_context_architecture["status"] == (
-    "review-corrections-applied-pending-rereview"
+    "second-review-corrections-applied-pending-rereview"
 )
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
@@ -2333,14 +2341,14 @@ assert output_authority["escapingIdempotenceAssumed"] is False
 assert len(output_context_architecture["contexts"]) == 11
 assert len(output_context_architecture["allowedEdges"]) == 12
 assert len(output_context_architecture["forbiddenEdges"]) == 15
-assert len(output_context_architecture["hxxResolution"]) == 15
+assert len(output_context_architecture["hxxResolution"]) == 18
 output_prototype = output_context_architecture["prototypeEvidence"]
 assert output_prototype["contextCount"] == 11
 assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
-assert output_prototype["hxxPositionCount"] == 15
-assert output_prototype["compileNegativeCount"] == 19
-assert output_prototype["independentMutationCount"] == 30
+assert output_prototype["hxxPositionCount"] == 18
+assert output_prototype["compileNegativeCount"] == 24
+assert output_prototype["independentMutationCount"] == 36
 assert len(output_context_architecture["referenceReview"]) == 7
 for output_reference in output_context_architecture["referenceReview"]:
     assert sha1.fullmatch(output_reference["commit"])
@@ -2354,6 +2362,7 @@ assert adr012_receipt["status"] in {
     "implemented-hosted-pending",
     "implemented-review-pending",
     "implemented-rereview-pending",
+    "second-corrections-rereview-pending",
     "verified",
 }
 for adr012_subject in adr012_receipt["subject"].values():
@@ -2369,9 +2378,9 @@ assert adr012_verification["strictHaxeForbiddenTokenCount"] == 0
 assert adr012_verification["contextCount"] == 11
 assert adr012_verification["allowedEdgeCount"] == 12
 assert adr012_verification["forbiddenEdgeCount"] == 15
-assert adr012_verification["hxxPositionCount"] == 15
-assert adr012_verification["compileNegativeCount"] == 19
-assert adr012_verification["independentMutationCount"] == 30
+assert adr012_verification["hxxPositionCount"] == 18
+assert adr012_verification["compileNegativeCount"] == 24
+assert adr012_verification["independentMutationCount"] == 36
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
 ] is True
@@ -2393,14 +2402,16 @@ adr012_hosted = adr012_receipt["hostedWorkflow"]
 assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
-if adr012_hosted["status"] == "corrected-passed":
-    assert adr012_receipt["status"] == "implemented-rereview-pending"
+if adr012_hosted["status"] == "corrected-passed-superseded-by-second-corrections":
+    assert adr012_receipt["status"] == "second-corrections-rereview-pending"
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
     assert sha1.fullmatch(adr012_hosted["commit"])
     assert isinstance(adr012_hosted["historicalRunId"], int)
     assert isinstance(adr012_hosted["historicalJobId"], int)
     assert sha1.fullmatch(adr012_hosted["historicalCommit"])
+    assert adr012_hosted["secondCorrectionCommit"] is None
+    assert adr012_hosted["secondCorrectionStatus"] == "pending-first-hosted-main-run"
 elif adr012_hosted["status"] == "pending-first-hosted-main-run":
     assert adr012_receipt["status"] == "implemented-hosted-pending"
     assert adr012_hosted["runId"] is None
