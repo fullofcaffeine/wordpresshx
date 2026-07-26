@@ -47,6 +47,7 @@ required_files=(
   docs/adr/021-release-and-support-policy.md
   docs/gates/README.md
   docs/gates/g0-product-authority-and-baseline.md
+  docs/gates/g3-semantic-plan-and-ownership.md
   docs/architecture/browser-compiler.md
   docs/architecture/build-and-dev-loop.md
   docs/architecture/haxe-first-site-authoring.md
@@ -676,6 +677,7 @@ required_files=(
   manifests/toolchain.lock.json
   manifests/upstream.lock.json
   manifests/evidence/g0-product-baseline.json
+  manifests/evidence/g3-semantic-ownership.template.json
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
@@ -846,10 +848,12 @@ required_files=(
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
   scripts/gates/check-g0-baseline.py
+  scripts/gates/check-g3-closure.py
   scripts/gates/check-g2-legacy-jsx-carriers.py
   scripts/gates/check-g2-build-advisories.py
   scripts/gates/check-g2-provider-exact-optionals.py
   scripts/gates/test-g0-baseline.py
+  scripts/gates/test-g3-closure.py
   scripts/ci/check-checkout-action.py
   scripts/ci/check-security-tooling.sh
   scripts/ci/install-gitleaks.sh
@@ -967,6 +971,11 @@ wordpress_adapter_receipt = json.loads(
 activation_hook_receipt = json.loads(
     Path(
         "manifests/evidence/g1.3-wordpress-activation-hook.json"
+    ).read_text(encoding="utf-8")
+)
+g3_closure_template = json.loads(
+    Path(
+        "manifests/evidence/g3-semantic-ownership.template.json"
     ).read_text(encoding="utf-8")
 )
 sdk025_receipt = json.loads(
@@ -3522,6 +3531,7 @@ assert sdk043_command["commands"] == [
     "dev",
     "trace",
 ]
+assert sdk043_command["inspectOptions"] == ["--why <generated-path>"]
 cli_package_manifest = json.loads(
     Path("packages/cli/package.json").read_text(encoding="utf-8")
 )
@@ -3600,6 +3610,16 @@ assert sdk043_verification["historicalTraceCompatibility"] == (
 )
 assert sdk043_verification["strictHaxeBoundaryGuard"] == "passed"
 assert sdk043_verification["outcome"] == "passed"
+assert project_cli_implementation["g3ClosureReverification"] == {
+    "command": "bash scripts/project-cli/test-production.sh",
+    "outcome": "passed-local",
+    "positiveCases": 17,
+    "negativeCases": 16,
+    "noWriteAssertions": 17,
+    "fixtureArtifactCount": 3,
+    "inspectWhyEveryFixtureArtifact": "passed",
+    "provenanceManifestAndContentBinding": "passed",
+}
 sdk043_adoption = project_cli_implementation["aggregateLockAdoption"]
 assert sdk043_adoption["toolchainLockSha256"] == hashlib.sha256(
     Path("manifests/toolchain.lock.json").read_bytes()
@@ -5632,6 +5652,10 @@ g13_activation_input_records = {
     record["path"]: record["sha256"]
     for record in activation_hook_receipt["authenticatedInputs"]
 }
+g3_closure_subject_records = {
+    record["path"]: record["sha256"]
+    for record in g3_closure_template["currentSubjects"].values()
+}
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
@@ -5643,6 +5667,7 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
         assert sdk026_current_sha256 in (
             sdk045_plugin_subject_records.get(sdk026_input_path),
             g13_activation_input_records.get(sdk026_input_path),
+            g3_closure_subject_records.get(sdk026_input_path),
         )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
@@ -6486,6 +6511,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
     assert strict_haxe_current_digest in (
         strict_haxe_digest,
         g13_activation_input_records.get(strict_haxe_path),
+        g3_closure_subject_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -6741,6 +6767,7 @@ for record in sdk025_inputs:
             sdk026_input_records.get(record["path"]),
             strict_haxe_subjects.get(record["path"]),
             g13_activation_input_records.get(record["path"]),
+            g3_closure_subject_records.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 
@@ -11563,6 +11590,7 @@ python3 -m py_compile scripts/project-cli/test-production.py
 python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
+python3 scripts/gates/test-g3-closure.py
 python3 scripts/gates/check-g2-legacy-jsx-carriers.py
 python3 scripts/gates/check-g2-build-advisories.py
 python3 scripts/gates/check-g2-provider-exact-optionals.py

@@ -356,9 +356,37 @@ def run(runtime_root: Path) -> dict[str, object]:
         )
         _, build_inspection = runtime.invoke_project(project, "inspect", "build")
         assert any(value.get("schema") == "wordpress-hx.inspect-build.v1" for value in build_inspection)
-        _, provenance = runtime.invoke_project(project, "inspect", "provenance", EFFECTIVE.as_posix())
-        proof = next(value for value in provenance if value.get("schema") == "wordpress-hx.inspect-provenance.v1")
-        assert proof["artifact"]["contentSha256"] == hashlib.sha256(EXPECTED_INPUTS.read_bytes()).hexdigest()
+        manifest_files = manifest["files"]
+        assert len(manifest_files) == 3
+        for artifact in manifest_files:
+            _, provenance = runtime.invoke_project(
+                project, "inspect", "--why", artifact["path"]
+            )
+            proof = next(
+                value
+                for value in provenance
+                if value.get("schema") == "wordpress-hx.inspect-provenance.v1"
+            )
+            assert proof["manifestDigest"] == manifest["manifestDigest"]
+            assert proof["artifact"] == artifact
+            assert hashlib.sha256(
+                (project / artifact["path"]).read_bytes()
+            ).hexdigest() == artifact["contentSha256"]
+
+        conflicting_why = runtime.invoke(
+            [
+                "inspect",
+                "--why",
+                EFFECTIVE.as_posix(),
+                "provenance",
+                "--project",
+                runtime.container(project),
+                "--json",
+            ],
+            expected=2,
+        )
+        why_diagnostic = assert_canonical_jsonl(conflicting_why.stderr)
+        assert why_diagnostic[0]["code"] == "WPHX0001"
 
         tampered = project / EFFECTIVE
         original_effective = tampered.read_bytes()

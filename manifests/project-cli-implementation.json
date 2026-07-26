@@ -53,6 +53,9 @@
       "build",
       "provenance"
     ],
+    "inspectOptions": [
+      "--why <generated-path>"
+    ],
     "devOptions": [
       "--services=none"
     ],
@@ -214,6 +217,16 @@
     "historicalTraceCompatibility": "php-and-browser-suites-passed",
     "strictHaxeBoundaryGuard": "passed",
     "outcome": "passed"
+  },
+  "g3ClosureReverification": {
+    "command": "bash scripts/project-cli/test-production.sh",
+    "outcome": "passed-local",
+    "positiveCases": 17,
+    "negativeCases": 16,
+    "noWriteAssertions": 17,
+    "fixtureArtifactCount": 3,
+    "inspectWhyEveryFixtureArtifact": "passed",
+    "provenanceManifestAndContentBinding": "passed"
   },
   "claims": {
     "sdk043ProjectCli": "runtime-tested-hosted",

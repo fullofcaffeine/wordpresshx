@@ -19,6 +19,7 @@ class CliArguments {
 		var json = false;
 		var dryRun = false;
 		var services:Null<String> = null;
+		var whyPath:Null<String> = null;
 		final positionals:Array<String> = [];
 		var index = 1;
 		while (index < arguments.length) {
@@ -60,6 +61,12 @@ class CliArguments {
 						case _:
 					}
 					index += 2;
+				case "--why":
+					if (command != "inspect" || whyPath != null || index + 1 >= arguments.length) {
+						usage("--why requires one generated path and is supported only by inspect");
+					}
+					whyPath = arguments[index + 1];
+					index += 2;
 				case _ if (StringTools.startsWith(option, "--services=")):
 					final value = option.substr("--services=".length);
 					if (services != null || value != "none") {
@@ -83,12 +90,19 @@ class CliArguments {
 		if (command != "inspect" && positionals.length != 0) {
 			usage(command + " does not accept positional arguments");
 		}
+		if (whyPath != null) {
+			if (positionals.length != 0) {
+				usage("inspect --why cannot be combined with an inspect topic");
+			}
+			positionals.push("provenance");
+			positionals.push(whyPath);
+		}
 		return new CliInvocation(command, projectPath, profile, json, dryRun, services, positionals);
 	}
 
 	static function usage<T>(message:String):T {
 		throw new CliFailure("WPHX0001", message, 2, "command", null, [
-			"Use: wphx <build|check|inspect|clean|doctor|dev> [--project <path>] [--profile <id>] [--json]."
+			"Use: wphx <build|check|inspect|clean|doctor|dev> [--project <path>] [--profile <id>] [--json]; inspect also accepts --why <generated-path>."
 		]);
 	}
 }

@@ -89,10 +89,15 @@ wphx check
 wphx inspect project
 wphx inspect inputs --json
 wphx inspect build --json
-wphx inspect provenance .wphx/generated/effective-inputs.json --json
+wphx inspect --why .wphx/generated/effective-inputs.json --json
 wphx doctor
 wphx clean
 ```
+
+`inspect --why <generated-path>` is the concise form of
+`inspect provenance <generated-path>`. Both resolve one exact current manifest
+entry; neither infers ownership from a directory name, filename convention, or
+comment.
 
 Git-only hosts can opt in to carrying generated deployment bytes for exact
 configured roots. The command never discovers roots from existing files:

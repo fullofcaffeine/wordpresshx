@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G3-SEMANTIC-PLAN-FAIL-CLOSED-OWNERSHIP",
+  "bead": "wordpresshx-g3",
+  "status": "pending-hosted-proof",
+  "gateContract": {
+    "path": "wordpress-hx-sdk-product-requirements.md",
+    "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
+    "section": "Gate G3 — Semantic plan and fail-closed ownership"
+  },
+  "evidenceReceipts": [
+    {
+      "receiptId": "ADR-006-SEMANTIC-PLAN-CONTRACT",
+      "bead": "wordpresshx-adr-006",
+      "path": "manifests/evidence/adr-006-semantic-plan-contract.json",
+      "sha256": "f19120b4bd6bfa4d0a47a72d454a6a077609cff4e71b0593373d5c352ebfd182"
+    },
+    {
+      "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
+      "bead": "wordpresshx-sdk-040",
+      "path": "manifests/evidence/sdk-040-semantic-collector.json",
+      "sha256": "caf16c226b2a656df9d514e995646824d87662664078381d9fa63fc2d057eabf"
+    },
+    {
+      "receiptId": "ADR-007-GENERATED-ARTIFACT-OWNERSHIP",
+      "bead": "wordpresshx-adr-007",
+      "path": "manifests/evidence/adr-007-generated-artifact-ownership.json",
+      "sha256": "fdc96b1b93830e7d2466fc064d5d2d65c039a4625ba80758ca421b403b0f3488"
+    },
+    {
+      "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
+      "bead": "wordpresshx-sdk-041",
+      "path": "manifests/evidence/sdk-041-ownership-transaction.json",
+      "sha256": "2c4c30df73b770b0923048dc913f440e5ae1e35a6487f5e7bddad1a008fc4e1c"
+    },
+    {
+      "receiptId": "SDK-042-DETERMINISTIC-BUILD",
+      "bead": "wordpresshx-sdk-042",
+      "path": "manifests/evidence/sdk-042-deterministic-build.json",
+      "sha256": "6e58e5e1f73d5f4ce55e306912c59da13f82aa914dce09b91490e95be7f11c2d"
+    },
+    {
+      "receiptId": "SDK-043-PROJECT-CLI",
+      "bead": "wordpresshx-sdk-043",
+      "path": "manifests/evidence/sdk-043-project-cli.json",
+      "sha256": "052b1ae1d10110118c53dfe05d7321a159d1499be4da4db07f2cb067411300b5"
+    },
+    {
+      "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
+      "bead": "wordpresshx-sdk-026",
+      "path": "manifests/evidence/sdk-026-generated-php-quality.json",
+      "sha256": "534639a9b04455be48e35697a08a2258492aa1709bdb3eb066fd78fdc63cb20f"
+    },
+    {
+      "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
+      "bead": "wordpresshx-sdk-045.2",
+      "path": "manifests/evidence/sdk-045-plugin-scaffold.json",
+      "sha256": "075724c989e3dd866ee4ec5e33aeaae44f154c29bf412715ddd3c84b464ada00"
+    }
+  ],
+  "currentSubjects": {
+    "projectCliImplementation": {
+      "path": "manifests/project-cli-implementation.json",
+      "sha256": "38379ad01b47b7109fdc728b2cd1c414dffd984f45be281b6b5be3c1586e1eaf"
+    },
+    "cliArguments": {
+      "path": "packages/cli/src/wordpresshx/cli/CliArguments.hx",
+      "sha256": "bc046308baa262d24147a1a25b79cbb82f1d9d6fcd423780f8efe9016edcab28"
+    },
+    "projectCliCorpus": {
+      "path": "scripts/project-cli/test-production.py",
+      "sha256": "329e32380c14a19c60b9fdd0c3e3462d23b1dcb6a3d1814daed7c8e91b78e82c"
+    },
+    "cliDocumentation": {
+      "path": "packages/cli/README.md",
+      "sha256": "8470cdd3eab09b5cc6d6be528628d83f373399b4a1d610c147d506997a2d7923"
+    }
+  },
+  "acceptance": {
+    "semanticPlan": {
+      "schema": "wordpress-hx.semantic-plan.v1",
+      "canonicalization": "wordpress-hx.canonical-json.v1",
+      "directBuildCount": 2,
+      "serverBuildCount": 2,
+      "outcome": "passed"
+    },
+    "stagedFullTree": {
+      "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
+      "directVsReplayGeneratedTree": "byte-identical",
+      "incompleteAndExtraStageRejected": true,
+      "outcome": "passed"
+    },
+    "failClosedFilesystem": {
+      "requiredScenarios": [
+        "path-traversal",
+        "symlink",
+        "duplicate",
+        "case-collision",
+        "unowned-destination",
+        "modified-owned-file",
+        "stale-modified-file",
+        "malformed-manifest"
+      ],
+      "negativeInvocationCount": 26,
+      "outcome": "passed"
+    },
+    "transactionValidators": {
+      "qualityTools": [
+        "php-syntax-lint",
+        "formatter-stability",
+        "WordPress-Coding-Standards",
+        "PHPCompatibility",
+        "PHPStan"
+      ],
+      "qualityExecutionBeforePublication": true,
+      "exactStageContentBinding": true,
+      "failedQualityPublicationCount": 0,
+      "outcome": "passed"
+    },
+    "interruptionRecovery": {
+      "crashCheckpointCount": 13,
+      "recoveryModes": [
+        "finalize-complete-next",
+        "rollback-partial"
+      ],
+      "outcome": "passed"
+    },
+    "manifestOnlyClean": {
+      "cleanPreservesUnowned": true,
+      "modifiedOwnedFileRejected": true,
+      "nameOrCommentInference": false,
+      "outcome": "passed"
+    },
+    "determinism": {
+      "freshRootCount": 2,
+      "ownedGenerationReplay": "byte-identical",
+      "manifestReplay": "byte-identical",
+      "unsignedArchiveReplay": "byte-identical",
+      "outcome": "passed"
+    },
+    "inspectWhy": {
+      "fixtureArtifactCount": 3,
+      "everyFixtureArtifact": "passed",
+      "manifestAndContentBinding": "passed",
+      "legacyProvenanceFormPreserved": true,
+      "outcome": "passed"
+    }
+  },
+  "localVerification": {
+    "commands": [
+      "bash scripts/semantic-collector/test.sh",
+      "bash scripts/ownership/test.sh",
+      "bash scripts/determinism/test-production.sh",
+      "bash scripts/project-cli/test-production.sh",
+      "bash scripts/php-quality/test-production.sh",
+      "bash scripts/scaffold/test-production.sh",
+      "bash scripts/check-repository.sh"
+    ],
+    "outcome": "passed"
+  },
+  "implementation": {
+    "commit": null
+  },
+  "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "jobCount": null,
+    "allJobsPassed": null,
+    "jobs": {
+      "repository": null,
+      "semantic-plan": null,
+      "haxe": null
+    }
+  },
+  "claimBoundary": {
+    "g3SemanticPlanAndOwnership": "pending-hosted-proof",
+    "wordpressRuntimeCompatibility": "not-claimed-by-g3",
+    "nextjsRuntimeCompatibility": "not-claimed-by-g3",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested"
+  }
+}
