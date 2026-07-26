@@ -10,6 +10,13 @@ SDK-080 establishes the [`hxx`](hxx/README.md) parser-adapter prototype. Its pac
 
 SDK-031 establishes the [`gutenberg`](gutenberg/README.md) browser compiler profile. It admits an immutable Genes release through a recorded generic upstream-fix lineage, emits strict split-ESM TypeScript as the primary lane, keeps classic Genes output as a bounded differential, and proves retained public exports, live ESM behavior, full-DCE privacy, ordinary JavaScript consumption, and deterministic output. Gutenberg/React HXX APIs build on this compiler boundary in SDK-032; this first package slice deliberately contains no WordPress-specific compiler patch.
 
+G2.5 upgrades that package-local compiler input to Genes' released generic
+linked JSX carriers. The WordPressHx lowerer constructs those carriers with
+concrete Haxe types, the strict fixture requires an empty public and internal
+weak-type inventory, and the strict/classic runtime differential proves
+effectful prop and child order. The generalized property-alias compatibility
+work lives upstream; WordPressHx consumes only the immutable release.
+
 SDK-032 adds the first typed React/Gutenberg HXX slice to that same
 [`gutenberg`](gutenberg/README.md) module. Application components return Haxe
 inline markup directly; an exact-profile compile-time resolver checks native
@@ -24,11 +31,14 @@ classic JavaScript-plus-declarations printers. Both outputs retain the same
 declared module, pass strict external TypeScript consumption, and produce the
 same data, SSR, mounted-state, and click behavior in isolated React 18
 processes. This is a bounded regression corpus, not a universal mode switch;
-it required no Genes source change or sibling build input.
+it required no WordPress-specific Genes source change or sibling build input.
+G2.5 extends the same corpus with an effectful two-prop/two-child component:
+strict TSX and classic JavaScript must both observe
+`prop-first > prop-second > child-first > child-second`, exactly once.
 
 SDK-025 establishes the [`cli`](cli/README.md) build source for
 `@wordpress-hx/cli`. Its PHP trace application is authored in Haxe and compiled
-to Node ESM by immutable Genes 1.36.3. It validates exact package indexes and
+to Node ESM by immutable Genes 1.38.0. It validates exact package indexes and
 PHP range maps offline, preserves native frames, emits stable text or canonical
 JSON, and consumes separately retained debug companions. Browser trace
 correlation remains SDK-034 work. No Genes source change, sibling checkout, or

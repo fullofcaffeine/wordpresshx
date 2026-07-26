@@ -346,6 +346,28 @@ assert.match(strictApi, /return <section className="differential-counter"/);
 assert.doesNotMatch(strictApi, /React__genes_jsx\.createElement/);
 assert.match(classicApi, /React__genes_jsx\.createElement\("section"/);
 assert.doesNotMatch(classicApi, /return <section/);
+const evaluationLabels = [
+  "prop-first",
+  "prop-second",
+  "child-first",
+  "child-second"
+];
+for (const [lane, source] of [
+  ["strict", strictApi],
+  ["classic", classicApi]
+]) {
+  let previousOffset = -1;
+  for (const label of evaluationLabels) {
+    const offset = source.indexOf(`recordEvaluation("${label}")`);
+    assert.ok(offset > previousOffset, `${lane} reordered ${label}`);
+    assert.equal(
+      source.indexOf(`recordEvaluation("${label}")`, offset + 1),
+      -1,
+      `${lane} evaluated ${label} more than once`
+    );
+    previousOffset = offset;
+  }
+}
 assert.equal(expected.targetShape.strict.reactElementForm, "jsx");
 assert.equal(expected.targetShape.classic.reactElementForm, "react-create-element");
 assert.equal(expected.targetShape.unexplainedSemanticDifferenceCount, 0);

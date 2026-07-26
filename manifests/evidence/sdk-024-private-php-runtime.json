@@ -161,7 +161,7 @@
   "implementation": {
     "applicationLanguage": "Haxe",
     "privateCompiler": "Haxe 4.3.7 PHP target",
-    "javascriptCompiler": "Genes 1.36.3",
+    "javascriptCompiler": "Genes 1.38.0",
     "runtime": "ordinary-PHP-behind-native-WordPress-adapter",
     "pluginPlan": "wordpress-hx.plugin-plan.v2",
     "pluginEmission": "wordpress-hx.plugin-emission.v2",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "resolved-sdk-031",
+  "status": "resolved-g2.5",
   "profile": "wp70-release",
   "toolchain": {
     "haxe": "4.3.7",
@@ -24,16 +24,16 @@
   },
   "compiler": {
     "name": "genes-ts",
-    "version": "1.36.3",
-    "tag": "v1.36.3",
+    "version": "1.38.0",
+    "tag": "v1.38.0",
     "repository": "https://github.com/fullofcaffeine/genes-ts",
-    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-    "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+    "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
     "releaseArtifact": {
       "name": "submit.zip",
-      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.36.3/submit.zip",
-      "sizeBytes": 234698,
-      "sha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b"
+      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.38.0/submit.zip",
+      "sizeBytes": 335627,
+      "sha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab"
     },
     "admission": {
       "kind": "generalized-upstream-fix-release",
@@ -53,6 +53,27 @@
         "fixCommit": "77aa609279886fd8f53f48e0d2b751f898489930",
         "fixTree": "987359de08e83b4159aefc1a7987aa4146285037",
         "mergeCommit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58"
+      },
+      "adoption": {
+        "receiptId": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+        "previous": {
+          "version": "1.36.3",
+          "tag": "v1.36.3",
+          "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+          "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+          "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b"
+        },
+        "linkedCarrier": {
+          "pullRequest": 10,
+          "firstRelease": "v1.37.0"
+        },
+        "nativePropertyCompatibility": {
+          "pullRequest": 42,
+          "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+          "reviewedTip": "5de91a0d9616560d8ecc19f3aa2fca13912dee10",
+          "mergeCommit": "d0e9d392811d18eef42e3bfc3c0ce1ec2a6abbf7",
+          "mergeTree": "9ab74f5d25af85701dfec5917fdf3ea3a25d5184"
+        }
       }
     }
   },

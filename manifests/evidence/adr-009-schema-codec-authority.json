@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "f46144069a3edc2c4badb587f3421eea717d64cadbd787f61d6e876e8e9434fe"
+      "sha256": "be54bac8372ace774e86a9f237bb9a29d8ed5adc05193308ab6fafcec5bb3b8c"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -23,7 +23,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "bbbca806dc84444c194dcd83c40e697a1749839773c6c107f97c368f573366b5"
+      "sha256": "902435578d9e7c3fd966a11e3da16dfa7e6b243b53acfc8344d42c6f0da65d90"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -39,7 +39,7 @@
     "canonicalJsonIdentity": "wordpress-hx.contract-canonical-json.v1",
     "haxeType": "wordpress.hx.contracts.schema.SchemaDocument",
     "domainCodec": "wordpress.hx.contracts.ContractCodec<T>",
-    "browserCompiler": "genes-ts-1.36.3-c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "browserCompiler": "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7",
     "phpPrototypeCompiler": "stock-haxe-4.3.7-php",
     "manualParallelTargetSchemasAllowed": false,
     "runtimeReflectionRequired": false
@@ -53,7 +53,7 @@
     ],
     "sourceTreeSha256": "13f572da58bf8579eb9ee297aa093534890d4db92053aaea18735c72bed52b21",
     "haxeVersion": "4.3.7",
-    "genesVersion": "1.36.3",
+    "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",

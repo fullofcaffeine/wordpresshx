@@ -133,7 +133,7 @@
     "negativeCompileFixtureCount": 4,
     "targets": [
       "haxe-interp-4.3.7",
-      "genes-ts-1.36.3-c59ecb361fd91418584487c2138bae8d3d3a3961-typescript-5.9.3-node-22.17.0",
+      "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7-typescript-5.9.3-node-22.17.0",
       "php-8.4.7"
     ]
   },

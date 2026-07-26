@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the immutable SDK-031 compiler and TypeScript tooling closure."""
+"""Verify the immutable G2.5 compiler and TypeScript tooling closure."""
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def hxml_lines(path: Path) -> list[str]:
 
 def verify_metadata(lock: dict) -> None:
     assert lock["schemaVersion"] == 1
-    assert lock["status"] == "resolved-sdk-031"
+    assert lock["status"] == "resolved-g2.5"
     assert lock["profile"] == "wp70-release"
 
     toolchain = lock["toolchain"]
@@ -86,8 +86,8 @@ def verify_metadata(lock: dict) -> None:
         "compiler",
     )
     assert compiler["name"] == "genes-ts"
-    assert compiler["version"] == "1.36.3"
-    assert compiler["tag"] == "v1.36.3"
+    assert compiler["version"] == "1.38.0"
+    assert compiler["tag"] == "v1.38.0"
     assert compiler["repository"] == "https://github.com/fullofcaffeine/genes-ts"
     assert SHA1.fullmatch(compiler["commit"])
     assert SHA1.fullmatch(compiler["tree"])
@@ -105,7 +105,9 @@ def verify_metadata(lock: dict) -> None:
     assert SHA256.fullmatch(release_artifact["sha256"])
 
     admission = compiler["admission"]
-    assert_exact_keys(admission, {"kind", "baseline", "change"}, "admission")
+    assert_exact_keys(
+        admission, {"kind", "baseline", "change", "adoption"}, "admission"
+    )
     assert admission["kind"] == "generalized-upstream-fix-release"
     assert admission["baseline"] == {
         "receiptId": "SDK-030-GENES-TS-V1.33.0",
@@ -127,6 +129,30 @@ def verify_metadata(lock: dict) -> None:
         "mergeCommit": "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
     }
     assert compiler["commit"] != admission["baseline"]["commit"]
+    assert admission["adoption"] == {
+        "receiptId": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+        "previous": {
+            "version": "1.36.3",
+            "tag": "v1.36.3",
+            "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+            "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+            "releaseArtifactSha256": (
+                "992c5de0aa2b234d023c360c4e75e94a"
+                "7eb7b04c18bbbe0e26d9ef475639aa1b"
+            ),
+        },
+        "linkedCarrier": {
+            "pullRequest": 10,
+            "firstRelease": "v1.37.0",
+        },
+        "nativePropertyCompatibility": {
+            "pullRequest": 42,
+            "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+            "reviewedTip": "5de91a0d9616560d8ecc19f3aa2fca13912dee10",
+            "mergeCommit": "d0e9d392811d18eef42e3bfc3c0ce1ec2a6abbf7",
+            "mergeTree": "9ab74f5d25af85701dfec5917fdf3ea3a25d5184",
+        },
+    }
 
     assert len(lock["dependencies"]) == 1
     dependency = lock["dependencies"][0]
@@ -437,7 +463,7 @@ def main() -> None:
     verify_metadata(lock)
     if not arguments.metadata_only:
         verify_network(lock)
-    print("SDK-031 immutable browser dependency lock passed")
+    print("G2.5 immutable browser dependency lock passed")
 
 
 if __name__ == "__main__":

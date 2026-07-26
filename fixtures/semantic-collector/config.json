@@ -16,7 +16,7 @@
   },
   "toolchainLock": {
     "path": "fixtures/project-cli/project/.wphx/project.lock.json",
-    "sha256": "d200cd7ee8e1f84c6763e461dc8f7429aeb735c243466344265196e2c74cdc83"
+    "sha256": "b71260d6cee03dff576bc6d240410c16f372ff21eb4b3b01b6c84784ec400de1"
   },
   "resourceRoots": [
     "fixtures/semantic-collector/assets"

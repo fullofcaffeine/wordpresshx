@@ -80,9 +80,9 @@ class ScaffoldToolchain {
 			{
 				id: "compiler.genes",
 				role: "compiler",
-				version: "1.36.3",
+				version: "1.38.0",
 				source: "git-source",
-				identity: "git:https://github.com/fullofcaffeine/genes-ts@c59ecb361fd91418584487c2138bae8d3d3a3961#tree=be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+				identity: "git:https://github.com/fullofcaffeine/genes-ts@122162abefc2035b307508e521348ea4fb36dab7#tree=739500b4f4f2513adc3d993cdab6e0e7620965a3"
 			},
 			{
 				id: "compiler.haxe",

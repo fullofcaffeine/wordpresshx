@@ -20,13 +20,17 @@ def main() -> None:
     compiler = lock["compiler"]
     assert compiler == {
         "name": "genes-ts",
-        "version": "1.36.3",
+        "version": "1.38.0",
         "repository": "https://github.com/fullofcaffeine/genes-ts",
-        "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-        "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+        "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+        "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
         "dependency": {"name": "helder.set", "version": "0.3.1"},
         "sourceChanged": False,
-        "pullRequest": None,
+        "pullRequest": {
+            "number": 42,
+            "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+            "wordpressSpecific": False,
+        },
     }
     genes_hxml = (ROOT / "haxe_libraries/genes-ts.hxml").read_text(
         encoding="utf-8"
@@ -72,7 +76,7 @@ def main() -> None:
         "sourceSha256": "831e61717840f82756aff0449fe23aec8af8b2e3c004e4f25a2b80da6f95d946",
         "profile": "packages/cli/profiles/development-reload-client.hxml",
         "profileSha256": "4367bb6fe0daedb754b37258d2a259225362e01dca7f7584026d0006f1c9f341",
-        "compiler": "genes-ts@1.36.3",
+        "compiler": "genes-ts@1.38.0",
         "bundler": "esbuild@0.27.2",
         "asset": "packages/cli/assets/development-reload-client.js",
         "assetSha256": "cc9aa72db548a9d7379062bed2b2a7d5889571a8bc774dc1958eb0a6b369b694",
@@ -201,7 +205,7 @@ def main() -> None:
     }
 
     print(
-        "CLI dependency lock passed: Genes 1.36.3, hxnodejs 10.0.0, "
+        "CLI dependency lock passed: Genes 1.38.0, hxnodejs 10.0.0, "
         "Node 22.17.0, esbuild 0.27.2, Playwright/Chromium 1.58.2"
     )
 

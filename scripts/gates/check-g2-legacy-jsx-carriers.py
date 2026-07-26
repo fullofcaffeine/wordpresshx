@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the bounded Genes 1.36 JSX carrier decision and migration owner."""
+"""Verify the historical Genes 1.36 inventory and its G2.5 replacement."""
 
 from __future__ import annotations
 
@@ -11,6 +11,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RECEIPT_PATH = (
     ROOT / "manifests/evidence/g2.1-legacy-jsx-marker-temporaries.json"
+)
+ADOPTION_RECEIPT_PATH = (
+    ROOT / "manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json"
 )
 
 
@@ -33,15 +36,10 @@ def main() -> None:
     for subject in receipt["subjects"].values():
         path = ROOT / subject["path"]
         assert path.is_file(), f"missing G2.1 subject: {path}"
-        assert sha256(path) == subject["sha256"], f"stale G2.1 subject: {path}"
+        assert len(subject["sha256"]) == 64
 
-    compiler = load_json(
-        ROOT / receipt["subjects"]["dependencyLock"]["path"]
-    )["compiler"]
-    current = receipt["currentCompiler"]
-    for field in ("name", "version", "tag", "commit", "tree"):
-        assert compiler[field] == current[field]
-    assert current["markerBoundary"] == {
+    historical = receipt["currentCompiler"]
+    assert historical["markerBoundary"] == {
         "tag": "Dynamic",
         "props": "Array<Dynamic>",
         "children": "Array<Dynamic>",
@@ -56,13 +54,6 @@ def main() -> None:
     ]
     assert inventory["exactCount"] == len(inventory["internal"]) == 3
     assert inventory["authoredHaxeWeakTypesAdded"] == 0
-
-    verifier = (
-        ROOT / receipt["subjects"]["liveVerifier"]["path"]
-    ).read_text(encoding="utf-8")
-    for item in inventory["internal"]:
-        assert f'"{item}"' in verifier
-    assert "assert.deepEqual(publicWeakTypes, []" in verifier
 
     reason = receipt["compilerReason"]
     assert reason["classification"] == "legacy-generic-jsx-marker-protocol"
@@ -89,9 +80,45 @@ def main() -> None:
             "receipts"
         ),
     }
+
+    adoption = load_json(ADOPTION_RECEIPT_PATH)
+    assert adoption["schemaVersion"] == 1
+    assert adoption["receiptId"] == "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION"
+    assert adoption["status"] in {"implemented-hosted-pending", "verified"}
+    for subject in adoption["subjects"].values():
+        path = ROOT / subject["path"]
+        assert path.is_file(), f"missing G2.5 subject: {path}"
+        assert sha256(path) == subject["sha256"], f"stale G2.5 subject: {path}"
+
+    previous = adoption["previousCompiler"]
+    for field in ("name", "version", "tag", "commit", "tree"):
+        assert previous[field] == historical[field]
+    compiler = load_json(
+        ROOT / adoption["subjects"]["gutenbergDependencyLock"]["path"]
+    )["compiler"]
+    adopted = adoption["adoptedCompiler"]
+    for field in ("name", "version", "tag", "commit", "tree"):
+        assert compiler[field] == adopted[field]
+    assert compiler["releaseArtifact"] == adopted["releaseArtifact"]
+
+    protocol = adoption["genericProtocol"]
+    assert protocol["legacyArrayMarkersRemoved"] is True
+    assert protocol["propAndChildEvaluationOrderPreserved"] is True
+    assert protocol["wordpressSymbolsInProtocol"] is False
+    lowerer = (
+        ROOT / adoption["subjects"]["browserHxxLowerer"]["path"]
+    ).read_text(encoding="utf-8")
+    for carrier in protocol["adapterCarriers"]:
+        assert carrier in lowerer
+    assert "Array<Dynamic>" not in lowerer
+
+    strict_types = adoption["localVerification"]["strictTypes"]
+    assert strict_types["publicWeakTypes"] == []
+    assert strict_types["internalWeakInventory"] == []
+    assert strict_types["forbiddenAuthoredHaxeTypes"] == []
     print(
-        "G2.1 legacy JSX carrier gate passed: "
-        "3 generated-only any[] locals, zero public weak types"
+        "G2.1/G2.5 JSX carrier gate passed: historical three-local inventory "
+        "replaced by typed linked carriers with zero weak generated types"
     )
 
 

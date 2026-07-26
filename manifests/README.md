@@ -152,10 +152,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 - `evidence/` contains the command, environment, hosted-CI, limitation, and artifact evidence behind a lock entry.
 
 The first resolved external input is genes-ts `v1.33.0`, recorded by
-`wordpresshx-sdk-030`. SDK-031 preserves that selection record and admits the
-active `v1.36.3` browser fixture through
-`packages/gutenberg/dependency-lock.json`, which proves the baseline, generic
-fix, reviewed merge, and release lineage. The canonical public Git and Beads
+`wordpresshx-sdk-030`. SDK-031 preserves the historical `v1.36.3` strict
+fixture; G2.5 admits the active `v1.38.0` browser compiler through
+`packages/gutenberg/dependency-lock.json`, preserving the baseline and adding
+the linked-carrier and generalized property-alias lineage. The canonical public Git and Beads
 transport is recorded by `evidence/sdk-004-canonical-repository.json`. The
 first co-located PHP compiler import is recorded by
 `evidence/sdk-020-reflaxe-php-bootstrap.json`; it is an internal source receipt,
@@ -176,6 +176,13 @@ source-map composition, and local Chrome accessibility/visual review. It does
 not claim dependency extraction, translations, real WordPress editor loading,
 the classic differential, complete G2 closure, publication, or production
 support.
+
+Receipt `G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION` is the current package-level
+compiler adoption overlay. It preserves SDK-031/032/035 and later feature
+receipts as historical evidence, pins the selected Genes release and artifact,
+records the generic upstream PR/CI lineage, hashes the current adapter and
+verifiers, and replays every compiler-dependent SDK, CLI, scaffold,
+source-map, deterministic-build, runtime, security, and repository gate.
 
 Receipt `SDK-035-CLASSIC-GENES-DIFFERENTIAL` compiles one retained Haxe/HXX
 facade through strict TSX and classic JavaScript plus declarations from the

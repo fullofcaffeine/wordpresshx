@@ -65,7 +65,7 @@ haxe_library_cache="$(
     );
   '
 )"
-genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src"
+genes_root="${haxe_library_cache}/genes-ts/1.38.0/github/122162abefc2035b307508e521348ea4fb36dab7/src"
 haxe_stdlib_root="${lix_haxe_root}/versions/4.3.7/std"
 
 python3 "${package_root}/scripts/verify-dependency-lock.py" --metadata-only

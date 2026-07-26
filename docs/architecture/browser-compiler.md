@@ -19,8 +19,16 @@ The complete admission, strict-output, DCE, runtime, and reproducibility proof
 is recorded by
 [`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
 
-SDK-035 closes the representative React differential with the same immutable
-Genes 1.36.3 pin. One SDK-owned Haxe/HXX facade is emitted as strict TSX and as
+G2.5 supersedes that package-local compiler input with immutable Genes
+`v1.38.0` without rewriting SDK-031's historical evidence. Its adoption receipt binds the current immutable release,
+the generic linked JSX protocol, the generalized upstream compatibility PR,
+an empty SDK-owned weak-type inventory, and fresh replays of every affected
+browser/CLI gate. The baseline selection in `manifests/upstream.lock.json`
+remains `v1.33.0`; the active package pin lives in
+`packages/gutenberg/dependency-lock.json`.
+
+SDK-035 originally closed the representative React differential with immutable
+Genes 1.36.3; G2.5 replays and extends it under Genes 1.38.0. One SDK-owned Haxe/HXX facade is emitted as strict TSX and as
 classic JavaScript plus declarations, consumed under strict TypeScript 5.9.3,
 and executed through pure functions, React SSR, a mounted hook, and a real
 click. The clean replay and all four isolated runtime transcripts match. The
@@ -61,7 +69,7 @@ the SDK package index to authenticate the exact files and layer order. A final
 JS-to-Haxe map is admitted only for the exact entry/mode after deliberate
 development and minified throws pass; otherwise the supported result is an
 explicit JS-to-TS/TSX-to-Haxe two-stage chain. SDK-034 now proves that contract
-for its exact Genes 1.36.3/esbuild 0.27.2 fixture in real Chromium, including
+for its original Genes 1.36.3/esbuild 0.27.2 fixture in real Chromium, including
 the two-stage fallback and production retention. That receipt is not evidence
 for webpack or Next.js. `wordpresshx-g2.4` owns the exact official
 `@wordpress/scripts` projection, and SDK-113 must admit each future NextJsHx

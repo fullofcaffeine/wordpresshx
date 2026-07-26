@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHITECTURE_PATH = ROOT / "manifests" / "output-context-architecture.json"
+BROWSER_DEPENDENCY_LOCK_PATH = ROOT / "packages" / "gutenberg" / "dependency-lock.json"
 FIXTURE_ROOT = ROOT / "fixtures" / "output-context"
 TRANSCRIPT_PATH = FIXTURE_ROOT / "expected" / "context-plan.txt"
 
@@ -288,7 +289,18 @@ def validate_model(model: dict[str, object]) -> None:
                 f"prototype evidence {field} changed: expected {expected!r}"
             )
     targets = unique_strings(evidence.get("targets"), "prototypeEvidence targets")
-    if len(targets) != 5 or not any(target.startswith("genes-ts-1.36.3-") for target in targets):
+    browser_lock = require_dict(
+        strict_json(
+            BROWSER_DEPENDENCY_LOCK_PATH.read_text(encoding="utf-8"),
+            "browser dependency lock",
+        ),
+        "browser dependency lock",
+    )
+    genes = require_dict(browser_lock.get("compiler"), "browser dependency lock compiler")
+    genes_target = f"genes-ts-{genes.get('version')}-"
+    if len(targets) != 5 or not any(
+        target.startswith(genes_target) for target in targets
+    ):
         raise ValidationError("prototype target inventory changed")
 
     hosted = require_dict(model.get("hostedGate"), "hostedGate")

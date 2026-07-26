@@ -187,9 +187,9 @@ def verify_maps(evidence: Path, files_by_id: dict[str, dict]) -> None:
         "referenced_source_indexes"
     ]
     expected = {
-        "genes-editor-panel.tsx.map": ("EditorPanel.tsx", 6),
+        "genes-editor-panel.tsx.map": ("EditorPanel.tsx", 5),
         "wordpress-scripts-development.js.map": ("editor.js", 7),
-        "wordpress-scripts-production.js.map": ("editor.js", 5),
+        "wordpress-scripts-production.js.map": ("editor.js", 1),
     }
     map_paths = sorted((evidence / "maps").glob("*.map"))
     if [path.name for path in map_paths] != sorted(expected):
@@ -214,7 +214,13 @@ def verify_maps(evidence: Path, files_by_id: dict[str, dict]) -> None:
             or len(document["sources"]) != expected_source_count
             or "sourcesContent" in document
         ):
-            raise AssertionError(f"{map_path.name}: normalized map contract drifted")
+            raise AssertionError(
+                f"{map_path.name}: normalized map contract drifted "
+                f"(expected file {expected_file!r} and "
+                f"{expected_source_count} sources; got "
+                f"{document.get('file')!r} and "
+                f"{len(document.get('sources', []))} sources)"
+            )
         if not isinstance(document["names"], list) or not all(
             isinstance(name, str)
             and name
@@ -375,9 +381,9 @@ def verify_packages(evidence_package: Path, evidence: Path, index: dict, plan: d
         raise AssertionError("G2.4 package binding drifted")
     raw_layers = binding["rawLayers"]
     expected_counts = {
-        "file:map:genes:wordpress-scripts-editor-panel": (6, 6, 0),
-        "file:map:wordpress-scripts:development": (19, 7, 9),
-        "file:map:wordpress-scripts:production": (10, 5, 0),
+        "file:map:genes:wordpress-scripts-editor-panel": (5, 5, 0),
+        "file:map:wordpress-scripts:development": (18, 7, 3),
+        "file:map:wordpress-scripts:production": (7, 1, 0),
     }
     if set(raw_layers) != set(expected_counts):
         raise AssertionError("G2.4 raw layer inventory drifted")
@@ -392,7 +398,11 @@ def verify_packages(evidence_package: Path, evidence: Path, index: dict, plan: d
             != counts
             or layer["sourcesContentRemoved"] is not True
         ):
-            raise AssertionError(f"{layer_id}: raw layer proof drifted")
+            raise AssertionError(
+                f"{layer_id}: raw layer proof drifted "
+                f"(expected {counts}; got "
+                f"{(layer['rawSourceCount'], layer['haxeSourceCount'], layer['embeddedHaxeSourceContentVerified'])})"
+            )
     production = verify_zip(
         evidence_package / "packages" / manifest["production"]["path"],
         manifest["production"],

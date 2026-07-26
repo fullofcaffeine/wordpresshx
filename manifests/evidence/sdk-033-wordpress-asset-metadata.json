@@ -56,7 +56,7 @@
     },
     "gate": {
       "path": "packages/gutenberg/scripts/test-assets.sh",
-      "sha256": "a191e421ee2503a366c6233f111a21d6fea416ee745491422b9126353aa4215d"
+      "sha256": "208eb67b99a5aa6a01417e6e8b1c0bc3f4c0df4fdec85ca742a373dd2a613e50"
     },
     "wordpressLane": {
       "path": "packages/gutenberg/scripts/run-wordpress-assets-lane.sh",
@@ -87,9 +87,9 @@
     "lixPackage": "15.12.4",
     "lixReportedCli": "15.12.2",
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
     },
     "node": {
       "version": "22.17.0",

@@ -12,7 +12,7 @@
     },
     "verifier": {
       "path": "packages/gutenberg/scripts/verify-hxx.mjs",
-      "sha256": "91878816767ebe78419e5c96a4ed697104b95e526492a061160df74ae915b178"
+      "sha256": "b219fbcbfe559b41fdc07623b05db011fcf81b61826a82e8d7c749f92883b7f7"
     },
     "diagnostics": {
       "path": "packages/gutenberg/test/expected/provider-exact-optional-diagnostics.json",
@@ -32,7 +32,7 @@
     },
     "sdk032Receipt": {
       "path": "manifests/evidence/sdk-032-react-gutenberg-hxx.json",
-      "sha256": "302eb58c4d21e998e39565b49d5eb5372298f5d215a2eab1084e06277f58c7e3"
+      "sha256": "b9c08ee26035e59315e9d8c8206f58dbb8ff9359830a2c07d80945301afae676"
     }
   },
   "exactProvider": {

@@ -1,5 +1,5 @@
-# @install: lix --silent download "gh://github.com/fullofcaffeine/genes-ts#c59ecb361fd91418584487c2138bae8d3d3a3961" into genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961
+# @install: lix --silent download "gh://github.com/fullofcaffeine/genes-ts#122162abefc2035b307508e521348ea4fb36dab7" into genes-ts/1.38.0/github/122162abefc2035b307508e521348ea4fb36dab7
 -lib helder.set
-${HAXE_LIBCACHE}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/extraParams.hxml
--cp ${HAXE_LIBCACHE}/genes-ts/1.36.3/github/c59ecb361fd91418584487c2138bae8d3d3a3961/src
--D genes-ts=1.36.3
+${HAXE_LIBCACHE}/genes-ts/1.38.0/github/122162abefc2035b307508e521348ea4fb36dab7/extraParams.hxml
+-cp ${HAXE_LIBCACHE}/genes-ts/1.38.0/github/122162abefc2035b307508e521348ea4fb36dab7/src
+-D genes-ts=1.38.0

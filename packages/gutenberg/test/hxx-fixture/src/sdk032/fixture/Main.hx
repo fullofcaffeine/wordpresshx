@@ -52,10 +52,9 @@ class Main {
 			}
 		];
 		final proofTags:Array<ReactNode> = ["HXX  ·  ", "REACT 18  ·  ", "WP 7.0"];
-		final actionDefaults:{
-			className:String,
-			ref:wordpress.hx.gutenberg.react.ReactTypes.ReactRefObject<HtmlButtonElement>
-		} = {
+		final actionDefaults:ActionDefaults = {
+			ariaControls: "proof-result",
+			ariaExpanded: accepted,
 			className: "proof__action",
 			ref: actionRef
 		};
@@ -133,16 +132,14 @@ class Main {
 							</Notice>
 						</div>
 
-						<footer class="proof__sheet-foot">
-							<div class="proof__tags" role="group" aria-label="Build targets">{...proofTags}</div>
-							<Button
-								{...actionDefaults}
-								ariaControls="proof-result"
-								ariaExpanded={accepted}
-								onClick={accept}
-								onKeyDown={acceptFromKeyboard}
-								variant={buttonVariant}
-							>
+							<footer class="proof__sheet-foot">
+								<div class="proof__tags" role="group" aria-label="Build targets">{...proofTags}</div>
+								<Button
+									{...actionDefaults}
+									onClick={accept}
+									onKeyDown={acceptFromKeyboard}
+									variant={buttonVariant}
+								>
 								<if {accepted}>Reopen proof<else>Accept this proof</if>
 							</Button>
 						</footer>
@@ -196,6 +193,22 @@ class Main {
 			</button>
 		</li>;
 	}
+}
+
+/**
+ * Exact spread shape proving Haxe-safe names retain their target JSX spelling.
+ *
+ * The runtime object owns only these four fields, so explicit event handlers
+ * can follow the spread without pretending that absent optional Button props
+ * were already supplied.
+ */
+private typedef ActionDefaults = {
+	@:native("aria-controls")
+	final ariaControls:String;
+	@:native("aria-expanded")
+	final ariaExpanded:Bool;
+	final className:String;
+	final ref:wordpress.hx.gutenberg.react.ReactTypes.ReactRefObject<HtmlButtonElement>;
 }
 
 private typedef ProofCheck = {

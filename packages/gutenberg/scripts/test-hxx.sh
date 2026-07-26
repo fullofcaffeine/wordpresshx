@@ -106,6 +106,8 @@ expect_compile_failure "missing_notice_children" "WPX3215"
 expect_compile_failure "open_spread" "WPX3218"
 expect_compile_failure "unknown_prop" "WPX3226"
 expect_compile_failure "unsupported_switch" "WPX3213"
+expect_compile_failure "invalid_button_type" "WPX3229"
+expect_compile_failure "invalid_component_return" "WPX3209"
 expect_compile_failure "wrong_event" "ReactMouseEvent<"
 expect_compile_failure "wrong_ref" "String should be wordpress.hx.gutenberg.react.HtmlButtonElement"
 

@@ -13,6 +13,9 @@ assert.equal(typeof DifferentialApi, "function");
 assert.equal(typeof DifferentialApi.summarize, "function");
 assert.equal(typeof DifferentialApi.describe, "function");
 assert.equal(typeof DifferentialApi.Counter, "function");
+assert.equal(typeof DifferentialApi.OrderedEvaluation, "function");
+assert.equal(typeof DifferentialApi.resetEvaluationOrder, "function");
+assert.equal(typeof DifferentialApi.evaluationTranscript, "function");
 
 const summary = DifferentialApi.summarize("item", [3, 1, 3]);
 const description = DifferentialApi.describe("SDK-035", summary);
@@ -24,6 +27,11 @@ const props = {
 const serverHtml = renderToStaticMarkup(
   React.createElement(DifferentialApi.Counter, props)
 );
+DifferentialApi.resetEvaluationOrder();
+const orderedEvaluationHtml = renderToStaticMarkup(
+  React.createElement(DifferentialApi.OrderedEvaluation)
+);
+const evaluationOrder = DifferentialApi.evaluationTranscript();
 
 const dom = new JSDOM("<!doctype html><div id=\"root\"></div>", {
   url: "https://wordpresshx.invalid/"
@@ -79,6 +87,8 @@ console.log(JSON.stringify({
   summary,
   description,
   serverHtml,
+  orderedEvaluationHtml,
+  evaluationOrder,
   clientBefore,
   clientAfter
 }));

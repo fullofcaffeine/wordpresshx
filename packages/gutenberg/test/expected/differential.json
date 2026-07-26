@@ -13,8 +13,8 @@
   },
   "compilerProvenance": {
     "name": "genes-ts",
-    "version": "1.36.3",
-    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "version": "1.38.0",
+    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
     "referenceFixture": {
       "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
       "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",
@@ -23,7 +23,11 @@
       "buildInput": false
     },
     "wordpressSpecificGenesChange": false,
-    "genesPullRequest": null
+    "genesPullRequest": {
+      "number": 42,
+      "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+      "wordpressSpecific": false
+    }
   },
   "publicContract": {
     "className": "DifferentialApi",
@@ -39,7 +43,14 @@
             "optional": false
           }
         ],
-        "returns": "BrowserNode"
+        "returns": "JSX.Element"
+      },
+      {
+        "kind": "static-method",
+        "name": "OrderedEvaluation",
+        "typeParameters": [],
+        "parameters": [],
+        "returns": "JSX.Element"
       },
       {
         "kind": "static-method",
@@ -58,6 +69,20 @@
           }
         ],
         "returns": "string"
+      },
+      {
+        "kind": "static-method",
+        "name": "evaluationTranscript",
+        "typeParameters": [],
+        "parameters": [],
+        "returns": "string"
+      },
+      {
+        "kind": "static-method",
+        "name": "resetEvaluationOrder",
+        "typeParameters": [],
+        "parameters": [],
+        "returns": "void"
       },
       {
         "kind": "static-method",
@@ -126,6 +151,8 @@
     },
     "description": "SDK-035:3:7:item-3|item-1|item-3",
     "serverHtml": "<section class=\"differential-counter\" data-state=\"2\" aria-label=\"Differential count\"><span class=\"differential-counter__label\">Differential count</span><span class=\"differential-counter__value\" aria-live=\"polite\">2</span><button type=\"button\">Add 3</button></section>",
+    "orderedEvaluationHtml": "<div data-state=\"prop-first\" aria-label=\"prop-second\"><span>child-first</span><strong>child-second</strong></div>",
+    "evaluationOrder": "prop-first>prop-second>child-first>child-second",
     "clientBefore": {
       "count": "2",
       "output": "2",
@@ -140,14 +167,14 @@
     }
   },
   "artifacts": {
-    "generatedTreeSha256": "0063a76bb3f4b5326cf201208bf8ddd0ed21122de71ed22fa19afef4b31f7438",
+    "generatedTreeSha256": "80b313070c496e3188488fbdf07dd1582f20b58c0114dfac602f73f7efc3270b",
     "strictBundle": {
-      "bytes": 12249,
-      "sha256": "1c4fc43077710ebfc8f873f309fd715d0b54928761426901da40a26af1907f35"
+      "bytes": 13357,
+      "sha256": "3331d250dcd704c2d85545cea22aa97bb1e325b8dfc0280e93c54cfb47862395"
     },
     "classicBundle": {
-      "bytes": 12337,
-      "sha256": "1172921830a8867982107e9e3240f9f35b0421570c0217b4cf52e6cc712e8303"
+      "bytes": 13431,
+      "sha256": "5d4ad0bd814a78a424284af6ab2ca8448c1ca40abacb1cd4262bde35379bb181"
     }
   },
   "budgets": {

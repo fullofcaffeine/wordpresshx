@@ -6,7 +6,7 @@
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
-      "sha256": "ddb7dea16b3203511990825e964cad89a75942f9e367ad22195b72cc5d3f58e1"
+      "sha256": "846541a0a2661372485072a49ac4a7052c671e5199e99b1c0976b6e8615d7bab"
     },
     "processBoundary": {
       "path": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",

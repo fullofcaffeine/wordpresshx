@@ -19,7 +19,8 @@ REPOSITORY_ROOT = PACKAGE_ROOT.parents[1]
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 STABLE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/@+\-]{0,255}$")
-GENES_COMMIT = "c59ecb361fd91418584487c2138bae8d3d3a3961"
+GENES_COMMIT = "122162abefc2035b307508e521348ea4fb36dab7"
+HAXE_CLASSPATH_PREFIX = "haxe://classpath/"
 
 
 def digest(data: bytes) -> str:
@@ -267,7 +268,32 @@ class PackageBuilder:
             )
         raise ValueError(f"Source Map references an unadmitted Haxe root: {source_path}")
 
+    def classify_haxe_classpath_uri(
+        self, source_reference: str
+    ) -> dict[str, object]:
+        if not source_reference.startswith(HAXE_CLASSPATH_PREFIX):
+            raise ValueError(f"not a Haxe classpath URI: {source_reference}")
+        relative = require_safe_path(
+            source_reference[len(HAXE_CLASSPATH_PREFIX) :]
+        )
+        candidates = [
+            candidate
+            for candidate in (
+                self.genes_root / relative,
+                self.haxe_stdlib_root / relative,
+            )
+            if candidate.is_file()
+        ]
+        if len(candidates) != 1:
+            raise ValueError(
+                "Haxe classpath URI does not resolve to exactly one "
+                f"admitted compiler root: {source_reference}"
+            )
+        return self.classify_haxe_path(candidates[0])
+
     def classify_composed_source(self, source_reference: str) -> dict[str, object]:
+        if source_reference.startswith(HAXE_CLASSPATH_PREFIX):
+            return self.classify_haxe_classpath_uri(source_reference)
         if (
             not source_reference
             or source_reference.startswith("/")
@@ -277,7 +303,7 @@ class PackageBuilder:
             raise ValueError(f"unsafe composed source reference: {source_reference}")
         normalized = posixpath.normpath(source_reference)
         genes_marker = (
-            f"haxe/haxe_libraries/genes-ts/1.36.3/github/{GENES_COMMIT}/src/"
+            f"haxe/haxe_libraries/genes-ts/1.38.0/github/{GENES_COMMIT}/src/"
         )
         stdlib_marker = "haxe/versions/4.3.7/std/"
         if genes_marker in normalized:
@@ -298,6 +324,8 @@ class PackageBuilder:
     def classify_genes_source(
         self, map_path: Path, source_reference: str
     ) -> dict[str, object]:
+        if source_reference.startswith(HAXE_CLASSPATH_PREFIX):
+            return self.classify_haxe_classpath_uri(source_reference)
         if (
             not source_reference
             or source_reference.startswith("/")
@@ -507,7 +535,7 @@ class PackageBuilder:
         toolchain = json.loads(read_utf8(self.bundle_root / "toolchain.json"))
         build_inputs = {
             "toolchain": toolchain,
-            "genes": {"version": "1.36.3", "commit": GENES_COMMIT},
+            "genes": {"version": "1.38.0", "commit": GENES_COMMIT},
             "fixtureSha256": digest(
                 read_utf8(
                     PACKAGE_ROOT

@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",
-      "sha256": "faac03025e53f2bcd0d454b746b5a7d714ed6e5e6d34a03c0925bc3bba438740"
+      "sha256": "314821b895960aeeba8a2136f86111a488aa9bb96f9133a2dd748d3e1c2ad709"
     },
     "projectSchema": {
       "path": "schemas/project.schema.json",
@@ -50,19 +50,19 @@
     },
     "projectLockFixture": {
       "path": "fixtures/project-cli/project/.wphx/project.lock.json",
-      "sha256": "d200cd7ee8e1f84c6763e461dc8f7429aeb735c243466344265196e2c74cdc83"
+      "sha256": "b71260d6cee03dff576bc6d240410c16f372ff21eb4b3b01b6c84784ec400de1"
     },
     "effectiveInputsFixture": {
       "path": "fixtures/project-cli/valid/effective-inputs.json",
-      "sha256": "0fb6ce6340fc42b9bdc5d9173c5e14d2c8016d5daa08d9af6192df6f8ce2af81"
+      "sha256": "66b69548168e1c4ded646569e084a449267735c5c110a704eda9d4b6dbc8e11d"
     },
     "dryRunEventsFixture": {
       "path": "fixtures/project-cli/valid/build-dry-run.events.jsonl",
-      "sha256": "3689b47fbd2439aa0a9848a9adc27c38fc3ffd2b37bc3b620e831213e06918b9"
+      "sha256": "9235aa8d4576cbc70d504c47c207f65a4401d55e0e1698d561e91927ae6eb776"
     },
     "devEventsFixture": {
       "path": "fixtures/project-cli/valid/dev.events.jsonl",
-      "sha256": "176b9fde42b64282a75f6f55afe04bf5173cb621fb436b31606ad394059da90e"
+      "sha256": "51abff0ce8077ef3e07b7e6fa90c8c97ab3fcc47e11436b7cfc99a6f57258127"
     }
   },
   "contract": {
@@ -76,9 +76,9 @@
     "compileWatchOnly": "wphx dev --services=none",
     "packageManager": "npm@10.9.2",
     "projectConfigSemanticSha256": "df18cceedf89682510cd191c6d8551e9b0401c30fc16c81852051ce11b7e8c6c",
-    "projectLockDigest": "18a0c4d77672842deca9937100f7daa1e43deb5c9ba118eaa4cfb2a8ca02fe5a",
-    "effectiveInputsFingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
-    "compileServerCompatibilityDigest": "b81db5fb9dddcf44e5994e2fe0f82d949750e135698df819171873fe7c3012e6"
+    "projectLockDigest": "4cfa2c74754de88a9e775a90c5103d14bcaa172eccdb90f639d790b6cab54e22",
+    "effectiveInputsFingerprint": "4c5f973f28fcff62b1065591e62a38d4246bd0ebd37dff431ef15d27fd1aa520",
+    "compileServerCompatibilityDigest": "7eb9fb428b1fe091e75e0198cf5b79b07a702febae30fe10d5f2f983b3d07694"
   },
   "verification": {
     "command": "bash scripts/project-cli/test.sh",

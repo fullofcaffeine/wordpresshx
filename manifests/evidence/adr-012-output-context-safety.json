@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "0b476270c26c0d1de49bdd705c582b7de8e860baaef07ab2908f09a8470d596e"
+      "sha256": "41911ace537ae4cd71084b4909ec18714f688bffbb6e990fde65fb2cf43dd962"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,7 +19,7 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "e24344395b9350deecba95596b3a6220802754a14dab4e7974a6fd629e278e2b"
+      "sha256": "fda3155ec58d0e03f73a8169e32bfab22e699ce3d04230dfe366294ae6b87cf3"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
@@ -37,7 +37,7 @@
     "terminalRawStringConversionAllowed": false,
     "terminalValuesSerializable": false,
     "unsafeRawApiPublished": false,
-    "browserCompiler": "genes-ts-1.36.3-c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "browserCompiler": "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7",
     "phpPrototypeCompiler": "stock-haxe-4.3.7-php",
     "wordpressRuntimeAuthority": "wordpress-7.0"
   },
@@ -48,7 +48,7 @@
     ],
     "sourceTreeSha256": "28d97a705b26879a71037ff555775c9a0f0081f5e7f1f204e2dae1c94d013840",
     "haxeVersion": "4.3.7",
-    "genesVersion": "1.36.3",
+    "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",

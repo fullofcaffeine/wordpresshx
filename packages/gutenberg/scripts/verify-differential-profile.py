@@ -43,8 +43,8 @@ def main() -> None:
     assert expected["profileId"] == "wp70-release"
     assert expected["compilerProvenance"] == {
         "name": "genes-ts",
-        "version": "1.36.3",
-        "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+        "version": "1.38.0",
+        "commit": "122162abefc2035b307508e521348ea4fb36dab7",
         "referenceFixture": {
             "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
             "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",
@@ -56,7 +56,11 @@ def main() -> None:
             "buildInput": False,
         },
         "wordpressSpecificGenesChange": False,
-        "genesPullRequest": None,
+        "genesPullRequest": {
+            "number": 42,
+            "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+            "wordpressSpecific": False,
+        },
     }
     compiler = dependency_lock["compiler"]
     assert compiler["name"] == expected["compilerProvenance"]["name"]
@@ -173,9 +177,14 @@ def main() -> None:
         encoding="utf-8"
     )
     assert "return <section" in fixture
+    assert "return <div data-state={recordEvaluation(\"prop-first\")}" in fixture
     assert "BrowserHxx.lower" not in fixture
     assert "useState(props.initial)" in fixture
     assert "DifferentialApi.Counter" in consumer
+    assert "DifferentialApi.OrderedEvaluation" in consumer
+    assert '"prop-first>prop-second>child-first>child-second"' in (
+        json.dumps(expected["runtimeTranscript"])
+    )
     assert 'dispatchEvent(new dom.window.MouseEvent("click"' in runner
     assert expected["targetShape"]["unexplainedSemanticDifferenceCount"] == 0
     assert expected["publicContract"]["unexplainedContractDifferenceCount"] == 0

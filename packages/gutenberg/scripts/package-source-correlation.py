@@ -37,10 +37,11 @@ safe_logical_path = TOOLS.safe_logical_path
 
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 STABLE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/@+\-]{0,255}$")
-GENES_COMMIT = "c59ecb361fd91418584487c2138bae8d3d3a3961"
-GENES_VERSION = "1.36.3"
+GENES_COMMIT = "122162abefc2035b307508e521348ea4fb36dab7"
+GENES_VERSION = "1.38.0"
 PROOF_RECEIPT = "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
 WEBPACK_PREFIX = "webpack://@wordpress-hx/sdk-033-build-tooling/"
+HAXE_CLASSPATH_PREFIX = "haxe://classpath/"
 
 
 def require_stable_id(value: str) -> str:
@@ -266,9 +267,34 @@ class PackageBuilder:
             )
         raise ValueError(f"map references an unadmitted Haxe root: {source_path}")
 
+    def classify_haxe_classpath_uri(
+        self, source_reference: str
+    ) -> dict[str, object]:
+        if not source_reference.startswith(HAXE_CLASSPATH_PREFIX):
+            raise ValueError(f"not a Haxe classpath URI: {source_reference}")
+        relative = safe_logical_path(
+            source_reference[len(HAXE_CLASSPATH_PREFIX) :]
+        )
+        candidates = [
+            candidate
+            for candidate in (
+                self.genes_root / relative,
+                self.haxe_stdlib_root / relative,
+            )
+            if candidate.is_file()
+        ]
+        if len(candidates) != 1:
+            raise ValueError(
+                "Haxe classpath URI does not resolve to exactly one "
+                f"admitted compiler root: {source_reference}"
+            )
+        return self.classify_haxe_path(candidates[0])
+
     def classify_genes_source(
         self, map_path: Path, source_reference: str
     ) -> dict[str, object]:
+        if source_reference.startswith(HAXE_CLASSPATH_PREFIX):
+            return self.classify_haxe_classpath_uri(source_reference)
         if (
             not source_reference
             or source_reference.startswith("/")
@@ -293,7 +319,10 @@ class PackageBuilder:
             )
         ):
             raise ValueError(f"unsafe or foreign Webpack source: {source_reference}")
-        payload = posixpath.normpath(source_reference[len(WEBPACK_PREFIX) :])
+        raw_payload = source_reference[len(WEBPACK_PREFIX) :]
+        if raw_payload.startswith(HAXE_CLASSPATH_PREFIX):
+            return self.classify_haxe_classpath_uri(raw_payload)
+        payload = posixpath.normpath(raw_payload)
         genes_marker = (
             f"genes-ts/{GENES_VERSION}/github/"
             f"{GENES_COMMIT}/src/"

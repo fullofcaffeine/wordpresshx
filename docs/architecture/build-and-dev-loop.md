@@ -124,7 +124,7 @@ header values, capabilities, secrets, or private paths.
 Both the inferred plugin path and `Dev.wordpress()` derive automatic
 development reload.
 The CLI embeds a browser client authored in strictly typed Haxe, compiled by the
-pinned Genes 1.36.3 profile, and bundled deterministically by pinned esbuild
+pinned Genes 1.38.0 profile, and bundled deterministically by pinned esbuild
 0.27.2. It serves that asset and an event stream from a loopback-only endpoint
 guarded by a fresh 256-bit capability and the exact admitted WordPress origin.
 A secret-free development MU-plugin adds the client at the WordPress footer

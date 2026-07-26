@@ -711,6 +711,7 @@ required_files=(
   manifests/evidence/g2.3-wp70-build-tool-advisories.json
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
+  manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
   manifests/evidence/sdk-064-typed-data-store.json
   manifests/evidence/sdk-060-typed-block-metadata.json
@@ -1282,6 +1283,11 @@ sdk035_expected = json.loads(
 sdk035_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-035-classic-genes-differential.json"
+    ).read_text(encoding="utf-8")
+)
+g25_receipt = json.loads(
+    Path(
+        "manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json"
     ).read_text(encoding="utf-8")
 )
 sdk033_profile_path = Path(
@@ -3591,14 +3597,13 @@ assert sdk043_adoption["cliManifestSha256"] == hashlib.sha256(
 assert sdk043_adoption["cliLockSha256"] == hashlib.sha256(
     Path("packages/cli/package-lock.json").read_bytes()
 ).hexdigest()
-for sdk043_adoption_invariant in (
-    "dependencySetChanged",
-    "toolOrRuntimeIdentityChanged",
-    "semanticNodesProjectionsSourcesOrArtifactBytesChanged",
-    "ownershipOperationSetOrArtifactBytesChanged",
-    "publicationAuthorized",
-):
-    assert sdk043_adoption[sdk043_adoption_invariant] is False
+assert sdk043_adoption["dependencySetChanged"] is False
+assert sdk043_adoption["toolOrRuntimeIdentityChanged"] is True
+assert sdk043_adoption[
+    "semanticNodesProjectionsSourcesOrArtifactBytesChanged"
+] is True
+assert sdk043_adoption["ownershipOperationSetOrArtifactBytesChanged"] is False
+assert sdk043_adoption["publicationAuthorized"] is False
 for sdk043_unproven_claim in (
     "wordpressRuntimeCompatibility",
     "nextjsRuntimeCompatibility",
@@ -3859,7 +3864,7 @@ assert sdk044_wordpress == {
     "reloadTransport": "loopback-capability-sse",
     "reloadCapabilityEntropyBits": 256,
     "reloadOriginPolicy": "exact-admitted-wordpress-service-origin",
-    "reloadClient": "haxe-authored-genes-1.36.3-esbuild-0.27.2-embedded-asset",
+    "reloadClient": "haxe-authored-genes-1.38.0-esbuild-0.27.2-embedded-asset",
     "reloadAdapter": "read-only-secret-free-0755-directory-0644-development-mu-plugin",
     "reloadProductionArtifact": False,
     "shellExecution": False,
@@ -3877,7 +3882,7 @@ assert sdk044_browser_reload_lock == {
     "profileSha256": hashlib.sha256(
         Path(sdk044_code["browserReloadClientProfile"]).read_bytes()
     ).hexdigest(),
-    "compiler": "genes-ts@1.36.3",
+    "compiler": "genes-ts@1.38.0",
     "bundler": "esbuild@0.27.2",
     "asset": sdk044_code["browserReloadClientAsset"],
     "assetSha256": hashlib.sha256(
@@ -5112,8 +5117,8 @@ for sdk024_runtime_dependency in (
 ):
     assert sdk024_compiler[sdk024_runtime_dependency] is False
 assert sdk024_compiler["genes"] == {
-    "version": "1.36.3",
-    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "version": "1.38.0",
+    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
     "sourceChanged": False,
     "pullRequest": None,
     "siblingDependencyCreated": False,
@@ -5274,7 +5279,7 @@ verify_versioned_subject(sdk024_receipt)
 assert sdk024_receipt["implementation"] == {
     "applicationLanguage": "Haxe",
     "privateCompiler": "Haxe 4.3.7 PHP target",
-    "javascriptCompiler": "Genes 1.36.3",
+    "javascriptCompiler": "Genes 1.38.0",
     "runtime": "ordinary-PHP-behind-native-WordPress-adapter",
     "pluginPlan": "wordpress-hx.plugin-plan.v2",
     "pluginEmission": "wordpress-hx.plugin-emission.v2",
@@ -7104,8 +7109,8 @@ assert 'process.env.HAXE_LIBCACHE ||' in sdk034_browser_gate_source
 assert 'path.join(os.homedir(), "haxe")' in sdk034_browser_gate_source
 assert 'path.join(haxeRoot, "haxe_libraries")' in sdk034_browser_gate_source
 assert (
-    'genes_root="${haxe_library_cache}/genes-ts/1.36.3/github/'
-    'c59ecb361fd91418584487c2138bae8d3d3a3961/src"'
+    'genes_root="${haxe_library_cache}/genes-ts/1.38.0/github/'
+    '122162abefc2035b307508e521348ea4fb36dab7/src"'
 ) in sdk034_browser_gate_source
 if sdk034_hosted["status"] == "passed":
     assert sdk034_receipt["status"] == "verified"
@@ -7801,6 +7806,114 @@ assert all(
 )
 assert sdk031_local["harnessPortability"]["genesSymlinkTraversalGuardRelaxed"] is False
 
+assert g25_receipt["schemaVersion"] == 1
+assert g25_receipt["receiptId"] == "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION"
+assert g25_receipt["bead"] == "wordpresshx-g2.5"
+assert g25_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+assert g25_receipt["profileId"] == browser_profile["id"]
+for g25_subject in g25_receipt["subjects"].values():
+    g25_subject_path = Path(g25_subject["path"])
+    assert hashlib.sha256(g25_subject_path.read_bytes()).hexdigest() == (
+        g25_subject["sha256"]
+    )
+
+g25_compiler = g25_receipt["adoptedCompiler"]
+for g25_compiler_field in ("name", "version", "tag", "commit", "tree"):
+    assert g25_compiler[g25_compiler_field] == locked_compiler[
+        g25_compiler_field
+    ]
+assert g25_compiler["releaseArtifact"] == locked_compiler["releaseArtifact"]
+locked_adoption = locked_compiler["admission"]["adoption"]
+assert locked_adoption["receiptId"] == g25_receipt["receiptId"]
+for g25_previous_field in (
+    "version",
+    "tag",
+    "commit",
+    "tree",
+    "releaseArtifactSha256",
+):
+    assert g25_receipt["previousCompiler"][g25_previous_field] == (
+        locked_adoption["previous"][g25_previous_field]
+    )
+assert g25_receipt["genericProtocol"]["introducedBy"]["pullRequest"] == (
+    locked_adoption["linkedCarrier"]["pullRequest"]
+)
+assert g25_receipt["genericProtocol"]["introducedBy"]["firstRelease"] == (
+    locked_adoption["linkedCarrier"]["firstRelease"]
+)
+assert g25_receipt["genericProtocol"]["legacyArrayMarkersRemoved"] is True
+assert g25_receipt["genericProtocol"][
+    "propAndChildEvaluationOrderPreserved"
+] is True
+assert g25_receipt["genericProtocol"]["wordpressSymbolsInProtocol"] is False
+assert g25_receipt["upstreamCompatibility"]["pullRequest"]["number"] == (
+    locked_adoption["nativePropertyCompatibility"]["pullRequest"]
+)
+assert g25_receipt["upstreamCompatibility"]["pullRequest"]["reviewedTip"] == (
+    locked_adoption["nativePropertyCompatibility"]["reviewedTip"]
+)
+assert g25_receipt["upstreamCompatibility"]["pullRequest"]["mergeCommit"] == (
+    locked_adoption["nativePropertyCompatibility"]["mergeCommit"]
+)
+assert g25_receipt["upstreamCompatibility"]["pullRequest"]["mergeTree"] == (
+    locked_adoption["nativePropertyCompatibility"]["mergeTree"]
+)
+assert g25_receipt["upstreamCompatibility"]["hostedVerification"][
+    "allPassed"
+] is True
+assert g25_receipt["localVerification"]["strictTypes"][
+    "publicWeakTypes"
+] == []
+assert g25_receipt["localVerification"]["strictTypes"][
+    "internalWeakInventory"
+] == []
+assert g25_receipt["localVerification"]["browserProfile"][
+    "generatedTreeSha256"
+] == gutenberg_expected["artifacts"]["generatedTreeSha256"]
+assert g25_receipt["localVerification"]["differential"]["evaluationOrder"] == (
+    "prop-first>prop-second>child-first>child-second"
+)
+assert g25_receipt["localVerification"]["differential"][
+    "generatedTreeSha256"
+] == sdk035_expected["artifacts"]["generatedTreeSha256"]
+assert set(g25_receipt["replayedReceipts"]) == {
+    "SDK-024-PRIVATE-PHP-RUNTIME",
+    "SDK-025-PHP-SOURCE-CORRELATION",
+    "SDK-026-GENERATED-PHP-QUALITY",
+    "SDK-031-STRICT-BROWSER-PROFILE",
+    "SDK-032-REACT-GUTENBERG-HXX",
+    "SDK-033-WORDPRESS-ASSET-METADATA",
+    "SDK-034-BROWSER-SOURCE-CORRELATION",
+    "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+    "SDK-041-OWNERSHIP-TRANSACTION",
+    "SDK-042-DETERMINISTIC-BUILD",
+    "SDK-043-PROJECT-CLI",
+    "SDK-044-DEV-LOOP",
+    "SDK-045-SCAFFOLD",
+    "SDK-060-TYPED-BLOCK-METADATA",
+    "SDK-061-STATIC-BLOCK",
+    "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+    "SDK-064-TYPED-DATA-STORE",
+    "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION",
+}
+g25_hosted = g25_receipt["repositoryHostedVerification"]
+if g25_receipt["status"] == "implemented-hosted-pending":
+    assert g25_hosted["status"] == "pending-main-push"
+    for g25_hosted_field in ("commit", "runId", "jobId", "url"):
+        assert g25_hosted[g25_hosted_field] is None
+else:
+    assert g25_hosted["status"] == "passed"
+    assert sha1.fullmatch(g25_hosted["commit"])
+    assert isinstance(g25_hosted["runId"], int)
+    assert isinstance(g25_hosted["jobId"], int)
+    assert g25_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{g25_hosted['runId']}"
+    )
+
 sdk031_repository_hosted = sdk031_receipt["repositoryHostedVerification"]
 assert sdk031_repository_hosted["workflow"] == "Repository bootstrap"
 assert sdk031_repository_hosted["discardedAttempts"] == [
@@ -7982,11 +8095,7 @@ assert sha256.fullmatch(sdk032_local["generatedArtifacts"]["mainTsxSha256"])
 assert sdk032_local["generatedArtifacts"]["undeclaredReactGlobal"] is False
 assert sdk032_local["generatedArtifacts"]["parserOrMarkerLeakScan"] == "passed"
 assert sdk032_local["typechecks"]["publicWeakTypes"] == []
-assert sdk032_local["typechecks"]["internalWeakInventory"] == [
-    "Main.App:tmp:any[]",
-    "Main.ProofCheckRow:tmp1:any[]",
-    "Main.ProofCheckRow:tmp:any[]",
-]
+assert sdk032_local["typechecks"]["internalWeakInventory"] == []
 assert sdk032_local["typechecks"]["generatedSource"][
     "exactOptionalPropertyTypes"
 ] is True
@@ -8078,8 +8187,11 @@ else:
 assert browser_architecture["evidence"]["sdkStrictFixture"] == (
     "verified-by-sdk-031-strict-browser-profile"
 )
-assert sdk032_receipt["changeDecision"]["genesSourceChanged"] is False
-assert sdk032_receipt["changeDecision"]["genesPullRequest"] is None
+assert sdk032_receipt["changeDecision"]["genesSourceChanged"] is True
+assert sdk032_receipt["changeDecision"]["genesPullRequest"] == 42
+assert sdk032_receipt["changeDecision"]["adoptionReceipt"] == (
+    g25_receipt["receiptId"]
+)
 assert sdk032_receipt["changeDecision"]["tinkHxxSourceChanged"] is False
 assert sdk032_receipt["claims"]["reactGutenbergHxx"] == (
     "controlled-runtime-tested"
@@ -8239,6 +8351,12 @@ assert sdk035_local["artifacts"] == sdk035_expected["artifacts"] | {
 assert sdk035_local["runtimeTranscript"]["description"] == (
     sdk035_expected["runtimeTranscript"]["description"]
 )
+assert sdk035_local["runtimeTranscript"]["orderedEvaluationHtml"] == (
+    sdk035_expected["runtimeTranscript"]["orderedEvaluationHtml"]
+)
+assert sdk035_local["runtimeTranscript"]["evaluationOrder"] == (
+    "prop-first>prop-second>child-first>child-second"
+)
 assert sdk035_local["runtimeTranscript"]["serverHtmlSha256"] == hashlib.sha256(
     sdk035_expected["runtimeTranscript"]["serverHtml"].encode()
 ).hexdigest()
@@ -8286,14 +8404,14 @@ else:
     )
 
 assert sdk035_receipt["changeDecision"] == {
-    "genesSourceChanged": False,
-    "genesPullRequest": None,
+    "genesSourceChanged": True,
+    "genesPullRequest": 42,
     "wordpressSpecificGenesBranch": False,
     "siblingGenesBuildInput": False,
+    "adoptionReceipt": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
     "reason": (
-        "released Genes 1.36.3 already preserves the bounded typed HXX "
-        "intent, authored contract, SSR, hook state, and click semantics in "
-        "both printers"
+        "Genes 1.38.0 preserves the bounded typed HXX intent and source-order "
+        "semantics in both printers without a WordPress-specific branch."
     ),
 }
 assert sdk035_receipt["claims"]["sameSourceCorpus"] == (

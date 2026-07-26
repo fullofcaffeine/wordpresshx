@@ -25,25 +25,25 @@
       "schemaPath": "schemas/project-lock.schema.json",
       "schemaSha256": "f232581d27a192631a15864d5cfa29fc6343858c171d537c4a177b6cc442c831",
       "fixturePath": "fixtures/project-cli/project/.wphx/project.lock.json",
-      "fixtureSha256": "d200cd7ee8e1f84c6763e461dc8f7429aeb735c243466344265196e2c74cdc83",
-      "lockDigest": "18a0c4d77672842deca9937100f7daa1e43deb5c9ba118eaa4cfb2a8ca02fe5a"
+      "fixtureSha256": "b71260d6cee03dff576bc6d240410c16f372ff21eb4b3b01b6c84784ec400de1",
+      "lockDigest": "4cfa2c74754de88a9e775a90c5103d14bcaa172eccdb90f639d790b6cab54e22"
     },
     "effectiveInputs": {
       "identity": "wordpress-hx.effective-inputs.v1",
       "schemaPath": "schemas/effective-inputs.schema.json",
       "schemaSha256": "0e4a2933658d389a808e6e330225d8a483506fb1f8170fa1cb32c2cc645415c2",
       "fixturePath": "fixtures/project-cli/valid/effective-inputs.json",
-      "fixtureSha256": "0fb6ce6340fc42b9bdc5d9173c5e14d2c8016d5daa08d9af6192df6f8ce2af81",
-      "fingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629"
+      "fixtureSha256": "66b69548168e1c4ded646569e084a449267735c5c110a704eda9d4b6dbc8e11d",
+      "fingerprint": "4c5f973f28fcff62b1065591e62a38d4246bd0ebd37dff431ef15d27fd1aa520"
     },
     "events": {
       "identity": "wordpress-hx.cli-event.v1",
       "schemaPath": "schemas/cli-event.schema.json",
       "schemaSha256": "a9025459637adf399794e7f4d1f743eca7070da6a51cc88cfdb38cc05faf76fd",
       "dryRunFixturePath": "fixtures/project-cli/valid/build-dry-run.events.jsonl",
-      "dryRunFixtureSha256": "3689b47fbd2439aa0a9848a9adc27c38fc3ffd2b37bc3b620e831213e06918b9",
+      "dryRunFixtureSha256": "9235aa8d4576cbc70d504c47c207f65a4401d55e0e1698d561e91927ae6eb776",
       "devFixturePath": "fixtures/project-cli/valid/dev.events.jsonl",
-      "devFixtureSha256": "176b9fde42b64282a75f6f55afe04bf5173cb621fb436b31606ad394059da90e"
+      "devFixtureSha256": "51abff0ce8077ef3e07b7e6fa90c8c97ab3fcc47e11436b7cfc99a6f57258127"
     }
   },
   "configurationAuthority": {
@@ -161,7 +161,7 @@
     "defaultForDev": "managed-project-local-haxe-wait",
     "defaultForBoundedCommands": "direct",
     "policy": "project-isolated-compatible-attach-v1",
-    "compatibilityDigest": "b81db5fb9dddcf44e5994e2fe0f82d949750e135698df819171873fe7c3012e6",
+    "compatibilityDigest": "7eb9fb428b1fe091e75e0198cf5b79b07a702febae30fe10d5f2f983b3d07694",
     "localResolvedProjectRootHashIncludedAtRuntime": true,
     "absoluteProjectRootPersisted": false,
     "configLockCompilerClasspathsDefinesAndBuildEnvBound": true,

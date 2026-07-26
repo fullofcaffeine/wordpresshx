@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "cd7852ddd06ab0fadaaad7a9c77467ebc31947f7c604fcab3924cffc0044f94a"
+      "sha256": "df17ec4b689b39cc16ae8e06c9e8edf4439e4ea7cdc341096f822ca341c4c690"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -63,7 +63,7 @@
     ],
     "sourceTreeSha256": "5fc1642e3605f6861a96decba22dfbf3d0dae903d5903b458afe88feef197d09",
     "haxeVersion": "4.3.7",
-    "genesVersion": "1.36.3",
+    "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",

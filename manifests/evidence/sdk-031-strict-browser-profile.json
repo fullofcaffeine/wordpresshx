@@ -9,7 +9,7 @@
     "profileId": "wp70-release",
     "dependencyLock": {
       "path": "packages/gutenberg/dependency-lock.json",
-      "sha256": "8161ff0a60ca0a764d2133f2a3d84f046046eb0513846071fb32c170b328bd74"
+      "sha256": "0af68e8e13a726352a8435bddc833b4394ffa5038fc8a6ca794beeb6d07ecdf0"
     },
     "exportDirective": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/browser/BrowserExport.hx",
@@ -17,19 +17,19 @@
     },
     "expectedArtifacts": {
       "path": "packages/gutenberg/test/expected/browser-profile.json",
-      "sha256": "857098caa265e25cee09d2a7521db668c97450d9cae7251663f22be3d946d663"
+      "sha256": "4cd167a3ba8743efc5a02efd5f5fed3ccd6718b20dd9f2008c80a1a0a24dbc13"
     },
     "compiler": {
       "name": "genes-ts",
-      "version": "1.36.3",
-      "tag": "v1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+      "version": "1.38.0",
+      "tag": "v1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
       "releaseArtifact": {
         "name": "submit.zip",
-        "sizeBytes": 234698,
-        "sha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
-        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.36.3/submit.zip"
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.38.0/submit.zip",
+        "sizeBytes": 335627,
+        "sha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab"
       }
     }
   },
@@ -73,7 +73,8 @@
         "7999b7cff09f78ebb8e09c3db6e221beb141b67b",
         "77aa609279886fd8f53f48e0d2b751f898489930",
         "e5f2cc146eaf6e5e8d89ceae4f6c544e07ff2d58",
-        "c59ecb361fd91418584487c2138bae8d3d3a3961"
+        "c59ecb361fd91418584487c2138bae8d3d3a3961",
+        "122162abefc2035b307508e521348ea4fb36dab7"
       ],
       "lineageVerification": "git merge-base --is-ancestor passed for baseline -> fix -> merge -> release"
     }
@@ -148,11 +149,16 @@
       "apiDigestMatchedDownloadedBytes": true,
       "apiSizeMatchedDownloadedBytes": true,
       "embeddedHaxelibName": "genes-ts",
-      "embeddedHaxelibVersion": "1.36.3",
+      "embeddedHaxelibVersion": "1.38.0",
       "embeddedDependencies": {
         "helder.set": "0.3.1"
       }
     }
+  },
+  "adoptionReplay": {
+    "receiptId": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+    "compilerVersion": "1.38.0",
+    "outcome": "passed"
   },
   "projectToolchain": {
     "haxe": "4.3.7",
@@ -185,13 +191,13 @@
     "verifiers": {
       "dependency": {
         "path": "packages/gutenberg/scripts/verify-dependency-lock.py",
-        "sha256": "150752b1dcff06dc53b93ee68f739a4f446e28091b96975b361b8907f73431bb",
+        "sha256": "6b6bbd8f0008c000de34f6ba0580e21df38b5874f2a1620cc607ed8d0d42de8a",
         "metadataOnly": "passed",
         "networkMaterialization": "passed"
       },
       "browserProfile": {
         "path": "packages/gutenberg/scripts/verify-browser-profile.mjs",
-        "sha256": "7024a7989529fd83114c11c167ba5d2c30999bdabacfca099e0d5080fafe5c37",
+        "sha256": "2475d692827fca65232d069f062f3e8acc555fdf4cff4155fc48253fac2f6f72",
         "outcome": "passed"
       },
       "gateScript": {
@@ -200,14 +206,14 @@
       }
     },
     "generatedArtifacts": {
-      "treeSha256": "69e47fd4fc35e0ae452e4e3e0451ecca80cc7653746cc403a13dc7187d2226d8",
+      "treeSha256": "8e53711e0088ae200f6d802e40d5c5297a4612d479bac501acac38cd5c0b5630",
       "strictBundle": {
-        "bytes": 13799,
-        "sha256": "375f2fc31ab8480b09f1946359848d1b0107b78351f9ecf9760a424bcd28a9e2"
+        "bytes": 13895,
+        "sha256": "681066099a61201f6bb0b8370c51552f0dc7122b55258d1dc539b3f5d8b13ec6"
       },
       "classicBundle": {
-        "bytes": 13178,
-        "sha256": "8502678b2eb977ac9d9666f1d8796b7278328365910b0f1d04ef8293b61b1465"
+        "bytes": 13274,
+        "sha256": "bde578192eb9a6208689a6471c46497a42c41aa1ae7b9ea8d3c17fdb780e51de"
       },
       "machineLocalPathLeakScan": "passed"
     },

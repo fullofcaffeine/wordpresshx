@@ -43,7 +43,11 @@
       "acceptedSource": "String-or-text-domain-value",
       "serverLowering": "esc_html-at-final-sink",
       "browserLowering": "React-child-auto-escape",
-      "sinks": ["element-child", "admin-plain-message", "dynamic-block-text"],
+      "sinks": [
+        "element-child",
+        "admin-plain-message",
+        "dynamic-block-text"
+      ],
       "crossContextReuse": false
     },
     {
@@ -52,7 +56,11 @@
       "acceptedSource": "String-or-typed-attribute-value",
       "serverLowering": "esc_attr-at-final-sink",
       "browserLowering": "React-attribute-auto-escape",
-      "sinks": ["ordinary-attribute", "aria-attribute", "data-attribute"],
+      "sinks": [
+        "ordinary-attribute",
+        "aria-attribute",
+        "data-attribute"
+      ],
       "crossContextReuse": false
     },
     {
@@ -61,7 +69,12 @@
       "acceptedSource": "ValidatedUrl",
       "serverLowering": "esc_url-at-final-sink",
       "browserLowering": "validated-url-then-React-attribute-auto-escape",
-      "sinks": ["href", "src", "action", "formaction"],
+      "sinks": [
+        "href",
+        "src",
+        "action",
+        "formaction"
+      ],
       "crossContextReuse": false
     },
     {
@@ -70,7 +83,9 @@
       "acceptedSource": "String-or-text-domain-value",
       "serverLowering": "esc_textarea-at-final-sink",
       "browserLowering": "React-textarea-value",
-      "sinks": ["textarea-content"],
+      "sinks": [
+        "textarea-content"
+      ],
       "crossContextReuse": false
     },
     {
@@ -79,7 +94,11 @@
       "acceptedSource": "String-plus-named-profile-native-or-content-addressed-custom-KSES-policy",
       "serverLowering": "wp_kses_post-or-wp_kses_data-or-wp_kses-at-final-sink",
       "browserLowering": "separate-browser-policy-result-required-before-internal-rich-html-lowering",
-      "sinks": ["rich-content-child", "admin-rich-message", "provider-rich-fragment"],
+      "sinks": [
+        "rich-content-child",
+        "admin-rich-message",
+        "provider-rich-fragment"
+      ],
       "crossContextReuse": false
     },
     {
@@ -88,7 +107,10 @@
       "acceptedSource": "T-plus-ContractCodec<T>",
       "serverLowering": "wp_json_encode-with-explicit-failure-handling-for-JSON-response",
       "browserLowering": "schema-codec-plus-JSON-stringify-for-JSON-response",
-      "sinks": ["REST-response", "application-json-document"],
+      "sinks": [
+        "REST-response",
+        "application-json-document"
+      ],
       "crossContextReuse": false
     },
     {
@@ -97,7 +119,10 @@
       "acceptedSource": "T-plus-ContractCodec<T>",
       "serverLowering": "wp_json_encode-with-JSON_HEX_TAG-AMP-APOS-QUOT-and-explicit-failure",
       "browserLowering": "JSON-stringify-plus-script-data-character-escaping",
-      "sinks": ["non-executable-script-data", "native-script-data-registration"],
+      "sinks": [
+        "non-executable-script-data",
+        "native-script-data-registration"
+      ],
       "crossContextReuse": false
     },
     {
@@ -106,7 +131,10 @@
       "acceptedSource": "closed-typed-property-and-value-AST",
       "serverLowering": "typed-CSS-printer-then-esc_attr",
       "browserLowering": "typed-React-style-object",
-      "sinks": ["style-attribute", "generated-stylesheet-declaration"],
+      "sinks": [
+        "style-attribute",
+        "generated-stylesheet-declaration"
+      ],
       "crossContextReuse": false
     },
     {
@@ -115,7 +143,11 @@
       "acceptedSource": "resolved-and-typed-HXX-AST-only",
       "serverLowering": "static-native-markup-plus-context-specific-native-calls",
       "browserLowering": "typed-HXX-to-React-Gutenberg",
-      "sinks": ["template-root", "component-child", "dynamic-block-render"],
+      "sinks": [
+        "template-root",
+        "component-child",
+        "dynamic-block-render"
+      ],
       "crossContextReuse": false
     },
     {
@@ -251,7 +283,7 @@
     "independentMutationCount": 21,
     "targets": [
       "haxe-interp-4.3.7",
-      "genes-ts-1.36.3-typescript-5.9.3-node-22.17.0",
+      "genes-ts-1.38.0-typescript-5.9.3-node-22.17.0",
       "stock-haxe-php-8.4.7",
       "react-dom-server-18.3.1",
       "wordpress-7.0-mariadb-11.4.5"

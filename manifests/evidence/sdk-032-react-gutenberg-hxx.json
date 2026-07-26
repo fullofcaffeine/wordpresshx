@@ -17,7 +17,7 @@
     },
     "lowerer": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
-      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
+      "sha256": "12386954c1951e9f1ef9bf72f73c192c65776724774194c54f2af76923308d99"
     },
     "profileResolver": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxProfile.hx",
@@ -41,7 +41,7 @@
     },
     "fixture": {
       "path": "packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/Main.hx",
-      "sha256": "2bbd4ca2e99c9162dfce7978689456090e7deefffe3dfcf1a30276fdfe55c1c2"
+      "sha256": "874ebbc0c340c65a7a30c8cc17fa2416f62ecb4acfceb1595c125080a576f0da"
     },
     "visualStyles": {
       "path": "packages/gutenberg/test/hxx-fixture/src/sdk032/fixture/ProofStyles.hx",
@@ -51,11 +51,11 @@
   "immutableInputs": {
     "compiler": {
       "name": "genes-ts",
-      "version": "1.36.3",
-      "tag": "v1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
-      "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+      "version": "1.38.0",
+      "tag": "v1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+      "releaseArtifactSha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab",
       "admissionReceipt": "SDK-031-STRICT-BROWSER-PROFILE"
     },
     "parser": {
@@ -172,11 +172,11 @@
     "verifiers": {
       "compilerRuntime": {
         "path": "packages/gutenberg/scripts/verify-hxx.mjs",
-        "sha256": "91878816767ebe78419e5c96a4ed697104b95e526492a061160df74ae915b178"
+        "sha256": "b219fbcbfe559b41fdc07623b05db011fcf81b61826a82e8d7c749f92883b7f7"
       },
       "gateScript": {
         "path": "packages/gutenberg/scripts/test-hxx.sh",
-        "sha256": "7adef7920c550622b397ea743aea894cd5ca1334fd1516c464727f068f6a92c7"
+        "sha256": "edcb9e6b55e025e32c944de498b0f8fbf0affd7a965e4d744e9ef56b0d1f4624"
       },
       "weakTypeGuard": {
         "path": "scripts/lint/haxe-weak-type-guard.py",
@@ -184,15 +184,15 @@
       }
     },
     "generatedArtifacts": {
-      "treeSha256": "90e82b00c33e55b94648aca11cd71aff43fc0ba2082d644b66266ba4108b9e69",
-      "mainTsxSha256": "c59ca3bec2957365f920c1c5d05ebcc884f8d1d42e5ba2ef74bdc8b7f52bba9a",
+      "treeSha256": "55a7f38028bf20889b5006a3417db9168ec657988fac65e82a0cf26a8e8b5f07",
+      "mainTsxSha256": "fc4f30870586455a393d637df219b95d2787af7e08e1158b0dc18d80b83aece5",
       "runtimeBundle": {
-        "bytes": 1428790,
-        "sha256": "b765b24f3dbcb3d6ca79c44484403b6aae0ce96a62fe44daf8e5ece98b2c2f38"
+        "bytes": 1429319,
+        "sha256": "0b3871e06dd99bfbed2829e9b89929d55056558e21a89ee001df8395a07aa9cb"
       },
       "visualJavascript": {
-        "bytes": 617141,
-        "sha256": "2c492db9c2e80d72197b9d7787c63d380fa5df55d578233d526af8dbaec695ce"
+        "bytes": 617670,
+        "sha256": "c2d788f355045c6898c7fd1a79ef975c886a5d40b4c1119a49c2f6b9f2595bf5"
       },
       "visualCss": {
         "bytes": 118036,
@@ -225,12 +225,8 @@
         "outcome": "passed"
       },
       "publicWeakTypes": [],
-      "internalWeakInventory": [
-        "Main.App:tmp:any[]",
-        "Main.ProofCheckRow:tmp1:any[]",
-        "Main.ProofCheckRow:tmp:any[]"
-      ],
-      "internalWeakExplanation": "Genes marker-protocol evaluation-order temporaries are internal implementation locals; no weak type reaches a public field, parameter, return type, prop, event, ref, hook, or context contract."
+      "internalWeakInventory": [],
+      "internalWeakExplanation": "The typed linked prop and child carriers preserve evaluation order without weak generated locals."
     },
     "negativeDiagnostics": {
       "WPX3213": "switch-control HXX is outside the admitted browser subset",
@@ -370,12 +366,13 @@
     ]
   },
   "changeDecision": {
-    "genesSourceChanged": false,
-    "genesPullRequest": null,
+    "genesSourceChanged": true,
+    "genesPullRequest": 42,
     "tinkHxxSourceChanged": false,
     "tinkHxxForkCreated": false,
     "wordpressSpecificCompilerBranch": false,
-    "reason": "the admitted public parser and released Genes marker contract support the bounded typed surface without a generic compiler change"
+    "adoptionReceipt": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+    "reason": "Genes 1.38.0 supplies the generalized linked-carrier, native-field, and React-key contracts required by the bounded typed surface."
   },
   "correctiveVerification": {
     "reason": "Remove weak Haxe types across the complete HXX/Gutenberg compilation closure and make the closure-wide guard part of the base gate.",
@@ -404,7 +401,7 @@
     "The first profile curates Button and Notice plus a bounded native-HTML surface; additional Gutenberg components remain later generated or curated work.",
     "switch and let controls are rejected in the SDK-032 browser subset; conditions and Array loops are admitted.",
     "G2.2 proves that the exact provider Ariakit declarations produce 26 stable exactOptionalPropertyTypes diagnostics while the same complete graph passes with skipLibCheck disabled and exact optionals off; generated user modules and provider declarations remain separate strict lanes rather than patching node_modules or weakening both.",
-    "Three internal any[] locals are exact Genes marker-protocol evaluation-order storage; the verifier inventories them and rejects any public any or unknown.",
+    "The released typed linked-carrier protocol preserves evaluation order without internal any[] marker locals.",
     "The real-browser screenshots and color-contrast audit are local review evidence rather than a content-addressed browser CI lane.",
     "The pinned parser closure emits upstream Haxe 4.3 deprecation warnings.",
     "Dependency extraction, translations, real WordPress editor loading, classic differential, and complete G2 closure remain SDK-033 through SDK-035.",

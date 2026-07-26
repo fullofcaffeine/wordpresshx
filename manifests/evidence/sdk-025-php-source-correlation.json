@@ -31,9 +31,9 @@
     "lixReportedCli": "15.12.2",
     "formatter": "1.18.0",
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
     },
     "hxnodejs": "10.0.0",
     "node": {
@@ -94,7 +94,7 @@
       "genesSourceChanged": false,
       "genesPullRequest": null,
       "wordpressSpecificGenesBranch": false,
-      "reason": "Genes 1.36.3 already emits the required deterministic Node ESM CLI; no generic compiler defect was found"
+      "reason": "Genes 1.38.0 emits the required deterministic Node ESM CLI; no WordPress-specific compiler branch is present."
     }
   },
   "authenticatedInputs": [
@@ -108,11 +108,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
-      "sha256": "b4fcc2d9e35bc7a1f9b484043176605b3be7390e996395184d2adeebd39238c6"
+      "sha256": "7d7a03340da9bf73a1cd3154c33897113550fc5212ffe010b41c640d566bd189"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/map/PhpRangeMapWriter.hx",
-      "sha256": "d3dbfc827855741b6ed986c51e1cc56d93516e5aee0f124f528d90a12c28fb7a"
+      "sha256": "6c791a26ef87d3db663abe81e306a340e3b9ad54e1a60fb4c1295b6ba60853c3"
     },
     {
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpRangeMapWriter.hx",
@@ -120,15 +120,15 @@
     },
     {
       "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx",
-      "sha256": "bb9acb36fb58df155c83c5e546109879d4f085f088335275720a2b797ae0a19d"
+      "sha256": "a7fb8e0ec84f5cf19202b0c3a5bcae5eb9bf132ebb124b14bd5c806a74255c61"
     },
     {
       "path": "compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx",
-      "sha256": "cb6f9608f2cebf705e76426fe5e2d611b01a6b1a1b202a552e1e21b9435dd1bc"
+      "sha256": "d274806fe5ae2ac89709f8568797723dee701044ec31cfe6ceeccd58f38cb833"
     },
     {
       "path": "compiler/wordpress/test/fixtures/SourceCorrelationFixture.hx",
-      "sha256": "5c60d3163f6136a043dcf66da0ed4babb71ef577b1e47f1dfb4ec82cc948b4e2"
+      "sha256": "e0351d4e74cc9da90980252a2e2f6252e918215ebe8fa9a2c256da21528112ce"
     },
     {
       "path": "compiler/wordpress/runtime/probe-source-correlation.php",
@@ -144,27 +144,27 @@
     },
     {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b"
+      "sha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/Main.hx",
-      "sha256": "d07e12bd6e31c9d9a6242494362f51429cea6f20091db3079bcbb6d9897bea39"
+      "sha256": "acba318a42be4de229b7c34ef5ca12b691a1eaec41d8c41777984c85269c28cf"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/PhpTraceEngine.hx",
-      "sha256": "c76ccb96ee3ea72703e790ffa4f2293077c8318bb28d39fbd2a9d11ad3c8efdf"
+      "sha256": "4e4f7f1b29a239dc0bef550818abbf1d1606d554d7a3e44f6bf96aab65a0e109"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/SourceIndex.hx",
-      "sha256": "35c86091410cf6ae994dcd971bb88731422f6b05a848bf309d2ad68d315a46e9"
+      "sha256": "3ab2f4a04247fe96138f2765506432c389e478bb781876f02636ed67ed7dbf3b"
     },
     {
       "path": "packages/cli/scripts/test.sh",
-      "sha256": "bbef3c3bbbd080bc54a4a7558bf712fca2027e615aaafa2685f2b763c6bfa566"
+      "sha256": "7c7b2250c0806017ccc61cda0f7bbb069ac2cb24eb9ba7ec5b4bd7441589505d"
     },
     {
       "path": "packages/cli/scripts/verify-dependency-lock.py",
-      "sha256": "5b6f5a143b76276aef627fc6c38c944c607a83831f4945c9664270e656f04404"
+      "sha256": "232f725869bfe0bc89a775bee2fca20ece5d1f56305dcd0156e7fc25d4d8941e"
     },
     {
       "path": "packages/cli/scripts/verify-php-trace.py",

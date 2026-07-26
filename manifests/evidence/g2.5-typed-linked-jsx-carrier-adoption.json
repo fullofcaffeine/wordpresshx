@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+  "bead": "wordpresshx-g2.5",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-26",
+  "profileId": "wp70-release",
+  "subjects": {
+    "gutenbergDependencyLock": {
+      "path": "packages/gutenberg/dependency-lock.json",
+      "sha256": "0af68e8e13a726352a8435bddc833b4394ffa5038fc8a6ca794beeb6d07ecdf0"
+    },
+    "gutenbergGenesPin": {
+      "path": "packages/gutenberg/haxe_libraries/genes-ts.hxml",
+      "sha256": "a0739cc25337fb39cd5350cd3953bd8d47580f4b942936188bd1b058c5427e42"
+    },
+    "cliDependencyLock": {
+      "path": "packages/cli/dependency-lock.json",
+      "sha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c"
+    },
+    "cliGenesPin": {
+      "path": "packages/cli/haxe_libraries/genes-ts.hxml",
+      "sha256": "a0739cc25337fb39cd5350cd3953bd8d47580f4b942936188bd1b058c5427e42"
+    },
+    "browserHxxLowerer": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
+      "sha256": "12386954c1951e9f1ef9bf72f73c192c65776724774194c54f2af76923308d99"
+    },
+    "browserHxxVerifier": {
+      "path": "packages/gutenberg/scripts/verify-hxx.mjs",
+      "sha256": "b219fbcbfe559b41fdc07623b05db011fcf81b61826a82e8d7c749f92883b7f7"
+    },
+    "differentialVerifier": {
+      "path": "packages/gutenberg/scripts/verify-differential.mjs",
+      "sha256": "fb80d30f53f36379ca3739781593af4680ff53ffcbff89af3a308105d734ebab"
+    },
+    "gutenbergSourceCorrelation": {
+      "path": "packages/gutenberg/scripts/package-source-correlation.py",
+      "sha256": "54af3486a499ac1e9ba481cb2387834cd8d86bd0fe7c81711a8ef1b1962fa9d1"
+    },
+    "cliSourceCorrelation": {
+      "path": "packages/cli/scripts/package-browser-source-correlation.py",
+      "sha256": "6acf93e4f56b7a81b3c1f68b284250ca35d99ffaa6d5d5ea3302b890ffe323d1"
+    },
+    "projectLock": {
+      "path": "fixtures/project-cli/project/.wphx/project.lock.json",
+      "sha256": "b71260d6cee03dff576bc6d240410c16f372ff21eb4b3b01b6c84784ec400de1"
+    }
+  },
+  "previousCompiler": {
+    "name": "genes-ts",
+    "version": "1.36.3",
+    "tag": "v1.36.3",
+    "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+    "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
+    "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+    "inventoryReceipt": "G2.1-LEGACY-JSX-MARKER-TEMPORARIES"
+  },
+  "adoptedCompiler": {
+    "name": "genes-ts",
+    "version": "1.38.0",
+    "tag": "v1.38.0",
+    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+    "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+    "releaseArtifact": {
+      "name": "submit.zip",
+      "sizeBytes": 335627,
+      "sha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab",
+      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.38.0/submit.zip"
+    },
+    "publishedAt": "2026-07-26T08:31:16Z",
+    "releaseUrl": "https://github.com/fullofcaffeine/genes-ts/releases/tag/v1.38.0",
+    "embeddedHaxelib": {
+      "name": "genes-ts",
+      "version": "1.38.0",
+      "dependencies": {
+        "helder.set": "0.3.1"
+      }
+    }
+  },
+  "genericProtocol": {
+    "name": "typed-linked-prop-and-child-carriers",
+    "introducedBy": {
+      "pullRequest": 10,
+      "url": "https://github.com/fullofcaffeine/genes-ts/pull/10",
+      "mergeCommit": "da383b180f1423d42c8ed0b70fabd9ae447b5142",
+      "firstRelease": "v1.37.0"
+    },
+    "adapterCarriers": [
+      "__genesJsxPropsEnd",
+      "__genesJsxPropName",
+      "__genesJsxPropValue",
+      "__genesJsxPropNext",
+      "__genesJsxSpreadValue",
+      "__genesJsxChildrenEnd",
+      "__genesJsxChildValue",
+      "__genesJsxChildNext"
+    ],
+    "legacyArrayMarkersRemoved": true,
+    "propAndChildEvaluationOrderPreserved": true,
+    "wordpressSymbolsInProtocol": false
+  },
+  "upstreamCompatibility": {
+    "classification": "generic-native-field-and-react-key-compatibility",
+    "pullRequest": {
+      "number": 42,
+      "url": "https://github.com/fullofcaffeine/genes-ts/pull/42",
+      "reviewedTip": "5de91a0d9616560d8ecc19f3aa2fca13912dee10",
+      "mergeCommit": "d0e9d392811d18eef42e3bfc3c0ce1ec2a6abbf7",
+      "mergeTree": "9ab74f5d25af85701dfec5917fdf3ea3a25d5184",
+      "wordpressSymbolsInCompilerOrFixtures": false
+    },
+    "hostedVerification": {
+      "pullRequestCiRunId": 30192695276,
+      "pullRequestCiJobId": 89768700798,
+      "pullRequestSmokeJobId": 89768700835,
+      "pullRequestHaxePreviewJobId": 89768700834,
+      "pullRequestCodeqlRunId": 30192695307,
+      "pullRequestCodeqlJobId": 89768678003,
+      "mainCiRunId": 30193366153,
+      "releaseRunId": 30194046201,
+      "releaseJobId": 89772272540,
+      "allPassed": true
+    }
+  },
+  "localVerification": {
+    "strictTypes": {
+      "publicWeakTypes": [],
+      "internalWeakInventory": [],
+      "forbiddenAuthoredHaxeTypes": [],
+      "outcome": "passed"
+    },
+    "browserProfile": {
+      "generatedTreeSha256": "8e53711e0088ae200f6d802e40d5c5297a4612d479bac501acac38cd5c0b5630",
+      "strictBundle": {
+        "bytes": 13895,
+        "sha256": "681066099a61201f6bb0b8370c51552f0dc7122b55258d1dc539b3f5d8b13ec6"
+      },
+      "classicBundle": {
+        "bytes": 13274,
+        "sha256": "bde578192eb9a6208689a6471c46497a42c41aa1ae7b9ea8d3c17fdb780e51de"
+      },
+      "outcome": "passed"
+    },
+    "browserHxx": {
+      "generatedTreeSha256": "55a7f38028bf20889b5006a3417db9168ec657988fac65e82a0cf26a8e8b5f07",
+      "generatedMainSha256": "fc4f30870586455a393d637df219b95d2787af7e08e1158b0dc18d80b83aece5",
+      "runtimeBundleSha256": "0b3871e06dd99bfbed2829e9b89929d55056558e21a89ee001df8395a07aa9cb",
+      "publicWeakTypes": [],
+      "internalWeakInventory": [],
+      "outcome": "passed"
+    },
+    "differential": {
+      "generatedTreeSha256": "80b313070c496e3188488fbdf07dd1582f20b58c0114dfac602f73f7efc3270b",
+      "strictBundle": {
+        "bytes": 13357,
+        "sha256": "3331d250dcd704c2d85545cea22aa97bb1e325b8dfc0280e93c54cfb47862395"
+      },
+      "classicBundle": {
+        "bytes": 13431,
+        "sha256": "5d4ad0bd814a78a424284af6ab2ca8448c1ca40abacb1cd4262bde35379bb181"
+      },
+      "evaluationOrder": "prop-first>prop-second>child-first>child-second",
+      "outcome": "passed"
+    },
+    "sourceCorrelation": {
+      "compilerNormalizedSourceCount": 5,
+      "developmentNormalizedSourceCount": 7,
+      "productionNormalizedSourceCount": 1,
+      "machinePathLeaks": 0,
+      "realChromium": "passed",
+      "realWordPress70": "passed",
+      "outcome": "passed"
+    },
+    "projectToolchain": {
+      "projectLockDigest": "4cfa2c74754de88a9e775a90c5103d14bcaa172eccdb90f639d790b6cab54e22",
+      "effectiveInputsFingerprint": "4c5f973f28fcff62b1065591e62a38d4246bd0ebd37dff431ef15d27fd1aa520",
+      "compileServerCompatibilityDigest": "7eb9fb428b1fe091e75e0198cf5b79b07a702febae30fe10d5f2f983b3d07694",
+      "outcome": "passed"
+    },
+    "realWordPressLanes": {
+      "wordpressVersion": "7.0",
+      "assetMetadata": "passed",
+      "blockMetadata": "passed",
+      "staticBlock": "passed",
+      "editorPlugin": "passed",
+      "typedDataStore": "passed"
+    }
+  },
+  "replayedReceipts": [
+    "SDK-024-PRIVATE-PHP-RUNTIME",
+    "SDK-025-PHP-SOURCE-CORRELATION",
+    "SDK-026-GENERATED-PHP-QUALITY",
+    "SDK-031-STRICT-BROWSER-PROFILE",
+    "SDK-032-REACT-GUTENBERG-HXX",
+    "SDK-033-WORDPRESS-ASSET-METADATA",
+    "SDK-034-BROWSER-SOURCE-CORRELATION",
+    "SDK-035-CLASSIC-GENES-DIFFERENTIAL",
+    "SDK-041-OWNERSHIP-TRANSACTION",
+    "SDK-042-DETERMINISTIC-BUILD",
+    "SDK-043-PROJECT-CLI",
+    "SDK-044-DEV-LOOP",
+    "SDK-045-SCAFFOLD",
+    "SDK-060-TYPED-BLOCK-METADATA",
+    "SDK-061-STATIC-BLOCK",
+    "SDK-063-EDITOR-PLUGIN-SLOTFILL",
+    "SDK-064-TYPED-DATA-STORE",
+    "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
+  ],
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null
+  },
+  "claims": {
+    "typedLinkedCarrierAdopted": true,
+    "legacyWeakMarkerInventoryEliminated": true,
+    "strictAndClassicOrderEquivalent": true,
+    "wordpressSpecificGenesBranch": false,
+    "mutableSiblingGenesBuildInput": false,
+    "publicationAuthorized": false
+  }
+}

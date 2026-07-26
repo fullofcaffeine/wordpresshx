@@ -57,8 +57,8 @@
     "runtimeNodeDependency": false,
     "runtimeHaxeDependency": false,
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
       "sourceChanged": false,
       "pullRequest": null,
       "siblingDependencyCreated": false

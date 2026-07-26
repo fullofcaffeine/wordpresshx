@@ -7,6 +7,11 @@ const node = DifferentialApi.Counter({
   step: 3,
   label: "Differential count"
 });
+DifferentialApi.resetEvaluationOrder();
+const orderedNode = DifferentialApi.OrderedEvaluation();
+const evaluationTranscript: string = DifferentialApi.evaluationTranscript();
 
 void description;
 void node;
+void orderedNode;
+void evaluationTranscript;

@@ -15,8 +15,8 @@ on the prototype spelling.
 The package is internal and publication remains blocked. Its exact build closure
 is recorded in [`dependency-lock.json`](dependency-lock.json): Haxe 4.3.7,
 Lix package 15.12.4 (reported CLI 15.12.2),
-Genes 1.36.3 at commit
-`c59ecb361fd91418584487c2138bae8d3d3a3961`, hxnodejs 10.0.0, and Node
+Genes 1.38.0 at commit
+`122162abefc2035b307508e521348ea4fb36dab7`, hxnodejs 10.0.0, and Node
 22.17.0. The SDK-034 browser evidence closure additionally pins esbuild 0.27.2,
 playwright-core 1.58.2, and the Playwright image's exact platform children:
 browser 145.0.7632.6 on Linux AMD64 and 145.0.7632.0 on Linux ARM64. Both
@@ -234,7 +234,8 @@ unmapped segments retain their exact native frame without basename, suffix, or
 nearest-line guessing. URL origins are transport details; the complete decoded
 pathname is the file identity.
 
-SDK-034 admits the exact Genes 1.36.3/esbuild 0.27.2 fixture entry in
+SDK-034 originally admitted the Genes 1.36.3/esbuild 0.27.2 fixture entry; G2.5
+replays it with the active Genes 1.38.0 pin in
 development, minified production, and two-stage modes. G2.4 separately projects
 the same strict lookup contract through the exact SDK-033
 `@wordpress/scripts` 31.5.0 entry in development and minified production. Its

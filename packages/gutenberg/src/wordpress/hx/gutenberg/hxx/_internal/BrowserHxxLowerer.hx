@@ -35,6 +35,24 @@ private typedef ComponentContract = {
 	final children:String;
 }
 
+/**
+ * One validated property before it becomes Genes' typed linked carrier.
+ *
+ * Why: the former `Array<Expr>` representation mirrored Genes 1.36's
+ * heterogeneous runtime marker array and forced generated `any[]` locals.
+ * Keeping names and spreads distinct here lets every value retain its own Haxe
+ * type when the carrier is constructed.
+ *
+ * What/How: `NamedProperty` stores the target JSX name, checked value, and
+ * authored position; `SpreadProperty` stores one already-validated closed
+ * object. `propertyCarrier` later folds these values right-to-left into the
+ * generic Genes 1.37 protocol without reflection, casts, or weak containers.
+ */
+private enum BrowserHxxProperty {
+	NamedProperty(name:String, value:Expr, position:Position);
+	SpreadProperty(value:Expr);
+}
+
 /** Turns the neutral positioned HXX tree into Genes' runtime-free JSX intent. */
 class BrowserHxxLowerer {
 	public static function lower(markup:Expr):Expr {
@@ -50,11 +68,17 @@ class BrowserHxxLowerer {
 	}
 
 	private function lowerRoot(children:HxxSyntaxChildren):Expr {
-		final lowered = lowerChildren(children);
+		final lowered:Array<Expr> = [];
+		for (child in children.items) {
+			final expression = lowerChild(child, children.items.length != 1);
+			if (expression != null) {
+				lowered.push(expression);
+			}
+		}
 		if (lowered.length == 0) {
 			Context.error("WPX3203: browser HXX must produce at least one child.", children.pos);
 		}
-		return lowered.length == 1 ? lowered[0] : fragment(lowered, children.pos);
+		return lowered.length == 1 ? lowered[0] : fragment(lowered, children.pos, false);
 	}
 
 	private function lowerChildren(children:Null<HxxSyntaxChildren>):Array<Expr> {
@@ -63,7 +87,7 @@ class BrowserHxxLowerer {
 		}
 		final output:Array<Expr> = [];
 		for (child in children.items) {
-			final lowered = lowerChild(child);
+			final lowered = lowerChild(child, true);
 			if (lowered != null) {
 				output.push(lowered);
 			}
@@ -71,10 +95,10 @@ class BrowserHxxLowerer {
 		return output;
 	}
 
-	private function lowerChild(child:HxxSyntaxChild):Null<Expr> {
+	private function lowerChild(child:HxxSyntaxChild, hxxNestedChild:Bool):Null<Expr> {
 		return switch child.kind {
 			case Node(node):
-				lowerNode(node);
+				lowerNode(node, hxxNestedChild);
 			case Text(value):
 				value.value.length == 0 ? null : at(macro $v{value.value}, value.pos);
 			case Expression(value):
@@ -93,24 +117,24 @@ class BrowserHxxLowerer {
 		};
 	}
 
-	private function lowerNode(node:HxxSyntaxNode):Expr {
+	private function lowerNode(node:HxxSyntaxNode, hxxNestedChild:Bool):Expr {
 		if (node.name.value == "__fragment__") {
 			if (node.attributes.length > 0) {
 				Context.error("WPX3204: browser HXX fragments cannot have attributes.", node.name.pos);
 			}
-			return fragment(lowerChildren(node.children), node.pos);
+			return fragment(lowerChildren(node.children), node.pos, hxxNestedChild);
 		}
 
 		if (isIntrinsic(node.name.value)) {
-			return lowerElement(node);
+			return lowerElement(node, hxxNestedChild);
 		}
 		if (!startsUppercase(node.name.value)) {
 			Context.error('WPX3205: unknown browser HXX intrinsic <${node.name.value}>.', node.name.pos);
 		}
-		return lowerComponent(node);
+		return lowerComponent(node, hxxNestedChild);
 	}
 
-	private function lowerElement(node:HxxSyntaxNode):Expr {
+	private function lowerElement(node:HxxSyntaxNode, hxxNestedChild:Bool):Expr {
 		if (isVoid(node.name.value) && hasChildren(node.children)) {
 			Context.error('WPX3206: void browser HXX element <${node.name.value}> cannot have children.', node.pos);
 		}
@@ -122,10 +146,10 @@ class BrowserHxxLowerer {
 		};
 		final children = lowerChildren(node.children);
 		final tag = at(macro $v{node.name.value}, node.name.pos);
-		return jsx(tag, lowerAttributes(node.attributes, contract, children, node.pos), children, node.pos);
+		return jsx(tag, lowerAttributes(node.attributes, contract, children, node.pos), children, node.pos, hxxNestedChild);
 	}
 
-	private function lowerComponent(node:HxxSyntaxNode):Expr {
+	private function lowerComponent(node:HxxSyntaxNode, hxxNestedChild:Bool):Expr {
 		final tag = try {
 			Context.parse(node.name.value, node.name.pos);
 		} catch (_:haxe.Exception) {
@@ -139,7 +163,7 @@ class BrowserHxxLowerer {
 		final component = BrowserHxxProfile.component(profile, node.name.value);
 		final contract = component == null ? customComponent(node.name.value, tagType, node.name.pos) : profileComponent(component, tagType, node.name.pos);
 		final children = lowerChildren(node.children);
-		return jsx(tag, lowerAttributes(node.attributes, contract, children, node.pos), children, node.pos);
+		return jsx(tag, lowerAttributes(node.attributes, contract, children, node.pos), children, node.pos, hxxNestedChild);
 	}
 
 	private function profileComponent(component:BrowserHxxComponentProfile, tagType:Type, position:Position):ComponentContract {
@@ -159,8 +183,10 @@ class BrowserHxxLowerer {
 	private function customComponent(name:String, tagType:Type, position:Position):ComponentContract {
 		return switch Context.follow(tagType) {
 			case TFun(arguments, result):
-				if (!Context.unify(result, Context.getType("genes.react.Element"))) {
-					Context.error('WPX3209: custom browser HXX component <$name> must return BrowserNode.', position);
+				final browserNode = Context.getType("genes.react.Element");
+				final reactNode = Context.getType("wordpress.hx.gutenberg.react.ReactTypes.ReactNode");
+				if (!Context.unify(result, browserNode) && !Context.unify(result, reactNode)) {
+					Context.error('WPX3209: custom browser HXX component <$name> must return BrowserNode or ReactNode.', position);
 				}
 				switch arguments {
 					case []:
@@ -178,9 +204,9 @@ class BrowserHxxLowerer {
 	}
 
 	private function lowerAttributes(attributes:Array<HxxSyntaxAttribute>, contract:ComponentContract, children:Array<Expr>,
-			nodePosition:Position):Array<Expr> {
-		final spreads:Array<Expr> = [];
-		final explicit:Array<Expr> = [];
+			nodePosition:Position):Array<BrowserHxxProperty> {
+		final spreads:Array<BrowserHxxProperty> = [];
+		final explicit:Array<BrowserHxxProperty> = [];
 		final present = new Map<String, Bool>();
 		final spreadNames = new Map<String, Bool>();
 
@@ -195,7 +221,7 @@ class BrowserHxxLowerer {
 						present[field.name] = true;
 						spreadNames[field.name] = true;
 					}
-					spreads.push(spreadProperty(value));
+					spreads.push(SpreadProperty(value));
 				case Empty(name):
 					final resolved = propName(name.value);
 					final prop = requireProp(contract, resolved.haxeName, name.pos);
@@ -206,14 +232,14 @@ class BrowserHxxLowerer {
 					}
 					warnExplicitOverride(spreadNames, resolved.haxeName, contract.displayName, name.pos);
 					present[resolved.haxeName] = true;
-					explicit.push(property(resolved.targetName, checked(at(macro true, name.pos), prop.type), name.pos));
+					explicit.push(NamedProperty(resolved.targetName, checked(at(macro true, name.pos), prop.type, !prop.required), name.pos));
 				case Regular(name, value):
 					final resolved = propName(name.value);
 					final prop = requireProp(contract, resolved.haxeName, name.pos);
 					requireUnique(present, resolved.haxeName, contract.displayName, name.pos);
 					warnExplicitOverride(spreadNames, resolved.haxeName, contract.displayName, name.pos);
 					present[resolved.haxeName] = true;
-					explicit.push(property(resolved.targetName, checked(value, prop.type), name.pos));
+					explicit.push(NamedProperty(resolved.targetName, checked(value, prop.type, !prop.required), name.pos));
 			}
 		}
 
@@ -225,7 +251,7 @@ class BrowserHxxLowerer {
 			present["children"] = true;
 			if (childrenProp != null) {
 				final childValue = children.length == 1 ? children[0] : fragment(children, nodePosition);
-				checked(childValue, childrenProp.type);
+				checked(childValue, childrenProp.type, !childrenProp.required);
 			}
 		} else if (contract.children == "required") {
 			Context.error('WPX3215: <${contract.displayName}> requires children.', nodePosition);
@@ -258,9 +284,6 @@ class BrowserHxxLowerer {
 		final output:Array<PropContract> = [];
 		for (field in fields) {
 			final resolved = propName(field.name);
-			if (resolved.targetName != resolved.haxeName) {
-				Context.error('WPX3219: aliased prop ${field.name} cannot be spread on <${contract.displayName}>; write it explicitly.', field.pos);
-			}
 			final expected = requireProp(contract, resolved.haxeName, field.pos);
 			if (!Context.unify(field.type, expected.type)) {
 				Context.error('WPX3220: spread prop ${field.name} on <${contract.displayName}> expected ${TypeTools.toString(expected.type)}, found ${TypeTools.toString(field.type)}.',
@@ -340,23 +363,106 @@ class BrowserHxxLowerer {
 		return output;
 	}
 
-	private function checked(value:Expr, expected:Type):Expr {
-		final complex = expected.toComplexType();
+	/**
+	 * Applies the supplied-property type rather than the omission wrapper.
+	 *
+	 * Haxe represents an optional structural field as `Null<T>` while retaining
+	 * `@:optional` separately. That outer `Null` means the field may be absent;
+	 * it does not permit an authored `null` value. Genes 1.37 correctly checks
+	 * those states separately, so the expression must be contextualized as `T`.
+	 * A required field, including one explicitly declared `Null<T>`, keeps its
+	 * complete original type.
+	 */
+	private function checked(value:Expr, expected:Type, optionalField:Bool = false):Expr {
+		final suppliedType = optionalField ? withoutOptionalNull(expected) : expected;
+		final complex = suppliedType.toComplexType();
 		if (complex == null) {
-			Context.error('WPX3225: browser HXX cannot express expected type ${TypeTools.toString(expected)}.', value.pos);
+			Context.error('WPX3225: browser HXX cannot express expected type ${TypeTools.toString(suppliedType)}.', value.pos);
 		}
-		return {expr: ECheckType(value, complex), pos: value.pos};
+		final normalized = normalizeKnownLiteral(value, suppliedType);
+		return {expr: ECheckType(normalized, complex), pos: value.pos};
 	}
 
-	private function jsx(tag:Expr, props:Array<Expr>, children:Array<Expr>, position:Position):Expr {
-		final propArray = expressionArray(props, position);
-		final childArray = expressionArray(children, position);
-		return at(macro genes.react.internal.Jsx.__jsx($tag, $propArray, $childArray), position);
+	/**
+	 * Keeps standard HTML string syntax while producing a precise Haxe value.
+	 *
+	 * A raw String cannot inhabit the closed `HtmlButtonType` union. Rewriting
+	 * only its three admitted literals gives authors ordinary `type="button"`
+	 * markup while invalid literals and broad String variables still fail in
+	 * Haxe before TypeScript exists.
+	 */
+	private static function normalizeKnownLiteral(value:Expr, expected:Type):Expr {
+		return switch [abstractTypeIdentity(expected), value.expr] {
+			case ["wordpress.hx.gutenberg.html.HtmlButtonType", EConst(CString("button", _))]:
+				at(macro {
+					final htmlButtonType:wordpress.hx.gutenberg.html.HtmlButtonType = wordpress.hx.gutenberg.html.HtmlButtonType.Button;
+					htmlButtonType;
+				}, value.pos);
+			case ["wordpress.hx.gutenberg.html.HtmlButtonType", EConst(CString("submit", _))]:
+				at(macro {
+					final htmlButtonType:wordpress.hx.gutenberg.html.HtmlButtonType = wordpress.hx.gutenberg.html.HtmlButtonType.Submit;
+					htmlButtonType;
+				}, value.pos);
+			case ["wordpress.hx.gutenberg.html.HtmlButtonType", EConst(CString("reset", _))]:
+				at(macro {
+					final htmlButtonType:wordpress.hx.gutenberg.html.HtmlButtonType = wordpress.hx.gutenberg.html.HtmlButtonType.Reset;
+					htmlButtonType;
+				}, value.pos);
+			case ["wordpress.hx.gutenberg.html.HtmlButtonType", EConst(CString(invalid, _))]:
+				Context.error('WPX3229: native button type "$invalid" must be button, submit, or reset.', value.pos);
+			default:
+				value;
+		};
 	}
 
-	private function fragment(children:Array<Expr>, position:Position):Expr {
-		final childArray = expressionArray(children, position);
-		return at(macro genes.react.internal.Jsx.__frag($childArray), position);
+	private static function abstractTypeIdentity(type:Type):Null<String> {
+		return switch type {
+			case TAbstract(reference, _):
+				final value = reference.get();
+				value.pack.concat([value.name]).join(".");
+			case TLazy(resolve):
+				abstractTypeIdentity(resolve());
+			case TType(_, _):
+				abstractTypeIdentity(Context.follow(type));
+			default:
+				null;
+		};
+	}
+
+	private static function withoutOptionalNull(type:Type):Type {
+		return switch type {
+			case TAbstract(reference, [inner]) if (reference.get().pack.length == 0 && reference.get().name == "Null"):
+				inner;
+			case TLazy(resolve):
+				withoutOptionalNull(resolve());
+			default:
+				type;
+		};
+	}
+
+	/**
+	 * Emits one checked element through Genes' generic linked carrier protocol.
+	 *
+	 * Why: nested parser-owned markup may be safely inlined by Genes only when
+	 * the marker records that ownership. The root marker remains ordinary
+	 * authored JSX intent, while nested markers use the dedicated HXX identity.
+	 *
+	 * What/How: property and child carriers preserve each expression's concrete
+	 * Haxe type. Genes validates the complete marker plan before choosing TSX,
+	 * JSX, typed `createElement`, or classic JavaScript output.
+	 */
+	private function jsx(tag:Expr, props:Array<BrowserHxxProperty>, children:Array<Expr>, position:Position, hxxNestedChild:Bool):Expr {
+		final properties = propertyCarrier(props, position);
+		final childValues = childrenCarrier(children, position);
+		final marker = hxxNestedChild ? macro genes.react.internal.Jsx.__hxxChildJsx($tag, $properties,
+			$childValues) : macro genes.react.internal.Jsx.__jsx($tag, $properties, $childValues);
+		return at(marker, position);
+	}
+
+	private function fragment(children:Array<Expr>, position:Position, hxxNestedChild:Bool = true):Expr {
+		final childValues = childrenCarrier(children, position);
+		final marker = hxxNestedChild ? macro genes.react.internal.Jsx.__hxxChildFrag($childValues) : macro genes.react.internal.Jsx.__frag($childValues);
+		return at(marker, position);
 	}
 
 	private function group(children:Array<Expr>, position:Position):Expr {
@@ -366,12 +472,53 @@ class BrowserHxxLowerer {
 		return children.length == 1 ? children[0] : fragment(children, position);
 	}
 
-	private function property(name:String, value:Expr, position:Position):Expr {
-		return at(macro {name: $v{name}, value: $value}, position);
+	/**
+	 * Folds validated properties into the immutable Genes marker shape.
+	 *
+	 * Building from the end preserves authored order in the forward linked
+	 * chain. Every record is structurally distinct, so a String property and a
+	 * callback property never need a shared weak array element type.
+	 */
+	private function propertyCarrier(properties:Array<BrowserHxxProperty>, position:Position):Expr {
+		var carrier = at(macro {__genesJsxPropsEnd: true}, position);
+		var index = properties.length;
+		while (index > 0) {
+			index--;
+			switch properties[index] {
+				case NamedProperty(name, value, propertyPosition):
+					carrier = at(macro {
+						__genesJsxPropName: $v{name},
+						__genesJsxPropValue: $value,
+						__genesJsxPropNext: $carrier
+					}, propertyPosition);
+				case SpreadProperty(value):
+					carrier = at(macro {
+						__genesJsxSpreadValue: $value,
+						__genesJsxPropNext: $carrier
+					}, value.pos);
+			}
+		}
+		return carrier;
 	}
 
-	private function spreadProperty(value:Expr):Expr {
-		return at(macro {spread: $value}, value.pos);
+	/**
+	 * Folds children into typed links while retaining their source positions.
+	 *
+	 * Genes may keep or safely inline a child link, but either choice reads the
+	 * same checked value exactly once and in source order.
+	 */
+	private function childrenCarrier(children:Array<Expr>, position:Position):Expr {
+		var carrier = at(macro {__genesJsxChildrenEnd: true}, position);
+		var index = children.length;
+		while (index > 0) {
+			index--;
+			final child = children[index];
+			carrier = at(macro {
+				__genesJsxChildValue: $child,
+				__genesJsxChildNext: $carrier
+			}, child.pos);
+		}
+		return carrier;
 	}
 
 	private static function propName(source:String):PropName {
@@ -480,10 +627,6 @@ class BrowserHxxLowerer {
 
 	private static function compareText(left:String, right:String):Int {
 		return left == right ? 0 : left < right ? -1 : 1;
-	}
-
-	private static function expressionArray(items:Array<Expr>, position:Position):Expr {
-		return {expr: EArrayDecl(items), pos: position};
 	}
 }
 #end

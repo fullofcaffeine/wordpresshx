@@ -34,9 +34,9 @@
     "lixReportedCli": "15.12.2",
     "formatter": "1.18.0",
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
     },
     "nodeBuild": {
       "version": "22.17.0",
@@ -81,7 +81,7 @@
     },
     {
       "path": "packages/gutenberg/scripts/package-source-correlation.py",
-      "sha256": "2a633563893b359bb444a3a74db848816f669887761ad4df145e509992722817"
+      "sha256": "54af3486a499ac1e9ba481cb2387834cd8d86bd0fe7c81711a8ef1b1962fa9d1"
     },
     {
       "path": "packages/gutenberg/scripts/run-source-correlation-browser.mjs",
@@ -89,11 +89,11 @@
     },
     {
       "path": "packages/gutenberg/scripts/test-assets.sh",
-      "sha256": "a191e421ee2503a366c6233f111a21d6fea416ee745491422b9126353aa4215d"
+      "sha256": "208eb67b99a5aa6a01417e6e8b1c0bc3f4c0df4fdec85ca742a373dd2a613e50"
     },
     {
       "path": "packages/gutenberg/scripts/verify-source-correlation.py",
-      "sha256": "9333389198a2c7b495ad345a5659d2814aec20da4681af80d19ddb3f46c2d35a"
+      "sha256": "c6d8e60496bb50aef2488d4e690834d8d25874440cb010f447605c58605c1153"
     },
     {
       "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",
@@ -105,11 +105,11 @@
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/BrowserTraceEngine.hx",
-      "sha256": "b5f958e8df3cd6d8c9bb0a24666ab13b3cfddc3c6828e2d12c578ce67dcce987"
+      "sha256": "4185d0c5632c0ce4a094522d9c4edc06acb4e72c1ed9b3a6e0e431b9a46e20eb"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/SourceMapV3.hx",
-      "sha256": "fc3022e6ae3c47bacc89067950549e9ade2d5bc8c48e81051bb4b87c67bd5d7e"
+      "sha256": "7ce10096ff17cfa90e1f286e7d8656aa910161bb56a1712c51f3c4de0ee9dfa1"
     },
     {
       "path": "schemas/source-correlation-index.schema.json",

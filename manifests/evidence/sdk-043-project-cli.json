@@ -169,9 +169,9 @@
     "lixPackage": "15.12.4",
     "lixReportedCli": "15.12.2",
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
     },
     "hxnodejs": "10.0.0",
     "node": {
@@ -189,7 +189,7 @@
     "positiveCases": 15,
     "negativeCases": 15,
     "noWriteAssertions": 17,
-    "effectiveFingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
+    "effectiveFingerprint": "4c5f973f28fcff62b1065591e62a38d4246bd0ebd37dff431ef15d27fd1aa520",
     "effectiveFixtureByteEquality": "passed",
     "deterministicGenesOutput": "passed",
     "eventContractValidation": "passed",

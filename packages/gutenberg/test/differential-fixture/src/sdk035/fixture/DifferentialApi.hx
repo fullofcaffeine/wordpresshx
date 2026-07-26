@@ -26,6 +26,8 @@ typedef CounterProps = {
  */
 @:build(wordpress.hx.gutenberg.browser.BrowserExport.build("wordpresshx.sdk035.differential-api", []))
 class DifferentialApi {
+	private static final evaluationOrder:Array<String> = [];
+
 	public static function summarize(prefix:String, values:Array<Int>):DifferentialSummary {
 		var total = 0;
 		final labels:Array<String> = [];
@@ -44,6 +46,27 @@ class DifferentialApi {
 		return '${label}:${summary.count}:${summary.total}:${summary.labels.join("|")}';
 	}
 
+	public static function resetEvaluationOrder():Void {
+		evaluationOrder.resize(0);
+	}
+
+	public static function evaluationTranscript():String {
+		return evaluationOrder.join(">");
+	}
+
+	/**
+	 * Proves the SDK's linked HXX carrier preserves observable source order.
+	 *
+	 * Both differential lanes must evaluate the two props before the two
+	 * children, with every value evaluated exactly once.
+	 */
+	public static function OrderedEvaluation():BrowserNode {
+		return <div data-state={recordEvaluation("prop-first")} aria-label={recordEvaluation("prop-second")}>
+			<span>{recordEvaluation("child-first")}</span>
+			<strong>{recordEvaluation("child-second")}</strong>
+		</div>;
+	}
+
 	public static function Counter(props:CounterProps):BrowserNode {
 		final countState = useState(props.initial);
 		final count = countState.value;
@@ -58,5 +81,10 @@ class DifferentialApi {
 				}}
 			>{'Add ${props.step}'}</button>
 		</section>;
+	}
+
+	private static function recordEvaluation(label:String):String {
+		evaluationOrder.push(label);
+		return label;
 	}
 }

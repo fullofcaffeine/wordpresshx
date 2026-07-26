@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "schemas" / "contract-schema.schema.json"
 ARCHITECTURE_PATH = ROOT / "manifests" / "schema-codec-architecture.json"
+BROWSER_DEPENDENCY_LOCK_PATH = ROOT / "packages" / "gutenberg" / "dependency-lock.json"
 SEMANTIC_PLAN_ARCHITECTURE_PATH = ROOT / "manifests" / "semantic-plan-architecture.json"
 TRANSCRIPT_PATH = (
     ROOT / "fixtures" / "schema-codec" / "expected" / "cross-target.txt"
@@ -114,7 +115,19 @@ def validate_architecture_manifest() -> None:
     if prototype.get("negativeCompileFixtureCount") != 4:
         raise ValidationError("architecture compile-negative count changed")
     targets = require_list(prototype.get("targets"), "architecture targets")
-    if not any(isinstance(target, str) and target.startswith("genes-ts-1.36.3-") for target in targets):
+    browser_lock = require_dict(
+        strict_json(
+            BROWSER_DEPENDENCY_LOCK_PATH.read_text(encoding="utf-8"),
+            "browser dependency lock",
+        ),
+        "browser dependency lock",
+    )
+    genes = require_dict(browser_lock.get("compiler"), "browser dependency lock compiler")
+    genes_target = f"genes-ts-{genes.get('version')}-{genes.get('commit')}-"
+    if not any(
+        isinstance(target, str) and target.startswith(genes_target)
+        for target in targets
+    ):
         raise ValidationError("architecture target list omitted pinned Genes")
 
     references = require_list(

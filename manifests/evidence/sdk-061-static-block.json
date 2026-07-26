@@ -68,7 +68,7 @@
     },
     "browserHxxLowerer": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/hxx/_internal/BrowserHxxLowerer.hx",
-      "sha256": "63090a0b3ed00f22a66ff8b625e9e9310eb115c1b7d4537b4780aabf9e9075e0"
+      "sha256": "12386954c1951e9f1ef9bf72f73c192c65776724774194c54f2af76923308d99"
     },
     "reactTypes": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx",
@@ -117,9 +117,9 @@
     "lixReportedCli": "15.12.2",
     "formatter": "1.18.0",
     "genes": {
-      "version": "1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6"
+      "version": "1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3"
     },
     "node": "22.17.0",
     "npm": "10.9.2",

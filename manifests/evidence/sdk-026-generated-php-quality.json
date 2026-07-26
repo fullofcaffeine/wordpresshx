@@ -18,7 +18,7 @@
   "implementation": {
     "implementationCommit": "6daf377559f004a3c09a00dc722ce3d87fccde9b",
     "language": "Haxe",
-    "javascriptCompiler": "Genes 1.36.3",
+    "javascriptCompiler": "Genes 1.38.0",
     "genesSourceChanged": false,
     "genesPullRequest": null,
     "stagingDiagnostic": "WPHX3400",
@@ -88,11 +88,11 @@
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
-      "sha256": "ec69c35d59ecd66e43f79e3371e451adf13f03e3357e0b02f5d2ae3b0f75d1ca"
+      "sha256": "a2c99c682ea94f598de520a4a2a0005abfc9f651722fcd1a5fef34a4c69bc57e"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
-      "sha256": "51d830e235816dd4500ea5ce26b8920f3f3f18ce3d322f3e2cd50d53f5422e0b"
+      "sha256": "176e9c9678ce75450de4d2e08719a110696d2a5505646b2bfd579735230aeb6c"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQualityResult.hx",
@@ -104,7 +104,7 @@
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginProjectBuild.hx",
-      "sha256": "a2a8c30d19a159dd204b94944b431d1d49f352f89d037396a7302a488871c136"
+      "sha256": "9bed435c0702a83a2bf215884e39615bb152724b3f5efb8db373986bb4491bf1"
     },
     {
       "path": "packages/cli/test/expected/private.text",

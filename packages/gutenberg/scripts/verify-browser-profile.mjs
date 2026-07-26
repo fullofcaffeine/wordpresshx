@@ -393,20 +393,15 @@ async function bundleLane(lane, extension) {
 const strictBundle = await bundleLane("strict", "ts");
 const classicBundle = await bundleLane("classic", "js");
 const generatedTreeSha256 = treeDigest(replayRoot);
-assert.equal(
+const actualArtifacts = {
   generatedTreeSha256,
-  expected.artifacts.generatedTreeSha256,
-  "generated tree digest drift"
-);
+  strictBundle: { bytes: strictBundle.bytes, sha256: strictBundle.sha256 },
+  classicBundle: { bytes: classicBundle.bytes, sha256: classicBundle.sha256 }
+};
 assert.deepEqual(
-  { bytes: strictBundle.bytes, sha256: strictBundle.sha256 },
-  expected.artifacts.strictBundle,
-  "strict bundle bytes drift"
-);
-assert.deepEqual(
-  { bytes: classicBundle.bytes, sha256: classicBundle.sha256 },
-  expected.artifacts.classicBundle,
-  "classic bundle bytes drift"
+  actualArtifacts,
+  expected.artifacts,
+  "browser profile artifact bytes drift"
 );
 assert.ok(
   strictBundle.bytes <= expected.budgets.strictBundleMaximumBytes,

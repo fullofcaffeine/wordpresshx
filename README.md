@@ -109,11 +109,12 @@ They pin Haxe Formatter 1.18.0 and Gitleaks 8.30.0, format staged Haxe, reject m
 - Browser: use the sibling genes-ts project as the compiler authority. Any required change must be generalized in an isolated upstream worktree, protected by a non-WordPress regression fixture and the relevant full upstream suite, and submitted upstream before this repository pins it.
 
 The browser-compiler selection baseline is the immutable genes-ts `v1.33.0`
-release; the active SDK-031 Gutenberg/browser fixture is locked to the later
-`v1.36.3` release through a recorded generic-fix lineage. Their exact commits,
-trees, package digests, toolchains, upstream CI, and clean replays are recorded
-in the [browser compiler pin](docs/architecture/browser-compiler.md). These are
-compiler-input and strict-fixture claims, not yet a complete WordPress browser
+release. SDK-031 preserves the historical `v1.36.3` strict-fixture evidence,
+while G2.5 pins the active Gutenberg/browser packages to `v1.38.0` and its
+typed linked JSX carriers. Exact commits, trees, package digests, upstream
+PR/CI, and clean replays are recorded in the
+[browser compiler pin](docs/architecture/browser-compiler.md). These are
+compiler-input and bounded fixture claims, not yet a complete WordPress browser
 support claim.
 
 SDK-032 now layers typed Haxe inline markup over that boundary for the exact

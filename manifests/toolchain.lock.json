@@ -362,7 +362,7 @@
           "lockPath": "packages/cli/browser-tooling/package-lock.json",
           "lockSha256": "9aa6dfb868de55f1e7941aa3ece99eb4c1780d0c831f22d34cb24a08c28e55e4",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b",
+          "dependencyLockSha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c",
           "directPackages": [
             "esbuild@0.27.2",
             "playwright-core@1.58.2"
@@ -383,7 +383,7 @@
           "lockPath": "packages/cli/package-lock.json",
           "lockSha256": "57a6dc69e9bb4519cccfdddf2625c8a635831e45178b6ecae3c744d8c243d075",
           "dependencyLockPath": "packages/cli/dependency-lock.json",
-          "dependencyLockSha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b",
+          "dependencyLockSha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c",
           "directPackages": [],
           "runtimeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
           "lifecycleScriptsAllowed": false,
@@ -422,10 +422,10 @@
     }
   },
   "profileInputs": {
-      "upstreamLock": {
-        "path": "manifests/upstream.lock.json",
-        "sha256": "c98bdd83d88749e4200720e9fa8183b6a0195f7ea164ee40bb91767ef13840a0"
-      },
+    "upstreamLock": {
+      "path": "manifests/upstream.lock.json",
+      "sha256": "c98bdd83d88749e4200720e9fa8183b6a0195f7ea164ee40bb91767ef13840a0"
+    },
     "profiles": [
       "wp70-release",
       "gutenberg-forward-23.4"

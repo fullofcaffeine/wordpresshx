@@ -262,6 +262,9 @@ for (const expectedSource of [
   "<Button",
   "<Notice",
   "<Main.ProofCheckRow",
+  '"aria-controls": "proof-result"',
+  '"aria-expanded": accepted',
+  "<Button {...actionDefaults}",
   "import('react').MouseEvent<HTMLButtonElement>",
   "import('react').KeyboardEvent<HTMLButtonElement>",
   "import('react').RefObject<HTMLButtonElement>",
@@ -341,23 +344,24 @@ function visitInternalWeak(node, owner = "module") {
     nextOwner = `Main.${node.name.getText(mainSourceFile)}`;
   }
   if (ts.isVariableDeclaration(node) && node.type) {
-    const isAnyArray =
-      ts.isArrayTypeNode(node.type) &&
-      node.type.elementType.kind === ts.SyntaxKind.AnyKeyword;
-    if (isAnyArray) {
-      internalWeakInventory.push(
-        `${owner}:${node.name.getText(mainSourceFile)}:any[]`
-      );
+    const variableName = node.name.getText(mainSourceFile);
+    function visitType(typeNode) {
+      const weak = weakKeyword(typeNode);
+      if (weak) {
+        internalWeakInventory.push(`${owner}:${variableName}:${weak}`);
+      }
+      ts.forEachChild(typeNode, visitType);
     }
+    visitType(node.type);
   }
   ts.forEachChild(node, (child) => visitInternalWeak(child, nextOwner));
 }
 visitInternalWeak(mainSourceFile);
-assert.deepEqual(internalWeakInventory.sort(), [
-  "Main.App:tmp:any[]",
-  "Main.ProofCheckRow:tmp1:any[]",
-  "Main.ProofCheckRow:tmp:any[]",
-]);
+assert.deepEqual(
+  internalWeakInventory,
+  [],
+  "weak marker carrier leaked into SDK-owned implementation locals"
+);
 
 const generatedMapPath = `${generatedMainPath}.map`;
 const generatedMap = readJson(generatedMapPath);

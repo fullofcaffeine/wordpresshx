@@ -192,7 +192,7 @@
     },
     {
       "path": "packages/cli/scripts/test-browser-source-correlation.sh",
-      "sha256": "392648cd0705d3cb44480d2f7fd4439180258081213cb29bf5e2321f3e5721b9"
+      "sha256": "4608e0d04713d04afaf2bf66276e649349c21d08d340e59e56d18fa78e3e5491"
     },
     {
       "path": "scripts/lint/haxe-weak-type-guard.py",

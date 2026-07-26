@@ -26,19 +26,19 @@
       },
       {
         "path": "packages/gutenberg/scripts/verify-differential-profile.py",
-        "sha256": "f6fb9807495cac8fdce2c0403c0ecaae60e6c32873034686d6a1b98b90a3f2f5"
+        "sha256": "13ef1707b655889b37775b26453ac9079dc4b4e570bfbc7ef4a4538e34e270a3"
       },
       {
         "path": "packages/gutenberg/scripts/verify-differential.mjs",
-        "sha256": "89b3cfa27be3e282d9c019ab56611aee84f28229dce4f6e0b05004c88ed8445a"
+        "sha256": "fb80d30f53f36379ca3739781593af4680ff53ffcbff89af3a308105d734ebab"
       },
       {
         "path": "packages/gutenberg/test/differential-consumer/consumer.ts",
-        "sha256": "564adfe2dc4b54cf9b57363b446c74b349842a7a07249a636f207de5c179e2dd"
+        "sha256": "5d7b76fa608424d14543b06c22024bee8081cc24a0d0c2acc97b4e25c13ee222"
       },
       {
         "path": "packages/gutenberg/test/differential-fixture/src/sdk035/fixture/DifferentialApi.hx",
-        "sha256": "816928e54c9bc6609eb1a087519e86f87c1a996b1386c39046633a47b2b0cb25"
+        "sha256": "4ef0c453dfc884e3d2b090ab56b71cc4beb5a430faae50a78fb1c58028c88180"
       },
       {
         "path": "packages/gutenberg/test/differential-fixture/src/sdk035/fixture/Main.hx",
@@ -46,25 +46,25 @@
       },
       {
         "path": "packages/gutenberg/test/differential-runtime/run.mjs",
-        "sha256": "1d820faaf704d9b31964ef24d1840812d87bb8a9d8d5fbcdea5be5e24f96c4e1"
+        "sha256": "be0c40cad9dfc059b447d395321693e39b3a381c4100815bd3cea20d69d1a4e5"
       },
       {
         "path": "packages/gutenberg/test/expected/differential.json",
-        "sha256": "1d36b8c908b648a295382dd34f7dd022fbff3b82eb573e2653ada814242295c1"
+        "sha256": "fcb979718a5e1c0cdb68f87b6cb64711b36d39bcf31e5e282d8ce707893f2010"
       }
     ]
   },
   "immutableInputs": {
     "compiler": {
       "name": "genes-ts",
-      "version": "1.36.3",
-      "tag": "v1.36.3",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
-      "tree": "be1a96453ac97e6f80916b415deff0d0ad3f18a6",
-      "releaseArtifactSha256": "992c5de0aa2b234d023c360c4e75e94a7eb7b04c18bbbe0e26d9ef475639aa1b",
+      "version": "1.38.0",
+      "tag": "v1.38.0",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+      "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+      "releaseArtifactSha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab",
       "dependencyLock": {
         "path": "packages/gutenberg/dependency-lock.json",
-        "sha256": "8161ff0a60ca0a764d2133f2a3d84f046046eb0513846071fb32c170b328bd74"
+        "sha256": "0af68e8e13a726352a8435bddc833b4394ffa5038fc8a6ca794beeb6d07ecdf0"
       },
       "admissionReceipt": "SDK-031-STRICT-BROWSER-PROFILE"
     },
@@ -111,7 +111,7 @@
     },
     "referenceFixture": {
       "repository": "https://github.com/fullofcaffeine/genes-ts",
-      "commit": "c59ecb361fd91418584487c2138bae8d3d3a3961",
+      "commit": "122162abefc2035b307508e521348ea4fb36dab7",
       "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
       "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",
       "sha256": "4d49ecde37d13de4b76c52f20e3e5c8ef81739f680da5f42bc0d3d9c5e147184",
@@ -220,19 +220,21 @@
       "unexplainedSemanticDifferenceCount": 0
     },
     "artifacts": {
-      "generatedTreeSha256": "0063a76bb3f4b5326cf201208bf8ddd0ed21122de71ed22fa19afef4b31f7438",
+      "generatedTreeSha256": "80b313070c496e3188488fbdf07dd1582f20b58c0114dfac602f73f7efc3270b",
       "strictBundle": {
-        "bytes": 12249,
-        "sha256": "1c4fc43077710ebfc8f873f309fd715d0b54928761426901da40a26af1907f35"
+        "bytes": 13357,
+        "sha256": "3331d250dcd704c2d85545cea22aa97bb1e325b8dfc0280e93c54cfb47862395"
       },
       "classicBundle": {
-        "bytes": 12337,
-        "sha256": "1172921830a8867982107e9e3240f9f35b0421570c0217b4cf52e6cc712e8303"
+        "bytes": 13431,
+        "sha256": "5d4ad0bd814a78a424284af6ab2ca8448c1ca40abacb1cd4262bde35379bb181"
       },
       "machineLocalPathLeaks": 0
     },
     "runtimeTranscript": {
       "description": "SDK-035:3:7:item-3|item-1|item-3",
+      "orderedEvaluationHtml": "<div data-state=\"prop-first\" aria-label=\"prop-second\"><span>child-first</span><strong>child-second</strong></div>",
+      "evaluationOrder": "prop-first>prop-second>child-first>child-second",
       "serverHtmlSha256": "3a0afa29d23e4eb0fb9944d4be07b3cbc07e6b1809f5668862b433d315d6fcdc",
       "clientCountBefore": "2",
       "clientCountAfterClick": "5"
@@ -269,11 +271,12 @@
     "completedAt": "2026-07-21T05:03:08Z"
   },
   "changeDecision": {
-    "genesSourceChanged": false,
-    "genesPullRequest": null,
+    "genesSourceChanged": true,
+    "genesPullRequest": 42,
     "wordpressSpecificGenesBranch": false,
     "siblingGenesBuildInput": false,
-    "reason": "released Genes 1.36.3 already preserves the bounded typed HXX intent, authored contract, SSR, hook state, and click semantics in both printers"
+    "adoptionReceipt": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
+    "reason": "Genes 1.38.0 preserves the bounded typed HXX intent and source-order semantics in both printers without a WordPress-specific branch."
   },
   "claims": {
     "sameSourceCorpus": "runtime-and-contract-tested",

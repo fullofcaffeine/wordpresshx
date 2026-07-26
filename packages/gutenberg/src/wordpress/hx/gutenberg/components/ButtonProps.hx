@@ -18,8 +18,11 @@ enum abstract ButtonVariant(String) to String {
 @:ts.type("import('react').ComponentProps<typeof import('@wordpress/components').Button>")
 typedef ButtonProps = {
 	@:optional final accessibleWhenDisabled:Bool;
+	@:native("aria-controls")
 	@:optional final ariaControls:String;
+	@:native("aria-expanded")
 	@:optional final ariaExpanded:Bool;
+	@:native("aria-label")
 	@:optional final ariaLabel:String;
 	@:optional final children:ReactNode;
 	@:optional final className:String;

@@ -107,7 +107,7 @@
     "archiveEntryCount": 2,
     "negativeComparisonCount": 3,
     "additiveRootMigrationCount": 1,
-    "fingerprint": "2bbd00f3639aee8b982f048cf8f8850280e0a9c334fc9494e4dfe5c4445a2629",
+    "fingerprint": "4c5f973f28fcff62b1065591e62a38d4246bd0ebd37dff431ef15d27fd1aa520",
     "archiveSha256": "e9da3d59015dece6282a1e180e6dfd338c5e63fd97681cfc69f632723e9f5471",
     "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
     "containerNetwork": "none",

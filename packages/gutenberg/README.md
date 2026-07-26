@@ -3,7 +3,8 @@
 This directory owns the WordPressHx browser profile inside the assembled
 wordpress-hx Haxelib. It is not a separately published package.
 
-SDK-031 establishes the first bounded compiler/profile fixture:
+SDK-031 establishes the first bounded compiler/profile fixture, preserved as
+historical evidence:
 
 - exact Genes v1.36.3 source at its immutable release commit, admitted through
   the generalized Array-index fix in upstream PR #3;
@@ -25,6 +26,10 @@ mutable sibling checkout.
 
 The exact upstream and package proof is recorded in
 [`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
+
+G2.5 is the active package pin: exact Genes v1.38.0 at release commit
+`122162abefc2035b307508e521348ea4fb36dab7`, with the generic linked JSX
+carrier from PR #10 and generalized native-property compatibility from PR #42.
 
 The fixture is intentionally independent of WordPress package symbols.
 WordPress package externs and React/Gutenberg HXX belong to SDK-032; official
@@ -113,20 +118,19 @@ therefore get a separate stricter lane with that option enabled and zero public
 `any` or `unknown` types. WordPressHx does not patch `node_modules` or publish
 normalized declarations whose semantics it cannot independently guarantee.
 
-Genes 1.36.3 also retains three private `any[]` evaluation carriers in this
-fixture. They come from its legacy heterogeneous JSX marker arrays; the live
-verifier binds their exact method/name/type inventory and still requires zero
-public weak types. Removing an annotation or inlining a carrier would lose
-index-sensitive typing or once-only evaluation. The generalized linked-carrier
-replacement already shipped upstream, and
-[`G2.1`](../../docs/compiler/g2.1-legacy-jsx-carriers.md) explains why its
-adoption is a coherent compiler-line migration rather than a local patch.
+G2.5 replaces Genes 1.36.3's three private `any[]` evaluation carriers with the
+released generic linked-prop and linked-child protocol. Every embedded value
+keeps its concrete inferred type and its authored evaluation position; the
+live verifier now requires both the public and SDK-owned internal weak-type
+inventories to be exactly empty. [`G2.1`](../../docs/compiler/g2.1-legacy-jsx-carriers.md)
+preserves the legacy diagnosis, while the G2.5 receipt records the immutable
+release adoption and upstream provenance.
 
 ## Same-source strict/classic differential
 
 SDK-035 adds a deliberately small cross-printer contract on top of the SDK-032
 compile-time HXX lowerer. One Haxe facade exports typed summary functions and a
-hook-driven counter that returns inline markup. The exact Genes 1.36.3 source
+hook-driven counter that returns inline markup. The active Genes 1.38.0 source
 is compiled twice: strict split-ESM TSX, and classic split-ESM JavaScript with
 adjacent declarations. The SDK parser has already produced typed Genes JSX
 intent, so both profiles set `genes.react.no_inline_markup`; running Genes'
