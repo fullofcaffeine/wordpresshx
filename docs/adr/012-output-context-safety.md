@@ -312,3 +312,20 @@ requires a versioned policy and compatibility note.
   complete Haxe-authored site.
 - `wordpresshx-sdk-117`: admit exact provider versions before provider markup
   adapters can be used by examples.
+
+## Independent Oracle review
+
+The content-addressed GPT-5.6 Oracle review dated 2026-07-26 returned
+**changes required**. The authoritative details are in
+[`ORACLE-REVIEW.md`](../../review/oracle/results/ORACLE-REVIEW.md) and
+[`adr-decisions.json`](../../review/oracle/results/adr-decisions.json).
+
+Remediation bead `wordpresshx-g4.1` owns ADR012-F001 through ADR012-F009. It
+must close every security-sensitive HXX position, connect typed terminals to
+real PHP/browser lowerers, make compiler-markup construction compiler-owned,
+retain executable JSON codec/failure authority, separate CSS grammars,
+implement content-addressed custom KSES policy, strengthen browser negatives,
+remove exact-tool drift, and state non-cacheability as an enforceable policy
+rather than a linear-type guarantee.
+
+This ADR remains proposed until those findings pass a fresh Oracle review.

@@ -58,6 +58,6 @@ decision.
 
 ## Proposed records
 
-- [ADR-012: Output-context safety](012-output-context-safety.md) — hosted evidence passes; fresh independent review remains pending and no raw output API is published.
-- [ADR-015: Interop and adoption contract format](015-interop-and-adoption-contract-format.md) — precise-or-omitted schemas and cross-target synthetic proof pass locally and hosted; fresh independent review remains pending.
-- [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — qualified review and owner approval pending; no license grant or publication authorization.
+- [ADR-012: Output-context safety](012-output-context-safety.md) — Oracle review returned changes required; ADR012-F001–F009 are tracked by `wordpresshx-g4.1`.
+- [ADR-015: Interop and adoption contract format](015-interop-and-adoption-contract-format.md) — Oracle review returned changes required; ADR015-F001–F010 are tracked by `wordpresshx-g6.1`.
+- [ADR-020: Licensing and generated output](020-licensing-and-generated-output.md) — Oracle review returned changes required and publication remains blocked; ADR020-F001–F008 are tracked by `wordpresshx-sdk-plan.2`.

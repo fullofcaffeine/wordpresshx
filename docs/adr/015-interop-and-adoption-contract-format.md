@@ -401,3 +401,21 @@ regenerated and reviewed.
   integration with a typed core fallback.
 - `wordpresshx-sdk-083`: exercise the shared contracts in a complete
   Haxe-authored WordPress site.
+
+## Independent Oracle review
+
+The content-addressed GPT-5.6 Oracle review dated 2026-07-26 returned
+**changes required**. The authoritative details are in
+[`ORACLE-REVIEW.md`](../../review/oracle/results/ORACLE-REVIEW.md) and
+[`adr-decisions.json`](../../review/oracle/results/adr-decisions.json).
+
+Remediation bead `wordpresshx-g6.1` owns ADR015-F001 through ADR015-F010. The
+next proof must derive its inventory and loss report from real provider inputs,
+preserve only source-authorized types, run an actual no-execution generator,
+mint capabilities from target-owned lifecycle observations, call native
+providers through generated facades, and bind contracts, capabilities, review,
+facades, and ownership under one digest root. It must also define observable
+deployed-artifact identity, anchor public schemas, exercise ownership rollback,
+and eliminate exact-tool/evidence-stage drift.
+
+This ADR remains proposed until those findings pass a fresh Oracle review.

@@ -65,6 +65,9 @@ second command runs fresh PHP exceptions in the exact locked containers,
 correlates their native frames, replaces only this packet directory, and
 recomputes its manifest.
 
-G1.2 and aggregate G1 remain open until an eligible separate Oracle/review
-context supplies an accepted receipt. This packet does not authorize
-publication or claim production support.
+The 2026-07-26 GPT-5.6 Oracle receipt is accepted and machine-validated. It
+records three non-blocking observations: a stale supplemental SDK-025 digest,
+eager include/registration behavior in `autoload.php`, and the bounded manually
+planned PHP-IR scope of the adapter proof. These remain follow-up work under
+`wordpresshx-g1.4`; they do not broaden G1 into a general PHP compiler,
+publication, or production-support claim.

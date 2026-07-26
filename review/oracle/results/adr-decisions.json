@@ -2,12 +2,23 @@
   "schema": "wordpress-hx.oracle-adr-decisions.v1",
   "schemaVersion": 1,
   "reviewId": "wordpresshx-oracle-full-review-2026-07-26",
+  "reviewedAt": "2026-07-26",
   "reviewer": {
     "name": "Oracle",
-    "reviewContextKind": "oracle-agent",
-    "provider": "OpenAI",
-    "model": "GPT-5.6",
-    "independenceStatement": "This Oracle did not implement the reviewed work, contribute to the reviewed implementation commits, or prepare the evidence bundle. It applies assigned expert perspectives without claiming human or legal credentials."
+    "role": "Independent adversarial technical reviewer applying the expert perspectives requested by REVIEW_PROMPT.md",
+    "reviewContext": {
+      "kind": "oracle-agent",
+      "provider": "OpenAI",
+      "model": "GPT-5.6"
+    },
+    "independence": {
+      "implementedReviewedWork": false,
+      "contributedToReviewedCommit": false,
+      "preparedEvidenceBundle": false,
+      "humanCredentialsClaimed": false,
+      "legalAuthorityClaimed": false,
+      "statement": "Oracle did not implement the reviewed work, contribute to the recorded commit, or prepare the evidence bundle. The review applies assigned expert perspectives without claiming human credentials or legal authority."
+    }
   },
   "inputs": {
     "prompt": {
@@ -18,26 +29,41 @@
       "path": "wordpresshx-repository.xml",
       "sha256": "c7182305f8e3b51a8ff59e2cd85fd8be753121673fbc80b856c77747a17bdba3",
       "recordedCommit": "145390ec66ed9f0bec61fa834fa8d6713369f6d4",
-      "snapshotQualifier": "includes the pending Oracle-governance working diff"
+      "snapshotQualifier": "including pending Oracle-governance working diff",
+      "repomixFileEntryCount": 1071
     },
     "references": {
       "path": "references.xml",
       "sha256": "1132cfa6672232b0737110e14d874de06adec67d90b0e0989e7a091bfb8a40ea",
-      "authority": "design references only"
+      "authority": "design references only; not WordPressHx authority"
     }
   },
-  "reviewedAt": "2026-07-26",
+  "overall": {
+    "decision": "changes-required",
+    "g1Decision": "accepted",
+    "publicationAuthorized": false,
+    "productionSupportClaimed": false,
+    "legalAdvice": false,
+    "summary": "G1 narrowly demonstrates readable, debuggable generated PHP. ADR-012, ADR-015, and ADR-020 remain unaccepted because their strongest authority claims are not yet connected to executable source-derived evidence or closed distributable artifacts."
+  },
   "decisions": [
     {
       "adrId": "ADR-012",
       "title": "Output-context safety",
+      "path": "docs/adr/012-output-context-safety.md",
       "decision": "changes-required",
-      "decisionRationale": "The no-universal-safe-type and late-native-lowering direction is sound, but the position graph is not fail-closed for all markup-bearing attributes, one CSS terminal conflates distinct grammars, key custom-policy and codec claims are not implemented by the cited prototype, and the exact Genes evidence identity conflicts across records.",
+      "decisionRationale": "The nominal-context direction and late native escaping are sound, but the HXX context table is not closed, CompilerMarkup authority is publicly forgeable, typed terminals do not drive actual lowerers, and JSON/CSS/custom-KSES claims exceed executable evidence.",
+      "strengths": [
+        "No universal safe-string type and no public raw-markup API.",
+        "Distinct text, attribute, URL, textarea, rich-HTML, JSON-document, script-data, CSS, and compiler-markup contracts.",
+        "Late WordPress-native escaping/sanitization intent and separate browser/server rich-HTML authority.",
+        "Compile-negative cross-context examples and explicit non-production claims."
+      ],
       "findings": [
         {
           "id": "ADR012-F001",
           "severity": "blocking-high",
-          "title": "The HXX position inventory leaves dangerous unclassified attributes on the ordinary-string path.",
+          "title": "The HXX position graph is not closed for every security-sensitive HTML position.",
           "affectedPaths": [
             "docs/adr/012-output-context-safety.md",
             "manifests/output-context-architecture.json",
@@ -45,19 +71,77 @@
             "fixtures/output-context/runtime/browser.mjs"
           ],
           "observedFacts": [
-            "The position graph gives URL treatment only to href, src, action, and formaction.",
-            "The ordinary-attribute rule accepts String or a typed attribute value.",
-            "No supplied negative or runtime case covers srcdoc, srcset, SVG URL-bearing attributes, raw-text elements, or an unknown security-sensitive attribute."
+            "The ADR and architecture route only href, src, action, and formaction through the URL terminal; ordinary attributes accept String or a typed attribute value.",
+            "No supplied compile-negative or runtime vector covers srcdoc, srcset, SVG URL-bearing attributes, raw-text elements, style-element content, or an otherwise unclassified security-sensitive attribute.",
+            "The runtime browser proof exercises an ordinary safe href and does not exercise a nested-document or URL-list grammar."
           ],
-          "inference": "A future lowerer following this table could treat nested-markup or additional URL-bearing positions as ordinary escaped attributes. Attribute escaping preserves HTML attribute grammar but does not establish the security policy of the nested grammar represented by values such as srcdoc.",
-          "practicalConsequence": "A believable implementation could type-check and escape a value yet still create an XSS or context-confusion path.",
-          "recommendation": "Define a closed element/attribute context table. Reject every unclassified raw-text, nested-document, URL-list, SVG, event, style, and script position by default; then add source-positioned compile-negative fixtures and real browser/WordPress vectors for each admitted exception.",
-          "status": "open"
+          "inference": "Attribute escaping preserves the outer HTML attribute grammar but does not establish the policy of a nested grammar such as HTML in srcdoc or a URL list in srcset.",
+          "practicalConsequence": "A future lowerer can follow the documented table, type-check, and still admit XSS or context-confusion through an unclassified position.",
+          "recommendation": "Publish a closed element/attribute context table; reject every unclassified nested-document, raw-text, URL-list, SVG, event, style, and script position by default; add source-positioned negatives and native/browser vectors for each admitted exception."
         },
         {
           "id": "ADR012-F002",
           "severity": "blocking-high",
-          "title": "CssDeclarations conflates style-attribute and stylesheet-declaration grammars.",
+          "title": "The typed terminal prototype is disconnected from the PHP and React sinks that are presented as runtime evidence.",
+          "affectedPaths": [
+            "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx",
+            "fixtures/output-context/test/Main.hx",
+            "fixtures/output-context/runtime/wordpress-probe.php",
+            "fixtures/output-context/runtime/browser.mjs",
+            "manifests/output-context-architecture.json"
+          ],
+          "observedFacts": [
+            "Every OutputSinks method ignores the terminal payload and returns a descriptor string such as server=esc_html or server=wp_json_encode-with-failure.",
+            "The Haxe test compares those descriptors across interpreter, Genes/Node, and stock Haxe PHP output.",
+            "The WordPress and React probes independently hard-code payloads and native calls rather than consuming bytes or values lowered from the Haxe terminal objects."
+          ],
+          "inference": "The packet proves nominal type separation adjacent to handwritten native escaping, not that the typed context selected in Haxe controls the emitted native sink.",
+          "practicalConsequence": "An implementation could route the wrong terminal to a sink, drop the codec/policy, or emit different bytes while the current transcript and native probes continue to pass.",
+          "recommendation": "Implement executable terminal lowerers/printers and generate the PHP/React fixture inputs from the Haxe terminal plans. Compare the generated bytes and native behavior under adversarial vectors."
+        },
+        {
+          "id": "ADR012-F003",
+          "severity": "blocking-high",
+          "title": "CompilerMarkup can be minted from a caller-provided string rather than a compiler-resolved typed AST and source span.",
+          "affectedPaths": [
+            "docs/adr/012-output-context-safety.md",
+            "fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx",
+            "fixtures/output-context/test/Main.hx",
+            "manifests/output-context-architecture.json"
+          ],
+          "observedFacts": [
+            "The ADR says the compiler creates CompilerMarkup only after resolving and typing HXX while retaining its source span.",
+            "Output.resolvedHxxFragment(fragmentId:String) is a public method and constructs CompilerMarkup from an arbitrary identity string.",
+            "The fixture calls that public method directly; no typed HXX AST, source span, macro-only entry point, or position resolver participates."
+          ],
+          "inference": "A private constructor does not establish compiler-only authority when a public factory accepts caller-controlled evidence.",
+          "practicalConsequence": "Application code can manufacture the same nominal authority that the ADR reserves for a resolved compiler path, and the current tests cannot detect incorrect HXX position inference.",
+          "recommendation": "Move construction behind a compiler/macro-internal API that accepts the resolved typed AST plus source provenance; execute real child, attribute, URL, textarea, style, rich-content, script-data, and event position fixtures with exact diagnostics."
+        },
+        {
+          "id": "ADR012-F004",
+          "severity": "blocking-high",
+          "title": "The JSON codec and encoding-failure contract are declared but not implemented or exercised.",
+          "affectedPaths": [
+            "docs/adr/012-output-context-safety.md",
+            "fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx",
+            "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx",
+            "fixtures/output-context/runtime/wordpress-probe.php",
+            "scripts/output-context/test.sh"
+          ],
+          "observedFacts": [
+            "OutputCodec<T> exposes only schemaId(); JsonDocument and HtmlScriptData retain the domain value but not an encoder or encoded result.",
+            "The Haxe sinks emit descriptor text and never invoke a codec.",
+            "The WordPress probe calls wp_json_encode without a === false branch and does not supply invalid UTF-8, recursion, depth, or unsupported-value failures; the final json_encode is also unchecked."
+          ],
+          "inference": "The exact ADR-009 codec authority and explicit failure semantics can be omitted without failing current evidence.",
+          "practicalConsequence": "Encoding failure can silently become false, empty output, or a malformed response/script fragment while the architecture validator still reports success.",
+          "recommendation": "Carry an executable ContractCodec<T> or an explicit encoded Result through the terminal, model encoding errors, and test success plus invalid UTF-8, recursion/depth, and unsupported-value failures on PHP and browser paths."
+        },
+        {
+          "id": "ADR012-F005",
+          "severity": "blocking-high",
+          "title": "One CSS terminal conflates inline-style and stylesheet grammars and admits arbitrary token strings without a printer proof.",
           "affectedPaths": [
             "docs/adr/012-output-context-safety.md",
             "manifests/output-context-architecture.json",
@@ -65,42 +149,57 @@
             "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx"
           ],
           "observedFacts": [
-            "The architecture lists both style-attribute and generated-stylesheet-declaration as sinks for one terminal.",
-            "Its single server lowering is typed-CSS-printer-then-esc_attr.",
-            "The prototype stores a small declaration AST but does not implement a CSS printer or either native sink."
+            "The architecture lists both style-attribute and generated-stylesheet-declaration as sinks for CssDeclarations while naming one server lowering: typed printer followed by esc_attr.",
+            "esc_attr is an outer HTML attribute operation, not a stylesheet escaping operation.",
+            "CssValue.Token(name:String) accepts arbitrary strings; the fixture has no CSS printer, property/value compatibility rules, URL policy, or native sink."
           ],
-          "inference": "HTML attribute escaping is appropriate only after printing an inline style attribute; it is not CSS escaping for a stylesheet and can corrupt stylesheet bytes. Extending the same type to URL-valued CSS or style-element content would create additional grammar boundaries.",
-          "practicalConsequence": "The design can produce invalid CSS or hide an injection gap when the currently closed prototype expands.",
-          "recommendation": "Split inline style values from stylesheet rules/assets, define a closed printer and URL policy for each, withhold style-element output unless separately modeled, and prove malicious token, delimiter, URL, and HTML-closing vectors at real sinks.",
-          "status": "open"
+          "inference": "The current nominal wrapper does not make the CSS grammar closed, and the same bytes cannot be safely finalized identically for style attributes and stylesheet assets.",
+          "practicalConsequence": "Future expansion can admit delimiters, URL/expression forms, invalid property/value pairs, or HTML-closing sequences while retaining the CssDeclarations brand.",
+          "recommendation": "Split inline-style values from stylesheet rules/assets; use property-specific validated value algebras and separate printers; withhold style-element output until modeled; test delimiters, URLs, control characters, and HTML-closing payloads at actual sinks."
         },
         {
-          "id": "ADR012-F003",
+          "id": "ADR012-F006",
           "severity": "blocking-high",
-          "title": "The cited prototype does not prove the custom KSES or typed-codec authority asserted by the ADR.",
+          "title": "Content-addressed custom KSES policy authority exists only in prose and a handwritten probe.",
           "affectedPaths": [
             "docs/adr/012-output-context-safety.md",
             "manifests/output-context-architecture.json",
             "fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx",
-            "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx",
             "fixtures/output-context/runtime/wordpress-probe.php",
+            "manifests/evidence/adr-012-output-context-safety.json"
+          ],
+          "observedFacts": [
+            "The ADR requires a custom policy identity to bind the complete tag/attribute allowlist and explicit protocol set by digest.",
+            "The Haxe prototype publishes only postContent and dataHtml native-policy factories.",
+            "The custom wp_kses call is hard-coded in the PHP probe and is not connected to a typed custom-policy constructor, canonicalization algorithm, digest, or branded result.",
+            "The evidence receipt itself says a public custom-policy type constructor is not implemented."
+          ],
+          "inference": "Native-policy branding is demonstrated, but the stronger custom-policy authority can be claimed without executable construction or identity checks.",
+          "practicalConsequence": "Two different allowlists or protocol sets can accidentally share an identity, or an implementation can hash incomplete material, without the current gate detecting it.",
+          "recommendation": "Define a canonical policy document and digest over tags, attributes, protocols, profile, and version; construct a distinct branded terminal from it; add mutation and native KSES vectors showing identity changes for every policy change."
+        },
+        {
+          "id": "ADR012-F007",
+          "severity": "major-high",
+          "title": "The browser URL and event negative assertions are too weak to establish the claimed shared policy.",
+          "affectedPaths": [
+            "fixtures/output-context/runtime/browser.mjs",
+            "fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx",
             "scripts/output-context/test.sh"
           ],
           "observedFacts": [
-            "The ADR requires custom KSES identities to bind tags, attributes, and protocols by digest.",
-            "The Haxe prototype publishes only postContent and dataHtml native-policy factories; the custom wp_kses call exists only as an unrelated handwritten PHP runtime probe.",
-            "OutputCodec exposes only schemaId; JsonDocument and HtmlScriptData retain no encoder, and the Haxe sink emits a transcript rather than encoding.",
-            "The PHP probe calls wp_json_encode but contains no deliberate encoding-failure vector."
+            "The browser probe passes only a known-safe HTTPS URL, then asserts that javascript: is absent from the rendered markup.",
+            "It asserts that onfocus= is absent even though no event-attribute payload is supplied.",
+            "The Haxe URL validator and PHP esc_url probe are independent from the browser value path, and the corpus omits case/control/entity/protocol-relative/data-URL variants."
           ],
-          "inference": "Type separation is demonstrated, but content-addressed custom policy construction, codec-owned bytes, and explicit native/browser encoding failure behavior are not.",
-          "practicalConsequence": "The evidence can be read as stronger than it is and would not catch a production implementation that ignores the codec, mis-hashes a policy, or mishandles an encoder failure.",
-          "recommendation": "Add a canonical custom-policy codec and digest, retain an executable typed codec through the final sink, exercise actual successful and failed encodings on PHP and browser targets, and make the transcript derive from those operations rather than declarative strings.",
-          "status": "open"
+          "inference": "The negative assertions are partly vacuous and do not prove that one validated URL authority reaches both target sinks.",
+          "practicalConsequence": "Divergent target policies or a future unsafe URL regression can pass the current test.",
+          "recommendation": "Feed one generated validation result into both targets and add an adversarial matrix covering scheme casing, controls, whitespace, entities, protocol-relative URLs, fragments, data URLs, Unicode, and event/style attribute rejection."
         },
         {
-          "id": "ADR012-F004",
-          "severity": "blocking-medium",
-          "title": "Exact browser-compiler evidence identity is internally inconsistent.",
+          "id": "ADR012-F008",
+          "severity": "major-medium",
+          "title": "Exact Genes identity drifts across the ADR, fixture guide, manifest, and receipt.",
           "affectedPaths": [
             "docs/adr/012-output-context-safety.md",
             "fixtures/output-context/README.md",
@@ -110,83 +209,109 @@
           "observedFacts": [
             "The ADR and fixture README name Genes 1.36.3.",
             "The architecture manifest and evidence receipt name Genes 1.38.0 and commit 122162abefc2035b307508e521348ea4fb36dab7.",
-            "The project treats exact compiler identity as evidence authority."
+            "The repository treats exact compiler identity as part of evidence authority."
           ],
-          "inference": "At least one reviewed claim is stale; the snapshot does not establish which prose statement describes the hosted run without relying on authority outside the bundle.",
-          "practicalConsequence": "A reviewer or reproducer cannot unambiguously select the compiler that earned the cited result.",
-          "recommendation": "Choose the actual tested identity, regenerate all dependent receipts and prose from one lock, and add a repository gate that rejects version/commit drift across ADR, fixture guide, architecture manifest, evidence receipt, and dependency lock.",
-          "status": "open"
+          "inference": "At least one current-looking claim is stale, and the bundle alone does not establish which prose statement describes the hosted result.",
+          "practicalConsequence": "A reviewer can reproduce against the wrong compiler while believing the exact evidence identity is closed.",
+          "recommendation": "Generate all version/status prose from one dependency lock and reject drift across ADRs, fixture guides, manifests, receipts, and package locks."
         },
         {
-          "id": "ADR012-F005",
+          "id": "ADR012-F009",
           "severity": "non-blocking-medium",
-          "title": "Immediate-use, non-cacheable terminal semantics are policy claims rather than enforced Haxe properties.",
+          "title": "Non-cacheable and non-serializable terminal semantics are policy rules rather than Haxe type-system guarantees.",
           "affectedPaths": [
             "docs/adr/012-output-context-safety.md",
             "fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx"
           ],
           "observedFacts": [
-            "Public factories create terminal objects from domain values.",
-            "Constructors and raw fields are private, but ordinary application code can still retain an object reference in memory.",
-            "The ADR says terminal values cannot be cached or serialized."
+            "Constructors and raw fields are private, but ordinary application code can retain a terminal object reference in memory.",
+            "The prototype supplies no affine, linear, sink-bound, or generation-scoped use discipline."
           ],
-          "inference": "Haxe nominal types prevent cross-context substitution, but the prototype does not provide affine or linear use and therefore cannot literally prevent caching.",
-          "practicalConsequence": "Documentation may overstate what the compiler guarantees, especially around policy changes between construction and rendering.",
-          "recommendation": "State the enforceable invariant precisely: raw content remains opaque and native escaping occurs at the final sink. Treat non-retention as an SDK API/lint rule unless a sink-bound representation can enforce it.",
-          "status": "open"
+          "inference": "Nominal types prevent cross-context substitution but cannot literally prevent caching or delayed reuse.",
+          "practicalConsequence": "Documentation can overstate what the compiler enforces, especially if policy changes between construction and rendering.",
+          "recommendation": "State the enforceable invariant precisely—opaque raw content and final-sink contextual lowering—and treat non-retention as API design, linting, or a future sink-bound capability rather than a proven type property."
         }
       ]
     },
     {
       "adrId": "ADR-015",
       "title": "Interop and adoption contract format",
+      "path": "docs/adr/015-interop-and-adoption-contract-format.md",
       "decision": "changes-required",
-      "decisionRationale": "Static no-execution, whole-binding precedence, omission reports, native ownership, and app-local facades are good boundaries. The fixture nevertheless manufactures precision not present in its authoritative declarations, does not bind the exact capability document from the contract, permits forged observations in the token prototype, and publishes schemas whose identity patterns are not anchored.",
+      "decisionRationale": "Static/no-execution, precise-or-omitted, native-provider ownership, and app-local facades are the right policy. The fixture does not derive its records from source, invents omissions and stronger types, mints capability authority from caller data, and never invokes the provider.",
+      "strengths": [
+        "Default static inspection and explicit isolated-reflection boundary.",
+        "Whole-binding precedence rather than field-spliced signatures.",
+        "Explicit omissions, conflicts, capability sets, and native-provider ownership.",
+        "No provider-name branches admitted in compiler core and no ownership-transfer claim."
+      ],
       "findings": [
         {
           "id": "ADR015-F001",
-          "severity": "blocking-high",
-          "title": "The fixture guesses stronger JavaScript types than its authoritative TypeScript input supplies.",
+          "severity": "blocking-critical",
+          "title": "The review/loss report inventories symbols that do not exist in any supplied provider input.",
           "affectedPaths": [
             "fixtures/adoption-contract/inputs/index.d.ts",
+            "fixtures/adoption-contract/inputs/provider-stubs.php",
+            "fixtures/adoption-contract/inputs/plugin.php",
+            "fixtures/adoption-contract/contract/acme-calendar.review.json",
+            "scripts/adoption/validate-architecture.py"
+          ],
+          "observedFacts": [
+            "The TypeScript input contains CalendarBadgeProps, formatCalendarLabel, and CalendarBadge; the PHP stubs contain Event::title and list_events; plugin.php contains only fixture plugin metadata/sentinel content.",
+            "The review report nevertheless claims omissions for CalendarRegistry, Event::__call, conditional_helper, and mutate_all and reports seven discovered symbols.",
+            "validate_review checks sorting, counts, source-input IDs, and conflict precedence but never parses the provider inputs to prove that an included, omitted, or conflicting symbol exists there."
+          ],
+          "inference": "The validator authenticates a self-consistent narrative, not a source-derived loss report.",
+          "practicalConsequence": "Arbitrary fabricated omissions and discovery counts can pass, so “precise-or-omitted” and loss visibility are not trustworthy evidence.",
+          "recommendation": "Implement source parsers that derive a candidate symbol inventory; bind every admitted, omitted, and conflicting symbol to an exact input, byte/source span, and signature digest; make the validator re-derive and compare the inventory."
+        },
+        {
+          "id": "ADR015-F002",
+          "severity": "blocking-critical",
+          "title": "Admitted signatures manufacture precision not present in the authoritative source declarations.",
+          "affectedPaths": [
+            "fixtures/adoption-contract/inputs/index.d.ts",
+            "fixtures/adoption-contract/inputs/provider-stubs.php",
             "fixtures/adoption-contract/contract/acme-calendar.contract.json",
             "fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/AcmeCalendar.hx",
             "docs/adr/015-interop-and-adoption-contract-format.md"
           ],
           "observedFacts": [
-            "index.d.ts declares count as number, but the contract emits int32.",
-            "index.d.ts declares CalendarBadge's return as object, but the contract emits the native nominal ReactElement.",
-            "The ADR forbids guessed types and requires one complete source record to assert the whole binding."
+            "TypeScript number becomes int32 for count and formatCalendarLabel.",
+            "CalendarBadge returns object in the declaration but ReactElement in the contract.",
+            "PHP int is represented as int32 even though PHP integer width follows the target platform and the supplied stub gives no 32-bit refinement.",
+            "The ADR explicitly forbids guessed types and requires one complete authoritative binding."
           ],
-          "inference": "Neither integer-only semantics nor React element identity follows from the supplied declaration. The generated surface is narrower and more specific than its strongest authority.",
-          "practicalConsequence": "Valid provider calls can be rejected, invalid assumptions can be accepted as typed truth, and a generated facade can fail at runtime while appearing precise.",
-          "recommendation": "Map TypeScript number to the exact admitted numeric algebra unless independent authoritative evidence proves an integer refinement; omit CalendarBadge or require an authoritative ReactElement declaration/curated exact contract. Add differential negatives that reject this mutation.",
-          "status": "open"
-        },
-        {
-          "id": "ADR015-F002",
-          "severity": "blocking-high",
-          "title": "The adoption contract does not content-bind the exact capability set it names.",
-          "affectedPaths": [
-            "schemas/adoption-contract.schema.json",
-            "schemas/adoption-capability.schema.json",
-            "fixtures/adoption-contract/contract/acme-calendar.contract.json",
-            "fixtures/adoption-contract/contract/acme-calendar.capability.json"
-          ],
-          "observedFacts": [
-            "The contract capabilitySet reference contains only id and version.",
-            "The capability document binds the contract digest and has its own self-digest, but the contract does not contain that capability digest.",
-            "The design relies on exact provider, binding, and probe identity."
-          ],
-          "inference": "A different self-consistent capability document with the same id and version can satisfy the contract reference unless an unmodeled package-level root binds both records.",
-          "practicalConsequence": "Probe requirements or scope can drift without changing the generated binding contract, permitting silent authority substitution.",
-          "recommendation": "Add an acyclic adoption-bundle manifest that binds the exact digests of contract, capability, review, generated Haxe facade, and ownership manifest; make every consumer require that root identity.",
-          "status": "open"
+          "inference": "The generated surface is narrower and more specific than its strongest authority.",
+          "practicalConsequence": "Valid provider behavior can be rejected and invented assumptions can be accepted as compile-time truth, producing runtime failure behind a precise-looking facade.",
+          "recommendation": "Use exact target ABI types such as JavaScript number and PHP int, retain object/opaque where that is all the source says, or omit the member until an authoritative curated declaration supplies the stronger type. Add mutations for these exact refinements."
         },
         {
           "id": "ADR015-F003",
           "severity": "blocking-high",
-          "title": "The capability prototype does not prove trusted observation or target-specific token lifecycle.",
+          "title": "No executable generator proves static no-execution, deterministic derivation, or precise-or-omitted output.",
+          "affectedPaths": [
+            "fixtures/adoption-contract/contract/acme-calendar.contract.json",
+            "fixtures/adoption-contract/contract/acme-calendar.review.json",
+            "fixtures/adoption-contract/inputs/generator.txt",
+            "scripts/adoption/validate-architecture.py",
+            "scripts/adoption/test.sh"
+          ],
+          "observedFacts": [
+            "The contract, capability, and review JSON are checked in before the test runs.",
+            "generator.txt is a descriptor rather than a program that parses inputs and writes the records.",
+            "The validator hashes inputs and validates record relationships but does not generate records from them.",
+            "The poison/no-execution sentinel protects validation and Haxe compilation, not a provider-inspection generator that does not exist."
+          ],
+          "inference": "The fixture can prove that committed records were not executed during validation, but not that generation is deterministic, source-derived, or non-executing.",
+          "practicalConsequence": "A future generator can execute provider code, splice fields, or emit stale/fabricated records without this proof catching the behavior.",
+          "recommendation": "Implement a fixture generator that writes all three documents and the facade into a private stage from the exact inputs; run the poison sentinel around generation; compare canonical bytes on cold/warm runs and after independent input mutations."
+        },
+        {
+          "id": "ADR015-F004",
+          "severity": "blocking-high",
+          "title": "Capability observations and scope identities are publicly forgeable and do not model target lifecycles.",
           "affectedPaths": [
             "fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/Adoption.hx",
             "fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/AcmeCalendar.hx",
@@ -195,79 +320,96 @@
             "fixtures/adoption-contract/test-negative/direct_token_construction/Main.hx"
           ],
           "observedFacts": [
-            "Adoption.observeExact is public and accepts caller-supplied provider id, version, artifact digest, and binding strings.",
-            "Adoption.beginRequest is public and accepts a caller-supplied identity string.",
-            "Both PHP-request and browser-module capabilities are modeled with the same generic RequestScope API, while the capability record declares distinct scopes.",
-            "The token constructor is private, but callers can supply observations that cause the runtime to mint a token."
+            "Adoption.observeExact is public and accepts provider ID, version, artifact digest, and binding names directly from application code.",
+            "Adoption.beginRequest is public and accepts a caller-provided identity string.",
+            "The browser-module and PHP-request capabilities both use RequestScope; the cross-scope negative uses different phantom marker classes rather than two runtime instances of the same nominal scope.",
+            "The token constructor is private, but public factories mint the token from caller-controlled premises."
           ],
-          "inference": "The negative direct-construction proof does not prevent application code from manufacturing the premises used by the public token factory, and it does not demonstrate browser-module lifecycle isolation.",
-          "practicalConsequence": "Availability checks can be bypassed or reused under the wrong lifecycle, turning a nominal proof into a believable but stale capability.",
-          "recommendation": "Move observation and scope creation behind target-owned adapters; encode request, process, and browser-module scopes as distinct types with private factories; bind version, artifact, exports, and binding checks into the minted token; add forgery, stale-process, module-reload, and cross-target negatives.",
-          "status": "open"
-        },
-        {
-          "id": "ADR015-F004",
-          "severity": "blocking-high",
-          "title": "Exact runtime artifact matching and required-capability failure are declared but not operationally specified.",
-          "affectedPaths": [
-            "docs/adr/015-interop-and-adoption-contract-format.md",
-            "schemas/adoption-capability.schema.json",
-            "fixtures/adoption-contract/contract/acme-calendar.capability.json",
-            "manifests/adoption-contract-architecture.json"
-          ],
-          "observedFacts": [
-            "Every probe requires artifactMatch exact-sha256.",
-            "The schema does not define how an installed PHP plugin tree or transformed browser bundle yields the original provider artifact digest.",
-            "Capabilities contain optional, but the authority object has one fallback behavior and no required-integration startup diagnostic contract."
-          ],
-          "inference": "Archive identity generally is not recoverable from installed/transformed runtime bytes without a trusted deployed manifest, and the required path described in prose cannot be represented distinctly.",
-          "practicalConsequence": "A production adapter may either reject every real installation, silently weaken artifact matching, or handle required absence as optional fallback.",
-          "recommendation": "Define target-specific observable artifact identities and deployment manifests, including normalization rules; add a distinct required-failure contract and runtime evidence for present, absent, upgraded, transformed, and partially installed providers.",
-          "status": "open"
+          "inference": "Constructor privacy is not trusted observation. The phantom type and string identity do not create a runtime-owned, generative request/process/module capability.",
+          "practicalConsequence": "Application code can manufacture apparent availability or reproduce authority under the wrong lifecycle, leading to false/stale provider authorization.",
+          "recommendation": "Make observations target-owned and inaccessible to app code; use distinct request/process/browser-module scope types with generative nonces; bind all observed facts into the token; test forgery, same-type cross-instance reuse, reload, stale process, and cross-target misuse."
         },
         {
           "id": "ADR015-F005",
-          "severity": "blocking-medium",
-          "title": "Public schema patterns do not enforce whole-string identities or digests.",
+          "severity": "blocking-high",
+          "title": "The generated facades never invoke the native provider.",
           "affectedPaths": [
-            "schemas/adoption-contract.schema.json",
-            "schemas/adoption-capability.schema.json",
-            "schemas/adoption-review.schema.json"
+            "fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/AcmeCalendar.hx",
+            "fixtures/adoption-contract/inputs/provider-stubs.php",
+            "fixtures/adoption-contract/inputs/index.d.ts",
+            "fixtures/adoption-contract/test/Main.hx"
           ],
           "observedFacts": [
-            "The id, semver, SHA-256, Haxe path, and related JSON Schema pattern strings omit beginning and end anchors.",
-            "JSON Schema pattern matching is substring-based.",
-            "The ADR claims exact closed records as a public contract."
+            "AcmeCalendarFacade.listEvents returns a php-call transcript string after token authorization.",
+            "AcmeCalendarFacade.renderBadge returns a js-call transcript string.",
+            "No generated PHP function call, JavaScript module import/export call, ABI conversion, exception path, reference behavior, callback, or lifecycle interaction is exercised."
           ],
-          "inference": "Strings with an otherwise invalid prefix or suffix can match the current schemas even if the repository's Python semantic validator rejects selected fixtures.",
-          "practicalConsequence": "Independent schema consumers can accept malformed or ambiguous identities, weakening cross-tool determinism.",
-          "recommendation": "Anchor every full-string pattern, add adversarial schema tests for prefixes/suffixes and Unicode/confusable cases, and publish one canonical semantic validator where JSON Schema cannot express cross-record rules.",
-          "status": "open"
+          "inference": "The prototype proves type relationships around a descriptor, not that the facade preserves native provider ABI or ownership.",
+          "practicalConsequence": "Incorrect native symbol spelling, argument/return conversion, exceptions, arrays, references, module loading, or provider races can remain invisible.",
+          "recommendation": "Generate target-specific wrappers that call deterministic synthetic native stubs/modules first, then a bounded real-provider seam; exercise success, absence, wrong artifact/version, exception, reference/array, and reload behavior while keeping the native provider owner."
         },
         {
           "id": "ADR015-F006",
-          "severity": "blocking-medium",
-          "title": "Exact Genes and hosted-state claims drift across ADR records.",
+          "severity": "blocking-high",
+          "title": "The contract does not content-bind the exact capability document, review report, facade, and ownership set under one root identity.",
           "affectedPaths": [
-            "docs/adr/015-interop-and-adoption-contract-format.md",
-            "fixtures/adoption-contract/README.md",
-            "manifests/adoption-contract-architecture.json",
-            "manifests/evidence/adr-015-interop-adoption-contract.json"
+            "schemas/adoption-contract.schema.json",
+            "schemas/adoption-capability.schema.json",
+            "fixtures/adoption-contract/contract/acme-calendar.contract.json",
+            "fixtures/adoption-contract/contract/acme-calendar.capability.json",
+            "fixtures/adoption-contract/contract/acme-calendar.review.json"
           ],
           "observedFacts": [
-            "The ADR and fixture README name Genes 1.36.3.",
-            "The architecture manifest and evidence receipt name Genes 1.38.0.",
-            "The architecture claim says compile-tested-local-pending-hosted while the same manifest has a passed hostedGate; the evidence receipt says local-and-hosted."
+            "The contract references its capability set by ID and version only.",
+            "The capability document binds the contract digest and has a self-digest, but the contract does not bind the capability digest.",
+            "No package-level manifest binds the exact contract, capability set, review report, generated facade, and generated-file ownership manifest."
           ],
-          "inference": "The architecture manifest was only partly refreshed after the hosted/compiler evidence changed.",
-          "practicalConsequence": "Exact reproduction and evidence-stage interpretation are ambiguous.",
-          "recommendation": "Generate prose and claim state from the exact dependency/hosted receipt, reject stale phase words, and reissue one content-addressed ADR packet.",
-          "status": "open"
+          "inference": "A different self-consistent capability document with the same ID/version can be substituted without changing the binding contract.",
+          "practicalConsequence": "Probe requirements, scope, optionality, and native symbols can drift silently from the generated facade authority.",
+          "recommendation": "Add an acyclic adoption-bundle manifest that binds exact digests for every record and generated file set; require consumers and runtime probes to verify that root identity."
         },
         {
           "id": "ADR015-F007",
-          "severity": "non-blocking-medium",
-          "title": "Regeneration and removal policy is not represented by a concrete generated-file inventory in this fixture.",
+          "severity": "blocking-high",
+          "title": "“Exact artifact” identity is not a real provider artifact or operational runtime observation.",
+          "affectedPaths": [
+            "fixtures/adoption-contract/contract/acme-calendar.contract.json",
+            "fixtures/adoption-contract/contract/acme-calendar.capability.json",
+            "fixtures/adoption-contract/inputs/plugin.php",
+            "fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/Adoption.hx"
+          ],
+          "observedFacts": [
+            "The provider artifact URL names acme-calendar.2.4.1.zip, but artifactSha256 equals the digest of inputs/plugin.php.",
+            "The runtime prototype receives that digest as caller data rather than hashing deployed plugin/module bytes or reading a platform-owned build identity.",
+            "The capability record claims exact-sha256 matching, yet no deploy-observable artifact definition is supplied."
+          ],
+          "inference": "The fixture conflates one source file with a provider archive and then treats a caller assertion as an exact runtime observation.",
+          "practicalConsequence": "A different deployed plugin/module can be authorized under the expected digest, making required/optional capability behavior fail open in practice.",
+          "recommendation": "Use an actual deterministic provider archive or explicitly name the exact main-file artifact; define target-specific observable identities (WordPress plugin/version/build manifest and JS module/package lock/export set); compute them in trusted probes and test required-capability failure separately from optional fallback."
+        },
+        {
+          "id": "ADR015-F008",
+          "severity": "blocking-medium",
+          "title": "Public JSON Schema patterns are not anchored for independent standards-compliant validators.",
+          "affectedPaths": [
+            "schemas/adoption-contract.schema.json",
+            "schemas/adoption-capability.schema.json",
+            "schemas/adoption-review.schema.json",
+            "scripts/adoption/validate-architecture.py"
+          ],
+          "observedFacts": [
+            "Patterns for IDs, SHA-256, semver, paths, and URLs omit ^ and $ anchors.",
+            "JSON Schema pattern uses substring matching by specification.",
+            "The repository’s custom ClosedSchemaValidator applies re.fullmatch, masking the weakness for this one implementation."
+          ],
+          "inference": "A conforming external validator can accept prefixed or suffixed garbage that the local validator rejects.",
+          "practicalConsequence": "Cross-tool consumers can disagree on identities and digests, weakening the claimed closed interoperable contract.",
+          "recommendation": "Anchor every full-string pattern, add adversarial tests through an independent JSON Schema implementation, and keep cross-record semantic validation separate from schema shape validation."
+        },
+        {
+          "id": "ADR015-F009",
+          "severity": "major-medium",
+          "title": "Regeneration, removal, modified-file protection, and rollback are prose-bound rather than adoption-specific executable evidence.",
           "affectedPaths": [
             "docs/adr/015-interop-and-adoption-contract-format.md",
             "fixtures/adoption-contract/contract/acme-calendar.contract.json",
@@ -275,27 +417,73 @@
             "manifests/adoption-contract-architecture.json"
           ],
           "observedFacts": [
-            "The contract stores ownership policy strings but no generated facade path/hash inventory.",
-            "The ADR delegates actual ownership to ADR-007.",
-            "The fixture contains no regeneration/removal transaction over modified facade bytes."
+            "The contract stores ownership-policy strings but no generated facade path/hash inventory.",
+            "The fixture performs no no-op regeneration, changed-provider regeneration, modified-owned-file, removal, rollback, or provider-untouched filesystem transaction.",
+            "The ADR delegates ownership mechanics to ADR-007 but does not bind an ADR-007 manifest into this adoption packet."
           ],
-          "inference": "The policy is compatible with deterministic ownership, but this packet does not prove the adoption-specific handoff.",
-          "practicalConsequence": "A later generator can satisfy the schemas while failing to remove only exact owned files.",
-          "recommendation": "Bind the ADR-007 generated-files manifest into the adoption bundle and add no-op regeneration, changed provider, modified owned file, removal, rollback, and provider-untouched filesystem tests.",
-          "status": "open"
+          "inference": "The policy is compatible with deterministic ownership, but the adoption handoff is not proven.",
+          "practicalConsequence": "A generator can satisfy schemas while overwriting user changes, leaving stale facades, or deleting provider-owned files.",
+          "recommendation": "Bind the generated-files ownership manifest into the adoption bundle and add cold/warm, update, modified-owned-file, removal, rollback, and provider-untouched tests."
+        },
+        {
+          "id": "ADR015-F010",
+          "severity": "major-medium",
+          "title": "Exact Genes version and hosted-evidence state drift across current-looking ADR records.",
+          "affectedPaths": [
+            "docs/adr/015-interop-and-adoption-contract-format.md",
+            "fixtures/adoption-contract/README.md",
+            "manifests/adoption-contract-architecture.json",
+            "manifests/evidence/adr-015-interop-adoption-contract.json"
+          ],
+          "observedFacts": [
+            "The ADR and fixture README name Genes 1.36.3 while the architecture manifest and receipt name 1.38.0.",
+            "The architecture claim retains compile-tested-local-pending-hosted while the same record has a passed hosted gate and the receipt says local-and-hosted."
+          ],
+          "inference": "The packet was only partly refreshed after compiler/hosted evidence changed.",
+          "practicalConsequence": "Reproduction identity and evidence-stage interpretation are ambiguous.",
+          "recommendation": "Generate exact version and evidence-stage prose from one lock/receipt and reject stale phase words or version strings in the repository gate."
         }
       ]
     },
     {
       "adrId": "ADR-020",
-      "title": "Licensing and generated output",
+      "title": "Licensing and generated-output risk",
+      "path": "docs/adr/020-licensing-and-generated-output.md",
       "decision": "changes-required",
-      "decisionRationale": "The origin-sensitive output model and fail-closed publication policy are prudent, but the record deliberately has no root grant, no contributor-rights conclusion, incomplete dependency/artifact inventory, unresolved metadata/text conflicts, and no exact generated-runtime or derived-catalog conclusion. This is technical risk analysis, not legal advice or publication authorization.",
+      "decisionRationale": "The origin-sensitive, fail-closed policy is prudent and appropriately refuses publication. It is not yet a license or artifact conclusion: contributor authority, complete inventories, copied runtime/output origins, conflicts, catalogs, and final notices remain open, and the supplied snapshot cannot reproduce the audit.",
+      "strengths": [
+        "Explicit no-license-grant and publication=false state.",
+        "Compiler license is not assumed automatically to classify all output.",
+        "User-authored, emitter, third-party/upstream, and toolchain-runtime origins are distinguished.",
+        "Qualified review and exact packed-artifact evidence are required rather than inferred."
+      ],
       "findings": [
         {
           "id": "ADR020-F001",
+          "severity": "blocking-high",
+          "title": "The supplied “every tracked file” snapshot cannot reproduce the repository’s own bootstrap or license gates.",
+          "affectedPaths": [
+            "wordpresshx-repository.xml",
+            "scripts/check-repository.sh",
+            "scripts/gates/check-g0-baseline.py",
+            "scripts/licenses/check-license-policy.py",
+            "scripts/licenses/test-license-policy.py",
+            "manifests/toolchain.lock.json"
+          ],
+          "observedFacts": [
+            "The Repomix snapshot contains 1,071 file entries but omits six required package-lock.json files, scripts/project-cli/test-contract.py, and tooling/php-quality/composer.lock.",
+            "scripts/check-repository.sh and the G0 baseline require those exact paths; the toolchain manifest records the lock paths.",
+            "The ordinary license checker raises FileNotFoundError for tooling/php-quality/composer.lock, and the publication-gate/test wrapper cannot reach its expected controlled blocked result.",
+            "Repomix itself can omit ignored/default-excluded files, so this may be bundle construction failure rather than repository deletion; either way the review input does not substantiate a complete tracked tree."
+          ],
+          "inference": "The immutable review bundle is incomplete for the exact whole-repository and licensing claims it asks Oracle to verify.",
+          "practicalConsequence": "A reviewer cannot independently reproduce the claimed pass/fail state, lock-derived inventory, or publication block from the supplied authority.",
+          "recommendation": "Rebuild the review bundle from git ls-files or a raw git archive, include ignored-but-tracked locks, publish a path/byte/hash inventory, and rerun the ordinary audit plus publication gate before relying on their receipts."
+        },
+        {
+          "id": "ADR020-F002",
           "severity": "blocking-critical",
-          "title": "Repository-original work has no license grant and contributor authority is unproven.",
+          "title": "Repository-original work has no root license grant and contributor authority is unproven.",
           "affectedPaths": [
             "docs/adr/020-licensing-and-generated-output.md",
             "LICENSES/policy.json",
@@ -304,19 +492,18 @@
             "README.md"
           ],
           "observedFacts": [
-            "No root LICENSE is present in the tracked snapshot.",
-            "policy.json says repositoryLicenseGrant not-granted and publication.allowed false.",
-            "components.json marks repository-original-work LicenseRef-No-License-Grant and contributor rights as a publication blocker."
+            "No root LICENSE grant is present in the snapshot.",
+            "policy.json records provisional-no-license-grant, publication.allowed=false, and qualified review pending.",
+            "components.json classifies repository-original work as LicenseRef-No-License-Grant and records contributor-rights confirmation as a blocker."
           ],
-          "inference": "The proposed GPL-2.0-or-later expression is a candidate policy only. This review cannot establish that every contributor has granted the product owner authority to publish all original or copied work under it.",
-          "practicalConsequence": "No public SDK, CLI, source archive, generated template package, or registry publication is authorized by the reviewed evidence.",
-          "recommendation": "Inventory contributors and imported/copied sections, obtain and record the necessary owner/contributor decisions, add the complete reviewed license text and notices, and bind approval to an immutable commit and exact artifacts.",
-          "status": "open"
+          "inference": "GPL-2.0-or-later is a candidate policy, not a granted license or demonstrated chain of title.",
+          "practicalConsequence": "No SDK, CLI, source archive, generated template package, registry artifact, or promoted download is authorized by this evidence.",
+          "recommendation": "Inventory contributors and imported/copied sections; record owner/contributor authority; obtain qualified review; add the complete approved root grant and notices; bind approval to an immutable commit and exact artifacts. Oracle cannot grant or infer these rights."
         },
         {
-          "id": "ADR020-F002",
+          "id": "ADR020-F003",
           "severity": "blocking-high",
-          "title": "The component inventory omits major exact npm/browser build and runtime-test graphs within its claimed scope.",
+          "title": "The component inventory is curated rather than complete and lock-derived.",
           "affectedPaths": [
             "LICENSES/components.json",
             "LICENSES/THIRD_PARTY_NOTICES.md",
@@ -327,19 +514,18 @@
             "packages/cli/browser-tooling/package.json"
           ],
           "observedFacts": [
-            "components.json inventories selected Haxe, PHP-quality, CI, Docker, compiler, and profile inputs.",
-            "The package manifests separately pin React, React DOM, TypeScript, esbuild, webpack, Playwright, axe-core, Babel, and many WordPress npm packages.",
-            "Those npm components are not enumerated in components.json or the provisional third-party ledger even though the inventory scope includes CI/build tools and exact runtime test inputs."
+            "The component ledger inventories selected Haxe, compiler, PHP-quality, CI, Docker, and profile inputs.",
+            "Exact package manifests separately pin React, React DOM, TypeScript, esbuild, webpack, Playwright, axe-core, Babel, and many @wordpress packages that are not enumerated in components.json or the provisional notices ledger.",
+            "The policy scope includes build/CI tools and exact runtime-test inputs, but the checker does not derive the inventory from every lock or packed output."
           ],
-          "inference": "The current consistency test authenticates a curated list rather than a complete lock-derived inventory.",
-          "practicalConsequence": "License conflicts, notices, copied browser runtime, and final bundle obligations can be missed while the policy reports the component inventory as inventoried.",
-          "recommendation": "Generate an SBOM from every exact npm/Haxelib/Composer/OCI lock and each packed output, reconcile it with source-level components, and make unexplained lock entries or bundle modules fail the publication gate.",
-          "status": "open"
+          "inference": "Internal consistency of a curated component list is not evidence of dependency completeness.",
+          "practicalConsequence": "License conflicts, notices, copied browser runtime, and packed-artifact obligations can be missed while the inventory reports an inventoried state.",
+          "recommendation": "Generate SBOMs from every Haxelib, npm, Composer, OCI, and source lock plus each packed artifact; require every lock/bundle component to map to an origin/license decision or fail the publication gate."
         },
         {
-          "id": "ADR020-F003",
+          "id": "ADR020-F004",
           "severity": "blocking-high",
-          "title": "Actual generated private PHP includes stock Haxe runtime and polyfill bytes without a closed artifact-specific license/notice decision.",
+          "title": "Actual generated runtime/polyfill bytes lack a final artifact-specific origin, license, and notice closure.",
           "affectedPaths": [
             "manifests/private-runtime-implementation.json",
             "manifests/evidence/sdk-024-private-php-runtime.json",
@@ -348,17 +534,16 @@
             "compiler/reflaxe.php/provenance.json"
           ],
           "observedFacts": [
-            "The private-runtime implementation records 15 stock runtime PHP files, a generated classmap, global polyfills, and a per-file component/license inventory in test artifacts.",
-            "components.json says the generated-runtime boundary is not inventoried and blocks publication.",
-            "The full Haxe standard-library/runtime bytes and applicable license text are not present in this review packet as a final packed artifact notice set."
+            "The private PHP lane records stock Haxe runtime files, a classmap, global polyfills, and per-file evidence in test artifacts.",
+            "The licensing policy still marks generated runtime/standard-library boundaries as publication-blocking and GENERATED_OUTPUT.md says Haxe/Genes/runtime copying is not closed per final artifact.",
+            "No exact installable ZIP with complete byte-origin map, SBOM, source correspondence, full license texts, and final notices is supplied for review."
           ],
-          "inference": "The current repository already demonstrates the copied-runtime problem that ADR-020 leaves unresolved; compiler-output generalities are insufficient for those concrete bytes.",
-          "practicalConsequence": "A generated plugin can contain third-party or toolchain code whose attribution, source, license text, and compatibility obligations are absent from the distributable.",
-          "recommendation": "Produce the exact private-runtime ZIP, per-file origin map, source correspondence, SBOM, full licenses/notices, and deterministic byte-to-origin comparison; repeat for Genes/browser output and every scaffold/template before deciding artifact terms.",
-          "status": "open"
+          "inference": "General statements about compiler output do not classify substantial copied runtime, standard-library, template, or helper bytes in a concrete distributable.",
+          "practicalConsequence": "A generated plugin/browser bundle can ship third-party/toolchain code without the applicable attribution, source, license text, or compatibility decision.",
+          "recommendation": "Produce exact candidate archives; map every file/range to user input, emitter-original boilerplate, third-party/upstream material, or toolchain runtime; include SBOM, source correspondence, complete licenses/notices, and deterministic byte-to-origin checks for PHP and Genes outputs."
         },
         {
-          "id": "ADR020-F004",
+          "id": "ADR020-F005",
           "severity": "blocking-high",
           "title": "Metadata/license-text conflicts and missing license texts remain unresolved.",
           "affectedPaths": [
@@ -368,20 +553,19 @@
             "docs/adr/020-licensing-and-generated-output.md"
           ],
           "observedFacts": [
-            "tink_hxx and tink_anon metadata says MIT while exact source LICENSE files are recorded as the Unlicense.",
-            "Lix metadata and shipped LICENSE similarly conflict.",
-            "Several exact Haxelib artifacts omit license texts, and tink_parse lacks a standalone source license file in the inspected revision.",
-            "THIRD_PARTY_NOTICES.md is a ledger, not a final notice file with full applicable texts."
+            "tink_hxx and tink_anon metadata says MIT while exact source license files are recorded as the Unlicense.",
+            "Lix metadata and shipped license evidence conflict.",
+            "tink_parse lacks a standalone source license in the inspected revision, and multiple exact package artifacts lack a bundled license text.",
+            "THIRD_PARTY_NOTICES.md is a provisional ledger rather than a final notice bundle containing all applicable texts."
           ],
-          "inference": "The snapshot accurately recognizes uncertainty but does not establish the terms that a distributor may rely on for each exact artifact.",
-          "practicalConsequence": "Notices can be wrong or incomplete, and a blanket candidate grant could misdescribe included material.",
-          "recommendation": "Obtain authoritative upstream clarification or exact source grants, retain the evidence, decide whether the components remain build-only or are replaced, and generate full applicable texts from the resolved exact inputs.",
-          "status": "open"
+          "inference": "The snapshot recognizes uncertainty but does not establish which terms a distributor may rely on for each exact input and artifact.",
+          "practicalConsequence": "A final notice set can be inaccurate or incomplete, and a blanket candidate grant can misdescribe included material.",
+          "recommendation": "Obtain authoritative upstream clarification or exact grants, preserve the evidence, decide whether affected components remain build-only or are replaced, and generate complete applicable texts from the resolved exact inputs."
         },
         {
-          "id": "ADR020-F005",
+          "id": "ADR020-F006",
           "severity": "blocking-high",
-          "title": "Derived WordPress/Gutenberg catalogs lack a reviewed per-field origin and distribution conclusion.",
+          "title": "Derived WordPress and Gutenberg catalogs lack a reviewed field-level origin and distribution conclusion.",
           "affectedPaths": [
             "generated/wp70-release/catalog-v1/catalog.json",
             "generated/gutenberg-forward-23.4/catalog-v1/catalog.json",
@@ -392,19 +576,36 @@
             "LICENSES/components.json"
           ],
           "observedFacts": [
-            "The catalogs contain selected API/package identifiers, signatures, classifications, and source provenance derived from exact WordPress/Gutenberg inputs.",
-            "The policy calls them facts and identifiers and proposes GPL-2.0-or-later-with-provenance.",
-            "components.json explicitly records derived-catalog treatment as pending and publication-blocking."
+            "The catalogs contain selected names, signatures, classifications, schema arrangements, and provenance derived from exact WordPress/Gutenberg inputs.",
+            "The candidate policy describes them as facts/identifiers with provenance, while components.json explicitly leaves derived-catalog treatment pending and publication-blocking.",
+            "Source hashes prove provenance but do not classify every copied or normalized field or the collection/arrangement as distributed expression."
           ],
-          "inference": "Exact source hashes establish provenance but do not alone decide whether particular selected expressions, schema arrangements, or collections require license/attribution treatment.",
-          "practicalConsequence": "Publishing the catalogs under one asserted grant can overstate ownership or omit upstream obligations.",
-          "recommendation": "Generate a field-level extraction map, quantify and review copied versus normalized expression, preserve exact upstream notices, and have the product owner make an artifact-specific decision informed by qualified legal counsel if needed.",
-          "status": "open"
+          "inference": "The evidence does not support one universal ownership or license conclusion for the complete generated catalogs.",
+          "practicalConsequence": "Publishing them under one asserted grant can overstate repository ownership or omit upstream attribution/terms.",
+          "recommendation": "Generate a field-level extraction map, quantify copied versus normalized content, preserve upstream notices and exact spans, and obtain an artifact-specific owner/qualified review decision."
         },
         {
-          "id": "ADR020-F006",
+          "id": "ADR020-F007",
           "severity": "blocking-medium",
-          "title": "The imported GPL compiler notice is provenance evidence, not a complete distributable license set.",
+          "title": "Exact Haxe license evidence is internally inconsistent and incompletely content-bound.",
+          "affectedPaths": [
+            "LICENSES/components.json",
+            "manifests/toolchain.lock.json",
+            "docs/adr/020-licensing-and-generated-output.md"
+          ],
+          "observedFacts": [
+            "The Haxe 4.3.7 component records commit e0b355c6be312c1b17382603f018cf52522ec651.",
+            "Its license locator names a different revision, e0b3551ca0511b660d5f3ba8752b3c4c89587307.",
+            "Several exact source-license evidence records have a null SHA-256 even when an immutable locator is named."
+          ],
+          "inference": "The exact component and the evidence used to classify its license are not guaranteed to be the same bytes.",
+          "practicalConsequence": "A changed or mistyped external locator can silently alter the terms used in the final decision.",
+          "recommendation": "Bind every license text to the same exact pinned commit/blob and a content hash; vendor the evidence snapshot into the review bundle; reject component/license locator mismatch and null hashes for publication-relevant inputs."
+        },
+        {
+          "id": "ADR020-F008",
+          "severity": "major-medium",
+          "title": "Imported compiler provenance is strong, but the local notice is not a complete distributable license set.",
           "affectedPaths": [
             "compiler/reflaxe.php/provenance.json",
             "compiler/reflaxe.php/LICENSE.md",
@@ -412,22 +613,21 @@
           ],
           "observedFacts": [
             "provenance.json identifies the exact wordpresshx-port origin, source blobs, transformations, and GPL-2.0-or-later expression.",
-            "compiler/reflaxe.php/LICENSE.md contains a short notice and external link rather than the complete GPL text.",
-            "No final compiler archive and applicable notice bundle is supplied."
+            "compiler/reflaxe.php/LICENSE.md is a short notice/link rather than the complete applicable GPL text and final preserved notice set.",
+            "No final compiler archive with source correspondence and complete notices is supplied."
           ],
-          "inference": "Origin preservation is strong, but distribution compliance is intentionally unfinished.",
-          "practicalConsequence": "A source or Haxelib archive assembled from the current tree may omit required license material and source/provenance correspondence.",
-          "recommendation": "Include the complete applicable license text, preserved copyright notices, file-level provenance, corresponding source obligations, and an exact archive manifest in the SDK-002 artifact review.",
-          "status": "open"
+          "inference": "Provenance preservation does not by itself complete distribution materials.",
+          "practicalConsequence": "A Haxelib/source archive assembled from the tree can omit required license text, notices, or corresponding-source information.",
+          "recommendation": "For each candidate archive, include the complete applicable license text, preserved notices, file-level provenance, source correspondence, SBOM, and exact archive manifest."
         }
       ]
     }
   ],
   "crossCuttingConclusions": {
-    "publicationAuthorized": false,
-    "productionSupportClaimed": false,
-    "legalAdvice": false,
-    "productOwnerDecisionBoundary": "The product owner can decide whether to fund and adopt the proposed policy, whether to seek upstream clarification or replace dependencies, and whether to grant repository-original work under an approved license after confirming rights. The evidence does not permit the owner or this Oracle to infer missing contributor rights, third-party terms, generated-output obligations, or publication authorization.",
-    "runtimeEvidenceBoundary": "This review inspected the immutable receipts, generated artifacts, traces, scripts, and recorded outputs in the bundle. It did not rerun external hosted jobs or fabricate runtime results beyond those records."
-  }
+    "semanticEvidence": "Content hashes prove which bytes a record names; they do not prove that the record was derived from those bytes. High-risk validators must parse or regenerate source semantics, not only validate self-consistent claims.",
+    "runtimeEvidence": "Recorded hosted/runtime receipts were inspected as immutable evidence within their named scope. Oracle did not rerun external hosted jobs or generalize them to broader compatibility or production support.",
+    "productOwnerDecisionBoundary": "The product owner may decide priorities, candidate policy, dependency replacement/clarification, and whether to seek qualified review. The evidence does not permit Oracle or the owner to infer missing contributor rights, third-party terms, generated-output obligations, or publication authorization."
+  },
+  "documentDigestAlgorithm": "sha256-canonical-json-without-documentDigest-v1",
+  "documentDigest": "d61232435e837ae35a44c09ce6f6ab5e388bce6a40133a69a0ab867d85843d71"
 }

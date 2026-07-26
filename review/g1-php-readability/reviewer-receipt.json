@@ -10,8 +10,8 @@
   },
   "reviewer": {
     "name": "Oracle",
-    "role": "Independent Oracle using a senior WordPress and PHP review perspective",
-    "wordpressPhpExperience": "This Oracle applied the requested native WordPress plugin, PHP ABI, generated-code, and operational debugging review perspective; it does not claim human credentials.",
+    "role": "Independent Oracle applying senior WordPress/PHP and generated-code review criteria",
+    "wordpressPhpExperience": "This Oracle applied the requested WordPress plugin, PHP ABI, generated-code readability, native debugging, and source-correlation review perspective; no human credential is claimed.",
     "reviewContext": {
       "kind": "oracle-agent",
       "provider": "OpenAI",
@@ -23,7 +23,7 @@
       "implementedEmitter": false,
       "contributedToReviewedCommit": false,
       "preparedPacket": false,
-      "statement": "I did not implement the reviewed emitter, contribute to the reviewed implementation commit, or prepare this evidence packet."
+      "statement": "Oracle did not implement the reviewed emitter, contribute to the reviewed implementation commit, or prepare this evidence packet."
     }
   },
   "reviewedAt": "2026-07-26",
@@ -32,18 +32,21 @@
     {
       "id": "ordinary-php-naming-and-shape",
       "outcome": "accepted",
-      "notes": "Namespaces, stable class and method names, scalar and WordPress nominal types, references, visibility, arrays, and ordinary control flow are recognizable to an experienced PHP reader and callable without a Haxe runtime.",
+      "notes": "The reviewed output uses normal namespaces, classes, methods, visibility, scalar and WordPress nominal types, arrays, references, and recognizable PHP control flow without a required Haxe runtime.",
       "evidencePaths": [
         "php/acme-books-adapters/includes/PublicAdapters.php",
         "callers/native-adapter-caller.php",
-        "artifact-manifests/wordpresshx-public-php-adapters.v1.json"
+        "artifact-manifests/wordpresshx-public-php-adapters.v1.json",
+        "haxe/fixtures/AcmeBooksAdapters.hx"
       ],
-      "findingIds": []
+      "findingIds": [
+        "g1-finding-003"
+      ]
     },
     {
       "id": "wordpress-conventions",
       "outcome": "accepted",
-      "notes": "The root file has a normal plugin header and ABSPATH guard; it owns activation registration, and the generated registration file uses ordinary action, filter, REST, and dynamic-block callbacks with explicit priorities and accepted argument counts.",
+      "notes": "The root has an ordinary plugin header and ABSPATH guard, owns activation registration, and registers action, filter, REST, and dynamic-block callbacks through familiar WordPress APIs.",
       "evidencePaths": [
         "php/acme-books-adapters/acme-books-adapters.php",
         "php/acme-books-adapters/includes/register-adapters.php",
@@ -56,7 +59,7 @@
     {
       "id": "control-flow-and-bootstrap",
       "outcome": "accepted",
-      "notes": "The load path is short and inspectable: plugin root, eager local includes, activation registration, idempotent bootstrap, then WordPress-owned callback dispatch. One naming observation does not obscure or change that flow.",
+      "notes": "The bootstrap is short and locally inspectable: plugin root, eager local includes and registration, activation registration, idempotent boot, then WordPress-owned callback dispatch.",
       "evidencePaths": [
         "php/acme-books-adapters/acme-books-adapters.php",
         "php/acme-books-adapters/includes/autoload.php",
@@ -70,7 +73,7 @@
     {
       "id": "adapters-and-private-boundary",
       "outcome": "accepted",
-      "notes": "WordPress-facing methods are public native static callables, helper methods remain private, and the private failure path stays visible in ordinary PHP frames without publishing a second runtime ABI.",
+      "notes": "WordPress-facing methods are public native static callables, helper methods remain private, and the private failure path remains visible in ordinary PHP frames without creating a public runtime ABI.",
       "evidencePaths": [
         "php/acme-books-adapters/includes/PublicAdapters.php",
         "php/source-correlation/includes/FailureCallbacks.php",
@@ -82,7 +85,7 @@
     {
       "id": "errors-and-native-stack-frames",
       "outcome": "accepted",
-      "notes": "Hook, REST, render, and private failures retain the native exception class, message, generated PHP path and line, callable sequence, and unmapped frames. Correlation adds annotations without replacing native text.",
+      "notes": "Hook, REST, render, and private failures preserve native exception class, message, PHP file and line, callable sequence, and unmapped frames; correlation annotates without supplanting native stacks.",
       "evidencePaths": [
         "traces/hook.native.stack",
         "traces/private.native.stack",
@@ -95,7 +98,7 @@
     {
       "id": "haxe-source-correlation",
       "outcome": "accepted",
-      "notes": "The current generated PHP digest is bound by the range map and packet manifest; source identities are project-relative, statement anchors point to the corresponding Haxe throws, and ambiguous intermediate frames remain explicitly unmapped. A stale digest in one supplemental historical receipt should be refreshed.",
+      "notes": "The current generated PHP digest is bound by the range map and packet manifest; project-relative source identities and statement anchors locate representative Haxe throws while ambiguous frames remain unmapped.",
       "evidencePaths": [
         "debug/source-index.json",
         "debug/includes/FailureCallbacks.php.haxe-map.json",
@@ -116,7 +119,7 @@
       "id": "g1-finding-001",
       "category": "haxe-source-correlation",
       "severity": "non-blocking",
-      "summary": "The supplemental SDK-025 receipt identifies an older FailureCallbacks.php digest than the current content-bound map and packet.",
+      "summary": "The supplemental SDK-025 receipt names an older FailureCallbacks.php digest than the reviewed packet.",
       "evidencePaths": [
         "evidence/sdk-025-php-source-correlation.json",
         "debug/includes/FailureCallbacks.php.haxe-map.json",
@@ -124,7 +127,7 @@
         "packet-manifest.json"
       ],
       "resolution": "accepted-non-blocking",
-      "resolutionNotes": "The receipt records e2612cf416877983e712c930ee6fc0e36ccd3f37c451b964a8f5af990ee7e157, while the reviewed PHP, map, and packet manifest bind d3534a6374ebec4ded2265850d93fb0be6f2b73c55f4ac213cbb6e811db00dc2. The current map and all supplied traces remain mutually consistent, so readability and debuggability are demonstrated; refresh or clearly label the supplemental receipt before using it as current artifact evidence.",
+      "resolutionNotes": "The supplemental receipt records e2612cf416877983e712c930ee6fc0e36ccd3f37c451b964a8f5af990ee7e157, while the reviewed PHP, current map, and packet bind d3534a6374ebec4ded2265850d93fb0be6f2b73c55f4ac213cbb6e811db00dc2. The current map and supplied traces are mutually consistent, so the narrow G1 decision remains accepted; refresh or explicitly label the supplemental record as historical before treating it as current evidence.",
       "resolutionEvidencePaths": [
         "debug/includes/FailureCallbacks.php.haxe-map.json",
         "traces/private.correlated.json",
@@ -135,17 +138,34 @@
       "id": "g1-finding-002",
       "category": "control-flow-and-bootstrap",
       "severity": "observation",
-      "summary": "The file named autoload.php is an eager include graph and executes adapter registration while being required.",
+      "summary": "The file named autoload.php is an eager include graph that executes adapter registration.",
       "evidencePaths": [
         "php/acme-books-adapters/includes/autoload.php",
         "php/acme-books-adapters/includes/register-adapters.php",
         "php/acme-books-adapters/acme-books-adapters.php"
       ],
       "resolution": "accepted-non-blocking",
-      "resolutionNotes": "The behavior is local, short, and fully visible, and the root-to-registration path is easy to follow. A generated comment or a name such as includes.php would reduce the chance that a PHP reader assumes PSR-style lazy autoloading, but no hidden framework indirection or debugging blocker results.",
+      "resolutionNotes": "The behavior is short, local, and visible, so it does not block debugging. Rename it to includes.php, split registration from loading, or add a generated comment so a PHP maintainer does not assume PSR-style lazy autoloading.",
       "resolutionEvidencePaths": [
         "php/acme-books-adapters/includes/autoload.php",
         "php/acme-books-adapters/includes/register-adapters.php"
+      ]
+    },
+    {
+      "id": "g1-finding-003",
+      "category": "ordinary-php-naming-and-shape",
+      "severity": "observation",
+      "summary": "The adapter proof is a bounded Haxe-authored PHP-IR fixture rather than broad ordinary-Haxe lowering evidence.",
+      "evidencePaths": [
+        "haxe/fixtures/AcmeBooksAdapters.hx",
+        "artifact-manifests/wordpresshx-public-php-adapters.v1.json",
+        "README.md"
+      ],
+      "resolution": "accepted-non-blocking",
+      "resolutionNotes": "The packet validly proves readability of the exact emitted slice under review. It must not be generalized to arbitrary Haxe source, all WordPress APIs, or production support; future G1 expansion should include a normal typed application-Haxe input and independent source ranges for public methods.",
+      "resolutionEvidencePaths": [
+        "haxe/fixtures/AcmeBooksAdapters.hx",
+        "artifact-manifests/wordpresshx-public-php-adapters.v1.json"
       ]
     }
   ],
@@ -153,7 +173,7 @@
     "allBlockingFindingsResolved": true,
     "publicationAuthorized": false,
     "productionSupportClaimed": false,
-    "attestation": "I reviewed all six required categories against the identified content-addressed packet. The decision is limited to generated PHP readability and debuggability and does not authorize publication or claim production support."
+    "attestation": "Oracle reviewed all six required categories against the identified content-addressed packet. Acceptance is limited to generated PHP readability and debuggability and does not authorize publication or claim production support."
   },
-  "receiptDigest": "d69f6c9522f541cf9de9d925db829bbfd072bf3329dcb55cb67124cfea9c8a38"
+  "receiptDigest": "db2445f9c67d78085a4d3fa8af61d8990a423ee75a09c0b293467ba3ff0c962a"
 }

@@ -173,3 +173,22 @@ artifact licenses are immutable for those bytes.
 - `wordpresshx-adr-020`: remains open until qualified review and owner approval.
 - `wordpresshx-sdk-002`: applies the accepted decision to exact packages,
   notices, SBOMs, provenance, generated-output manifests, and publication gates.
+
+## Independent Oracle review
+
+The content-addressed GPT-5.6 Oracle licensing-risk review dated 2026-07-26
+returned **changes required; publication blocked**. The authoritative details
+are in [`ORACLE-REVIEW.md`](../../review/oracle/results/ORACLE-REVIEW.md) and
+[`adr-decisions.json`](../../review/oracle/results/adr-decisions.json).
+
+Remediation bead `wordpresshx-sdk-plan.2` owns ADR020-F001 through ADR020-F008:
+make the review snapshot reproduce repository gates; establish repository and
+import rights plus the owner decision; derive inventory from every lock and
+packed artifact; close generated runtime/polyfill origins, licenses, and
+notices; resolve metadata/text discrepancies; produce field-level catalog
+provenance; reconcile exact Haxe licensing evidence; and ship the imported
+compiler's complete distributable license/notice set.
+
+The review is technical risk evidence, not legal advice. Development may
+continue, but publication remains mechanically blocked until the findings are
+resolved and the product owner authorizes it.

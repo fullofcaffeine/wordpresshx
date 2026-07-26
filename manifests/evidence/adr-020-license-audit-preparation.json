@@ -7,7 +7,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/020-licensing-and-generated-output.md",
-      "sha256": "03d4c554dc74070850ecf9c47b69c83cf1c8b531f51306a79516d829deaa0afe"
+      "sha256": "d976dd5685cfbf8f551c9c7e347184ef5265d226a80bb22f87991e8dc43071a9"
     },
     "components": {
       "path": "LICENSES/components.json",
