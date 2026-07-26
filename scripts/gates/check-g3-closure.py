@@ -287,14 +287,24 @@ def validate_status(audit: Audit, receipt: dict[str, Any], template: bool) -> No
     audit.check(isinstance(jobs, dict) and all(isinstance(value, int) and value > 0 for value in jobs.values()), "final receipt needs exact required job IDs")
     audit.check(boundary.get("g3SemanticPlanAndOwnership") == "verified", "final G3 claim must be verified")
     if isinstance(commit, str) and SHA1.fullmatch(commit):
-        result = subprocess.run(
-            ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        shallow = subprocess.run(
+            ["git", "rev-parse", "--is-shallow-repository"],
             cwd=audit.root,
             check=False,
-            stdout=subprocess.DEVNULL,
+            text=True,
+            stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
         )
-        audit.check(result.returncode == 0, "implementation commit is absent from repository history")
+        audit.check(shallow.returncode == 0, "cannot inspect repository history depth")
+        if shallow.returncode == 0 and shallow.stdout.strip() != "true":
+            result = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+                cwd=audit.root,
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            audit.check(result.returncode == 0, "implementation commit is absent from repository history")
 
 
 def validate(root: Path, receipt_path: Path, template: bool) -> list[str]:
