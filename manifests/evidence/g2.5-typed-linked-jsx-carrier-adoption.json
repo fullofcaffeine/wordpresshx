@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION",
   "bead": "wordpresshx-g2.5",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "observedAt": "2026-07-26",
   "profileId": "wp70-release",
   "subjects": {
@@ -210,11 +210,28 @@
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null
+    "status": "passed",
+    "commit": "3cd923ada6d0c49097dba23ab8a64dadf406c5e3",
+    "runId": 30197804295,
+    "jobId": 89783565115,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30197804295",
+    "attempt": 2,
+    "attemptUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30197804295/attempts/2",
+    "jobName": "haxe",
+    "jobUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30197804295/job/89783565115",
+    "jobCount": 13,
+    "allJobsPassed": true,
+    "discardedAttempts": [
+      {
+        "attempt": 1,
+        "failedJob": "contract-schema",
+        "failedJobId": 89782353709,
+        "failedStep": "Install exact Haxe, formatter, Genes, and TypeScript dependencies",
+        "repositoryTestReached": false,
+        "reason": "npm 10.9.2 failed an internal cache rename with EEXIST and ENOENT on the hosted runner",
+        "resolution": "reran the complete immutable workflow; all 13 jobs passed on attempt 2 without a source change"
+      }
+    ]
   },
   "claims": {
     "typedLinkedCarrierAdopted": true,
