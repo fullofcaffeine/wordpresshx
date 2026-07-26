@@ -677,7 +677,7 @@ required_files=(
   manifests/toolchain.lock.json
   manifests/upstream.lock.json
   manifests/evidence/g0-product-baseline.json
-  manifests/evidence/g3-semantic-ownership.template.json
+  manifests/evidence/g3-semantic-ownership.json
   manifests/evidence/sdk-003-release-governance.json
   manifests/evidence/adr-020-license-audit-preparation.json
   manifests/evidence/adr-006-semantic-plan-contract.json
@@ -973,9 +973,9 @@ activation_hook_receipt = json.loads(
         "manifests/evidence/g1.3-wordpress-activation-hook.json"
     ).read_text(encoding="utf-8")
 )
-g3_closure_template = json.loads(
+g3_closure_receipt = json.loads(
     Path(
-        "manifests/evidence/g3-semantic-ownership.template.json"
+        "manifests/evidence/g3-semantic-ownership.json"
     ).read_text(encoding="utf-8")
 )
 sdk025_receipt = json.loads(
@@ -5654,7 +5654,7 @@ g13_activation_input_records = {
 }
 g3_closure_subject_records = {
     record["path"]: record["sha256"]
-    for record in g3_closure_template["currentSubjects"].values()
+    for record in g3_closure_receipt["currentSubjects"].values()
 }
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
@@ -11591,6 +11591,8 @@ python3 -m py_compile scripts/scaffold/test-production.py
 python3 scripts/docker/check-image-lock.py
 python3 scripts/gates/test-g0-baseline.py
 python3 scripts/gates/test-g3-closure.py
+python3 scripts/gates/check-g3-closure.py \
+  --receipt manifests/evidence/g3-semantic-ownership.json
 python3 scripts/gates/check-g2-legacy-jsx-carriers.py
 python3 scripts/gates/check-g2-build-advisories.py
 python3 scripts/gates/check-g2-provider-exact-optionals.py

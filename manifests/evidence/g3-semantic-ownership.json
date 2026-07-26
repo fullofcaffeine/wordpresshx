@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G3-SEMANTIC-PLAN-FAIL-CLOSED-OWNERSHIP",
   "bead": "wordpresshx-g3",
-  "status": "pending-hosted-proof",
+  "status": "verified",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "3e614bf36397c2fa81455b7f97dfe50f1cd2834b12627ffa70e60a94c70f84a8",
@@ -159,23 +159,23 @@
     "outcome": "passed"
   },
   "implementation": {
-    "commit": null
+    "commit": "a591e3997187f0ffe60da5fe5e7d1b6fcc257950"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": null,
-    "commit": null,
-    "status": "pending",
-    "jobCount": null,
-    "allJobsPassed": null,
+    "runId": 30201571185,
+    "commit": "a591e3997187f0ffe60da5fe5e7d1b6fcc257950",
+    "status": "passed",
+    "jobCount": 13,
+    "allJobsPassed": true,
     "jobs": {
-      "repository": null,
-      "semantic-plan": null,
-      "haxe": null
+      "repository": 89792283465,
+      "semantic-plan": 89792283456,
+      "haxe": 89792283482
     }
   },
   "claimBoundary": {
-    "g3SemanticPlanAndOwnership": "pending-hosted-proof",
+    "g3SemanticPlanAndOwnership": "verified",
     "wordpressRuntimeCompatibility": "not-claimed-by-g3",
     "nextjsRuntimeCompatibility": "not-claimed-by-g3",
     "publicPackagePublication": "blocked",

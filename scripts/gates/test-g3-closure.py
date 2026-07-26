@@ -14,7 +14,7 @@ from typing import Callable
 
 ROOT = Path(__file__).resolve().parents[2]
 VALIDATOR = ROOT / "scripts/gates/check-g3-closure.py"
-TEMPLATE = ROOT / "manifests/evidence/g3-semantic-ownership.template.json"
+RECEIPT = ROOT / "manifests/evidence/g3-semantic-ownership.json"
 
 
 def run(receipt: dict[str, object]) -> subprocess.CompletedProcess[str]:
@@ -55,7 +55,25 @@ def negative(
 
 
 def main() -> int:
-    baseline = json.loads(TEMPLATE.read_text(encoding="utf-8"))
+    baseline = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    baseline["status"] = "pending-hosted-proof"
+    baseline["implementation"]["commit"] = None
+    baseline["hostedWorkflow"] = {
+        "workflow": "Repository bootstrap",
+        "runId": None,
+        "commit": None,
+        "status": "pending",
+        "jobCount": None,
+        "allJobsPassed": None,
+        "jobs": {
+            "repository": None,
+            "semantic-plan": None,
+            "haxe": None,
+        },
+    }
+    baseline["claimBoundary"]["g3SemanticPlanAndOwnership"] = (
+        "pending-hosted-proof"
+    )
     positive = run(baseline)
     if positive.returncode != 0:
         raise AssertionError(f"positive G3 template validation failed\n{positive.stderr}")
