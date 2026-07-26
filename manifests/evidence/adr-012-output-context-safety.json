@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "immutable-policy-rereview-pending",
-  "observedAt": "2026-07-26T22:09:33Z",
+  "status": "verified",
+  "observedAt": "2026-07-26T22:46:46Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "8d03f0940b64de56641610542e496ca290b0677ad706986be6919430efcb51ea"
+      "sha256": "5ba6276d1cce72d733c0d29309a6461b27e8531fc8ab24a6902324d2f305e360"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "38c665dc0b1e4b14faecb9a5afd52b6aaa220c61ef0a68182b7ee65b4d2cc6a4"
+      "sha256": "a6eeea83bef34f63d2a323656efe1987ef22e7a6dccce11100ecf73f08caafde"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -67,7 +67,7 @@
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "passed-local-and-hosted-immutable-policy"
+    "outcome": "passed-local-hosted-and-independent-review"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -87,6 +87,20 @@
       "closedFindings": ["ADR012-F001", "ADR012-F002", "ADR012-F003", "ADR012-F004", "ADR012-F005", "ADR012-F007", "ADR012-F008", "ADR012-F009"],
       "openFindings": ["ADR012-F006"]
     },
+    "finalRereview": {
+      "decision": "accepted",
+      "reviewedCommit": "e51dbaadb3ba8dfc4edb145834fb7316b82501a9",
+      "packetSha256": "43d6db1c63a60c8e6d0d96cfe1ac7492df0641f1b163707fdd65ea5ded0cad07",
+      "reportPath": "review/oracle/results/adr012-final-e51dbaa/ORACLE-FINAL-REREVIEW.md",
+      "reportSha256": "6a36ebaf25e58d3367097d0a94abb1f03cdf9818d6253b88bed1aa928aab6f6c",
+      "decisionPath": "review/oracle/results/adr012-final-e51dbaa/adr012-final-decision.json",
+      "decisionSha256": "5cf38a2667e30121fb6498d035c01cccc0be2b617df3936df61ea751551f1f79",
+      "reviewedInputsPath": "review/oracle/results/adr012-final-e51dbaa/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "6bfd5afc2308a8381021cdb59e63088e180a85faf6f66acd29a695f048a7c808",
+      "closedFindings": ["ADR012-F001", "ADR012-F002", "ADR012-F003", "ADR012-F004", "ADR012-F005", "ADR012-F006", "ADR012-F007", "ADR012-F008", "ADR012-F009"],
+      "openFindings": [],
+      "newNonBlockingFindings": ["ADR012-R3-N001"]
+    },
     "secondCorrectionClaims": [
       "ADR012-F001: resolved namespace state is mandatory and unknown attributes, unknown children, namespaced descendants, nested grammars, and void-element children fail closed.",
       "ADR012-F002: one Haxe-generated native-runtime plan is consumed by the PHP, WordPress, Genes, and React sink probes and verified by digest.",
@@ -98,8 +112,8 @@
       "ADR012-F008: the Genes identity is derived from the immutable browser dependency lock and recorded consistently as 1.38.0.",
       "ADR012-F009: non-retention is stated as an enforceable SDK API policy, not as a linear-type guarantee."
     ],
-    "freshIndependentReview": "immutable-policy-correction-pending-final-rereview",
-    "acceptanceAuthorized": false
+    "freshIndependentReview": "accepted-no-blocking-findings",
+    "acceptanceAuthorized": true
   },
   "referenceReview": {
     "exactRecordCount": 7,
@@ -131,10 +145,10 @@
     "The prototype implements a typed custom KSES policy constructor; a production public constructor and browser rich-HTML policy are not implemented by this receipt.",
     "Browser rich-HTML policy, PHP 7.4, packed-consumer, and provider-markup behavior are not tested by this receipt.",
     "The unsafe raw target is intentionally withheld until ADR-019 defines auditable waiver governance.",
-    "The immutable policy correction has exact local and hosted evidence and still needs a final independent Oracle rereview."
+    "ADR012-R3-N001 records five stale path names in the final review prompt; the Oracle reviewed the manifest-bound equivalents and future prompts must validate paths against the packet inventory."
   ],
   "claims": {
-    "architectureDecision": "third-review-correction-applied-pending-rereview",
+    "architectureDecision": "accepted-after-review",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

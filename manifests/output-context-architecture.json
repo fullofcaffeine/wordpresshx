@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "third-review-correction-applied-pending-rereview",
+  "status": "accepted-after-review",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
@@ -454,7 +454,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "third-review-correction-applied-pending-rereview",
+    "architectureDecision": "accepted-after-review",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

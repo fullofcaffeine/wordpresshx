@@ -1,8 +1,8 @@
 # ADR-012: Output-context safety
 
-- Status: immutable-policy correction applied; final rereview pending
+- Status: accepted after independent Oracle rereview
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; corrections pending rereview)
+- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; accepted)
 - Bead: `wordpresshx-adr-012`
 - Profiles/layers: shared output contracts, PHP compiler, WordPress profile, HXX lowering, Genes browser output, REST, blocks, admin UI
 - Supersedes: none; makes PRD §29.1 and ADR-011's contextual-lowering requirement concrete
@@ -338,6 +338,8 @@ requires a versioned policy and compatibility note.
   complete Haxe-authored site.
 - `wordpresshx-sdk-117`: admit exact provider versions before provider markup
   adapters can be used by examples.
+- `wordpresshx-sdk-plan.4`: validate immutable review prompt paths against the
+  exact archived packet inventory before dispatch.
 
 ## Independent Oracle review
 
@@ -379,4 +381,17 @@ JSON arrays from that immutable representation, and a compile-negative fixture
 proves post-hash mutation is inaccessible. The immutable-policy correction at
 commit `4d403cdb33ff2ce6e7da196e1062163e15c9e302` passed public run
 [`30223402796`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30223402796),
-job `89849614666`. Only the final independent rereview remains.
+job `89849614666`.
+
+The final independent rereview examined immutable evidence commit
+`e51dbaadb3ba8dfc4edb145834fb7316b82501a9` from packet
+`43d6db1c63a60c8e6d0d96cfe1ac7492df0641f1b163707fdd65ea5ded0cad07`.
+It independently reproduced the inaccessible post-hash mutation, varied every
+custom-policy identity component against its emitted plan, and accepted the
+bounded ADR-012 architecture with F001 through F009 closed. The exact decision
+is in
+[`ORACLE-FINAL-REREVIEW.md`](../../review/oracle/results/adr012-final-e51dbaa/ORACLE-FINAL-REREVIEW.md).
+Its sole new finding, ADR012-R3-N001, is non-blocking: five paths in the review
+prompt were stale, while the actual manifest-bound prototype paths existed,
+matched their receipt hashes, and were reviewed. Future review prompts must be
+validated against their packet path inventory.

@@ -761,6 +761,9 @@ required_files=(
   review/oracle/results/adr012-rereview-2-0bc2349/ORACLE-REREVIEW-2.md
   review/oracle/results/adr012-rereview-2-0bc2349/adr012-decision-2.json
   review/oracle/results/adr012-rereview-2-0bc2349/reviewed-inputs.sha256
+  review/oracle/results/adr012-final-e51dbaa/ORACLE-FINAL-REREVIEW.md
+  review/oracle/results/adr012-final-e51dbaa/adr012-final-decision.json
+  review/oracle/results/adr012-final-e51dbaa/reviewed-inputs.sha256
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -2331,9 +2334,7 @@ else:
 
 assert output_context_architecture["schemaVersion"] == 1
 assert output_context_architecture["decisionId"] == "ADR-012"
-assert output_context_architecture["status"] == (
-    "third-review-correction-applied-pending-rereview"
-)
+assert output_context_architecture["status"] == "accepted-after-review"
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
 assert output_authority["universalSafeTypeAllowed"] is False
@@ -2393,6 +2394,91 @@ assert adr012_receipt["authority"]["unsafeRawApiPublished"] is False
 assert adr012_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
 assert adr012_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
 assert adr012_receipt["referenceReview"]["genesSourceChanged"] is False
+assert output_context_architecture["claims"]["architectureDecision"] == (
+    "accepted-after-review"
+)
+adr012_final_review = adr012_receipt["review"]["finalRereview"]
+assert adr012_final_review == {
+    "decision": "accepted",
+    "reviewedCommit": "e51dbaadb3ba8dfc4edb145834fb7316b82501a9",
+    "packetSha256": (
+        "43d6db1c63a60c8e6d0d96cfe1ac7492df0641f1b163707fdd65ea5ded0cad07"
+    ),
+    "reportPath": (
+        "review/oracle/results/adr012-final-e51dbaa/ORACLE-FINAL-REREVIEW.md"
+    ),
+    "reportSha256": (
+        "6a36ebaf25e58d3367097d0a94abb1f03cdf9818d6253b88bed1aa928aab6f6c"
+    ),
+    "decisionPath": (
+        "review/oracle/results/adr012-final-e51dbaa/adr012-final-decision.json"
+    ),
+    "decisionSha256": (
+        "5cf38a2667e30121fb6498d035c01cccc0be2b617df3936df61ea751551f1f79"
+    ),
+    "reviewedInputsPath": (
+        "review/oracle/results/adr012-final-e51dbaa/reviewed-inputs.sha256"
+    ),
+    "reviewedInputsSha256": (
+        "6bfd5afc2308a8381021cdb59e63088e180a85faf6f66acd29a695f048a7c808"
+    ),
+    "closedFindings": [f"ADR012-F{finding:03d}" for finding in range(1, 10)],
+    "openFindings": [],
+    "newNonBlockingFindings": ["ADR012-R3-N001"],
+}
+for adr012_review_path, adr012_review_digest in (
+    (
+        adr012_final_review["reportPath"],
+        adr012_final_review["reportSha256"],
+    ),
+    (
+        adr012_final_review["decisionPath"],
+        adr012_final_review["decisionSha256"],
+    ),
+    (
+        adr012_final_review["reviewedInputsPath"],
+        adr012_final_review["reviewedInputsSha256"],
+    ),
+):
+    assert hashlib.sha256(Path(adr012_review_path).read_bytes()).hexdigest() == (
+        adr012_review_digest
+    )
+adr012_final_decision = json.loads(
+    Path(adr012_final_review["decisionPath"]).read_text(encoding="utf-8")
+)
+assert adr012_final_decision["schema"] == (
+    "wordpress-hx.oracle-adr012-rereview.v3"
+)
+assert adr012_final_decision["reviewedCommit"] == (
+    adr012_final_review["reviewedCommit"]
+)
+assert adr012_final_decision["finalDecision"] == "accepted"
+assert [
+    finding["id"] for finding in adr012_final_decision["priorFindingDispositions"]
+] == adr012_final_review["closedFindings"]
+assert all(
+    finding["disposition"] == "closed"
+    for finding in adr012_final_decision["priorFindingDispositions"]
+)
+assert adr012_final_decision["newFindings"] == [
+    {
+        "id": "ADR012-R3-N001",
+        "severity": "non-blocking",
+        "confidence": "high",
+        "summary": (
+            "The immutable review prompt names five nonexistent minimum-inspection "
+            "paths; the packet evidence manifest correctly names and hashes the "
+            "actual bounded-prototype equivalents."
+        ),
+    }
+]
+assert adr012_receipt["review"]["freshIndependentReview"] == (
+    "accepted-no-blocking-findings"
+)
+assert adr012_receipt["review"]["acceptanceAuthorized"] is True
+assert adr012_receipt["claims"]["architectureDecision"] == (
+    "accepted-after-review"
+)
 assert adr012_receipt["claims"]["publicationAuthorized"] is False
 for unproven_output_claim in (
     "productionSdkTypes",
@@ -2408,7 +2494,7 @@ assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
 if adr012_hosted["status"] == "immutable-policy-passed":
-    assert adr012_receipt["status"] == "immutable-policy-rereview-pending"
+    assert adr012_receipt["status"] == "verified"
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
     assert sha1.fullmatch(adr012_hosted["commit"])

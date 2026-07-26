@@ -70,7 +70,9 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   corrected hosted gate passed, then Oracle required a second correction pass.
   Its exact hosted gate passed; a second Oracle rereview then exposed one
   post-hash policy mutability gap. The immutable-policy correction's hosted
-  gate now passes; final rereview remains pending.
+  gate passed, and the final Oracle rereview accepted the bounded architecture
+  with F001 through F009 closed. Production SDK types and lowerers remain
+  follow-up implementation work.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.
