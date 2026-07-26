@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-26T23:07:14Z",
+  "status": "implemented-review-pending",
+  "observedAt": "2026-07-26T23:15:26Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "a20101a32374fe43286ac381f18ab1c4847d429671ff6206d179306fde6b0a0f"
+      "sha256": "bc8c0695fe087d3d04f13b14f68c1513de00b97fa75e179270aa931bd2b35ff7"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -82,22 +82,22 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run"
+    "runId": 30224851347,
+    "jobId": 89853259064,
+    "commit": "1d1296a9078a6e4834fb2d1f5900e568aa74c4f8",
+    "status": "passed"
   },
   "limitations": [
     "The executable fixture proves a bounded governance model, not a production source/generated/final-artifact scanner.",
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "Independent Oracle review is required before ADR acceptance."
+    "The focused hosted policy gate passes; independent Oracle review is still required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
-    "deterministicFailClosedScenarios": "passed-local",
+    "deterministicFailClosedScenarios": "passed-local-and-hosted",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",
     "productionArtifactInventory": "not-tested",

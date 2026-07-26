@@ -293,6 +293,11 @@ review, decoded TypeScript `unknown`, and overlong expiry. The policy validator
 also applies independent fail-closed mutations to the authority, categories,
 lifecycle, inventory, gates, diagnostics, and claims.
 
+Focused public workflow
+[`30224851347`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30224851347),
+job `89853259064`, passed the exact policy, schema, scenarios, and mutation
+validator at commit `1d1296a9078a6e4834fb2d1f5900e568aa74c4f8`.
+
 Acceptance commands:
 
 ```bash
