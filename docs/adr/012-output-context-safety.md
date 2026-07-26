@@ -304,8 +304,10 @@ the Oracle corrections. Corrected commit
 `60e0516db0b1542e7eeba9da02254e115b1abaab` passed public run
 [`30221651100`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30221651100),
 job `89845003958`. Fresh independent rereview remains required before this ADR
-can move to accepted. That run predates the second correction pass; its exact
-commit must be replaced by new hosted evidence before the next rereview.
+can move to accepted. The second correction pass at commit
+`68e5effa9d9a07163eafbd08864ccc872f76e0ad` passed public run
+[`30222742845`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30222742845),
+job `89847822705`.
 
 The design follows the official
 [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/),

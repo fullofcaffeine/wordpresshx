@@ -384,15 +384,16 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "corrected-passed-superseded-by-second-corrections",
-        "runId": 30221651100,
-        "jobId": 89845003958,
-        "commit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
+        "status": "second-corrections-passed",
+        "runId": 30222742845,
+        "jobId": 89847822705,
+        "commit": "68e5effa9d9a07163eafbd08864ccc872f76e0ad",
+        "firstCorrectionRunId": 30221651100,
+        "firstCorrectionJobId": 89845003958,
+        "firstCorrectionCommit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
         "historicalRunId": 29713766565,
         "historicalJobId": 88262490140,
         "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
-        "secondCorrectionCommit": None,
-        "secondCorrectionStatus": "pending-first-hosted-main-run",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 

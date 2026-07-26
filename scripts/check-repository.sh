@@ -2402,7 +2402,7 @@ adr012_hosted = adr012_receipt["hostedWorkflow"]
 assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
-if adr012_hosted["status"] == "corrected-passed-superseded-by-second-corrections":
+if adr012_hosted["status"] == "second-corrections-passed":
     assert adr012_receipt["status"] == "second-corrections-rereview-pending"
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
@@ -2410,8 +2410,9 @@ if adr012_hosted["status"] == "corrected-passed-superseded-by-second-corrections
     assert isinstance(adr012_hosted["historicalRunId"], int)
     assert isinstance(adr012_hosted["historicalJobId"], int)
     assert sha1.fullmatch(adr012_hosted["historicalCommit"])
-    assert adr012_hosted["secondCorrectionCommit"] is None
-    assert adr012_hosted["secondCorrectionStatus"] == "pending-first-hosted-main-run"
+    assert isinstance(adr012_hosted["firstCorrectionRunId"], int)
+    assert isinstance(adr012_hosted["firstCorrectionJobId"], int)
+    assert sha1.fullmatch(adr012_hosted["firstCorrectionCommit"])
 elif adr012_hosted["status"] == "pending-first-hosted-main-run":
     assert adr012_receipt["status"] == "implemented-hosted-pending"
     assert adr012_hosted["runId"] is None

@@ -7,11 +7,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "809bff77448386c2da1adb4589ad17fb530363faf8cb080e30fe2680f0525815"
+      "sha256": "08b3a51a6bf9149629526d6facaf8325cfbbaf0b939e57727d448ea9bb577adf"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "ce840a7edd5a637d7f8cd06abfaab0c7af2508bb6f78e0b72e9f3873ce460303"
+      "sha256": "c53ef5615db9446b4889c1b34ce48e7b506d3b11e44b32e67fca6499557190bd"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,7 +19,7 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "959b3215a6573b00a698acbcba6cf2747594fe64bf05c385f0d7726716d536b4"
+      "sha256": "2153df11418c3844fb9ec149ef533695eb14f56ad8fdba17216afeac4a772aa5"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
@@ -67,7 +67,7 @@
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "passed-local-second-corrections-hosted-pending"
+    "outcome": "passed-local-and-hosted-second-corrections"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -103,15 +103,16 @@
     "workflow": "Output-context safety",
     "job": "output-context",
     "required": true,
-    "runId": 30221651100,
-    "jobId": 89845003958,
-    "commit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
-    "status": "corrected-passed-superseded-by-second-corrections",
+    "runId": 30222742845,
+    "jobId": 89847822705,
+    "commit": "68e5effa9d9a07163eafbd08864ccc872f76e0ad",
+    "status": "second-corrections-passed",
+    "firstCorrectionRunId": 30221651100,
+    "firstCorrectionJobId": 89845003958,
+    "firstCorrectionCommit": "60e0516db0b1542e7eeba9da02254e115b1abaab",
     "historicalRunId": 29713766565,
     "historicalJobId": 88262490140,
-    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
-    "secondCorrectionCommit": null,
-    "secondCorrectionStatus": "pending-first-hosted-main-run"
+    "historicalCommit": "11ec7cc273ca65130c1fcd79505347390dba3d9a"
   },
   "limitations": [
     "The Haxe output types and sinks are a bounded architecture prototype, not the SDK-052 public implementation.",
@@ -119,7 +120,7 @@
     "The prototype implements a typed custom KSES policy constructor; a production public constructor and browser rich-HTML policy are not implemented by this receipt.",
     "Browser rich-HTML policy, PHP 7.4, packed-consumer, and provider-markup behavior are not tested by this receipt.",
     "The unsafe raw target is intentionally withheld until ADR-019 defines auditable waiver governance.",
-    "The second correction pass has local evidence and still needs exact hosted evidence plus a fresh independent Oracle rereview."
+    "The second correction pass has exact local and hosted evidence and still needs a fresh independent Oracle rereview."
   ],
   "claims": {
     "architectureDecision": "second-review-corrections-applied-pending-rereview",
