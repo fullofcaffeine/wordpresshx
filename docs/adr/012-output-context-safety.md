@@ -376,5 +376,7 @@ digest was computed. The final correction stores policy semantics only as
 private final booleans and immutable strings; neither the custom policy nor its
 terminal exposes rules, attributes, or protocol arrays. The sink derives fresh
 JSON arrays from that immutable representation, and a compile-negative fixture
-proves post-hash mutation is inaccessible. The second hosted run therefore
-remains historical until this final correction receives its own hosted result.
+proves post-hash mutation is inaccessible. The immutable-policy correction at
+commit `4d403cdb33ff2ce6e7da196e1062163e15c9e302` passed public run
+[`30223402796`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30223402796),
+job `89849614666`. Only the final independent rereview remains.
