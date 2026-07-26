@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "G1.3-WORDPRESS-ACTIVATION-HOOK",
   "bead": "wordpresshx-g1.3",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "observedAt": "2026-07-26T10:59:55Z",
   "subject": {
     "profileId": "wp70-release",
     "fixture": "acme-books-adapters",
-    "implementationCommit": null,
+    "implementationCommit": "d6f74f9ac009862f0f65b2a46c67b69999b7fea9",
     "genericCompilerChanged": false,
     "layerOwnership": {
       "genericPhpIrAndPrinter": "compiler/reflaxe.php",
@@ -195,30 +195,30 @@
   },
   "hostedWorkflow": {
     "path": ".github/workflows/repository.yml",
-    "commit": null,
-    "runId": null,
-    "url": null,
-    "status": "pending",
+    "commit": "d6f74f9ac009862f0f65b2a46c67b69999b7fea9",
+    "runId": 30199567254,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30199567254",
+    "status": "passed",
     "requiredJobs": [
       {
         "name": "repository",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 89787043869,
+        "status": "passed"
       },
       {
         "name": "haxe",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 89787043923,
+        "status": "passed"
       },
       {
         "name": "wordpress-runtime",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 89787043909,
+        "status": "passed"
       },
       {
         "name": "security",
-        "jobId": null,
-        "status": "pending"
+        "jobId": 89787043942,
+        "status": "passed"
       }
     ]
   },
