@@ -301,8 +301,10 @@ The initial focused public workflow
 [`30224851347`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30224851347),
 job `89853259064`, passed the exact policy, schema, scenarios, and mutation
 validator at commit `1d1296a9078a6e4834fb2d1f5900e568aa74c4f8`. It predates
-the canonical waiver-instance fixture and its additional mutations; a current
-hosted run is required before review.
+the canonical waiver-instance fixture and its additional mutations. The current
+subject at commit `75e4f76b9f80f2a5694a04386ff626aedee5040d` passed run
+[`30225305825`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30225305825),
+job `89854421141`, including all fifty-one mutations.
 
 Acceptance commands:
 

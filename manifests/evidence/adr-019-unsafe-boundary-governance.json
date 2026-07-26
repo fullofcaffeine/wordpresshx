@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-26T23:22:29Z",
+  "status": "implemented-review-pending",
+  "observedAt": "2026-07-26T23:28:09Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "f7f64b8b8a568b837b7d8f96911032238cf0df37e2881bfb3940b22887c00259"
+      "sha256": "788208adc74f01f4bee5c796eb1074046009bce2edf8ba9f691e01d4f4c82f99"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -92,10 +92,10 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-canonical-waiver-hosted-run",
+    "runId": 30225305825,
+    "jobId": 89854421141,
+    "commit": "75e4f76b9f80f2a5694a04386ff626aedee5040d",
+    "status": "passed",
     "historicalRunId": 30224851347,
     "historicalJobId": 89853259064,
     "historicalCommit": "1d1296a9078a6e4834fb2d1f5900e568aa74c4f8"
@@ -105,12 +105,12 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The initial focused hosted policy gate predates the canonical waiver fixture; a current hosted run and independent Oracle review are required before ADR acceptance."
+    "The current focused hosted policy gate passes; independent Oracle review is still required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
-    "deterministicFailClosedScenarios": "passed-local-current-hosted-pending",
+    "deterministicFailClosedScenarios": "passed-local-and-hosted",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",
     "productionArtifactInventory": "not-tested",

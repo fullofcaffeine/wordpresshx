@@ -77,8 +77,9 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   reconciliation, expiry, artifact-propagation, and release-stop authority. A
   waiver is temporary visibility, never a safe type or support claim; public
   APIs, recommended examples, routine HXX, and critical/high risk remain
-  unwaivable. Its bounded validator and canonical synthetic waiver pass locally;
-  a current hosted run and independent Oracle review remain pending.
+  unwaivable. Its bounded validator and canonical synthetic waiver pass locally
+  and in the focused hosted workflow; independent Oracle review remains
+  pending.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.
