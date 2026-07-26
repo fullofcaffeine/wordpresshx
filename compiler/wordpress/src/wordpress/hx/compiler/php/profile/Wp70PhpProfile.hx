@@ -20,16 +20,23 @@ class Wp70PhpProfile {
 		printer = new WordPressPhpPrinter();
 	}
 
-	public function emitPlugin(plan:PluginBootstrapPlan):WordPressPluginArtifact {
+	public function emitPlugin(plan:PluginBootstrapPlan, ?activation:WordPressPluginActivationCallback):WordPressPluginArtifact {
 		if (plan == null || plan.profileId != "wp70-release") {
 			throw "Wp70PhpProfile requires an exact wp70-release bootstrap plan";
 		}
 
-		final root = new PhpFile(plan.rootPath, null, false, [], [
+		final rootStatements:Array<PhpStmt> = [
 			PhpIf(PhpNot(PhpFunctionCall("defined", [PhpString("ABSPATH")])), [PhpReturnVoid]),
-			PhpRequireOnce(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/" + plan.autoloadPath))),
-			PhpExprStmt(PhpStaticCall(plan.absoluteBootstrapClass, "boot", []))
-		]);
+			PhpRequireOnce(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/" + plan.autoloadPath)))
+		];
+		if (activation != null) {
+			rootStatements.push(PhpExprStmt(PhpFunctionCall("\\register_activation_hook", [
+				PhpMagicConst("__FILE__"),
+				PhpCallableArray(PhpClassConst(activation.absoluteClassName, "class"), activation.callbackMethod)
+			])));
+		}
+		rootStatements.push(PhpExprStmt(PhpStaticCall(plan.absoluteBootstrapClass, "boot", [])));
+		final root = new PhpFile(plan.rootPath, null, false, [], rootStatements);
 		final autoload = new PhpFile(plan.autoloadPath, null, true, [], [
 			PhpRequireOnce(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/Bootstrap.php")))
 		]);

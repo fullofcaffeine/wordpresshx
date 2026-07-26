@@ -3,6 +3,7 @@ package wordpress.hx.compiler.php.profile;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
 import reflaxe.php.ir.PhpProperty;
+import reflaxe.php.ir.PhpQualifiedName;
 import reflaxe.php.ir.PhpSourceRange;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
@@ -16,6 +17,8 @@ class WordPressPublicAdapterPlan {
 	public final registrationPath:String;
 	public final adapterClass:String;
 	public final absoluteAdapterClass:String;
+	public final adapterQualifiedName:PhpQualifiedName;
+	public final activationCallback:Null<PhpIdentifier>;
 	public final semanticNodeId:Null<String>;
 
 	final propertyValues:Array<PhpProperty>;
@@ -34,7 +37,7 @@ class WordPressPublicAdapterPlan {
 
 	public function new(plugin:PluginBootstrapPlan, className:PhpIdentifier, source:PhpSourceRange, properties:Array<PhpProperty>, methods:Array<PhpMethod>,
 			hooks:Array<WordPressHookRegistration>, restRoutes:Array<WordPressRestRouteRegistration>, blocks:Array<WordPressBlockRegistration>,
-			exports:Array<WordPressPublicExport>, ?semanticNodeId:String) {
+			exports:Array<WordPressPublicExport>, ?activationCallback:PhpIdentifier, ?semanticNodeId:String) {
 		if (plugin == null || className == null || source == null || properties == null || methods == null || hooks == null || restRoutes == null
 			|| blocks == null || exports == null) {
 			throw "WordPress public adapter plan requires every closed inventory";
@@ -50,6 +53,8 @@ class WordPressPublicAdapterPlan {
 		this.registrationPath = "includes/register-adapters.php";
 		this.adapterClass = plugin.namespace.toString() + "\\" + className.value;
 		this.absoluteAdapterClass = "\\" + adapterClass;
+		this.adapterQualifiedName = PhpQualifiedName.relative(adapterClass);
+		this.activationCallback = activationCallback;
 		if (source.isExact && semanticNodeId == null) {
 			throw "An exact WordPress adapter source requires a semantic node ID";
 		}
@@ -125,6 +130,12 @@ class WordPressPublicAdapterPlan {
 		for (export in exportValues) {
 			unique(identities, "export:" + export.method.value.toLowerCase(), "public export");
 			publicStatic(export.method, "public export");
+		}
+		if (activationCallback != null) {
+			unique(identities, "activation:" + activationCallback.value.toLowerCase(), "activation callback");
+			final callback = publicStatic(activationCallback, "activation callback");
+			requireParameters(callback, [], "activation callback");
+			requireReturn(callback, "void", "activation callback");
 		}
 	}
 

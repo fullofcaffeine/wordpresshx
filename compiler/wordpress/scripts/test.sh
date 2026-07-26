@@ -54,7 +54,7 @@ if [[ "${native_output}" != "${expected_output}" ]]; then
 fi
 
 adapter_native_output="$(php runtime/native-adapter-caller.php build/acme-books-adapters/includes/PublicAdapters.php)"
-adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
+adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["activate","appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
 if [[ "${adapter_native_output}" != "${adapter_expected_output}" ]]; then
   echo "unexpected native PHP adapter caller output: ${adapter_native_output}" >&2
   exit 1

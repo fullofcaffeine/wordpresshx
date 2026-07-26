@@ -37,6 +37,11 @@ typedef WordPressPublicAdapterManifestHook = {
 	final acceptedArgs:Int;
 }
 
+typedef WordPressPublicAdapterManifestActivationHook = {
+	final callback:String;
+	final ownerFile:String;
+}
+
 typedef WordPressPublicAdapterManifestRoute = {
 	final namespace:String;
 	final route:String;
@@ -79,6 +84,7 @@ typedef WordPressPublicAdapterManifest = {
 		final registrationPath:String;
 	};
 	final files:Array<WordPressPublicAdapterManifestFile>;
+	final activationHook:Null<WordPressPublicAdapterManifestActivationHook>;
 	final hooks:Array<WordPressPublicAdapterManifestHook>;
 	final restRoutes:Array<WordPressPublicAdapterManifestRoute>;
 	final blocks:Array<WordPressPublicAdapterManifestBlock>;
@@ -219,6 +225,10 @@ class WordPressPublicAdapterArtifact {
 			final method = plan.method(export.method);
 			exportRecords.push(exportRecord(plan, method));
 		}
+		final activationHook:Null<WordPressPublicAdapterManifestActivationHook> = plan.activationCallback == null ? null : {
+			callback: plan.absoluteAdapterClass + "::" + plan.activationCallback.value,
+			ownerFile: plan.plugin.rootPath
+		};
 
 		return {
 			schemaVersion: 1,
@@ -234,6 +244,7 @@ class WordPressPublicAdapterArtifact {
 				registrationPath: plan.registrationPath
 			},
 			files: fileRecords,
+			activationHook: activationHook,
 			hooks: hookRecords,
 			restRoutes: routeRecords,
 			blocks: blockRecords,

@@ -56,6 +56,9 @@ sort($methods);
 echo wp_json_encode(
     array(
         'active' => is_plugin_active($plugin),
+        'activation' => array(
+            'schemaVersion' => get_option('acme_books_adapters_schema_version', null),
+        ),
         'block' => array(
             'markup' => $block_markup,
             'registered' => $block_registered,

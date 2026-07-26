@@ -34,7 +34,7 @@ class SourceCorrelationFixture {
 		], [
 			new WordPressRestRouteRegistration("wordpresshx-fixture/v1", "/fail", Readable, id("failRest"), id("allowRest"))
 		],
-			[new WordPressBlockRegistration("wordpresshx-fixture/failure", id("failRender"))], [new WordPressPublicExport(id("failPrivate"))],
+			[new WordPressBlockRegistration("wordpresshx-fixture/failure", id("failRender"))], [new WordPressPublicExport(id("failPrivate"))], null,
 			"fixture:source-correlation:class");
 	}
 

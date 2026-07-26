@@ -27,7 +27,8 @@ import wordpress.hx.compiler.php.profile.WordPressRestRouteRegistration;
 /** Haxe-only application input for the SDK-023 native WordPress adapter fixture. **/
 class AcmeBooksAdapters {
 	public static function plan():WordPressPublicAdapterPlan {
-		return new WordPressPublicAdapterPlan(plugin(), id("PublicAdapters"), source(), properties(), methods(), hooks(), restRoutes(), blocks(), exports());
+		return new WordPressPublicAdapterPlan(plugin(), id("PublicAdapters"), source(), properties(), methods(), hooks(), restRoutes(), blocks(), exports(),
+			id("activate"));
 	}
 
 	public static function plugin():PluginBootstrapPlan {
@@ -52,6 +53,10 @@ class AcmeBooksAdapters {
 	public static function methods():Array<PhpMethod> {
 		final fixtureSource = source();
 		return [
+			new PhpMethod(PhpPublic, true, false, id("activate"), [], fixtureSource, PhpVoidType,
+				[
+					PhpExprStmt(PhpFunctionCall("\\update_option", [PhpString("acme_books_adapters_schema_version"), PhpString("1"), PhpBool(false)]))
+				]),
 			new PhpMethod(PhpPublic, true, false, id("onInit"), [], fixtureSource, PhpVoidType,
 				[PhpAssign(PhpStaticProperty("self", "initialized"), PhpBool(true))]),
 			new PhpMethod(PhpPublic, true, false, id("isInitialized"), [], fixtureSource, PhpBoolType, [PhpReturn(PhpStaticProperty("self", "initialized"))]),

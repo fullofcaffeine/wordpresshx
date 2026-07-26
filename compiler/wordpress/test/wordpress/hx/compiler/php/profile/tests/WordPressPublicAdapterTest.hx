@@ -59,9 +59,11 @@ class WordPressPublicAdapterTest {
 	}
 
 	static function assertPublicShapes(artifact:WordPressPublicAdapterArtifact):Void {
+		final root = artifact.file(artifact.plan.plugin.rootPath).source;
 		final adapter = artifact.file("includes/PublicAdapters.php").source;
 		final registrations = artifact.file("includes/register-adapters.php").source;
 		for (required in [
+			"public static function activate(): void",
 			"public static function filterTitle(string $title, int $postId): string",
 			"public static function restBook(\\WP_REST_Request $request)",
 			"public static function renderSummary(array $attributes, string $content, \\WP_Block $block): string",
@@ -73,6 +75,9 @@ class WordPressPublicAdapterTest {
 			if (adapter.indexOf(required) == -1) {
 				throw "adapter class is missing native ABI shape: " + required;
 			}
+		}
+		if (root.indexOf("\\register_activation_hook( __FILE__, array( \\Acme\\BooksAdapters\\PublicAdapters::class, 'activate' ) );") == -1) {
+			throw "plugin root is missing its native activation hook registration";
 		}
 		for (required in [
 			"\\add_action( 'init', array( \\Acme\\BooksAdapters\\PublicAdapters::class, 'onInit' ), 9, 0 );",
@@ -96,6 +101,11 @@ class WordPressPublicAdapterTest {
 	static function assertManifest(artifact:WordPressPublicAdapterArtifact):Void {
 		final manifest = artifact.manifest();
 		assertEquals("wordpresshx-public-php-adapters-v1", manifest.manifestId, "adapter manifest identity");
+		if (manifest.activationHook == null) {
+			throw "adapter manifest is missing its activation hook";
+		}
+		assertEquals("\\Acme\\BooksAdapters\\PublicAdapters::activate", manifest.activationHook.callback, "activation callback");
+		assertEquals("acme-books-adapters.php", manifest.activationHook.ownerFile, "activation callback owner file");
 		assertEquals("5", Std.string(manifest.files.length), "adapter manifest file count");
 		assertEquals("2", Std.string(manifest.hooks.length), "adapter manifest hook count");
 		assertEquals("1", Std.string(manifest.restRoutes.length), "adapter manifest REST route count");
@@ -108,10 +118,10 @@ class WordPressPublicAdapterTest {
 		final valid = AcmeBooksAdapters.plan();
 		assertThrows(() -> profile.emitPlugin(null), "missing adapter plan");
 		assertThrows(() -> new WordPressPublicAdapterPlan(valid.plugin, AcmeBooksAdapters.id("bootstrap"), valid.source, valid.properties, valid.methods,
-			valid.hooks, valid.restRoutes, valid.blocks, valid.exports),
+			valid.hooks, valid.restRoutes, valid.blocks, valid.exports, valid.activationCallback),
 			"case-insensitive bootstrap collision");
 		assertThrows(() -> new WordPressPublicAdapterPlan(valid.plugin, AcmeBooksAdapters.id("Autoload"), valid.source, valid.properties, valid.methods,
-			valid.hooks, valid.restRoutes, valid.blocks, valid.exports),
+			valid.hooks, valid.restRoutes, valid.blocks, valid.exports, valid.activationCallback),
 			"case-insensitive autoload collision");
 		assertThrows(() -> new WordPressHookRegistration(Action, "bad hook", AcmeBooksAdapters.id("onInit"), 10, 0), "unsafe hook name");
 		assertThrows(() -> new WordPressHookRegistration(Action, "init", AcmeBooksAdapters.id("onInit"), 10, -1), "negative accepted args");
@@ -169,6 +179,20 @@ class WordPressPublicAdapterTest {
 		final nonStaticMethods = replaceMethod(valid.methods, "normalizeTitle",
 			method("normalizeTitle", PhpPublic, false, [AcmeBooksAdapters.parameter("title", PhpStringType)], PhpStringType));
 		assertThrows(() -> rebuild(valid, null, nonStaticMethods), "non-static public export");
+		assertThrows(() -> withActivation(valid, AcmeBooksAdapters.id("missingActivation")), "missing activation callback");
+		assertThrows(() -> withActivation(valid, AcmeBooksAdapters.id("activate"),
+			replaceMethod(valid.methods, "activate", method("activate", PhpPrivate, true, [], PhpVoidType))),
+			"private activation callback");
+		assertThrows(() -> withActivation(valid, AcmeBooksAdapters.id("activate"),
+			replaceMethod(valid.methods, "activate", method("activate", PhpPublic, false, [], PhpVoidType))),
+			"non-static activation callback");
+		assertThrows(() -> withActivation(valid, AcmeBooksAdapters.id("activate"),
+			replaceMethod(valid.methods, "activate",
+				method("activate", PhpPublic, true, [AcmeBooksAdapters.parameter("unexpected", PhpStringType)], PhpVoidType))),
+			"activation callback with parameters");
+		assertThrows(() -> withActivation(valid, AcmeBooksAdapters.id("activate"),
+			replaceMethod(valid.methods, "activate", method("activate", PhpPublic, true, [], PhpBoolType))),
+			"non-void activation callback");
 
 		final emitted = profile.emitPlugin(valid);
 		assertThrows(() -> new WordPressPublicAdapterArtifact(valid, [
@@ -185,7 +209,7 @@ class WordPressPublicAdapterTest {
 		}
 		final callerMethods = valid.methods;
 		callerMethods.pop();
-		if (valid.methods.length != 10) {
+		if (valid.methods.length != 11) {
 			throw "adapter method inventory was mutable through its getter";
 		}
 	}
@@ -195,7 +219,13 @@ class WordPressPublicAdapterTest {
 			?exports:Array<WordPressPublicExport>):WordPressPublicAdapterPlan {
 		return new WordPressPublicAdapterPlan(valid.plugin, valid.className, valid.source, properties == null ? valid.properties : properties,
 			methods == null ? valid.methods : methods, hooks == null ? valid.hooks : hooks, restRoutes == null ? valid.restRoutes : restRoutes,
-			blocks == null ? valid.blocks : blocks, exports == null ? valid.exports : exports);
+			blocks == null ? valid.blocks : blocks, exports == null ? valid.exports : exports, valid.activationCallback, valid.semanticNodeId);
+	}
+
+	static function withActivation(valid:WordPressPublicAdapterPlan, activationCallback:reflaxe.php.ir.PhpIdentifier,
+			?methods:Array<PhpMethod>):WordPressPublicAdapterPlan {
+		return new WordPressPublicAdapterPlan(valid.plugin, valid.className, valid.source, valid.properties, methods == null ? valid.methods : methods,
+			valid.hooks, valid.restRoutes, valid.blocks, valid.exports, activationCallback, valid.semanticNodeId);
 	}
 
 	static function replaceMethod(methods:Array<PhpMethod>, name:String, replacement:PhpMethod):Array<PhpMethod> {

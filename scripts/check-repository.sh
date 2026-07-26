@@ -723,6 +723,7 @@ required_files=(
   manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
+  manifests/evidence/g1.3-wordpress-activation-hook.json
   manifests/evidence/sdk-024-private-php-runtime.json
   manifests/evidence/sdk-025-php-source-correlation.json
   manifests/evidence/sdk-026-generated-php-quality.json
@@ -954,6 +955,11 @@ wordpress_php_receipt = json.loads(
 wordpress_adapter_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-023-wordpress-public-php-adapters.json"
+    ).read_text(encoding="utf-8")
+)
+activation_hook_receipt = json.loads(
+    Path(
+        "manifests/evidence/g1.3-wordpress-activation-hook.json"
     ).read_text(encoding="utf-8")
 )
 sdk025_receipt = json.loads(
@@ -5615,6 +5621,10 @@ sdk045_plugin_subject_records = {
     record["path"]: record["sha256"]
     for record in historical_subject_records(sdk045_plugin_receipt["subject"])
 }
+g13_activation_input_records = {
+    record["path"]: record["sha256"]
+    for record in activation_hook_receipt["authenticatedInputs"]
+}
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
@@ -5623,8 +5633,9 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
         Path(sdk026_input_path).read_bytes()
     ).hexdigest()
     if sdk026_current_sha256 != sdk026_input_sha256:
-        assert sdk026_current_sha256 == sdk045_plugin_subject_records.get(
-            sdk026_input_path
+        assert sdk026_current_sha256 in (
+            sdk045_plugin_subject_records.get(sdk026_input_path),
+            g13_activation_input_records.get(sdk026_input_path),
         )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
@@ -6462,8 +6473,12 @@ assert set(strict_haxe_subjects) == {
 }
 for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
     assert sha256.fullmatch(strict_haxe_digest)
-    assert hashlib.sha256(Path(strict_haxe_path).read_bytes()).hexdigest() == (
-        strict_haxe_digest
+    strict_haxe_current_digest = hashlib.sha256(
+        Path(strict_haxe_path).read_bytes()
+    ).hexdigest()
+    assert strict_haxe_current_digest in (
+        strict_haxe_digest,
+        g13_activation_input_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -6532,7 +6547,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
     (
         "wordpress-php-compiler",
         "compiler/wordpress",
-        25,
+        26,
         "bash compiler/wordpress/scripts/test.sh",
     ),
 ):
@@ -6718,6 +6733,7 @@ for record in sdk025_inputs:
             sdk024_generic_records.get(record["path"]),
             sdk026_input_records.get(record["path"]),
             strict_haxe_subjects.get(record["path"]),
+            g13_activation_input_records.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 
@@ -10168,6 +10184,10 @@ assert adapter_manifest["restRoutes"][0]["permissionCallback"] == (
 )
 assert len(adapter_manifest["blocks"]) == 1
 assert len(adapter_manifest["publicExports"]) == 3
+assert adapter_manifest["activationHook"] == {
+    "callback": "\\Acme\\BooksAdapters\\PublicAdapters::activate",
+    "ownerFile": "acme-books-adapters.php",
+}
 
 adapter_generated_files = {
     artifact["path"]: artifact
@@ -10345,10 +10365,10 @@ assert adapter_readability["totalPhpBytes"] == sum(
 assert adapter_readability["totalPhpLines"] == sum(
     artifact["lines"] for artifact in adapter_generated_files.values()
 )
-assert adapter_readability["totalPhpBytes"] == 4090
-assert adapter_readability["totalPhpLines"] == 154
-assert adapter_readability["adapterClassBytes"] == 2723
-assert adapter_readability["adapterClassLines"] == 101
+assert adapter_readability["totalPhpBytes"] == 4310
+assert adapter_readability["totalPhpLines"] == 159
+assert adapter_readability["adapterClassBytes"] == 2840
+assert adapter_readability["adapterClassLines"] == 105
 assert adapter_readability["ordinaryPhpSymbolsVisible"] is True
 assert adapter_readability["automatedRawScaffoldReview"] == "passed"
 assert adapter_readability["independentWordpressPhpReviewer"] == (
@@ -10408,6 +10428,217 @@ assert wordpress_adapter_receipt["claims"] == {
 }
 assert wordpress_adapter_receipt["limitations"] == sorted(
     wordpress_adapter_receipt["limitations"]
+)
+
+assert activation_hook_receipt["schemaVersion"] == 1
+assert activation_hook_receipt["receiptId"] == (
+    "G1.3-WORDPRESS-ACTIVATION-HOOK"
+)
+assert activation_hook_receipt["bead"] == "wordpresshx-g1.3"
+assert activation_hook_receipt["status"] in (
+    "implemented-hosted-pending",
+    "verified",
+)
+activation_subject = activation_hook_receipt["subject"]
+assert activation_subject["profileId"] == "wp70-release"
+assert activation_subject["fixture"] == "acme-books-adapters"
+assert activation_subject["genericCompilerChanged"] is False
+assert activation_subject["layerOwnership"] == {
+    "genericPhpIrAndPrinter": "compiler/reflaxe.php",
+    "wordpressLifecycleContractAndLowering": "compiler/wordpress",
+    "rootFileRegistrationOwner": "Wp70PhpProfile",
+}
+
+activation_inputs = activation_hook_receipt["authenticatedInputs"]
+activation_input_paths = [entry["path"] for entry in activation_inputs]
+assert activation_input_paths == sorted(set(activation_input_paths))
+assert len(activation_inputs) == 12
+for entry in activation_inputs:
+    input_path = Path(entry["path"])
+    assert input_path.is_file()
+    assert hashlib.sha256(input_path.read_bytes()).hexdigest() == (
+        entry["sha256"]
+    )
+    assert entry["path"].startswith("compiler/wordpress/")
+    assert not entry["path"].startswith("compiler/reflaxe.php/")
+
+assert activation_hook_receipt["activationContract"] == {
+    "authoringSurface": (
+        "typed Haxe method identifier on WordPressPublicAdapterPlan"
+    ),
+    "callback": "\\Acme\\BooksAdapters\\PublicAdapters::activate",
+    "requiredShape": {
+        "visibility": "public",
+        "static": True,
+        "parameterCount": 0,
+        "returnType": "void",
+    },
+    "registration": {
+        "function": "\\register_activation_hook",
+        "owner": "__FILE__",
+        "ownerPath": "acme-books-adapters.php",
+        "order": [
+            "load local autoloader",
+            "register activation callback against root __FILE__",
+            "boot plugin",
+        ],
+    },
+    "durableEffect": {
+        "operation": "\\update_option",
+        "option": "acme_books_adapters_schema_version",
+        "value": "1",
+        "autoload": False,
+    },
+    "rawPhpApplicationSource": False,
+    "runtimeWrapper": False,
+}
+assert activation_hook_receipt["negativeGenerationCases"] == [
+    "callback-method-missing",
+    "callback-method-private",
+    "callback-method-non-static",
+    "callback-method-wrong-arity",
+    "callback-method-non-void",
+]
+
+activation_artifacts = {
+    artifact["role"]: artifact
+    for artifact in activation_hook_receipt["generatedArtifacts"]
+}
+assert set(activation_artifacts) == {
+    "plugin-root",
+    "bootstrap",
+    "adapter-class",
+    "autoload",
+    "registrations",
+    "artifact-manifest",
+}
+for artifact in activation_artifacts.values():
+    snapshot = Path(artifact["snapshotPath"]).read_bytes()
+    assert hashlib.sha256(snapshot).hexdigest() == artifact["sha256"]
+    assert len(snapshot) == artifact["bytes"]
+    assert len(snapshot.splitlines()) == artifact["lines"]
+
+activation_manifest = json.loads(
+    Path(
+        activation_artifacts["artifact-manifest"]["snapshotPath"]
+    ).read_text(encoding="utf-8")
+)
+assert activation_manifest["activationHook"] == {
+    "callback": "\\Acme\\BooksAdapters\\PublicAdapters::activate",
+    "ownerFile": "acme-books-adapters.php",
+}
+for role in (
+    "plugin-root",
+    "bootstrap",
+    "adapter-class",
+    "autoload",
+    "registrations",
+):
+    assert activation_artifacts[role]["sha256"] == (
+        adapter_generated_files[activation_artifacts[role]["path"]][
+            "sha256"
+        ]
+    )
+
+activation_root = Path(
+    activation_artifacts["plugin-root"]["snapshotPath"]
+).read_text(encoding="utf-8")
+autoload_position = activation_root.index(
+    "require_once __DIR__ . '/includes/autoload.php';"
+)
+registration_position = activation_root.index(
+    "\\register_activation_hook( __FILE__, array( "
+    "\\Acme\\BooksAdapters\\PublicAdapters::class, 'activate' ) );"
+)
+boot_position = activation_root.index(
+    "\\Acme\\BooksAdapters\\Bootstrap::boot();"
+)
+assert autoload_position < registration_position < boot_position
+activation_adapter = Path(
+    activation_artifacts["adapter-class"]["snapshotPath"]
+).read_text(encoding="utf-8")
+assert "public static function activate(): void" in activation_adapter
+assert (
+    "\\update_option( 'acme_books_adapters_schema_version', '1', false );"
+    in activation_adapter
+)
+
+activation_verification = activation_hook_receipt["verification"]
+assert activation_verification["localProfile"]["outcome"] == "passed"
+assert activation_verification["exactPhpMatrix"] == {
+    "command": "bash compiler/wordpress/scripts/test-php-matrix.sh",
+    "php74": "passed",
+    "php84": "passed",
+    "nativeNonHaxeCallers": "passed",
+    "directAccessGuards": "passed-zero-output",
+}
+assert activation_verification["wordpressMatrix"] == {
+    "command": "bash compiler/wordpress/scripts/test-wordpress.sh",
+    "wordpressVersion": "7.0",
+    "databases": ["mysql", "mariadb"],
+    "freshInstall": "passed",
+    "nativeActivation": "passed",
+    "freshRequest": "passed",
+    "durableOption": {
+        "name": "acme_books_adapters_schema_version",
+        "value": "1",
+    },
+    "hookRestBlockExportRegressions": "passed",
+}
+assert activation_verification["generatedPhpQuality"] == {
+    "command": "bash scripts/php-quality/test-production.sh",
+    "composerGraph": "exact-locked",
+    "wpcs": "passed",
+    "phpCompatibility": "passed",
+    "phpstan": "passed",
+    "outcome": "passed",
+}
+
+activation_hosted = activation_hook_receipt["hostedWorkflow"]
+assert activation_hosted["path"] == ".github/workflows/repository.yml"
+assert [job["name"] for job in activation_hosted["requiredJobs"]] == [
+    "repository",
+    "haxe",
+    "wordpress-runtime",
+    "security",
+]
+if activation_hook_receipt["status"] == "implemented-hosted-pending":
+    assert activation_subject["implementationCommit"] is None
+    for field in ("commit", "runId", "url"):
+        assert activation_hosted[field] is None
+    assert activation_hosted["status"] == "pending"
+    for job in activation_hosted["requiredJobs"]:
+        assert job["jobId"] is None
+        assert job["status"] == "pending"
+else:
+    assert sha1.fullmatch(activation_subject["implementationCommit"])
+    assert activation_hosted["commit"] == (
+        activation_subject["implementationCommit"]
+    )
+    assert isinstance(activation_hosted["runId"], int)
+    assert activation_hosted["runId"] > 0
+    assert activation_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        + str(activation_hosted["runId"])
+    )
+    assert activation_hosted["status"] == "passed"
+    for job in activation_hosted["requiredJobs"]:
+        assert isinstance(job["jobId"], int)
+        assert job["jobId"] > 0
+        assert job["status"] == "passed"
+
+assert activation_hook_receipt["claims"] == {
+    "typedActivationCallback": "generation-tested",
+    "nativeRootOwnedActivationHook": "runtime-tested",
+    "php74AndPhp84": "runtime-tested",
+    "wordpress70MysqlAndMariadb": "runtime-tested",
+    "wpcsAndStaticAnalysis": "tested",
+    "independentReadabilityReview": "not-tested-g1.2",
+    "publication": "unsupported",
+    "productionSupport": "not-tested",
+}
+assert activation_hook_receipt["limitations"] == sorted(
+    activation_hook_receipt["limitations"]
 )
 
 generic_haxe_files = list((package_root / "src").rglob("*.hx")) + list(

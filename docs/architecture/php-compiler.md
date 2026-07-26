@@ -113,9 +113,12 @@ plan or ADR-007 ownership schema.
 
 This advances only the bootstrap/profile slice. SDK-023 adds bounded hook,
 REST, block, and export adapters; SDK-024 adds the dependency-closed private
-stock-Haxe lane; and SDK-026 adds generated-PHP quality enforcement. Broader
-lifecycle APIs, independent readability sign-off, HXX lowering, and production
-support remain separate beads and claims.
+stock-Haxe lane; and SDK-026 adds generated-PHP quality enforcement. G1.3 adds
+one bounded lifecycle operation: a typed activation callback lowered to native
+root-file registration. WordPress remains the lifecycle owner, while the Haxe
+plan rejects an invalid callable before packaging. Deactivation, uninstall,
+upgrade migrations, broader lifecycle APIs, independent readability sign-off,
+HXX lowering, and production support remain separate beads and claims.
 
 ## Generated-PHP quality transaction
 

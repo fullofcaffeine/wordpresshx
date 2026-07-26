@@ -15,6 +15,15 @@ The profile checks callback visibility, static shape, argument and return types,
 by-reference parameters, duplicate registrations, and reserved generated names
 before emitting PHP.
 
+G1.3 adds the first lifecycle boundary: the Haxe plan names a public static
+zero-argument `Void` method, and the profile emits
+`register_activation_hook(__FILE__, callable)` in the plugin root after loading
+the local autoloader. The root file matters because WordPress associates an
+activation callback with the file passed to that function. A missing, private,
+non-static, parameterized, or non-`Void` method stops generation. In the fixture,
+the generated callback writes a schema-version option; a fresh WordPress request
+then proves that the activation ran and its effect persisted.
+
 SDK-025 projects the generic compiler's authenticated UTF-8 byte mappings into
 the public WordPressHx range-map and package-index formats. A representative
 five-file plugin deliberately fails through an action, REST callback,
@@ -30,7 +39,7 @@ HXX runtime enters the output. The adapter fixture is exercised by an ordinary
 non-Haxe PHP caller, exact PHP 7.4 and 8.4 containers, and clean WordPress 7.0
 MySQL and MariaDB installs. Its runtime proof includes a native action/filter,
 REST success and `WP_Error` paths, escaped dynamic-block rendering, reflection,
-and by-reference mutation.
+by-reference mutation, and the root-owned activation hook.
 
 The source-correlation fixture also runs as a genuinely activated plugin on
 clean WordPress 7.0 MySQL and MariaDB installs. Its native exception frames are

@@ -56,6 +56,7 @@ expected_correlation_header = {
     "DomainPath": "/languages",
 }
 expected_adapter_methods = [
+    "activate",
     "appendLabel",
     "filterTitle",
     "isInitialized",
@@ -107,6 +108,8 @@ for lane in lanes:
         raise SystemExit(f"adapter class was not native-shaped: {adapter_probe!r}")
     if adapter_probe.get("methods") != expected_adapter_methods:
         raise SystemExit(f"adapter reflection differed: {adapter_probe!r}")
+    if adapter_probe.get("activation") != {"schemaVersion": "1"}:
+        raise SystemExit(f"activation hook effect did not survive a fresh request: {adapter_probe!r}")
     hooks = adapter_probe.get("hooks", {})
     if hooks != {
         "filterPriority": 12,

@@ -183,7 +183,7 @@
     },
     "artifactManifestSnapshot": {
       "path": "compiler/wordpress/test/expected/acme-books-adapters/wordpresshx-public-php-adapters.v1.json",
-      "sha256": "a03bfb5c091c42cdc05c7fe747cfb42fcadd2c346ec2ecc4c2dc2695f0d71287"
+      "sha256": "06ea4964b85bfd0621784dd6c326c120ef25ad8f4c6ef0dfc49b4b5b10b94944"
     }
   },
   "toolchain": {
@@ -276,9 +276,9 @@
       "role": "plugin-root",
       "path": "acme-books-adapters.php",
       "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/acme-books-adapters.php.txt",
-      "bytes": 459,
-      "lines": 18,
-      "sha256": "31e17a6bf37720a3746119a3ea6d6de48f571252bfda8b6abffe49e2418989e4"
+      "bytes": 562,
+      "lines": 19,
+      "sha256": "80d391382d521b418909b9dc44c3ec70038f13762c9c6fad6b300e0654f05563"
     },
     {
       "role": "bootstrap",
@@ -292,9 +292,9 @@
       "role": "adapter-class",
       "path": "includes/PublicAdapters.php",
       "snapshotPath": "compiler/wordpress/test/expected/acme-books-adapters/includes/PublicAdapters.php.txt",
-      "bytes": 2723,
-      "lines": 101,
-      "sha256": "aa0bf3dfdac1bd4103ed4bbe935031059f65f4891d52c812d43aab2898f7a822"
+      "bytes": 2840,
+      "lines": 105,
+      "sha256": "b748db52cf280e028d3113caeb2d71367ba5fbfd3096e0cd2b9e3babbb9bedd2"
     },
     {
       "role": "autoload",
@@ -398,10 +398,10 @@
     },
     "readability": {
       "trackedNativeSnapshots": true,
-      "totalPhpBytes": 4090,
-      "totalPhpLines": 154,
-      "adapterClassBytes": 2723,
-      "adapterClassLines": 101,
+      "totalPhpBytes": 4310,
+      "totalPhpLines": 159,
+      "adapterClassBytes": 2840,
+      "adapterClassLines": 105,
       "ordinaryPhpSymbolsVisible": true,
       "automatedRawScaffoldReview": "passed",
       "independentWordpressPhpReviewer": "pending-g1"

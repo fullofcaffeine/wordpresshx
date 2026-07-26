@@ -6,7 +6,7 @@ fixture="build/acme-books/acme-books.php"
 adapter_fixture="build/acme-books-adapters/acme-books-adapters.php"
 adapter_class_file="build/acme-books-adapters/includes/PublicAdapters.php"
 expected_output='{"booted":true,"class":"Acme\\Books\\Bootstrap","methods":["boot","isBooted"],"outputBytes":0}'
-adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
+adapter_expected_output='{"class":"Acme\\BooksAdapters\\PublicAdapters","initialized":true,"labels":["seed","added"],"methods":["activate","appendLabel","filterTitle","isInitialized","normalizeTitle","onInit","registerBlocks","registerRestRoutes","renderSummary","restBook","restPermission"],"normalize":"NATIVE CALLER","outputBytes":0,"parameters":{"labelType":"string","labelsByReference":true},"privateMethods":["bookPayload","normalizeTitleImpl"]}'
 
 if [[ ! -f "${package_root}/${fixture}" ]]; then
   echo "missing generated WordPress PHP fixture; run scripts/test.sh first" >&2

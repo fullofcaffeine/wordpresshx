@@ -219,7 +219,7 @@
     {
       "id": "wordpress-php-compiler",
       "root": "compiler/wordpress",
-      "haxeFileCount": 25,
+      "haxeFileCount": 26,
       "findingCount": 0,
       "gate": "bash compiler/wordpress/scripts/test.sh",
       "outcome": "passed-hosted"

@@ -27,7 +27,9 @@ class Wp70PublicAdapterProfile {
 		if (plan == null || plan.plugin.profileId != "wp70-release") {
 			throw "Wp70PublicAdapterProfile requires an exact wp70-release adapter plan";
 		}
-		final base = bootstrap.emitPlugin(plan.plugin);
+		final activationMethod = plan.activationCallback;
+		final activation = activationMethod == null ? null : new WordPressPluginActivationCallback(plan.adapterQualifiedName, activationMethod);
+		final base = bootstrap.emitPlugin(plan.plugin, activation);
 		final methods = plan.methods;
 		if (plan.restRoutes.length > 0) {
 			methods.push(registrationMethod("registerRestRoutes", restRegistrationBody(plan), plan));

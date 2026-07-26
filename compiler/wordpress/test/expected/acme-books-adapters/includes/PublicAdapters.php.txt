@@ -7,6 +7,10 @@ namespace Acme\BooksAdapters;
 class PublicAdapters {
 	private static bool $initialized = false;
 
+	public static function activate(): void {
+		\update_option( 'acme_books_adapters_schema_version', '1', false );
+	}
+
 	public static function onInit(): void {
 		self::$initialized = true;
 	}

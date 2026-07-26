@@ -415,4 +415,13 @@ lanes pass. Hook/REST/block adapters, lifecycle behavior, WPCS/static analysis,
 independent readability sign-off, publication, and production support remain
 separately gated.
 
+Receipt `G1.3-WORDPRESS-ACTIVATION-HOOK` records the current typed activation
+boundary layered on the SDK-023 adapter fixture. Haxe selects a public static
+zero-argument `Void` method; the WordPress profile owns
+`register_activation_hook(__FILE__, callable)` in the plugin root. Exact PHP
+7.4/8.4 callers, generated-PHP quality checks, and clean WordPress 7.0 MySQL and
+MariaDB lanes verify a durable option on a fresh request. The receipt changes
+neither the generic PHP compiler nor the still-pending independent G1.2
+readability review, publication, or production-support claims.
+
 Receipt `SDK-080-HXX-PARSER-PROTOTYPE` records the exact `tink_hxx` 0.25.1 artifact and five-transitive closure, parser-only adapter, normal Haxe expression and closed-spread typing, named slots, relative source spans, server/browser semantic parity, target-leakage negatives, density snapshots, and final-artifact no-runtime scans. Its stock PHP/JavaScript carriers are evidence-only; it does not advance native `reflaxe.php`, Genes, WordPress runtime, or production claims.

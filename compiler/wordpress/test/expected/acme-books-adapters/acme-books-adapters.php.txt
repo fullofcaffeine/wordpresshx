@@ -15,4 +15,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 require_once __DIR__ . '/includes/autoload.php';
+\register_activation_hook( __FILE__, array( \Acme\BooksAdapters\PublicAdapters::class, 'activate' ) );
 \Acme\BooksAdapters\Bootstrap::boot();
