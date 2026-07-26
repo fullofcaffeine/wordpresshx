@@ -60,14 +60,15 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   migrations, and fail-closed PHP/Genes/REST/Gutenberg projections. Its
   executable builder fixture proves a bounded cross-target slice; ergonomic
   macro derivation and production target emitters remain follow-up work.
-- `output-context-architecture.json` is ADR-012's proposed exact-context trust
+- `output-context-architecture.json` is ADR-012's corrected exact-context trust
   and conversion graph. It keeps text, attribute, URL, textarea, policy-branded
   rich HTML, JSON document, HTML script data, typed CSS, and compiler markup
-  terminal and non-interchangeable; the unsafe raw target remains withheld.
-  Its bounded fixture covers Haxe, Genes/TypeScript/Node, stock-Haxe PHP, React
-  SSR, and clean WordPress 7.0, while production SDK types and HXX lowering
-  remain follow-up work pending fresh independent review. Its focused hosted
-  gate passes at the exact commit recorded by the receipt.
+  terminal and non-interchangeable; inline styles and stylesheet assets have
+  separate grammars, and the unsafe raw target remains withheld. Its generated
+  runtime plan is consumed by Genes/React and stock-Haxe PHP/clean WordPress
+  7.0. Production SDK types and HXX lowering remain follow-up work. The prior
+  hosted run is historical evidence; the corrected commit and fresh Oracle
+  rereview remain pending.
 - `adoption-contract-architecture.json` is ADR-015's proposed no-execution,
   complete-binding source precedence, precise-or-omitted contract, scoped
   capability, native-provider ownership, and app-local/companion-layer lock.

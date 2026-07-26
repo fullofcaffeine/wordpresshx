@@ -1,4 +1,5 @@
 import wordpress.hx.output.prototype.Output;
+import wordpress.hx.output.prototype.Output.JsonEncoding;
 import wordpress.hx.output.prototype.Output.OutputCodec;
 import wordpress.hx.output.prototype.OutputSinks;
 
@@ -7,6 +8,10 @@ final class MessageCodec implements OutputCodec<String> {
 
 	public function schemaId():String {
 		return "message.v1";
+	}
+
+	public function encode(value:String):JsonEncoding {
+		return EncodedJson("\"message\"");
 	}
 }
 

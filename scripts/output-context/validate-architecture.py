@@ -98,7 +98,7 @@ def validate_model(model: dict[str, object]) -> None:
         "lateEscapingRequired": True,
         "universalSafeTypeAllowed": False,
         "terminalRawStringConversionAllowed": False,
-        "terminalValuesSerializable": False,
+        "terminalRetentionPolicy": "opaque-until-final-sink-sdk-policy",
         "escapingIdempotenceAssumed": False,
         "validationEqualsEscaping": False,
         "sanitizationEqualsValidation": False,
@@ -139,9 +139,13 @@ def validate_model(model: dict[str, object]) -> None:
             "HtmlScriptData<T>",
             "wp_json_encode-with-JSON_HEX_TAG-AMP-APOS-QUOT-and-explicit-failure",
         ),
-        "css-declarations": (
-            "CssDeclarations",
+        "css-inline-style": (
+            "InlineStyle",
             "typed-CSS-printer-then-esc_attr",
+        ),
+        "css-stylesheet": (
+            "Stylesheet",
+            "typed-stylesheet-printer-without-HTML-attribute-escaping",
         ),
         "compiler-markup": (
             "CompilerMarkup",
@@ -178,8 +182,24 @@ def validate_model(model: dict[str, object]) -> None:
 
     allowed = unique_strings(model.get("allowedEdges"), "allowedEdges")
     forbidden = unique_strings(model.get("forbiddenEdges"), "forbiddenEdges")
-    if len(allowed) != 11 or len(forbidden) != 14:
+    if len(allowed) != 12 or len(forbidden) != 15:
         raise ValidationError("conversion edge inventory changed")
+    required_allowed = {
+        "String->HtmlText@text-sink",
+        "String->HtmlAttribute@ordinary-attribute-sink",
+        "String->TextareaText@textarea-sink",
+        "String->ValidatedUrl@URL-validator",
+        "ValidatedUrl->HtmlUrl@URL-attribute-sink",
+        "String+NamedNativeOrExactCustomKsesPolicy->KsesHtml@rich-content-sink",
+        "T+ContractCodec<T>->JsonDocument<T>@JSON-response-sink",
+        "T+ContractCodec<T>->HtmlScriptData<T>@script-data-sink",
+        "TypedCssDeclaration[]->InlineStyle@style-attribute-sink",
+        "TypedCssRule[]->Stylesheet@stylesheet-asset-sink",
+        "ResolvedHxxAst->CompilerMarkup@compiler-lowering",
+        "AdmittedNativeProvider+TypedContract->ProviderMarkup@profile-adapter",
+    }
+    if set(allowed) != required_allowed:
+        raise ValidationError("allowed conversion graph changed")
     required_forbidden = {
         "HtmlText->HtmlAttribute",
         "HtmlAttribute->HtmlText",
@@ -189,7 +209,8 @@ def validate_model(model: dict[str, object]) -> None:
         "KsesHtml->CompilerMarkup",
         "String->KsesHtml-without-policy",
         "String->CompilerMarkup",
-        "String->CssDeclarations",
+        "String->InlineStyle",
+        "String->Stylesheet",
         "terminal-output->storage",
         "terminal-output->serialization",
         "server-event-attribute->inline-JavaScript",
@@ -209,7 +230,24 @@ def validate_model(model: dict[str, object]) -> None:
         if not isinstance(position, str) or position in hxx:
             raise ValidationError("HXX position identity is invalid")
         hxx[position] = rule
-    if len(hxx) != 8:
+    required_hxx_positions = {
+        "ordinary-child",
+        "ordinary-attribute",
+        "href-src-action-formaction",
+        "textarea-content",
+        "style-attribute",
+        "rich-content-insertion",
+        "script-data",
+        "server-event-handler-attribute",
+        "nested-document-attribute-srcdoc",
+        "url-list-attribute-srcset",
+        "svg-math-namespace-attribute",
+        "raw-style-child",
+        "iframe-child",
+        "raw-textarea-child",
+        "dynamic-position-name",
+    }
+    if set(hxx) != required_hxx_positions:
         raise ValidationError("HXX position inventory changed")
     if hxx.get("href-src-action-formaction", {}).get("input") != (
         "static-checked-literal-or-ValidatedUrl"
@@ -217,6 +255,17 @@ def validate_model(model: dict[str, object]) -> None:
         raise ValidationError("HXX URL positions no longer require URL validation")
     if hxx.get("server-event-handler-attribute", {}).get("result") != "compile-error":
         raise ValidationError("server HXX admitted inline event code")
+    for rejected_position in (
+        "nested-document-attribute-srcdoc",
+        "url-list-attribute-srcset",
+        "svg-math-namespace-attribute",
+        "raw-style-child",
+        "iframe-child",
+        "raw-textarea-child",
+        "dynamic-position-name",
+    ):
+        if hxx[rejected_position].get("result") != "compile-error":
+            raise ValidationError(f"HXX admitted {rejected_position}")
 
     constructors = require_list(model.get("trustConstructors"), "trustConstructors")
     by_constructor: dict[str, dict[str, object]] = {}
@@ -235,6 +284,14 @@ def validate_model(model: dict[str, object]) -> None:
         raise ValidationError("trust constructor inventory changed")
     if by_constructor["compiler-resolved-hxx"].get("acceptsRawMarkupString") is not False:
         raise ValidationError("compiler HXX constructor accepts raw markup")
+    if by_constructor["compiler-resolved-hxx"].get("constructorAuthority") != (
+        "exact-generated-fragment-class-only"
+    ):
+        raise ValidationError("compiler HXX constructor authority changed")
+    if by_constructor["compiler-resolved-hxx"].get("provenanceRequired") != (
+        "Haxe-source-span-fragment-identity-and-typed-AST"
+    ):
+        raise ValidationError("compiler HXX provenance changed")
     if by_constructor["admitted-native-provider"].get("acceptsRawMarkupString") is not False:
         raise ValidationError("native provider constructor accepts raw markup")
     if by_constructor["wordpress-kses-policy"].get("provenanceRequired") != (
@@ -276,12 +333,12 @@ def validate_model(model: dict[str, object]) -> None:
     expected_evidence = {
         "sourceTreeSha256": source_tree_digest(),
         "transcriptSha256": sha256(TRANSCRIPT_PATH.read_bytes()),
-        "contextCount": 10,
-        "allowedEdgeCount": 11,
-        "forbiddenEdgeCount": 14,
-        "hxxPositionCount": 8,
-        "compileNegativeCount": 8,
-        "independentMutationCount": 21,
+        "contextCount": 11,
+        "allowedEdgeCount": 12,
+        "forbiddenEdgeCount": 15,
+        "hxxPositionCount": 15,
+        "compileNegativeCount": 19,
+        "independentMutationCount": 30,
     }
     for field, expected in expected_evidence.items():
         if evidence.get(field) != expected:
@@ -308,10 +365,12 @@ def validate_model(model: dict[str, object]) -> None:
         "workflow": ".github/workflows/output-context.yml",
         "job": "output-context",
         "command": "bash scripts/output-context/test.sh",
-        "status": "passed",
+        "status": "historical-passed-superseded",
         "runId": 29713766565,
         "jobId": 88262490140,
         "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+        "correctedCommit": None,
+        "correctedStatus": "pending-first-hosted-main-run",
     }:
         raise ValidationError("hosted output-context gate declaration changed")
 
@@ -375,7 +434,7 @@ def mutation_cases(model: dict[str, object]) -> list[tuple[str, dict[str, object
     changed("text-lowering")["contexts"][0]["serverLowering"] = "htmlspecialchars"
     changed("raw-url-source")["contexts"][2]["acceptedSource"] = "String"
     changed("cross-context-reuse")["contexts"][0]["crossContextReuse"] = True
-    changed("unsafe-sink")["contexts"][9]["sinks"] = ["template-root"]
+    changed("unsafe-sink")["contexts"][10]["sinks"] = ["template-root"]
     changed("forbidden-allowed")["allowedEdges"].append("HtmlText->HtmlAttribute")
     changed("removed-forbidden")["forbiddenEdges"].remove("HtmlText->HtmlAttribute")
     changed("raw-compiler-markup")["trustConstructors"][0]["acceptsRawMarkupString"] = True
@@ -387,6 +446,17 @@ def mutation_cases(model: dict[str, object]) -> list[tuple[str, dict[str, object
     changed("esc-url-raw-output")["wordpressSemantics"]["escUrlRawIsNotAnOutputFunction"] = False
     changed("react-url-authority")["browserSemantics"]["reactUrlSanitizationAuthority"] = True
     changed("production-overclaim")["claims"]["productionSupport"] = "supported"
+    changed("weakened-terminal-retention")["authority"]["terminalRetentionPolicy"] = "advisory"
+    changed("missing-stylesheet-context")["contexts"].pop(8)
+    changed("stylesheet-html-escaping")["contexts"][8]["serverLowering"] = "typed-CSS-printer-then-esc_attr"
+    changed("missing-required-allowed-edge")["allowedEdges"].remove(
+        "TypedCssRule[]->Stylesheet@stylesheet-asset-sink"
+    )
+    changed("srcdoc-admitted")["hxxResolution"][8]["result"] = "html-attribute"
+    changed("namespace-admitted")["hxxResolution"][10]["result"] = "html-url"
+    changed("dynamic-position-admitted")["hxxResolution"][14]["result"] = "html-attribute"
+    changed("forgeable-compiler-markup")["trustConstructors"][0]["constructorAuthority"] = "public-factory"
+    changed("implicit-json-failure")["wordpressSemantics"]["wpJsonEncodeFailureMustBeHandled"] = False
     return mutations
 
 
@@ -397,7 +467,7 @@ def main() -> None:
     )
     validate_model(model)
     mutations = mutation_cases(model)
-    if len(mutations) != 21:
+    if len(mutations) != 30:
         raise ValidationError("independent mutation inventory changed")
     for label, mutation in mutations:
         try:

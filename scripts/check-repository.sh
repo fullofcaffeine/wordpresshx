@@ -614,11 +614,24 @@ required_files=(
   fixtures/output-context/expected/context-plan.txt
   fixtures/output-context/runtime/browser.mjs
   fixtures/output-context/runtime/wordpress-probe.php
+  fixtures/output-context/src/wordpress/hx/output/generated/TodoCardMarkup.hx
+  fixtures/output-context/src/wordpress/hx/output/prototype/HxxPositionGuard.hx
   fixtures/output-context/src/wordpress/hx/output/prototype/Output.hx
   fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx
   fixtures/output-context/test/Main.hx
   fixtures/output-context/test-negative/css_from_string/Main.hx
+  fixtures/output-context/test-negative/direct_markup_construction/Main.hx
   fixtures/output-context/test-negative/direct_terminal_construction/Main.hx
+  fixtures/output-context/test-negative/hxx_dynamic_position/Main.hx
+  fixtures/output-context/test-negative/hxx_event/Main.hx
+  fixtures/output-context/test-negative/hxx_iframe_child/Main.hx
+  fixtures/output-context/test-negative/hxx_script_child/Main.hx
+  fixtures/output-context/test-negative/hxx_srcdoc/Main.hx
+  fixtures/output-context/test-negative/hxx_srcset/Main.hx
+  fixtures/output-context/test-negative/hxx_style_attribute/Main.hx
+  fixtures/output-context/test-negative/hxx_style_child/Main.hx
+  fixtures/output-context/test-negative/hxx_svg_url/Main.hx
+  fixtures/output-context/test-negative/hxx_textarea_child/Main.hx
   fixtures/output-context/test-negative/json_as_script/Main.hx
   fixtures/output-context/test-negative/kses_as_compiler_markup/Main.hx
   fixtures/output-context/test-negative/plain_as_rich_html/Main.hx
@@ -2307,25 +2320,27 @@ else:
 assert output_context_architecture["schemaVersion"] == 1
 assert output_context_architecture["decisionId"] == "ADR-012"
 assert output_context_architecture["status"] == (
-    "proposed-pending-fresh-review"
+    "review-corrections-applied-pending-rereview"
 )
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
 assert output_authority["universalSafeTypeAllowed"] is False
 assert output_authority["terminalRawStringConversionAllowed"] is False
-assert output_authority["terminalValuesSerializable"] is False
+assert output_authority["terminalRetentionPolicy"] == (
+    "opaque-until-final-sink-sdk-policy"
+)
 assert output_authority["escapingIdempotenceAssumed"] is False
-assert len(output_context_architecture["contexts"]) == 10
-assert len(output_context_architecture["allowedEdges"]) == 11
-assert len(output_context_architecture["forbiddenEdges"]) == 14
-assert len(output_context_architecture["hxxResolution"]) == 8
+assert len(output_context_architecture["contexts"]) == 11
+assert len(output_context_architecture["allowedEdges"]) == 12
+assert len(output_context_architecture["forbiddenEdges"]) == 15
+assert len(output_context_architecture["hxxResolution"]) == 15
 output_prototype = output_context_architecture["prototypeEvidence"]
-assert output_prototype["contextCount"] == 10
-assert output_prototype["allowedEdgeCount"] == 11
-assert output_prototype["forbiddenEdgeCount"] == 14
-assert output_prototype["hxxPositionCount"] == 8
-assert output_prototype["compileNegativeCount"] == 8
-assert output_prototype["independentMutationCount"] == 21
+assert output_prototype["contextCount"] == 11
+assert output_prototype["allowedEdgeCount"] == 12
+assert output_prototype["forbiddenEdgeCount"] == 15
+assert output_prototype["hxxPositionCount"] == 15
+assert output_prototype["compileNegativeCount"] == 19
+assert output_prototype["independentMutationCount"] == 30
 assert len(output_context_architecture["referenceReview"]) == 7
 for output_reference in output_context_architecture["referenceReview"]:
     assert sha1.fullmatch(output_reference["commit"])
@@ -2338,6 +2353,7 @@ assert adr012_receipt["bead"] == "wordpresshx-adr-012"
 assert adr012_receipt["status"] in {
     "implemented-hosted-pending",
     "implemented-review-pending",
+    "implemented-rereview-pending",
     "verified",
 }
 for adr012_subject in adr012_receipt["subject"].values():
@@ -2350,12 +2366,12 @@ assert adr012_verification["sourceTreeSha256"] == output_prototype[
 ]
 assert adr012_verification["strictNullSafety"] is True
 assert adr012_verification["strictHaxeForbiddenTokenCount"] == 0
-assert adr012_verification["contextCount"] == 10
-assert adr012_verification["allowedEdgeCount"] == 11
-assert adr012_verification["forbiddenEdgeCount"] == 14
-assert adr012_verification["hxxPositionCount"] == 8
-assert adr012_verification["compileNegativeCount"] == 8
-assert adr012_verification["independentMutationCount"] == 21
+assert adr012_verification["contextCount"] == 11
+assert adr012_verification["allowedEdgeCount"] == 12
+assert adr012_verification["forbiddenEdgeCount"] == 15
+assert adr012_verification["hxxPositionCount"] == 15
+assert adr012_verification["compileNegativeCount"] == 19
+assert adr012_verification["independentMutationCount"] == 30
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
 ] is True
@@ -2377,7 +2393,14 @@ adr012_hosted = adr012_receipt["hostedWorkflow"]
 assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
-if adr012_hosted["status"] == "pending-first-hosted-main-run":
+if adr012_hosted["status"] == "historical-passed-superseded":
+    assert adr012_receipt["status"] == "implemented-rereview-pending"
+    assert isinstance(adr012_hosted["runId"], int)
+    assert isinstance(adr012_hosted["jobId"], int)
+    assert sha1.fullmatch(adr012_hosted["commit"])
+    assert adr012_hosted["correctedCommit"] is None
+    assert adr012_hosted["correctedStatus"] == "pending-first-hosted-main-run"
+elif adr012_hosted["status"] == "pending-first-hosted-main-run":
     assert adr012_receipt["status"] == "implemented-hosted-pending"
     assert adr012_hosted["runId"] is None
     assert adr012_hosted["jobId"] is None

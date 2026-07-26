@@ -170,7 +170,7 @@ assert_compile_failure text_as_attribute \
 assert_compile_failure url_as_text \
 	'HtmlUrl should be wordpress.hx.output.prototype.HtmlText'
 assert_compile_failure json_as_script \
-	'JsonDocument<String> should be wordpress.hx.output.prototype.HtmlScriptData'
+	'JsonDocument should be wordpress.hx.output.prototype.HtmlScriptData'
 assert_compile_failure plain_as_rich_html \
 	'String should be wordpress.hx.output.prototype.KsesHtml'
 assert_compile_failure direct_terminal_construction \
@@ -180,16 +180,42 @@ assert_compile_failure kses_as_compiler_markup \
 assert_compile_failure css_from_string \
 	'String should be Array<wordpress.hx.output.prototype.CssDeclaration>'
 assert_compile_failure script_as_rest \
-	'HtmlScriptData<String> should be wordpress.hx.output.prototype.JsonDocument'
+	'HtmlScriptData should be wordpress.hx.output.prototype.JsonDocument'
+assert_compile_failure direct_markup_construction \
+	'Cannot access private constructor of wordpress.hx.output.prototype.CompilerMarkup'
+assert_compile_failure hxx_srcdoc \
+	'HXX srcdoc is a nested HTML document and is not admitted'
+assert_compile_failure hxx_srcset \
+	'HXX srcset is a URL-list grammar and is not admitted'
+assert_compile_failure hxx_svg_url \
+	'HXX nested namespace attributes require a dedicated typed profile'
+assert_compile_failure hxx_event \
+	'HXX event attributes cannot contain server/browser string handlers'
+assert_compile_failure hxx_style_attribute \
+	'HXX style requires the typed InlineStyle terminal'
+assert_compile_failure hxx_script_child \
+	'HXX script children require the typed HtmlScriptData terminal'
+assert_compile_failure hxx_style_child \
+	'HXX style children are withheld until a typed stylesheet-element contract exists'
+assert_compile_failure hxx_iframe_child \
+	'HXX iframe children are a nested document and are not admitted'
+assert_compile_failure hxx_textarea_child \
+	'HXX textarea children require the typed TextareaText terminal'
+assert_compile_failure hxx_dynamic_position \
+	'HXX attribute must be a compile-time string literal'
 
-browser_json="$("${node_command}" "${fixture_root}/runtime/browser.mjs" "${typescript_root}")"
-python3 - "${browser_json}" <<'PY'
+browser_json="$("${node_command}" "${fixture_root}/runtime/browser.mjs" "${typescript_root}" "${test_root}/interp.txt")"
+python3 - "${browser_json}" "${test_root}/interp.txt" <<'PY'
+import hashlib
 import json
 import sys
 
 result = json.loads(sys.argv[1])
+plan_bytes = open(sys.argv[2], "rb").read()
 if result.get("check") != "wordpresshx-adr012-browser-output-context-v1":
     raise SystemExit(f"ADR-012 browser proof identity differed: {result!r}")
+if result.get("planSha256") != hashlib.sha256(plan_bytes).hexdigest():
+    raise SystemExit(f"ADR-012 browser proof did not consume the generated plan: {result!r}")
 for field in ("textEscaped", "attributeEscaped", "textareaEscaped"):
     if result.get(field) is not True:
         raise SystemExit(f"ADR-012 browser proof failed {field}: {result!r}")
@@ -207,6 +233,6 @@ if grep --fixed-strings --quiet -- 'dangerouslySetInnerHTML' "${fixture_root}/ru
 	exit 1
 fi
 
-bash "${repository_root}/scripts/output-context/test-wordpress.sh"
+bash "${repository_root}/scripts/output-context/test-wordpress.sh" "${test_root}/interp.txt"
 
 echo "ADR-012 output-context prototype passed on Haxe, Genes/Node, PHP, React SSR, and WordPress 7.0"

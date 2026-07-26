@@ -1,8 +1,8 @@
 # ADR-012: Output-context safety
 
-- Status: proposed
+- Status: review corrections applied; fresh Oracle rereview pending
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), separate Oracle security review pending
+- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; corrections pending rereview)
 - Bead: `wordpresshx-adr-012`
 - Profiles/layers: shared output contracts, PHP compiler, WordPress profile, HXX lowering, Genes browser output, REST, blocks, admin UI
 - Supersedes: none; makes PRD §29.1 and ADR-011's contextual-lowering requirement concrete
@@ -46,15 +46,19 @@ The output model has distinct, terminal contracts:
 | Rich HTML | policy-branded `KsesHtml` | `wp_kses_post`, `wp_kses_data`, or a content-addressed custom `wp_kses` policy at the final sink | a separate browser-policy result before an internal rich-HTML lowerer |
 | JSON document | `JsonDocument<T>` | the contract codec and `wp_json_encode`, with explicit failure handling | the contract codec and `JSON.stringify` for a JSON response/document |
 | HTML script data | `HtmlScriptData<T>` | `wp_json_encode` with `JSON_HEX_TAG`, `JSON_HEX_AMP`, `JSON_HEX_APOS`, and `JSON_HEX_QUOT`, with explicit failure handling | `JSON.stringify` plus script-data character escaping |
-| CSS declarations | `CssDeclarations` | a closed typed CSS printer, then `esc_attr` for a style attribute | a typed React style object |
+| Inline CSS declarations | `InlineStyle` | a closed property/value printer, then `esc_attr` at the style-attribute sink | a typed React style object |
+| Stylesheet asset | `Stylesheet` | a separate closed selector/property/value printer, without HTML attribute escaping | a generated stylesheet asset |
 | Compiler markup | `CompilerMarkup` | static native markup plus separately lowered contextual segments | typed HXX-to-React/Gutenberg output |
 | Unsafe raw target | withheld | not published | not published |
 
 The terminal contracts have no public constructors, raw-value accessors,
-implicit string conversions, general serialization, or cross-context
+implicit string conversions, SDK serialization APIs, or cross-context
 conversion. They represent authority for one immediate sink, not reusable
-domain data. Repository-owned APIs do not accept a terminal value for storage,
-logging, a REST model, another context, or a later render pass.
+domain data. Repository-owned APIs enforce a retention policy: they do not
+accept a terminal value for storage, logging, a REST model, another context,
+or a later render pass. Haxe does not provide linear types, so this is an
+audited SDK API policy rather than a claim that the language makes arbitrary
+user retention impossible.
 
 `esc_url_raw` is not an output operation. Sanitization, validation, escaping,
 authorization, and nonce verification remain independent decisions. In
@@ -74,7 +78,8 @@ String ----------------------------------------> TextareaText
 String + named native/exact custom KSES policy > KsesHtml<policy>
 T + ContractCodec<T> --------------------------> JsonDocument<T>
 T + ContractCodec<T> --------------------------> HtmlScriptData<T>
-TypedCssDeclaration[] -------------------------> CssDeclarations
+TypedCssDeclaration[] -------------------------> InlineStyle
+TypedCssRule[] --------------------------------> Stylesheet
 resolved typed HXX AST + source span ----------> CompilerMarkup
 admitted provider + exact typed contract ------> ProviderMarkup
 ```
@@ -105,7 +110,8 @@ public static function render(model:TodoView):ServerMarkup {
 }
 ```
 
-The HXX resolver knows the syntactic position before lowering. It inserts the
+The HXX resolver knows the syntactic position before lowering. Its closed
+position graph inserts the
 text operation for an ordinary child, attribute escaping for an ordinary
 attribute, textarea handling for textarea content, and the URL path for
 `href`, `src`, `action`, and `formaction`. A static URL literal is checked at
@@ -113,11 +119,16 @@ compile time; a dynamic URL must already satisfy the typed validator. Style
 positions accept only typed CSS declarations. Rich-content and script-data
 positions require their explicit terminal contracts. Server inline event
 attributes are rejected; browser event positions accept typed callbacks.
+Nested-document `srcdoc`, URL-list `srcset`, SVG/MathML namespace attributes,
+raw `style`, `script`, `iframe`, and `textarea` children, and non-literal
+position names fail closed until a dedicated typed grammar is admitted.
 
-The compiler creates `CompilerMarkup` only after resolving and typing the HXX
-AST, retaining its source span. It does not accept a string that happens to
-contain markup. This keeps the common `return <markup>` path dense while making
-unusual trust transitions explicit and searchable.
+The exact compiler-generated fragment class creates `CompilerMarkup` only
+after resolving and typing the HXX AST, retaining fragment identity and source
+span. Application code cannot call that private constructor or supply its own
+provenance. The constructor never accepts a string that happens to contain
+markup. This keeps the common `return <markup>` path dense while making unusual
+trust transitions explicit and searchable.
 
 ### JSON is data until its final embedding context
 
@@ -252,20 +263,26 @@ Costs and constraints:
 
 ## Evidence and commands
 
-The bounded prototype is in
+The corrected bounded prototype is in
 [`fixtures/output-context`](../../fixtures/output-context/README.md). Its
-terminal constructors are private, it contains no repository-forbidden weak
-Haxe operation, and eight compile-negative fixtures prove incompatible types
-do not interchange. One canonical plan transcript is byte-identical on Haxe
-4.3.7 interpretation, Genes 1.36.3 plus TypeScript 5.9.3/Node 22.17.0, and
+terminal constructors are private, compiler markup is owned by an exact
+generated fragment class, and it contains no repository-forbidden weak Haxe
+operation. Nineteen compile-negative fixtures cover cross-context
+substitution, direct construction, and the closed HXX rejection categories.
+One canonical native-runtime plan is byte-identical on Haxe 4.3.7
+interpretation, Genes 1.38.0 plus TypeScript 5.9.3/Node 22.17.0, and
 stock-Haxe PHP 8.4.7.
 
-The runtime corpus also checks React DOM Server 18.3.1 and a clean pinned
-WordPress 7.0/MariaDB installation. The WordPress probe exercises text,
-attribute, textarea, URL, three KSES policies, JSON script data, a native
-dynamic-block callback, a REST response, and `wp_admin_notice`. The browser
-probe exercises React text, attribute, textarea, validated URL, and script-data
-behavior without a raw-HTML API.
+The React and WordPress probes consume that exact Haxe-generated plan and
+return its digest, connecting typed terminals to the tested native sinks. The
+runtime corpus checks React DOM Server 18.3.1 and a clean pinned WordPress
+7.0/MariaDB installation. The WordPress probe exercises text, attribute,
+textarea, accepted and adversarial URLs, three KSES policies including the
+canonical digest-bound custom policy, successful and failed JSON codecs,
+script data, a native dynamic-block callback, a REST response, and
+`wp_admin_notice`. The browser probe exercises the same plan through React
+text, attribute, textarea, validated URL, typed inline CSS, stylesheet output,
+compiler provenance, and script-data behavior without a raw-HTML API.
 
 ```bash
 python3 scripts/output-context/validate-architecture.py
@@ -275,13 +292,14 @@ bash scripts/check-repository.sh
 
 The independent Python validator authenticates the fixture tree and expected
 transcript, asserts the complete context/conversion model, and rejects
-twenty-one mutations. The combined gate is configured as the `output-context`
+thirty mutations. The combined gate is configured as the `output-context`
 job in the focused output-context workflow. Hosted evidence and a fresh
-independent review are separate gates. Public run
+independent review are separate gates. Historical public run
 [`29713766565`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29713766565),
 job `88262490140`, passed the complete corpus at commit
-`11ec7cc273ca65130c1fcd79505347390dba3d9a`. Fresh independent review remains
-required before this ADR can move from proposed to accepted.
+`11ec7cc273ca65130c1fcd79505347390dba3d9a`; it predates and is superseded by
+the Oracle corrections. The corrected commit still needs its first hosted run
+and fresh independent rereview before this ADR can move to accepted.
 
 The design follows the official
 [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/),
@@ -328,4 +346,6 @@ implement content-addressed custom KSES policy, strengthen browser negatives,
 remove exact-tool drift, and state non-cacheability as an enforceable policy
 rather than a linear-type guarantee.
 
-This ADR remains proposed until those findings pass a fresh Oracle review.
+The corrections are implemented in the bounded evidence fixture. This ADR
+remains unaccepted until the corrected content-addressed packet passes a fresh
+Oracle review.

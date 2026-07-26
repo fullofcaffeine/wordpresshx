@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "proposed-pending-fresh-review",
+  "status": "review-corrections-applied-pending-rereview",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
     "lateEscapingRequired": true,
     "universalSafeTypeAllowed": false,
     "terminalRawStringConversionAllowed": false,
-    "terminalValuesSerializable": false,
+    "terminalRetentionPolicy": "opaque-until-final-sink-sdk-policy",
     "escapingIdempotenceAssumed": false,
     "validationEqualsEscaping": false,
     "sanitizationEqualsValidation": false,
@@ -126,14 +126,24 @@
       "crossContextReuse": false
     },
     {
-      "id": "css-declarations",
-      "terminalContract": "CssDeclarations",
+      "id": "css-inline-style",
+      "terminalContract": "InlineStyle",
       "acceptedSource": "closed-typed-property-and-value-AST",
       "serverLowering": "typed-CSS-printer-then-esc_attr",
       "browserLowering": "typed-React-style-object",
       "sinks": [
-        "style-attribute",
-        "generated-stylesheet-declaration"
+        "style-attribute"
+      ],
+      "crossContextReuse": false
+    },
+    {
+      "id": "css-stylesheet",
+      "terminalContract": "Stylesheet",
+      "acceptedSource": "closed-typed-selector-property-and-value-AST",
+      "serverLowering": "typed-stylesheet-printer-without-HTML-attribute-escaping",
+      "browserLowering": "typed-stylesheet-asset-printer",
+      "sinks": [
+        "generated-stylesheet-asset"
       ],
       "crossContextReuse": false
     },
@@ -169,7 +179,8 @@
     "String+NamedNativeOrExactCustomKsesPolicy->KsesHtml@rich-content-sink",
     "T+ContractCodec<T>->JsonDocument<T>@JSON-response-sink",
     "T+ContractCodec<T>->HtmlScriptData<T>@script-data-sink",
-    "TypedCssDeclaration[]->CssDeclarations@style-sink",
+    "TypedCssDeclaration[]->InlineStyle@style-attribute-sink",
+    "TypedCssRule[]->Stylesheet@stylesheet-asset-sink",
     "ResolvedHxxAst->CompilerMarkup@compiler-lowering",
     "AdmittedNativeProvider+TypedContract->ProviderMarkup@profile-adapter"
   ],
@@ -182,7 +193,8 @@
     "KsesHtml->CompilerMarkup",
     "String->KsesHtml-without-policy",
     "String->CompilerMarkup",
-    "String->CssDeclarations",
+    "String->InlineStyle",
+    "String->Stylesheet",
     "terminal-output->storage",
     "terminal-output->serialization",
     "server-event-attribute->inline-JavaScript",
@@ -212,8 +224,8 @@
     },
     {
       "position": "style-attribute",
-      "input": "CssDeclarations",
-      "result": "css-declarations"
+      "input": "InlineStyle",
+      "result": "css-inline-style"
     },
     {
       "position": "rich-content-insertion",
@@ -229,13 +241,49 @@
       "position": "server-event-handler-attribute",
       "input": "none",
       "result": "compile-error"
+    },
+    {
+      "position": "nested-document-attribute-srcdoc",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "url-list-attribute-srcset",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "svg-math-namespace-attribute",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "raw-style-child",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "iframe-child",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "raw-textarea-child",
+      "input": "none",
+      "result": "compile-error"
+    },
+    {
+      "position": "dynamic-position-name",
+      "input": "none",
+      "result": "compile-error"
     }
   ],
   "trustConstructors": [
     {
       "id": "compiler-resolved-hxx",
       "acceptsRawMarkupString": false,
-      "provenanceRequired": "Haxe-source-span-and-typed-AST"
+      "constructorAuthority": "exact-generated-fragment-class-only",
+      "provenanceRequired": "Haxe-source-span-fragment-identity-and-typed-AST"
     },
     {
       "id": "wordpress-kses-policy",
@@ -273,14 +321,14 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "28d97a705b26879a71037ff555775c9a0f0081f5e7f1f204e2dae1c94d013840",
-    "transcriptSha256": "b9359f199da38f1cf2dc039dcbd1a90ad8a31c35bb6f80c9df8c4f6429581793",
-    "contextCount": 10,
-    "allowedEdgeCount": 11,
-    "forbiddenEdgeCount": 14,
-    "hxxPositionCount": 8,
-    "compileNegativeCount": 8,
-    "independentMutationCount": 21,
+    "sourceTreeSha256": "77356a8c7dda53f8af3322d810d51c6823c9465c1209062488fec94e7a53de82",
+    "transcriptSha256": "6437cec402df7e4f075271764a4960e4941a764c21c82f0d8672ecb0824f2c4f",
+    "contextCount": 11,
+    "allowedEdgeCount": 12,
+    "forbiddenEdgeCount": 15,
+    "hxxPositionCount": 15,
+    "compileNegativeCount": 19,
+    "independentMutationCount": 30,
     "targets": [
       "haxe-interp-4.3.7",
       "genes-ts-1.38.0-typescript-5.9.3-node-22.17.0",
@@ -293,10 +341,12 @@
     "workflow": ".github/workflows/output-context.yml",
     "job": "output-context",
     "command": "bash scripts/output-context/test.sh",
-    "status": "passed",
+    "status": "historical-passed-superseded",
     "runId": 29713766565,
     "jobId": 88262490140,
-    "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a"
+    "commit": "11ec7cc273ca65130c1fcd79505347390dba3d9a",
+    "correctedCommit": null,
+    "correctedStatus": "pending-first-hosted-main-run"
   },
   "referenceReview": [
     {
@@ -382,8 +432,9 @@
     }
   ],
   "claims": {
-    "architectureDecision": "proposed-pending-fresh-review",
+    "architectureDecision": "review-corrections-applied-pending-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
+    "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",
     "reactTextAttributeEscaping": "runtime-tested",
     "productionSdkTypes": "not-tested",

@@ -2,6 +2,11 @@
 set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
+plan_path="${1:-}"
+if [[ -z "${plan_path}" || ! -f "${plan_path}" ]]; then
+	echo "ADR-012 WordPress output-context proof requires the Haxe-generated plan path" >&2
+	exit 1
+fi
 compose_file="${repository_root}/docker/wordpress/compose.yml"
 project_name="wordpresshx-adr012-$$"
 compose=(
@@ -48,14 +53,19 @@ fi
 install_json="$("${compose[@]}" exec --no-TTY wordpress-mariadb php /opt/wordpresshx/install.php)"
 "${compose[@]}" cp "${repository_root}/fixtures/output-context/runtime/wordpress-probe.php" \
 	wordpress-mariadb:/opt/wordpresshx/output-context-probe.php >&2
+"${compose[@]}" cp "${plan_path}" \
+	wordpress-mariadb:/opt/wordpresshx/output-context-plan.json >&2
 probe_json="$("${compose[@]}" exec --no-TTY wordpress-mariadb php /opt/wordpresshx/output-context-probe.php)"
 
-python3 - "${repository_root}/docker/images.lock.json" "${install_json}" "${probe_json}" <<'PY'
+python3 - "${repository_root}/docker/images.lock.json" "${plan_path}" "${install_json}" "${probe_json}" <<'PY'
+import hashlib
 import json
 import sys
 
-lock_path, install_source, probe_source = sys.argv[1:]
+lock_path, plan_path, install_source, probe_source = sys.argv[1:]
 images = json.load(open(lock_path, encoding="utf-8"))["images"]
+plan_bytes = open(plan_path, "rb").read()
+plan = json.loads(plan_bytes)
 install = json.loads(install_source)
 probe = json.loads(probe_source)
 
@@ -65,6 +75,8 @@ if probe.get("check") != "wordpresshx-adr012-wordpress-output-context-v1":
     raise SystemExit(f"ADR-012 probe identity differed: {probe!r}")
 if probe.get("wordpressVersion") != "7.0":
     raise SystemExit(f"ADR-012 WordPress version differed: {probe!r}")
+if probe.get("planSha256") != hashlib.sha256(plan_bytes).hexdigest():
+    raise SystemExit(f"ADR-012 WordPress did not consume the generated plan: {probe!r}")
 
 payload_markers = ("<script", "javascript:")
 for field in ("text", "attribute", "textarea", "blockMarkup", "adminNotice"):
@@ -89,8 +101,12 @@ if not isinstance(urls, dict):
     raise SystemExit(f"ADR-012 URL result missing: {probe!r}")
 if urls.get("javascript") != "":
     raise SystemExit(f"ADR-012 unsafe URL survived: {urls!r}")
-if urls.get("https") != "https://example.test/todos/7?a=1&#038;b=2":
+if urls.get("protocolRelative") != "" or urls.get("data") != "":
+    raise SystemExit(f"ADR-012 rejected URL shape survived: {urls!r}")
+if urls.get("https") != "https://example.test/path":
     raise SystemExit(f"ADR-012 HTTPS URL escaping differed: {urls!r}")
+if urls.get("schemeCase") != "https://example.test/path":
+    raise SystemExit(f"ADR-012 scheme-case URL escaping differed: {urls!r}")
 if urls.get("relative") != "/todos/7?mode=edit&#038;from=hxx":
     raise SystemExit(f"ADR-012 relative URL escaping differed: {urls!r}")
 
@@ -122,10 +138,16 @@ if not isinstance(rest, dict) or rest.get("status") != 200:
 data = rest.get("data")
 if not isinstance(data, dict) or data.get("kind") != "data-not-markup":
     raise SystemExit(f"ADR-012 REST data contract differed: {rest!r}")
-if data.get("title") != '<script>alert("xss")</script><strong data-note="&quot;">kept</strong>&"\'':
+if data.get("title") != json.loads(plan["restJson"]["encoded"])["title"]:
     raise SystemExit(f"ADR-012 REST data was silently mutated: {rest!r}")
 if "</script" in rest.get("encoded", "").lower():
     raise SystemExit(f"ADR-012 REST JSON retained a closing tag: {rest!r}")
+if probe.get("inlineStyle") != plan["inlineStyle"]:
+    raise SystemExit(f"ADR-012 inline style lowering differed: {probe!r}")
+if probe.get("stylesheet") != plan["stylesheet"]:
+    raise SystemExit(f"ADR-012 stylesheet lowering differed: {probe!r}")
+if probe.get("markupProvenance") != plan["markup"]:
+    raise SystemExit(f"ADR-012 compiler-markup provenance differed: {probe!r}")
 
 print(json.dumps({
     "admin": "wp_admin_notice-wp_kses_post",

@@ -11,11 +11,54 @@ $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 
 require_once '/var/www/html/wp-load.php';
 
-$payload = '<script>alert("xss")</script><strong data-note="&quot;">kept</strong>&"\'';
-$attribute_payload = '" autofocus onfocus="alert(1)" data-note="<unsafe>"';
-$textarea_payload = '</textarea><script>alert("textarea")</script>&';
-$rich_payload = '<p><strong>kept</strong><script>alert("rich")</script>'
-    . '<a href="javascript:alert(1)" onmouseover="alert(2)">link</a></p>';
+$plan_path = '/opt/wordpresshx/output-context-plan.json';
+$plan_bytes = file_get_contents($plan_path);
+if (false === $plan_bytes) {
+    throw new RuntimeException('Haxe-generated output-context plan is missing');
+}
+$plan = json_decode($plan_bytes, true, 512, JSON_THROW_ON_ERROR);
+if (
+    ! is_array($plan)
+    || 'wordpresshx.output-context-runtime-plan.v2' !== ($plan['schema'] ?? null)
+) {
+    throw new RuntimeException('Haxe-generated output-context plan identity differs');
+}
+
+$payload = (string) $plan['text'];
+$attribute_payload = (string) $plan['attribute'];
+$textarea_payload = (string) $plan['textarea'];
+$rich_plans = $plan['richHtml'];
+if (! is_array($rich_plans) || 3 !== count($rich_plans)) {
+    throw new RuntimeException('Haxe-generated rich HTML plan differs');
+}
+$rich_payload = (string) $rich_plans[0]['value'];
+if (
+    $rich_payload !== $rich_plans[1]['value']
+    || $rich_payload !== $rich_plans[2]['value']
+) {
+    throw new RuntimeException('KSES policies did not receive one generated payload');
+}
+
+$custom_policy = (string) $rich_plans[2]['canonicalPolicy'];
+$expected_custom_policy = 'version=todo-rich.v1;tags=a[href,title],p,strong;protocols=http,https';
+if ($expected_custom_policy !== $custom_policy) {
+    throw new RuntimeException('Custom KSES policy canonical document differs');
+}
+$custom_digest = hash('sha256', $custom_policy);
+if ('custom:' . $custom_digest !== $rich_plans[2]['policyIdentity']) {
+    throw new RuntimeException('Custom KSES policy digest differs');
+}
+
+$rest_value = json_decode((string) $plan['restJson']['encoded'], true, 512, JSON_THROW_ON_ERROR);
+$script_value = json_decode((string) $plan['scriptData']['encoded'], true, 512, JSON_THROW_ON_ERROR);
+if (
+    '' !== $plan['restJson']['failureReason']
+    || '' !== $plan['scriptData']['failureReason']
+    || 'invalid-control-character' !== $plan['encodingFailure']['failureReason']
+    || '' !== $plan['encodingFailure']['encoded']
+) {
+    throw new RuntimeException('Typed JSON codec result differs');
+}
 
 register_block_type(
     'wordpresshx/output-context-proof',
@@ -46,17 +89,18 @@ $block_markup = render_block(
 
 add_action(
     'rest_api_init',
-    static function (): void {
+    static function () use ($rest_value): void {
         register_rest_route(
             'wordpresshx/v1',
             '/output-context',
             array(
                 'methods' => 'GET',
                 'permission_callback' => '__return_true',
-                'callback' => static function (WP_REST_Request $request): WP_REST_Response {
+                'callback' => static function (WP_REST_Request $request) use ($rest_value): WP_REST_Response {
                     return new WP_REST_Response(
                         array(
-                            'title' => (string) $request->get_param('title'),
+                            'id' => (int) $rest_value['id'],
+                            'title' => (string) $rest_value['title'],
                             'kind' => 'data-not-markup',
                         ),
                         200
@@ -69,7 +113,6 @@ add_action(
 do_action('rest_api_init');
 
 $request = new WP_REST_Request('GET', '/wordpresshx/v1/output-context');
-$request->set_param('title', $payload);
 $rest_response = rest_do_request($request);
 $rest_data = $rest_response->get_data();
 
@@ -85,23 +128,39 @@ wp_admin_notice(
 $admin_notice = (string) ob_get_clean();
 
 $script_json = wp_json_encode(
-    array(
-        'title' => '</script><script>alert("json")</script>&\'',
-        'id' => 7,
-    ),
+    $script_value,
     JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
+if (false === $script_json) {
+    throw new RuntimeException('wp_json_encode failed for admitted script data');
+}
 
 $result = array(
     'check' => 'wordpresshx-adr012-wordpress-output-context-v1',
+    'planSha256' => hash('sha256', $plan_bytes),
     'wordpressVersion' => get_bloginfo('version'),
     'text' => esc_html($payload),
     'attribute' => esc_attr($attribute_payload),
     'textarea' => esc_textarea($textarea_payload),
     'url' => array(
-        'https' => esc_url('https://example.test/todos/7?a=1&b=2'),
-        'javascript' => esc_url('javascript:alert(1)'),
-        'relative' => esc_url('/todos/7?mode=edit&from=hxx'),
+        'https' => $plan['urlMatrix']['https']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['https']['input'])
+            : '',
+        'schemeCase' => $plan['urlMatrix']['schemeCase']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['schemeCase']['input'])
+            : '',
+        'javascript' => $plan['urlMatrix']['javascript']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['javascript']['input'])
+            : '',
+        'protocolRelative' => $plan['urlMatrix']['protocolRelative']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['protocolRelative']['input'])
+            : '',
+        'data' => $plan['urlMatrix']['data']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['data']['input'])
+            : '',
+        'relative' => $plan['urlMatrix']['relative']['accepted']
+            ? esc_url((string) $plan['urlMatrix']['relative']['input'])
+            : '',
     ),
     'richHtml' => array(
         'post' => wp_kses_post($rich_payload),
@@ -117,6 +176,9 @@ $result = array(
         ),
     ),
     'scriptJson' => $script_json,
+    'inlineStyle' => esc_attr((string) $plan['inlineStyle']),
+    'stylesheet' => (string) $plan['stylesheet'],
+    'markupProvenance' => $plan['markup'],
     'blockMarkup' => $block_markup,
     'rest' => array(
         'status' => $rest_response->get_status(),
