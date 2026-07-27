@@ -3,7 +3,7 @@
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
   "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-26T23:52:00Z",
+  "observedAt": "2026-07-27T00:18:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
@@ -43,7 +43,7 @@
     },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "5fc28082208417abac6ce7dde06fc58098435e8eb3cd1a9a1ad35440d4b81f1a"
+      "sha256": "f9a9fa8dfc9964d8b976521102e8363c00d0e8b02c1807ebb33a568d0638fdcc"
     },
     "canonicalReview": {
       "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
@@ -71,7 +71,7 @@
     },
     "workflow": {
       "path": ".github/workflows/unsafe-boundary-policy.yml",
-      "sha256": "7bcdc12de135dcf498e55a27f445106b4565d9828cab58de0967d3368e743221"
+      "sha256": "113b1d9ef2926a1e75a328e14f5e51a16d874376a269be1152045346558e1c45"
     },
     "releasePolicy": {
       "path": "manifests/release-support-policy.json",
@@ -102,7 +102,7 @@
       "bash scripts/check-repository.sh"
     ],
     "sourceTreeDigestAlgorithm": "sha256-sorted-full-path-content-digests-v2",
-    "sourceTreeSha256": "8bfb437f45216b6b53342ce1d4bc748e2d9bbc47a4f36aad472decb752d13d90",
+    "sourceTreeSha256": "10d80d8969c61849939e3910827e9c451d1bb8c7004fbab9289b8656bf165312",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
     "policyDigest": "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
@@ -152,6 +152,9 @@
     "jobId": null,
     "commit": null,
     "status": "pending-oracle-correction-hosted-run",
+    "failedCorrectionRunId": 30226771473,
+    "failedCorrectionJobIds": [89858153619, 89858661844],
+    "failedCorrectionReason": "fresh-runner-bd-dolt-pull-failed-before-diagnostic-output-was-preserved",
     "previousRunId": 30225305825,
     "previousJobId": 89854421141,
     "previousCommit": "75e4f76b9f80f2a5694a04386ff626aedee5040d",

@@ -402,14 +402,18 @@ def validate_bead_status(
         raise ValidationError("Bead status projection digest drifted")
     if VERIFY_BEADS and verify_live:
         binary = os.environ.get("WORDPRESSHX_BD_BIN", "bd")
-        subprocess.run(
+        pull = subprocess.run(
             [binary, "dolt", "pull"],
             cwd=ROOT,
-            check=True,
+            check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
         )
+        if pull.returncode != 0:
+            raise ValidationError(
+                "authoritative Beads Dolt pull failed:\n" + pull.stdout
+            )
         completed = subprocess.run(
             [binary, "show", expected_bead, "--json"],
             cwd=ROOT,

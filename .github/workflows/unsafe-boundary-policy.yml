@@ -29,6 +29,10 @@ jobs:
         run: |
           binary="$(bash scripts/beads/build-history-reader.sh)"
           echo "binary=${binary}" >> "${GITHUB_OUTPUT}"
+      - name: Fetch the public Beads Dolt authority ref
+        run: |
+          git ls-remote origin refs/dolt/data
+          git fetch --no-tags origin refs/dolt/data:refs/dolt/data
       - name: Validate waivers, lifecycle authority, live removal Bead, and release stops
         env:
           WORDPRESSHX_BD_BIN: ${{ steps.beads.outputs.binary }}
