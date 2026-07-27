@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "wordpresshx-exact-component-license-evidence-v1",
+  "status": "technical-evidence-recorded-review-pending",
+  "legalAdvice": false,
+  "publicationAuthorized": false,
+  "components": [
+    {
+      "id": "computed-style-0.1.4",
+      "match": {
+        "ecosystem": "npm",
+        "name": "computed-style",
+        "version": "0.1.4",
+        "resolution": "integrity:sha512-WpAmaKbMNmS3OProfHIdJiNleNJdgUrJfbKArXua28QF7+0CoZjlLn0lp6vlc+dl5r2/X9GQiQRQQU4BzSa69w=="
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/computed-style/-/computed-style-0.1.4.tgz",
+        "sha256": "744d1b76feae62832fdb258b13967fcc8f03d4614a9719d5329c5a9882484f2b",
+        "packageMetadataSha256": "2683bfb858a32faabcd7b9e3cb9df85317e48baf859ba465b322f1989c17145c"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE-MIT",
+        "sourceSha256": "80e369c712ed2fadfc15ef19079ad8ae21a1011535b1bef0596d491554af922d",
+        "snapshotPath": "LICENSES/evidence/licenses/computed-style-0.1.4-LICENSE-MIT",
+        "snapshotSha256": "80e369c712ed2fadfc15ef19079ad8ae21a1011535b1bef0596d491554af922d",
+        "normalization": "exact-bytes",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The legacy package.json licenses array says MIT; npm lock v3 omitted the license field.",
+      "evidenceConclusion": "exact-artifact-license-text-recorded",
+      "distributionConclusion": "build-input-only-not-known-to-be-redistributed"
+    },
+    {
+      "id": "exit-0.1.2",
+      "match": {
+        "ecosystem": "npm",
+        "name": "exit",
+        "version": "0.1.2",
+        "resolution": "integrity:sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ=="
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/exit/-/exit-0.1.2.tgz",
+        "sha256": "485f06ca0939c28f18128926c4345162d0adcfd340c62e292bb827c2cfe82a41",
+        "packageMetadataSha256": "5e2cb677a865c02d0a626eea6a718b9dd528cfb45ea20914bb6c396a7291c5e6"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE-MIT",
+        "sourceSha256": "65bd93f75d6c0cdc1c9e1a39bd1814e2e34355c665e1564a1517f27c1523ab7e",
+        "snapshotPath": "LICENSES/evidence/licenses/exit-0.1.2-LICENSE-MIT",
+        "snapshotSha256": "65bd93f75d6c0cdc1c9e1a39bd1814e2e34355c665e1564a1517f27c1523ab7e",
+        "normalization": "exact-bytes",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The legacy package.json licenses array says MIT; npm lock v3 omitted the license field.",
+      "evidenceConclusion": "exact-artifact-license-text-recorded",
+      "distributionConclusion": "build-input-only-not-known-to-be-redistributed"
+    },
+    {
+      "id": "genes-ts-1.38.0",
+      "match": {
+        "ecosystem": "haxelib",
+        "name": "genes-ts",
+        "version": "1.38.0",
+        "resolution": "git:122162abefc2035b307508e521348ea4fb36dab7#tree=739500b4f4f2513adc3d993cdab6e0e7620965a3"
+      },
+      "artifact": {
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.38.0/submit.zip",
+        "sha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab",
+        "packageMetadataSha256": null
+      },
+      "licenseEvidence": {
+        "artifactPath": "https://github.com/fullofcaffeine/genes-ts/blob/122162abefc2035b307508e521348ea4fb36dab7/LICENSE",
+        "sourceSha256": "db06c7b27c072c83ad42ec1826ea0e2e28485222b1e047a92e411552079a7c2d",
+        "snapshotPath": "LICENSES/evidence/licenses/genes-ts-1.38.0-LICENSE",
+        "snapshotSha256": "a93bc9bb0d10dbd48382d4c7dad2ba9e6e852f4269b8c0f96018588392d1249f",
+        "normalization": "one-final-lf-appended",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The exact active compiler source carries the MIT text; the release archive remains a separate notice-boundary input.",
+      "evidenceConclusion": "exact-source-license-text-recorded",
+      "distributionConclusion": "build-input-and-compiler-output-origin-review-required"
+    },
+    {
+      "id": "gradient-parser-1.1.1",
+      "match": {
+        "ecosystem": "npm",
+        "name": "gradient-parser",
+        "version": "1.1.1",
+        "resolution": "integrity:sha512-Hu0YfNU+38EsTmnUfLXUKFMXq9yz7htGYpF4x+dlbBhUCvIvzLt0yVLT/gJRmvLKFJdqNFrz4eKkIUjIXSr7Tw=="
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/gradient-parser/-/gradient-parser-1.1.1.tgz",
+        "sha256": "e30444b0ac5350871c330e4bc1ffc735392edd2ffc3736494355c9b278e3daba",
+        "packageMetadataSha256": "9ca305c8e2910533e6f095d9bee2cd86a5515495a51be82e1298cdf576265389"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE",
+        "sourceSha256": "1f400fa6731a256b1ea2ed01231e01c4ed14a32176ff1e97128e2dd985a9055c",
+        "snapshotPath": "LICENSES/evidence/licenses/gradient-parser-1.1.1-LICENSE",
+        "snapshotSha256": "1f400fa6731a256b1ea2ed01231e01c4ed14a32176ff1e97128e2dd985a9055c",
+        "normalization": "exact-bytes",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The legacy package.json licenses array says MIT; npm lock v3 omitted the license field.",
+      "evidenceConclusion": "exact-artifact-license-text-recorded",
+      "distributionConclusion": "build-input-only-not-known-to-be-redistributed"
+    },
+    {
+      "id": "haxe-4.3.7-compiler",
+      "match": {
+        "ecosystem": "haxe",
+        "name": "haxe-compiler",
+        "version": "4.3.7",
+        "resolution": "git:e0b355c6be312c1b17382603f018cf52522ec651#tree=55d2c4c59ed55c52fa0660e2fe385081a94b23d1"
+      },
+      "artifact": {
+        "url": "https://raw.githubusercontent.com/HaxeFoundation/haxe/e0b355c6be312c1b17382603f018cf52522ec651/extra/LICENSE.txt",
+        "sha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "packageMetadataSha256": null
+      },
+      "licenseEvidence": {
+        "artifactPath": "extra/LICENSE.txt",
+        "sourceSha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "snapshotPath": "LICENSES/evidence/licenses/haxe-4.3.7-LICENSE.txt",
+        "snapshotSha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "normalization": "exact-bytes",
+        "observedExpression": "GPL-2.0-or-later"
+      },
+      "metadataObservation": "The exact combined Haxe license file identifies the compiler GPL terms and the standard-library MIT terms at the pinned 4.3.7 source commit.",
+      "evidenceConclusion": "exact-source-license-text-recorded",
+      "distributionConclusion": "build-input-only-compiler-output-origin-review-required"
+    },
+    {
+      "id": "haxe-4.3.7-stdlib",
+      "match": {
+        "ecosystem": "haxe",
+        "name": "haxe-standard-library",
+        "version": "4.3.7",
+        "resolution": "git:e0b355c6be312c1b17382603f018cf52522ec651#tree=55d2c4c59ed55c52fa0660e2fe385081a94b23d1"
+      },
+      "artifact": {
+        "url": "https://raw.githubusercontent.com/HaxeFoundation/haxe/e0b355c6be312c1b17382603f018cf52522ec651/extra/LICENSE.txt",
+        "sha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "packageMetadataSha256": null
+      },
+      "licenseEvidence": {
+        "artifactPath": "extra/LICENSE.txt",
+        "sourceSha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "snapshotPath": "LICENSES/evidence/licenses/haxe-4.3.7-LICENSE.txt",
+        "snapshotSha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+        "normalization": "exact-bytes",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The exact combined Haxe license file identifies the compiler GPL terms and the standard-library MIT terms at the pinned 4.3.7 source commit.",
+      "evidenceConclusion": "exact-source-license-text-recorded",
+      "distributionConclusion": "copied-standard-library-bytes-require-artifact-origin-review"
+    },
+    {
+      "id": "lix-15.12.4",
+      "match": {
+        "ecosystem": "npm",
+        "name": "lix",
+        "version": "15.12.4",
+        "resolution": "sha256:4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa"
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/lix/-/lix-15.12.4.tgz",
+        "sha256": "4f2257276aba9f552b1b35237d33fbc1a0898039d8105ed6e8d1468e6c53a2fa",
+        "packageMetadataSha256": "ffc0c8ab6d23c125ffe333caedb7862b2d493023438848b46e2da9f4aa676d86"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE",
+        "sourceSha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+        "snapshotPath": "LICENSES/evidence/licenses/lix-15.12.4-LICENSE",
+        "snapshotSha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+        "normalization": "exact-bytes",
+        "observedExpression": "Unlicense"
+      },
+      "metadataObservation": "The exact package.json says MIT while its exact shipped LICENSE is the Unlicense.",
+      "evidenceConclusion": "metadata-text-conflict-preserved",
+      "distributionConclusion": "build-input-only-conflict-requires-independent-review"
+    },
+    {
+      "id": "parse-cache-control-1.0.1",
+      "match": {
+        "ecosystem": "npm",
+        "name": "parse-cache-control",
+        "version": "1.0.1",
+        "resolution": "integrity:sha512-60zvsJReQPX5/QP0Kzfd/VrpjScIQ7SHBW6bFCYfEP+fp0Eppr1SHhIO5nd1PjZtvclzSzES9D/p5nFJurwfWg=="
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/parse-cache-control/-/parse-cache-control-1.0.1.tgz",
+        "sha256": "9758521b952eca1a4c688c41854dc55229cba637e64d2d901e09995d43f67c1e",
+        "packageMetadataSha256": "e035ad2f6690f96a507b6c20cd22021977444c8d771e85890a1e4c4dccd6cac5"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE",
+        "sourceSha256": "111f42b37daecc6c387d037ef25955bd269e7f9a46a736d5257a23560534763f",
+        "snapshotPath": "LICENSES/evidence/licenses/parse-cache-control-1.0.1-LICENSE",
+        "snapshotSha256": "111f42b37daecc6c387d037ef25955bd269e7f9a46a736d5257a23560534763f",
+        "normalization": "exact-bytes",
+        "observedExpression": "BSD-3-Clause"
+      },
+      "metadataObservation": "The legacy package.json licenses array says BSD; the exact three-clause text is preserved; npm lock v3 omitted the license field.",
+      "evidenceConclusion": "exact-artifact-license-text-recorded",
+      "distributionConclusion": "build-input-only-not-known-to-be-redistributed"
+    },
+    {
+      "id": "svg-tags-1.0.0",
+      "match": {
+        "ecosystem": "npm",
+        "name": "svg-tags",
+        "version": "1.0.0",
+        "resolution": "integrity:sha512-ovssysQTa+luh7A5Weu3Rta6FJlFBBbInjOh722LIt6klpU2/HtdUbszju/G4devcvk8PGt7FCLv5wftu3THUA=="
+      },
+      "artifact": {
+        "url": "https://registry.npmjs.org/svg-tags/-/svg-tags-1.0.0.tgz",
+        "sha256": "910d8e7b8ea8e1b944c7cf6410934d4461e0ed87bbdf075fa331ea6e266fbe2e",
+        "packageMetadataSha256": "5d7c4d550ee65be1d810055b151ab0b76867a12e3d9c314f93825c8dd1baf760"
+      },
+      "licenseEvidence": {
+        "artifactPath": "package/LICENSE",
+        "sourceSha256": "4fa26a349d96c6bf268296011d84a70d18a1e85dfbef9a3c3f785c97e28d1f5d",
+        "snapshotPath": "LICENSES/evidence/licenses/svg-tags-1.0.0-LICENSE",
+        "snapshotSha256": "93ea1a5530e80be0fa6cf66de9fc6d2523292220bb871e45c68f8723f086a28d",
+        "normalization": "one-final-lf-appended",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The legacy package.json licenses array says MIT; npm lock v3 omitted the license field.",
+      "evidenceConclusion": "exact-artifact-license-text-recorded",
+      "distributionConclusion": "build-input-only-not-known-to-be-redistributed"
+    },
+    {
+      "id": "tink-anon-0.7.0",
+      "match": {
+        "ecosystem": "haxelib",
+        "name": "tink_anon",
+        "version": "0.7.0",
+        "resolution": "git:ef441a73a41f9ae4ca0f060035ff2c188618df4c"
+      },
+      "artifact": {
+        "url": "https://github.com/haxetink/tink_anon/tree/ef441a73a41f9ae4ca0f060035ff2c188618df4c",
+        "sha256": null,
+        "packageMetadataSha256": "ef633059f6cfa4d1c80819e6e286af119c9a1e1dc1db3a5b7a1cd9e3511fa34c"
+      },
+      "licenseEvidence": {
+        "artifactPath": "LICENSE",
+        "sourceSha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+        "snapshotPath": "LICENSES/evidence/licenses/tink-anon-0.7.0-LICENSE",
+        "snapshotSha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+        "normalization": "exact-bytes",
+        "observedExpression": "Unlicense"
+      },
+      "metadataObservation": "The exact haxelib.json says MIT while the exact source LICENSE is the Unlicense.",
+      "evidenceConclusion": "metadata-text-conflict-preserved",
+      "distributionConclusion": "compile-time-only-prohibited-from-generated-runtime"
+    },
+    {
+      "id": "tink-hxx-0.25.1",
+      "match": {
+        "ecosystem": "haxelib",
+        "name": "tink_hxx",
+        "version": "0.25.1",
+        "resolution": "sha256:0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e"
+      },
+      "artifact": {
+        "url": "https://lib.haxe.org/files/3.0/tink_hxx-0,25,1.zip",
+        "sha256": "0b6f2d925c8fb854732f67e293d268d0e51cfa0f69b12ebfc9bb16c4f71baa1e",
+        "packageMetadataSha256": "9dc7756d8e606d50e3e2192769db23f521150dc769b870aa52b918aaf0c8d0a2"
+      },
+      "licenseEvidence": {
+        "artifactPath": "exact source commit LICENSE; release ZIP omits it",
+        "sourceSha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+        "snapshotPath": "LICENSES/evidence/licenses/tink-hxx-0.25.1-LICENSE",
+        "snapshotSha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+        "normalization": "exact-bytes",
+        "observedExpression": "Unlicense"
+      },
+      "metadataObservation": "The exact haxelib.json says MIT while the exact source LICENSE is the Unlicense.",
+      "evidenceConclusion": "metadata-text-conflict-preserved",
+      "distributionConclusion": "compile-time-only-prohibited-from-generated-runtime"
+    }
+  ]
+}

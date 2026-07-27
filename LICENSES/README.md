@@ -16,8 +16,22 @@ license texts/notices, and evidence from the exact packed artifacts.
 
 - `policy.json` is the closed, machine-readable provisional policy and
   publication state.
-- `components.json` inventories repository origins and exact third-party/build
-  inputs, including unresolved evidence conflicts.
+- `components.json` is the curated ledger for repository origins, copied source,
+  known conflicts, and material review boundaries.
+- `inventory/build-inputs.json` is generated from every recognized tracked
+  dependency, source, toolchain, OCI, and fixture lock. It preserves every lock
+  observation and maps missing evidence to an explicit blocking disposition.
+- `sbom/build-inputs.spdx.json` is the deterministic SPDX 2.3 view of those
+  normalized build/test/source components. It is not an SBOM for a release
+  artifact.
+- `evidence/component-license-evidence.json` binds exact source/package
+  artifacts to the preserved license-text snapshots under `evidence/licenses/`.
+  Metadata/text conflicts remain conflicts; the evidence file does not choose
+  whichever declaration is more convenient.
+- `evidence/licenses/haxe-4.3.7-LICENSE.txt` is byte-identical to
+  `extra/LICENSE.txt` at the exact Haxe toolchain commit; the policy gate binds
+  its commit, tree, blob, and SHA-256 to both compiler and standard-library
+  records.
 - `GENERATED_OUTPUT.md` explains the proposed origin-sensitive output model.
 - `THIRD_PARTY_NOTICES.md` is the review ledger. It is not yet a final
   notice bundle.
@@ -31,6 +45,17 @@ Run the audit locally with:
 ```bash
 python3 scripts/licenses/test-license-policy.py
 ```
+
+The focused inventory command is:
+
+```bash
+python3 scripts/licenses/generate-build-input-inventory.py
+```
+
+In a Git checkout it discovers tracked locks with `git ls-files`, so adding a
+lock without regenerating the inventory fails. In a portable source snapshot it
+replays the committed source list and exact source hashes; the review packet
+must separately prove that the snapshot contains the complete Git tree.
 
 The publication assertion intentionally exits with status 3:
 
@@ -60,6 +85,8 @@ Tool license, source license, and output license are separate questions. A
 compiler's license does not by itself classify every emitted byte, while copied
 runtime, standard-library, scaffold, or template bytes can retain obligations
 from their source. The final artifact manifest must make those origins visible.
+The build-input SBOM therefore proves dependency coverage only. It cannot be
+used as the notice list for a packed plugin, theme, site, compiler, or SDK.
 
 ## Authoritative background
 

@@ -19,6 +19,7 @@ MARKER = "REFLAXE_PHP_PACKAGE_ARTIFACT:PASS"
 DEFAULT_SOURCE_DATE_EPOCH = 315532800
 PACKAGE_DOCUMENTS = (
     "CHANGELOG.md",
+    "COPYING",
     "EXTRACTION.md",
     "LICENSE.md",
     "README.md",
@@ -138,11 +139,26 @@ def source_manifest(package_root: Path, files: list[Path], metadata: dict[str, o
         digest = sha256_bytes(contents)
         entries.append({"path": relative, "sha256": digest, "bytes": len(contents)})
         digest_lines.append(f"{digest}  {relative}\n")
+    by_path = {
+        entry["path"]: entry
+        for entry in entries
+    }
     return {
         "schemaVersion": SCHEMA_VERSION,
         "package": {"name": metadata["name"], "version": metadata["version"]},
         "sourceOnly": True,
         "publicationAuthorized": False,
+        "sourceCorrespondence": {
+            "status": "complete-source-only-archive",
+            "preferredForm": "all packaged Haxe sources and build metadata",
+            "fileManifest": "package-source.json",
+        },
+        "licenseMaterials": {
+            "expression": "GPL-2.0-or-later",
+            "notice": by_path["LICENSE.md"],
+            "completeText": by_path["COPYING"],
+            "fileLevelProvenance": by_path["provenance.json"],
+        },
         "contentSha256": sha256_bytes("".join(digest_lines).encode("utf-8")),
         "files": entries,
     }
@@ -237,6 +253,12 @@ def build(out_dir: Path, require_clean: bool) -> Path:
             "sourceOnly": True,
             "reproducible": True,
             "publicationAuthorized": False,
+            "licenseExpression": "GPL-2.0-or-later",
+            "completeLicenseText": {
+                "path": "COPYING",
+                "sha256": sha256_bytes((package_root / "COPYING").read_bytes()),
+            },
+            "sourceCorrespondence": "complete-source-only-archive",
         },
     }
     (out_dir / "artifact-manifest.json").write_bytes(canonical_json(artifact))

@@ -59,6 +59,14 @@ class PackageBuilderTest(unittest.TestCase):
             with self.assertRaisesRegex(BUILDER.PackageFailure, "machine-local path"):
                 BUILDER.validate_portable_inputs(root, [input_path])
 
+    def test_complete_license_is_a_required_package_document(self) -> None:
+        self.assertIn("COPYING", BUILDER.PACKAGE_DOCUMENTS)
+        copying = SCRIPT_PATH.parent.parent / "COPYING"
+        self.assertEqual(
+            BUILDER.sha256_bytes(copying.read_bytes()),
+            "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

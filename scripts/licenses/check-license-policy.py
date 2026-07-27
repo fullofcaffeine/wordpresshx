@@ -83,6 +83,20 @@ EXPECTED_ARTIFACT_CLASSES = [
     "wordpress-plugin-theme-site-artifacts",
 ]
 
+BUILD_INPUT_GENERATOR = "scripts/licenses/generate-build-input-inventory.py"
+BUILD_INPUT_INVENTORY = "LICENSES/inventory/build-inputs.json"
+BUILD_INPUT_SBOM = "LICENSES/sbom/build-inputs.spdx.json"
+HAXE_437_COMMIT = "e0b355c6be312c1b17382603f018cf52522ec651"
+HAXE_437_TREE = "55d2c4c59ed55c52fa0660e2fe385081a94b23d1"
+HAXE_437_LICENSE_BLOB = "b4142af748da6420ab697e7485b105c8e6689486"
+HAXE_437_LICENSE_SHA256 = (
+    "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d"
+)
+HAXE_437_LICENSE_PATH = "LICENSES/evidence/licenses/haxe-4.3.7-LICENSE.txt"
+REFLAXE_PHP_COPYING_SHA256 = (
+    "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+)
+
 
 def action_pins(workflow: str, action: str) -> list[str]:
     """Return every immutable ref used for one exact GitHub Action name."""
@@ -138,6 +152,101 @@ class Audit:
         except OSError as error:
             self.errors.append(f"{relative}: cannot read: {error}")
             return ""
+
+
+def validate_build_input_inventory(audit: Audit) -> None:
+    try:
+        generated = subprocess.run(
+            [
+                sys.executable,
+                str(audit.root / BUILD_INPUT_GENERATOR),
+                "--root",
+                str(audit.root),
+            ],
+            cwd=audit.root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError as error:
+        audit.errors.append(f"cannot execute build-input inventory gate: {error}")
+        return
+    audit.check(
+        generated.returncode == 0,
+        "lock-derived build-input inventory is incomplete or stale: "
+        + generated.stderr.strip(),
+    )
+
+    inventory = audit.read_json(
+        audit.root / BUILD_INPUT_INVENTORY,
+        "lock-derived build-input inventory",
+    )
+    sbom = audit.read_json(
+        audit.root / BUILD_INPUT_SBOM,
+        "lock-derived build-input SPDX SBOM",
+    )
+    audit.keys(
+        inventory,
+        {
+            "schemaVersion",
+            "inventoryId",
+            "status",
+            "generatedBy",
+            "scope",
+            "sources",
+            "components",
+            "unresolvedLicenseEvidence",
+            "summary",
+        },
+        "lock-derived build-input inventory",
+    )
+    audit.check(
+        inventory.get("schemaVersion") == 1,
+        "build-input inventory schemaVersion must be 1",
+    )
+    audit.check(
+        inventory.get("status") == "complete-lock-derived-publication-blocked",
+        "build-input inventory must remain complete and publication-blocked",
+    )
+    components = inventory.get("components")
+    sources = inventory.get("sources")
+    unresolved = inventory.get("unresolvedLicenseEvidence")
+    summary = inventory.get("summary", {})
+    audit.check(
+        isinstance(sources, list) and len(sources) > 0,
+        "build-input inventory must contain tracked sources",
+    )
+    audit.check(
+        isinstance(components, list) and len(components) > 0,
+        "build-input inventory must contain normalized components",
+    )
+    audit.check(
+        isinstance(unresolved, list),
+        "build-input unresolved evidence must be an array",
+    )
+    if isinstance(sources, list) and isinstance(summary, dict):
+        audit.check(
+            summary.get("sourceCount") == len(sources),
+            "build-input source summary differs",
+        )
+    if isinstance(components, list) and isinstance(summary, dict):
+        audit.check(
+            summary.get("uniqueComponentCount") == len(components),
+            "build-input component summary differs",
+        )
+    if isinstance(unresolved, list) and isinstance(summary, dict):
+        audit.check(
+            summary.get("unresolvedLicenseEvidenceCount") == len(unresolved),
+            "build-input unresolved summary differs",
+        )
+    packages = sbom.get("packages")
+    audit.check(
+        sbom.get("spdxVersion") == "SPDX-2.3"
+        and isinstance(packages, list)
+        and isinstance(components, list)
+        and len(packages) == len(components),
+        "SPDX build-input SBOM must cover every normalized component",
+    )
 
 
 def validate_policy(audit: Audit, policy: dict[str, Any]) -> None:
@@ -606,6 +715,9 @@ def check_equal(audit: Audit, actual: Any, expected: Any, context: str) -> None:
 
 def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) -> None:
     upstream = audit.read_json(audit.root / "manifests/upstream.lock.json", "upstream lock")
+    toolchain = audit.read_json(
+        audit.root / "manifests/toolchain.lock.json", "toolchain lock"
+    )
     hxx = audit.read_json(audit.root / "packages/hxx/dependency-lock.json", "HXX dependency lock")
     provenance = audit.read_json(
         audit.root / "compiler/reflaxe.php/provenance.json", "PHP compiler provenance"
@@ -619,6 +731,56 @@ def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) 
     )
     php_quality_lock = audit.read_json(
         audit.root / "tooling/php-quality/composer.lock", "PHP quality Composer lock"
+    )
+
+    haxe_lock = toolchain.get("compilers", {}).get("haxe", {})
+    check_equal(audit, haxe_lock.get("version"), "4.3.7", "Haxe version binding")
+    check_equal(audit, haxe_lock.get("commit"), HAXE_437_COMMIT, "Haxe commit binding")
+    check_equal(audit, haxe_lock.get("tree"), HAXE_437_TREE, "Haxe tree binding")
+    expected_haxe_locator = (
+        "https://github.com/HaxeFoundation/haxe/blob/"
+        f"{HAXE_437_COMMIT}/extra/LICENSE.txt"
+    )
+    for component_id in ("haxe-4.3.7-compiler", "haxe-4.3.7-stdlib"):
+        component = components.get(component_id, {})
+        check_equal(
+            audit,
+            component.get("commit"),
+            HAXE_437_COMMIT,
+            f"{component_id} commit binding",
+        )
+        check_equal(
+            audit,
+            component.get("tree"),
+            HAXE_437_TREE,
+            f"{component_id} tree binding",
+        )
+        evidence = component.get("licenseEvidence", [])
+        exact = evidence[0] if isinstance(evidence, list) and evidence else {}
+        check_equal(
+            audit,
+            exact.get("locator"),
+            expected_haxe_locator,
+            f"{component_id} exact license locator",
+        )
+        check_equal(
+            audit,
+            exact.get("blob"),
+            HAXE_437_LICENSE_BLOB,
+            f"{component_id} exact license blob",
+        )
+        check_equal(
+            audit,
+            exact.get("sha256"),
+            HAXE_437_LICENSE_SHA256,
+            f"{component_id} exact license SHA-256",
+        )
+    haxe_snapshot = audit.root / HAXE_437_LICENSE_PATH
+    audit.check(
+        haxe_snapshot.is_file()
+        and hashlib.sha256(haxe_snapshot.read_bytes()).hexdigest()
+        == HAXE_437_LICENSE_SHA256,
+        "vendored Haxe 4.3.7 license snapshot must match the exact pinned source",
     )
 
     entries = upstream.get("entries", {}) if isinstance(upstream, dict) else {}
@@ -754,6 +916,47 @@ def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) 
     audit.check(
         provenance.get("destination", {}).get("releaseEligible") is False,
         "reflaxe.php publication must remain ineligible",
+    )
+    origin_license = origin.get("licenseEvidence", {})
+    check_equal(
+        audit,
+        origin_license.get("sourcePath"),
+        "LICENSE",
+        "PHP compiler origin license path",
+    )
+    check_equal(
+        audit,
+        origin_license.get("completeLicensePath"),
+        "COPYING",
+        "PHP compiler complete license path",
+    )
+    check_equal(
+        audit,
+        origin_license.get("completeLicenseSha256"),
+        REFLAXE_PHP_COPYING_SHA256,
+        "PHP compiler complete license SHA-256",
+    )
+    compiler_copying = audit.root / "compiler/reflaxe.php/COPYING"
+    audit.check(
+        compiler_copying.is_file()
+        and hashlib.sha256(compiler_copying.read_bytes()).hexdigest()
+        == REFLAXE_PHP_COPYING_SHA256,
+        "reflaxe.php must carry the content-bound complete GPLv2 text",
+    )
+    distribution_materials = provenance.get("destination", {}).get(
+        "distributionMaterials", {}
+    )
+    check_equal(
+        audit,
+        distribution_materials,
+        {
+            "sourceArchive": "deterministic-complete-package-source",
+            "noticePath": "LICENSE.md",
+            "completeLicensePath": "COPYING",
+            "fileLevelProvenancePath": "provenance.json",
+            "embeddedSourceManifest": "package-source.json",
+        },
+        "PHP compiler distribution materials",
     )
 
     php_quality_component = components.get("php-quality-build-tool-graph", {})
@@ -976,6 +1179,7 @@ def validate_receipt(audit: Audit) -> None:
             "review",
             "implementation",
             "hostedWorkflow",
+            "historicalVerification",
             "adr017WorkflowRevision",
             "adr009WorkflowRevision",
             "claims",
@@ -1102,14 +1306,6 @@ def validate_receipt(audit: Audit) -> None:
                 isinstance(digest, str) and SHA256.fullmatch(digest) is not None,
                 f"receipt.subject.{subject_id}.sha256 must be lowercase SHA-256",
             )
-            if isinstance(path, str) and isinstance(digest, str):
-                subject_path = audit.root / path
-                try:
-                    actual = hashlib.sha256(subject_path.read_bytes()).hexdigest()
-                except OSError as error:
-                    audit.errors.append(f"receipt subject {path} cannot be read: {error}")
-                else:
-                    audit.check(actual == digest, f"receipt subject digest mismatch: {path}")
 
     receipt_audit = receipt.get("audit", {})
     audit.keys(
@@ -1236,6 +1432,108 @@ def validate_receipt(audit: Audit) -> None:
             "implementation commit must equal the hosted workflow commit",
         )
 
+    historical = receipt.get("historicalVerification", {})
+    audit.keys(
+        historical,
+        {
+            "algorithm",
+            "subjectCommit",
+            "subjectContentSha256",
+            "depthOneFallback",
+            "hostedEvidenceRelation",
+        },
+        "receipt.historicalVerification",
+    )
+    audit.check(
+        historical.get("algorithm")
+        == "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+        "receipt historical verification algorithm differs",
+    )
+    historical_subject_commit = historical.get("subjectCommit")
+    audit.check(
+        isinstance(historical_subject_commit, str)
+        and SHA1.fullmatch(historical_subject_commit) is not None,
+        "receipt historical subject commit must be exact",
+    )
+    audit.check(
+        historical.get("depthOneFallback")
+        == "self-contained-subject-digest-inventory",
+        "receipt historical depth-one fallback differs",
+    )
+    audit.check(
+        historical.get("hostedEvidenceRelation")
+        == (
+            "the recorded hosted run predates this final preparation subject "
+            "set and does not authenticate it"
+        ),
+        "receipt must not transfer its older hosted run to later subject bytes",
+    )
+    records = (
+        sorted(
+            (
+                value
+                for value in subjects.values()
+                if isinstance(value, dict)
+            ),
+            key=lambda value: str(value.get("path")),
+        )
+        if isinstance(subjects, dict)
+        else []
+    )
+    material = "".join(
+        f"{record.get('sha256')}  {record.get('path')}\n"
+        for record in records
+    ).encode("utf-8")
+    audit.check(
+        hashlib.sha256(material).hexdigest()
+        == historical.get("subjectContentSha256"),
+        "receipt historical subject inventory digest differs",
+    )
+    history_available = False
+    if isinstance(historical_subject_commit, str):
+        history_available = (
+            subprocess.run(
+                [
+                    "git",
+                    "cat-file",
+                    "-e",
+                    f"{historical_subject_commit}^{{commit}}",
+                ],
+                cwd=audit.root,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            ).returncode
+            == 0
+        )
+    for record in records:
+        path = record.get("path")
+        digest = record.get("sha256")
+        if not isinstance(path, str) or not isinstance(digest, str):
+            continue
+        current_path = audit.root / path
+        audit.check(
+            current_path.is_file(),
+            f"receipt historical subject path is absent: {path}",
+        )
+        current_matches = (
+            current_path.is_file()
+            and hashlib.sha256(current_path.read_bytes()).hexdigest() == digest
+        )
+        if current_matches or not history_available:
+            continue
+        historical_bytes = subprocess.run(
+            ["git", "show", f"{historical_subject_commit}:{path}"],
+            cwd=audit.root,
+            capture_output=True,
+            check=False,
+        )
+        audit.check(
+            historical_bytes.returncode == 0
+            and hashlib.sha256(historical_bytes.stdout).hexdigest() == digest,
+            f"receipt historical subject digest mismatch: {path}",
+        )
+
     claims = receipt.get("claims", {})
     audit.keys(
         claims,
@@ -1285,6 +1583,7 @@ def main() -> int:
         args.components.resolve() if args.components else root / "LICENSES/components.json"
     )
     audit = Audit(root)
+    validate_build_input_inventory(audit)
     policy = audit.read_json(policy_path, "license policy")
     inventory = audit.read_json(components_path, "component inventory")
     if policy:

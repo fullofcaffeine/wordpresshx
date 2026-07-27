@@ -2,15 +2,27 @@
 
 This is an inventory for qualified review. It is **not** the final notice file
 for a release, does not reproduce all required license texts, and is not a
-license grant. Exact machine-readable evidence lives in `components.json`.
+license grant. Curated machine-readable findings live in `components.json`.
+The complete lock-derived observation set lives in
+`inventory/build-inputs.json`; its SPDX view is
+`sbom/build-inputs.spdx.json`.
+
+The generated inventory currently covers 23 tracked lock/manifests, 3,825
+component observations, and 1,781 exact normalized components. Six components
+have no license declaration in their lock metadata: Genes 1.38.0 and five npm
+build dependencies. Each now binds exact source or package-artifact license
+evidence in `evidence/component-license-evidence.json`; the lock omissions are
+not silently treated as license conclusions. OCI images are classified as
+non-redistributed test inputs, and fixture-only dependencies remain visibly
+fixture-only.
 
 | Component or group | Current role | Observed declaration/evidence | Current treatment |
 |---|---|---|---|
 | WordPress 7.0 | exact profile/runtime authority | GPL-2.0-or-later at exact source | derive facts/contracts with provenance; review pending |
 | Gutenberg embedded and 23.4.0 | exact editor profile authorities | project GPL statement; post-2021 contribution dual-license statement | keep profiles separate; derived-data review pending |
 | `wordpresshx-port` compiler origin | copied/generalized PHP compiler seed | GPL-2.0-or-later exact source grant and file-level provenance | preserve attribution/grant; final repository treatment pending |
-| Genes 1.33.0 | generic browser compiler input | exact MIT source license; release archive omits license file | build input; future notice/output audit required |
-| Haxe 4.3.7 | compiler and standard-library input | compiler GPL-2.0-or-later; standard library MIT per Haxe Foundation | build provenance plus per-target copied-output audit |
+| Genes 1.33.0 and active 1.38.0 | generic browser compiler inputs | both exact source revisions have content-bound MIT evidence; release archives remain separate notice boundaries | build input; future output audit required |
+| Haxe 4.3.7 | compiler and standard-library input | exact combined compiler GPL-2.0-or-later and standard-library MIT text is preserved at `evidence/licenses/haxe-4.3.7-LICENSE.txt` | build provenance plus per-target copied-output audit |
 | `tink_hxx` 0.25.1 | compile-time parser | metadata says MIT; exact source LICENSE is Unlicense; archive omits license | unresolved conflict; publication blocked |
 | `tink_anon` 0.7.0 | compile-time parser dependency | exact manifest says MIT; exact LICENSE is Unlicense | unresolved conflict; publication blocked |
 | Lix 15.12.4 | build package manager | npm metadata says MIT; shipped LICENSE is Unlicense | unresolved conflict; publication blocked |
@@ -40,6 +52,10 @@ Build-only tools belong in build provenance unless their bytes are copied or
 redistributed. Conversely, a compile-time dependency cannot be omitted merely
 because it ran at compile time if its implementation bytes appear in the final
 artifact.
+
+The lock-derived SPDX document intentionally uses `NOASSERTION` for conclusions.
+License strings copied from lock metadata remain in the companion inventory;
+they are not promoted into artifact conclusions without text/origin review.
 
 ## Known blocking findings
 

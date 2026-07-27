@@ -18,6 +18,7 @@ CHECKER = ROOT / "scripts/licenses/check-license-policy.py"
 POLICY_PATH = ROOT / "LICENSES/policy.json"
 COMPONENTS_PATH = ROOT / "LICENSES/components.json"
 GOLDEN_PATH = ROOT / "fixtures/licenses/expected/publication-blocked.txt"
+BUILD_INPUT_TEST = ROOT / "scripts/licenses/test-build-input-inventory.py"
 
 
 def load_checker_module() -> Any:
@@ -110,6 +111,20 @@ def main() -> int:
         "an absent required action must fail",
     )
 
+    build_inputs = subprocess.run(
+        [sys.executable, str(BUILD_INPUT_TEST)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    expect(
+        build_inputs.returncode == 0,
+        "lock-derived build-input inventory failed:\n"
+        + build_inputs.stdout
+        + build_inputs.stderr,
+    )
+
     normal = run_checker()
     expect(normal.returncode == 0, f"ordinary policy validation failed:\n{normal.stderr}")
     expect(
@@ -182,8 +197,8 @@ def main() -> int:
     )
 
     print(
-        "license policy tests passed: 1 positive, 1 blocked gate, "
-        "8 policy mutations, 3 action-pin cases"
+        "license policy tests passed: complete lock-derived inventory, "
+        "1 positive, 1 blocked gate, 8 policy mutations, 3 action-pin cases"
     )
     return 0
 

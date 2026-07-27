@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "inventoryId": "wordpresshx-third-party-and-origin-audit-v1",
   "status": "provisional-qualified-review-required",
-  "scope": "Repository source, generated catalogs, pinned compiler inputs, HXX parser and generated-PHP quality closures, CI/build tools, and exact runtime test inputs present before ADR-020 acceptance.",
+  "scope": "Curated review anchors for repository origins, copied source, known conflicts, and material toolchain boundaries. Complete lock-derived build/test/source observations live in LICENSES/inventory/build-inputs.json and its companion SPDX SBOM.",
   "components": [
     {
       "id": "actions-checkout-7.0.0",
@@ -244,10 +244,10 @@
       "licenseEvidence": [
         {
           "kind": "exact-source-license",
-          "locator": "https://github.com/HaxeFoundation/haxe/blob/e0b3551ca0511b660d5f3ba8752b3c4c89587307/extra/LICENSE.txt",
+          "locator": "https://github.com/HaxeFoundation/haxe/blob/e0b355c6be312c1b17382603f018cf52522ec651/extra/LICENSE.txt",
           "blob": "b4142af748da6420ab697e7485b105c8e6689486",
-          "sha256": null,
-          "observation": "Haxe compiler license statement at the exact 4.3.7 tag commit."
+          "sha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+          "observation": "Combined Haxe compiler GPL and standard-library MIT license text at the exact pinned 4.3.7 commit."
         }
       ],
       "licenseConclusion": "verified-declaration-pending-qualified-review",
@@ -272,11 +272,11 @@
       "declaredLicense": "MIT",
       "licenseEvidence": [
         {
-          "kind": "official-project-licensing-statement",
-          "locator": "https://haxe.org/foundation/open-source.html",
-          "blob": null,
-          "sha256": null,
-          "observation": "The Haxe Foundation identifies the standard library as MIT-licensed."
+          "kind": "exact-source-license",
+          "locator": "https://github.com/HaxeFoundation/haxe/blob/e0b355c6be312c1b17382603f018cf52522ec651/extra/LICENSE.txt",
+          "blob": "b4142af748da6420ab697e7485b105c8e6689486",
+          "sha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d",
+          "observation": "The exact pinned Haxe source contains the standard-library MIT text and compiler GPL text in one content-bound license file."
         }
       ],
       "licenseConclusion": "verified-declaration-output-boundary-pending",

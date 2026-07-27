@@ -7,6 +7,13 @@
     "commit": "20b9c974f141375b6cf191db6f25b115812e282c",
     "tree": "1de1d4869f8cea49ebebc9e54295057c62dee011",
     "license": "GPL-2.0-or-later",
+    "licenseEvidence": {
+      "sourcePath": "LICENSE",
+      "sourceSha256": "e23f0691c0099420d74e4c0a66a8581d5994d07277d219597aec890ec0b0c2ed",
+      "localNoticePath": "LICENSE.md",
+      "completeLicensePath": "COPYING",
+      "completeLicenseSha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
     "sources": [
       {
         "path": "src/wphx/compiler/php/WphxPhpCompiler.hx",
@@ -62,7 +69,14 @@
     "releaseBlockers": [
       "wordpresshx-adr-020",
       "wordpresshx-sdk-002"
-    ]
+    ],
+    "distributionMaterials": {
+      "sourceArchive": "deterministic-complete-package-source",
+      "noticePath": "LICENSE.md",
+      "completeLicensePath": "COPYING",
+      "fileLevelProvenancePath": "provenance.json",
+      "embeddedSourceManifest": "package-source.json"
+    }
   },
   "transformations": [
     "Moved the generic IR and printer from the mixed compiler class into independent modules.",

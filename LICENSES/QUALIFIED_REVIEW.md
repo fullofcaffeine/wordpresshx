@@ -47,6 +47,12 @@ upstream positions; this file does not independently decide their application.
 
 - `LICENSES/policy.json`
 - `LICENSES/components.json`
+- `LICENSES/inventory/build-inputs.json`
+- `LICENSES/sbom/build-inputs.spdx.json`
+- `LICENSES/evidence/component-license-evidence.json`
+- `LICENSES/evidence/licenses/`
+- `scripts/licenses/generate-build-input-inventory.py`
+- `scripts/licenses/test-build-input-inventory.py`
 - `LICENSES/GENERATED_OUTPUT.md`
 - `LICENSES/THIRD_PARTY_NOTICES.md`
 - `docs/adr/020-licensing-and-generated-output.md`

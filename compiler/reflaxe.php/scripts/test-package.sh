@@ -55,6 +55,31 @@ if ! cmp -s "${build_a}/artifact-manifest.json" "${build_b}/artifact-manifest.js
   exit 1
 fi
 
+python3 - "${build_a}/${archive_name}" "${build_a}/artifact-manifest.json" <<'PY'
+import hashlib
+import json
+import sys
+import zipfile
+from pathlib import Path
+
+archive_path = Path(sys.argv[1])
+artifact = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+with zipfile.ZipFile(archive_path) as archive:
+    assert "COPYING" in archive.namelist()
+    copying = archive.read("COPYING")
+    source = json.loads(archive.read("package-source.json"))
+assert hashlib.sha256(copying).hexdigest() == (
+    "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+)
+assert source["licenseMaterials"]["expression"] == "GPL-2.0-or-later"
+assert source["licenseMaterials"]["completeText"]["path"] == "COPYING"
+assert source["sourceCorrespondence"]["status"] == "complete-source-only-archive"
+assert artifact["package"]["completeLicenseText"]["path"] == "COPYING"
+assert artifact["package"]["sourceCorrespondence"] == (
+    "complete-source-only-archive"
+)
+PY
+
 artifact_root="${package_root}/build/package-artifact"
 mkdir -p "${artifact_root}"
 cp -f "${build_a}/${archive_name}" "${artifact_root}/${archive_name}"

@@ -30,11 +30,26 @@ the Unlicense; several Haxelib archives declare MIT but omit a license text; and
 commit inspected. Generated runtime/standard-library/boilerplate bytes and the
 legal treatment of derived catalogs have not yet been closed.
 
+The Haxe 4.3.7 compiler and standard-library evidence is now bound to one exact
+commit, tree, license blob, and SHA-256, with the byte-identical combined
+license text preserved in `LICENSES/evidence/licenses/haxe-4.3.7-LICENSE.txt`.
+This resolves the evidence-identity defect; it does not decide which Haxe
+runtime or standard-library bytes reach any future packed output.
+
 Automated checks can prove this inventory remains internally consistent. A
 separate Oracle can challenge the inventory, reasoning, and proposed policy
 from a software-licensing review perspective, but it cannot supply contributor
 rights, provide legal advice, or authorize publication. The product owner
 retains those decisions.
+
+After the first Oracle review, the implementation added a separate
+lock-derived evidence layer. `LICENSES/inventory/build-inputs.json` discovers
+every recognized tracked dependency/source/toolchain lock and preserves each
+component observation; `LICENSES/sbom/build-inputs.spdx.json` provides a
+deterministic SPDX 2.3 projection. The portable replay validates the committed
+source hashes without requiring `.git`, while an exact Git archive/path manifest
+must prove whole-tree completeness for the review packet. This closes neither
+artifact-specific byte origins nor the owner licensing decision.
 
 ## Proposed decision
 

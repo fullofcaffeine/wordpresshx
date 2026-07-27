@@ -90,6 +90,13 @@
     "status": "passed",
     "fullMatrixStatus": "passed"
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "df20fc1b10a9955260cbfeb0b68019a291760722",
+    "subjectContentSha256": "13ccb86962425f228dd21758b6524122e9e7e6c2b4d57a9c5fddf32bbad8dbc0",
+    "depthOneFallback": "self-contained-subject-digest-inventory",
+    "hostedEvidenceRelation": "the recorded hosted run predates this final preparation subject set and does not authenticate it"
+  },
   "adr017WorkflowRevision": {
     "observedAt": "2026-07-19T19:39:00Z",
     "reason": "ADR-017 adds one exact-pinned checkout use for its independent policy job.",
