@@ -337,6 +337,12 @@ of tree. Its exact report, decision, and input inventory are retained under
 `review/oracle/results/adr019-review-9b855b9/`. The content-addressed receipts,
 live Beads verification, exhaustive schema lock plus independent validator,
 and symlink rejection above are the correction subject awaiting rereview.
+Correction commit `fcd712affe5c3ce1582beae73439f96b91b56f19`
+passed focused hosted run
+[`30227977113`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30227977113),
+job `89861397432`. The clean runner fetched `refs/dolt/data`, initialized its
+local Beads database from the public Dolt remote, pulled it, and matched the
+content-addressed SDK-052 status projection.
 
 Acceptance commands:
 

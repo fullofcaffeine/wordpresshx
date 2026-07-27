@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-27T00:36:00Z",
+  "status": "implemented-review-pending",
+  "observedAt": "2026-07-27T00:43:13Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "e599c4105834b6a71a378bd01be41e74d61e80340c17be46bcbb2e8180cc29fe"
+      "sha256": "1ca5528d1af76ce4204d89d5b98fe293a8bc72e0db6c033788bf209590822edc"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -148,10 +148,10 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-oracle-correction-hosted-run",
+    "runId": 30227977113,
+    "jobId": 89861397432,
+    "commit": "fcd712affe5c3ce1582beae73439f96b91b56f19",
+    "status": "passed",
     "failedCorrectionRunId": 30226771473,
     "failedCorrectionJobIds": [89858153619, 89858661844],
     "failedCorrectionReason": "fresh-runner-bd-dolt-pull-failed-before-diagnostic-output-was-preserved",
@@ -173,12 +173,12 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The correction subject passes locally; a fresh focused hosted run and independent Oracle rereview are required before ADR acceptance."
+    "The correction subject passes locally and in the focused hosted gate; independent Oracle rereview is required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
-    "deterministicFailClosedScenarios": "passed-local-correction-hosted-pending",
+    "deterministicFailClosedScenarios": "passed-local-and-hosted",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",
     "productionArtifactInventory": "not-tested",
