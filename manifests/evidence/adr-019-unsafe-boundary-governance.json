@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-review-pending",
-  "observedAt": "2026-07-27T01:16:58Z",
+  "status": "verified",
+  "observedAt": "2026-07-27T01:35:14Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "f778326d04923c3b149ec92e654a4eccf51fbe954559f15e139bb125b9ab05d2"
+      "sha256": "4a3a9b20eaa06efa20912632df9e4cb4ce17340c4d3bc0324516f4d639e1251e"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
-      "sha256": "3a3b69962e73529480658d774d89b1dd728d76be8cc5d98f3f7986d4089d860d"
+      "sha256": "54df4b0788c950e6b29a8df35d19400ff13c047ad803c50ec73ce94b18051b6f"
     },
     "schema": {
       "path": "schemas/unsafe-boundary-waiver.schema.json",
@@ -47,7 +47,7 @@
     },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "a0f3af1fa4677297b93cc617431de3ddf3537389bdd6876c1014ed6ce87dce58"
+      "sha256": "3382a880d0e9631e7efc8d20b0a8f9b2d60e343453d259e88dc9add201d16b9a"
     },
     "canonicalReview": {
       "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
@@ -118,9 +118,9 @@
       "bash scripts/check-repository.sh"
     ],
     "sourceTreeDigestAlgorithm": "sha256-sorted-full-path-content-digests-v2",
-    "sourceTreeSha256": "6e15907f37f93a09279acd70599c62a3279be116ea2b751e224d469b3d1d282d",
+    "sourceTreeSha256": "374b3f9dd1eefcb2dff9cdfbc1553a3c21ec49e95446996683cb8c318f5ed5c6",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
-    "policyDigest": "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38",
+    "policyDigest": "dde70444406f1ded7f16704854f3ad01652deca6beef4cc79e59bb3274225be6",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
     "scenarioDigest": "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf",
     "waiverDigestAlgorithm": "sha256-canonical-json-v1",
@@ -164,8 +164,29 @@
       "resolvedFindings": ["ADR019-F002", "ADR019-F004"],
       "openFindings": ["ADR019-F001", "ADR019-F003", "ADR019-RF001", "ADR019-RF002"]
     },
-    "freshIndependentOracleRereview": "pending-second-correction",
-    "acceptanceAuthorized": false
+    "finalOracleRereview": {
+      "decision": "accepted",
+      "reviewedCommit": "2ca5fca6a227f853d5ecf3953e06377b62d10677",
+      "implementationCommit": "0f01fda14c81ee2476cdc31e41885afcf50e3fb5",
+      "packetSha256": "bcb9b758ea86e7212852bb606185c0783f157c2ff5ae08f63b9d7d0aad3bfb13",
+      "reportPath": "review/oracle/results/adr019-rereview-2-2ca5fca/ORACLE-ADR019-REREVIEW-2.md",
+      "reportSha256": "2dbc4d391aad0ed661e239ced2a16b91acec650fcee50215e59d929feb93f4b0",
+      "decisionPath": "review/oracle/results/adr019-rereview-2-2ca5fca/adr019-rereview-2-decision.json",
+      "decisionSha256": "c7391fc6bf4093c633abb503618f8c5c65d4ab95dc7706d828aa1b1689614d63",
+      "reviewedInputsPath": "review/oracle/results/adr019-rereview-2-2ca5fca/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "2768aaa36d35652c5efefbc378e55d2f13c1f685dd1bede9d41d523fe71cea8e",
+      "resolvedFindings": [
+        "ADR019-F001",
+        "ADR019-F002",
+        "ADR019-F003",
+        "ADR019-F004",
+        "ADR019-RF001",
+        "ADR019-RF002"
+      ],
+      "newFindings": []
+    },
+    "freshIndependentOracleRereview": "accepted",
+    "acceptanceAuthorized": true
   },
   "relationships": {
     "adr008UnsafeClassificationRemainsUnsupported": true,
@@ -206,10 +227,10 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The second correction passes locally and in the focused hosted gate; a fresh independent Oracle rereview is required before ADR acceptance."
+    "Independent Oracle acceptance covers the bounded governance architecture only; all production and publication claims remain withheld."
   ],
   "claims": {
-    "architectureDecision": "proposed-pending-independent-review",
+    "architectureDecision": "accepted-after-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
     "deterministicFailClosedScenarios": "passed-local-and-hosted",
     "productionSourceScanner": "not-tested",

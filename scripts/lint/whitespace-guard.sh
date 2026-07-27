@@ -9,6 +9,7 @@ cd "${repository_root}"
 oracle_report_exclusions=(
   ':!review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md'
   ':!review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md'
+  ':!review/oracle/results/adr019-rereview-2-2ca5fca/ORACLE-ADR019-REREVIEW-2.md'
 )
 
 if [[ "${1:-}" == "--staged" ]]; then

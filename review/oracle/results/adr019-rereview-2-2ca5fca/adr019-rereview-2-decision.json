@@ -1,0 +1,37 @@
+{
+  "schema": "wordpress-hx.oracle-adr019-rereview-2.v1",
+  "reviewedCommit": "2ca5fca6a227f853d5ecf3953e06377b62d10677",
+  "implementationCommit": "0f01fda14c81ee2476cdc31e41885afcf50e3fb5",
+  "packetSha256": "bcb9b758ea86e7212852bb606185c0783f157c2ff5ae08f63b9d7d0aad3bfb13",
+  "hostedEvidence": {
+    "runId": 30229302949,
+    "jobId": 89865057093,
+    "status": "supporting-passed"
+  },
+  "reviewer": {
+    "identity": "Codex Oracle agent /root/oracle_wordpresshx_review",
+    "provider": "OpenAI",
+    "model": "GPT-5 Codex",
+    "role": "independent senior application-security and release-governance reviewer"
+  },
+  "findingDispositions": [
+    {"id": "ADR019-F001", "disposition": "resolved"},
+    {"id": "ADR019-F002", "disposition": "resolved"},
+    {"id": "ADR019-F003", "disposition": "resolved"},
+    {"id": "ADR019-F004", "disposition": "resolved"},
+    {"id": "ADR019-RF001", "disposition": "resolved"},
+    {"id": "ADR019-RF002", "disposition": "resolved"}
+  ],
+  "newFindings": [],
+  "boundedClaims": {
+    "architecturePrototypeAccepted": true,
+    "productionScannersVerified": false,
+    "publicUnsafeApiAuthorized": false,
+    "wordpressOrBrowserBehaviorVerified": false,
+    "publicationAuthorized": false,
+    "stableSupportAuthorized": false,
+    "productionSupportAuthorized": false,
+    "manualHumanReviewRequired": false
+  },
+  "decision": "accepted"
+}

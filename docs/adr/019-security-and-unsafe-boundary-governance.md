@@ -1,8 +1,8 @@
 # ADR-019: Security and unsafe-boundary governance
 
-- Status: proposed; independent Oracle review required
+- Status: accepted after independent Oracle review
 - Date: 2026-07-26
-- Owners/reviewers: Marcelo Serpa (product owner and accountable security/release owner), Codex (policy and executable-fixture implementation), independent security Oracle (acceptance pending)
+- Owners/reviewers: Marcelo Serpa (product owner and accountable security/release owner), Codex (policy and executable-fixture implementation), independent security Oracle (accepted)
 - Bead: `wordpresshx-adr-019`
 - Profiles/layers: maintained Haxe, generated PHP/JavaScript/TypeScript, profile/adoption contracts, compiler target segments, artifact manifests, security evidence, and release gates
 - Supersedes: informal waiver descriptions in the PRD and earlier ADRs
@@ -365,13 +365,20 @@ record. It also found that the immutable Repomix packet omitted the declared
 reproducible. The exact rereview artifacts are retained under
 `review/oracle/results/adr019-rereview-0542155/`. The recursive ancestor
 validation, fabricated-chain mutation, expanded Ajv instances/probe, and
-packet completeness check are the second correction subject. ADR acceptance
-remains withheld pending a fresh independent Oracle rereview. Correction commit
+packet completeness check are the second correction subject. Correction commit
 `0f01fda14c81ee2476cdc31e41885afcf50e3fb5` passed focused hosted run
 [`30229302949`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30229302949),
 job `89865057093`, including clean lockfile installation, all eight Ajv
 instances/probes, fresh Beads initialization/pull, recursive ancestry
 validation, and the fabricated-chain rejection.
+
+The independent second rereview accepted evidence commit
+`2ca5fca6a227f853d5ecf3953e06377b62d10677`. It verified the packet and
+all 38 declared paths in both representations, reproduced clean Ajv and Python
+gates, ran live Beads verification, resolved F001-F004 and RF001-RF002, and
+reported no new findings. The exact report, decision, and reviewed-input
+inventory are retained under
+`review/oracle/results/adr019-rereview-2-2ca5fca/`.
 
 Acceptance commands:
 
@@ -389,7 +396,7 @@ git diff --check
 These checks prove a bounded governance model. They do not scan every production
 source/artifact, publish an unsafe constructor, execute WordPress security
 behavior, complete the release security corpus, or authorize stable support.
-Fresh independent Oracle acceptance of the second correction remains required.
+The architecture decision is accepted within this bounded prototype scope.
 
 ## Migration, rollback, and supersession
 

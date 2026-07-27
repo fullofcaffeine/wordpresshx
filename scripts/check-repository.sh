@@ -773,6 +773,9 @@ required_files=(
   review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md
   review/oracle/results/adr019-rereview-0542155/adr019-rereview-decision.json
   review/oracle/results/adr019-rereview-0542155/reviewed-inputs.sha256
+  review/oracle/results/adr019-rereview-2-2ca5fca/ORACLE-ADR019-REREVIEW-2.md
+  review/oracle/results/adr019-rereview-2-2ca5fca/adr019-rereview-2-decision.json
+  review/oracle/results/adr019-rereview-2-2ca5fca/reviewed-inputs.sha256
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -2559,10 +2562,7 @@ else:
 
 assert unsafe_boundary_policy["schemaVersion"] == 1
 assert unsafe_boundary_policy["decisionId"] == "ADR-019"
-assert unsafe_boundary_policy["status"] in {
-    "proposed-pending-independent-review",
-    "accepted-after-independent-review",
-}
+assert unsafe_boundary_policy["status"] == "accepted-after-independent-review"
 assert unsafe_boundary_policy["policyId"] == (
     "wordpress-hx-unsafe-boundary-v1"
 )
@@ -2571,11 +2571,7 @@ assert adr019_receipt["receiptId"] == (
     "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE"
 )
 assert adr019_receipt["bead"] == "wordpresshx-adr-019"
-assert adr019_receipt["status"] in {
-    "implemented-hosted-pending",
-    "implemented-review-pending",
-    "verified",
-}
+assert adr019_receipt["status"] == "verified"
 for adr019_subject in adr019_receipt["subject"].values():
     assert hashlib.sha256(Path(adr019_subject["path"]).read_bytes()).hexdigest() == (
         adr019_subject["sha256"]
@@ -2615,7 +2611,7 @@ assert adr019_verification["sourceTreeDigestAlgorithm"] == (
     "sha256-sorted-full-path-content-digests-v2"
 )
 assert adr019_verification["policyDigest"] == (
-    "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38"
+    "dde70444406f1ded7f16704854f3ad01652deca6beef4cc79e59bb3274225be6"
 )
 assert adr019_verification["scenarioDigest"] == (
     "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf"
@@ -2711,10 +2707,45 @@ for adr019_review_path, adr019_review_digest in (
     assert hashlib.sha256(Path(adr019_review_path).read_bytes()).hexdigest() == (
         adr019_review_digest
     )
-assert adr019_receipt["review"]["freshIndependentOracleRereview"] == (
-    "pending-second-correction"
+adr019_final_review = adr019_receipt["review"]["finalOracleRereview"]
+assert adr019_final_review["decision"] == "accepted"
+assert adr019_final_review["reviewedCommit"] == (
+    "2ca5fca6a227f853d5ecf3953e06377b62d10677"
 )
-assert adr019_receipt["review"]["acceptanceAuthorized"] is False
+assert adr019_final_review["implementationCommit"] == (
+    "0f01fda14c81ee2476cdc31e41885afcf50e3fb5"
+)
+assert adr019_final_review["packetSha256"] == (
+    "bcb9b758ea86e7212852bb606185c0783f157c2ff5ae08f63b9d7d0aad3bfb13"
+)
+assert adr019_final_review["resolvedFindings"] == [
+    "ADR019-F001",
+    "ADR019-F002",
+    "ADR019-F003",
+    "ADR019-F004",
+    "ADR019-RF001",
+    "ADR019-RF002",
+]
+assert adr019_final_review["newFindings"] == []
+for adr019_review_path, adr019_review_digest in (
+    (
+        adr019_final_review["reportPath"],
+        adr019_final_review["reportSha256"],
+    ),
+    (
+        adr019_final_review["decisionPath"],
+        adr019_final_review["decisionSha256"],
+    ),
+    (
+        adr019_final_review["reviewedInputsPath"],
+        adr019_final_review["reviewedInputsSha256"],
+    ),
+):
+    assert hashlib.sha256(Path(adr019_review_path).read_bytes()).hexdigest() == (
+        adr019_review_digest
+    )
+assert adr019_receipt["review"]["freshIndependentOracleRereview"] == "accepted"
+assert adr019_receipt["review"]["acceptanceAuthorized"] is True
 assert adr019_receipt["relationships"] == {
     "adr008UnsafeClassificationRemainsUnsupported": True,
     "adr012RawOutputConstructorRemainsWithheld": True,
@@ -2723,6 +2754,12 @@ assert adr019_receipt["relationships"] == {
     "sdk093ProductionScannerAndCorpusRequired": True,
 }
 adr019_claims = adr019_receipt["claims"]
+assert adr019_claims["architectureDecision"] == (
+    "accepted-after-independent-review"
+)
+assert unsafe_boundary_policy["claims"]["architectureDecision"] == (
+    "accepted-after-independent-review"
+)
 for unproven_unsafe_claim in (
     "productionSourceScanner",
     "productionGeneratedScanner",
@@ -12025,7 +12062,8 @@ done < <(find review/g1-php-readability/packet -type f -print0)
 git diff --check HEAD -- \
   . \
   ':!review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md' \
-  ':!review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md'
+  ':!review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md' \
+  ':!review/oracle/results/adr019-rereview-2-2ca5fca/ORACLE-ADR019-REREVIEW-2.md'
 
 bash scripts/ci/check-security-tooling.sh
 

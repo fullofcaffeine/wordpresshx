@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-019",
-  "status": "proposed-pending-independent-review",
+  "status": "accepted-after-independent-review",
   "policyId": "wordpress-hx-unsafe-boundary-v1",
   "authority": {
     "defaultDisposition": "blocked",
@@ -229,7 +229,7 @@
     "reviewRequired": "WPX1912"
   },
   "claims": {
-    "architectureDecision": "proposed-pending-independent-review",
+    "architectureDecision": "accepted-after-independent-review",
     "prototypePolicyValidator": "implemented",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",

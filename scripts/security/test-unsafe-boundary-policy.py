@@ -1176,8 +1176,13 @@ def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
         raise ValidationError("diagnostic codes changed or collide")
 
     claims = object_value(policy["claims"], "claims")
+    expected_architecture_decision = (
+        "accepted-after-independent-review"
+        if policy["status"] == "accepted-after-independent-review"
+        else "proposed-pending-independent-review"
+    )
     if claims != {
-        "architectureDecision": "proposed-pending-independent-review",
+        "architectureDecision": expected_architecture_decision,
         "prototypePolicyValidator": "implemented",
         "productionSourceScanner": "not-tested",
         "productionGeneratedScanner": "not-tested",
