@@ -1,0 +1,2 @@
+Synthetic review input for ADR-019 governance validation.
+This file contains no executable boundary and grants no production authority.

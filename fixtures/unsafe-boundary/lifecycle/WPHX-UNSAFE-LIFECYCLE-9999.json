@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "ledgerId": "WPHX-UNSAFE-LIFECYCLE-9999",
+  "waiverId": "WPHX-UNSAFE-9999",
+  "simulationOnly": true,
+  "currentRecordId": "WPHX-UNSAFE-LIFECYCLE-9999-01",
+  "records": [
+    {
+      "id": "WPHX-UNSAFE-LIFECYCLE-9999-01",
+      "sequence": 1,
+      "recordedAt": "2026-07-20T00:00:00Z",
+      "state": "active",
+      "waiverSubjectSha256": "4ee3256bef153e8ab7995e83d306f110de2102109efb23d916dd25f74262c215",
+      "reviewReceiptSha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f",
+      "previousRecordId": null,
+      "previousRecordSha256": null,
+      "renewalOf": null,
+      "supersededBy": null,
+      "revocation": {
+        "at": null,
+        "reason": null
+      },
+      "removalStatus": {
+        "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json",
+        "sha256": "9fc2f89803609a7fda4af4b364bd5d547d5a8a94e02e00a912791f4948e4c6cc"
+      }
+    }
+  ]
+}

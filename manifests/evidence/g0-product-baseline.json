@@ -17,7 +17,7 @@
     },
     "validator": {
       "path": "scripts/gates/check-g0-baseline.py",
-      "sha256": "fdaddf84f2433e6d774b812c82f3a3d1daedc1aaed9f642a777a780260767e42"
+      "sha256": "7567044faa54f61c3e9c4f976741370566243066a38a9595f5a79d5d13861d3c"
     },
     "tests": {
       "path": "scripts/gates/test-g0-baseline.py",

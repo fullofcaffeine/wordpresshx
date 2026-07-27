@@ -1,0 +1,58 @@
+{
+  "schema": "wordpress-hx.oracle-adr019-review.v1",
+  "reviewedCommit": "9b855b979c8db30822cc6cffcc6110e4e44f6e1f",
+  "reviewer": {
+    "model": "GPT-5.6",
+    "provider": "OpenAI",
+    "role": "independent-security-oracle-agent"
+  },
+  "inputs": {
+    "packetSha256": "8adf80367cc104323908bd1c46327f3090b444905562fdc3314d944862098644",
+    "promptSha256": "9022e588986be72936593d06dc225538e6bbd142f6338a713a59f2778051a9e4",
+    "repositorySnapshotSha256": "fb3bc9acd6da3732fab788b5b69781202d9e88cf890c3d23b82a1df575cb10af",
+    "declaredInspectionPathsSha256": "07dc98b96049feb1acb717207a7eda51e408921192931cd70136e45c70fec43a",
+    "declaredInspectionPathsPresent": {
+      "present": 17,
+      "declared": 17
+    }
+  },
+  "findings": [
+    {
+      "id": "ADR019-F001",
+      "severity": "blocking-high",
+      "confidence": "high",
+      "summary": "The waiver schema cannot represent revoked/superseded/renewal ancestry, and the validator accepts nonexistent removal Beads and already-missed removal deadlines."
+    },
+    {
+      "id": "ADR019-F002",
+      "severity": "blocking-high",
+      "confidence": "high",
+      "summary": "Independent approval is reduced to reviewer-owner string inequality plus any listed evidence-file hash, so approval provenance is forgeable."
+    },
+    {
+      "id": "ADR019-F003",
+      "severity": "blocking-high",
+      "confidence": "high",
+      "summary": "The schema validator accepts material weakenings to waiver ID, UTC timestamp, and nested review-required rules."
+    },
+    {
+      "id": "ADR019-F004",
+      "severity": "major-medium",
+      "confidence": "high",
+      "summary": "Repository path confinement follows symlinks and can bind source/evidence outside the repository."
+    }
+  ],
+  "boundedClaims": {
+    "architecturePrototypeOnly": true,
+    "productionSourceScanner": "not-tested",
+    "productionGeneratedScanner": "not-tested",
+    "productionArtifactInventory": "not-tested",
+    "productionWaiverApi": "withheld",
+    "wordpressOrBrowserSecurityBehavior": "not-tested",
+    "stableReleaseAuthorized": false,
+    "publicationAuthorized": false,
+    "productionSupport": "not-tested",
+    "manualHumanReviewRequired": false
+  },
+  "finalDecision": "changes-required"
+}

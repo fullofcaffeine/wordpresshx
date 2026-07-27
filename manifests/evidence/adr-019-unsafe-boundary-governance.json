@@ -2,20 +2,32 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-review-pending",
-  "observedAt": "2026-07-26T23:28:09Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-26T23:52:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "788208adc74f01f4bee5c796eb1074046009bce2edf8ba9f691e01d4f4c82f99"
+      "sha256": "e599c4105834b6a71a378bd01be41e74d61e80340c17be46bcbb2e8180cc29fe"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
-      "sha256": "209c134af0c94c7711fdc8b2d17278b4ef2dc9e1c9433f52e1649942082b339f"
+      "sha256": "3a3b69962e73529480658d774d89b1dd728d76be8cc5d98f3f7986d4089d860d"
     },
     "schema": {
       "path": "schemas/unsafe-boundary-waiver.schema.json",
-      "sha256": "ed4f9128e30561319d0045bdeca372cb48973b14bb6f0297744b30d9064efb5d"
+      "sha256": "33d33ff4028df2512b7ed36b0b441f56d27a8cc52d25d2a0bb48ac60638bb62f"
+    },
+    "reviewSchema": {
+      "path": "schemas/unsafe-boundary-review.schema.json",
+      "sha256": "9ab0713f7553bc4f1549a52a5fd9b0fbf93b9087888b66c380595df92517d76b"
+    },
+    "lifecycleSchema": {
+      "path": "schemas/unsafe-boundary-lifecycle.schema.json",
+      "sha256": "7a6979342cb6aae0e4206434a251ba13beffa5ef4f19c18073bd12f407660809"
+    },
+    "beadStatusSchema": {
+      "path": "schemas/unsafe-boundary-bead-status.schema.json",
+      "sha256": "98ded4ce8ee18bd5d8f4576f03e26afbd85be792a49023b6fdff09cdb7bf7ecb"
     },
     "scenarios": {
       "path": "fixtures/unsafe-boundary/scenarios.json",
@@ -23,7 +35,7 @@
     },
     "canonicalWaiver": {
       "path": "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json",
-      "sha256": "c31667450c474fcd2abe2d8923ad2e83c00f18d761639d6363b52574a0c78a79"
+      "sha256": "50154f869c5a1fa8a780aead194c5953ff7143e4cca00c704708114b0a1b1258"
     },
     "canonicalWaiverSource": {
       "path": "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
@@ -31,11 +43,35 @@
     },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "9a25bdfc672c0e75750ebbeaa2cb1c64bbbcc54999460fdeb92f2ac34de8bad9"
+      "sha256": "5fc28082208417abac6ce7dde06fc58098435e8eb3cd1a9a1ad35440d4b81f1a"
+    },
+    "canonicalReview": {
+      "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
+      "sha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f"
+    },
+    "canonicalLifecycle": {
+      "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json",
+      "sha256": "d89fa837f837c9f78ed66cb000e53279c7173d3843596cf244ded061b58d3ad5"
+    },
+    "canonicalBeadStatus": {
+      "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json",
+      "sha256": "9fc2f89803609a7fda4af4b364bd5d547d5a8a94e02e00a912791f4948e4c6cc"
+    },
+    "independentSchemaValidator": {
+      "path": "scripts/security/unsafe-boundary-schema/validate.mjs",
+      "sha256": "94e27a67be3cc21c4a1d181dc859e81f3c84a139554a54ce9aac55b00b0b1759"
+    },
+    "schemaValidatorManifest": {
+      "path": "scripts/security/unsafe-boundary-schema/package.json",
+      "sha256": "d8cf947e792b6eab0e768a56ea21082ce00845a6ecb86e6ff0c13d1c2da60dd8"
+    },
+    "schemaValidatorLock": {
+      "path": "scripts/security/unsafe-boundary-schema/package-lock.json",
+      "sha256": "8674393422769ae18afbd6812082b904e535c7858e5d8711c4de3d4845cd1a70"
     },
     "workflow": {
       "path": ".github/workflows/unsafe-boundary-policy.yml",
-      "sha256": "72dc85760cf3ad12673eff819b364d21120c58b4ee35f77acc54ae98c855cb2f"
+      "sha256": "7bcdc12de135dcf498e55a27f445106b4565d9828cab58de0967d3368e743221"
     },
     "releasePolicy": {
       "path": "manifests/release-support-policy.json",
@@ -51,25 +87,33 @@
     "maximumInitialLifetimeDays": 90,
     "absoluteUtcExpiryRequired": true,
     "independentReviewRequired": true,
+    "reviewReceiptContentAddressed": true,
+    "additiveLifecycleAuthorityRequired": true,
+    "liveRemovalBeadVerificationRequired": true,
+    "symbolicLinkRepositoryPathsAllowed": false,
     "manualHumanReviewRequired": false,
     "accountableHumanOrMaintainerRoleRequired": true
   },
   "verification": {
     "commands": [
       "python3 scripts/security/test-unsafe-boundary-policy.py",
+      "npm --prefix scripts/security/unsafe-boundary-schema test",
+      "WORDPRESSHX_BD_BIN=\"$(command -v bd)\" python3 scripts/security/test-unsafe-boundary-policy.py --verify-beads",
       "bash scripts/check-repository.sh"
     ],
-    "sourceTreeDigestAlgorithm": "sha256-sorted-policy-schema-scenarios-waiver-source-validator-subject-list-v1",
-    "sourceTreeSha256": "4a32e450cfa3962a5b9c71ec11b073aa55a6a37396351da7948420e883710459",
+    "sourceTreeDigestAlgorithm": "sha256-sorted-full-path-content-digests-v2",
+    "sourceTreeSha256": "8bfb437f45216b6b53342ce1d4bc748e2d9bbc47a4f36aad472decb752d13d90",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
-    "policyDigest": "9a577e5a2e992f2a99f815a19570b23045a5589e59574a641f349ee014d10c7d",
+    "policyDigest": "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
     "scenarioDigest": "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf",
     "waiverDigestAlgorithm": "sha256-canonical-json-v1",
-    "waiverDigest": "f2ef3ea415b3526b6a0d67df4512ffa81e01377d1230c771c0bf693b829ba229",
+    "waiverDigest": "9bea91a47412cfbba483a70cfbb0d962ca294b125b408563a5a21cf5299dda22",
     "categoryCount": 9,
     "scenarioCount": 14,
-    "failClosedMutationCount": 51,
+    "failClosedMutationCount": 59,
+    "independentSchemaCount": 4,
+    "independentSchemaWeakeningProbeCount": 7,
     "waiverSchemaClosed": true,
     "sourceGeneratedAndFinalInventoriesRequired": true,
     "prohibitedScopesRemainUnwaivable": true,
@@ -78,7 +122,19 @@
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
-    "freshIndependentOracleReview": "pending",
+    "initialOracleReview": {
+      "decision": "changes-required",
+      "reviewedCommit": "9b855b979c8db30822cc6cffcc6110e4e44f6e1f",
+      "packetSha256": "8adf80367cc104323908bd1c46327f3090b444905562fdc3314d944862098644",
+      "reportPath": "review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md",
+      "reportSha256": "c96e2b179f2265299221431200e8f37f25ce91a08a602035b0bb37d37dbbed7d",
+      "decisionPath": "review/oracle/results/adr019-review-9b855b9/adr019-decision.json",
+      "decisionSha256": "a730fd0298421b4c33bca2c92f396db097090ce8e797134955d1ceb056e0186e",
+      "reviewedInputsPath": "review/oracle/results/adr019-review-9b855b9/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "701d99df5c15ccf6fb590a5760553a9679078c047f80c60869b4d9575825cb42",
+      "openFindings": ["ADR019-F001", "ADR019-F002", "ADR019-F003", "ADR019-F004"]
+    },
+    "freshIndependentOracleRereview": "pending-corrections",
     "acceptanceAuthorized": false
   },
   "relationships": {
@@ -92,10 +148,13 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": 30225305825,
-    "jobId": 89854421141,
-    "commit": "75e4f76b9f80f2a5694a04386ff626aedee5040d",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-oracle-correction-hosted-run",
+    "previousRunId": 30225305825,
+    "previousJobId": 89854421141,
+    "previousCommit": "75e4f76b9f80f2a5694a04386ff626aedee5040d",
     "historicalRunId": 30224851347,
     "historicalJobId": 89853259064,
     "historicalCommit": "1d1296a9078a6e4834fb2d1f5900e568aa74c4f8"
@@ -105,12 +164,12 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The current focused hosted policy gate passes; independent Oracle review is still required before ADR acceptance."
+    "The correction subject passes locally; a fresh focused hosted run and independent Oracle rereview are required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
     "waiverSchemaAndPolicyPrototype": "implemented",
-    "deterministicFailClosedScenarios": "passed-local-and-hosted",
+    "deterministicFailClosedScenarios": "passed-local-correction-hosted-pending",
     "productionSourceScanner": "not-tested",
     "productionGeneratedScanner": "not-tested",
     "productionArtifactInventory": "not-tested",

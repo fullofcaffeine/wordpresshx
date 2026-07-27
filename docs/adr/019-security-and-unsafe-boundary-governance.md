@@ -85,23 +85,33 @@ generic raw bucket.
 ### Exact waiver record
 
 [`unsafe-boundary-waiver.schema.json`](../../schemas/unsafe-boundary-waiver.schema.json)
-is the closed waiver record. Every waiver binds:
+is the closed waiver record. It references two separate immutable authorities:
+the closed
+[`unsafe-boundary-review.schema.json`](../../schemas/unsafe-boundary-review.schema.json)
+receipt and the additive
+[`unsafe-boundary-lifecycle.schema.json`](../../schemas/unsafe-boundary-lifecycle.schema.json)
+ledger. Every waiver binds:
 
 - `WPHX-UNSAFE-NNNN` and one stable `UB-*` boundary ID;
-- one closed category, reason, accountable owner, and independently recorded
-  approval;
+- one closed category, reason, accountable owner, and content-addressed
+  independent approval receipt;
 - exact creation, review, expiry, and removal deadline instants in UTC;
 - risk severity, threat, and mitigation;
 - repository-relative source path, full-file SHA-256, and line range;
 - package/layer, exact profiles, and target scope;
 - at least one content-addressed evidence file;
-- one removal Bead and a testable success condition.
+- one removal Bead, a content-addressed status projection, and a testable
+  success condition.
 
-The reviewer differs from the owner. A content-addressed independent Oracle
-agent acting in the relevant security/compiler expert role is an allowed
-reviewer; this policy never forces a manual human review gate. The accountable
-owner remains a named human or maintainer role because an automated reviewer
-cannot own release response or removal work.
+The review receipt binds reviewer identity/provider/model/role, review time,
+the exact prompt and input snapshot, the waiver subject, source and evidence
+digests, findings, decision, independence declarations, and limitations. The
+reviewer differs from the owner. A content-addressed independent Oracle agent
+acting in the relevant security/compiler expert role is allowed; this policy
+never forces a manual human review gate. Synthetic receipts are marked and
+cannot authorize production. The accountable owner remains a named human or
+maintainer role because an automated reviewer cannot own release response or
+removal work.
 
 An initial waiver lasts at most 90 days. Its removal deadline cannot exceed its
 expiry. “Before 1.0,” “next release,” and other relative dates are invalid. A
@@ -117,13 +127,18 @@ instant:
 2. evaluation precedes expiry;
 3. category and scope match the detected boundary;
 4. the exact source and evidence hashes match;
-5. its removal Bead is open or in progress;
+5. its content-addressed removal-Bead projection matches an authoritative
+   `bd show` performed after `bd dolt pull`, and the issue is open or in
+   progress;
 6. risk remains below high;
 7. every required artifact mapping and decoder/facade proof exists.
 
+The current lifecycle record must be the final record in a contiguous,
+content-addressed ancestry. Active records cannot carry revocation or
+supersession data; revoked records require a time and reason; superseded
+records name a different waiver. Renewals use a new waiver ID and fresh review.
 Expired, revoked, source-drifted, and scope-drifted waivers fail every build,
-not only release builds. Supersession is additive: historical records and
-receipts remain immutable, while the new record names its own identity.
+not only release builds.
 
 ### One reconciled inventory, three observations
 
@@ -283,8 +298,14 @@ Machine authority:
 
 - [`unsafe-boundary-policy.json`](../../manifests/unsafe-boundary-policy.json)
 - [`unsafe-boundary-waiver.schema.json`](../../schemas/unsafe-boundary-waiver.schema.json)
+- [`unsafe-boundary-review.schema.json`](../../schemas/unsafe-boundary-review.schema.json)
+- [`unsafe-boundary-lifecycle.schema.json`](../../schemas/unsafe-boundary-lifecycle.schema.json)
+- [`unsafe-boundary-bead-status.schema.json`](../../schemas/unsafe-boundary-bead-status.schema.json)
 - [`scenarios.json`](../../fixtures/unsafe-boundary/scenarios.json)
 - [`WPHX-UNSAFE-9999.json`](../../fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json)
+- [`WPHX-UNSAFE-REVIEW-9999-01.json`](../../fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json)
+- [`WPHX-UNSAFE-LIFECYCLE-9999.json`](../../fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json)
+- [`wordpresshx-sdk-052.json`](../../fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json)
 - [`test-unsafe-boundary-policy.py`](../../scripts/security/test-unsafe-boundary-policy.py)
 
 The canonical waiver is explicitly synthetic and authorizes no repository or
@@ -294,8 +315,10 @@ covers a current narrow waiver, missing/stale inventory, expiry, source and
 scope drift, a prohibited public Haxe type, self-approval, missing waiver,
 missing generated mapping, high/critical risk, missing independent review,
 decoded TypeScript `unknown`, and overlong expiry. The policy validator also
-applies fifty-one fail-closed mutations to the authority, categories, lifecycle,
-inventory, gates, diagnostics, schema, canonical waiver, and claims.
+applies fifty-nine fail-closed mutations to the authority, categories,
+lifecycle, inventory, gates, diagnostics, schema, canonical waiver, path
+confinement, and claims. Pinned Ajv 8.17.1 independently validates all four
+Draft 2020-12 schemas and seven material schema-weakening probes.
 
 The initial focused public workflow
 [`30224851347`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30224851347),
@@ -306,10 +329,22 @@ subject at commit `75e4f76b9f80f2a5694a04386ff626aedee5040d` passed run
 [`30225305825`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30225305825),
 job `89854421141`, including all fifty-one mutations.
 
+The first independent ADR-019 Oracle review of commit `9b855b9` returned
+`changes-required`: lifecycle/removal state was asserted rather than
+authoritative, approval provenance was forgeable, nested schema constraints
+were under-validated, and repository-relative paths could follow symlinks out
+of tree. Its exact report, decision, and input inventory are retained under
+`review/oracle/results/adr019-review-9b855b9/`. The content-addressed receipts,
+live Beads verification, exhaustive schema lock plus independent validator,
+and symlink rejection above are the correction subject awaiting rereview.
+
 Acceptance commands:
 
 ```bash
 python3 scripts/security/test-unsafe-boundary-policy.py
+npm --prefix scripts/security/unsafe-boundary-schema test
+WORDPRESSHX_BD_BIN="$(command -v bd)" \
+  python3 scripts/security/test-unsafe-boundary-policy.py --verify-beads
 bash scripts/check-repository.sh
 bd lint
 bd dep cycles

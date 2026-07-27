@@ -108,6 +108,9 @@
   ],
   "waiverContract": {
     "schema": "schemas/unsafe-boundary-waiver.schema.json",
+    "reviewReceiptSchema": "schemas/unsafe-boundary-review.schema.json",
+    "lifecycleSchema": "schemas/unsafe-boundary-lifecycle.schema.json",
+    "beadStatusSchema": "schemas/unsafe-boundary-bead-status.schema.json",
     "idPattern": "^WPHX-UNSAFE-[0-9]{4}$",
     "boundaryIdPattern": "^UB-[A-Z0-9][A-Z0-9-]*$",
     "sourceBinding": "repository-relative-path-full-file-sha256-and-line-range",
@@ -115,22 +118,27 @@
     "ownerKind": "named-accountable-human-or-maintainer-role",
     "reviewerMustDifferFromOwner": true,
     "independentOracleReviewerAllowed": true,
+    "reviewBinding": "content-addressed-prompt-input-source-evidence-findings-decision-and-independence",
+    "simulationReceiptMayAuthorizeProduction": false,
     "selfApprovalAllowed": false,
     "maximumInitialLifetimeDays": 90,
     "renewal": "new-waiver-id-review-and-source-binding-required",
     "vagueOrReleaseRelativeExpiryAllowed": false,
     "removalBeadRequired": true,
+    "removalStatusAuthority": "bd-show-after-dolt-pull-content-addressed-projection",
     "removalDeadlineMayExceedExpiry": false
   },
   "lifecycle": {
     "states": ["active", "expired", "revoked", "superseded"],
     "activeConditions": [
       "approved-review",
+      "current-additive-lifecycle-record",
       "evaluation-before-expiry",
       "source-binding-matches",
       "scope-matches",
       "category-matches",
       "removal-bead-open-or-in-progress",
+      "authoritative-removal-bead-receipt-matches-live-dolt",
       "risk-below-high",
       "all-required-evidence-matches"
     ],

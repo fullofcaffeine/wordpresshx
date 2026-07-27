@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "WPHX-BEAD-STATUS-WORDPRESSHX-SDK-052",
+  "source": "bd-show-after-dolt-pull",
+  "observedAt": "2026-07-26T22:55:00Z",
+  "issue": {
+    "id": "wordpresshx-sdk-052",
+    "status": "open",
+    "updatedAt": "2026-07-19T18:20:17Z"
+  },
+  "projectionSha256": "6704d4d59475757293bf8fc115503f178db29a3b09defd4ead6c8c6a870868e6"
+}

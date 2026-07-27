@@ -466,6 +466,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/editor-tooling/package.json",
                 "packages/cli/package.json",
                 "packages/cli/browser-tooling/package.json",
+                "scripts/security/unsafe-boundary-schema/package.json",
             ]
         ),
         "unlocked package.json found",
@@ -483,9 +484,20 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
                 "packages/gutenberg/editor-tooling/package-lock.json",
                 "packages/cli/package-lock.json",
                 "packages/cli/browser-tooling/package-lock.json",
+                "scripts/security/unsafe-boundary-schema/package-lock.json",
             ]
         ),
         "unlocked package-manager lock found",
+    )
+    audit.check(
+        audit.sha256("scripts/security/unsafe-boundary-schema/package.json")
+        == "d8cf947e792b6eab0e768a56ea21082ce00845a6ecb86e6ff0c13d1c2da60dd8",
+        "ADR-019 schema validator manifest digest changed",
+    )
+    audit.check(
+        audit.sha256("scripts/security/unsafe-boundary-schema/package-lock.json")
+        == "8674393422769ae18afbd6812082b904e535c7858e5d8711c4de3d4845cd1a70",
+        "ADR-019 schema validator lock digest changed",
     )
     if isinstance(sdk031_manifest, str):
         audit.check(

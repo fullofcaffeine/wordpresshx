@@ -1,15 +1,21 @@
 {
   "schemaVersion": 1,
+  "simulationOnly": true,
   "id": "WPHX-UNSAFE-9999",
   "boundaryId": "UB-SYNTHETIC-COMPILER-PRIVATE-ADAPTER",
   "category": "php-raw-segment",
   "reason": "Synthetic fixture proving the closed ADR-019 record; it authorizes no repository or release boundary.",
   "owner": "Marcelo Serpa",
   "review": {
-    "reviewer": "independent-oracle-fixture",
-    "reviewedAt": "2026-07-20T00:00:00Z",
-    "decision": "approved",
-    "evidenceSha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
+    "receiptId": "WPHX-UNSAFE-REVIEW-9999-01",
+    "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
+    "sha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f"
+  },
+  "lifecycle": {
+    "ledgerId": "WPHX-UNSAFE-LIFECYCLE-9999",
+    "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json",
+    "sha256": "d89fa837f837c9f78ed66cb000e53279c7173d3843596cf244ded061b58d3ad5",
+    "currentRecordId": "WPHX-UNSAFE-LIFECYCLE-9999-01"
   },
   "createdAt": "2026-07-20T00:00:00Z",
   "expiresAt": "2026-09-01T00:00:00Z",

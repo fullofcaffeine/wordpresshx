@@ -6,12 +6,18 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+ROOT_RESOLVED = ROOT.resolve(strict=True)
 POLICY_PATH = ROOT / "manifests" / "unsafe-boundary-policy.json"
 SCHEMA_PATH = ROOT / "schemas" / "unsafe-boundary-waiver.schema.json"
 SCENARIOS_PATH = ROOT / "fixtures" / "unsafe-boundary" / "scenarios.json"
@@ -26,6 +32,7 @@ SHA256 = re.compile(r"^[0-9a-f]{64}$")
 UTC_INSTANT = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
 )
+VERIFY_BEADS = "--verify-beads" in sys.argv[1:]
 
 
 class ValidationError(ValueError):
@@ -130,12 +137,28 @@ def repository_path(value: object, label: str) -> Path:
     ):
         raise ValidationError(f"{label} escapes the repository")
     path = ROOT / text
-    if not path.is_file():
+    cursor = ROOT
+    for part in Path(text).parts:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            raise ValidationError(f"{label} contains a symbolic link: {text}")
+    try:
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(ROOT_RESOLVED)
+    except (FileNotFoundError, ValueError) as error:
+        raise ValidationError(f"{label} escapes or is absent: {text}") from error
+    if not resolved.is_file():
         raise ValidationError(f"{label} does not name a file: {text}")
-    return path
+    return resolved
 
 
 def validate_schema(schema: dict[str, object], category_ids: list[str]) -> None:
+    if digest(schema) != (
+        "de07948d5b41a37a4f20d13cbdf769b238114f387427e16f740282aabb9d15eb"
+    ):
+        raise ValidationError(
+            "waiver schema differs from the exhaustively reviewed closed contract"
+        )
     exact_keys(
         schema,
         {
@@ -158,12 +181,14 @@ def validate_schema(schema: dict[str, object], category_ids: list[str]) -> None:
         raise ValidationError("waiver schema required/properties differ")
     expected = {
         "schemaVersion",
+        "simulationOnly",
         "id",
         "boundaryId",
         "category",
         "reason",
         "owner",
         "review",
+        "lifecycle",
         "createdAt",
         "expiresAt",
         "risk",
@@ -187,10 +212,386 @@ def validate_schema(schema: dict[str, object], category_ids: list[str]) -> None:
     pattern = string_value(repository_path.get("pattern"), "repository path pattern")
     if "(?!/)" not in pattern or "\\.\\." not in pattern or "\\\\" not in pattern:
         raise ValidationError("repository path confinement weakened")
-    for closed_object in ("review", "risk", "source", "scope", "removal"):
+    for closed_object in (
+        "review",
+        "lifecycle",
+        "risk",
+        "source",
+        "scope",
+        "removal",
+    ):
         field = object_value(properties.get(closed_object), closed_object)
         if field.get("additionalProperties") is not False:
             raise ValidationError(f"{closed_object} schema must be closed")
+
+
+def validate_file_digest(value: object, label: str) -> tuple[str, str]:
+    reference = object_value(value, label)
+    exact_keys(reference, {"path", "sha256"}, label)
+    path_text = string_value(reference["path"], f"{label} path")
+    path = repository_path(path_text, f"{label} path")
+    expected = string_value(reference["sha256"], f"{label} SHA-256")
+    if (
+        SHA256.fullmatch(expected) is None
+        or hashlib.sha256(path.read_bytes()).hexdigest() != expected
+    ):
+        raise ValidationError(f"{label} digest drifted")
+    return path_text, expected
+
+
+def waiver_subject(waiver: dict[str, object]) -> dict[str, object]:
+    subject = copy.deepcopy(waiver)
+    subject.pop("review", None)
+    subject.pop("lifecycle", None)
+    return subject
+
+
+def validate_review_receipt(
+    waiver: dict[str, object],
+    owner: str,
+    subject_sha256: str,
+    simulation_only: bool,
+) -> tuple[datetime, str]:
+    reference = object_value(waiver["review"], "waiver review reference")
+    exact_keys(reference, {"receiptId", "path", "sha256"}, "waiver review reference")
+    receipt_id = string_value(reference["receiptId"], "review receipt ID")
+    path_text = string_value(reference["path"], "review receipt path")
+    path = repository_path(path_text, "review receipt path")
+    expected_hash = string_value(reference["sha256"], "review receipt SHA-256")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+        raise ValidationError("review receipt digest drifted")
+    receipt = object_value(strict_json(path), "review receipt")
+    exact_keys(
+        receipt,
+        {
+            "schemaVersion",
+            "receiptId",
+            "simulationOnly",
+            "waiverId",
+            "waiverSubjectSha256",
+            "reviewer",
+            "reviewedAt",
+            "prompt",
+            "inputs",
+            "repositorySnapshotSha256",
+            "source",
+            "evidence",
+            "findings",
+            "decision",
+            "independence",
+            "limitations",
+        },
+        "review receipt",
+    )
+    if (
+        receipt["schemaVersion"] != 1
+        or receipt["receiptId"] != receipt_id
+        or receipt["waiverId"] != waiver["id"]
+        or receipt["waiverSubjectSha256"] != subject_sha256
+        or receipt["decision"] != "approved"
+        or receipt["simulationOnly"] is not simulation_only
+    ):
+        raise ValidationError("review receipt identity, subject, or decision is invalid")
+    reviewer = object_value(receipt["reviewer"], "review receipt reviewer")
+    exact_keys(
+        reviewer, {"identity", "provider", "model", "role"}, "review receipt reviewer"
+    )
+    identity = string_value(reviewer["identity"], "reviewer identity")
+    string_value(reviewer["provider"], "reviewer provider")
+    string_value(reviewer["model"], "reviewer model")
+    if reviewer["role"] != "independent-security-reviewer" or identity == owner:
+        raise ValidationError("reviewer identity or role is not independent")
+    independence = object_value(receipt["independence"], "review independence")
+    if independence != {
+        "reviewerDiffersFromOwner": True,
+        "contextIsolated": True,
+        "reviewerAuthoredWaiver": False,
+    }:
+        raise ValidationError("review independence declaration is invalid")
+    validate_file_digest(receipt["prompt"], "review prompt")
+    declared: list[dict[str, str]] = []
+    for index, entry in enumerate(array_value(receipt["inputs"], "review inputs")):
+        path_value, hash_value = validate_file_digest(
+            entry, f"review input[{index}]"
+        )
+        declared.append({"path": path_value, "sha256": hash_value})
+    source_path, source_hash = validate_file_digest(
+        receipt["source"], "review source"
+    )
+    if (
+        source_path != object_value(waiver["source"], "waiver source")["path"]
+        or source_hash != object_value(waiver["source"], "waiver source")["sha256"]
+    ):
+        raise ValidationError("review source does not bind the waiver source")
+    declared.append({"path": source_path, "sha256": source_hash})
+    evidence_bindings: list[dict[str, str]] = []
+    for index, entry in enumerate(array_value(receipt["evidence"], "review evidence")):
+        path_value, hash_value = validate_file_digest(
+            entry, f"review evidence[{index}]"
+        )
+        binding = {"path": path_value, "sha256": hash_value}
+        evidence_bindings.append(binding)
+        declared.append(binding)
+    waiver_evidence = [
+        object_value(entry, "waiver evidence")
+        for entry in array_value(waiver["evidence"], "waiver evidence")
+    ]
+    if evidence_bindings != waiver_evidence:
+        raise ValidationError("review evidence does not exactly bind waiver evidence")
+    if receipt["repositorySnapshotSha256"] != digest(declared):
+        raise ValidationError("review repository snapshot digest drifted")
+    for index, raw_finding in enumerate(
+        array_value(receipt["findings"], "review findings")
+    ):
+        finding = object_value(raw_finding, f"review finding[{index}]")
+        exact_keys(
+            finding,
+            {"id", "severity", "summary", "disposition"},
+            f"review finding[{index}]",
+        )
+        string_value(finding["id"], "review finding ID")
+        if finding["severity"] in {"high", "critical"}:
+            raise ValidationError("approved review retains a high or critical finding")
+        string_value(finding["summary"], "review finding summary")
+        if finding["disposition"] not in {"accepted-risk", "resolved"}:
+            raise ValidationError("review finding disposition is invalid")
+    if not unique_strings(receipt["limitations"], "review limitations"):
+        raise ValidationError("review limitations are required")
+    return parse_utc(receipt["reviewedAt"], "review reviewedAt"), expected_hash
+
+
+def validate_bead_status(
+    value: object,
+    expected_bead: str,
+    evaluation_at: datetime,
+    verify_live: bool,
+) -> None:
+    path_text, _ = validate_file_digest(value, "removal Bead status")
+    receipt = object_value(strict_json(repository_path(path_text, "Bead status path")), "Bead status")
+    exact_keys(
+        receipt,
+        {
+            "schemaVersion",
+            "receiptId",
+            "source",
+            "observedAt",
+            "issue",
+            "projectionSha256",
+        },
+        "Bead status",
+    )
+    issue = object_value(receipt["issue"], "Bead status issue")
+    exact_keys(issue, {"id", "status", "updatedAt"}, "Bead status issue")
+    if (
+        receipt["schemaVersion"] != 1
+        or receipt["source"] != "bd-show-after-dolt-pull"
+        or issue["id"] != expected_bead
+        or issue["status"] not in {"open", "in_progress"}
+    ):
+        raise ValidationError("removal Bead is absent, closed, or not authoritative")
+    observed_at = parse_utc(receipt["observedAt"], "Bead status observedAt")
+    updated_at = parse_utc(issue["updatedAt"], "Bead status updatedAt")
+    if not updated_at <= observed_at <= evaluation_at:
+        raise ValidationError("Bead status receipt timestamps are invalid")
+    projection = {
+        "id": issue["id"],
+        "status": issue["status"],
+        "updatedAt": issue["updatedAt"],
+    }
+    if receipt["projectionSha256"] != digest(projection):
+        raise ValidationError("Bead status projection digest drifted")
+    if VERIFY_BEADS and verify_live:
+        binary = os.environ.get("WORDPRESSHX_BD_BIN", "bd")
+        subprocess.run(
+            [binary, "dolt", "pull"],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        completed = subprocess.run(
+            [binary, "show", expected_bead, "--json"],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        live_values = json.loads(completed.stdout)
+        if not isinstance(live_values, list) or len(live_values) != 1:
+            raise ValidationError("authoritative Beads query returned no unique issue")
+        live = object_value(live_values[0], "live Bead")
+        live_projection = {
+            "id": live.get("id"),
+            "status": live.get("status"),
+            "updatedAt": live.get("updated_at"),
+        }
+        if live_projection != projection:
+            raise ValidationError("committed Bead status differs from live Dolt authority")
+
+
+def validate_lifecycle(
+    waiver: dict[str, object],
+    subject_sha256: str,
+    review_sha256: str,
+    created_at: datetime,
+    reviewed_at: datetime,
+    evaluation_at: datetime,
+    expires_at: datetime,
+    simulation_only: bool,
+) -> None:
+    reference = object_value(waiver["lifecycle"], "waiver lifecycle reference")
+    exact_keys(
+        reference,
+        {"ledgerId", "path", "sha256", "currentRecordId"},
+        "waiver lifecycle reference",
+    )
+    path_text = string_value(reference["path"], "lifecycle path")
+    path = repository_path(path_text, "lifecycle path")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != reference["sha256"]:
+        raise ValidationError("lifecycle ledger digest drifted")
+    ledger = object_value(strict_json(path), "lifecycle ledger")
+    exact_keys(
+        ledger,
+        {
+            "schemaVersion",
+            "ledgerId",
+            "waiverId",
+            "simulationOnly",
+            "currentRecordId",
+            "records",
+        },
+        "lifecycle ledger",
+    )
+    if (
+        ledger["schemaVersion"] != 1
+        or ledger["ledgerId"] != reference["ledgerId"]
+        or ledger["waiverId"] != waiver["id"]
+        or ledger["currentRecordId"] != reference["currentRecordId"]
+        or ledger["simulationOnly"] is not simulation_only
+    ):
+        raise ValidationError("lifecycle identity differs from waiver reference")
+    records = array_value(ledger["records"], "lifecycle records")
+    if not records:
+        raise ValidationError("lifecycle ledger is empty")
+    previous_id: str | None = None
+    previous_hash: str | None = None
+    ids: set[str] = set()
+    current: dict[str, object] | None = None
+    for index, raw_record in enumerate(records):
+        record = object_value(raw_record, f"lifecycle record[{index}]")
+        exact_keys(
+            record,
+            {
+                "id",
+                "sequence",
+                "recordedAt",
+                "state",
+                "waiverSubjectSha256",
+                "reviewReceiptSha256",
+                "previousRecordId",
+                "previousRecordSha256",
+                "renewalOf",
+                "supersededBy",
+                "revocation",
+                "removalStatus",
+            },
+            f"lifecycle record[{index}]",
+        )
+        record_id = string_value(record["id"], "lifecycle record ID")
+        if (
+            record_id in ids
+            or integer_value(record["sequence"], "lifecycle sequence") != index + 1
+            or record["previousRecordId"] != previous_id
+            or record["previousRecordSha256"] != previous_hash
+        ):
+            raise ValidationError("lifecycle ancestry is not additive and contiguous")
+        ids.add(record_id)
+        recorded_at = parse_utc(record["recordedAt"], "lifecycle recordedAt")
+        if not created_at <= reviewed_at <= recorded_at <= evaluation_at < expires_at:
+            raise ValidationError("lifecycle, review, evaluation, or expiry order is invalid")
+        if (
+            record["waiverSubjectSha256"] != subject_sha256
+            or record["reviewReceiptSha256"] != review_sha256
+        ):
+            raise ValidationError("lifecycle record does not bind waiver and review")
+        state = string_value(record["state"], "lifecycle state")
+        revocation = object_value(record["revocation"], "lifecycle revocation")
+        exact_keys(revocation, {"at", "reason"}, "lifecycle revocation")
+        if state == "active":
+            if (
+                record["supersededBy"] is not None
+                or revocation != {"at": None, "reason": None}
+            ):
+                raise ValidationError("active lifecycle has revocation or successor")
+        elif state == "revoked":
+            if (
+                revocation["at"] is None
+                or revocation["reason"] is None
+                or record["supersededBy"] is not None
+            ):
+                raise ValidationError("revoked lifecycle lacks revocation authority")
+        elif state == "superseded":
+            successor = record["supersededBy"]
+            if (
+                not isinstance(successor, str)
+                or successor == waiver["id"]
+                or revocation != {"at": None, "reason": None}
+            ):
+                raise ValidationError("superseded lifecycle lacks a new waiver ID")
+        else:
+            raise ValidationError("unknown lifecycle state")
+        if record["renewalOf"] is not None:
+            renewal = object_value(record["renewalOf"], "renewal ancestor")
+            exact_keys(
+                renewal,
+                {"waiverId", "lifecyclePath", "lifecycleSha256"},
+                "renewal ancestor",
+            )
+            prior_id = string_value(renewal["waiverId"], "renewal ancestor ID")
+            prior_path = repository_path(
+                renewal["lifecyclePath"], "renewal ancestor lifecycle path"
+            )
+            if (
+                prior_id == waiver["id"]
+                or index != 0
+                or hashlib.sha256(prior_path.read_bytes()).hexdigest()
+                != renewal["lifecycleSha256"]
+            ):
+                raise ValidationError("renewal must use a new waiver and fresh ledger")
+            prior = object_value(strict_json(prior_path), "renewal ancestor ledger")
+            prior_records = array_value(prior.get("records"), "renewal records")
+            if (
+                prior.get("waiverId") != prior_id
+                or not prior_records
+                or prior.get("currentRecordId")
+                != object_value(prior_records[-1], "renewal current record").get("id")
+                or object_value(prior_records[-1], "renewal current record").get(
+                    "state"
+                )
+                != "superseded"
+                or object_value(prior_records[-1], "renewal current record").get(
+                    "supersededBy"
+                )
+                != waiver["id"]
+            ):
+                raise ValidationError("renewal ancestor does not authorize successor")
+        validate_bead_status(
+            record["removalStatus"],
+            string_value(
+                object_value(waiver["removal"], "waiver removal")["bead"],
+                "removal Bead",
+            ),
+            evaluation_at,
+            record_id == ledger["currentRecordId"],
+        )
+        previous_id = record_id
+        previous_hash = digest(record)
+        if record_id == ledger["currentRecordId"]:
+            current = record
+    if current is None or current is not records[-1] or current["state"] != "active":
+        raise ValidationError("current lifecycle authority is not the final active record")
 
 
 def validate_waiver_instance(
@@ -202,12 +603,14 @@ def validate_waiver_instance(
         waiver,
         {
             "schemaVersion",
+            "simulationOnly",
             "id",
             "boundaryId",
             "category",
             "reason",
             "owner",
             "review",
+            "lifecycle",
             "createdAt",
             "expiresAt",
             "risk",
@@ -220,6 +623,7 @@ def validate_waiver_instance(
     )
     if waiver["schemaVersion"] != 1:
         raise ValidationError("waiver schema version changed")
+    simulation_only = bool_value(waiver["simulationOnly"], "waiver simulationOnly")
     waiver_id = string_value(waiver["id"], "waiver id")
     if re.fullmatch(r"WPHX-UNSAFE-[0-9]{4}", waiver_id) is None:
         raise ValidationError("waiver ID is invalid")
@@ -232,26 +636,11 @@ def validate_waiver_instance(
         raise ValidationError("waiver category is unknown or does not use waivers")
     string_value(waiver["reason"], "waiver reason")
     owner = string_value(waiver["owner"], "waiver owner")
-
-    review = object_value(waiver["review"], "waiver review")
-    exact_keys(
-        review,
-        {"reviewer", "reviewedAt", "decision", "evidenceSha256"},
-        "waiver review",
+    subject_sha256 = digest(waiver_subject(waiver))
+    reviewed_at, review_sha256 = validate_review_receipt(
+        waiver, owner, subject_sha256, simulation_only
     )
-    reviewer = string_value(review["reviewer"], "waiver reviewer")
-    if reviewer == owner:
-        raise ValidationError("waiver owner cannot self-approve")
-    if review["decision"] != "approved":
-        raise ValidationError("waiver review is not approved")
-    review_evidence = string_value(
-        review["evidenceSha256"], "review evidence SHA-256"
-    )
-    if SHA256.fullmatch(review_evidence) is None:
-        raise ValidationError("review evidence SHA-256 is invalid")
-
     created_at = parse_utc(waiver["createdAt"], "waiver createdAt")
-    reviewed_at = parse_utc(review["reviewedAt"], "waiver reviewedAt")
     expires_at = parse_utc(waiver["expiresAt"], "waiver expiresAt")
     if not (
         created_at <= reviewed_at <= evaluation_at < expires_at
@@ -301,7 +690,6 @@ def validate_waiver_instance(
     evidence_values = array_value(waiver["evidence"], "waiver evidence")
     if not evidence_values:
         raise ValidationError("waiver evidence is empty")
-    evidence_hashes: list[str] = []
     evidence_paths: list[str] = []
     for index, raw_evidence in enumerate(evidence_values):
         evidence = object_value(raw_evidence, f"waiver evidence[{index}]")
@@ -322,11 +710,8 @@ def validate_waiver_instance(
         ):
             raise ValidationError(f"waiver evidence[{index}] digest drifted")
         evidence_paths.append(evidence_path_text)
-        evidence_hashes.append(evidence_hash)
     if len(evidence_paths) != len(set(evidence_paths)):
         raise ValidationError("waiver evidence paths contain duplicates")
-    if review_evidence not in evidence_hashes:
-        raise ValidationError("review digest is not one of the waiver evidence files")
 
     removal = object_value(waiver["removal"], "waiver removal")
     exact_keys(
@@ -340,7 +725,19 @@ def validate_waiver_instance(
     )
     if removal_deadline > expires_at:
         raise ValidationError("waiver removal deadline exceeds expiry")
+    if removal_deadline < max(created_at, reviewed_at, evaluation_at):
+        raise ValidationError("waiver removal deadline has already passed")
     string_value(removal["successCondition"], "waiver removal success condition")
+    validate_lifecycle(
+        waiver,
+        subject_sha256,
+        review_sha256,
+        created_at,
+        reviewed_at,
+        evaluation_at,
+        expires_at,
+        simulation_only,
+    )
 
 
 def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
@@ -485,6 +882,9 @@ def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
         waiver,
         {
             "schema",
+            "reviewReceiptSchema",
+            "lifecycleSchema",
+            "beadStatusSchema",
             "idPattern",
             "boundaryIdPattern",
             "sourceBinding",
@@ -492,17 +892,23 @@ def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
             "ownerKind",
             "reviewerMustDifferFromOwner",
             "independentOracleReviewerAllowed",
+            "reviewBinding",
+            "simulationReceiptMayAuthorizeProduction",
             "selfApprovalAllowed",
             "maximumInitialLifetimeDays",
             "renewal",
             "vagueOrReleaseRelativeExpiryAllowed",
             "removalBeadRequired",
+            "removalStatusAuthority",
             "removalDeadlineMayExceedExpiry",
         },
         "waiver contract",
     )
     if waiver != {
         "schema": "schemas/unsafe-boundary-waiver.schema.json",
+        "reviewReceiptSchema": "schemas/unsafe-boundary-review.schema.json",
+        "lifecycleSchema": "schemas/unsafe-boundary-lifecycle.schema.json",
+        "beadStatusSchema": "schemas/unsafe-boundary-bead-status.schema.json",
         "idPattern": "^WPHX-UNSAFE-[0-9]{4}$",
         "boundaryIdPattern": "^UB-[A-Z0-9][A-Z0-9-]*$",
         "sourceBinding": (
@@ -512,11 +918,18 @@ def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
         "ownerKind": "named-accountable-human-or-maintainer-role",
         "reviewerMustDifferFromOwner": True,
         "independentOracleReviewerAllowed": True,
+        "reviewBinding": (
+            "content-addressed-prompt-input-source-evidence-findings-decision-and-independence"
+        ),
+        "simulationReceiptMayAuthorizeProduction": False,
         "selfApprovalAllowed": False,
         "maximumInitialLifetimeDays": 90,
         "renewal": "new-waiver-id-review-and-source-binding-required",
         "vagueOrReleaseRelativeExpiryAllowed": False,
         "removalBeadRequired": True,
+        "removalStatusAuthority": (
+            "bd-show-after-dolt-pull-content-addressed-projection"
+        ),
         "removalDeadlineMayExceedExpiry": False,
     }:
         raise ValidationError("waiver contract changed")
@@ -548,11 +961,13 @@ def validate_policy(policy: dict[str, object]) -> dict[str, dict[str, object]]:
     )
     if active_conditions != {
         "approved-review",
+        "current-additive-lifecycle-record",
         "evaluation-before-expiry",
         "source-binding-matches",
         "scope-matches",
         "category-matches",
         "removal-bead-open-or-in-progress",
+        "authoritative-removal-bead-receipt-matches-live-dolt",
         "risk-below-high",
         "all-required-evidence-matches",
     }:
@@ -1124,6 +1539,51 @@ def run_schema_mutations(
                 properties(value)["source"], "source property"
             ).__setitem__("additionalProperties", True),
         ),
+        (
+            "waiver ID pattern",
+            lambda value: object_value(
+                properties(value)["id"], "waiver ID property"
+            ).__setitem__("pattern", ".*"),
+        ),
+        (
+            "UTC instant pattern",
+            lambda value: object_value(
+                definitions(value)["utcInstant"], "UTC definition"
+            ).__setitem__("pattern", ".*"),
+        ),
+        (
+            "review receipt digest no longer required",
+            lambda value: array_value(
+                object_value(properties(value)["review"], "review property")[
+                    "required"
+                ],
+                "review required",
+            ).remove("sha256"),
+        ),
+        (
+            "evidence cardinality",
+            lambda value: object_value(
+                properties(value)["evidence"], "evidence property"
+            ).__setitem__("minItems", 0),
+        ),
+        (
+            "source line type",
+            lambda value: object_value(
+                object_value(properties(value)["source"], "source property")[
+                    "properties"
+                ],
+                "source properties",
+            ).__setitem__("startLine", {"type": "string"}),
+        ),
+        (
+            "review path ref",
+            lambda value: object_value(
+                object_value(properties(value)["review"], "review property")[
+                    "properties"
+                ],
+                "review properties",
+            ).__setitem__("path", {"type": "string"}),
+        ),
     ]
     for label, mutate in mutations:
         expect_failure(label, mutate)
@@ -1226,6 +1686,33 @@ def run_waiver_mutations(
     return len(mutations)
 
 
+def run_repository_path_mutations() -> int:
+    fixture_root = ROOT / "fixtures" / "unsafe-boundary"
+    temporary = Path(tempfile.mkdtemp(prefix=".path-confinement-", dir=fixture_root))
+    external = Path(tempfile.mkdtemp(prefix="wordpresshx-adr019-external-"))
+    try:
+        outside_file = external / "outside.txt"
+        outside_file.write_text("outside repository\n", encoding="utf-8")
+        file_link = temporary / "file-link.txt"
+        directory_link = temporary / "directory-link"
+        file_link.symlink_to(outside_file)
+        directory_link.symlink_to(external, target_is_directory=True)
+        labels = [
+            file_link.relative_to(ROOT).as_posix(),
+            (directory_link / "outside.txt").relative_to(ROOT).as_posix(),
+        ]
+        for label in labels:
+            try:
+                repository_path(label, "adversarial path")
+            except ValidationError:
+                continue
+            raise AssertionError(f"symbolic-link escape passed unexpectedly: {label}")
+        return len(labels)
+    finally:
+        shutil.rmtree(temporary)
+        shutil.rmtree(external)
+
+
 def main() -> None:
     policy = object_value(strict_json(POLICY_PATH), "policy")
     schema = object_value(strict_json(SCHEMA_PATH), "schema")
@@ -1238,7 +1725,9 @@ def main() -> None:
     results = validate_scenarios(scenarios, policy, categories)
     mutation_count = run_policy_mutations(policy) + run_schema_mutations(
         schema, list(categories)
-    ) + run_waiver_mutations(waiver, categories, evaluation_at)
+    ) + run_waiver_mutations(
+        waiver, categories, evaluation_at
+    ) + run_repository_path_mutations()
     summary = {
         "categoryCount": len(categories),
         "mutationCount": mutation_count,

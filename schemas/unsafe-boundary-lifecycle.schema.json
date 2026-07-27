@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wordpresshx.dev/schemas/unsafe-boundary-lifecycle.schema.json",
+  "title": "WordPressHx unsafe-boundary lifecycle ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "ledgerId",
+    "waiverId",
+    "simulationOnly",
+    "currentRecordId",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "ledgerId": {
+      "type": "string",
+      "pattern": "^WPHX-UNSAFE-LIFECYCLE-[0-9]{4}$"
+    },
+    "waiverId": {"$ref": "#/$defs/waiverId"},
+    "simulationOnly": {"type": "boolean"},
+    "currentRecordId": {"$ref": "#/$defs/recordId"},
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/record"}
+    }
+  },
+  "$defs": {
+    "nonEmpty": {"type": "string", "minLength": 1},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utcInstant": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "waiverId": {
+      "type": "string",
+      "pattern": "^WPHX-UNSAFE-[0-9]{4}$"
+    },
+    "recordId": {
+      "type": "string",
+      "pattern": "^WPHX-UNSAFE-LIFECYCLE-[0-9]{4}-[0-9]{2}$"
+    },
+    "nullableRecordId": {
+      "oneOf": [{"$ref": "#/$defs/recordId"}, {"type": "null"}]
+    },
+    "nullableWaiverId": {
+      "oneOf": [{"$ref": "#/$defs/waiverId"}, {"type": "null"}]
+    },
+    "nullableSha256": {
+      "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+    },
+    "nullableNonEmpty": {
+      "oneOf": [{"$ref": "#/$defs/nonEmpty"}, {"type": "null"}]
+    },
+    "fileDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repositoryPath"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "renewalAncestor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["waiverId", "lifecyclePath", "lifecycleSha256"],
+      "properties": {
+        "waiverId": {"$ref": "#/$defs/waiverId"},
+        "lifecyclePath": {"$ref": "#/$defs/repositoryPath"},
+        "lifecycleSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "nullableRenewalAncestor": {
+      "oneOf": [{"$ref": "#/$defs/renewalAncestor"}, {"type": "null"}]
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sequence",
+        "recordedAt",
+        "state",
+        "waiverSubjectSha256",
+        "reviewReceiptSha256",
+        "previousRecordId",
+        "previousRecordSha256",
+        "renewalOf",
+        "supersededBy",
+        "revocation",
+        "removalStatus"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/recordId"},
+        "sequence": {"type": "integer", "minimum": 1},
+        "recordedAt": {"$ref": "#/$defs/utcInstant"},
+        "state": {"enum": ["active", "revoked", "superseded"]},
+        "waiverSubjectSha256": {"$ref": "#/$defs/sha256"},
+        "reviewReceiptSha256": {"$ref": "#/$defs/sha256"},
+        "previousRecordId": {"$ref": "#/$defs/nullableRecordId"},
+        "previousRecordSha256": {"$ref": "#/$defs/nullableSha256"},
+        "renewalOf": {"$ref": "#/$defs/nullableRenewalAncestor"},
+        "supersededBy": {"$ref": "#/$defs/nullableWaiverId"},
+        "revocation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["at", "reason"],
+          "properties": {
+            "at": {
+              "oneOf": [{"$ref": "#/$defs/utcInstant"}, {"type": "null"}]
+            },
+            "reason": {"$ref": "#/$defs/nullableNonEmpty"}
+          }
+        },
+        "removalStatus": {"$ref": "#/$defs/fileDigest"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {"state": {"const": "active"}}
+          },
+          "then": {
+            "properties": {
+              "supersededBy": {"type": "null"},
+              "revocation": {
+                "type": "object",
+                "properties": {
+                  "at": {"type": "null"},
+                  "reason": {"type": "null"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {"state": {"const": "revoked"}}
+          },
+          "then": {
+            "properties": {
+              "supersededBy": {"type": "null"},
+              "revocation": {
+                "type": "object",
+                "properties": {
+                  "at": {"$ref": "#/$defs/utcInstant"},
+                  "reason": {"$ref": "#/$defs/nonEmpty"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {"state": {"const": "superseded"}}
+          },
+          "then": {
+            "properties": {
+              "supersededBy": {"$ref": "#/$defs/waiverId"},
+              "revocation": {
+                "type": "object",
+                "properties": {
+                  "at": {"type": "null"},
+                  "reason": {"type": "null"}
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
