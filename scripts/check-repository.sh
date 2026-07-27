@@ -55,6 +55,7 @@ required_files=(
   docs/gates/g3-semantic-plan-and-ownership.md
   docs/architecture/browser-compiler.md
   docs/architecture/build-and-dev-loop.md
+  docs/architecture/genes-extraction-review.md
   docs/architecture/haxe-first-site-authoring.md
   docs/architecture/php-compiler.md
   docs/architecture/repository-layout.md

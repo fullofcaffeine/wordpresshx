@@ -64,6 +64,13 @@ fixture; the ADR is not runtime compatibility evidence.
 
 WordPress package maps, handles, profiles, metadata, and build integration belong in this SDK. Generic lowering, TypeScript/JavaScript semantics, module behavior, source maps, declarations, and ts2hx compiler behavior belong in genes-ts.
 
+The concrete extraction rubric and the current React, external-HXX,
+public-root-manifest, source-map-consumer, and typing-policy candidate review
+are documented in
+[`genes-extraction-review.md`](genes-extraction-review.md). A candidate is not
+upstream merely because it could be reused; it needs a framework-neutral API,
+neutral Genes fixtures, and downstream regression proof.
+
 ADR-014 keeps each Genes/bundler layer in standard Source Map v3, but requires
 the SDK package index to authenticate the exact files and layer order. A final
 JS-to-Haxe map is admitted only for the exact entry/mode after deliberate

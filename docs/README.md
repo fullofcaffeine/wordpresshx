@@ -11,6 +11,7 @@ The repository is still establishing its durable documentation structure.
 - [Runtime support packaging](adr/018-runtime-support-packaging.md)
 - [Provisional repository layout](architecture/repository-layout.md)
 - [Browser compiler pin and ownership](architecture/browser-compiler.md)
+- [Genes extraction review and ownership rubric](architecture/genes-extraction-review.md)
 - [Generic PHP compiler boundary](architecture/php-compiler.md)
 - [Haxe-first complete-site authoring](architecture/haxe-first-site-authoring.md)
 - [Reference application architectures and plugin shortlist](architecture/reference-application-architectures.md)

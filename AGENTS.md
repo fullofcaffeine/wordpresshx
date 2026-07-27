@@ -59,6 +59,37 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
 - Keep advanced behavior available through explicit typed options and narrow escape hatches. Ergonomic helpers must not hide ownership, weaken validation, introduce ambiguous magic, or couple the core SDK to an optional integration.
 
+## Genes and Downstream Ownership
+
+- Put reusable Haxe-to-JavaScript/TypeScript language and tooling capabilities
+  in **Genes**, not directly in consumer frameworks or projects such as
+  WordPressHx/GutenbergHx or NextJsHx. This includes generally applicable
+  typed authoring support, JS/TS/TSX lowering and emission, source maps,
+  module/runtime interop, compiler diagnostics, and framework-neutral frontend
+  primitives. The rationale is reuse by other present or future Haxe-to-JS/TS
+  projects, not only the integration that first exposed the need.
+- Treat generic React capabilities the same way. React component, Hook,
+  HXX/JSX, props, children, refs, dependency, event, and module-export
+  mechanisms that are useful across hosts belong in Genes, normally under its
+  framework-neutral `genes.react` layer. This repository owns only the
+  WordPress/Gutenberg provider bindings, exact component and data contracts,
+  profile policy, and application ergonomics built on that shared mechanism.
+- Keep downstream code focused on intrinsic product or framework semantics:
+  WordPress and Gutenberg contracts, Next.js contracts, exact-profile
+  adapters, integration policy, packaging, and application behavior. A
+  downstream fixture may prove the need for a general Genes capability, but
+  the downstream must not become its permanent implementation home.
+- Decide ownership from semantics, not discovery location. Move a capability
+  upstream only when its API and tests are useful without WordPressHx-specific
+  types, paths, fixtures, profiles, or assumptions; do not create speculative
+  abstractions merely to make code appear general.
+- Make generalized Genes changes in an isolated worktree under `../genes`,
+  follow that repository's contribution rules, prove its existing and new
+  quality gates without regressions, and use a pull request. Tell the user when
+  the upstream PR is ready or merged. Do not hide an unmerged upstream change
+  in a permanent downstream fork; any necessary temporary compatibility bridge
+  must be narrow, explicitly tracked, and removable.
+
 ## Non-Interactive Shell Commands
 
 **ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
