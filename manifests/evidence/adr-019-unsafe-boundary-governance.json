@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-27T01:01:10Z",
+  "status": "implemented-review-pending",
+  "observedAt": "2026-07-27T01:16:58Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "8c38234ce636e9bb78c54135594a66e8d2b92a619deed66e819ae4695ce07115"
+      "sha256": "f778326d04923c3b149ec92e654a4eccf51fbe954559f15e139bb125b9ab05d2"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -178,10 +178,10 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-second-oracle-correction-hosted-run",
+    "runId": 30229302949,
+    "jobId": 89865057093,
+    "commit": "0f01fda14c81ee2476cdc31e41885afcf50e3fb5",
+    "status": "passed",
     "lastPassedRunId": 30227977113,
     "lastPassedJobId": 89861397432,
     "lastPassedCommit": "fcd712affe5c3ce1582beae73439f96b91b56f19",
@@ -206,7 +206,7 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The second correction passes locally; its focused hosted gate and a fresh independent Oracle rereview are required before ADR acceptance."
+    "The second correction passes locally and in the focused hosted gate; a fresh independent Oracle rereview is required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",

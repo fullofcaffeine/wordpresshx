@@ -366,8 +366,12 @@ reproducible. The exact rereview artifacts are retained under
 `review/oracle/results/adr019-rereview-0542155/`. The recursive ancestor
 validation, fabricated-chain mutation, expanded Ajv instances/probe, and
 packet completeness check are the second correction subject. ADR acceptance
-remains withheld until that subject passes its hosted gate and a fresh
-independent Oracle rereview.
+remains withheld pending a fresh independent Oracle rereview. Correction commit
+`0f01fda14c81ee2476cdc31e41885afcf50e3fb5` passed focused hosted run
+[`30229302949`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30229302949),
+job `89865057093`, including clean lockfile installation, all eight Ajv
+instances/probes, fresh Beads initialization/pull, recursive ancestry
+validation, and the fabricated-chain rejection.
 
 Acceptance commands:
 
