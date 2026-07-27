@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "simulationOnly": true,
-  "id": "WPHX-UNSAFE-9999",
+  "id": "WPHX-UNSAFE-9998",
   "boundaryId": "UB-SYNTHETIC-COMPILER-PRIVATE-ADAPTER",
   "category": "php-raw-segment",
-  "reason": "Synthetic fixture proving the closed ADR-019 record; it authorizes no repository or release boundary.",
+  "reason": "Synthetic ancestor fixture proving that renewal requires a fully authenticated prior waiver and lifecycle.",
   "owner": "Marcelo Serpa",
   "review": {
-    "receiptId": "WPHX-UNSAFE-REVIEW-9999-01",
-    "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
-    "sha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f"
+    "receiptId": "WPHX-UNSAFE-REVIEW-9998-01",
+    "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9998-01.json",
+    "sha256": "a6caec1639afdb064c2692724c3355d62d3fab6851a507403c07e71c899b8642"
   },
   "lifecycle": {
-    "ledgerId": "WPHX-UNSAFE-LIFECYCLE-9999",
-    "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json",
-    "sha256": "e39fd85fabed1b41db4bc1c96cd5ee5b324107128e4ed2514f29c32ca3990277",
-    "currentRecordId": "WPHX-UNSAFE-LIFECYCLE-9999-01"
+    "ledgerId": "WPHX-UNSAFE-LIFECYCLE-9998",
+    "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json",
+    "sha256": "2c16dbcf0092bc04e2e65acba4549332d719ad7cd7d413ebd0ca3506168d17ea",
+    "currentRecordId": "WPHX-UNSAFE-LIFECYCLE-9998-02"
   },
-  "createdAt": "2026-07-20T00:00:00Z",
+  "createdAt": "2026-07-19T20:00:00Z",
   "expiresAt": "2026-09-01T00:00:00Z",
   "risk": {
     "severity": "medium",
@@ -33,8 +33,12 @@
   "scope": {
     "package": "compiler/reflaxe.php",
     "layer": "compiler-private-adapter",
-    "profiles": ["generic-php"],
-    "targets": ["php"]
+    "profiles": [
+      "generic-php"
+    ],
+    "targets": [
+      "php"
+    ]
   },
   "evidence": [
     {
@@ -45,6 +49,6 @@
   "removal": {
     "bead": "wordpresshx-sdk-052",
     "deadline": "2026-09-01T00:00:00Z",
-    "successCondition": "Replace the synthetic fixture with production declaration and inventory evidence or remove it before SDK-052 closure."
+    "successCondition": "Supersede this synthetic ancestor with a new independently reviewed waiver or remove it before SDK-052 closure."
   }
 }

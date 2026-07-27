@@ -770,6 +770,9 @@ required_files=(
   review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md
   review/oracle/results/adr019-review-9b855b9/adr019-decision.json
   review/oracle/results/adr019-review-9b855b9/reviewed-inputs.sha256
+  review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md
+  review/oracle/results/adr019-rereview-0542155/adr019-rereview-decision.json
+  review/oracle/results/adr019-rereview-0542155/reviewed-inputs.sha256
   manifests/evidence/sdk-080-hxx-parser-prototype.json
   packages/build/README.md
   packages/build/src/wordpress/hx/build/SemanticPlan.hx
@@ -930,12 +933,16 @@ required_files=(
   manifests/unsafe-boundary-policy.json
   fixtures/unsafe-boundary/scenarios.json
   fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json
+  fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9998.json
   fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt
   fixtures/unsafe-boundary/review/fixture-review-prompt.md
   fixtures/unsafe-boundary/review/fixture-review-input.txt
   fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json
+  fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9998-01.json
   fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json
+  fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json
   fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json
+  fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json
   scripts/security/unsafe-boundary-schema/package.json
   scripts/security/unsafe-boundary-schema/package-lock.json
   scripts/security/unsafe-boundary-schema/validate.mjs
@@ -2582,10 +2589,16 @@ adr019_source_paths = (
     "schemas/unsafe-boundary-bead-status.schema.json",
     "fixtures/unsafe-boundary/scenarios.json",
     "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json",
+    "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9998.json",
     "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
+    "fixtures/unsafe-boundary/review/fixture-review-prompt.md",
+    "fixtures/unsafe-boundary/review/fixture-review-input.txt",
     "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
+    "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9998-01.json",
     "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json",
+    "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json",
     "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json",
+    "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json",
     "scripts/security/test-unsafe-boundary-policy.py",
     "scripts/security/unsafe-boundary-schema/package.json",
     "scripts/security/unsafe-boundary-schema/package-lock.json",
@@ -2608,13 +2621,14 @@ assert adr019_verification["scenarioDigest"] == (
     "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf"
 )
 assert adr019_verification["waiverDigest"] == (
-    "9bea91a47412cfbba483a70cfbb0d962ca294b125b408563a5a21cf5299dda22"
+    "1bdb9dd7a04ef266e02ce860a6a30bac34fd85ce04ae3e5199a40947bde5bf5a"
 )
 assert adr019_verification["categoryCount"] == 9
 assert adr019_verification["scenarioCount"] == 14
-assert adr019_verification["failClosedMutationCount"] == 59
+assert adr019_verification["failClosedMutationCount"] == 60
 assert adr019_verification["independentSchemaCount"] == 4
-assert adr019_verification["independentSchemaWeakeningProbeCount"] == 7
+assert adr019_verification["independentSchemaInstanceCount"] == 8
+assert adr019_verification["independentSchemaWeakeningProbeCount"] == 8
 assert adr019_verification["waiverSchemaClosed"] is True
 assert adr019_verification["sourceGeneratedAndFinalInventoriesRequired"] is True
 assert adr019_verification["prohibitedScopesRemainUnwaivable"] is True
@@ -2660,8 +2674,45 @@ for adr019_review_path, adr019_review_digest in (
     assert hashlib.sha256(Path(adr019_review_path).read_bytes()).hexdigest() == (
         adr019_review_digest
     )
+adr019_correction_review = adr019_receipt["review"][
+    "firstCorrectionOracleRereview"
+]
+assert adr019_correction_review["decision"] == "changes-required"
+assert adr019_correction_review["reviewedCommit"] == (
+    "05421557763d61b3bd87996714508227da619db2"
+)
+assert adr019_correction_review["packetSha256"] == (
+    "2cedd63d13f5c22699cae4adae98ca884fcb2fba9b307e6028b399581dcd6a49"
+)
+assert adr019_correction_review["resolvedFindings"] == [
+    "ADR019-F002",
+    "ADR019-F004",
+]
+assert adr019_correction_review["openFindings"] == [
+    "ADR019-F001",
+    "ADR019-F003",
+    "ADR019-RF001",
+    "ADR019-RF002",
+]
+for adr019_review_path, adr019_review_digest in (
+    (
+        adr019_correction_review["reportPath"],
+        adr019_correction_review["reportSha256"],
+    ),
+    (
+        adr019_correction_review["decisionPath"],
+        adr019_correction_review["decisionSha256"],
+    ),
+    (
+        adr019_correction_review["reviewedInputsPath"],
+        adr019_correction_review["reviewedInputsSha256"],
+    ),
+):
+    assert hashlib.sha256(Path(adr019_review_path).read_bytes()).hexdigest() == (
+        adr019_review_digest
+    )
 assert adr019_receipt["review"]["freshIndependentOracleRereview"] == (
-    "pending-corrections"
+    "pending-second-correction"
 )
 assert adr019_receipt["review"]["acceptanceAuthorized"] is False
 assert adr019_receipt["relationships"] == {
@@ -2690,6 +2741,7 @@ if adr019_hosted["status"] in {
     "pending-first-hosted-main-run",
     "pending-canonical-waiver-hosted-run",
     "pending-oracle-correction-hosted-run",
+    "pending-second-oracle-correction-hosted-run",
 }:
     assert adr019_receipt["status"] == "implemented-hosted-pending"
     assert adr019_hosted["runId"] is None
@@ -2703,6 +2755,10 @@ if adr019_hosted["status"] in {
         assert isinstance(adr019_hosted["previousRunId"], int)
         assert isinstance(adr019_hosted["previousJobId"], int)
         assert sha1.fullmatch(adr019_hosted["previousCommit"])
+    if adr019_hosted["status"] == "pending-second-oracle-correction-hosted-run":
+        assert isinstance(adr019_hosted["lastPassedRunId"], int)
+        assert isinstance(adr019_hosted["lastPassedJobId"], int)
+        assert sha1.fullmatch(adr019_hosted["lastPassedCommit"])
 elif adr019_hosted["status"] == "passed":
     assert adr019_receipt["status"] in {
         "implemented-review-pending",
@@ -11968,7 +12024,8 @@ done < <(find review/g1-php-readability/packet -type f -print0)
 # hard-break spaces; their exact digests are asserted above.
 git diff --check HEAD -- \
   . \
-  ':!review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md'
+  ':!review/oracle/results/adr019-review-9b855b9/ORACLE-ADR019-REVIEW.md' \
+  ':!review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md'
 
 bash scripts/ci/check-security-tooling.sh
 

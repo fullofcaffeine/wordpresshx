@@ -116,7 +116,12 @@ removal work.
 An initial waiver lasts at most 90 days. Its removal deadline cannot exceed its
 expiry. “Before 1.0,” “next release,” and other relative dates are invalid. A
 renewal is a new waiver ID, source binding, evidence packet, review, expiry, and
-removal decision; prior approval is not inherited.
+removal decision; prior approval is not inherited. Its first lifecycle record
+content-addresses both the prior waiver and prior ledger. The gate recursively
+validates every ancestor's closed waiver, independent review, complete
+contiguous lifecycle hash chain, timestamps, source/evidence bindings, and
+removal authority before accepting the final supersession record. A digest-valid
+but semantically fabricated ancestor cannot authorize a renewal.
 
 ### Lifecycle is evaluated, not asserted
 
@@ -303,9 +308,13 @@ Machine authority:
 - [`unsafe-boundary-bead-status.schema.json`](../../schemas/unsafe-boundary-bead-status.schema.json)
 - [`scenarios.json`](../../fixtures/unsafe-boundary/scenarios.json)
 - [`WPHX-UNSAFE-9999.json`](../../fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json)
+- [`WPHX-UNSAFE-9998.json`](../../fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9998.json)
 - [`WPHX-UNSAFE-REVIEW-9999-01.json`](../../fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json)
+- [`WPHX-UNSAFE-REVIEW-9998-01.json`](../../fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9998-01.json)
 - [`WPHX-UNSAFE-LIFECYCLE-9999.json`](../../fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json)
+- [`WPHX-UNSAFE-LIFECYCLE-9998.json`](../../fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json)
 - [`wordpresshx-sdk-052.json`](../../fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json)
+- [`wordpresshx-sdk-052-2026-07-20.json`](../../fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json)
 - [`test-unsafe-boundary-policy.py`](../../scripts/security/test-unsafe-boundary-policy.py)
 
 The canonical waiver is explicitly synthetic and authorizes no repository or
@@ -317,8 +326,11 @@ missing generated mapping, high/critical risk, missing independent review,
 decoded TypeScript `unknown`, and overlong expiry. The policy validator also
 applies fifty-nine fail-closed mutations to the authority, categories,
 lifecycle, inventory, gates, diagnostics, schema, canonical waiver, path
-confinement, and claims. Pinned Ajv 8.17.1 independently validates all four
-Draft 2020-12 schemas and seven material schema-weakening probes.
+confinement, and claims. A sixtieth mutation builds a content-addressed,
+schema-shaped renewal with a broken ancestor hash chain and proves that it
+fails closed. Pinned Ajv 8.17.1 independently validates all four Draft 2020-12
+schemas against eight current and ancestor instances and eight material
+schema-weakening probes.
 
 The initial focused public workflow
 [`30224851347`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/30224851347),
@@ -344,6 +356,19 @@ job `89861397432`. The clean runner fetched `refs/dolt/data`, initialized its
 local Beads database from the public Dolt remote, pulled it, and matched the
 content-addressed SDK-052 status projection.
 
+The first correction rereview of evidence commit
+`05421557763d61b3bd87996714508227da619db2` also returned
+`changes-required`. It resolved approval provenance and repository path
+confinement, but found that renewal checked only the prior ledger's final
+record. It also found that the immutable Repomix packet omitted the declared
+`package-lock.json`, so the pinned Ajv result was not independently
+reproducible. The exact rereview artifacts are retained under
+`review/oracle/results/adr019-rereview-0542155/`. The recursive ancestor
+validation, fabricated-chain mutation, expanded Ajv instances/probe, and
+packet completeness check are the second correction subject. ADR acceptance
+remains withheld until that subject passes its hosted gate and a fresh
+independent Oracle rereview.
+
 Acceptance commands:
 
 ```bash
@@ -360,7 +385,7 @@ git diff --check
 These checks prove a bounded governance model. They do not scan every production
 source/artifact, publish an unsafe constructor, execute WordPress security
 behavior, complete the release security corpus, or authorize stable support.
-Independent Oracle acceptance remains required.
+Fresh independent Oracle acceptance of the second correction remains required.
 
 ## Migration, rollback, and supersession
 

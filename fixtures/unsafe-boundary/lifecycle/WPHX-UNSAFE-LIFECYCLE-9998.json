@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "ledgerId": "WPHX-UNSAFE-LIFECYCLE-9998",
+  "waiverId": "WPHX-UNSAFE-9998",
+  "simulationOnly": true,
+  "currentRecordId": "WPHX-UNSAFE-LIFECYCLE-9998-02",
+  "records": [
+    {
+      "id": "WPHX-UNSAFE-LIFECYCLE-9998-01",
+      "sequence": 1,
+      "recordedAt": "2026-07-19T20:00:00Z",
+      "state": "active",
+      "waiverSubjectSha256": "e09178a117a6016c606c376399e29bfa4b17a4c4150f9ab68c8182d0d4d10aae",
+      "reviewReceiptSha256": "a6caec1639afdb064c2692724c3355d62d3fab6851a507403c07e71c899b8642",
+      "previousRecordId": null,
+      "previousRecordSha256": null,
+      "renewalOf": null,
+      "supersededBy": null,
+      "revocation": {
+        "at": null,
+        "reason": null
+      },
+      "removalStatus": {
+        "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json",
+        "sha256": "af540a800a1d5fd6bffc3bc8b6b1bd63df619d950b7963540867ac6a87296269"
+      }
+    },
+    {
+      "id": "WPHX-UNSAFE-LIFECYCLE-9998-02",
+      "sequence": 2,
+      "recordedAt": "2026-07-20T00:00:00Z",
+      "state": "superseded",
+      "waiverSubjectSha256": "e09178a117a6016c606c376399e29bfa4b17a4c4150f9ab68c8182d0d4d10aae",
+      "reviewReceiptSha256": "a6caec1639afdb064c2692724c3355d62d3fab6851a507403c07e71c899b8642",
+      "previousRecordId": "WPHX-UNSAFE-LIFECYCLE-9998-01",
+      "previousRecordSha256": "83a35a84fceecfe111d7d8a62a19db023f7367a0be07e3f9fb01206aeeaafe91",
+      "renewalOf": null,
+      "supersededBy": "WPHX-UNSAFE-9999",
+      "revocation": {
+        "at": null,
+        "reason": null
+      },
+      "removalStatus": {
+        "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json",
+        "sha256": "af540a800a1d5fd6bffc3bc8b6b1bd63df619d950b7963540867ac6a87296269"
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "WPHX-UNSAFE-REVIEW-9998-01",
+  "simulationOnly": true,
+  "waiverId": "WPHX-UNSAFE-9998",
+  "waiverSubjectSha256": "e09178a117a6016c606c376399e29bfa4b17a4c4150f9ab68c8182d0d4d10aae",
+  "reviewer": {
+    "identity": "independent-oracle-fixture",
+    "provider": "synthetic-test-provider",
+    "model": "synthetic-test-model",
+    "role": "independent-security-reviewer"
+  },
+  "reviewedAt": "2026-07-19T20:00:00Z",
+  "prompt": {
+    "path": "fixtures/unsafe-boundary/review/fixture-review-prompt.md",
+    "sha256": "4bbeabc0ff47c84fcd0c50ef1186393436f007c7c402e4fb7ad91b57e7b67c10"
+  },
+  "inputs": [
+    {
+      "path": "fixtures/unsafe-boundary/review/fixture-review-input.txt",
+      "sha256": "9e44b02a5d25fcc2c85f7b299c13d79db97c74184571baa910f9526e7f65450c"
+    }
+  ],
+  "repositorySnapshotSha256": "4598b0d5b05d60b0c9a3a9c286cfaa18b10b4b53fb307b66dfec855e76cd9f5c",
+  "source": {
+    "path": "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
+    "sha256": "94d447a48c98cf2ffcb56fc713fa17eaedc9799381b28f01b82b0e0013e2e11c"
+  },
+  "evidence": [
+    {
+      "path": "fixtures/unsafe-boundary/scenarios.json",
+      "sha256": "9d81dbe4451c865abfdb1ec03d392e931b6457f25b0c026f786e058e7a86be2e"
+    }
+  ],
+  "findings": [],
+  "decision": "approved",
+  "independence": {
+    "reviewerDiffersFromOwner": true,
+    "contextIsolated": true,
+    "reviewerAuthoredWaiver": false
+  },
+  "limitations": [
+    "Synthetic ancestor receipt used only to test renewal governance; it cannot authorize a production boundary."
+  ]
+}

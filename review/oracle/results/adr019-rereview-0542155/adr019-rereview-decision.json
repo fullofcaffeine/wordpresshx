@@ -1,0 +1,41 @@
+{
+  "schema": "wordpress-hx.oracle-adr019-rereview.v1",
+  "reviewedCommit": "05421557763d61b3bd87996714508227da619db2",
+  "packetSha256": "2cedd63d13f5c22699cae4adae98ca884fcb2fba9b307e6028b399581dcd6a49",
+  "reviewer": {
+    "identity": "Codex Oracle agent /root/oracle_wordpresshx_review",
+    "role": "independent senior application-security and release-governance reviewer",
+    "model": "GPT-5.4"
+  },
+  "findingDispositions": [
+    {"id": "ADR019-F001", "disposition": "partially-resolved-open"},
+    {"id": "ADR019-F002", "disposition": "resolved"},
+    {"id": "ADR019-F003", "disposition": "implemented-not-reproducible-from-packet"},
+    {"id": "ADR019-F004", "disposition": "resolved"}
+  ],
+  "newFindings": [
+    {
+      "id": "ADR019-RF001",
+      "severity": "high",
+      "title": "Renewal ancestry is only shallowly authenticated",
+      "status": "open"
+    },
+    {
+      "id": "ADR019-RF002",
+      "severity": "medium",
+      "title": "Immutable review packet omits the declared package lock",
+      "status": "open"
+    }
+  ],
+  "boundedClaims": {
+    "architecturePrototypeOnly": true,
+    "productionScannersVerified": false,
+    "publicUnsafeApiAuthorized": false,
+    "wordpressOrBrowserBehaviorVerified": false,
+    "publicationAuthorized": false,
+    "stableSupportAuthorized": false,
+    "productionSupportAuthorized": false,
+    "manualHumanReviewRequired": false
+  },
+  "decision": "changes-required"
+}

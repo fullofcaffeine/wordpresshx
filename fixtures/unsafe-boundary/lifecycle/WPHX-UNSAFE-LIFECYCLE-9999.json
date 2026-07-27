@@ -14,7 +14,13 @@
       "reviewReceiptSha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f",
       "previousRecordId": null,
       "previousRecordSha256": null,
-      "renewalOf": null,
+      "renewalOf": {
+        "waiverId": "WPHX-UNSAFE-9998",
+        "waiverPath": "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9998.json",
+        "waiverSha256": "b3fa61cb3529dc81d0cd3327b3ae63b54072d30c9fde4bb77a69503e2271979b",
+        "lifecyclePath": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json",
+        "lifecycleSha256": "2c16dbcf0092bc04e2e65acba4549332d719ad7cd7d413ebd0ca3506168d17ea"
+      },
       "supersededBy": null,
       "revocation": {
         "at": null,

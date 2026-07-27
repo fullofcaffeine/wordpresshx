@@ -71,9 +71,17 @@
     "renewalAncestor": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["waiverId", "lifecyclePath", "lifecycleSha256"],
+      "required": [
+        "waiverId",
+        "waiverPath",
+        "waiverSha256",
+        "lifecyclePath",
+        "lifecycleSha256"
+      ],
       "properties": {
         "waiverId": {"$ref": "#/$defs/waiverId"},
+        "waiverPath": {"$ref": "#/$defs/repositoryPath"},
+        "waiverSha256": {"$ref": "#/$defs/sha256"},
         "lifecyclePath": {"$ref": "#/$defs/repositoryPath"},
         "lifecycleSha256": {"$ref": "#/$defs/sha256"}
       }

@@ -463,6 +463,7 @@ def validate_bead_status(
 
 def validate_lifecycle(
     waiver: dict[str, object],
+    categories: dict[str, dict[str, object]],
     subject_sha256: str,
     review_sha256: str,
     created_at: datetime,
@@ -470,6 +471,8 @@ def validate_lifecycle(
     evaluation_at: datetime,
     expires_at: datetime,
     simulation_only: bool,
+    expected_successor: str | None,
+    ancestry: frozenset[str],
 ) -> None:
     reference = object_value(waiver["lifecycle"], "waiver lifecycle reference")
     exact_keys(
@@ -502,6 +505,12 @@ def validate_lifecycle(
         or ledger["simulationOnly"] is not simulation_only
     ):
         raise ValidationError("lifecycle identity differs from waiver reference")
+    waiver_id = string_value(waiver["id"], "waiver ID")
+    expected_ledger_id = waiver_id.replace(
+        "WPHX-UNSAFE-", "WPHX-UNSAFE-LIFECYCLE-", 1
+    )
+    if ledger["ledgerId"] != expected_ledger_id:
+        raise ValidationError("lifecycle ledger ID does not bind the waiver ID")
     records = array_value(ledger["records"], "lifecycle records")
     if not records:
         raise ValidationError("lifecycle ledger is empty")
@@ -509,6 +518,8 @@ def validate_lifecycle(
     previous_hash: str | None = None
     ids: set[str] = set()
     current: dict[str, object] | None = None
+    previous_state: str | None = None
+    previous_recorded_at: datetime | None = None
     for index, raw_record in enumerate(records):
         record = object_value(raw_record, f"lifecycle record[{index}]")
         exact_keys(
@@ -531,7 +542,8 @@ def validate_lifecycle(
         )
         record_id = string_value(record["id"], "lifecycle record ID")
         if (
-            record_id in ids
+            record_id != f"{expected_ledger_id}-{index + 1:02d}"
+            or record_id in ids
             or integer_value(record["sequence"], "lifecycle sequence") != index + 1
             or record["previousRecordId"] != previous_id
             or record["previousRecordSha256"] != previous_hash
@@ -541,12 +553,18 @@ def validate_lifecycle(
         recorded_at = parse_utc(record["recordedAt"], "lifecycle recordedAt")
         if not created_at <= reviewed_at <= recorded_at <= evaluation_at < expires_at:
             raise ValidationError("lifecycle, review, evaluation, or expiry order is invalid")
+        if previous_recorded_at is not None and recorded_at <= previous_recorded_at:
+            raise ValidationError("lifecycle record timestamps are not increasing")
         if (
             record["waiverSubjectSha256"] != subject_sha256
             or record["reviewReceiptSha256"] != review_sha256
         ):
             raise ValidationError("lifecycle record does not bind waiver and review")
         state = string_value(record["state"], "lifecycle state")
+        if index == 0 and state != "active":
+            raise ValidationError("lifecycle must begin with an active record")
+        if previous_state not in {None, "active"}:
+            raise ValidationError("lifecycle contains a record after a terminal state")
         revocation = object_value(record["revocation"], "lifecycle revocation")
         exact_keys(revocation, {"at", "reason"}, "lifecycle revocation")
         if state == "active":
@@ -560,6 +578,8 @@ def validate_lifecycle(
                 revocation["at"] is None
                 or revocation["reason"] is None
                 or record["supersededBy"] is not None
+                or parse_utc(revocation["at"], "lifecycle revocation at")
+                != recorded_at
             ):
                 raise ValidationError("revoked lifecycle lacks revocation authority")
         elif state == "superseded":
@@ -576,37 +596,59 @@ def validate_lifecycle(
             renewal = object_value(record["renewalOf"], "renewal ancestor")
             exact_keys(
                 renewal,
-                {"waiverId", "lifecyclePath", "lifecycleSha256"},
+                {
+                    "waiverId",
+                    "waiverPath",
+                    "waiverSha256",
+                    "lifecyclePath",
+                    "lifecycleSha256",
+                },
                 "renewal ancestor",
             )
             prior_id = string_value(renewal["waiverId"], "renewal ancestor ID")
+            prior_waiver_path = repository_path(
+                renewal["waiverPath"], "renewal ancestor waiver path"
+            )
             prior_path = repository_path(
                 renewal["lifecyclePath"], "renewal ancestor lifecycle path"
             )
             if (
                 prior_id == waiver["id"]
+                or prior_id in ancestry
                 or index != 0
+                or hashlib.sha256(prior_waiver_path.read_bytes()).hexdigest()
+                != renewal["waiverSha256"]
                 or hashlib.sha256(prior_path.read_bytes()).hexdigest()
                 != renewal["lifecycleSha256"]
             ):
                 raise ValidationError("renewal must use a new waiver and fresh ledger")
-            prior = object_value(strict_json(prior_path), "renewal ancestor ledger")
-            prior_records = array_value(prior.get("records"), "renewal records")
+            prior_waiver = object_value(
+                strict_json(prior_waiver_path), "renewal ancestor waiver"
+            )
+            if prior_waiver.get("id") != prior_id:
+                raise ValidationError("renewal ancestor waiver identity drifted")
             if (
-                prior.get("waiverId") != prior_id
-                or not prior_records
-                or prior.get("currentRecordId")
-                != object_value(prior_records[-1], "renewal current record").get("id")
-                or object_value(prior_records[-1], "renewal current record").get(
-                    "state"
-                )
-                != "superseded"
-                or object_value(prior_records[-1], "renewal current record").get(
-                    "supersededBy"
-                )
-                != waiver["id"]
+                prior_waiver.get("boundaryId") != waiver["boundaryId"]
+                or prior_waiver.get("simulationOnly") is not simulation_only
             ):
-                raise ValidationError("renewal ancestor does not authorize successor")
+                raise ValidationError(
+                    "renewal ancestor boundary or simulation authority drifted"
+                )
+            prior_lifecycle = object_value(
+                prior_waiver.get("lifecycle"), "renewal ancestor lifecycle reference"
+            )
+            if (
+                prior_lifecycle.get("path") != renewal["lifecyclePath"]
+                or prior_lifecycle.get("sha256") != renewal["lifecycleSha256"]
+            ):
+                raise ValidationError("renewal ancestor ledger reference drifted")
+            validate_waiver_instance(
+                prior_waiver,
+                categories,
+                recorded_at,
+                expected_successor=waiver_id,
+                ancestry=ancestry,
+            )
         validate_bead_status(
             record["removalStatus"],
             string_value(
@@ -614,20 +656,32 @@ def validate_lifecycle(
                 "removal Bead",
             ),
             evaluation_at,
-            record_id == ledger["currentRecordId"],
+            record_id == ledger["currentRecordId"] and expected_successor is None,
         )
         previous_id = record_id
         previous_hash = digest(record)
+        previous_state = state
+        previous_recorded_at = recorded_at
         if record_id == ledger["currentRecordId"]:
             current = record
-    if current is None or current is not records[-1] or current["state"] != "active":
-        raise ValidationError("current lifecycle authority is not the final active record")
+    if current is None or current is not records[-1]:
+        raise ValidationError("current lifecycle authority is not the final record")
+    if expected_successor is None:
+        if current["state"] != "active":
+            raise ValidationError("current lifecycle authority is not active")
+    elif (
+        current["state"] != "superseded"
+        or current["supersededBy"] != expected_successor
+    ):
+        raise ValidationError("renewal ancestor does not authorize successor")
 
 
 def validate_waiver_instance(
     waiver: dict[str, object],
     categories: dict[str, dict[str, object]],
     evaluation_at: datetime,
+    expected_successor: str | None = None,
+    ancestry: frozenset[str] = frozenset(),
 ) -> None:
     exact_keys(
         waiver,
@@ -657,6 +711,9 @@ def validate_waiver_instance(
     waiver_id = string_value(waiver["id"], "waiver id")
     if re.fullmatch(r"WPHX-UNSAFE-[0-9]{4}", waiver_id) is None:
         raise ValidationError("waiver ID is invalid")
+    if waiver_id in ancestry:
+        raise ValidationError("waiver renewal ancestry contains a cycle")
+    current_ancestry = ancestry | {waiver_id}
     boundary_id = string_value(waiver["boundaryId"], "boundary ID")
     if re.fullmatch(r"UB-[A-Z0-9][A-Z0-9-]*", boundary_id) is None:
         raise ValidationError("boundary ID is invalid")
@@ -760,6 +817,7 @@ def validate_waiver_instance(
     string_value(removal["successCondition"], "waiver removal success condition")
     validate_lifecycle(
         waiver,
+        categories,
         subject_sha256,
         review_sha256,
         created_at,
@@ -767,6 +825,8 @@ def validate_waiver_instance(
         evaluation_at,
         expires_at,
         simulation_only,
+        expected_successor,
+        current_ancestry,
     )
 
 
@@ -1743,6 +1803,110 @@ def run_repository_path_mutations() -> int:
         shutil.rmtree(external)
 
 
+def run_renewal_ancestry_mutation(
+    waiver: dict[str, object],
+    categories: dict[str, dict[str, object]],
+    evaluation_at: datetime,
+) -> int:
+    fixture_root = ROOT / "fixtures" / "unsafe-boundary"
+    temporary = Path(
+        tempfile.mkdtemp(prefix=".renewal-ancestry-", dir=fixture_root)
+    )
+
+    def write_fixture(name: str, value: object) -> tuple[str, str]:
+        path = temporary / name
+        path.write_text(
+            json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+            encoding="utf-8",
+        )
+        return (
+            path.relative_to(ROOT).as_posix(),
+            hashlib.sha256(path.read_bytes()).hexdigest(),
+        )
+
+    try:
+        prior_waiver_path = (
+            fixture_root / "waivers" / "WPHX-UNSAFE-9998.json"
+        )
+        prior_lifecycle_path = (
+            fixture_root
+            / "lifecycle"
+            / "WPHX-UNSAFE-LIFECYCLE-9998.json"
+        )
+        current_lifecycle_path = (
+            fixture_root
+            / "lifecycle"
+            / "WPHX-UNSAFE-LIFECYCLE-9999.json"
+        )
+        prior_waiver = object_value(
+            strict_json(prior_waiver_path), "mutation prior waiver"
+        )
+        fabricated_prior = object_value(
+            strict_json(prior_lifecycle_path), "mutation prior lifecycle"
+        )
+        prior_records = array_value(
+            fabricated_prior["records"], "mutation prior records"
+        )
+        object_value(
+            prior_records[-1], "mutation prior final record"
+        )["previousRecordSha256"] = "0" * 64
+        fabricated_lifecycle_ref = write_fixture(
+            "fabricated-prior-lifecycle.json", fabricated_prior
+        )
+        object_value(
+            prior_waiver["lifecycle"], "mutation prior lifecycle reference"
+        ).update(
+            {
+                "path": fabricated_lifecycle_ref[0],
+                "sha256": fabricated_lifecycle_ref[1],
+            }
+        )
+        fabricated_waiver_ref = write_fixture(
+            "fabricated-prior-waiver.json", prior_waiver
+        )
+        current_lifecycle = object_value(
+            strict_json(current_lifecycle_path), "mutation current lifecycle"
+        )
+        current_records = array_value(
+            current_lifecycle["records"], "mutation current records"
+        )
+        renewal = object_value(
+            object_value(
+                current_records[0], "mutation current first record"
+            )["renewalOf"],
+            "mutation renewal ancestor",
+        )
+        renewal.update(
+            {
+                "waiverPath": fabricated_waiver_ref[0],
+                "waiverSha256": fabricated_waiver_ref[1],
+                "lifecyclePath": fabricated_lifecycle_ref[0],
+                "lifecycleSha256": fabricated_lifecycle_ref[1],
+            }
+        )
+        current_lifecycle_ref = write_fixture(
+            "current-lifecycle.json", current_lifecycle
+        )
+        candidate = copy.deepcopy(waiver)
+        object_value(
+            candidate["lifecycle"], "mutation current lifecycle reference"
+        ).update(
+            {
+                "path": current_lifecycle_ref[0],
+                "sha256": current_lifecycle_ref[1],
+            }
+        )
+        try:
+            validate_waiver_instance(candidate, categories, evaluation_at)
+        except ValidationError:
+            return 1
+        raise AssertionError(
+            "fabricated renewal ancestry passed unexpectedly"
+        )
+    finally:
+        shutil.rmtree(temporary)
+
+
 def main() -> None:
     policy = object_value(strict_json(POLICY_PATH), "policy")
     schema = object_value(strict_json(SCHEMA_PATH), "schema")
@@ -1757,7 +1921,9 @@ def main() -> None:
         schema, list(categories)
     ) + run_waiver_mutations(
         waiver, categories, evaluation_at
-    ) + run_repository_path_mutations()
+    ) + run_repository_path_mutations() + run_renewal_ancestry_mutation(
+        waiver, categories, evaluation_at
+    )
     summary = {
         "categoryCount": len(categories),
         "mutationCount": mutation_count,

@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
-  "status": "implemented-review-pending",
-  "observedAt": "2026-07-27T00:43:13Z",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-27T01:01:10Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
-      "sha256": "1ca5528d1af76ce4204d89d5b98fe293a8bc72e0db6c033788bf209590822edc"
+      "sha256": "8c38234ce636e9bb78c54135594a66e8d2b92a619deed66e819ae4695ce07115"
     },
     "policy": {
       "path": "manifests/unsafe-boundary-policy.json",
@@ -23,7 +23,7 @@
     },
     "lifecycleSchema": {
       "path": "schemas/unsafe-boundary-lifecycle.schema.json",
-      "sha256": "7a6979342cb6aae0e4206434a251ba13beffa5ef4f19c18073bd12f407660809"
+      "sha256": "e2b79346d64a0114a4f68e6c9d485a8ae70af55dffd99f66642fa801d9390cbb"
     },
     "beadStatusSchema": {
       "path": "schemas/unsafe-boundary-bead-status.schema.json",
@@ -35,7 +35,11 @@
     },
     "canonicalWaiver": {
       "path": "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9999.json",
-      "sha256": "50154f869c5a1fa8a780aead194c5953ff7143e4cca00c704708114b0a1b1258"
+      "sha256": "b200a255f12eece957e5794d5ff98aa0074491bc03456dcd647c160e20a0af3e"
+    },
+    "canonicalAncestorWaiver": {
+      "path": "fixtures/unsafe-boundary/waivers/WPHX-UNSAFE-9998.json",
+      "sha256": "b3fa61cb3529dc81d0cd3327b3ae63b54072d30c9fde4bb77a69503e2271979b"
     },
     "canonicalWaiverSource": {
       "path": "fixtures/unsafe-boundary/evidence/compiler-private-adapter.txt",
@@ -43,23 +47,35 @@
     },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "5e08feffda976bc396ea51a5ce6d670f90a7c1ca8fcbf5a0e022279c836c098b"
+      "sha256": "a0f3af1fa4677297b93cc617431de3ddf3537389bdd6876c1014ed6ce87dce58"
     },
     "canonicalReview": {
       "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
       "sha256": "403c6fe1bdde2789e389382a1526ada85bd2c3036f2e27523db7ff904c283b0f"
     },
+    "canonicalAncestorReview": {
+      "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9998-01.json",
+      "sha256": "a6caec1639afdb064c2692724c3355d62d3fab6851a507403c07e71c899b8642"
+    },
     "canonicalLifecycle": {
       "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9999.json",
-      "sha256": "d89fa837f837c9f78ed66cb000e53279c7173d3843596cf244ded061b58d3ad5"
+      "sha256": "e39fd85fabed1b41db4bc1c96cd5ee5b324107128e4ed2514f29c32ca3990277"
+    },
+    "canonicalAncestorLifecycle": {
+      "path": "fixtures/unsafe-boundary/lifecycle/WPHX-UNSAFE-LIFECYCLE-9998.json",
+      "sha256": "2c16dbcf0092bc04e2e65acba4549332d719ad7cd7d413ebd0ca3506168d17ea"
     },
     "canonicalBeadStatus": {
       "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052.json",
       "sha256": "9fc2f89803609a7fda4af4b364bd5d547d5a8a94e02e00a912791f4948e4c6cc"
     },
+    "canonicalAncestorBeadStatus": {
+      "path": "fixtures/unsafe-boundary/beads/wordpresshx-sdk-052-2026-07-20.json",
+      "sha256": "af540a800a1d5fd6bffc3bc8b6b1bd63df619d950b7963540867ac6a87296269"
+    },
     "independentSchemaValidator": {
       "path": "scripts/security/unsafe-boundary-schema/validate.mjs",
-      "sha256": "94e27a67be3cc21c4a1d181dc859e81f3c84a139554a54ce9aac55b00b0b1759"
+      "sha256": "6788cd7ab273f7778fda3a74f3e7c6065106ee4f7458032cd4d52dfea9485677"
     },
     "schemaValidatorManifest": {
       "path": "scripts/security/unsafe-boundary-schema/package.json",
@@ -102,18 +118,19 @@
       "bash scripts/check-repository.sh"
     ],
     "sourceTreeDigestAlgorithm": "sha256-sorted-full-path-content-digests-v2",
-    "sourceTreeSha256": "ccfdd703caa234d8763785b3f4bd3fb47cd902e704007f54ebd4ef977f4d762e",
+    "sourceTreeSha256": "6e15907f37f93a09279acd70599c62a3279be116ea2b751e224d469b3d1d282d",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
     "policyDigest": "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
     "scenarioDigest": "310c4581ff879e47881756081cc8cef573acbaa12770579b916e8613aaf1c4cf",
     "waiverDigestAlgorithm": "sha256-canonical-json-v1",
-    "waiverDigest": "9bea91a47412cfbba483a70cfbb0d962ca294b125b408563a5a21cf5299dda22",
+    "waiverDigest": "1bdb9dd7a04ef266e02ce860a6a30bac34fd85ce04ae3e5199a40947bde5bf5a",
     "categoryCount": 9,
     "scenarioCount": 14,
-    "failClosedMutationCount": 59,
+    "failClosedMutationCount": 60,
     "independentSchemaCount": 4,
-    "independentSchemaWeakeningProbeCount": 7,
+    "independentSchemaInstanceCount": 8,
+    "independentSchemaWeakeningProbeCount": 8,
     "waiverSchemaClosed": true,
     "sourceGeneratedAndFinalInventoriesRequired": true,
     "prohibitedScopesRemainUnwaivable": true,
@@ -134,7 +151,20 @@
       "reviewedInputsSha256": "701d99df5c15ccf6fb590a5760553a9679078c047f80c60869b4d9575825cb42",
       "openFindings": ["ADR019-F001", "ADR019-F002", "ADR019-F003", "ADR019-F004"]
     },
-    "freshIndependentOracleRereview": "pending-corrections",
+    "firstCorrectionOracleRereview": {
+      "decision": "changes-required",
+      "reviewedCommit": "05421557763d61b3bd87996714508227da619db2",
+      "packetSha256": "2cedd63d13f5c22699cae4adae98ca884fcb2fba9b307e6028b399581dcd6a49",
+      "reportPath": "review/oracle/results/adr019-rereview-0542155/ORACLE-ADR019-REREVIEW.md",
+      "reportSha256": "f4dd63f5bb66782c37b7c061385379f6b53c23cfcdc0bcbb413ec9e031baad71",
+      "decisionPath": "review/oracle/results/adr019-rereview-0542155/adr019-rereview-decision.json",
+      "decisionSha256": "a92f59980ad0dd44344eaa379df19c3b5d1c2dd767cae01c21e1cff4525b4a60",
+      "reviewedInputsPath": "review/oracle/results/adr019-rereview-0542155/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "b3f162122c4a9fb538fa45c95ca7927327a1b1ccddb9444b46fa8f500c1500ac",
+      "resolvedFindings": ["ADR019-F002", "ADR019-F004"],
+      "openFindings": ["ADR019-F001", "ADR019-F003", "ADR019-RF001", "ADR019-RF002"]
+    },
+    "freshIndependentOracleRereview": "pending-second-correction",
     "acceptanceAuthorized": false
   },
   "relationships": {
@@ -148,10 +178,13 @@
     "workflow": "Unsafe-boundary policy",
     "job": "unsafe-boundary-policy",
     "required": true,
-    "runId": 30227977113,
-    "jobId": 89861397432,
-    "commit": "fcd712affe5c3ce1582beae73439f96b91b56f19",
-    "status": "passed",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-second-oracle-correction-hosted-run",
+    "lastPassedRunId": 30227977113,
+    "lastPassedJobId": 89861397432,
+    "lastPassedCommit": "fcd712affe5c3ce1582beae73439f96b91b56f19",
     "failedCorrectionRunId": 30226771473,
     "failedCorrectionJobIds": [89858153619, 89858661844],
     "failedCorrectionReason": "fresh-runner-bd-dolt-pull-failed-before-diagnostic-output-was-preserved",
@@ -173,7 +206,7 @@
     "No public unsafe constructor or production waiver API is published.",
     "The scenarios do not execute WordPress, PHP, a browser, dependency scanners, or a final release artifact.",
     "Stable publication remains blocked independently by ADR-020, ADR-021, G8, and the capability ledger.",
-    "The correction subject passes locally and in the focused hosted gate; independent Oracle rereview is required before ADR acceptance."
+    "The second correction passes locally; its focused hosted gate and a fresh independent Oracle rereview are required before ADR acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-independent-review",
