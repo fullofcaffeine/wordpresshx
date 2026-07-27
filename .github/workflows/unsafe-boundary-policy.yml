@@ -36,4 +36,5 @@ jobs:
       - name: Validate waivers, lifecycle authority, live removal Bead, and release stops
         env:
           WORDPRESSHX_BD_BIN: ${{ steps.beads.outputs.binary }}
+          WORDPRESSHX_BEADS_REMOTE: git+https://github.com/fullofcaffeine/wordpresshx.git
         run: python3 scripts/security/test-unsafe-boundary-policy.py --verify-beads
