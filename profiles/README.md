@@ -12,6 +12,22 @@ SDK-010 has now locked and independently materialized the [`wp70-release` source
 
 [`catalog-selection.json`](catalog-selection.json) is the reviewed input contract for the minimal vertical-slice inventory. Regenerate into a fresh tree with `scripts/profiles/generate-catalogs.py`; validate committed bytes, double-run equality, exact source objects, known entries, omissions, and failed-publication rollback with `scripts/profiles/test-catalog-generator.sh`. Broad catalog scraping is intentionally outside SDK-013.
 
+Each generated profile also carries `field-origins.json`. It covers every leaf
+field and empty container in `catalog.json` and `omissions.json`, distinguishing
+SDK-authored structure, generator-derived values, exact source-lock identities,
+source-file digests, and normalized upstream identifiers. Upstream-derived
+identifiers include exact byte/line spans in the pinned source blobs. The map
+also binds byte-identical WordPress/Gutenberg license snapshots. This is
+auditable provenance, not a distribution or ownership conclusion; publication
+remains subject to ADR-020 review and product-owner approval.
+
+`scripts/profiles/catalog-core-v1.py` preserves the exact SDK-013 generator
+bytes that own `catalog.json` and `omissions.json`. The extended generator owns
+the companion origin maps and reports, and the regeneration gate independently
+runs the immutable core and requires byte-identical catalog and omission
+outputs. Evidence-only generator changes therefore cannot silently invalidate
+otherwise unchanged capability catalogs.
+
 SDK-014 compares any two closed, digest-valid catalogs without writing them:
 
 ```bash

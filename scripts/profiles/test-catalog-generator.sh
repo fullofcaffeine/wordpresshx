@@ -30,6 +30,8 @@ else
   fetch_arguments=(--fetch-missing --cache-root "${temporary_root}/cache")
 fi
 
+python3 "${repository_root}/scripts/licenses/generate-profile-license-snapshots.py"
+
 generate() {
   local output_root="$1"
   if (( provided == 3 )); then
@@ -47,6 +49,37 @@ generate "${temporary_root}/run-one"
 generate "${temporary_root}/run-two"
 diff -ru "${temporary_root}/run-one" "${temporary_root}/run-two"
 diff -ru "${repository_root}/generated" "${temporary_root}/run-one"
+
+if (( provided == 3 )); then
+  python3 "${repository_root}/scripts/profiles/catalog-core-v1.py" \
+    "${repository_arguments[@]}" \
+    --output-root "${temporary_root}/catalog-core"
+else
+  python3 "${repository_root}/scripts/profiles/catalog-core-v1.py" \
+    --repository "wordpress=${temporary_root}/cache/wordpress" \
+    --repository "embedded-gutenberg=${temporary_root}/cache/embedded-gutenberg" \
+    --repository "forward-gutenberg=${temporary_root}/cache/forward-gutenberg" \
+    --output-root "${temporary_root}/catalog-core"
+fi
+for generated_profile in "${temporary_root}"/run-one/*/catalog-v1; do
+  profile_id="$(basename "$(dirname "${generated_profile}")")"
+  cmp \
+    "${generated_profile}/catalog.json" \
+    "${temporary_root}/catalog-core/${profile_id}/catalog-v1/catalog.json"
+  cmp \
+    "${generated_profile}/omissions.json" \
+    "${temporary_root}/catalog-core/${profile_id}/catalog-v1/omissions.json"
+done
+
+for field_origins in "${temporary_root}"/run-one/*/catalog-v1/field-origins.json; do
+  jq -e '
+    .status == "field-origins-inventoried-review-pending"
+    and .publicationAuthorized == false
+    and .summary.fieldCount == ([.outputs[].fields[]] | length)
+    and .summary.upstreamSourceSpanCount > 0
+    and .summary.upstreamLicenseEvidenceCount > 0
+  ' "${field_origins}" >/dev/null
+done
 
 if grep -R -F -- "${temporary_root}" "${temporary_root}/run-one" >/dev/null; then
   echo "generated catalog leaked its materialization path" >&2

@@ -9,6 +9,11 @@
   },
   "effectiveInputs": [
     {
+      "sourceDigest": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+      "sourceInputId": "embedded-gutenberg-source",
+      "sourcePath": "LICENSE.md"
+    },
+    {
       "sourceDigest": "aa685725ecddb4a60903eeddb5cd5e7a8988261b528ac206a498c86d3eebcf6a",
       "sourceInputId": "embedded-gutenberg-source",
       "sourcePath": "packages/blocks/package.json"
@@ -37,6 +42,11 @@
       "sourceDigest": "47847dd136a2ee54883ba089a4e77d2b87b74e36add6e5d67e778b22823658bf",
       "sourceInputId": "embedded-gutenberg-source",
       "sourcePath": "packages/i18n/package.json"
+    },
+    {
+      "sourceDigest": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+      "sourceInputId": "wordpress-source",
+      "sourcePath": "src/license.txt"
     },
     {
       "sourceDigest": "b17d9e4028dd44cc9c7715804148fb1035a438376352f301e08ba265516a3e68",
@@ -81,11 +91,11 @@
   ],
   "generator": {
     "identity": "wordpresshx-exact-profile-generator",
-    "sourceDigest": "ce5d366c5ddeea9fdc3fa52e25a6f1323d3fdb94db33b554783fa8ddc6fbb08f",
+    "sourceDigest": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898",
     "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
     "version": "1"
   },
-  "inputFingerprint": "815972e2abc5d5c2ef384573717063ef5026f8ec6f8120ce3b69e3d45a4ea870",
+  "inputFingerprint": "565c05cdac055086ede322173466658b9a436ffc2b305c57bcdbd6492e2131c2",
   "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
   "inventoryReceiptId": "SDK-013-PROFILE-GENERATOR",
   "outputs": {
@@ -94,6 +104,12 @@
       "catalogDigest": "530a1581d07e7509fb68f7da5b53575009ed4a94280513efd82a8c99622d9d61",
       "path": "catalog.json",
       "sha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e"
+    },
+    "fieldOrigins": {
+      "fieldCount": 586,
+      "fieldOriginsDigest": "6d24768f9fc416ffb3880b0945152cb05f22934de436eb2e9d8da7f204487e31",
+      "path": "field-origins.json",
+      "sha256": "d0db6f9e88ae882dd4b22808e1bec149c8336bca6f62409b79a48a7054bbb4d0"
     },
     "omissions": {
       "omissionCount": 2,
@@ -110,7 +126,7 @@
   "schemaVersion": 1,
   "selection": {
     "path": "profiles/catalog-selection.json",
-    "sha256": "f5ef84b20c9111c087bce694ea9a197c3eddaa46263b863e83c8002353fb683a"
+    "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
   },
   "sourceLock": {
     "path": "profiles/wp70-release/source.lock.json",

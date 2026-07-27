@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SELECTION_PATH = ROOT / "profiles" / "catalog-selection.json"
 SCHEMA_PATH = ROOT / "schemas" / "profile.schema.json"
 GENERATOR_PATH = ROOT / "scripts" / "profiles" / "generate-catalogs.py"
+CATALOG_CORE_PATH = ROOT / "scripts" / "profiles" / "catalog-core-v1.py"
 GENERATED_ROOT = ROOT / "generated"
 VALIDATOR_PATH = ROOT / "scripts" / "profiles" / "validate-profile-schema.py"
 TOOLCHAIN_IDENTITY = "python-stdlib-json-v1+git-object-reader-v1"
@@ -32,6 +33,30 @@ def canonical(value: object) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")
+
+
+def pointer_component(value: str) -> str:
+    return value.replace("~", "~0").replace("/", "~1")
+
+
+def leaf_fields(value: object, path: str = "") -> list[tuple[str, object]]:
+    if isinstance(value, dict):
+        if not value:
+            return [(path, value)]
+        fields: list[tuple[str, object]] = []
+        for name, child in value.items():
+            fields.extend(
+                leaf_fields(child, path + "/" + pointer_component(str(name)))
+            )
+        return fields
+    if isinstance(value, list):
+        if not value:
+            return [(path, value)]
+        fields = []
+        for index, child in enumerate(value):
+            fields.extend(leaf_fields(child, f"{path}/{index}"))
+        return fields
+    return [(path, value)]
 
 
 def pointer(value: object, path: str) -> object:
@@ -135,6 +160,231 @@ def verify_omissions(
         }
 
 
+def verify_field_origins(
+    document: dict[str, object],
+    profile: dict[str, object],
+    generator: dict[str, object],
+    effective_inputs: set[tuple[str, str, str]],
+    catalog_bytes: bytes,
+    catalog: dict[str, object],
+    omission_bytes: bytes,
+    omissions: dict[str, object],
+) -> None:
+    exact_keys(
+        document,
+        {
+            "schemaVersion",
+            "profileId",
+            "catalogRevision",
+            "status",
+            "legalAdvice",
+            "publicationAuthorized",
+            "distributionConclusion",
+            "fieldOriginsDigestAlgorithm",
+            "fieldOriginsDigest",
+            "generator",
+            "upstreamLicenseEvidence",
+            "outputs",
+            "summary",
+        },
+        "field origins",
+    )
+    assert document["schemaVersion"] == 1
+    assert document["profileId"] == profile["profileId"]
+    assert document["catalogRevision"] == profile["catalogRevision"]
+    assert document["status"] == "field-origins-inventoried-review-pending"
+    assert document["legalAdvice"] is False
+    assert document["publicationAuthorized"] is False
+    assert document["distributionConclusion"] == (
+        "pending-product-owner-and-qualified-review-of-exact-generated-catalog"
+    )
+    assert document["fieldOriginsDigestAlgorithm"] == "sha256-canonical-json-v1"
+    assert document["generator"] == generator
+    digest_material = {
+        key: value
+        for key, value in document.items()
+        if key != "fieldOriginsDigest"
+    }
+    assert document["fieldOriginsDigest"] == digest(canonical(digest_material))
+
+    licenses = document["upstreamLicenseEvidence"]
+    assert isinstance(licenses, list)
+    expected_license_count = sum(
+        int(definition.get("licenseEvidence") is not None)
+        for definition in profile["inputs"]
+    )
+    assert len(licenses) == expected_license_count
+    for license_evidence in licenses:
+        exact_keys(
+            license_evidence,
+            {
+                "sourceInputId",
+                "repository",
+                "commit",
+                "tree",
+                "expression",
+                "sourcePath",
+                "sourceBlob",
+                "sourceSha256",
+                "snapshotPath",
+                "snapshotSha256",
+            },
+            "upstream license evidence",
+        )
+        assert SHA256.fullmatch(license_evidence["sourceSha256"])
+        assert (
+            license_evidence["sourceSha256"]
+            == license_evidence["snapshotSha256"]
+        )
+        snapshot = ROOT / license_evidence["snapshotPath"]
+        assert snapshot.is_file()
+        assert digest(snapshot.read_bytes()) == license_evidence["snapshotSha256"]
+        assert (
+            license_evidence["sourceInputId"],
+            license_evidence["sourcePath"],
+            license_evidence["sourceSha256"],
+        ) in effective_inputs
+
+    expected_outputs = {
+        "catalog.json": (catalog_bytes, catalog),
+        "omissions.json": (omission_bytes, omissions),
+    }
+    outputs = document["outputs"]
+    assert isinstance(outputs, list)
+    assert [output["path"] for output in outputs] == sorted(expected_outputs)
+    origin_counts: dict[str, int] = {}
+    field_count = 0
+    upstream_span_sources: dict[str, int] = {}
+    for output in outputs:
+        exact_keys(
+            output,
+            {"path", "sha256", "fieldCount", "fields"},
+            "field-origin output",
+        )
+        output_bytes, output_document = expected_outputs[output["path"]]
+        assert output["sha256"] == digest(output_bytes)
+        expected_fields = {
+            path: digest(canonical(value))
+            for path, value in leaf_fields(output_document)
+        }
+        fields = output["fields"]
+        assert isinstance(fields, list)
+        assert output["fieldCount"] == len(fields) == len(expected_fields)
+        assert [field["outputPointer"] for field in fields] == sorted(
+            expected_fields
+        )
+        for field in fields:
+            exact_keys(
+                field,
+                {"outputPointer", "valueSha256", "origin"},
+                "field-origin entry",
+            )
+            field_pointer = field["outputPointer"]
+            assert field["valueSha256"] == expected_fields[field_pointer]
+            origin = field["origin"]
+            exact_keys(
+                origin,
+                {"class", "authority", "transform", "source"},
+                f"field origin {field_pointer}",
+            )
+            origin_class = origin["class"]
+            assert origin_class in {
+                "sdk-authored",
+                "sdk-generated",
+                "upstream-identity-derived",
+                "upstream-identity-verbatim",
+                "upstream-normalized",
+            }
+            origin_counts[origin_class] = origin_counts.get(origin_class, 0) + 1
+            source = origin["source"]
+            source_kind = source["kind"]
+            if source_kind == "repository-file":
+                exact_keys(
+                    source,
+                    {"kind", "path", "sha256"},
+                    "repository-file origin",
+                )
+                source_path = ROOT / source["path"]
+                assert source_path.is_file()
+                assert digest(source_path.read_bytes()) == source["sha256"]
+            elif source_kind == "repository-json-field":
+                exact_keys(
+                    source,
+                    {"kind", "path", "sha256", "jsonPointer"},
+                    "repository JSON origin",
+                )
+                source_path = ROOT / source["path"]
+                assert source_path.is_file()
+                assert digest(source_path.read_bytes()) == source["sha256"]
+                pointer(
+                    json.loads(source_path.read_bytes()),
+                    source["jsonPointer"],
+                )
+            elif source_kind == "upstream-source-span":
+                exact_keys(
+                    source,
+                    {
+                        "kind",
+                        "sourceInputId",
+                        "sourcePath",
+                        "sourceSha256",
+                        "locator",
+                        "matches",
+                    },
+                    "upstream source-span origin",
+                )
+                assert (
+                    source["sourceInputId"],
+                    source["sourcePath"],
+                    source["sourceSha256"],
+                ) in effective_inputs
+                matches = source["matches"]
+                assert isinstance(matches, list) and matches
+                upstream_span_sources[
+                    digest(canonical(source))
+                ] = len(matches)
+                for match in matches:
+                    exact_keys(
+                        match,
+                        {
+                            "byteStart",
+                            "byteEnd",
+                            "lineStart",
+                            "columnStart",
+                            "sha256",
+                        },
+                        "upstream source span",
+                    )
+                    assert 0 <= match["byteStart"] < match["byteEnd"]
+                    assert match["lineStart"] > 0 and match["columnStart"] > 0
+                    assert SHA256.fullmatch(match["sha256"])
+            else:
+                raise AssertionError(
+                    f"unknown field-origin source kind: {source_kind}"
+                )
+            field_count += 1
+
+    summary = document["summary"]
+    exact_keys(
+        summary,
+        {
+            "fieldCount",
+            "originFieldCounts",
+            "upstreamSourceSpanCount",
+            "upstreamLicenseEvidenceCount",
+        },
+        "field-origin summary",
+    )
+    assert summary["fieldCount"] == field_count
+    assert summary["originFieldCounts"] == {
+        key: origin_counts[key] for key in sorted(origin_counts)
+    }
+    assert summary["upstreamSourceSpanCount"] == sum(
+        upstream_span_sources.values()
+    )
+    assert summary["upstreamLicenseEvidenceCount"] == len(licenses)
+
+
 def verify_report(
     report: dict[str, object],
     profile: dict[str, object],
@@ -146,6 +396,8 @@ def verify_report(
     catalog: dict[str, object],
     omission_bytes: bytes,
     omissions: dict[str, object],
+    field_origins_bytes: bytes,
+    field_origins: dict[str, object],
 ) -> None:
     exact_keys(
         report,
@@ -240,6 +492,12 @@ def verify_report(
             "omissionsDigest": omissions["omissionsDigest"],
             "omissionCount": len(omissions["omissions"]),
         },
+        "fieldOrigins": {
+            "path": "field-origins.json",
+            "sha256": digest(field_origins_bytes),
+            "fieldOriginsDigest": field_origins["fieldOriginsDigest"],
+            "fieldCount": field_origins["summary"]["fieldCount"],
+        },
     }
     assert report["claims"] == {
         "catalogEvidenceStatus": "inventoried",
@@ -256,7 +514,13 @@ def main() -> None:
     assert selection["schemaVersion"] == 1
     assert selection["inventoryReceiptId"] == "SDK-013-PROFILE-GENERATOR"
     selection_digest = digest(selection_bytes)
-    generator = {
+    catalog_generator = {
+        "identity": selection["generatorIdentity"],
+        "version": selection["generatorVersion"],
+        "sourceDigest": digest(CATALOG_CORE_PATH.read_bytes()),
+        "toolchainIdentity": TOOLCHAIN_IDENTITY,
+    }
+    evidence_generator = {
         "identity": selection["generatorIdentity"],
         "version": selection["generatorVersion"],
         "sourceDigest": digest(GENERATOR_PATH.read_bytes()),
@@ -278,15 +542,20 @@ def main() -> None:
         target = GENERATED_ROOT / profile["targetPath"]
         catalog_path = target / "catalog.json"
         omission_path = target / "omissions.json"
+        field_origins_path = target / "field-origins.json"
         report_path = target / "generation-report.json"
-        expected_files.update({catalog_path, omission_path, report_path})
+        expected_files.update(
+            {catalog_path, omission_path, field_origins_path, report_path}
+        )
         catalog_bytes = catalog_path.read_bytes()
         omission_bytes = omission_path.read_bytes()
+        field_origins_bytes = field_origins_path.read_bytes()
         catalog = json.loads(catalog_bytes)
         omissions = json.loads(omission_bytes)
+        field_origins = json.loads(field_origins_bytes)
         report = json.loads(report_path.read_bytes())
         validator_module.validate_document(catalog, validator)
-        assert catalog["generator"] == generator
+        assert catalog["generator"] == catalog_generator
         assert catalog["catalog"]["profileId"] == profile["profileId"]
         assert catalog["catalog"]["catalogRevision"] == profile["catalogRevision"]
         source_lock_bytes = (ROOT / profile["sourceLockPath"]).read_bytes()
@@ -307,11 +576,29 @@ def main() -> None:
             assert capability["evidenceStatus"] == "inventoried"
             assert set(capability["evidence"]) == {"inventory"}
             assert capability["administrativeResults"][0]["result"] == "not-tested"
-        verify_omissions(omissions, profile, generator)
+        verify_omissions(omissions, profile, catalog_generator)
+        effective_keys = {
+            (
+                entry["sourceInputId"],
+                entry["sourcePath"],
+                entry["sourceDigest"],
+            )
+            for entry in report["effectiveInputs"]
+        }
+        verify_field_origins(
+            field_origins,
+            profile,
+            evidence_generator,
+            effective_keys,
+            catalog_bytes,
+            catalog,
+            omission_bytes,
+            omissions,
+        )
         verify_report(
             report,
             profile,
-            generator,
+            evidence_generator,
             selection_digest,
             source_lock_bytes,
             upstream_inputs,
@@ -319,6 +606,8 @@ def main() -> None:
             catalog,
             omission_bytes,
             omissions,
+            field_origins_bytes,
+            field_origins,
         )
         catalogs[profile["profileId"]] = catalog
         omissions_by_profile[profile["profileId"]] = omissions

@@ -18,8 +18,8 @@ fixture-only.
 
 | Component or group | Current role | Observed declaration/evidence | Current treatment |
 |---|---|---|---|
-| WordPress 7.0 | exact profile/runtime authority | GPL-2.0-or-later at exact source | derive facts/contracts with provenance; review pending |
-| Gutenberg embedded and 23.4.0 | exact editor profile authorities | project GPL statement; post-2021 contribution dual-license statement | keep profiles separate; derived-data review pending |
+| WordPress 7.0 | exact profile/runtime authority | exact GPL-2.0-or-later text and notices preserved at `evidence/licenses/wordpress-7.0-license.txt` | every catalog field is classified and upstream identifiers have exact spans; distribution review pending |
+| Gutenberg embedded and 23.4.0 | exact editor profile authorities | exact project GPL and post-2021 contribution dual-license statement preserved at `evidence/licenses/gutenberg-23.4.0-LICENSE.md` | keep profiles separate; every catalog field is classified; distribution review pending |
 | `wordpresshx-port` compiler origin | copied/generalized PHP compiler seed | GPL-2.0-or-later exact source grant and file-level provenance | preserve attribution/grant; final repository treatment pending |
 | Genes 1.33.0 and active 1.38.0 | generic browser compiler inputs | both exact source revisions have content-bound MIT evidence; release archives remain separate notice boundaries | build input; future output audit required |
 | Haxe 4.3.7 | compiler and standard-library input | exact combined compiler GPL-2.0-or-later and standard-library MIT text is preserved at `evidence/licenses/haxe-4.3.7-LICENSE.txt` | build provenance plus per-target copied-output audit |
@@ -56,6 +56,12 @@ artifact.
 The lock-derived SPDX document intentionally uses `NOASSERTION` for conclusions.
 License strings copied from lock metadata remain in the companion inventory;
 they are not promoted into artifact conclusions without text/origin review.
+
+The two generated `field-origins.json` records classify 724 catalog/omission
+fields in total and content-bind 44 distinct upstream source spans. They
+quantify provenance classes without deciding whether a normalized fact,
+identifier, collection, or arrangement is independently protectable. That
+artifact-specific conclusion remains for the Oracle and product owner.
 
 ## Known blocking findings
 

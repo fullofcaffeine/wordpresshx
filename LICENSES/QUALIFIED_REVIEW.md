@@ -53,13 +53,15 @@ upstream positions; this file does not independently decide their application.
 - `LICENSES/evidence/licenses/`
 - `scripts/licenses/generate-build-input-inventory.py`
 - `scripts/licenses/test-build-input-inventory.py`
+- `scripts/licenses/generate-profile-license-snapshots.py`
 - `LICENSES/GENERATED_OUTPUT.md`
 - `LICENSES/THIRD_PARTY_NOTICES.md`
 - `docs/adr/020-licensing-and-generated-output.md`
 - `compiler/reflaxe.php/provenance.json`
 - `manifests/upstream.lock.json`
 - `packages/hxx/dependency-lock.json`
-- exact generated catalogs and their source locks/receipts
+- exact generated catalogs, `field-origins.json` maps, preserved upstream
+  license snapshots, and their source locks/receipts
 - the final packed artifacts, manifests, SBOMs, license texts, and notice bundle
   created by SDK-002
 

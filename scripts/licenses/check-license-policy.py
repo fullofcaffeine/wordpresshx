@@ -86,6 +86,9 @@ EXPECTED_ARTIFACT_CLASSES = [
 BUILD_INPUT_GENERATOR = "scripts/licenses/generate-build-input-inventory.py"
 BUILD_INPUT_INVENTORY = "LICENSES/inventory/build-inputs.json"
 BUILD_INPUT_SBOM = "LICENSES/sbom/build-inputs.spdx.json"
+PROFILE_LICENSE_SNAPSHOT_GENERATOR = (
+    "scripts/licenses/generate-profile-license-snapshots.py"
+)
 HAXE_437_COMMIT = "e0b355c6be312c1b17382603f018cf52522ec651"
 HAXE_437_TREE = "55d2c4c59ed55c52fa0660e2fe385081a94b23d1"
 HAXE_437_LICENSE_BLOB = "b4142af748da6420ab697e7485b105c8e6689486"
@@ -155,6 +158,27 @@ class Audit:
 
 
 def validate_build_input_inventory(audit: Audit) -> None:
+    try:
+        snapshot_check = subprocess.run(
+            [
+                sys.executable,
+                str(audit.root / PROFILE_LICENSE_SNAPSHOT_GENERATOR),
+                "--root",
+                str(audit.root),
+            ],
+            cwd=audit.root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError as error:
+        audit.errors.append(f"cannot verify exact profile license snapshots: {error}")
+        return
+    audit.check(
+        snapshot_check.returncode == 0,
+        "exact profile license snapshots are incomplete or stale: "
+        + snapshot_check.stderr.strip(),
+    )
     try:
         generated = subprocess.run(
             [
@@ -782,6 +806,48 @@ def validate_lock_bindings(audit: Audit, components: dict[str, dict[str, Any]]) 
         == HAXE_437_LICENSE_SHA256,
         "vendored Haxe 4.3.7 license snapshot must match the exact pinned source",
     )
+    profile_license_expectations = {
+        "gutenberg-23.4.0": {
+            "locator": (
+                "https://github.com/WordPress/gutenberg/blob/"
+                "98a796c8780c480ef7bcfe03c42302d9564d785c/LICENSE.md"
+            ),
+            "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+            "sha256": (
+                "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888"
+            ),
+        },
+        "gutenberg-wp70-embedded": {
+            "locator": (
+                "https://github.com/WordPress/gutenberg/blob/"
+                "a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd/LICENSE.md"
+            ),
+            "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+            "sha256": (
+                "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888"
+            ),
+        },
+        "wordpress-7.0": {
+            "locator": (
+                "https://github.com/WordPress/wordpress-develop/blob/"
+                "26b68024931348d267b70e2a29910e1320d0094f/src/license.txt"
+            ),
+            "blob": "2d9ed1ab7973bd961ba9463cb6b254416ee97cc0",
+            "sha256": (
+                "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff"
+            ),
+        },
+    }
+    for component_id, expected in profile_license_expectations.items():
+        evidence = components.get(component_id, {}).get("licenseEvidence", [])
+        exact = evidence[0] if isinstance(evidence, list) and evidence else {}
+        for field, expected_value in expected.items():
+            check_equal(
+                audit,
+                exact.get(field),
+                expected_value,
+                f"{component_id} exact license {field}",
+            )
 
     entries = upstream.get("entries", {}) if isinstance(upstream, dict) else {}
     genes = entries.get("genes-ts", {}) if isinstance(entries, dict) else {}

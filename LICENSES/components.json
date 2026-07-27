@@ -188,8 +188,8 @@
           "kind": "exact-source-license",
           "locator": "https://github.com/WordPress/gutenberg/blob/98a796c8780c480ef7bcfe03c42302d9564d785c/LICENSE.md",
           "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
-          "sha256": null,
-          "observation": "Project licensing statement at the exact forward-profile commit."
+          "sha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+          "observation": "Project licensing statement at the exact forward-profile commit; byte-identical snapshot preserved at LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md."
         }
       ],
       "licenseConclusion": "verified-declaration-derived-data-treatment-pending",
@@ -217,8 +217,8 @@
           "kind": "exact-source-license",
           "locator": "https://github.com/WordPress/gutenberg/blob/a2a354cf35e5b69c3330d6c1cfd42d8dc2efb9fd/LICENSE.md",
           "blob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
-          "sha256": null,
-          "observation": "Project licensing statement at the exact embedded commit."
+          "sha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+          "observation": "Project licensing statement at the exact embedded commit; byte-identical snapshot preserved at LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md."
         }
       ],
       "licenseConclusion": "verified-declaration-derived-data-treatment-pending",
@@ -744,8 +744,8 @@
           "kind": "exact-source-license",
           "locator": "https://github.com/WordPress/wordpress-develop/blob/26b68024931348d267b70e2a29910e1320d0094f/src/license.txt",
           "blob": "2d9ed1ab7973bd961ba9463cb6b254416ee97cc0",
-          "sha256": null,
-          "observation": "WordPress license text at the exact 7.0 source commit."
+          "sha256": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+          "observation": "WordPress license text at the exact 7.0 source commit; byte-identical snapshot preserved at LICENSES/evidence/licenses/wordpress-7.0-license.txt."
         },
         {
           "kind": "official-project-licensing-statement",
@@ -771,7 +771,7 @@
         "wordpress-7.0"
       ],
       "blocksPublication": true,
-      "resolutionRequired": "Qualified review must confirm the characterization, license, attribution, and distribution treatment of generated profiles and contracts."
+      "resolutionRequired": "The generated field-origins.json maps and exact upstream license snapshots must receive an artifact-specific Oracle and product-owner conclusion on characterization, license, attribution, and distribution treatment."
     },
     {
       "id": "generated-runtime-boundary-not-inventoried",

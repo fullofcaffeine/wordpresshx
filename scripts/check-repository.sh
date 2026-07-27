@@ -25,6 +25,9 @@ required_files=(
   LICENSES/GENERATED_OUTPUT.md
   LICENSES/THIRD_PARTY_NOTICES.md
   LICENSES/QUALIFIED_REVIEW.md
+  LICENSES/evidence/component-license-evidence.json
+  LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md
+  LICENSES/evidence/licenses/wordpress-7.0-license.txt
   wordpress-hx-sdk-product-requirements.md
   docs/README.md
   docs/adr/README.md
@@ -463,9 +466,11 @@ required_files=(
   profiles/wp70-release/README.md
   profiles/wp70-release/source.lock.json
   generated/gutenberg-forward-23.4/catalog-v1/catalog.json
+  generated/gutenberg-forward-23.4/catalog-v1/field-origins.json
   generated/gutenberg-forward-23.4/catalog-v1/generation-report.json
   generated/gutenberg-forward-23.4/catalog-v1/omissions.json
   generated/wp70-release/catalog-v1/catalog.json
+  generated/wp70-release/catalog-v1/field-origins.json
   generated/wp70-release/catalog-v1/generation-report.json
   generated/wp70-release/catalog-v1/omissions.json
   schemas/README.md
@@ -908,6 +913,7 @@ required_files=(
   scripts/profiles/check-decision-lock.py
   scripts/profiles/check-classification-decision.py
   scripts/profiles/check-profile-isolation.py
+  scripts/profiles/catalog-core-v1.py
   scripts/profiles/check-generated-catalogs.py
   scripts/profiles/diff-catalogs.py
   scripts/profiles/generate-catalogs.py
@@ -915,9 +921,11 @@ required_files=(
   scripts/profiles/test-profile-diff.py
   scripts/profiles/test-profile-haxe.sh
   scripts/profiles/validate-profile-schema.py
+  scripts/profiles/verify-sdk013-history.py
   scripts/release/test-governance.py
   scripts/security/test-unsafe-boundary-policy.py
   scripts/licenses/check-license-policy.py
+  scripts/licenses/generate-profile-license-snapshots.py
   scripts/licenses/test-license-policy.py
   scripts/php-quality/expose-runtime.sh
   scripts/php-quality/install.sh
@@ -8906,13 +8914,27 @@ for sdk033_subject_name, sdk033_subject in sdk033_receipt["subject"].items():
         sdk033_subject["sha256"]
     )
 assert sdk033_receipt["provider"]["profileId"] == sdk033_profile["profileId"]
+sdk033_historical_catalog = next(
+    profile["catalog"]
+    for profile in sdk013_receipt["profiles"]
+    if profile["profileId"] == sdk033_receipt["provider"]["profileId"]
+)
+assert sdk033_receipt["provider"]["catalogRevision"] == (
+    next(
+        profile["catalogRevision"]
+        for profile in sdk013_receipt["profiles"]
+        if profile["profileId"] == sdk033_receipt["provider"]["profileId"]
+    )
+)
 assert sdk033_receipt["provider"]["catalogRevision"] == (
     sdk033_profile["catalogRevision"]
 )
-assert sdk033_receipt["provider"]["catalogDigest"] == catalog["catalogDigest"]
-assert sdk033_receipt["provider"]["catalogFileSha256"] == hashlib.sha256(
-    catalog_path.read_bytes()
-).hexdigest()
+assert sdk033_receipt["provider"]["catalogDigest"] == (
+    sdk033_historical_catalog["catalogDigest"]
+)
+assert sdk033_receipt["provider"]["catalogFileSha256"] == (
+    sdk033_historical_catalog["fileSha256"]
+)
 assert sdk033_receipt["provider"]["mappingSource"] == (
     sdk033_profile["mappingSource"]
 )
@@ -11596,17 +11618,19 @@ assert sdk013_receipt["schemaVersion"] == 1
 assert sdk013_receipt["receiptId"] == "SDK-013-PROFILE-GENERATOR"
 assert sdk013_receipt["bead"] == "wordpresshx-sdk-013"
 sdk013_subject = sdk013_receipt["subject"]
-for path_field, digest_field in (
-    ("generatorPath", "generatorSha256"),
-    ("checkerPath", "checkerSha256"),
-    ("testPath", "testSha256"),
-    ("selectionPath", "selectionSha256"),
-    ("profileSchemaPath", "profileSchemaSha256"),
-):
-    evidence_path = Path(sdk013_subject[path_field])
-    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == (
-        sdk013_subject[digest_field]
-    )
+sdk013_historical = sdk013_receipt["historicalVerification"]
+assert sdk013_historical == {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "4d633f2195542a655180e77c94c9f4e4b2fbb7e3",
+    "subjectContentSha256": (
+        "6381aa45691307fede7c986c133c5fb75491ad95e3101afbc6be81dfceb51c1f"
+    ),
+    "depthOneFallback": "self-contained-subject-digest-inventory",
+    "relation": (
+        "The original SDK-013 receipt remains authority only for its exact "
+        "historical generator, selection, and catalog bytes."
+    ),
+}
 assert sdk013_subject["generatorIdentity"] == (
     "wordpresshx-exact-profile-generator"
 )
@@ -11634,12 +11658,6 @@ assert sdk013_profiles["gutenberg-forward-23.4"][
     "wordpress70Compatibility"
 ] == "forbidden"
 for profile in sdk013_profiles.values():
-    for section_name in ("catalog", "omissions", "generationReport"):
-        section = profile[section_name]
-        path = Path(section["path"])
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == section[
-            "fileSha256"
-        ]
     assert profile["catalog"]["evidenceStatus"] == "inventoried"
     assert profile["omissions"]["omissionCount"] == 2
 assert sdk013_receipt["negativeEvidence"]["wrongRepositoryMissingExactCommit"] == (
@@ -11659,6 +11677,62 @@ assert sdk013_evolution["wordpressSourceCommitChanged"] is False
 assert sdk013_evolution["catalogRevisionChanged"] is False
 assert sdk013_evolution["classificationOrEvidenceStatusChanged"] is False
 assert sdk013_evolution["generatorReplay"] == "passed"
+sdk013_adr020_evolution = sdk013_receipt["adr020FieldOriginEvolution"]
+assert sdk013_adr020_evolution == {
+    "bead": "wordpresshx-sdk-plan.2",
+    "catalogRevisionChanged": False,
+    "classificationOrEvidenceStatusChanged": False,
+    "fieldOriginArtifacts": [
+        "generated/gutenberg-forward-23.4/catalog-v1/field-origins.json",
+        "generated/wp70-release/catalog-v1/field-origins.json",
+    ],
+    "fieldCount": 724,
+    "upstreamSourceSpanCount": 44,
+    "upstreamLicenseSnapshotCount": 2,
+    "distributionConclusion": "pending-product-owner-and-qualified-review",
+}
+sdk013_field_origin_profiles = {
+    "generated/gutenberg-forward-23.4/catalog-v1/field-origins.json": (
+        "gutenberg-forward-23.4"
+    ),
+    "generated/wp70-release/catalog-v1/field-origins.json": "wp70-release",
+}
+sdk013_field_count = 0
+sdk013_source_span_count = 0
+sdk013_license_snapshots = set()
+for path_text in sdk013_adr020_evolution["fieldOriginArtifacts"]:
+    field_origin = json.loads(Path(path_text).read_text(encoding="utf-8"))
+    profile_id = sdk013_field_origin_profiles[path_text]
+    assert field_origin["schemaVersion"] == 1
+    assert field_origin["profileId"] == profile_id
+    assert field_origin["catalogRevision"] == sdk013_profiles[profile_id][
+        "catalogRevision"
+    ]
+    assert field_origin["status"] == (
+        "field-origins-inventoried-review-pending"
+    )
+    assert field_origin["legalAdvice"] is False
+    assert field_origin["publicationAuthorized"] is False
+    assert field_origin["distributionConclusion"] == (
+        "pending-product-owner-and-qualified-review-of-exact-generated-catalog"
+    )
+    sdk013_field_count += field_origin["summary"]["fieldCount"]
+    sdk013_source_span_count += field_origin["summary"][
+        "upstreamSourceSpanCount"
+    ]
+    for license_evidence in field_origin["upstreamLicenseEvidence"]:
+        snapshot_path = Path(license_evidence["snapshotPath"])
+        assert hashlib.sha256(snapshot_path.read_bytes()).hexdigest() == (
+            license_evidence["snapshotSha256"]
+        )
+        sdk013_license_snapshots.add(snapshot_path.as_posix())
+assert sdk013_field_count == sdk013_adr020_evolution["fieldCount"]
+assert sdk013_source_span_count == sdk013_adr020_evolution[
+    "upstreamSourceSpanCount"
+]
+assert len(sdk013_license_snapshots) == sdk013_adr020_evolution[
+    "upstreamLicenseSnapshotCount"
+]
 assert sdk013_receipt["claims"]["generatorImplementation"] == "generated"
 assert sdk013_receipt["claims"]["wp70CapabilityCatalog"] == "inventoried"
 assert sdk013_receipt["claims"]["forwardCapabilityCatalog"] == "inventoried"
@@ -11981,6 +12055,7 @@ python3 scripts/profiles/check-decision-lock.py
 python3 scripts/profiles/check-classification-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
+python3 scripts/profiles/verify-sdk013-history.py
 python3 scripts/profiles/check-generated-catalogs.py
 python3 scripts/profiles/test-profile-diff.py
 python3 scripts/release/test-governance.py

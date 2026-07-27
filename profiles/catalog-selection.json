@@ -18,6 +18,13 @@
           "kind": "git-source",
           "providerIdentity": "wordpress:7.0-source",
           "repositoryArgument": "wordpress",
+          "licenseEvidence": {
+            "expression": "GPL-2.0-or-later",
+            "sourcePath": "src/license.txt",
+            "sourceBlob": "2d9ed1ab7973bd961ba9463cb6b254416ee97cc0",
+            "sourceSha256": "dec703cdb49042ca367f71c3982dee4552ffef395225f1fe9f14d29a4a0cb0ff",
+            "snapshotPath": "LICENSES/evidence/licenses/wordpress-7.0-license.txt"
+          },
           "pointers": {
             "repository": "/wordpressSource/repository",
             "commit": "/wordpressSource/commit",
@@ -30,6 +37,13 @@
           "kind": "git-source",
           "providerIdentity": "gutenberg:wordpress-7.0-embedded-source",
           "repositoryArgument": "embedded-gutenberg",
+          "licenseEvidence": {
+            "expression": "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0",
+            "sourcePath": "LICENSE.md",
+            "sourceBlob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+            "sourceSha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+            "snapshotPath": "LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md"
+          },
           "pointers": {
             "repository": "/embeddedGutenberg/repository",
             "commit": "/embeddedGutenberg/commit",
@@ -504,6 +518,13 @@
           "kind": "git-source",
           "providerIdentity": "gutenberg:23.4.0-source",
           "repositoryArgument": "forward-gutenberg",
+          "licenseEvidence": {
+            "expression": "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0",
+            "sourcePath": "LICENSE.md",
+            "sourceBlob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+            "sourceSha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+            "snapshotPath": "LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md"
+          },
           "pointers": {
             "repository": "/gutenbergSource/repository",
             "commit": "/gutenbergSource/commit",

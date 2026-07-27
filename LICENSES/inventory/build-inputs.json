@@ -474,13 +474,15 @@
       "declaredLicenses": [
         "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0"
       ],
-      "licenseEvidenceStatus": "lock-or-exact-source-metadata-recorded",
+      "licenseEvidenceStatus": "exact-component-license-evidence-recorded",
       "distributionClass": "profile-source-authority",
       "publicationDecision": "not-a-final-artifact-conclusion",
       "reviewBindings": [
         "gutenberg-23.4.0"
       ],
-      "exactLicenseEvidenceIds": [],
+      "exactLicenseEvidenceIds": [
+        "gutenberg-23.4.0"
+      ],
       "observedIn": [
         {
           "source": "manifests/upstream.lock.json",
@@ -509,13 +511,15 @@
       "declaredLicenses": [
         "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0"
       ],
-      "licenseEvidenceStatus": "lock-or-exact-source-metadata-recorded",
+      "licenseEvidenceStatus": "exact-component-license-evidence-recorded",
       "distributionClass": "profile-source-authority",
       "publicationDecision": "not-a-final-artifact-conclusion",
       "reviewBindings": [
         "gutenberg-wp70-embedded"
       ],
-      "exactLicenseEvidenceIds": [],
+      "exactLicenseEvidenceIds": [
+        "gutenberg-wordpress-7.0-embedded"
+      ],
       "observedIn": [
         {
           "source": "manifests/upstream.lock.json",
@@ -601,13 +605,15 @@
       "declaredLicenses": [
         "GPL-2.0-or-later"
       ],
-      "licenseEvidenceStatus": "lock-or-exact-source-metadata-recorded",
+      "licenseEvidenceStatus": "exact-component-license-evidence-recorded",
       "distributionClass": "profile-source-authority",
       "publicationDecision": "not-a-final-artifact-conclusion",
       "reviewBindings": [
         "wordpress-7.0"
       ],
-      "exactLicenseEvidenceIds": [],
+      "exactLicenseEvidenceIds": [
+        "wordpress-7.0"
+      ],
       "observedIn": [
         {
           "source": "manifests/upstream.lock.json",

@@ -1,0 +1,2325 @@
+{
+  "catalogRevision": "gutenberg-forward-23.4/catalog-v1",
+  "distributionConclusion": "pending-product-owner-and-qualified-review-of-exact-generated-catalog",
+  "fieldOriginsDigest": "3cf3f1416f94b4cf9bf60da0ce46a702d2f051c24ffd557a70aab1a7bdd1f09d",
+  "fieldOriginsDigestAlgorithm": "sha256-canonical-json-v1",
+  "generator": {
+    "identity": "wordpresshx-exact-profile-generator",
+    "sourceDigest": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898",
+    "toolchainIdentity": "python-stdlib-json-v1+git-object-reader-v1",
+    "version": "1"
+  },
+  "legalAdvice": false,
+  "outputs": [
+    {
+      "fieldCount": 109,
+      "fields": [
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/administrativeResults/0/reason",
+          "valueSha256": "48d6f7245f6e18f5078dc5dfabd3b7dccd9f742e946640996ce802c5ce1c03d3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/0/administrativeResults/0/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/administrativeResults/0/result",
+          "valueSha256": "d1ce5a4f57677853ac0dcac99ba494db2fdd557ff65570634f7df22a47d10a5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-profile-identity"
+          },
+          "outputPointer": "/catalog/capabilities/0/availableIn/0",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypeEdit",
+              "matches": [
+                {
+                  "byteEnd": 118,
+                  "byteStart": 106,
+                  "columnStart": 10,
+                  "lineStart": 3,
+                  "sha256": "86453313383a0411109ed70f879658f499a4b19744d5890de09f0c27d54dca90"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/catalog/capabilities/0/capabilityId",
+          "valueSha256": "b230718ad4465153d9aec25d8f44249c44a780821ff7b09ffbde80e81459a69b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/0/classification",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/classification",
+          "valueSha256": "5d4891101c907920b4adf4834dd93a3459678735f9d57d39708472efa4f4f0a6"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/classificationMetadata",
+          "valueSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/0/evidence/inventory/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/evidenceStatus",
+          "valueSha256": "9a62481e2a609a7834a47933172da51bd18830dfe5c9057792c9f2e90c2562f3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/0/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypeEdit",
+              "matches": [
+                {
+                  "byteEnd": 118,
+                  "byteStart": 106,
+                  "columnStart": 10,
+                  "lineStart": 3,
+                  "sha256": "86453313383a0411109ed70f879658f499a4b19744d5890de09f0c27d54dca90"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/catalog/capabilities/0/provenance/0/locator",
+          "valueSha256": "389fb97e4f794fa771973b33f4abb86f2eea0978db6e6f5fa3215031c6024d2b"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypeEdit",
+              "matches": [
+                {
+                  "byteEnd": 118,
+                  "byteStart": 106,
+                  "columnStart": 10,
+                  "lineStart": 3,
+                  "sha256": "86453313383a0411109ed70f879658f499a4b19744d5890de09f0c27d54dca90"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/catalog/capabilities/0/provenance/0/sourceDigest",
+          "valueSha256": "db5ec3c2ac2df1f1dc8c168e2e486ccbc350e55beb294e43028f0e854abb0a5b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/0/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/provenance/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/0/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/provenance/0/sourcePath",
+          "valueSha256": "608c48944e5a29ac7b3ea8d07003d91ee1acd575fe3a82fb12fd84bfb039c82f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/0/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/0/providerIdentity",
+          "valueSha256": "8f6dd83816c570560498669fb847b28540d91f02a726e8d466b8c7ee83f70bee"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/0/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/0/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/administrativeResults/0/reason",
+          "valueSha256": "48d6f7245f6e18f5078dc5dfabd3b7dccd9f742e946640996ce802c5ce1c03d3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/1/administrativeResults/0/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/administrativeResults/0/result",
+          "valueSha256": "d1ce5a4f57677853ac0dcac99ba494db2fdd557ff65570634f7df22a47d10a5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-profile-identity"
+          },
+          "outputPointer": "/catalog/capabilities/1/availableIn/0",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/catalog/capabilities/1/capabilityId",
+          "valueSha256": "0b6d56ec1fbb8d7b66db9bfdb84abb45b398a140b3b096fcaafed8cdafe6d877"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/1/classification",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/classification",
+          "valueSha256": "5d4891101c907920b4adf4834dd93a3459678735f9d57d39708472efa4f4f0a6"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/classificationMetadata",
+          "valueSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/1/evidence/inventory/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/evidenceStatus",
+          "valueSha256": "9a62481e2a609a7834a47933172da51bd18830dfe5c9057792c9f2e90c2562f3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/1/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/catalog/capabilities/1/provenance/0/locator",
+          "valueSha256": "f2ae8e3d9f68b2bd2c76e56bc34b3350a12a8609f16fcded1a02000ce894782f"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/catalog/capabilities/1/provenance/0/sourceDigest",
+          "valueSha256": "db5ec3c2ac2df1f1dc8c168e2e486ccbc350e55beb294e43028f0e854abb0a5b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/1/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/provenance/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/1/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/provenance/0/sourcePath",
+          "valueSha256": "608c48944e5a29ac7b3ea8d07003d91ee1acd575fe3a82fb12fd84bfb039c82f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/1/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/1/providerIdentity",
+          "valueSha256": "8f6dd83816c570560498669fb847b28540d91f02a726e8d466b8c7ee83f70bee"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/1/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/1/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/administrativeResults/0/reason",
+          "valueSha256": "48d6f7245f6e18f5078dc5dfabd3b7dccd9f742e946640996ce802c5ce1c03d3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/2/administrativeResults/0/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/administrativeResults/0/result",
+          "valueSha256": "d1ce5a4f57677853ac0dcac99ba494db2fdd557ff65570634f7df22a47d10a5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-profile-identity"
+          },
+          "outputPointer": "/catalog/capabilities/2/availableIn/0",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomiesList",
+              "matches": [
+                {
+                  "byteEnd": 170,
+                  "byteStart": 156,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "d6e3002ea3ca8768f8cd8b2ec4193f06318560efb21d1d02b971f1e1455eef04"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/catalog/capabilities/2/capabilityId",
+          "valueSha256": "4568ec33b771c1afa220a32ab78462db04e051f3f517ef857fa6847df26f5330"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/2/classification",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/classification",
+          "valueSha256": "5d4891101c907920b4adf4834dd93a3459678735f9d57d39708472efa4f4f0a6"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/classificationMetadata",
+          "valueSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/2/evidence/inventory/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/evidenceStatus",
+          "valueSha256": "9a62481e2a609a7834a47933172da51bd18830dfe5c9057792c9f2e90c2562f3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/2/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomiesList",
+              "matches": [
+                {
+                  "byteEnd": 170,
+                  "byteStart": 156,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "d6e3002ea3ca8768f8cd8b2ec4193f06318560efb21d1d02b971f1e1455eef04"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/catalog/capabilities/2/provenance/0/locator",
+          "valueSha256": "1b62084213e961979eb54faa89d726f715b903e65f142166cae223e6e0966226"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomiesList",
+              "matches": [
+                {
+                  "byteEnd": 170,
+                  "byteStart": 156,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "d6e3002ea3ca8768f8cd8b2ec4193f06318560efb21d1d02b971f1e1455eef04"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/catalog/capabilities/2/provenance/0/sourceDigest",
+          "valueSha256": "db5ec3c2ac2df1f1dc8c168e2e486ccbc350e55beb294e43028f0e854abb0a5b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/2/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/provenance/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/2/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/provenance/0/sourcePath",
+          "valueSha256": "608c48944e5a29ac7b3ea8d07003d91ee1acd575fe3a82fb12fd84bfb039c82f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/2/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/2/providerIdentity",
+          "valueSha256": "8f6dd83816c570560498669fb847b28540d91f02a726e8d466b8c7ee83f70bee"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/2/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/2/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/administrativeResults/0/reason",
+          "valueSha256": "48d6f7245f6e18f5078dc5dfabd3b7dccd9f742e946640996ce802c5ce1c03d3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/3/administrativeResults/0/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/administrativeResults/0/result",
+          "valueSha256": "d1ce5a4f57677853ac0dcac99ba494db2fdd557ff65570634f7df22a47d10a5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-profile-identity"
+          },
+          "outputPointer": "/catalog/capabilities/3/availableIn/0",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomyEdit",
+              "matches": [
+                {
+                  "byteEnd": 220,
+                  "byteStart": 208,
+                  "columnStart": 10,
+                  "lineStart": 5,
+                  "sha256": "a5f9bc05dc4ba5653525011384c60804bff798a470f659e51717cd03c02c2483"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/catalog/capabilities/3/capabilityId",
+          "valueSha256": "eee0ddd6dbadf451265ca485d86ecdbef138f0bd9d9f3ffbec489a36770cec77"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/3/classification",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/classification",
+          "valueSha256": "5d4891101c907920b4adf4834dd93a3459678735f9d57d39708472efa4f4f0a6"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/classificationMetadata",
+          "valueSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/3/evidence/inventory/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/evidenceStatus",
+          "valueSha256": "9a62481e2a609a7834a47933172da51bd18830dfe5c9057792c9f2e90c2562f3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/3/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomyEdit",
+              "matches": [
+                {
+                  "byteEnd": 220,
+                  "byteStart": 208,
+                  "columnStart": 10,
+                  "lineStart": 5,
+                  "sha256": "a5f9bc05dc4ba5653525011384c60804bff798a470f659e51717cd03c02c2483"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/catalog/capabilities/3/provenance/0/locator",
+          "valueSha256": "4b6ed1c6071e4480484ade491cddbc816322f6c33331bfaf33dc4c4c6318a060"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:TaxonomyEdit",
+              "matches": [
+                {
+                  "byteEnd": 220,
+                  "byteStart": 208,
+                  "columnStart": 10,
+                  "lineStart": 5,
+                  "sha256": "a5f9bc05dc4ba5653525011384c60804bff798a470f659e51717cd03c02c2483"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/catalog/capabilities/3/provenance/0/sourceDigest",
+          "valueSha256": "db5ec3c2ac2df1f1dc8c168e2e486ccbc350e55beb294e43028f0e854abb0a5b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/3/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/provenance/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/3/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/provenance/0/sourcePath",
+          "valueSha256": "608c48944e5a29ac7b3ea8d07003d91ee1acd575fe3a82fb12fd84bfb039c82f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/3/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/3/providerIdentity",
+          "valueSha256": "8f6dd83816c570560498669fb847b28540d91f02a726e8d466b8c7ee83f70bee"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/3/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/3/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/administrativeResults/0/reason",
+          "valueSha256": "48d6f7245f6e18f5078dc5dfabd3b7dccd9f742e946640996ce802c5ce1c03d3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/4/administrativeResults/0/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/administrativeResults/0/result",
+          "valueSha256": "d1ce5a4f57677853ac0dcac99ba494db2fdd557ff65570634f7df22a47d10a5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-profile-identity"
+          },
+          "outputPointer": "/catalog/capabilities/4/availableIn/0",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "json-pointer-equals:/name=@wordpress/content-types",
+              "matches": [
+                {
+                  "byteEnd": 37,
+                  "byteStart": 11,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "681641cbeb8c0893472e350fefb8b9545f5c31999ae08c939784462e5a73a673"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/package.json",
+              "sourceSha256": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/catalog/capabilities/4/capabilityId",
+          "valueSha256": "cd2772f2ded57ac7bdece7d062dc47c70a7b7ca528a731576780f9329855b95e"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/4/classification",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/classification",
+          "valueSha256": "5d4891101c907920b4adf4834dd93a3459678735f9d57d39708472efa4f4f0a6"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/classificationMetadata",
+          "valueSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/4/evidence/inventory/receiptId",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "emit-closed-catalog-administrative-or-evidence-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/evidenceStatus",
+          "valueSha256": "9a62481e2a609a7834a47933172da51bd18830dfe5c9057792c9f2e90c2562f3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/4/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/kind",
+          "valueSha256": "83271a64eb3565916caaf4f6ba0abe4fa6b877d7fa749e275700422fea79c0ba"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "json-pointer-equals:/name=@wordpress/content-types",
+              "matches": [
+                {
+                  "byteEnd": 37,
+                  "byteStart": 11,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "681641cbeb8c0893472e350fefb8b9545f5c31999ae08c939784462e5a73a673"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/package.json",
+              "sourceSha256": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/catalog/capabilities/4/provenance/0/locator",
+          "valueSha256": "ee0ab76ce91c3c89fb77f1bb9a1162c7624ed2462f2c4c2accb99a1a959fa895"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "json-pointer-equals:/name=@wordpress/content-types",
+              "matches": [
+                {
+                  "byteEnd": 37,
+                  "byteStart": 11,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "681641cbeb8c0893472e350fefb8b9545f5c31999ae08c939784462e5a73a673"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/package.json",
+              "sourceSha256": "f8514b24dce20712c305b55462f05b57f8207a22d03a958f1e96282523b7daa4"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/catalog/capabilities/4/provenance/0/sourceDigest",
+          "valueSha256": "57a3e317bc4958512a5cd837deb92d6d690839621afb916dca992fb226149dac"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/4/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/provenance/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/4/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/provenance/0/sourcePath",
+          "valueSha256": "dd2124c3ff55db5cb565061baff5dad8039ef6ac02985297631feee685a1d5c8"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/capabilities/4/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/catalog/capabilities/4/providerIdentity",
+          "valueSha256": "8f6dd83816c570560498669fb847b28540d91f02a726e8d466b8c7ee83f70bee"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/4/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/catalog/capabilities/4/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/catalogRevision",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-profile-field"
+          },
+          "outputPointer": "/catalog/catalogRevision",
+          "valueSha256": "da05ab68923c000f52e333a806bfe8d0915b5398949bc5ebc29dfce049a12cac"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/catalog/correctionAncestry",
+          "valueSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-profile-field"
+          },
+          "outputPointer": "/catalog/profileId",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/gutenbergSource/commit",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/commit",
+          "valueSha256": "66b5dc7659347534c574619c807a6f60783e7ff20b8a2ec900dd78d599149e40"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/0/inputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/inputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/0/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/kind",
+          "valueSha256": "058fddfdaec79713f40ca6fd2ee150aa1909453ded827e89b36477c59b991f3e"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/0/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/providerIdentity",
+          "valueSha256": "c28a4594f42f17e9262ec48056686409cca2e53318999b659291496d4e1d6c9d"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/gutenbergSource/repository",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/repository",
+          "valueSha256": "1708751b00b55e8988bf3ce045bafa619d326a92e53b622bc977cb7185b73137"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/gutenbergSource/tag",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/tag",
+          "valueSha256": "b206671d23067d22b618a3486a13a361d3825369d532724c87ae607e95c63240"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/gutenbergSource/tree",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/0/tree",
+          "valueSha256": "9d771001e73774564742a051b7ff9b662a2795eaf1915452a5d269e27f83b6bc"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/releaseDistribution/contentTreeSha256",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/contentTreeSha256",
+          "valueSha256": "65652722cd002e5fb14bf0167845c83c6ef9939b0e5d2ea5d5a8de250d4f89cb"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/1/inputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/inputId",
+          "valueSha256": "ad536852977372ab20f793265d0078ce4e47913a35196d726f38d2e8e783d2f7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/1/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/kind",
+          "valueSha256": "3ef5d43533f648811f194ba7851a2ebb3f95e46e97bed78d5a786c7cb4146f81"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/inputs/1/providerIdentity",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-input-classification"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/providerIdentity",
+          "valueSha256": "927398c299e68b433a22d65b81f7df4c22568ff9451be0d7aa1c2ecead2d3528"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/releaseDistribution/artifact/sha256",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/sha256",
+          "valueSha256": "4903a14cf1ea86db4502ed34b1164cc74372c6431b08a603b9756929d8c4cc7a"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/releaseDistribution/artifact/sizeBytes",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/sizeBytes",
+          "valueSha256": "f2ef7da7e6468ae72b8e3609796c64d45d8358db5c8326abaf50ef0ff43af8d6"
+        },
+        {
+          "origin": {
+            "authority": "exact-profile-source-lock",
+            "class": "upstream-identity-verbatim",
+            "source": {
+              "jsonPointer": "/releaseDistribution/artifact/url",
+              "kind": "repository-json-field",
+              "path": "profiles/gutenberg-forward-23.4/source.lock.json",
+              "sha256": "6253e48823534c5bad64a6876e78c605b3b7180fc41fe5ce83e829532356b109"
+            },
+            "transform": "copied-exact-profile-source-identity"
+          },
+          "outputPointer": "/catalog/upstreamInputs/1/url",
+          "valueSha256": "406a264acbb122269186eee42ddd5dd2670f66a465ea3c91943e8dc616de3d0d"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/catalogDigest",
+          "valueSha256": "f617258cd578123d663498fb7429c29f52693797a71f8e1075b8bce478f73b76"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/catalogDigestAlgorithm",
+          "valueSha256": "e3cdb06a8a9c02fd07c4923aa1c091319f2a95c81011a7fcb0381ab0fa8dab5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/identity",
+          "valueSha256": "548af79cc571551dac079703c5269ddd38d202be35c6a5ec3d6e142d782fcc56"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/sourceDigest",
+          "valueSha256": "9690b312f98bd3ce8e1307551e03f96d0f60be34de7f46ddfa8f219f52ec4184"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/toolchainIdentity",
+          "valueSha256": "7a22c2ffe9f1ba3981a9944d3ed45f1da8103145a60ebedc86bd5acb162a56cb"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/version",
+          "valueSha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-catalog-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/schemaVersion",
+          "valueSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+        }
+      ],
+      "path": "catalog.json",
+      "sha256": "3ef5bde500bd730914e40f6b5e408813e7310a8d7f2c1abf15e40cfe9484eea9"
+    },
+    {
+      "fieldCount": 29,
+      "fields": [
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/catalogRevision",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-profile-field"
+          },
+          "outputPointer": "/catalogRevision",
+          "valueSha256": "da05ab68923c000f52e333a806bfe8d0915b5398949bc5ebc29dfce049a12cac"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/identity",
+          "valueSha256": "548af79cc571551dac079703c5269ddd38d202be35c6a5ec3d6e142d782fcc56"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/sourceDigest",
+          "valueSha256": "9690b312f98bd3ce8e1307551e03f96d0f60be34de7f46ddfa8f219f52ec4184"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/toolchainIdentity",
+          "valueSha256": "7a22c2ffe9f1ba3981a9944d3ed45f1da8103145a60ebedc86bd5acb162a56cb"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/generator/version",
+          "valueSha256": "391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/0/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/0/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/omissions/0/locator",
+          "valueSha256": "f2ae8e3d9f68b2bd2c76e56bc34b3350a12a8609f16fcded1a02000ce894782f"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/omissions/0/omissionId",
+          "valueSha256": "f2f404bde5335ad62851e78c6011822daa558257e5fbf8207c5dab6c146f6f53"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/0/reason",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/0/reason",
+          "valueSha256": "7eb6ddf9b2e17275d57d8070ed30219a2a578773e4de35c5641e4bd5e01d76bd"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/0/reasonCode",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/0/reasonCode",
+          "valueSha256": "c7c7f28c04bbf0361da7cda4ddf628bc219c12780ad1113b743b32eb9ae00634"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/omissions/0/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/omissions/0/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "js-named-export:PostTypesList",
+              "matches": [
+                {
+                  "byteEnd": 68,
+                  "byteStart": 55,
+                  "columnStart": 10,
+                  "lineStart": 2,
+                  "sha256": "f4d7a184cc63dd44d2eafdf5e157077d08b42f3f4a117d3ddf99eacddbfa5e4c"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/index.ts",
+              "sourceSha256": "d2679077de8a26bda811b630e7680808fa967d1a1c76120e8d9f76609b878beb"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/omissions/0/sourceDigest",
+          "valueSha256": "db5ec3c2ac2df1f1dc8c168e2e486ccbc350e55beb294e43028f0e854abb0a5b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/0/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/0/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/0/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/0/sourcePath",
+          "valueSha256": "608c48944e5a29ac7b3ea8d07003d91ee1acd575fe3a82fb12fd84bfb039c82f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/1/kind",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/1/kind",
+          "valueSha256": "5d70bc8c75bbae268919c18dadcd4176ed0a3842c1e6b08b6367a6cdbdde152e"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "text-literal:__dangerousOptInToUnstableAPIsOnlyForCoreModules",
+              "matches": [
+                {
+                  "byteEnd": 91,
+                  "byteStart": 43,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                },
+                {
+                  "byteEnd": 208,
+                  "byteStart": 160,
+                  "columnStart": 2,
+                  "lineStart": 7,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/lock-unlock.ts",
+              "sourceSha256": "00f603bc2bde06c3466d0887819dcc35f739f9157d3b35d99afba07aa8ea187a"
+            },
+            "transform": "normalize-validated-locator-description"
+          },
+          "outputPointer": "/omissions/1/locator",
+          "valueSha256": "8bdb6cfa141fd078093d81436a7a6e8b34b7fdd21400b374368b31c682e4ec5d"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-normalized",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "text-literal:__dangerousOptInToUnstableAPIsOnlyForCoreModules",
+              "matches": [
+                {
+                  "byteEnd": 91,
+                  "byteStart": 43,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                },
+                {
+                  "byteEnd": 208,
+                  "byteStart": 160,
+                  "columnStart": 2,
+                  "lineStart": 7,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/lock-unlock.ts",
+              "sourceSha256": "00f603bc2bde06c3466d0887819dcc35f739f9157d3b35d99afba07aa8ea187a"
+            },
+            "transform": "namespace-and-kind-prefix-around-upstream-identifier"
+          },
+          "outputPointer": "/omissions/1/omissionId",
+          "valueSha256": "1f53868d592876b088c0e5f0d59d523b220d22d80b916d211b0a610380f7cab4"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/1/reason",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/1/reason",
+          "valueSha256": "734b26ab609e542a12ce39e02b54a63fcca9b9ec517bad21f0c8b9ebcf1e4e8f"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/1/reasonCode",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/1/reasonCode",
+          "valueSha256": "c5904fe2a9335946bd0dc1a3c695df6fff9de3710d4d82ddc71ded78e34e7537"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/sourceReceiptIds/0",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/omissions/1/receiptIds/0",
+          "valueSha256": "086ac537278713b96ae15f64ea7870b9af5d767f9e7d805da7ca1daa3c895d33"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/inventoryReceiptId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-receipt-identity"
+          },
+          "outputPointer": "/omissions/1/receiptIds/1",
+          "valueSha256": "55bd5ba7838014de297927c7cb304c07b8ce407c4d003ccd7d283849104254ea"
+        },
+        {
+          "origin": {
+            "authority": "exact-upstream-source",
+            "class": "upstream-identity-derived",
+            "source": {
+              "kind": "upstream-source-span",
+              "locator": "text-literal:__dangerousOptInToUnstableAPIsOnlyForCoreModules",
+              "matches": [
+                {
+                  "byteEnd": 91,
+                  "byteStart": 43,
+                  "columnStart": 10,
+                  "lineStart": 4,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                },
+                {
+                  "byteEnd": 208,
+                  "byteStart": 160,
+                  "columnStart": 2,
+                  "lineStart": 7,
+                  "sha256": "b29c17c3e8bafcbb992d3a455587801930f4cda1a4a13ceb64fbeed9912c4ab9"
+                }
+              ],
+              "sourceInputId": "gutenberg-source",
+              "sourcePath": "packages/content-types/src/lock-unlock.ts",
+              "sourceSha256": "00f603bc2bde06c3466d0887819dcc35f739f9157d3b35d99afba07aa8ea187a"
+            },
+            "transform": "sha256-complete-upstream-source-file"
+          },
+          "outputPointer": "/omissions/1/sourceDigest",
+          "valueSha256": "b8209adba9cf70d536a18568bae9ca761131c9ec2e32e47f53f6ec6a2b0de00b"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/1/sourceInputId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/1/sourceInputId",
+          "valueSha256": "3fe63a72e232f40e3b4564e9fa3e472f21c9623993151c56b8acc8c804d25ce7"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/omissions/1/sourcePath",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-selection-field"
+          },
+          "outputPointer": "/omissions/1/sourcePath",
+          "valueSha256": "0c7b2e739641f94e699adba450a6fad2272220680f2574436179c47927b7c695"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/omissionsDigest",
+          "valueSha256": "546a5bb5ddc0dcb114f9a71e3e53c73429df9816f0ddba2f52edc630391e351c"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/omissionsDigestAlgorithm",
+          "valueSha256": "e3cdb06a8a9c02fd07c4923aa1c091319f2a95c81011a7fcb0381ab0fa8dab5a"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-profile-selection",
+            "class": "sdk-authored",
+            "source": {
+              "jsonPointer": "/profiles/1/profileId",
+              "kind": "repository-json-field",
+              "path": "profiles/catalog-selection.json",
+              "sha256": "349ace797de9027e67979c151972c43bfa0f4aae86bd880bfdcfa06ed63051cb"
+            },
+            "transform": "copied-exact-sdk-profile-field"
+          },
+          "outputPointer": "/profileId",
+          "valueSha256": "58f666870ba09d260e2e7135632fa6f366c9c8e3c51de0e416c35f80e5ab95b3"
+        },
+        {
+          "origin": {
+            "authority": "wordpresshx-generator",
+            "class": "sdk-generated",
+            "source": {
+              "kind": "repository-file",
+              "path": "scripts/profiles/generate-catalogs.py",
+              "sha256": "f2dc8af4c7a8281d9c15f7ae9533a7301515d8934845ee3b9ee4ea9673f6f898"
+            },
+            "transform": "derive-omission-structure-digest-or-generator-identity"
+          },
+          "outputPointer": "/schemaVersion",
+          "valueSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+        }
+      ],
+      "path": "omissions.json",
+      "sha256": "519c4b35d4eeb27dc665ebdb7d40d7f52f417e89f86bcfb9d4703718ee00e986"
+    }
+  ],
+  "profileId": "gutenberg-forward-23.4",
+  "publicationAuthorized": false,
+  "schemaVersion": 1,
+  "status": "field-origins-inventoried-review-pending",
+  "summary": {
+    "fieldCount": 138,
+    "originFieldCounts": {
+      "sdk-authored": 74,
+      "sdk-generated": 35,
+      "upstream-identity-derived": 7,
+      "upstream-identity-verbatim": 8,
+      "upstream-normalized": 14
+    },
+    "upstreamLicenseEvidenceCount": 1,
+    "upstreamSourceSpanCount": 7
+  },
+  "upstreamLicenseEvidence": [
+    {
+      "commit": "98a796c8780c480ef7bcfe03c42302d9564d785c",
+      "expression": "GPL-2.0-or-later AND post-2021-contributions-dual-GPL-2.0-or-later-or-MPL-2.0",
+      "repository": "https://github.com/WordPress/gutenberg.git",
+      "snapshotPath": "LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md",
+      "snapshotSha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+      "sourceBlob": "ec2e73bf87194f4fc0ae489ec1091ec508a6f884",
+      "sourceInputId": "gutenberg-source",
+      "sourcePath": "LICENSE.md",
+      "sourceSha256": "ab2b32b2c482d181f7ea0a1806e22636b346f4daeed820595b118b2bff2b2888",
+      "tree": "ca453617695fda86c57c4a731475f4ae1c5aad9f"
+    }
+  ]
+}

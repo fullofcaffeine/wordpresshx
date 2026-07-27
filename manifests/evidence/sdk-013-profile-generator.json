@@ -125,6 +125,13 @@
     "job": "profile-generator",
     "required": true
   },
+  "historicalVerification": {
+    "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
+    "subjectCommit": "4d633f2195542a655180e77c94c9f4e4b2fbb7e3",
+    "subjectContentSha256": "6381aa45691307fede7c986c133c5fb75491ad95e3101afbc6be81dfceb51c1f",
+    "depthOneFallback": "self-contained-subject-digest-inventory",
+    "relation": "The original SDK-013 receipt remains authority only for its exact historical generator, selection, and catalog bytes."
+  },
   "postReceiptEvolution": {
     "receiptId": "SDK-033-WORDPRESS-ASSET-METADATA",
     "change": "SDK-033 added the exact native react, react-dom, and react-jsx-runtime script-handle inventory required to validate the official dependency-extraction mapping.",
@@ -132,6 +139,19 @@
     "catalogRevisionChanged": false,
     "classificationOrEvidenceStatusChanged": false,
     "generatorReplay": "passed"
+  },
+  "adr020FieldOriginEvolution": {
+    "bead": "wordpresshx-sdk-plan.2",
+    "catalogRevisionChanged": false,
+    "classificationOrEvidenceStatusChanged": false,
+    "fieldOriginArtifacts": [
+      "generated/gutenberg-forward-23.4/catalog-v1/field-origins.json",
+      "generated/wp70-release/catalog-v1/field-origins.json"
+    ],
+    "fieldCount": 724,
+    "upstreamSourceSpanCount": 44,
+    "upstreamLicenseSnapshotCount": 2,
+    "distributionConclusion": "pending-product-owner-and-qualified-review"
   },
   "claims": {
     "generatorImplementation": "generated",

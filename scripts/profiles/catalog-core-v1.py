@@ -18,13 +18,11 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
-from typing import Callable
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SELECTION = ROOT / "profiles" / "catalog-selection.json"
 PROFILE_SCHEMA = ROOT / "schemas" / "profile.schema.json"
-CATALOG_CORE = ROOT / "scripts" / "profiles" / "catalog-core-v1.py"
 TOOLCHAIN_IDENTITY = "python-stdlib-json-v1+git-object-reader-v1"
 
 
@@ -283,138 +281,6 @@ def locator_description(locator: dict[str, object]) -> str:
     return f"{kind}:{locator['value']}"
 
 
-def json_pointer_component(value: str) -> str:
-    return value.replace("~", "~0").replace("/", "~1")
-
-
-def leaf_fields(value: object, pointer: str = "") -> list[tuple[str, object]]:
-    if isinstance(value, dict):
-        if not value:
-            return [(pointer, value)]
-        fields: list[tuple[str, object]] = []
-        for name, child in value.items():
-            child_pointer = pointer + "/" + json_pointer_component(str(name))
-            fields.extend(leaf_fields(child, child_pointer))
-        return fields
-    if isinstance(value, list):
-        if not value:
-            return [(pointer, value)]
-        fields = []
-        for index, child in enumerate(value):
-            fields.extend(leaf_fields(child, f"{pointer}/{index}"))
-        return fields
-    return [(pointer, value)]
-
-
-def source_match(
-    source: bytes, start: int, end: int
-) -> dict[str, object]:
-    text = source.decode("utf-8")
-    before = text[:start]
-    matched = text[start:end]
-    start_byte = len(before.encode("utf-8"))
-    matched_bytes = matched.encode("utf-8")
-    return {
-        "byteStart": start_byte,
-        "byteEnd": start_byte + len(matched_bytes),
-        "lineStart": before.count("\n") + 1,
-        "columnStart": len(before.rsplit("\n", 1)[-1].encode("utf-8")) + 1,
-        "sha256": sha256(matched_bytes),
-    }
-
-
-def locator_matches(
-    source: bytes, locator: dict[str, object]
-) -> list[dict[str, object]]:
-    text = source.decode("utf-8")
-    kind = locator["kind"]
-    value = str(locator["value"])
-    spans: list[tuple[int, int]] = []
-    if kind == "php-function-declaration":
-        pattern = re.compile(
-            rf"(?m)^[ \t]*function[ \t]+(?P<value>{re.escape(value)})[ \t]*\("
-        )
-        spans = [match.span("value") for match in pattern.finditer(text)]
-    elif kind == "php-call-literal":
-        call = str(locator["call"])
-        pattern = re.compile(
-            rf"\b{re.escape(call)}\s*\(\s*(?P<quote>['\"])"
-            rf"(?P<value>{re.escape(value)})(?P=quote)"
-        )
-        spans = [match.span("value") for match in pattern.finditer(text)]
-    elif kind == "php-interpolated-call-prefix":
-        call = str(locator["call"])
-        pattern = re.compile(
-            rf'\b{re.escape(call)}\s*\(\s*"'
-            rf"(?P<value>{re.escape(value)})\{{\$"
-        )
-        spans = [match.span("value") for match in pattern.finditer(text)]
-    elif kind == "php-array-key":
-        pattern = re.compile(
-            rf"(?P<quote>['\"])(?P<value>{re.escape(value)})(?P=quote)\s*=>"
-        )
-        spans = [match.span("value") for match in pattern.finditer(text)]
-    elif kind == "json-pointer-equals":
-        pointer = str(locator["pointer"])
-        if pointer != "/name":
-            raise GenerationError(
-                f"source-span extraction does not support JSON pointer {pointer}"
-            )
-        parsed = json.loads(text)
-        if json_pointer(parsed, pointer) != locator["value"]:
-            raise GenerationError(f"JSON locator value drifted: {pointer}")
-        encoded = json.dumps(locator["value"], ensure_ascii=False)
-        pattern = re.compile(
-            rf'"name"\s*:\s*(?P<value>{re.escape(encoded)})'
-        )
-        spans = [match.span("value") for match in pattern.finditer(text)]
-    elif kind == "js-named-export":
-        for export in re.finditer(
-            r"\bexport\s*\{(?P<body>.*?)\}\s*from\s*['\"]",
-            text,
-            re.DOTALL,
-        ):
-            body = export.group("body")
-            body_start = export.start("body")
-            for entry in re.finditer(r"[^,]+", body):
-                raw_entry = entry.group(0)
-                cleaned = re.sub(r"/\*.*?\*/", "", raw_entry, flags=re.DOTALL)
-                cleaned = re.sub(r"//[^\n]*", "", cleaned)
-                cleaned = re.sub(r"^\s*type\s+", "", cleaned)
-                exported = re.split(r"\s+as\s+", cleaned.strip())[-1].strip()
-                if exported != value:
-                    continue
-                names = list(
-                    re.finditer(rf"\b{re.escape(value)}\b", raw_entry)
-                )
-                if not names:
-                    raise GenerationError(
-                        f"cannot locate named export span for {value}"
-                    )
-                match = names[-1]
-                spans.append(
-                    (
-                        body_start + entry.start() + match.start(),
-                        body_start + entry.start() + match.end(),
-                    )
-                )
-    elif kind == "text-literal":
-        spans = [
-            match.span()
-            for match in re.finditer(re.escape(value), text)
-        ]
-    else:
-        raise GenerationError(f"unknown locator kind: {kind}")
-
-    expected = locator.get("expectedCount")
-    if len(spans) != expected:
-        raise GenerationError(
-            f"{locator_description(locator)}: source-span count drifted; "
-            f"expected {expected}, found {len(spans)}"
-        )
-    return [source_match(source, start, end) for start, end in spans]
-
-
 def validate_locator(
     source: bytes, locator: dict[str, object], label: str
 ) -> None:
@@ -426,63 +292,6 @@ def validate_locator(
         raise GenerationError(
             f"{label}: locator count drifted; expected {expected}, found {actual}"
         )
-
-
-def generated_origin(
-    generator: dict[str, object], rule: str
-) -> dict[str, object]:
-    return {
-        "class": "sdk-generated",
-        "authority": "wordpresshx-generator",
-        "transform": rule,
-        "source": {
-            "kind": "repository-file",
-            "path": "scripts/profiles/generate-catalogs.py",
-            "sha256": generator["sourceDigest"],
-        },
-    }
-
-
-def repository_json_origin(
-    *,
-    origin_class: str,
-    authority: str,
-    transform: str,
-    path: str,
-    digest: str,
-    pointer: str,
-) -> dict[str, object]:
-    return {
-        "class": origin_class,
-        "authority": authority,
-        "transform": transform,
-        "source": {
-            "kind": "repository-json-field",
-            "path": path,
-            "sha256": digest,
-            "jsonPointer": pointer,
-        },
-    }
-
-
-def upstream_span_origin(
-    evidence: dict[str, object], transform: str
-) -> dict[str, object]:
-    return {
-        "class": "upstream-normalized",
-        "authority": "exact-upstream-source",
-        "transform": transform,
-        "source": evidence,
-    }
-
-
-def origin_document_digest(document: dict[str, object]) -> str:
-    material = {
-        key: value
-        for key, value in document.items()
-        if key != "fieldOriginsDigest"
-    }
-    return sha256(canonical_bytes(material))
 
 
 def catalog_digest(document: dict[str, object]) -> str:
@@ -511,17 +320,14 @@ def omissions_digest(document: dict[str, object]) -> str:
 
 def generate_profile(
     profile: dict[str, object],
-    selection_profile_index: int,
     selection_digest: str,
-    catalog_generator: dict[str, object],
-    evidence_generator: dict[str, object],
+    generator: dict[str, object],
     inventory_receipt_id: str,
     repositories: dict[str, Path],
 ) -> dict[str, bytes]:
     source_lock_path = ROOT / str(profile["sourceLockPath"])
     source_lock_bytes = source_lock_path.read_bytes()
     source_lock = json.loads(source_lock_bytes)
-    source_lock_digest = sha256(source_lock_bytes)
     profile_id = str(profile["profileId"])
     catalog_revision = str(profile["catalogRevision"])
     if source_lock["profileId"] != profile_id:
@@ -566,58 +372,7 @@ def generate_profile(
             )
         return blob_cache[key]
 
-    license_bindings: list[dict[str, object]] = []
-    for definition in profile["inputs"]:
-        evidence = definition.get("licenseEvidence")
-        if evidence is None:
-            continue
-        if definition["kind"] != "git-source" or not isinstance(evidence, dict):
-            raise GenerationError(
-                f"{profile_id}: license evidence requires a Git source input"
-            )
-        input_id = str(definition["inputId"])
-        exact_input = exact_by_id[input_id]
-        source_path = safe_source_path(str(evidence["sourcePath"]))
-        source = selected_blob(input_id, source_path)
-        source_digest = sha256(source)
-        expected_digest = str(evidence["sourceSha256"])
-        if source_digest != expected_digest:
-            raise GenerationError(
-                f"{profile_id}: license digest drifted for {input_id}"
-            )
-        argument = str(definition["repositoryArgument"])
-        source_blob = git_text(
-            repositories[argument],
-            "rev-parse",
-            f"{exact_input['commit']}:{source_path}",
-        )
-        if source_blob != evidence["sourceBlob"]:
-            raise GenerationError(
-                f"{profile_id}: license blob drifted for {input_id}"
-            )
-        snapshot_path = safe_source_path(str(evidence["snapshotPath"]))
-        snapshot = ROOT / snapshot_path
-        if not snapshot.is_file() or snapshot.read_bytes() != source:
-            raise GenerationError(
-                f"{profile_id}: license snapshot differs for {input_id}"
-            )
-        license_bindings.append(
-            {
-                "sourceInputId": input_id,
-                "repository": exact_input["repository"],
-                "commit": exact_input["commit"],
-                "tree": exact_input["tree"],
-                "expression": evidence["expression"],
-                "sourcePath": source_path,
-                "sourceBlob": source_blob,
-                "sourceSha256": source_digest,
-                "snapshotPath": snapshot_path,
-                "snapshotSha256": sha256(snapshot.read_bytes()),
-            }
-        )
-
     capabilities: list[dict[str, object]] = []
-    capability_sources: dict[str, dict[str, object]] = {}
     seen_capabilities: set[str] = set()
     source_receipts = [str(value) for value in profile["sourceReceiptIds"]]
     receipt_ids = sorted({inventory_receipt_id, *source_receipts})
@@ -632,14 +387,6 @@ def generate_profile(
         locator = dict(capability["locator"])
         source = selected_blob(source_input_id, source_path)
         validate_locator(source, locator, capability_id)
-        capability_sources[capability_id] = {
-            "kind": "upstream-source-span",
-            "sourceInputId": source_input_id,
-            "sourcePath": source_path,
-            "sourceSha256": sha256(source),
-            "locator": locator_description(locator),
-            "matches": locator_matches(source, locator),
-        }
         capabilities.append(
             {
                 "capabilityId": capability_id,
@@ -675,7 +422,6 @@ def generate_profile(
         )
 
     omission_entries: list[dict[str, object]] = []
-    omission_sources: dict[str, dict[str, object]] = {}
     seen_omissions: set[str] = set()
     for raw_omission in profile["omissions"]:
         omission = dict(raw_omission)
@@ -688,14 +434,6 @@ def generate_profile(
         locator = dict(omission["locator"])
         source = selected_blob(source_input_id, source_path)
         validate_locator(source, locator, omission_id)
-        omission_sources[omission_id] = {
-            "kind": "upstream-source-span",
-            "sourceInputId": source_input_id,
-            "sourcePath": source_path,
-            "sourceSha256": sha256(source),
-            "locator": locator_description(locator),
-            "matches": locator_matches(source, locator),
-        }
         omission_entries.append(
             {
                 "omissionId": omission_id,
@@ -716,7 +454,7 @@ def generate_profile(
         "schemaVersion": 1,
         "catalogDigestAlgorithm": "sha256-canonical-json-v1",
         "catalogDigest": "",
-        "generator": catalog_generator,
+        "generator": generator,
         "catalog": {
             "profileId": profile_id,
             "catalogRevision": catalog_revision,
@@ -734,262 +472,11 @@ def generate_profile(
         "catalogRevision": catalog_revision,
         "omissionsDigestAlgorithm": "sha256-canonical-json-v1",
         "omissionsDigest": "",
-        "generator": catalog_generator,
+        "generator": generator,
         "omissions": omission_entries,
     }
     omission_document["omissionsDigest"] = omissions_digest(omission_document)
     omission_bytes = pretty_json(omission_document)
-
-    selection_path = "profiles/catalog-selection.json"
-    profile_pointer = f"/profiles/{selection_profile_index}"
-
-    def selection_origin(pointer: str, transform: str) -> dict[str, object]:
-        return repository_json_origin(
-            origin_class="sdk-authored",
-            authority="wordpresshx-profile-selection",
-            transform=transform,
-            path=selection_path,
-            digest=selection_digest,
-            pointer=pointer,
-        )
-
-    def source_lock_origin(pointer: str, transform: str) -> dict[str, object]:
-        return repository_json_origin(
-            origin_class="upstream-identity-verbatim",
-            authority="exact-profile-source-lock",
-            transform=transform,
-            path=str(profile["sourceLockPath"]),
-            digest=source_lock_digest,
-            pointer=pointer,
-        )
-
-    def receipt_origin(value: object) -> dict[str, object]:
-        if value == inventory_receipt_id:
-            pointer = "/inventoryReceiptId"
-        else:
-            receipt_index = source_receipts.index(str(value))
-            pointer = f"{profile_pointer}/sourceReceiptIds/{receipt_index}"
-        return selection_origin(pointer, "copied-exact-receipt-identity")
-
-    def catalog_field_origin(pointer: str, value: object) -> dict[str, object]:
-        capability_match = re.match(
-            r"^/catalog/capabilities/([0-9]+)(/.*)$", pointer
-        )
-        if capability_match is not None:
-            index = int(capability_match.group(1))
-            relative = capability_match.group(2)
-            capability_pointer = f"{profile_pointer}/capabilities/{index}"
-            capability_id = str(capabilities[index]["capabilityId"])
-            source_evidence = capability_sources[capability_id]
-            if relative == "/capabilityId":
-                return upstream_span_origin(
-                    source_evidence,
-                    "namespace-and-kind-prefix-around-upstream-identifier",
-                )
-            if relative == "/provenance/0/locator":
-                return upstream_span_origin(
-                    source_evidence,
-                    "normalize-validated-locator-description",
-                )
-            if relative == "/provenance/0/sourceDigest":
-                origin = upstream_span_origin(
-                    source_evidence,
-                    "sha256-complete-upstream-source-file",
-                )
-                origin["class"] = "upstream-identity-derived"
-                return origin
-            selection_fields = {
-                "/providerIdentity": "providerIdentity",
-                "/kind": "kind",
-                "/classification": "classification",
-                "/provenance/0/sourceInputId": "sourceInputId",
-                "/provenance/0/sourcePath": "sourcePath",
-            }
-            if relative in selection_fields:
-                field = selection_fields[relative]
-                return selection_origin(
-                    f"{capability_pointer}/{field}",
-                    "copied-exact-sdk-selection-field",
-                )
-            if relative == "/availableIn/0":
-                return selection_origin(
-                    f"{profile_pointer}/profileId",
-                    "copied-exact-profile-identity",
-                )
-            if relative.startswith("/receiptIds/"):
-                return receipt_origin(value)
-            if relative == "/evidence/inventory/receiptId":
-                return receipt_origin(value)
-            if relative == "/administrativeResults/0/receiptId":
-                return receipt_origin(value)
-            return generated_origin(
-                evidence_generator,
-                "emit-closed-catalog-administrative-or-evidence-field",
-            )
-
-        input_match = re.match(
-            r"^/catalog/upstreamInputs/([0-9]+)/([^/]+)$", pointer
-        )
-        if input_match is not None:
-            index = int(input_match.group(1))
-            field = input_match.group(2)
-            definition = profile["inputs"][index]
-            input_pointer = f"{profile_pointer}/inputs/{index}"
-            source_pointer = definition["pointers"].get(field)
-            if source_pointer is not None:
-                return source_lock_origin(
-                    str(source_pointer),
-                    "copied-exact-profile-source-identity",
-                )
-            return selection_origin(
-                f"{input_pointer}/{field}",
-                "copied-exact-sdk-input-classification",
-            )
-
-        authored_catalog_fields = {
-            "/catalog/profileId": f"{profile_pointer}/profileId",
-            "/catalog/catalogRevision": f"{profile_pointer}/catalogRevision",
-        }
-        if pointer in authored_catalog_fields:
-            return selection_origin(
-                authored_catalog_fields[pointer],
-                "copied-exact-sdk-profile-field",
-            )
-        return generated_origin(
-            evidence_generator,
-            "derive-catalog-structure-digest-or-generator-identity",
-        )
-
-    def omission_field_origin(pointer: str, value: object) -> dict[str, object]:
-        omission_match = re.match(r"^/omissions/([0-9]+)(/.*)$", pointer)
-        if omission_match is not None:
-            index = int(omission_match.group(1))
-            relative = omission_match.group(2)
-            omission_pointer = f"{profile_pointer}/omissions/{index}"
-            omission_id = str(omission_entries[index]["omissionId"])
-            source_evidence = omission_sources[omission_id]
-            if relative == "/omissionId":
-                return upstream_span_origin(
-                    source_evidence,
-                    "namespace-and-kind-prefix-around-upstream-identifier",
-                )
-            if relative == "/locator":
-                return upstream_span_origin(
-                    source_evidence,
-                    "normalize-validated-locator-description",
-                )
-            if relative == "/sourceDigest":
-                origin = upstream_span_origin(
-                    source_evidence,
-                    "sha256-complete-upstream-source-file",
-                )
-                origin["class"] = "upstream-identity-derived"
-                return origin
-            selection_fields = {
-                "/kind": "kind",
-                "/sourceInputId": "sourceInputId",
-                "/sourcePath": "sourcePath",
-                "/reasonCode": "reasonCode",
-                "/reason": "reason",
-            }
-            if relative in selection_fields:
-                field = selection_fields[relative]
-                return selection_origin(
-                    f"{omission_pointer}/{field}",
-                    "copied-exact-sdk-selection-field",
-                )
-            if relative.startswith("/receiptIds/"):
-                return receipt_origin(value)
-            return generated_origin(
-                evidence_generator,
-                "emit-closed-omission-evidence-field",
-            )
-        authored_omission_fields = {
-            "/profileId": f"{profile_pointer}/profileId",
-            "/catalogRevision": f"{profile_pointer}/catalogRevision",
-        }
-        if pointer in authored_omission_fields:
-            return selection_origin(
-                authored_omission_fields[pointer],
-                "copied-exact-sdk-profile-field",
-            )
-        return generated_origin(
-            evidence_generator,
-            "derive-omission-structure-digest-or-generator-identity",
-        )
-
-    def field_records(
-        document: dict[str, object],
-        classifier: Callable[[str, object], dict[str, object]],
-    ) -> list[dict[str, object]]:
-        records: list[dict[str, object]] = []
-        for pointer, value in leaf_fields(document):
-            origin = classifier(pointer, value)
-            records.append(
-                {
-                    "outputPointer": pointer,
-                    "valueSha256": sha256(canonical_bytes(value)),
-                    "origin": origin,
-                }
-            )
-        return sorted(records, key=lambda record: str(record["outputPointer"]))
-
-    catalog_fields = field_records(catalog_document, catalog_field_origin)
-    omission_fields = field_records(omission_document, omission_field_origin)
-    origin_counts: dict[str, int] = {}
-    for record in [*catalog_fields, *omission_fields]:
-        origin = record["origin"]
-        origin_class = str(origin["class"])
-        origin_counts[origin_class] = origin_counts.get(origin_class, 0) + 1
-    unique_span_sources = {
-        sha256(canonical_bytes(source)): source
-        for source in [
-            *capability_sources.values(),
-            *omission_sources.values(),
-        ]
-    }
-    field_origins: dict[str, object] = {
-        "schemaVersion": 1,
-        "profileId": profile_id,
-        "catalogRevision": catalog_revision,
-        "status": "field-origins-inventoried-review-pending",
-        "legalAdvice": False,
-        "publicationAuthorized": False,
-        "distributionConclusion": (
-            "pending-product-owner-and-qualified-review-of-exact-generated-catalog"
-        ),
-        "fieldOriginsDigestAlgorithm": "sha256-canonical-json-v1",
-        "fieldOriginsDigest": "",
-        "generator": evidence_generator,
-        "upstreamLicenseEvidence": license_bindings,
-        "outputs": [
-            {
-                "path": "catalog.json",
-                "sha256": sha256(catalog_bytes),
-                "fieldCount": len(catalog_fields),
-                "fields": catalog_fields,
-            },
-            {
-                "path": "omissions.json",
-                "sha256": sha256(omission_bytes),
-                "fieldCount": len(omission_fields),
-                "fields": omission_fields,
-            },
-        ],
-        "summary": {
-            "fieldCount": len(catalog_fields) + len(omission_fields),
-            "originFieldCounts": {
-                key: origin_counts[key] for key in sorted(origin_counts)
-            },
-            "upstreamSourceSpanCount": sum(
-                len(source["matches"])
-                for source in unique_span_sources.values()
-            ),
-            "upstreamLicenseEvidenceCount": len(license_bindings),
-        },
-    }
-    field_origins["fieldOriginsDigest"] = origin_document_digest(field_origins)
-    field_origins_bytes = pretty_json(field_origins)
 
     effective_inputs = [
         {
@@ -1000,7 +487,7 @@ def generate_profile(
         for (input_id, source_path), source in sorted(blob_cache.items())
     ]
     fingerprint_material = {
-        "generatorSourceDigest": evidence_generator["sourceDigest"],
+        "generatorSourceDigest": generator["sourceDigest"],
         "selectionDigest": selection_digest,
         "profileSchemaDigest": sha256(PROFILE_SCHEMA.read_bytes()),
         "sourceLockDigest": sha256(source_lock_bytes),
@@ -1011,7 +498,7 @@ def generate_profile(
         "schemaVersion": 1,
         "profileId": profile_id,
         "catalogRevision": catalog_revision,
-        "generator": evidence_generator,
+        "generator": generator,
         "inventoryReceiptId": inventory_receipt_id,
         "inputFingerprintAlgorithm": "sha256-canonical-json-v1",
         "inputFingerprint": sha256(canonical_bytes(fingerprint_material)),
@@ -1025,7 +512,7 @@ def generate_profile(
         },
         "sourceLock": {
             "path": str(profile["sourceLockPath"]),
-            "sha256": source_lock_digest,
+            "sha256": sha256(source_lock_bytes),
         },
         "effectiveInputs": effective_inputs,
         "outputs": {
@@ -1041,12 +528,6 @@ def generate_profile(
                 "omissionsDigest": omission_document["omissionsDigest"],
                 "omissionCount": len(omission_entries),
             },
-            "fieldOrigins": {
-                "path": "field-origins.json",
-                "sha256": sha256(field_origins_bytes),
-                "fieldOriginsDigest": field_origins["fieldOriginsDigest"],
-                "fieldCount": field_origins["summary"]["fieldCount"],
-            },
         },
         "claims": {
             "catalogEvidenceStatus": "inventoried",
@@ -1059,7 +540,6 @@ def generate_profile(
     return {
         "catalog.json": catalog_bytes,
         "omissions.json": omission_bytes,
-        "field-origins.json": field_origins_bytes,
         "generation-report.json": pretty_json(report),
     }
 
@@ -1120,13 +600,7 @@ def main() -> None:
                     str(exact_input["commit"]),
                 )
 
-    catalog_generator = {
-        "identity": selection["generatorIdentity"],
-        "version": selection["generatorVersion"],
-        "sourceDigest": sha256(CATALOG_CORE.read_bytes()),
-        "toolchainIdentity": TOOLCHAIN_IDENTITY,
-    }
-    evidence_generator = {
+    generator = {
         "identity": selection["generatorIdentity"],
         "version": selection["generatorVersion"],
         "sourceDigest": sha256(Path(__file__).read_bytes()),
@@ -1143,13 +617,10 @@ def main() -> None:
     try:
         summaries: list[dict[str, object]] = []
         for profile in selected_profiles:
-            selection_profile_index = profiles.index(profile)
             files = generate_profile(
                 profile,
-                selection_profile_index,
                 selection_digest,
-                catalog_generator,
-                evidence_generator,
+                generator,
                 str(selection["inventoryReceiptId"]),
                 repositories,
             )

@@ -51,6 +51,16 @@ source hashes without requiring `.git`, while an exact Git archive/path manifest
 must prove whole-tree completeness for the review packet. This closes neither
 artifact-specific byte origins nor the owner licensing decision.
 
+The exact WordPress/Gutenberg catalog generator now emits a companion
+`field-origins.json` for each profile. Across the two current profiles it maps
+all 724 catalog and omission fields to SDK-authored structure,
+generator-derived values, exact source-lock identities, complete-source
+digests, or normalized upstream identifiers. The upstream-derived identifiers
+carry 44 distinct exact byte/line spans, and the maps bind byte-identical
+WordPress and Gutenberg license/notice snapshots. This supplies the technical
+field-level evidence requested by ADR020-F006 while deliberately retaining a
+pending distribution conclusion for Oracle and product-owner review.
+
 ## Proposed decision
 
 This section is a candidate for qualified review, not an accepted grant.

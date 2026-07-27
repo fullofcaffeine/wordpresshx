@@ -32,6 +32,11 @@ license texts/notices, and evidence from the exact packed artifacts.
   `extra/LICENSE.txt` at the exact Haxe toolchain commit; the policy gate binds
   its commit, tree, blob, and SHA-256 to both compiler and standard-library
   records.
+- `evidence/licenses/wordpress-7.0-license.txt` and
+  `evidence/licenses/gutenberg-23.4.0-LICENSE.md` preserve the complete exact
+  profile-source license/notice texts. `generated/*/catalog-v1/field-origins.json`
+  binds them to a complete field-level origin classification and exact upstream
+  identifier spans without asserting a distribution conclusion.
 - `GENERATED_OUTPUT.md` explains the proposed origin-sensitive output model.
 - `THIRD_PARTY_NOTICES.md` is the review ledger. It is not yet a final
   notice bundle.

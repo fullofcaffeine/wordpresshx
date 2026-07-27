@@ -21,6 +21,7 @@ required_files=(
   scripts/lint/hx-format-guard.sh
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
+  scripts/profiles/verify-sdk013-history.py
   scripts/security/run-beads-gitleaks.sh
   scripts/security/scan-beads-decoded-state.sh
   scripts/security/test-beads-decoded-state.sh
@@ -90,6 +91,7 @@ python3 scripts/generated-output-vcs/test-production-integration.py \
   "${receipt_provenance_mode}"
 
 if [[ "${CI:-}" == "true" && "${GITHUB_JOB:-}" == "security" ]]; then
+  python3 scripts/profiles/verify-sdk013-history.py --require-history
   bash scripts/beads/test-history-reader.sh --build-only
 fi
 
