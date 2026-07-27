@@ -3,7 +3,7 @@
   "receiptId": "ADR-019-UNSAFE-BOUNDARY-GOVERNANCE",
   "bead": "wordpresshx-adr-019",
   "status": "implemented-hosted-pending",
-  "observedAt": "2026-07-27T00:28:00Z",
+  "observedAt": "2026-07-27T00:36:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/019-security-and-unsafe-boundary-governance.md",
@@ -43,7 +43,7 @@
     },
     "validator": {
       "path": "scripts/security/test-unsafe-boundary-policy.py",
-      "sha256": "586f54aabf913c0db9afa0052a9f1a149458e4405eb2f07b6a26dfa2c7bb72ec"
+      "sha256": "5e08feffda976bc396ea51a5ce6d670f90a7c1ca8fcbf5a0e022279c836c098b"
     },
     "canonicalReview": {
       "path": "fixtures/unsafe-boundary/reviews/WPHX-UNSAFE-REVIEW-9999-01.json",
@@ -102,7 +102,7 @@
       "bash scripts/check-repository.sh"
     ],
     "sourceTreeDigestAlgorithm": "sha256-sorted-full-path-content-digests-v2",
-    "sourceTreeSha256": "a5c7ca68c8f4304dcbbd3b93fe8a89860998d011dba7032d7433477b58c0651f",
+    "sourceTreeSha256": "ccfdd703caa234d8763785b3f4bd3fb47cd902e704007f54ebd4ef977f4d762e",
     "policyDigestAlgorithm": "sha256-canonical-json-v1",
     "policyDigest": "7ef219a103427be6cc84ed35c87240b814e48b4779f436374a4d88cc0c62ee38",
     "scenarioDigestAlgorithm": "sha256-canonical-json-v1",
@@ -158,6 +158,9 @@
     "failedHydrationRunId": 30227304087,
     "failedHydrationJobId": 89859536107,
     "failedHydrationReason": "fresh-runner-had-no-local-beads-database-before-remote-bootstrap",
+    "failedProbeRunId": 30227625832,
+    "failedProbeJobId": 89860437197,
+    "failedProbeReason": "bd-where-located-metadata-without-proving-a-database",
     "previousRunId": 30225305825,
     "previousJobId": 89854421141,
     "previousCommit": "75e4f76b9f80f2a5694a04386ff626aedee5040d",

@@ -402,43 +402,32 @@ def validate_bead_status(
         raise ValidationError("Bead status projection digest drifted")
     if VERIFY_BEADS and verify_live:
         binary = os.environ.get("WORDPRESSHX_BD_BIN", "bd")
-        workspace = subprocess.run(
-            [binary, "where"],
+        remote = os.environ.get(
+            "WORDPRESSHX_BEADS_REMOTE",
+            "git+https://github.com/fullofcaffeine/wordpresshx.git",
+        )
+        initialized = subprocess.run(
+            [
+                binary,
+                "init",
+                "--remote",
+                remote,
+                "--init-if-missing",
+                "--non-interactive",
+                "--skip-hooks",
+                "--skip-agents",
+            ],
             cwd=ROOT,
             check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
         )
-        if workspace.returncode != 0:
-            remote = os.environ.get("WORDPRESSHX_BEADS_REMOTE")
-            if not remote:
-                raise ValidationError(
-                    "fresh-clone Beads verification requires "
-                    "WORDPRESSHX_BEADS_REMOTE"
-                )
-            initialized = subprocess.run(
-                [
-                    binary,
-                    "init",
-                    "--remote",
-                    remote,
-                    "--init-if-missing",
-                    "--non-interactive",
-                    "--skip-hooks",
-                    "--skip-agents",
-                ],
-                cwd=ROOT,
-                check=False,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
+        if initialized.returncode != 0:
+            raise ValidationError(
+                "authoritative Beads initialization failed:\n"
+                + initialized.stdout
             )
-            if initialized.returncode != 0:
-                raise ValidationError(
-                    "authoritative Beads initialization failed:\n"
-                    + initialized.stdout
-                )
         pull = subprocess.run(
             [binary, "dolt", "pull"],
             cwd=ROOT,
