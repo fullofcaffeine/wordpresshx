@@ -419,3 +419,10 @@ deployed-artifact identity, anchor public schemas, exercise ownership rollback,
 and eliminate exact-tool/evidence-stage drift.
 
 This ADR remains proposed until those findings pass a fresh Oracle review.
+
+The combined rereview of commit `76a90da1639aa28e163c1713067274323e5b4db2`
+confirmed that all ten findings remain open. It independently demonstrated the
+public schemas' unanchored-pattern defect and found no production generator or
+provider-call path that would supersede the earlier dispositions. The current
+routing and review limitations are recorded in the
+[combined review integration](../../review/oracle/results/combined-rereview-76a90da/INTEGRATION.md).

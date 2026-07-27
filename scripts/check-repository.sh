@@ -2420,6 +2420,7 @@ assert adr012_receipt["status"] in {
     "second-corrections-rereview-pending",
     "immutable-policy-rereview-pending",
     "verified",
+    "regression-open",
 }
 for adr012_subject in adr012_receipt["subject"].values():
     assert hashlib.sha256(Path(adr012_subject["path"]).read_bytes()).hexdigest() == (
@@ -2522,13 +2523,58 @@ assert adr012_final_decision["newFindings"] == [
         ),
     }
 ]
-assert adr012_receipt["review"]["freshIndependentReview"] == (
-    "accepted-no-blocking-findings"
-)
-assert adr012_receipt["review"]["acceptanceAuthorized"] is True
-assert adr012_receipt["claims"]["architectureDecision"] == (
-    "accepted-after-review"
-)
+if adr012_receipt["status"] == "regression-open":
+    adr012_combined = adr012_receipt["review"]["combinedRereviewIntegration"]
+    assert adr012_combined == {
+        "decision": "changes-required",
+        "reviewedCommit": "76a90da1639aa28e163c1713067274323e5b4db2",
+        "reviewedTree": "b341fb3cdaee2303c18e50ce47d9f71fb30ff4ca",
+        "packetSha256": (
+            "3e7126fac1651f9b8d0afe99534709b27aca73135339ba17a019f8c0c531d921"
+        ),
+        "integrationPath": (
+            "review/oracle/results/combined-rereview-76a90da/INTEGRATION.md"
+        ),
+        "integrationSha256": (
+            "165d8bd8c7a622ae2527b2c4083cb4972f9db52a786f692a9fac9a2d0fcc4d9c"
+        ),
+        "recordPath": (
+            "review/oracle/results/combined-rereview-76a90da/integration.json"
+        ),
+        "recordSha256": (
+            "9407ea6d284eb4dfb47724542fe674e8fdfbb5ccaf5cadf0dae4f1ff48825d97"
+        ),
+        "reopenedFindings": ["ADR012-F004"],
+        "remediationBead": "wordpresshx-g4.1.1",
+    }
+    for adr012_integration_path, adr012_integration_digest in (
+        (
+            adr012_combined["integrationPath"],
+            adr012_combined["integrationSha256"],
+        ),
+        (
+            adr012_combined["recordPath"],
+            adr012_combined["recordSha256"],
+        ),
+    ):
+        assert hashlib.sha256(
+            Path(adr012_integration_path).read_bytes()
+        ).hexdigest() == adr012_integration_digest
+    assert adr012_receipt["review"]["freshIndependentReview"] == (
+        "superseded-by-combined-rereview"
+    )
+    assert adr012_receipt["review"]["acceptanceAuthorized"] is False
+    assert adr012_receipt["claims"]["architectureDecision"] == (
+        "reopened-after-json-codec-regression"
+    )
+else:
+    assert adr012_receipt["review"]["freshIndependentReview"] == (
+        "accepted-no-blocking-findings"
+    )
+    assert adr012_receipt["review"]["acceptanceAuthorized"] is True
+    assert adr012_receipt["claims"]["architectureDecision"] == (
+        "accepted-after-review"
+    )
 assert adr012_receipt["claims"]["publicationAuthorized"] is False
 for unproven_output_claim in (
     "productionSdkTypes",
@@ -2544,7 +2590,7 @@ assert adr012_hosted["workflow"] == "Output-context safety"
 assert adr012_hosted["job"] == "output-context"
 assert adr012_hosted["required"] is True
 if adr012_hosted["status"] == "immutable-policy-passed":
-    assert adr012_receipt["status"] == "verified"
+    assert adr012_receipt["status"] in {"verified", "regression-open"}
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)
     assert sha1.fullmatch(adr012_hosted["commit"])
@@ -4479,7 +4525,11 @@ assert dev_loop_implementation["claims"]["publicPackagePublication"] == (
 assert sdk044_receipt["schemaVersion"] == 1
 assert sdk044_receipt["receiptId"] == "SDK-044-DEV-LOOP"
 assert sdk044_receipt["bead"] == "wordpresshx-sdk-044"
-assert sdk044_receipt["status"] in {"implemented-hosted-pending", "verified"}
+assert sdk044_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+    "verified-with-process-tree-regression-open",
+}
 
 verify_versioned_subject(sdk044_receipt)
 sdk044_current_implementation_sha256 = hashlib.sha256(
@@ -4546,7 +4596,10 @@ if sdk044_hosted["status"] == "pending-first-main-run":
     assert sdk044_hosted["commit"] is None
     sdk044_evidence_suffix = "local"
 elif sdk044_hosted["status"] == "passed":
-    assert sdk044_receipt["status"] == "verified"
+    assert sdk044_receipt["status"] in {
+        "verified",
+        "verified-with-process-tree-regression-open",
+    }
     assert dev_loop_implementation["status"] == (
         "implemented-sdk044-reload-hosted-verified"
     )

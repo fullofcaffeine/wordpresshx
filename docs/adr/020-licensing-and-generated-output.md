@@ -217,3 +217,11 @@ compiler's complete distributable license/notice set.
 The review is technical risk evidence, not legal advice. Development may
 continue, but publication remains mechanically blocked until the findings are
 resolved and the product owner authorizes it.
+
+The combined rereview of commit `76a90da1639aa28e163c1713067274323e5b4db2`
+reproduced the complete tracked snapshot and accepted the technical closure of
+F001, F003, F007, and F008. F002, F004, F005, and the authority portion of F006
+remain open. Engineering can produce final-artifact inventories and resolve or
+exclude conflicting components; it cannot invent contributor rights, a root
+grant, qualified review, or owner approval. The exact routing is recorded in
+the [combined review integration](../../review/oracle/results/combined-rereview-76a90da/INTEGRATION.md).

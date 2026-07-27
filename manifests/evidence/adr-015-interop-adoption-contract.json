@@ -7,7 +7,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
-      "sha256": "b31e690dd58575664b1e7871ba877146368699eda94953349f27137f68959dfe"
+      "sha256": "d6d21c622086b60f18a635f4567df1d0f1db6140f337e05a6d6801de815350bf"
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",

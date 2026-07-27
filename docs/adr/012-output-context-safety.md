@@ -1,8 +1,8 @@
 # ADR-012: Output-context safety
 
-- Status: accepted after independent Oracle rereview
+- Status: reopened after an independently reproduced JSON codec regression
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; accepted)
+- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; accepted the earlier bounded design, then found a regression)
 - Bead: `wordpresshx-adr-012`
 - Profiles/layers: shared output contracts, PHP compiler, WordPress profile, HXX lowering, Genes browser output, REST, blocks, admin UI
 - Supersedes: none; makes PRD §29.1 and ADR-011's contextual-lowering requirement concrete
@@ -395,3 +395,16 @@ Its sole new finding, ADR012-R3-N001, is non-blocking: five paths in the review
 prompt were stale, while the actual manifest-bound prototype paths existed,
 matched their receipt hashes, and were reviewed. Future review prompts must be
 validated against their packet path inventory.
+
+The combined independent rereview of commit
+`76a90da1639aa28e163c1713067274323e5b4db2`, returned on 2026-07-27,
+reopened F004. `TodoCardCodec` rejects only NUL and the fixture-local
+`PlanJson.quote` does not escape every JSON-forbidden C0 control. The sink can
+therefore brand bytes as successful JSON even though PHP
+`JSON_THROW_ON_ERROR` and JavaScript `JSON.parse` reject them. The earlier
+acceptance remains useful historical evidence for F001–F003 and F005–F009, but
+it no longer establishes the codec/native-boundary invariant. P0 remediation
+bead `wordpresshx-g4.1.1` owns a standards-compliant shared codec path,
+cross-target control/Unicode/depth/failure vectors, and a fresh
+content-addressed rereview. See the
+[combined review integration](../../review/oracle/results/combined-rereview-76a90da/INTEGRATION.md).

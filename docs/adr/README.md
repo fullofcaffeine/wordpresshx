@@ -49,7 +49,7 @@ decision.
 - [ADR-008: Profile generation and API classification](008-profile-generation-and-api-classification.md)
 - [ADR-009: Schema and codec authority](009-schema-and-codec-authority.md)
 - [ADR-011: HXX parser and lowering architecture](011-hxx-parser-and-lowering-architecture.md)
-- [ADR-012: Output-context safety](012-output-context-safety.md)
+- [ADR-012: Output-context safety](012-output-context-safety.md) — reopened after the combined Oracle rereview reproduced a JSON codec/native-decoder regression; `wordpresshx-g4.1.1` owns the repair.
 - [ADR-013: Genes TypeScript output and WordPress build integration](013-genes-ts-output-and-wordpress-build-integration.md)
 - [ADR-014: Source maps and PHP trace correlation](014-source-maps-and-php-trace-correlation.md)
 - [ADR-016: Project and CLI configuration](016-project-and-cli-configuration.md)

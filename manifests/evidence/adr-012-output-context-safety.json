@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "verified",
+  "status": "regression-open",
   "observedAt": "2026-07-26T22:46:46Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "5ba6276d1cce72d733c0d29309a6461b27e8531fc8ab24a6902324d2f305e360"
+      "sha256": "67e39a717e4dec415e12455fcace43ddf6fb0e6aa99c7389713e192892c716a0"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
@@ -112,8 +112,20 @@
       "ADR012-F008: the Genes identity is derived from the immutable browser dependency lock and recorded consistently as 1.38.0.",
       "ADR012-F009: non-retention is stated as an enforceable SDK API policy, not as a linear-type guarantee."
     ],
-    "freshIndependentReview": "accepted-no-blocking-findings",
-    "acceptanceAuthorized": true
+    "freshIndependentReview": "superseded-by-combined-rereview",
+    "acceptanceAuthorized": false,
+    "combinedRereviewIntegration": {
+      "decision": "changes-required",
+      "reviewedCommit": "76a90da1639aa28e163c1713067274323e5b4db2",
+      "reviewedTree": "b341fb3cdaee2303c18e50ce47d9f71fb30ff4ca",
+      "packetSha256": "3e7126fac1651f9b8d0afe99534709b27aca73135339ba17a019f8c0c531d921",
+      "integrationPath": "review/oracle/results/combined-rereview-76a90da/INTEGRATION.md",
+      "integrationSha256": "165d8bd8c7a622ae2527b2c4083cb4972f9db52a786f692a9fac9a2d0fcc4d9c",
+      "recordPath": "review/oracle/results/combined-rereview-76a90da/integration.json",
+      "recordSha256": "9407ea6d284eb4dfb47724542fe674e8fdfbb5ccaf5cadf0dae4f1ff48825d97",
+      "reopenedFindings": ["ADR012-F004"],
+      "remediationBead": "wordpresshx-g4.1.1"
+    }
   },
   "referenceReview": {
     "exactRecordCount": 7,
@@ -148,7 +160,7 @@
     "ADR012-R3-N001 records five stale path names in the final review prompt; the Oracle reviewed the manifest-bound equivalents and future prompts must validate paths against the packet inventory."
   ],
   "claims": {
-    "architectureDecision": "accepted-after-review",
+    "architectureDecision": "reopened-after-json-codec-regression",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

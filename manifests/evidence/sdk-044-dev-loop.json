@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "verified",
+  "status": "verified-with-process-tree-regression-open",
   "observedAt": "2026-07-21T12:30:03Z",
   "implementationCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
   "subject": {
@@ -274,6 +274,7 @@
     "required": true
   },
   "limitations": [
+    "DEV-N001: external services are not currently launched in owned POSIX process groups or Windows jobs; direct-child shutdown is tested, but a spawned descendant can survive. wordpresshx-sdk-044.4 owns the repair and superseding evidence.",
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
@@ -286,6 +287,7 @@
     "lastGoodRetention": "runtime-tested-hosted",
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
+    "externalDevelopmentServiceDescendantCleanup": "regression-open",
     "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",

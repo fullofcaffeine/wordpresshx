@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "recordKind": "oracle-review-integration",
+  "review": {
+    "reviewedCommit": "76a90da1639aa28e163c1713067274323e5b4db2",
+    "reviewedTree": "b341fb3cdaee2303c18e50ce47d9f71fb30ff4ca",
+    "packetSha256": "3e7126fac1651f9b8d0afe99534709b27aca73135339ba17a019f8c0c531d921",
+    "reviewer": "OpenAI GPT-5.6 Pro independent Oracle",
+    "reviewDate": "2026-07-27",
+    "decision": "changes-required",
+    "confidence": "high"
+  },
+  "routing": [
+    {
+      "findings": ["ADR012-F004"],
+      "bead": "wordpresshx-g4.1.1",
+      "disposition": "reopened-regression"
+    },
+    {
+      "findings": ["DEV-N001"],
+      "bead": "wordpresshx-sdk-044.4",
+      "disposition": "new-verified-defect"
+    },
+    {
+      "findings": [
+        "ADR015-F001",
+        "ADR015-F002",
+        "ADR015-F003",
+        "ADR015-F004",
+        "ADR015-F005",
+        "ADR015-F006",
+        "ADR015-F007",
+        "ADR015-F008",
+        "ADR015-F009",
+        "ADR015-F010"
+      ],
+      "bead": "wordpresshx-g6.1",
+      "disposition": "remains-open"
+    },
+    {
+      "findings": [
+        "ADR020-F001",
+        "ADR020-F002",
+        "ADR020-F003",
+        "ADR020-F004",
+        "ADR020-F005",
+        "ADR020-F006",
+        "ADR020-F007",
+        "ADR020-F008"
+      ],
+      "bead": "wordpresshx-sdk-plan.2",
+      "disposition": "mixed-technical-progress-publication-blocked"
+    },
+    {
+      "findings": ["ARCH-N01", "ARCH-N02", "ARCH-N03", "ARCH-N04"],
+      "bead": "wordpresshx-sdk-plan.3",
+      "disposition": "remains-open"
+    },
+    {
+      "findings": ["ADR012-R3-N001"],
+      "bead": "wordpresshx-sdk-plan.4",
+      "disposition": "remains-open-non-blocking"
+    },
+    {
+      "findings": ["G1-N01", "G1-N02", "G1-N03"],
+      "bead": "wordpresshx-g1.4",
+      "disposition": "remains-open-non-blocking"
+    }
+  ],
+  "publicationAuthorized": false,
+  "legalAdvice": false
+}
