@@ -59,6 +59,27 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
 - Keep advanced behavior available through explicit typed options and narrow escape hatches. Ergonomic helpers must not hide ownership, weaken validation, introduce ambiguous magic, or couple the core SDK to an optional integration.
 
+## Product Documentation and Positioning
+
+- Lead the WordPressHx README, related NextJsHx integration documentation, and
+  later beginner guides with the practical reasons to choose the Haxe/HXX
+  surface over maintaining raw PHP plus JavaScript/TypeScript: one typed
+  cross-layer authoring model, compile-time framework checks, reusable
+  contracts, generated native artifacts, deterministic tooling, source
+  correlation, and explicit interoperability escape hatches.
+- Demonstrate those advantages with small comparable workflows or
+  before/after examples. Explain what repetitive configuration, duplicated
+  models, late runtime failure, or cross-language drift Haxe removes; do not
+  rely on abstract claims that Haxe is merely safer or cleaner.
+- Make native compatibility a central product promise: WordPressHx extends
+  ordinary WordPress and Gutenberg rather than replacing their runtimes, and
+  its generated PHP, HTML, metadata, CSS, and browser modules must remain
+  inspectable and consumable by the existing ecosystem.
+- Keep positioning evidence-bound. Until the relevant exact-profile,
+  artifact, and runtime gates pass, describe “100% compatible” as the intended
+  architecture and state the precise verified profile or bounded capability;
+  never turn a design goal into an unqualified current support claim.
+
 ## Genes and Downstream Ownership
 
 - Put reusable Haxe-to-JavaScript/TypeScript language and tooling capabilities
