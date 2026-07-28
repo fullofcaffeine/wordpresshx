@@ -1,11 +1,107 @@
 package wordpress.hx.contracts;
 
+import haxe.io.Bytes;
+import haxe.io.Encoding;
 import wordpress.hx.contracts.WireValue.WireField;
 
 /** Deterministic JSON projection for the closed wire algebra. */
 class CanonicalWireJson {
 	public static function encode(value:WireValue):String {
 		return encodeValue(value, "$");
+	}
+
+	/**
+		Encode only after proving the complete value fits the bounded,
+		decoder-compatible JSON domain.
+	**/
+	public static function encodeChecked(value:WireValue, maxDepth:Int = 64):WireJsonEncoding {
+		if (maxDepth < 1) {
+			return JsonRejected("json-depth-limit-must-be-positive");
+		}
+		return switch validate(value, "$", 0, maxDepth) {
+			case Invalid(reason): JsonRejected(reason);
+			case Valid: JsonEncoded(encode(value));
+		};
+	}
+
+	static function validate(value:WireValue, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
+		if (depth > maxDepth) {
+			return Invalid(path + ": json-depth-limit-exceeded");
+		}
+		return switch value {
+			case NullValue | BoolValue(_) | IntegerValue(_):
+				Valid;
+			case StringValue(value):
+				validateString(value, path);
+			case ArrayValue(values):
+				validateArray(values, path, depth, maxDepth);
+			case ObjectValue(fields):
+				validateObject(fields, path, depth, maxDepth);
+		};
+	}
+
+	static function validateArray(values:Array<WireValue>, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
+		for (index in 0...values.length) {
+			switch validate(values[index], path + "[" + index + "]", depth + 1, maxDepth) {
+				case Invalid(reason):
+					return Invalid(reason);
+				case Valid:
+			}
+		}
+		return Valid;
+	}
+
+	static function validateObject(fields:Array<WireField>, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
+		final sorted = fields.copy();
+		sorted.sort((left, right) -> UnicodeScalarOrder.compare(left.name, right.name));
+		for (index in 0...sorted.length) {
+			final current = sorted[index];
+			switch validateString(current.name, path + "/<field-name>") {
+				case Invalid(reason):
+					return Invalid(reason);
+				case Valid:
+			}
+			if (index > 0 && sorted[index - 1].name == current.name) {
+				return Invalid(path + ": duplicate field " + current.name);
+			}
+			switch validate(current.value, path + "/" + current.name, depth + 1, maxDepth) {
+				case Invalid(reason):
+					return Invalid(reason);
+				case Valid:
+			}
+		}
+		return Valid;
+	}
+
+	static function validateString(value:String, path:String):WireJsonValidation {
+		return isValidUnicode(value) ? Valid : Invalid(path + ": invalid-unicode");
+	}
+
+	static function isValidUnicode(value:String):Bool {
+		#if target.utf16
+		var index = 0;
+		while (index < value.length) {
+			final code = StringTools.fastCodeAt(value, index);
+			if (code >= 0xd800 && code <= 0xdbff) {
+				if (index + 1 >= value.length) {
+					return false;
+				}
+				final low = StringTools.fastCodeAt(value, index + 1);
+				if (low < 0xdc00 || low > 0xdfff) {
+					return false;
+				}
+				index += 2;
+			} else {
+				if (code >= 0xdc00 && code <= 0xdfff) {
+					return false;
+				}
+				index++;
+			}
+		}
+		return true;
+		#else
+		return UnicodeString.validate(Bytes.ofString(value), Encoding.UTF8);
+		#end
 	}
 
 	static function encodeValue(value:WireValue, path:String):String {
@@ -71,4 +167,9 @@ class CanonicalWireJson {
 		result.add('"');
 		return result.toString();
 	}
+}
+
+private enum WireJsonValidation {
+	Valid;
+	Invalid(reason:String);
 }

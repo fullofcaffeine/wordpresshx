@@ -22,7 +22,11 @@ The boundary is deliberately closed:
 4. A `ContractCodec<T>` maps only a validated value into `T` and maps `T` back
    to the wire algebra. Impossible post-validation branches are internal
    defects, not user-input diagnostics.
-5. Target projectors consume the same canonical schema IR. A projector that
+5. `CanonicalWireJson.encodeChecked` rejects invalid Unicode, duplicate
+   fields, and values beyond its explicit depth limit before returning native
+   decoder-compatible JSON bytes. Application codecs return `WireValue`; they
+   cannot manufacture a JSON-success brand from a string.
+6. Target projectors consume the same canonical schema IR. A projector that
    cannot preserve a constraint must fail rather than silently widen it.
 
 Validation and sanitization are separate. Validators decide whether input is

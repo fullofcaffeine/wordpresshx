@@ -1,6 +1,8 @@
 package wordpress.hx.output.prototype;
 
 import haxe.crypto.Sha256;
+import wordpress.hx.contracts.CanonicalWireJson;
+import wordpress.hx.contracts.WireJsonEncoding;
 import wordpress.hx.output.prototype.Output.CompilerMarkup;
 import wordpress.hx.output.prototype.Output.CssColor;
 import wordpress.hx.output.prototype.Output.CssDisplay;
@@ -76,7 +78,11 @@ final class OutputSinks {
 
 	static function jsonPlan(schemaId:String, encoding:JsonEncoding):JsonPlan {
 		return switch encoding {
-			case EncodedJson(value): JsonPlan.success(schemaId, value);
+			case EncodedValue(value):
+				switch CanonicalWireJson.encodeChecked(value) {
+					case JsonEncoded(encoded): JsonPlan.success(schemaId, encoded);
+					case JsonRejected(reason): JsonPlan.failure(schemaId, reason);
+				};
 			case EncodingFailure(reason): JsonPlan.failure(schemaId, reason);
 		};
 	}

@@ -38,8 +38,18 @@ const plan = JSON.parse(planBytes);
 assert.equal(plan.schema, "wordpresshx.output-context-runtime-plan.v2");
 assert.equal(plan.restJson.failureReason, "");
 assert.equal(plan.scriptData.failureReason, "");
-assert.equal(plan.encodingFailure.failureReason, "invalid-control-character");
+assert.equal(plan.encodingFailure.failureReason, "invalid-domain-id");
 assert.equal(plan.encodingFailure.encoded, "");
+assert.equal(plan.controlJson.length, 0x20);
+for (let code = 0; code < 0x20; code += 1) {
+  const result = plan.controlJson[code];
+  assert.equal(result.failureReason, "");
+  assert.equal(JSON.parse(result.encoded).title, `before-${String.fromCharCode(code)}-after`);
+}
+assert.match(plan.depthFailure.failureReason, /json-depth-limit-exceeded$/);
+assert.equal(plan.depthFailure.encoded, "");
+assert.match(plan.invalidUnicodeFailure.failureReason, /invalid-unicode$/);
+assert.equal(plan.invalidUnicodeFailure.encoded, "");
 assert.equal(plan.richHtml.length, 4);
 assert.equal(
   plan.richHtml[2].canonicalPolicy,

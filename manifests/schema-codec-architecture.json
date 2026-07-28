@@ -124,7 +124,7 @@
     "implementationStatus": "decision-and-cross-target-architecture-prototype-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "13f572da58bf8579eb9ee297aa093534890d4db92053aaea18735c72bed52b21",
+    "sourceTreeSha256": "b06a6a5643046d93ef6b1fe3b46563ac15fed20c6fd2f0bcc6a45adc39be69f5",
     "schemaSha256": "68504df60f8b2f1376020435610bc5a768f4c0ae969130819ec0981de8679177",
     "transcriptSha256": "4760183a044a47dab1d52e1e5968182c9ade5a093844a8708afa07569095863e",
     "haxeInvariantCount": 27,
@@ -218,7 +218,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "accepted-after-review",
+    "architectureDecision": "accepted-base-checked-json-hardening-pending-rereview",
     "typedIrPrototype": "validated",
     "productionMacroDerivation": "not-tested",
     "productionPhpEmitter": "not-tested",

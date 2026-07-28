@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
-  "status": "verified",
-  "observedAt": "2026-07-20T01:54:10Z",
+  "status": "checked-json-hardening-rereview-pending",
+  "observedAt": "2026-07-28T05:29:11Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "be54bac8372ace774e86a9f237bb9a29d8ed5adc05193308ab6fafcec5bb3b8c"
+      "sha256": "516af06369cf91b938a6a4b8368453caff3e16d793b87ec456af36baad5d103d"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -23,7 +23,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "902435578d9e7c3fd966a11e3da16dfa7e6b243b53acfc8344d42c6f0da65d90"
+      "sha256": "4575b1dc0fcad0c3dcc22b65048c370747a6e3028f0c9563c9dba43b5fc19e9f"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -51,7 +51,7 @@
       "git diff --check",
       "git diff --cached --check"
     ],
-    "sourceTreeSha256": "13f572da58bf8579eb9ee297aa093534890d4db92053aaea18735c72bed52b21",
+    "sourceTreeSha256": "b06a6a5643046d93ef6b1fe3b46563ac15fed20c6fd2f0bcc6a45adc39be69f5",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
@@ -68,7 +68,7 @@
     "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
     "documentBoundPathIndependentRules": "passed",
     "developmentEncodeValidation": "passed",
-    "outcome": "passed-local-and-hosted"
+    "outcome": "checked-json-hardening-passed-local-pending-fresh-rereview"
   },
   "review": {
     "initialFindingCount": 10,
@@ -76,7 +76,8 @@
     "finalFreshReview": "no-blockers",
     "finalReviewReranFocusedGate": true,
     "finalReviewCheckedCurrentBytes": true,
-    "reviewer": "fresh Codex subagent"
+    "reviewer": "fresh Codex subagent",
+    "checkedJsonHardeningFreshReview": "required"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
@@ -94,7 +95,7 @@
     "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt."
   ],
   "claims": {
-    "architectureDecision": "accepted",
+    "architectureDecision": "accepted-base-checked-json-hardening-pending-rereview",
     "typedIrPrototype": "cross-target-runtime-tested",
     "canonicalSchemaAndDiagnostics": "validated",
     "productionMacroDerivation": "not-tested",

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "regression-open",
-  "observedAt": "2026-07-26T22:46:46Z",
+  "status": "regression-repaired-pending-rereview",
+  "observedAt": "2026-07-28T05:29:11Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
@@ -11,19 +11,19 @@
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "a6eeea83bef34f63d2a323656efe1987ef22e7a6dccce11100ecf73f08caafde"
+      "sha256": "9f7c5d6c2da68f5082be9116281587f96a2f675a494c39e37c41486b2a8a42f7"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
-      "sha256": "95eb7931a6fdd4761f79d7e897b45fb63f5ccd4d43d6d854d38390bceff16d43"
+      "sha256": "987531feff44158837368ba2a04e4dd42ff53311f5b73dbd7936378960c90a3a"
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "4cb57700bec95979b1bf1b02f9e9ef696f895390dd4792b897960927b14a4312"
+      "sha256": "4c829b3abd96450899e8c3c3ab76af271a96ac5d4572aa35dd9fd8629939155e"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
-      "sha256": "d437ef34c201ebbb0f3cc0060fe7c0740411e86cdf08020fd3f9a20b1794646d"
+      "sha256": "fbe290ff3d3c142dc4a54e731bb930b7243b47f21c2beb5c79c8414944b60fab"
     },
     "workflow": {
       "path": ".github/workflows/output-context.yml",
@@ -46,7 +46,7 @@
       "python3 scripts/output-context/validate-architecture.py",
       "bash scripts/output-context/test.sh"
     ],
-    "sourceTreeSha256": "95eaed6e05f788068a665b3bc7800e97390b4b041cd2db5696b471a6e96e9155",
+    "sourceTreeSha256": "e1afbe7af39eadb62724cee6184f2cda3f7f30dda184e4132ab34706f8bddfc4",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
@@ -67,7 +67,7 @@
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "passed-local-hosted-and-independent-review"
+    "outcome": "passed-local-pending-fresh-independent-rereview"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -112,7 +112,7 @@
       "ADR012-F008: the Genes identity is derived from the immutable browser dependency lock and recorded consistently as 1.38.0.",
       "ADR012-F009: non-retention is stated as an enforceable SDK API policy, not as a linear-type guarantee."
     ],
-    "freshIndependentReview": "superseded-by-combined-rereview",
+    "freshIndependentReview": "required-after-regression-repair",
     "acceptanceAuthorized": false,
     "combinedRereviewIntegration": {
       "decision": "changes-required",
@@ -125,6 +125,18 @@
       "recordSha256": "9407ea6d284eb4dfb47724542fe674e8fdfbb5ccaf5cadf0dae4f1ff48825d97",
       "reopenedFindings": ["ADR012-F004"],
       "remediationBead": "wordpresshx-g4.1.1"
+    },
+    "regressionRepair": {
+      "finding": "ADR012-F004",
+      "checkedEncoder": "wordpress.hx.contracts.CanonicalWireJson.encodeChecked",
+      "codecSuccessValue": "closed-WireValue-not-caller-authored-JSON-bytes",
+      "c0VectorCount": 32,
+      "invalidUnicodeFailure": "explicit",
+      "depthFailure": "explicit-at-64",
+      "unsupportedDomainValueFailure": "explicit",
+      "nativeDecoders": ["PHP-json_decode-JSON_THROW_ON_ERROR", "JavaScript-JSON.parse"],
+      "localGate": "passed",
+      "freshIndependentRereview": "required"
     }
   },
   "referenceReview": {
@@ -160,7 +172,7 @@
     "ADR012-R3-N001 records five stale path names in the final review prompt; the Oracle reviewed the manifest-bound equivalents and future prompts must validate paths against the packet inventory."
   ],
   "claims": {
-    "architectureDecision": "reopened-after-json-codec-regression",
+    "architectureDecision": "regression-repaired-pending-fresh-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

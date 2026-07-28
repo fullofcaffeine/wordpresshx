@@ -1,6 +1,7 @@
 import wordpress.hx.output.prototype.Output;
 import wordpress.hx.output.prototype.Output.JsonEncoding;
 import wordpress.hx.output.prototype.Output.OutputCodec;
+import wordpress.hx.contracts.WireValue;
 import wordpress.hx.output.prototype.OutputSinks;
 
 final class MessageCodec implements OutputCodec<String> {
@@ -11,7 +12,7 @@ final class MessageCodec implements OutputCodec<String> {
 	}
 
 	public function encode(value:String):JsonEncoding {
-		return EncodedJson("\"message\"");
+		return EncodedValue(StringValue("message"));
 	}
 }
 

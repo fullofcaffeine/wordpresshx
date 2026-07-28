@@ -92,6 +92,7 @@ main_class="Main"
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \
 	-cp "${fixture_root}/test" \
+	-cp "${repository_root}/packages/contracts/src" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 	--interp >"${test_root}/interp.txt"
@@ -101,6 +102,7 @@ main_class="Main"
 	"${scoped_haxe}" \
 		-cp ../../fixtures/output-context/src \
 		-cp ../../fixtures/output-context/test \
+		-cp ../../packages/contracts/src \
 		-main "${main_class}" \
 		--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 		-lib genes-ts \
@@ -127,6 +129,7 @@ main_class="Main"
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \
 	-cp "${fixture_root}/test" \
+	-cp "${repository_root}/packages/contracts/src" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 	--php "${test_root}/php"
@@ -150,6 +153,7 @@ assert_compile_failure() {
 	if "${scoped_haxe}" \
 		-cp "${fixture_root}/src" \
 		-cp "${fixture_root}/test-negative/${fixture}" \
+		-cp "${repository_root}/packages/contracts/src" \
 		-main Main \
 		--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 		--interp >"${diagnostic}" 2>&1; then

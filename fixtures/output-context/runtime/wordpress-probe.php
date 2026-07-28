@@ -101,10 +101,30 @@ if (hash('sha256', (string) $plan['markup']['canonicalAst']) !== $plan['markup']
 
 $rest_value = json_decode((string) $plan['restJson']['encoded'], true, 512, JSON_THROW_ON_ERROR);
 $script_value = json_decode((string) $plan['scriptData']['encoded'], true, 512, JSON_THROW_ON_ERROR);
+if (! is_array($plan['controlJson']) || 0x20 !== count($plan['controlJson'])) {
+    throw new RuntimeException('C0 JSON corpus differs');
+}
+foreach ($plan['controlJson'] as $code => $result) {
+    if ('' !== $result['failureReason']) {
+        throw new RuntimeException('C0 JSON corpus unexpectedly failed');
+    }
+    $decoded_control = json_decode((string) $result['encoded'], true, 512, JSON_THROW_ON_ERROR);
+    if ('before-' . chr($code) . '-after' !== $decoded_control['title']) {
+        throw new RuntimeException('C0 JSON corpus changed at byte ' . $code);
+    }
+}
+if (
+    ! str_ends_with((string) $plan['depthFailure']['failureReason'], 'json-depth-limit-exceeded')
+    || '' !== $plan['depthFailure']['encoded']
+    || ! str_ends_with((string) $plan['invalidUnicodeFailure']['failureReason'], 'invalid-unicode')
+    || '' !== $plan['invalidUnicodeFailure']['encoded']
+) {
+    throw new RuntimeException('JSON depth or Unicode failure changed');
+}
 if (
     '' !== $plan['restJson']['failureReason']
     || '' !== $plan['scriptData']['failureReason']
-    || 'invalid-control-character' !== $plan['encodingFailure']['failureReason']
+    || 'invalid-domain-id' !== $plan['encodingFailure']['failureReason']
     || '' !== $plan['encodingFailure']['encoded']
 ) {
     throw new RuntimeException('Typed JSON codec result differs');

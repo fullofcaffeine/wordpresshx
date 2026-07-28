@@ -145,6 +145,7 @@ def validate_architecture_manifest() -> None:
         "proposed-pending-fresh-review",
         "review-corrections-applied-pending-rereview",
         "accepted-after-review",
+        "accepted-base-checked-json-hardening-pending-rereview",
     }:
         raise ValidationError("architecture decision claim is invalid")
 

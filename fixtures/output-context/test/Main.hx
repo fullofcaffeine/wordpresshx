@@ -1,4 +1,7 @@
 import wordpress.hx.output.generated.TodoCardMarkup;
+import haxe.io.Bytes;
+import wordpress.hx.contracts.CanonicalWireJson;
+import wordpress.hx.contracts.WireValue;
 import wordpress.hx.output.prototype.Output;
 import wordpress.hx.output.prototype.Output.CssColor;
 import wordpress.hx.output.prototype.Output.CssDisplay;
@@ -36,13 +39,41 @@ final class TodoCardCodec implements OutputCodec<TodoCard> {
 	}
 
 	public function encode(value:TodoCard):JsonEncoding {
-		if (value.title.indexOf("\x00") >= 0) {
-			return EncodingFailure("invalid-control-character");
+		if (value.id <= 0) {
+			return EncodingFailure("invalid-domain-id");
 		}
-		return EncodedJson(PlanJson.object([
-			new JsonField("id", Std.string(value.id)),
-			new JsonField("title", PlanJson.quote(value.title))
+		return EncodedValue(ObjectValue([
+			{name: "id", value: IntegerValue(value.id)},
+			{name: "title", value: StringValue(value.title)}
 		]));
+	}
+}
+
+final class DeepValueCodec implements OutputCodec<Int> {
+	public function new() {}
+
+	public function schemaId():String {
+		return "deep-value.v1";
+	}
+
+	public function encode(depth:Int):JsonEncoding {
+		var value:WireValue = NullValue;
+		for (_ in 0...depth) {
+			value = ArrayValue([value]);
+		}
+		return EncodedValue(value);
+	}
+}
+
+final class InvalidUnicodeCodec implements OutputCodec<String> {
+	public function new() {}
+
+	public function schemaId():String {
+		return "unicode-value.v1";
+	}
+
+	public function encode(value:String):JsonEncoding {
+		return EncodedValue(StringValue(value));
 	}
 }
 
@@ -57,8 +88,8 @@ final class Main {
 			title: '</script><script>alert("json")</script>&\''
 		};
 		final invalidTodo:TodoCard = {
-			id: 8,
-			title: "invalid\x00title"
+			id: 0,
+			title: "invalid-domain-value"
 		};
 		final todoCodec = new TodoCardCodec();
 		final richPayload = '<p><strong>kept</strong><script>alert("rich")</script>'
@@ -94,10 +125,33 @@ final class Main {
 			new JsonField("restJson", restJson),
 			new JsonField("scriptData", scriptData),
 			new JsonField("encodingFailure", encodingFailure),
+			new JsonField("controlJson", controlJson(todoCodec)),
+			new JsonField("depthFailure", jsonPlan(OutputSinks.restJson(Output.jsonDocument(new DeepValueCodec(), 66)))),
+			new JsonField("invalidUnicodeFailure", jsonPlan(OutputSinks.restJson(Output.jsonDocument(new InvalidUnicodeCodec(), invalidUnicode())))),
 			new JsonField("inlineStyle", PlanJson.quote(inlineStyle)),
 			new JsonField("stylesheet", PlanJson.quote(stylesheet)),
 			new JsonField("markup", markupPlan(markup))
 		]));
+	}
+
+	static function invalidUnicode():String {
+		#if target.utf16
+		return String.fromCharCode(0xd800);
+		#else
+		return Bytes.ofHex("eda080").toString();
+		#end
+	}
+
+	static function controlJson(codec:TodoCardCodec):String {
+		final plans:Array<String> = [];
+		for (code in 0...0x20) {
+			final value:TodoCard = {
+				id: code + 1,
+				title: "before-" + String.fromCharCode(code) + "-after"
+			};
+			plans.push(jsonPlan(OutputSinks.restJson(Output.jsonDocument(codec, value))));
+		}
+		return PlanJson.array(plans);
 	}
 
 	static function requireAcceptedUrl(value:String):wordpress.hx.output.prototype.Output.ValidatedUrl {
@@ -229,13 +283,6 @@ final class PlanJson {
 	}
 
 	public static function quote(value:String):String {
-		final escaped = value.replace("\\", "\\\\")
-			.replace("\"", "\\\"")
-			.replace("\x08", "\\b")
-			.replace("\x0c", "\\f")
-			.replace("\n", "\\n")
-			.replace("\r", "\\r")
-			.replace("\t", "\\t");
-		return '"' + escaped + '"';
+		return CanonicalWireJson.encode(StringValue(value));
 	}
 }

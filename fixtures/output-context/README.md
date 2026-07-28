@@ -8,7 +8,11 @@ The Haxe prototype defines terminal text, attribute, textarea, validated URL,
 policy-branded rich HTML, JSON-document, script-data, separate inline-style and
 stylesheet, and compiler-markup contracts. JSON terminals require a
 fixture-local typed stand-in for ADR-009's `ContractCodec<T>` authority and
-retain either encoded output or an explicit failure. Native KSES policies have
+retain either a closed `WireValue` or an explicit failure. The final sink uses
+ADR-009's checked canonical encoder, so application codecs cannot brand
+caller-authored strings as valid JSON. Every C0 control character is exercised
+against PHP and JavaScript native decoders; invalid Unicode and excessive
+nesting remain explicit failures. Native KSES policies have
 distinct brands; a custom policy has a canonical allowlist/protocol document
 and digest. Constructors are private, terminal values expose no raw conversion,
 and only an exact generated fragment class can create compiler markup with a

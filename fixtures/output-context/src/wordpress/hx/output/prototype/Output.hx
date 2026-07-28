@@ -1,6 +1,7 @@
 package wordpress.hx.output.prototype;
 
 import haxe.crypto.Sha256;
+import wordpress.hx.contracts.WireValue;
 
 using StringTools;
 
@@ -89,7 +90,7 @@ interface OutputCodec<T> {
 }
 
 enum JsonEncoding {
-	EncodedJson(value:String);
+	EncodedValue(value:WireValue);
 	EncodingFailure(reason:String);
 }
 
