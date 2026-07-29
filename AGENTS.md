@@ -106,10 +106,26 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
   abstractions merely to make code appear general.
 - Make generalized Genes changes in an isolated worktree under `../genes`,
   follow that repository's contribution rules, prove its existing and new
-  quality gates without regressions, and use a pull request. Tell the user when
-  the upstream PR is ready or merged. Do not hide an unmerged upstream change
-  in a permanent downstream fork; any necessary temporary compatibility bridge
-  must be narrow, explicitly tracked, and removable.
+  quality gates without regressions, and use a pull request. Before planning,
+  editing, tracking, committing, or publishing there, read and obey the complete
+  applicable `AGENTS.md` hierarchy and referenced workflow instructions from
+  the Genes checkout. Operate as the Genes repository agent for that work:
+  use its architecture, Beads/worktree model, testing strategy, documentation
+  standards, hooks, commit/PR conventions, release rules, and completion
+  protocol rather than carrying over WordPressHx shortcuts or assumptions.
+  Layer the user's current request and compatible WordPressHx directives on
+  top; if instructions conflict, the target repository's instructions govern
+  work performed in that repository unless the user explicitly overrides them.
+  Re-read the target instructions when they change or when a new worktree/task
+  begins; a remembered summary is not a substitute.
+- Apply the same target-repository mode to any neighboring upstream or sibling
+  project, not only Genes. Its root and scoped `AGENTS.md` files govern work
+  inside that repository, while this file governs WordPressHx work and the
+  cross-repository ownership decision.
+- Tell the user when the upstream PR is ready or merged. Do not hide an
+  unmerged upstream change in a permanent downstream fork; any necessary
+  temporary compatibility bridge must be narrow, explicitly tracked, and
+  removable.
 
 ## Non-Interactive Shell Commands
 
