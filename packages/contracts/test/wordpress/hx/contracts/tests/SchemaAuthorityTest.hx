@@ -3,7 +3,9 @@ package wordpress.hx.contracts.tests;
 #if js
 import js.Node;
 #end
+import haxe.io.Bytes;
 import wordpress.hx.contracts.CanonicalWireJson;
+import wordpress.hx.contracts.WireJsonEncoding;
 import wordpress.hx.contracts.ContractCodec;
 import wordpress.hx.contracts.ContractError;
 import wordpress.hx.contracts.ContractRuleSet;
@@ -33,7 +35,7 @@ import wordpress.hx.contracts.schema.UnknownFieldPolicy;
 class SchemaAuthorityTest {
 	static function main():Void {
 		final codec = new ArticleCodec();
-		final lines = ["schema=" + CanonicalWireJson.encode(SchemaJson.encode(codec.schema()))];
+		final lines = ["schema=" + encodeJson(SchemaJson.encode(codec.schema()))];
 		lines.push("schema-invariants=" + verifySchemaInvariants());
 		run(lines, codec, "missing-optional", articleWire());
 		run(lines, codec, "explicit-null", articleWire([{name: "summary", value: NullValue}]));
@@ -58,6 +60,7 @@ class SchemaAuthorityTest {
 		run(lines, codec, "invalid-title", articleWire([{name: "title", value: StringValue("   ")}]));
 		run(lines, codec, "null-required", articleWire([{name: "title", value: NullValue}]));
 		lines.push("encode-invariants=" + verifyEncodeInvariants(codec));
+		lines.push("wire-json-invariants=" + verifyWireJsonInvariants());
 
 		final output = lines.join("\n") + "\n";
 		#if js
@@ -94,7 +97,7 @@ class SchemaAuthorityTest {
 		final sourceValues = ["first"];
 		final snapshot = schema(EnumNode(sourceValues));
 		sourceValues.push("mutated-after-construction");
-		final encoded = CanonicalWireJson.encode(SchemaJson.encode(snapshot));
+		final encoded = encodeJson(SchemaJson.encode(snapshot));
 		if (encoded.indexOf("mutated-after-construction") >= 0) {
 			throw new haxe.Exception("schema collection did not snapshot authored values");
 		}
@@ -110,7 +113,7 @@ class SchemaAuthorityTest {
 		], UnknownFieldPolicy.Reject));
 		sourceDefaultItems.push(StringValue("mutated-nested-item"));
 		sourceDefaultFields.push(field("mutated-field", BoolValue(true)));
-		final encodedDefaultSnapshot = CanonicalWireJson.encode(SchemaJson.encode(defaultSnapshot));
+		final encodedDefaultSnapshot = encodeJson(SchemaJson.encode(defaultSnapshot));
 		if (encodedDefaultSnapshot.indexOf("mutated-nested-item") >= 0 || encodedDefaultSnapshot.indexOf("mutated-field") >= 0) {
 			throw new haxe.Exception("schema default did not snapshot its nested wire value");
 		}
@@ -120,7 +123,7 @@ class SchemaAuthorityTest {
 		if (!mutateFirstStringArray(projectedDefault)) {
 			throw new haxe.Exception("schema default projection fixture did not expose its copied array");
 		}
-		final encodedAfterProjectionMutation = CanonicalWireJson.encode(SchemaJson.encode(defaultSnapshot));
+		final encodedAfterProjectionMutation = encodeJson(SchemaJson.encode(defaultSnapshot));
 		if (encodedAfterProjectionMutation.indexOf("mutated-output-item") >= 0) {
 			throw new haxe.Exception("mutating a schema projection changed the retained default");
 		}
@@ -182,7 +185,7 @@ class SchemaAuthorityTest {
 		], UnknownFieldPolicy.Reject));
 		switch ContractValidator.validate(object([]), withDefault) {
 			case Decoded(value):
-				if (CanonicalWireJson.encode(value) != '{"status":"draft"}') {
+				if (encodeJson(value) != '{"status":"draft"}') {
 					throw new haxe.Exception("missing-field default was not materialized canonically");
 				}
 				verified++;
@@ -275,16 +278,155 @@ class SchemaAuthorityTest {
 		throw new haxe.Exception("development codec admitted invalid mutable domain state");
 	}
 
+	static function verifyWireJsonInvariants():String {
+		var verified = 0;
+		verified += assertJsonEncoded("depth-1 scalar", StringValue("value"), 1);
+		verified += assertJsonEncoded("depth-1 root array", ArrayValue([]), 1);
+		verified += assertJsonEncoded("depth-1 root object", ObjectValue([]), 1);
+		verified += assertJsonRejectedSuffix("depth-1 nested array", nestedArrays(2, false), 1, "json-depth-limit-exceeded");
+		verified += assertJsonRejectedSuffix("depth-1 nested object", nestedObjects(2, false), 1, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 empty array", nestedArrays(64, false), 64);
+		verified += assertJsonRejectedSuffix("depth-65 empty array", nestedArrays(65, false), 64, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 scalar array", nestedArrays(64, true), 64);
+		verified += assertJsonRejectedSuffix("depth-65 scalar array", nestedArrays(65, true), 64, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 empty object", nestedObjects(64, false), 64);
+		verified += assertJsonRejectedSuffix("depth-65 empty object", nestedObjects(65, false), 64, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 scalar object", nestedObjects(64, true), 64);
+		verified += assertJsonRejectedSuffix("depth-65 scalar object", nestedObjects(65, true), 64, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 empty mixed", nestedMixed(64, false), 64);
+		verified += assertJsonRejectedSuffix("depth-65 empty mixed", nestedMixed(65, false), 64, "json-depth-limit-exceeded");
+		verified += assertJsonEncoded("depth-64 scalar mixed", nestedMixed(64, true), 64);
+		verified += assertJsonRejectedSuffix("depth-65 scalar mixed", nestedMixed(65, true), 64, "json-depth-limit-exceeded");
+		verified += assertJsonRejected("depth zero", NullValue, 0, "json-depth-limit-must-be-positive");
+		verified += assertJsonRejected("negative depth", NullValue, -1, "json-depth-limit-must-be-positive");
+		verified += assertJsonRejected("depth above supported maximum", NullValue, 65, "json-depth-limit-exceeds-supported-maximum");
+
+		final cyclicArrayValues:Array<WireValue> = [];
+		final cyclicArray = ArrayValue(cyclicArrayValues);
+		cyclicArrayValues.push(cyclicArray);
+		verified += assertJsonRejectedSuffix("cyclic array", cyclicArray, 64, "json-depth-limit-exceeded");
+		final cyclicObjectFields:Array<WireField> = [];
+		final cyclicObject = ObjectValue(cyclicObjectFields);
+		cyclicObjectFields.push(field("self", cyclicObject));
+		verified += assertJsonRejectedSuffix("cyclic object", cyclicObject, 64, "json-depth-limit-exceeded");
+
+		final invalidHigh = invalidHighSurrogate();
+		verified += assertJsonRejected("invalid high-surrogate value", StringValue(invalidHigh), 64, "$: invalid-unicode");
+		verified += assertJsonRejected("invalid high-surrogate key", ObjectValue([field(invalidHigh, NullValue)]), 64, "$[0]/<field-name>: invalid-unicode");
+		final invalidLow = invalidLowSurrogate();
+		verified += assertJsonRejected("invalid low-surrogate value", StringValue(invalidLow), 64, "$: invalid-unicode");
+		verified += assertJsonRejected("invalid low-surrogate key", ObjectValue([field(invalidLow, NullValue)]), 64, "$[0]/<field-name>: invalid-unicode");
+		verified += assertJsonRejected("adjacent duplicate", ObjectValue([field("same", NullValue), field("same", BoolValue(true))]), 64,
+			"$: duplicate field same");
+		verified += assertJsonRejected("non-adjacent duplicate", ObjectValue([
+			field("same", NullValue),
+			field("between", BoolValue(true)),
+			field("same", IntegerValue(1))
+		]), 64, "$: duplicate field same");
+
+		final mutableValues:Array<WireValue> = [StringValue("before")];
+		final immutableResult = CanonicalWireJson.encodeChecked(ArrayValue(mutableValues));
+		mutableValues[0] = StringValue("after");
+		mutableValues.push(StringValue("added"));
+		switch immutableResult {
+			case JsonEncoded(value) if (value == '["before"]'):
+				verified++;
+			case JsonEncoded(value):
+				throw new haxe.Exception("post-encoding mutation changed bytes: " + value);
+			case JsonRejected(reason):
+				throw new haxe.Exception("valid mutation fixture was rejected: " + reason);
+		}
+		return verified + "/29";
+	}
+
+	static function nestedArrays(count:Int, deepestHasScalar:Bool):WireValue {
+		if (count < 1) {
+			throw new haxe.Exception("nested array count must be positive");
+		}
+		var value:WireValue = deepestHasScalar ? ArrayValue([NullValue]) : ArrayValue([]);
+		for (_ in 1...count) {
+			value = ArrayValue([value]);
+		}
+		return value;
+	}
+
+	static function nestedObjects(count:Int, deepestHasScalar:Bool):WireValue {
+		if (count < 1) {
+			throw new haxe.Exception("nested object count must be positive");
+		}
+		var value:WireValue = deepestHasScalar ? ObjectValue([field("value", NullValue)]) : ObjectValue([]);
+		for (_ in 1...count) {
+			value = ObjectValue([field("value", value)]);
+		}
+		return value;
+	}
+
+	static function nestedMixed(count:Int, deepestHasScalar:Bool):WireValue {
+		if (count < 1) {
+			throw new haxe.Exception("nested mixed count must be positive");
+		}
+		var value:WireValue = deepestHasScalar ? ArrayValue([NullValue]) : ArrayValue([]);
+		for (index in 1...count) {
+			value = index % 2 == 0 ? ArrayValue([value]) : ObjectValue([field("value", value)]);
+		}
+		return value;
+	}
+
+	static function invalidHighSurrogate():String {
+		#if target.utf16
+		return String.fromCharCode(0xd800);
+		#else
+		return Bytes.ofHex("eda080").toString();
+		#end
+	}
+
+	static function invalidLowSurrogate():String {
+		#if target.utf16
+		return String.fromCharCode(0xdc00);
+		#else
+		return Bytes.ofHex("edb080").toString();
+		#end
+	}
+
+	static function assertJsonEncoded(label:String, value:WireValue, maxDepth:Int):Int {
+		return switch CanonicalWireJson.encodeChecked(value, maxDepth) {
+			case JsonEncoded(_): 1;
+			case JsonRejected(reason): throw new haxe.Exception(label + " unexpectedly rejected: " + reason);
+		};
+	}
+
+	static function assertJsonRejected(label:String, value:WireValue, maxDepth:Int, expectedReason:String):Int {
+		return switch CanonicalWireJson.encodeChecked(value, maxDepth) {
+			case JsonEncoded(encoded): throw new haxe.Exception(label + " unexpectedly emitted bytes: " + encoded);
+			case JsonRejected(reason):
+				if (reason != expectedReason) {
+					throw new haxe.Exception(label + " returned " + reason + " instead of " + expectedReason);
+				}
+				1;
+		};
+	}
+
+	static function assertJsonRejectedSuffix(label:String, value:WireValue, maxDepth:Int, expectedSuffix:String):Int {
+		return switch CanonicalWireJson.encodeChecked(value, maxDepth) {
+			case JsonEncoded(encoded): throw new haxe.Exception(label + " unexpectedly emitted bytes: " + encoded);
+			case JsonRejected(reason):
+				if (!StringTools.endsWith(reason, expectedSuffix)) {
+					throw new haxe.Exception(label + " returned " + reason + " instead of a " + expectedSuffix + " rejection");
+				}
+				1;
+		};
+	}
+
 	static function run(lines:Array<String>, codec:ArticleCodec, label:String, value:WireValue):Void {
 		switch codec.decode(value) {
 			case Decoded(article):
-				lines.push(label + "=" + CanonicalWireJson.encode(codec.encode(article)));
+				lines.push(label + "=" + encodeJson(codec.encode(article)));
 			case Rejected(issues):
 				if (issues.length != 1) {
 					throw new haxe.Exception(label + " did not produce exactly one canonical issue");
 				}
 				final issue = issues[0];
-				lines.push(label + "=" + CanonicalWireJson.encode(object([
+				lines.push(label + "=" + encodeJson(object([
 					field("actual", StringValue(issue.actual)),
 					field("code", StringValue(issue.code)),
 					field("expected", StringValue(issue.expected)),
@@ -330,6 +472,13 @@ class SchemaAuthorityTest {
 
 	static function object(fields:Array<WireField>):WireValue {
 		return ObjectValue(fields);
+	}
+
+	static function encodeJson(value:WireValue):String {
+		return switch CanonicalWireJson.encodeChecked(value) {
+			case JsonEncoded(encoded): encoded;
+			case JsonRejected(reason): throw new haxe.Exception("trusted schema fixture failed JSON encoding: " + reason);
+		};
 	}
 
 	static function field(name:String, value:WireValue):WireField {

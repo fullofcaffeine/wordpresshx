@@ -124,13 +124,16 @@
     "implementationStatus": "decision-and-cross-target-architecture-prototype-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "b06a6a5643046d93ef6b1fe3b46563ac15fed20c6fd2f0bcc6a45adc39be69f5",
+    "sourceTreeSha256": "4c105d2fad5d6bf0950bf58a6eb54bd3ac2ee0b3d72e81957953a857eb561a96",
     "schemaSha256": "68504df60f8b2f1376020435610bc5a768f4c0ae969130819ec0981de8679177",
-    "transcriptSha256": "4760183a044a47dab1d52e1e5968182c9ade5a093844a8708afa07569095863e",
+    "transcriptSha256": "292dacd56c49b64fb373fe68bfb306abbd114de9abeb45edd02e6de85fce35be",
+    "wireJsonBoundaryTranscriptSha256": "fd02f9939f0691c61e9fbc4c0dd78a9af09b12f5060d97ea9df9cdd4eb4a2183",
     "haxeInvariantCount": 27,
+    "checkedJsonInvariantCount": 29,
     "crossTargetVectorCount": 17,
+    "wireJsonBoundaryVectorCount": 37,
     "independentMutationCount": 18,
-    "negativeCompileFixtureCount": 4,
+    "negativeCompileFixtureCount": 5,
     "targets": [
       "haxe-interp-4.3.7",
       "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7-typescript-5.9.3-node-22.17.0",

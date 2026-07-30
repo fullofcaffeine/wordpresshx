@@ -15,6 +15,25 @@ ARCHITECTURE_PATH = ROOT / "manifests" / "output-context-architecture.json"
 BROWSER_DEPENDENCY_LOCK_PATH = ROOT / "packages" / "gutenberg" / "dependency-lock.json"
 FIXTURE_ROOT = ROOT / "fixtures" / "output-context"
 TRANSCRIPT_PATH = FIXTURE_ROOT / "expected" / "context-plan.txt"
+OUTPUT_SINKS_PATH = (
+    FIXTURE_ROOT
+    / "src"
+    / "wordpress"
+    / "hx"
+    / "output"
+    / "prototype"
+    / "OutputSinks.hx"
+)
+CANONICAL_JSON_PATH = (
+    ROOT
+    / "packages"
+    / "contracts"
+    / "src"
+    / "wordpress"
+    / "hx"
+    / "contracts"
+    / "CanonicalWireJson.hx"
+)
 
 
 class ValidationError(ValueError):
@@ -350,6 +369,26 @@ def validate_model(model: dict[str, object]) -> None:
     if browser.get("unsafeHtmlPropertyPublic") is not False:
         raise ValidationError("unsafe React HTML property became public")
 
+    output_sinks_source = OUTPUT_SINKS_PATH.read_text(encoding="utf-8")
+    json_plan_source = output_sinks_source.split("final class JsonPlan", 1)[-1]
+    if re.search(
+        r"public\s+static\s+function\s+\w+\s*\([^)]*(?:encoded|json)\s*:\s*String",
+        json_plan_source,
+    ):
+        raise ValidationError("JsonPlan exposes a public raw-string success factory")
+    if "@:allow(wordpress.hx.output.prototype.OutputSinks)" not in output_sinks_source:
+        raise ValidationError("JsonPlan construction is not sink-owned")
+    if "function new(schemaId:String, encoded:String, failureReason:String)" not in json_plan_source:
+        raise ValidationError("JsonPlan private construction contract changed")
+    canonical_json_source = CANONICAL_JSON_PATH.read_text(encoding="utf-8")
+    if re.search(
+        r"public\s+static\s+function\s+encode\s*\(\s*value\s*:\s*WireValue",
+        canonical_json_source,
+    ):
+        raise ValidationError("canonical JSON exposes an unchecked public encoder")
+    if "public static function encodeChecked(" not in canonical_json_source:
+        raise ValidationError("canonical JSON checked encoder is absent")
+
     evidence = require_dict(model.get("prototypeEvidence"), "prototypeEvidence")
     expected_evidence = {
         "sourceTreeSha256": source_tree_digest(),
@@ -358,7 +397,7 @@ def validate_model(model: dict[str, object]) -> None:
         "allowedEdgeCount": 12,
         "forbiddenEdgeCount": 15,
         "hxxPositionCount": 18,
-        "compileNegativeCount": 25,
+        "compileNegativeCount": 27,
         "independentMutationCount": 36,
     }
     for field, expected in expected_evidence.items():

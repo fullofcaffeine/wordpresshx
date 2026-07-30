@@ -336,13 +336,13 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "e1afbe7af39eadb62724cee6184f2cda3f7f30dda184e4132ab34706f8bddfc4",
-    "transcriptSha256": "987531feff44158837368ba2a04e4dd42ff53311f5b73dbd7936378960c90a3a",
+    "sourceTreeSha256": "bee0ae6f4e138a6078a8afb09e9fbff7dfd6702a715ef024d50f370ea54ded07",
+    "transcriptSha256": "21f02c2fc4c127eefa20ab62ee1cd0a6996a65d6636623b7e9587880cb21119d",
     "contextCount": 11,
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 25,
+    "compileNegativeCount": 27,
     "independentMutationCount": 36,
     "targets": [
       "haxe-interp-4.3.7",

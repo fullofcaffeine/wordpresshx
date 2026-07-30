@@ -169,6 +169,66 @@ assert_compile_failure() {
 	done
 }
 
+assert_compile_failure_all_targets() {
+	local fixture="$1"
+	shift
+	for target in interp genes php; do
+		local diagnostic="${test_root}/${fixture}.${target}.diagnostic.txt"
+		case "${target}" in
+			interp)
+				if "${scoped_haxe}" \
+					-cp "${fixture_root}/src" \
+					-cp "${fixture_root}/test-negative/${fixture}" \
+					-cp "${repository_root}/packages/contracts/src" \
+					-main Main \
+					--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+					--interp >"${diagnostic}" 2>&1; then
+					echo "negative output-context fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+			genes)
+				if (
+					cd "${repository_root}/packages/cli"
+					"${scoped_haxe}" \
+						-cp ../../fixtures/output-context/src \
+						-cp "../../fixtures/output-context/test-negative/${fixture}" \
+						-cp ../../packages/contracts/src \
+						-main Main \
+						--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+						-lib genes-ts \
+						-lib hxnodejs \
+						-D genes.ts \
+						-D js-es=6 \
+						-js "${test_root}/${fixture}-genes/index.ts"
+				) >"${diagnostic}" 2>&1; then
+					echo "negative output-context fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+			php)
+				if "${scoped_haxe}" \
+					-cp "${fixture_root}/src" \
+					-cp "${fixture_root}/test-negative/${fixture}" \
+					-cp "${repository_root}/packages/contracts/src" \
+					-main Main \
+					--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+					--php "${test_root}/${fixture}-php" >"${diagnostic}" 2>&1; then
+					echo "negative output-context fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+		esac
+		for expected_fragment in "$@"; do
+			if ! grep --fixed-strings --quiet -- "${expected_fragment}" "${diagnostic}"; then
+				echo "negative output-context fixture ${fixture} ${target} omitted diagnostic: ${expected_fragment}" >&2
+				sed -n '1,80p' "${diagnostic}" >&2
+				exit 1
+			fi
+		done
+	done
+}
+
 assert_compile_failure text_as_attribute \
 	'HtmlText should be wordpress.hx.output.prototype.HtmlAttribute'
 assert_compile_failure url_as_text \
@@ -219,6 +279,10 @@ assert_compile_failure hxx_unknown_child \
 	'HXX element is not in the closed child grammar'
 assert_compile_failure hxx_void_child \
 	'HXX void elements cannot receive children'
+assert_compile_failure_all_targets json_plan_success \
+	'Class<wordpress.hx.output.prototype.JsonPlan> has no field success'
+assert_compile_failure_all_targets json_plan_constructor \
+	'Cannot access private constructor of wordpress.hx.output.prototype.JsonPlan'
 
 browser_json="$("${node_command}" "${fixture_root}/runtime/browser.mjs" "${typescript_root}" "${test_root}/interp.txt")"
 python3 - "${browser_json}" "${test_root}/interp.txt" <<'PY'

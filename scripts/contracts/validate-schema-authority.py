@@ -66,6 +66,7 @@ def haxe_source_tree_digest() -> str:
     for source_root in (
         ROOT / "packages" / "contracts" / "src",
         ROOT / "packages" / "contracts" / "test",
+        ROOT / "packages" / "contracts" / "test-boundary",
         ROOT / "packages" / "contracts" / "test-negative",
     ):
         for source in source_root.rglob("*.hx"):
@@ -102,17 +103,30 @@ def validate_architecture_manifest() -> None:
         "sourceTreeSha256": haxe_source_tree_digest(),
         "schemaSha256": sha256(SCHEMA_PATH.read_bytes()),
         "transcriptSha256": sha256(TRANSCRIPT_PATH.read_bytes()),
+        "wireJsonBoundaryTranscriptSha256": sha256(
+            (
+                ROOT
+                / "fixtures"
+                / "schema-codec"
+                / "expected"
+                / "wire-json-boundary.txt"
+            ).read_bytes()
+        ),
     }
     for field, expected in expected_hashes.items():
         if prototype.get(field) != expected:
             raise ValidationError(f"architecture {field} is stale")
     if prototype.get("haxeInvariantCount") != 27:
         raise ValidationError("architecture Haxe invariant count changed")
+    if prototype.get("checkedJsonInvariantCount") != 29:
+        raise ValidationError("architecture checked JSON invariant count changed")
     if prototype.get("crossTargetVectorCount") != 17:
         raise ValidationError("architecture vector count changed")
+    if prototype.get("wireJsonBoundaryVectorCount") != 37:
+        raise ValidationError("architecture wire JSON boundary count changed")
     if prototype.get("independentMutationCount") != 18:
         raise ValidationError("architecture mutation count changed")
-    if prototype.get("negativeCompileFixtureCount") != 4:
+    if prototype.get("negativeCompileFixtureCount") != 5:
         raise ValidationError("architecture compile-negative count changed")
     targets = require_list(prototype.get("targets"), "architecture targets")
     browser_lock = require_dict(
@@ -796,6 +810,7 @@ def main() -> None:
         "schema",
         "schema-invariants",
         "encode-invariants",
+        "wire-json-invariants",
         "missing-optional",
         "explicit-null",
         "present-summary",
@@ -819,6 +834,8 @@ def main() -> None:
         raise ValidationError("Haxe schema invariant corpus did not pass")
     if entries["encode-invariants"] != "1/1":
         raise ValidationError("development encode invariant did not pass")
+    if entries["wire-json-invariants"] != "29/29":
+        raise ValidationError("checked JSON invariant corpus did not pass")
 
     document_value = strict_json(entries["schema"], "schema transcript")
     document = require_dict(document_value, "schema transcript")
@@ -831,6 +848,7 @@ def main() -> None:
         "schema",
         "schema-invariants",
         "encode-invariants",
+        "wire-json-invariants",
     }
     for label in vector_labels:
         payload = strict_json(entries[label], f"vector {label}")

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "recordId": "wordpresshx.oracle-integration.adr012-f004-rereview-0e01ab5",
+  "reviewedCommit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
+  "reviewedTree": "a18c63f427d5030e19e0923a7408fe239abd7e4b",
+  "packetSha256": "32e9585589e35bc4f9fc8e407794eac0fc7bd4a3788d651ed7956abae33a4143",
+  "decision": "changes-required",
+  "confidence": "high",
+  "reviewedAt": "2026-07-30T04:10:42Z",
+  "report": {
+    "path": "review/oracle/results/adr012-f004-rereview-0e01ab5/ORACLE-REREVIEW.md",
+    "sha256": "ee960c76303b0affb8f1f569dc8a13554dd566c2a13a86e6528c6c2bbda8f7db"
+  },
+  "reviewedInputs": {
+    "path": "review/oracle/results/adr012-f004-rereview-0e01ab5/reviewed-inputs.sha256",
+    "sha256": "1af00aa963b15a63df5628b2802c4e1faf9d1d7778082eb6602e90a1d4972c36"
+  },
+  "findingDispositions": [
+    {
+      "id": "ADR012-F004-RR-F001",
+      "severity": "blocking-high",
+      "disposition": "correction-applied-local-gates-passed-pending-rereview",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR-F001",
+      "severity": "blocking-medium",
+      "disposition": "correction-applied-local-gates-passed-pending-rereview",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR-F002",
+      "severity": "blocking-high",
+      "disposition": "correction-applied-local-gates-passed-pending-rereview",
+      "bead": "wordpresshx-g4.1.1"
+    }
+  ],
+  "authority": {
+    "adr009Accepted": false,
+    "adr012Accepted": false,
+    "adr012F004Closed": false,
+    "remediationBeadClosed": false,
+    "publicationAuthorized": false
+  }
+}

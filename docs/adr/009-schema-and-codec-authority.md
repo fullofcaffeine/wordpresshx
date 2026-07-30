@@ -423,9 +423,10 @@ Machine authority and executable fixture:
 - [`independent validator`](../../scripts/contracts/validate-schema-authority.py)
 - [`cross-target gate`](../../scripts/contracts/test-schema-authority.sh)
 
-The fixture contains 27 Haxe schema/validator invariants, 17 cross-target
-behavior vectors, 18 independent serialized-schema mutations, and four
-deliberate Haxe compile failures. The independent validator now asserts each
+The fixture contains 27 Haxe schema/validator invariants, 17 contract behavior
+vectors, 37 checked-JSON boundary vectors, 18 independent serialized-schema
+mutations, and five deliberate Haxe compile failures. The independent
+validator now asserts each
 vector's meaning rather than checking canonical syntax alone. It proves missing
 versus explicit null, recursively immutable defaults, caller/projection copy
 isolation, cyclic array/object rejection, declaration-time named-default
@@ -434,7 +435,7 @@ and ordering, decomposed-string preservation, closed/duplicate fields, rules
 on roots/array items/union payloads, enum and tagged-union behavior,
 exact/unavailable rules, development encode validation, strict null safety,
 JSON Pointer escaping, stable errors, and byte-identical output through Haxe
-interpretation, Genes 1.36.3 plus strict TypeScript 5.9.3 on Node 22.17.0, and
+interpretation, Genes 1.38.0 plus strict TypeScript 5.9.3 on Node 22.17.0, and
 stock Haxe PHP on PHP 8.4.7.
 
 The `contract-schema` job in the public repository workflow runs that complete
@@ -476,7 +477,19 @@ the runtime stack. Defaults now use a recursively immutable representation with
 fresh-copy projection, rules are path-independent and retained by the document,
 and cycles fail closed. The final fresh review reran the complete Haxe,
 Genes/strict-TypeScript/Node, and PHP gate, inspected the current bytes, checked
-all four compile-negative fixtures, and found no remaining blocker.
+all four then-current compile-negative fixtures, and found no remaining
+blocker.
+
+That acceptance is now historical for the checked JSON surface. The
+content-addressed GPT-5.6 Pro rereview of commit
+`0e01ab5e18fe023e43f2d45e1052bdccef658f05` found that the initial C0 repair
+still had leaf-dependent depth accounting and was not total over malformed
+public `WireValue` shapes reachable through non-strict or foreign callers.
+`encodeChecked` now validates and snapshots the complete mutable input before
+encoding, counts arrays and objects as container nesting, validates field names
+before sorting, and returns stable rejection variants for every malformed
+public shape. ADR-009 remains pending a new independent rereview. See the
+[exact rereview integration](../../review/oracle/results/adr012-f004-rereview-0e01ab5/INTEGRATION.md).
 
 ## Migration, rollback, and supersession
 

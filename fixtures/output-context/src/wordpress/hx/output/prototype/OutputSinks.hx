@@ -80,10 +80,10 @@ final class OutputSinks {
 		return switch encoding {
 			case EncodedValue(value):
 				switch CanonicalWireJson.encodeChecked(value) {
-					case JsonEncoded(encoded): JsonPlan.success(schemaId, encoded);
-					case JsonRejected(reason): JsonPlan.failure(schemaId, reason);
+					case JsonEncoded(encoded): new JsonPlan(schemaId, encoded, "");
+					case JsonRejected(reason): new JsonPlan(schemaId, "", reason);
 				};
-			case EncodingFailure(reason): JsonPlan.failure(schemaId, reason);
+			case EncodingFailure(reason): new JsonPlan(schemaId, "", reason);
 		};
 	}
 
@@ -255,6 +255,7 @@ final class RichHtmlPlan {
 	}
 }
 
+@:allow(wordpress.hx.output.prototype.OutputSinks)
 final class JsonPlan {
 	public final schemaId:String;
 	public final encoded:String;
@@ -264,14 +265,6 @@ final class JsonPlan {
 		this.schemaId = schemaId;
 		this.encoded = encoded;
 		this.failureReason = failureReason;
-	}
-
-	public static function success(schemaId:String, encoded:String):JsonPlan {
-		return new JsonPlan(schemaId, encoded, "");
-	}
-
-	public static function failure(schemaId:String, reason:String):JsonPlan {
-		return new JsonPlan(schemaId, "", reason);
 	}
 }
 

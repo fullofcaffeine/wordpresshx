@@ -2,6 +2,7 @@ import wordpress.hx.output.generated.TodoCardMarkup;
 import haxe.io.Bytes;
 import wordpress.hx.contracts.CanonicalWireJson;
 import wordpress.hx.contracts.WireValue;
+import wordpress.hx.contracts.WireJsonEncoding;
 import wordpress.hx.output.prototype.Output;
 import wordpress.hx.output.prototype.Output.CssColor;
 import wordpress.hx.output.prototype.Output.CssDisplay;
@@ -283,6 +284,9 @@ final class PlanJson {
 	}
 
 	public static function quote(value:String):String {
-		return CanonicalWireJson.encode(StringValue(value));
+		return switch CanonicalWireJson.encodeChecked(StringValue(value)) {
+			case JsonEncoded(encoded): encoded;
+			case JsonRejected(reason): throw "runtime-plan string failed JSON encoding: " + reason;
+		};
 	}
 }

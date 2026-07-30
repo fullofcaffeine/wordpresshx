@@ -1,0 +1,3 @@
+# Content-addressed Oracle reports are imported byte-for-byte; Markdown hard
+# line breaks may intentionally end with spaces.
+review/oracle/results/**/ORACLE-*.md whitespace=-trailing-space

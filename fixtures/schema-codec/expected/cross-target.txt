@@ -17,3 +17,4 @@ duplicate-field={"actual":"duplicate-field","code":"WPHX5204","expected":"one fi
 invalid-title={"actual":"constraint-failed","code":"WPHX5205","expected":"site.article.title.nonblank@1","path":"/title"}
 null-required={"actual":"null","code":"WPHX5201","expected":"string","path":"/title"}
 encode-invariants=1/1
+wire-json-invariants=29/29

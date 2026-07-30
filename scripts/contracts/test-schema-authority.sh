@@ -80,6 +80,7 @@ python3 "${repository_root}/scripts/contracts/validate-schema-authority.py"
 haxelib run formatter --check \
   -s "${package_root}/src" \
   -s "${package_root}/test" \
+  -s "${package_root}/test-boundary" \
   -s "${package_root}/test-negative"
 
 if grep --recursive --line-number --extended-regexp \
@@ -87,6 +88,7 @@ if grep --recursive --line-number --extended-regexp \
   '(^|[^[:alnum:]_])(Dynamic|Any|Reflect|untyped|cast)([^[:alnum:]_]|$)' \
   "${package_root}/src" \
   "${package_root}/test" \
+  "${package_root}/test-boundary" \
   "${package_root}/test-negative"; then
   echo "ADR-009 schema authority Haxe contains a forbidden weak-type construct" >&2
   exit 1
@@ -147,6 +149,40 @@ cmp "${expected}" "${test_root}/interp.txt"
 cmp "${expected}" "${test_root}/javascript.txt"
 cmp "${expected}" "${test_root}/php.txt"
 
+boundary_main="wordpress.hx.contracts.boundary.WireJsonBoundaryTest"
+"${scoped_haxe}" \
+	-cp "${package_root}/src" \
+	-cp "${package_root}/test-boundary" \
+	-main "${boundary_main}" \
+	--interp >"${test_root}/boundary-interp.txt"
+(
+	cd "${repository_root}/packages/cli"
+	"${scoped_haxe}" \
+		-cp ../contracts/src \
+		-cp ../contracts/test-boundary \
+		-main "${boundary_main}" \
+		-lib hxnodejs \
+		-D js-es=6 \
+		-js "${test_root}/boundary-javascript.js"
+)
+"${node_command}" "${test_root}/boundary-javascript.js" >"${test_root}/boundary-javascript.txt"
+"${scoped_haxe}" \
+	-cp "${package_root}/src" \
+	-cp "${package_root}/test-boundary" \
+	-main "${boundary_main}" \
+	--php "${test_root}/boundary-php"
+if [[ "${php_mode}" == "local" ]]; then
+	php "${test_root}/boundary-php/index.php" >"${test_root}/boundary-php.txt"
+else
+	docker run --rm --network none \
+		--mount "type=bind,src=${test_root},dst=/work,readonly" \
+		-w /work "${php_image}" php boundary-php/index.php >"${test_root}/boundary-php.txt"
+fi
+boundary_expected="${repository_root}/fixtures/schema-codec/expected/wire-json-boundary.txt"
+cmp "${boundary_expected}" "${test_root}/boundary-interp.txt"
+cmp "${boundary_expected}" "${test_root}/boundary-javascript.txt"
+cmp "${boundary_expected}" "${test_root}/boundary-php.txt"
+
 assert_compile_failure() {
   local fixture="$1"
   local fixture_main="$2"
@@ -170,6 +206,64 @@ assert_compile_failure() {
   done
 }
 
+assert_compile_failure_all_targets() {
+	local fixture="$1"
+	local fixture_main="$2"
+	shift 2
+	for target in interp genes php; do
+		local diagnostic="${test_root}/${fixture}.${target}.diagnostic.txt"
+		case "${target}" in
+			interp)
+				if "${scoped_haxe}" \
+					-cp "${package_root}/src" \
+					-cp "${package_root}/test-negative/${fixture}" \
+					-main "${fixture_main}" \
+					--macro 'nullSafety("wordpress.hx.contracts", Strict)' \
+					--interp >"${diagnostic}" 2>&1; then
+					echo "negative fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+			genes)
+				if (
+					cd "${repository_root}/packages/cli"
+					"${scoped_haxe}" \
+						-cp ../contracts/src \
+						-cp "../contracts/test-negative/${fixture}" \
+						-main "${fixture_main}" \
+						--macro 'nullSafety("wordpress.hx.contracts", Strict)' \
+						-lib genes-ts \
+						-lib hxnodejs \
+						-D genes.ts \
+						-D js-es=6 \
+						-js "${test_root}/${fixture}-genes/index.ts"
+				) >"${diagnostic}" 2>&1; then
+					echo "negative fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+			php)
+				if "${scoped_haxe}" \
+					-cp "${package_root}/src" \
+					-cp "${package_root}/test-negative/${fixture}" \
+					-main "${fixture_main}" \
+					--macro 'nullSafety("wordpress.hx.contracts", Strict)' \
+					--php "${test_root}/${fixture}-php" >"${diagnostic}" 2>&1; then
+					echo "negative fixture ${fixture} compiled successfully for ${target}" >&2
+					exit 1
+				fi
+				;;
+		esac
+		for expected_fragment in "$@"; do
+			if ! grep --fixed-strings --quiet -- "${expected_fragment}" "${diagnostic}"; then
+				echo "negative fixture ${fixture} ${target} omitted diagnostic: ${expected_fragment}" >&2
+				sed -n '1,80p' "${diagnostic}" >&2
+				exit 1
+			fi
+		done
+	done
+}
+
 assert_compile_failure \
   domain_mismatch \
   Main \
@@ -189,5 +283,9 @@ assert_compile_failure \
 	frozen_default_mutation \
 	wordpress.hx.contracts.negative.FrozenDefaultMutationMain \
 	'FrozenList<wordpress.hx.contracts.schema.FrozenWireValue> has no field push'
+assert_compile_failure_all_targets \
+	malformed_wire_value \
+	wordpress.hx.contracts.negative.MalformedWireValueMain \
+	'Null safety: Cannot assign nullable value here.'
 
 echo "ADR-009 typed schema/codec authority gate passed on Haxe interp, Genes/TypeScript/Node 22.17.0, and PHP 8.4.7"

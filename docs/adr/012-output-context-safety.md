@@ -269,7 +269,7 @@ The corrected bounded prototype is in
 [`fixtures/output-context`](../../fixtures/output-context/README.md). Its
 terminal constructors are private, compiler markup is owned by an exact
 generated fragment class, and it contains no repository-forbidden weak Haxe
-operation. Twenty-five compile-negative fixtures cover cross-context
+operation. Twenty-seven compile-negative fixtures cover cross-context
 substitution, direct construction, and the closed HXX rejection categories.
 One canonical native-runtime plan is byte-identical on Haxe 4.3.7
 interpretation, Genes 1.38.0 plus TypeScript 5.9.3/Node 22.17.0, and
@@ -408,3 +408,14 @@ bead `wordpresshx-g4.1.1` owns a standards-compliant shared codec path,
 cross-target control/Unicode/depth/failure vectors, and a fresh
 content-addressed rereview. See the
 [combined review integration](../../review/oracle/results/combined-rereview-76a90da/INTEGRATION.md).
+
+The next content-addressed GPT-5.6 Pro rereview examined repair commit
+`0e01ab5e18fe023e43f2d45e1052bdccef658f05` and again returned
+**changes required**. It confirmed the C0 codec path itself was repaired, but
+found an equivalent public `JsonPlan.success(schemaId, encoded)` bypass plus
+two narrow ADR-009 encoder defects: leaf-dependent container depth and
+non-total malformed-value handling. The current correction makes successful
+plan construction private and sink-owned, adds all-target compile negatives,
+and uses the hardened checked encoder described by ADR-009. F004, ADR-009, and
+ADR-012 remain open pending fresh content-addressed acceptance. See the
+[exact rereview and integration](../../review/oracle/results/adr012-f004-rereview-0e01ab5/INTEGRATION.md).

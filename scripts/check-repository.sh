@@ -2333,9 +2333,11 @@ assert schema_codec_architecture["claims"]["architectureDecision"] == (
 )
 schema_prototype = schema_codec_architecture["prototypeEvidence"]
 assert schema_prototype["haxeInvariantCount"] == 27
+assert schema_prototype["checkedJsonInvariantCount"] == 29
 assert schema_prototype["crossTargetVectorCount"] == 17
+assert schema_prototype["wireJsonBoundaryVectorCount"] == 37
 assert schema_prototype["independentMutationCount"] == 18
-assert schema_prototype["negativeCompileFixtureCount"] == 4
+assert schema_prototype["negativeCompileFixtureCount"] == 5
 assert adr009_receipt["schemaVersion"] == 1
 assert adr009_receipt["receiptId"] == "ADR-009-SCHEMA-CODEC-AUTHORITY"
 assert adr009_receipt["bead"] == "wordpresshx-adr-009"
@@ -2353,15 +2355,38 @@ assert adr009_verification["sourceTreeSha256"] == schema_prototype[
     "sourceTreeSha256"
 ]
 assert adr009_verification["haxeInvariantCount"] == 27
+assert adr009_verification["checkedJsonInvariantCount"] == 29
 assert adr009_verification["crossTargetVectorCount"] == 17
+assert adr009_verification["wireJsonBoundaryVectorCount"] == 37
 assert adr009_verification["independentMutationCount"] == 18
-assert adr009_verification["negativeCompileFixtureCount"] == 4
+assert adr009_verification["negativeCompileFixtureCount"] == 5
 assert adr009_verification["strictNullSafety"] is True
 assert adr009_verification["strictHaxeForbiddenTokenCount"] == 0
 assert adr009_verification["canonicalTranscriptByteIdenticalAcrossTargets"] is True
 assert adr009_receipt["review"]["finalFreshReview"] == "no-blockers"
 if adr009_receipt["status"] == "checked-json-hardening-rereview-pending":
     assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == "required"
+    adr009_checked_review = adr009_receipt["review"]["checkedJsonRereview"]
+    assert adr009_checked_review["decision"] == "changes-required"
+    assert adr009_checked_review["reviewedCommit"] == (
+        "0e01ab5e18fe023e43f2d45e1052bdccef658f05"
+    )
+    assert adr009_checked_review["findings"] == [
+        "ADR009-RR-F001",
+        "ADR009-RR-F002",
+    ]
+    assert adr009_checked_review["corrections"] == (
+        "applied-local-gates-passed-pending-fresh-rereview"
+    )
+    for review_path_field, review_digest_field in (
+        ("integrationPath", "integrationSha256"),
+        ("recordPath", "recordSha256"),
+        ("reportPath", "reportSha256"),
+        ("reviewedInputsPath", "reviewedInputsSha256"),
+    ):
+        assert hashlib.sha256(
+            Path(adr009_checked_review[review_path_field]).read_bytes()
+        ).hexdigest() == adr009_checked_review[review_digest_field]
     assert adr009_receipt["claims"]["architectureDecision"] == (
         "accepted-base-checked-json-hardening-pending-rereview"
     )
@@ -2415,7 +2440,7 @@ assert output_prototype["contextCount"] == 11
 assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
 assert output_prototype["hxxPositionCount"] == 18
-assert output_prototype["compileNegativeCount"] == 25
+assert output_prototype["compileNegativeCount"] == 27
 assert output_prototype["independentMutationCount"] == 36
 assert len(output_context_architecture["referenceReview"]) == 7
 for output_reference in output_context_architecture["referenceReview"]:
@@ -2450,7 +2475,7 @@ assert adr012_verification["contextCount"] == 11
 assert adr012_verification["allowedEdgeCount"] == 12
 assert adr012_verification["forbiddenEdgeCount"] == 15
 assert adr012_verification["hxxPositionCount"] == 18
-assert adr012_verification["compileNegativeCount"] == 25
+assert adr012_verification["compileNegativeCount"] == 27
 assert adr012_verification["independentMutationCount"] == 36
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
@@ -2596,6 +2621,48 @@ if adr012_receipt["status"] in {
         assert adr012_repair["c0VectorCount"] == 32
         assert adr012_repair["localGate"] == "passed"
         assert adr012_repair["freshIndependentRereview"] == "required"
+        adr012_f004_rereview = adr012_receipt["review"][
+            "f004RegressionRereview"
+        ]
+        assert adr012_f004_rereview["decision"] == "changes-required"
+        assert adr012_f004_rereview["reviewedCommit"] == (
+            "0e01ab5e18fe023e43f2d45e1052bdccef658f05"
+        )
+        assert adr012_f004_rereview["findings"] == [
+            "ADR012-F004-RR-F001",
+            "ADR009-RR-F001",
+            "ADR009-RR-F002",
+        ]
+        assert adr012_f004_rereview["corrections"] == (
+            "applied-local-gates-passed-pending-fresh-rereview"
+        )
+        for review_path_field, review_digest_field in (
+            ("integrationPath", "integrationSha256"),
+            ("recordPath", "recordSha256"),
+            ("reportPath", "reportSha256"),
+            ("reviewedInputsPath", "reviewedInputsSha256"),
+        ):
+            assert hashlib.sha256(
+                Path(adr012_f004_rereview[review_path_field]).read_bytes()
+            ).hexdigest() == adr012_f004_rereview[review_digest_field]
+        adr012_f004_record = json.loads(
+            Path(adr012_f004_rereview["recordPath"]).read_text(encoding="utf-8")
+        )
+        assert adr012_f004_record["decision"] == "changes-required"
+        assert adr012_f004_record["reviewedCommit"] == (
+            adr012_f004_rereview["reviewedCommit"]
+        )
+        assert [
+            finding["id"]
+            for finding in adr012_f004_record["findingDispositions"]
+        ] == adr012_f004_rereview["findings"]
+        assert adr012_f004_record["authority"] == {
+            "adr009Accepted": False,
+            "adr012Accepted": False,
+            "adr012F004Closed": False,
+            "remediationBeadClosed": False,
+            "publicationAuthorized": False,
+        }
     assert adr012_receipt["review"]["acceptanceAuthorized"] is False
 else:
     assert adr012_receipt["review"]["freshIndependentReview"] == (

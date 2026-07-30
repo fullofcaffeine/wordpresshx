@@ -3,27 +3,27 @@
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
   "status": "regression-repaired-pending-rereview",
-  "observedAt": "2026-07-28T05:29:11Z",
+  "observedAt": "2026-07-30T05:32:44Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "67e39a717e4dec415e12455fcace43ddf6fb0e6aa99c7389713e192892c716a0"
+      "sha256": "3a4a9c671d40b67b0762f013b148f722eaf7d53410080c7718299a9eea692881"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "9f7c5d6c2da68f5082be9116281587f96a2f675a494c39e37c41486b2a8a42f7"
+      "sha256": "f8a184231e09f064451554821e777979d81f2552c456296cd16ca1c5d00979a7"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
-      "sha256": "987531feff44158837368ba2a04e4dd42ff53311f5b73dbd7936378960c90a3a"
+      "sha256": "21f02c2fc4c127eefa20ab62ee1cd0a6996a65d6636623b7e9587880cb21119d"
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "4c829b3abd96450899e8c3c3ab76af271a96ac5d4572aa35dd9fd8629939155e"
+      "sha256": "d2662fc39405d6c804bb76fe549b9b46b91f5a0146a89efa751c00731fb8e7b5"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
-      "sha256": "fbe290ff3d3c142dc4a54e731bb930b7243b47f21c2beb5c79c8414944b60fab"
+      "sha256": "f583b88410cf7cf7ca33f0f9c050fb650a379ab5026806779e9f3716019a07a8"
     },
     "workflow": {
       "path": ".github/workflows/output-context.yml",
@@ -46,7 +46,7 @@
       "python3 scripts/output-context/validate-architecture.py",
       "bash scripts/output-context/test.sh"
     ],
-    "sourceTreeSha256": "e1afbe7af39eadb62724cee6184f2cda3f7f30dda184e4132ab34706f8bddfc4",
+    "sourceTreeSha256": "bee0ae6f4e138a6078a8afb09e9fbff7dfd6702a715ef024d50f370ea54ded07",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
@@ -60,7 +60,7 @@
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 25,
+    "compileNegativeCount": 27,
     "independentMutationCount": 36,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "reactTextAttributeTextareaAndScriptData": "passed",
@@ -137,6 +137,22 @@
       "nativeDecoders": ["PHP-json_decode-JSON_THROW_ON_ERROR", "JavaScript-JSON.parse"],
       "localGate": "passed",
       "freshIndependentRereview": "required"
+    },
+    "f004RegressionRereview": {
+      "decision": "changes-required",
+      "reviewedCommit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
+      "reviewedTree": "a18c63f427d5030e19e0923a7408fe239abd7e4b",
+      "packetSha256": "32e9585589e35bc4f9fc8e407794eac0fc7bd4a3788d651ed7956abae33a4143",
+      "integrationPath": "review/oracle/results/adr012-f004-rereview-0e01ab5/INTEGRATION.md",
+      "integrationSha256": "27eba80c9a7df09da6cc2401fb6af7d5b30b5222e911d5ed01d0a7f9c51d84fd",
+      "recordPath": "review/oracle/results/adr012-f004-rereview-0e01ab5/integration.json",
+      "recordSha256": "17405e339d71977c64b0ca7523b29c658cc60b87769100d08a3d3fc50de87e53",
+      "reportPath": "review/oracle/results/adr012-f004-rereview-0e01ab5/ORACLE-REREVIEW.md",
+      "reportSha256": "ee960c76303b0affb8f1f569dc8a13554dd566c2a13a86e6528c6c2bbda8f7db",
+      "reviewedInputsPath": "review/oracle/results/adr012-f004-rereview-0e01ab5/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "1af00aa963b15a63df5628b2802c4e1faf9d1d7778082eb6602e90a1d4972c36",
+      "findings": ["ADR012-F004-RR-F001", "ADR009-RR-F001", "ADR009-RR-F002"],
+      "corrections": "applied-local-gates-passed-pending-fresh-rereview"
     }
   },
   "referenceReview": {

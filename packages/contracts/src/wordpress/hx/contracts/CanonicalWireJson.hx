@@ -6,75 +6,109 @@ import wordpress.hx.contracts.WireValue.WireField;
 
 /** Deterministic JSON projection for the closed wire algebra. */
 class CanonicalWireJson {
-	public static function encode(value:WireValue):String {
-		return encodeValue(value, "$");
-	}
+	static inline final MAX_CONTAINER_DEPTH = 64;
 
 	/**
-		Encode only after proving the complete value fits the bounded,
-		decoder-compatible JSON domain.
+		Projects a public `WireValue` into decoder-compatible JSON bytes.
+
+		The first traversal validates and snapshots the complete mutable wire
+		tree. Container depth counts only arrays and objects: a root container
+		has depth one, and every nested container adds one regardless of whether
+		it is empty. Encoding then consumes only the private snapshot, so callers
+		cannot mutate the checked arrays or fields between validation and output.
 	**/
 	public static function encodeChecked(value:WireValue, maxDepth:Int = 64):WireJsonEncoding {
 		if (maxDepth < 1) {
 			return JsonRejected("json-depth-limit-must-be-positive");
 		}
-		return switch validate(value, "$", 0, maxDepth) {
-			case Invalid(reason): JsonRejected(reason);
-			case Valid: JsonEncoded(encode(value));
+		if (maxDepth > MAX_CONTAINER_DEPTH) {
+			return JsonRejected("json-depth-limit-exceeds-supported-maximum");
+		}
+		return switch snapshot(value, "$", 0, maxDepth) {
+			case SnapshotRejected(reason): JsonRejected(reason);
+			case SnapshotAccepted(value): JsonEncoded(encodeValue(value));
 		};
 	}
 
-	static function validate(value:WireValue, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
-		if (depth > maxDepth) {
-			return Invalid(path + ": json-depth-limit-exceeded");
+	static function snapshot(value:Null<WireValue>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
+		if (value == null) {
+			return SnapshotRejected(path + ": null-wire-value");
 		}
 		return switch value {
-			case NullValue | BoolValue(_) | IntegerValue(_):
-				Valid;
+			case NullValue:
+				SnapshotAccepted(CanonicalNull);
+			case BoolValue(value):
+				SnapshotAccepted(CanonicalBool(value));
+			case IntegerValue(value):
+				SnapshotAccepted(CanonicalInteger(value));
 			case StringValue(value):
-				validateString(value, path);
+				snapshotString(value, path);
 			case ArrayValue(values):
-				validateArray(values, path, depth, maxDepth);
+				snapshotArray(values, path, containerDepth + 1, maxDepth);
 			case ObjectValue(fields):
-				validateObject(fields, path, depth, maxDepth);
+				snapshotObject(fields, path, containerDepth + 1, maxDepth);
 		};
 	}
 
-	static function validateArray(values:Array<WireValue>, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
+	static function snapshotArray(values:Null<Array<WireValue>>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
+		if (values == null) {
+			return SnapshotRejected(path + ": null-array");
+		}
+		if (containerDepth > maxDepth) {
+			return SnapshotRejected(path + ": json-depth-limit-exceeded");
+		}
+		final valuesSnapshot:Array<CanonicalJsonValue> = [];
 		for (index in 0...values.length) {
-			switch validate(values[index], path + "[" + index + "]", depth + 1, maxDepth) {
-				case Invalid(reason):
-					return Invalid(reason);
-				case Valid:
+			switch snapshot(values[index], path + "[" + index + "]", containerDepth, maxDepth) {
+				case SnapshotRejected(reason):
+					return SnapshotRejected(reason);
+				case SnapshotAccepted(value):
+					valuesSnapshot.push(value);
 			}
 		}
-		return Valid;
+		return SnapshotAccepted(CanonicalArray(valuesSnapshot));
 	}
 
-	static function validateObject(fields:Array<WireField>, path:String, depth:Int, maxDepth:Int):WireJsonValidation {
-		final sorted = fields.copy();
-		sorted.sort((left, right) -> UnicodeScalarOrder.compare(left.name, right.name));
-		for (index in 0...sorted.length) {
-			final current = sorted[index];
-			switch validateString(current.name, path + "/<field-name>") {
-				case Invalid(reason):
-					return Invalid(reason);
-				case Valid:
+	static function snapshotObject(fields:Null<Array<WireField>>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
+		if (fields == null) {
+			return SnapshotRejected(path + ": null-object");
+		}
+		if (containerDepth > maxDepth) {
+			return SnapshotRejected(path + ": json-depth-limit-exceeded");
+		}
+		final fieldsSnapshot:Array<CanonicalJsonField> = [];
+		for (index in 0...fields.length) {
+			final current:Null<WireField> = fields[index];
+			if (current == null) {
+				return SnapshotRejected(path + "[" + index + "]: null-field");
 			}
-			if (index > 0 && sorted[index - 1].name == current.name) {
-				return Invalid(path + ": duplicate field " + current.name);
-			}
-			switch validate(current.value, path + "/" + current.name, depth + 1, maxDepth) {
-				case Invalid(reason):
-					return Invalid(reason);
-				case Valid:
+			final nameResult = snapshotString(current.name, path + "[" + index + "]/<field-name>");
+			final name = switch nameResult {
+				case SnapshotRejected(reason): return SnapshotRejected(reason);
+				case SnapshotAccepted(CanonicalString(value)): value;
+				case SnapshotAccepted(_): return SnapshotRejected(path + "[" + index + "]: invalid-field-name");
+			};
+			switch snapshot(current.value, path + "/" + name, containerDepth, maxDepth) {
+				case SnapshotRejected(reason):
+					return SnapshotRejected(reason);
+				case SnapshotAccepted(value):
+					fieldsSnapshot.push({name: name, value: value});
 			}
 		}
-		return Valid;
+		fieldsSnapshot.sort((left, right) -> UnicodeScalarOrder.compare(left.name, right.name));
+		for (index in 1...fieldsSnapshot.length) {
+			if (fieldsSnapshot[index - 1].name == fieldsSnapshot[index].name) {
+				return SnapshotRejected(path + ": duplicate field " + fieldsSnapshot[index].name);
+			}
+		}
+		return SnapshotAccepted(CanonicalObject(fieldsSnapshot));
 	}
 
-	static function validateString(value:String, path:String):WireJsonValidation {
-		return isValidUnicode(value) ? Valid : Invalid(path + ": invalid-unicode");
+	static function snapshotString(value:Null<String>, path:String):WireJsonSnapshotResult {
+		if (value == null) {
+			return SnapshotRejected(path + ": null-string");
+		}
+		return isValidUnicode(value) ? SnapshotAccepted(CanonicalString(value)) : SnapshotRejected(path + ": invalid-unicode");
 	}
 
 	static function isValidUnicode(value:String):Bool {
@@ -104,38 +138,21 @@ class CanonicalWireJson {
 		#end
 	}
 
-	static function encodeValue(value:WireValue, path:String):String {
+	static function encodeValue(value:CanonicalJsonValue):String {
 		return switch value {
-			case NullValue:
+			case CanonicalNull:
 				"null";
-			case BoolValue(value):
+			case CanonicalBool(value):
 				value ? "true" : "false";
-			case IntegerValue(value):
+			case CanonicalInteger(value):
 				Std.string(value);
-			case StringValue(value):
+			case CanonicalString(value):
 				encodeString(value);
-			case ArrayValue(values):
-				"[" + [
-					for (index in 0...values.length)
-						encodeValue(values[index], path + "[" + index + "]")
-				].join(",") + "]";
-			case ObjectValue(fields):
-				encodeObject(fields, path);
+			case CanonicalArray(values):
+				"[" + values.map(encodeValue).join(",") + "]";
+			case CanonicalObject(fields):
+				"{" + fields.map(field -> encodeString(field.name) + ":" + encodeValue(field.value)).join(",") + "}";
 		};
-	}
-
-	static function encodeObject(fields:Array<WireField>, path:String):String {
-		final sorted = fields.copy();
-		sorted.sort((left, right) -> UnicodeScalarOrder.compare(left.name, right.name));
-		final encoded:Array<String> = [];
-		for (index in 0...sorted.length) {
-			final current = sorted[index];
-			if (index > 0 && sorted[index - 1].name == current.name) {
-				throw new ContractError(path + ": duplicate field " + current.name);
-			}
-			encoded.push(encodeString(current.name) + ":" + encodeValue(current.value, path + "/" + current.name));
-		}
-		return "{" + encoded.join(",") + "}";
 	}
 
 	static function encodeString(value:String):String {
@@ -169,7 +186,21 @@ class CanonicalWireJson {
 	}
 }
 
-private enum WireJsonValidation {
-	Valid;
-	Invalid(reason:String);
+private enum WireJsonSnapshotResult {
+	SnapshotAccepted(value:CanonicalJsonValue);
+	SnapshotRejected(reason:String);
+}
+
+private enum CanonicalJsonValue {
+	CanonicalNull;
+	CanonicalBool(value:Bool);
+	CanonicalInteger(value:Int);
+	CanonicalString(value:String);
+	CanonicalArray(values:Array<CanonicalJsonValue>);
+	CanonicalObject(fields:Array<CanonicalJsonField>);
+}
+
+private typedef CanonicalJsonField = {
+	final name:String;
+	final value:CanonicalJsonValue;
 }
