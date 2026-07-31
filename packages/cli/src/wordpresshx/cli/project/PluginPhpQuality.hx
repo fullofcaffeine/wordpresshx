@@ -233,7 +233,7 @@ class PluginPhpQuality {
 			tool("phpcompatibility/phpcompatibility-wp", "2.1.8"),
 			tool("phpstan/phpstan", "2.2.5"),
 			tool("squizlabs/php_codesniffer", "3.13.5"),
-			tool("wp-coding-standards/wpcs", "3.4.0")
+			tool("wp-coding-standards/wpcs", "3.4.1")
 		];
 		return Buffer.from(ScaffoldJson.document(ScaffoldJson.object([
 			ScaffoldJson.field("schema", ScaffoldJson.text(REPORT_SCHEMA)),

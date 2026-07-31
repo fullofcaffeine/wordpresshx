@@ -9,8 +9,10 @@ ownership transaction can publish anything.
 
 `composer.lock` pins the complete ten-package graph. `toolchain.json` pins
 Composer 2.10.2 by artifact SHA-256, PHP 7.4.33 as the syntax floor, PHP 8.4.7
-as the primary lane, WordPress stubs 7.0.0, PHPCS 3.13.5, WPCS 3.4.0,
-PHPCompatibilityWP 2.1.8, and PHPStan 2.2.5. `install.sh` verifies the Composer
+as the primary lane, WordPress stubs 7.0.0, PHPCS 3.13.5, WPCS 3.4.1,
+PHPCompatibilityWP 2.1.8, and PHPStan 2.2.5. WPCS 3.4.1 is the exact patched
+boundary for GHSA-3pwp-g2mj-5p3v / CVE-2026-45293; the lock also carries its
+required PHPCSExtra 1.5.1 and PHPCSUtils 1.2.3. `install.sh` verifies the Composer
 PHAR before installing, validates the lock, audits advisories, and lints the
 runner.
 

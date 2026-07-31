@@ -10,7 +10,7 @@
     },
     "architecture": {
       "path": "manifests/generated-artifact-ownership.json",
-      "sha256": "2074b007ba3b0c3259e01f5f9328f60692306e7e61644e962a00a0ca13d24450"
+      "sha256": "6de31f4027c5dbd5c2a6aa470577cec3494c72a130efa4ea4b72e7df4daca277"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -30,24 +30,24 @@
     },
     "currentManifestFixture": {
       "path": "fixtures/ownership/valid/current.generated-files.json",
-      "sha256": "4684f28acc8980dc2770ab93a2cc66c5f8fe8bd1f697fe45032e9c628788a38e"
+      "sha256": "b85bdae7fd626c4fdd22676ee0756b22f5a580b7a7de69af6e92b5f5a752b3c4"
     },
     "nextManifestFixture": {
       "path": "fixtures/ownership/valid/next.generated-files.json",
-      "sha256": "0a5a242e31169da75b384994069275cd977df354caa354aa539feb642a229fc6"
+      "sha256": "b56539d460771210537749008dfc8351de074b64c68a1ea0704a60dea0d8f472"
     },
     "journalFixture": {
       "path": "fixtures/ownership/valid/prepared.journal.json",
-      "sha256": "2a765a76276c35a695302c9b6cd3e90cf5d7114e9cd89bfed0f3bff79bc01880"
+      "sha256": "0f868d18a0f48e28c3812fc1e191104083e00ba5abc844b4155dc9b34ee324c2"
     }
   },
   "contract": {
     "manifestSchema": "wordpress-hx.generated-files.v1",
     "journalSchema": "wordpress-hx.ownership-journal.v1",
     "transactionProtocol": "wordpress-hx.ownership-transaction.v1",
-    "currentManifestDigest": "56da0ba7ccc255d24a56c386fe89d8fb8caf80265f2e2a0314cdfe01897a369d",
-    "nextManifestDigest": "b62bbe639c107180f8b54da591cc719ac9f4c2922c59954754896416e84021c2",
-    "preparedJournalDigest": "a8a50d60f57afb3e0e9faf22e3675f7e58aded1ba7367c2a57308fdd2c13bdef",
+    "currentManifestDigest": "d7d3ced02b502f9e0eb9a3733020984ff7a5cf6c54a320c320873689ad3ee738",
+    "nextManifestDigest": "20b486383de5de78aedbb89ecb17ac76e0a278410cd9bb0eb455989958e40041",
+    "preparedJournalDigest": "0ff6d9a796d563d5f3e0bf0f124801e57ea0da3fafc168812ce4265741e4b283",
     "ownershipAuthority": "exact-current-manifest-path-hash-size-and-regular-file",
     "manifestPublication": "last-as-commit-marker",
     "forceOverwrite": false

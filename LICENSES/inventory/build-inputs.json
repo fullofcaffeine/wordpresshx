@@ -45,7 +45,7 @@
     },
     {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "67ea4ea71ae718c1f9dcfacaccb03273276cec3d48bac2c1628add2bcdaf7f10",
+      "sha256": "fbb14d82fd01b9662ee0e6e9d783f9771a1c5b310589491c9d973da32e1e6467",
       "parser": "aggregate-toolchain-lock",
       "componentObservationCount": 6
     },
@@ -147,7 +147,7 @@
     },
     {
       "path": "tooling/php-quality/composer.lock",
-      "sha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+      "sha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
       "parser": "composer-lock",
       "componentObservationCount": 10
     }
@@ -279,11 +279,11 @@
       ]
     },
     {
-      "id": "composer:phpcsstandards/phpcsextra@1.5.0#2d78c2cd7b1f5a37",
+      "id": "composer:phpcsstandards/phpcsextra@1.5.1#97f993e0c6ee1084",
       "ecosystem": "composer",
       "name": "phpcsstandards/phpcsextra",
-      "version": "1.5.0",
-      "resolution": "reference:b598aa890815b8df16363271b659d73280129101",
+      "version": "1.5.1",
+      "resolution": "reference:39467533fdb742446d68c1d10ac33d625ee0311c",
       "declaredLicenses": [
         "LGPL-3.0-or-later"
       ],
@@ -304,11 +304,11 @@
       ]
     },
     {
-      "id": "composer:phpcsstandards/phpcsutils@1.2.2#91974567ab22edb1",
+      "id": "composer:phpcsstandards/phpcsutils@1.2.3#5a83fc8e13a15bf1",
       "ecosystem": "composer",
       "name": "phpcsstandards/phpcsutils",
-      "version": "1.2.2",
-      "resolution": "reference:c216317e96c8b3f5932808f9b0f1f7a14e3bbf55",
+      "version": "1.2.3",
+      "resolution": "reference:5f35d9408c54d7b529501f3c688b6eae562aea1f",
       "declaredLicenses": [
         "LGPL-3.0-or-later"
       ],
@@ -379,11 +379,11 @@
       ]
     },
     {
-      "id": "composer:wp-coding-standards/wpcs@3.4.0#7ffa19b83527767a",
+      "id": "composer:wp-coding-standards/wpcs@3.4.1#ddee77e3d6ae1e4d",
       "ecosystem": "composer",
       "name": "wp-coding-standards/wpcs",
-      "version": "3.4.0",
-      "resolution": "reference:469c18ceab4d642b15bad4c65ebf3b307bfd55ab",
+      "version": "3.4.1",
+      "resolution": "reference:ec2ff942335f33683a5957a85d138753876a05cf",
       "declaredLicenses": [
         "MIT"
       ],

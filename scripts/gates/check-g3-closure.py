@@ -131,7 +131,12 @@ def validate_subjects(audit: Audit, receipt: dict[str, Any]) -> None:
         audit.check(isinstance(digest, str) and digest == audit.digest(expected_path), f"current subject digest mismatch for {name}")
 
 
-def validate_acceptance(audit: Audit, receipt: dict[str, Any], children: dict[str, dict[str, Any]]) -> None:
+def validate_acceptance(
+    audit: Audit,
+    receipt: dict[str, Any],
+    children: dict[str, dict[str, Any]],
+    pending: bool,
+) -> None:
     acceptance = receipt.get("acceptance")
     exact_keys(
         audit,
@@ -193,8 +198,26 @@ def validate_acceptance(audit: Audit, receipt: dict[str, Any], children: dict[st
         "outcome": "passed",
     }, "transaction-validator acceptance changed")
     sdk026 = children.get("SDK-026-GENERATED-PHP-QUALITY", {})
-    audit.check(nested(sdk026, "claims", "lintFormatWpcsCompatibilityStaticAnalysis") == "hosted-runtime-tested", "SDK-026 quality tools are not hosted-runtime-tested")
-    audit.check(nested(sdk026, "claims", "failClosedBeforePublication") == "hosted-negative-tested", "SDK-026 fail-closed publication proof changed")
+    expected_quality = (
+        "local-runtime-tested" if pending else "hosted-runtime-tested"
+    )
+    expected_fail_closed = (
+        "local-negative-tested" if pending else "hosted-negative-tested"
+    )
+    audit.check(
+        nested(sdk026, "claims", "lintFormatWpcsCompatibilityStaticAnalysis")
+        == expected_quality,
+        (
+            "SDK-026 quality tools are not locally runtime-tested"
+            if pending
+            else "SDK-026 quality tools are not hosted-runtime-tested"
+        ),
+    )
+    audit.check(
+        nested(sdk026, "claims", "failClosedBeforePublication")
+        == expected_fail_closed,
+        "SDK-026 fail-closed publication proof changed",
+    )
 
     recovery = acceptance.get("interruptionRecovery", {})
     audit.check(recovery == {
@@ -266,14 +289,16 @@ def validate_status(audit: Audit, receipt: dict[str, Any], template: bool) -> No
     audit.check(boundary.get("publicPackagePublication") == "blocked", "G3 bypasses publication policy")
     audit.check(boundary.get("productionSupport") == "not-tested", "G3 overclaims production support")
 
+    pending = receipt.get("status") == "pending-hosted-proof"
     if template:
         audit.check(receipt.get("status") == "pending-hosted-proof", "template status must be pending-hosted-proof")
-        audit.check(implementation.get("commit") is None, "template implementation commit must be null")
-        audit.check(hosted.get("status") == "pending", "template hosted status must be pending")
+    if pending:
+        audit.check(implementation.get("commit") is None, "pending implementation commit must be null")
+        audit.check(hosted.get("status") == "pending", "pending hosted status must be pending")
         for key in ("runId", "commit", "jobCount", "allJobsPassed"):
-            audit.check(hosted.get(key) is None, f"template hosted {key} must be null")
-        audit.check(isinstance(jobs, dict) and all(value is None for value in jobs.values()), "template job IDs must be null")
-        audit.check(boundary.get("g3SemanticPlanAndOwnership") == "pending-hosted-proof", "template gate claim must be pending")
+            audit.check(hosted.get(key) is None, f"pending hosted {key} must be null")
+        audit.check(isinstance(jobs, dict) and all(value is None for value in jobs.values()), "pending job IDs must be null")
+        audit.check(boundary.get("g3SemanticPlanAndOwnership") == "pending-hosted-proof", "pending gate claim must be pending")
         return
 
     audit.check(receipt.get("status") == "verified", "final receipt status must be verified")
@@ -350,7 +375,8 @@ def validate(root: Path, receipt_path: Path, template: bool) -> list[str]:
         audit.check("## Gate G3 — Semantic plan and fail-closed ownership" in prd, "G3 section is absent from the PRD")
     children = validate_references(audit, receipt)
     validate_subjects(audit, receipt)
-    validate_acceptance(audit, receipt, children)
+    pending = receipt.get("status") == "pending-hosted-proof"
+    validate_acceptance(audit, receipt, children, pending)
     local = receipt.get("localVerification")
     exact_keys(audit, local, {"commands", "outcome"}, "localVerification")
     if isinstance(local, dict):

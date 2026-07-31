@@ -3,7 +3,7 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "WordPressHx lock-derived build inputs",
-  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/e61b6fb6ec07467c28af74b11a9d3ce64ca993e9731156bf56d6a5356ad5e2cf",
+  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/4bf07f9739a33abb2a443347dd73fc6185713e69e740daa6e6ea6738bd938ee6",
   "creationInfo": {
     "created": "1970-01-01T00:00:00Z",
     "creators": [
@@ -105,38 +105,38 @@
       ]
     },
     {
-      "SPDXID": "SPDXRef-Package-49f698dc6f3e4a140d21",
+      "SPDXID": "SPDXRef-Package-e7ae5dfda801e16e9a72",
       "name": "phpcsstandards/phpcsextra",
-      "versionInfo": "1.5.0",
+      "versionInfo": "1.5.1",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:phpcsstandards/phpcsextra@1.5.0#2d78c2cd7b1f5a37",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:phpcsstandards/phpcsextra@1.5.1#97f993e0c6ee1084",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:generic/phpcsstandards%2Fphpcsextra@1.5.0?ecosystem=composer"
+          "referenceLocator": "pkg:generic/phpcsstandards%2Fphpcsextra@1.5.1?ecosystem=composer"
         }
       ]
     },
     {
-      "SPDXID": "SPDXRef-Package-957ffc597c521a54fd11",
+      "SPDXID": "SPDXRef-Package-8dd2e0e3401e13bfed00",
       "name": "phpcsstandards/phpcsutils",
-      "versionInfo": "1.2.2",
+      "versionInfo": "1.2.3",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:phpcsstandards/phpcsutils@1.2.2#91974567ab22edb1",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:phpcsstandards/phpcsutils@1.2.3#5a83fc8e13a15bf1",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:generic/phpcsstandards%2Fphpcsutils@1.2.2?ecosystem=composer"
+          "referenceLocator": "pkg:generic/phpcsstandards%2Fphpcsutils@1.2.3?ecosystem=composer"
         }
       ]
     },
@@ -177,20 +177,20 @@
       ]
     },
     {
-      "SPDXID": "SPDXRef-Package-57eaa4af7bf76b6b195c",
+      "SPDXID": "SPDXRef-Package-e209d2b35efd5111751a",
       "name": "wp-coding-standards/wpcs",
-      "versionInfo": "3.4.0",
+      "versionInfo": "3.4.1",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:wp-coding-standards/wpcs@3.4.0#7ffa19b83527767a",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:wp-coding-standards/wpcs@3.4.1#ddee77e3d6ae1e4d",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:generic/wp-coding-standards%2Fwpcs@3.4.0?ecosystem=composer"
+          "referenceLocator": "pkg:generic/wp-coding-standards%2Fwpcs@3.4.1?ecosystem=composer"
         }
       ]
     },
@@ -32102,12 +32102,12 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-Package-49f698dc6f3e4a140d21"
+      "relatedSpdxElement": "SPDXRef-Package-e7ae5dfda801e16e9a72"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-Package-957ffc597c521a54fd11"
+      "relatedSpdxElement": "SPDXRef-Package-8dd2e0e3401e13bfed00"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
@@ -32122,7 +32122,7 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-Package-57eaa4af7bf76b6b195c"
+      "relatedSpdxElement": "SPDXRef-Package-e209d2b35efd5111751a"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",

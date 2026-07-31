@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
   "bead": "wordpresshx-sdk-026",
-  "status": "verified",
-  "observedAt": "2026-07-19T16:53:52Z",
+  "status": "local-verified-hosted-pending",
+  "observedAt": "2026-07-31T07:56:40Z",
   "subject": {
     "implementation": "manifests/php-quality-implementation.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -11,12 +11,12 @@
     "cliPackage": "packages/cli",
     "toolRoot": "tooling/php-quality",
     "policyId": "wp70-release-generated-php-v1",
-    "policySha256": "fc85632c5d3dd978ffcb76e8ead1319cfcc345787f798b7d88d31d2af607446a",
-    "composerLockSha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+    "policySha256": "c7091c132c41904892e3516c611aeaf86e03ad74153c580cc89d60b30766b7bd",
+    "composerLockSha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
     "wordpressStubsSha256": "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
   },
   "implementation": {
-    "implementationCommit": "6daf377559f004a3c09a00dc722ce3d87fccde9b",
+    "implementationCommit": null,
     "language": "Haxe",
     "javascriptCompiler": "Genes 1.38.0",
     "genesSourceChanged": false,
@@ -33,7 +33,13 @@
     "node": "22.17.0",
     "composer": "2.10.2",
     "phpCodeSniffer": "3.13.5",
-    "wordpressCodingStandards": "3.4.0",
+    "wordpressCodingStandards": "3.4.1",
+    "securityRemediation": {
+      "advisory": "GHSA-3pwp-g2mj-5p3v",
+      "cve": "CVE-2026-45293",
+      "affectedVersions": ">=0.14.1,<3.4.1",
+      "resolvedVersion": "3.4.1"
+    },
     "phpCompatibilityWordPress": "2.1.8",
     "phpStan": "2.2.5",
     "wordpressStubs": "7.0.0",
@@ -92,7 +98,7 @@
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
-      "sha256": "176e9c9678ce75450de4d2e08719a110696d2a5505646b2bfd579735230aeb6c"
+      "sha256": "32eb4f5c7dbf17d9c04fd4c220caede1959d93adcb0d268c7f42f088a33bb856"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/PluginPhpQualityResult.hx",
@@ -160,7 +166,7 @@
     }
   },
   "hostedVerification": {
-    "status": "passed",
+    "status": "pending",
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "steps": [
@@ -169,27 +175,27 @@
       "Test Haxe-first site scaffolding"
     ],
     "precedingFailure": {
-      "runId": 29695150919,
-      "jobId": 88214513059,
-      "commit": "cb87b6a25e405445c61408f29cbcff9f329e18c4",
-      "sdk026Steps": "passed",
-      "failedStep": "Test Haxe and Genes PHP trace CLI",
-      "cause": "private-human-trace-snapshot-retained-pre-phpdoc-native-lines"
+      "runId": 30614061713,
+      "jobId": 91103088992,
+      "commit": "ee97055743e1a84c14f4a58823383ad958d13f90",
+      "sdk026Steps": "failed-during-install-audit",
+      "failedStep": "Install exact generated-PHP quality toolchain",
+      "cause": "GHSA-3pwp-g2mj-5p3v-affected-wpcs-3.4.0"
     },
-    "commit": "6daf377559f004a3c09a00dc722ce3d87fccde9b",
-    "runId": 29695491419,
-    "jobId": 88215411504,
-    "completedAt": "2026-07-19T16:53:52Z",
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29695491419",
-    "fullMatrixStatus": "passed",
-    "jobCount": 11
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "completedAt": null,
+    "url": null,
+    "fullMatrixStatus": "pending",
+    "jobCount": null
   },
   "claims": {
-    "pinnedToolsAndWordPressStubs": "hosted-runtime-tested",
-    "lintFormatWpcsCompatibilityStaticAnalysis": "hosted-runtime-tested",
-    "autoloadClassmapAndDuplicateSymbols": "hosted-runtime-tested",
+    "pinnedToolsAndWordPressStubs": "local-runtime-tested",
+    "lintFormatWpcsCompatibilityStaticAnalysis": "local-runtime-tested",
+    "autoloadClassmapAndDuplicateSymbols": "local-runtime-tested",
     "narrowVersionedGeneratedExceptions": "policy-authenticated-and-negative-tested",
-    "failClosedBeforePublication": "hosted-negative-tested",
+    "failClosedBeforePublication": "local-negative-tested",
     "haxeOnlyCommonPath": "compile-and-runtime-tested",
     "qualifiedLicenseApproval": "blocked",
     "publicPackagePublication": "blocked",

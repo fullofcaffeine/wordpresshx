@@ -455,7 +455,7 @@
     {
       "id": "php-quality-build-tool-graph",
       "name": "Exact generated-PHP Composer quality graph",
-      "version": "composer.lock@8185991c7986",
+      "version": "composer.lock@c64abda9f331",
       "role": "generated-php-format-compatibility-security-and-static-analysis-build-tools",
       "repository": null,
       "commit": null,
@@ -476,21 +476,21 @@
           "kind": "exact-local-composer-lock-metadata",
           "locator": "tooling/php-quality/composer.lock",
           "blob": null,
-          "sha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+          "sha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
           "observation": "The exact ten-package build graph records MIT, LGPL-3.0-or-later, and BSD-3-Clause package declarations plus immutable source references."
         },
         {
           "kind": "exact-build-tool-policy",
           "locator": "tooling/php-quality/toolchain.json",
           "blob": null,
-          "sha256": "e7f18199a9f23ef5bf6eb86c54706e9947da3a06124ec53376aea5a7a60fc1a3",
+          "sha256": "0fd88c47416e48d52f2eed48285ee7a58a8008f5d8d8f37e3fd2d783b9547207",
           "observation": "The SDK pins Composer, PHPCS, WPCS, PHPCompatibilityWP, PHPStan, and WordPress stubs as build-only inputs; generated plugin inventories prove no vendor or Composer bytes are packaged."
         }
       ],
       "licenseConclusion": "exact-metadata-build-only-pending-qualified-review",
       "noticeStatus": "build-provenance-only-unless-tool-bytes-are-redistributed",
       "reviewStatus": "pending-qualified-review",
-      "notes": "The graph contains Composer 2.10.2; dealerdirect/phpcodesniffer-composer-installer 1.2.1; php-stubs/wordpress-stubs 7.0.0; PHPCompatibility packages 9.3.5, 1.3.4, and 2.1.8; PHPCSExtra 1.5.0; PHPCSUtils 1.2.2; PHPStan 2.2.5; PHP_CodeSniffer 3.13.5; and WPCS 3.4.0. Vendor bytes remain ephemeral and absent from generated artifacts."
+      "notes": "The graph contains Composer 2.10.2; dealerdirect/phpcodesniffer-composer-installer 1.2.1; php-stubs/wordpress-stubs 7.0.0; PHPCompatibility packages 9.3.5, 1.3.4, and 2.1.8; PHPCSExtra 1.5.1; PHPCSUtils 1.2.3; PHPStan 2.2.5; PHP_CodeSniffer 3.13.5; and WPCS 3.4.1. Vendor bytes remain ephemeral and absent from generated artifacts."
     },
     {
       "id": "reflaxe-php-port-origin",

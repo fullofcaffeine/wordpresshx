@@ -112,7 +112,7 @@
       "lockPaths": [
         "tooling/php-quality/composer.lock"
       ],
-      "lockSha256": "8185991c7986ea06c1b54710b21b6e63d342abc14b1212fa3a5483c1afbd2649",
+      "lockSha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
       "composer": {
         "version": "2.10.2",
         "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
@@ -146,13 +146,13 @@
         },
         {
           "name": "phpcsstandards/phpcsextra",
-          "version": "1.5.0",
-          "sourceReference": "b598aa890815b8df16363271b659d73280129101"
+          "version": "1.5.1",
+          "sourceReference": "39467533fdb742446d68c1d10ac33d625ee0311c"
         },
         {
           "name": "phpcsstandards/phpcsutils",
-          "version": "1.2.2",
-          "sourceReference": "c216317e96c8b3f5932808f9b0f1f7a14e3bbf55"
+          "version": "1.2.3",
+          "sourceReference": "5f35d9408c54d7b529501f3c688b6eae562aea1f"
         },
         {
           "name": "phpstan/phpstan",
@@ -166,8 +166,8 @@
         },
         {
           "name": "wp-coding-standards/wpcs",
-          "version": "3.4.0",
-          "sourceReference": "469c18ceab4d642b15bad4c65ebf3b307bfd55ab"
+          "version": "3.4.1",
+          "sourceReference": "ec2ff942335f33683a5957a85d138753876a05cf"
         }
       ],
       "allowedComposerPlugins": [
