@@ -270,7 +270,7 @@
       "id": "cli-project-and-development",
       "root": "packages/cli/src/wordpresshx/cli/project",
       "entryPath": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "haxeFileCount": 66,
+      "haxeFileCount": 67,
       "findingCount": 0,
       "gate": "bash packages/cli/scripts/check-project-haxe.sh",
       "outcome": "passed-hosted"

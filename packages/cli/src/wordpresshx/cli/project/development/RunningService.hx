@@ -1,6 +1,7 @@
 package wordpresshx.cli.project.development;
 
 import haxe.DynamicAccess;
+import haxe.Exception;
 import haxe.Timer;
 import js.lib.Error;
 import js.node.ChildProcess;
@@ -13,11 +14,13 @@ import wordpresshx.cli.project.ProjectFiles;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentCommand;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentServiceKind;
+import wordpresshx.cli.project.development.DevelopmentProcessLaunch.DevelopmentProcessOwnership;
 
 /** One owned no-shell process with bounded output retained only for readiness. */
 class RunningService {
 	static inline final LOG_WINDOW = 65536;
 	static inline final STOP_TIMEOUT_MS = 3000;
+	static inline final STOP_POLL_MS = 25;
 	static final OPERATIONAL_ENVIRONMENT = ["COMSPEC", "PATH", "PATHEXT", "SystemRoot", "TEMP", "TMP"];
 
 	public final service:DevelopmentService;
@@ -28,6 +31,7 @@ class RunningService {
 	public var stopping(default, null) = false;
 
 	final child:NodeChildProcess;
+	final ownedGroup:Null<OwnedProcessGroup>;
 	final events:DevelopmentEvents;
 	final onFailure:RunningService->CliFailure->Void;
 	final cleanup:Null<(Void->Void)->Void>;
@@ -37,6 +41,8 @@ class RunningService {
 	var stopCallback:Null<Void->Void>;
 	var stopReason = "stopped";
 	var stopTimer:Null<Timer>;
+	var forceSent = false;
+	var forceDeadline = 0.0;
 
 	public static function start(project:DevelopmentProject, service:DevelopmentService, port:Int, reload:Null<WordPressReloadAdapter>,
 			events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void):RunningService {
@@ -47,21 +53,35 @@ class RunningService {
 			case External: externalLaunch(service, port, workingDirectory, environment);
 			case WordPress: WordPressProvider.launch(project, service, port, workingDirectory, environment, reload);
 		};
+		if (launch.ownership == PosixProcessGroup && NodeGlobals.process().platform == "win32") {
+			throw new CliFailure("WPHX2326", "development service " + service.id + " requires Windows Job Object ownership before it can start", 7,
+				"service-start", null, [
+					"Run this external service on a supported POSIX host or install a WordPressHx build with the Windows Job Object adapter."
+				]);
+		}
 		final child = ChildProcess.spawn(launch.executable, launch.arguments, {
 			cwd: launch.workingDirectory,
+			detached: launch.ownership == PosixProcessGroup,
 			env: launch.environment,
 			shell: false,
 			stdio: ["ignore", "pipe", "pipe"]
 		});
-		final plugin = project.deployablePlugin;
-		return new RunningService(service, port, child, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
+		try {
+			final plugin = project.deployablePlugin;
+			final ownedGroup = launch.ownership == PosixProcessGroup ? new OwnedProcessGroup(child.pid) : null;
+			return new RunningService(service, port, child, ownedGroup, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
+		} catch (error:Exception) {
+			child.kill("SIGKILL");
+			throw error;
+		}
 	}
 
-	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void,
-			cleanup:Null<(Void->Void)->Void>, wordpressPluginEntry:Null<String>) {
+	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, ownedGroup:Null<OwnedProcessGroup>, events:DevelopmentEvents,
+			onFailure:RunningService->CliFailure->Void, cleanup:Null<(Void->Void)->Void>, wordpressPluginEntry:Null<String>) {
 		this.service = service;
 		this.port = port;
 		this.child = child;
+		this.ownedGroup = ownedGroup;
 		this.events = events;
 		this.onFailure = onFailure;
 		this.cleanup = cleanup;
@@ -86,15 +106,23 @@ class RunningService {
 		stopReason = reason;
 		stopCallback = callback;
 		if (!alive) {
-			finishStop();
+			if (ownedGroup == null) {
+				finishStop();
+			} else {
+				beginGroupStop();
+			}
 			return;
 		}
-		child.kill("SIGTERM");
-		stopTimer = Timer.delay(() -> {
-			if (alive) {
-				child.kill("SIGKILL");
-			}
-		}, STOP_TIMEOUT_MS);
+		if (ownedGroup == null) {
+			child.kill("SIGTERM");
+			stopTimer = Timer.delay(() -> {
+				if (alive) {
+					child.kill("SIGKILL");
+				}
+			}, STOP_TIMEOUT_MS);
+			return;
+		}
+		beginGroupStop();
 	}
 
 	function capture(stream:js.node.stream.Readable.IReadable):Void {
@@ -119,7 +147,11 @@ class RunningService {
 	function processExit(code:Int, signal:String):Void {
 		alive = false;
 		if (stopping) {
-			finishStop();
+			if (ownedGroup == null) {
+				finishStop();
+			} else {
+				checkGroupStop();
+			}
 			return;
 		}
 		if (!failureReported) {
@@ -145,6 +177,36 @@ class RunningService {
 		completeStop();
 	}
 
+	function beginGroupStop():Void {
+		final group = ownedGroup;
+		if (group == null) {
+			finishStop();
+			return;
+		}
+		forceDeadline = Timer.stamp() * 1000 + STOP_TIMEOUT_MS;
+		forceSent = false;
+		group.signal("SIGTERM");
+		checkGroupStop();
+	}
+
+	function checkGroupStop():Void {
+		final group = ownedGroup;
+		if (group == null || !group.alive()) {
+			finishStop();
+			return;
+		}
+		if (!forceSent && Timer.stamp() * 1000 >= forceDeadline) {
+			forceSent = true;
+			group.signal("SIGKILL");
+		}
+		if (stopTimer == null) {
+			stopTimer = Timer.delay(() -> {
+				stopTimer = null;
+				checkGroupStop();
+			}, STOP_POLL_MS);
+		}
+	}
+
 	function completeStop():Void {
 		events.stopped(service, stopReason);
 		final callback = stopCallback;
@@ -164,6 +226,7 @@ class RunningService {
 			],
 			workingDirectory: workingDirectory,
 			environment: environment,
+			ownership: PosixProcessGroup,
 			cleanup: null
 		};
 	}

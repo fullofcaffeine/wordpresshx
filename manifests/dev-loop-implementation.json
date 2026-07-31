@@ -22,6 +22,7 @@
     "servicePlanReader": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
     "serviceSupervisor": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
     "developmentProcessLaunch": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
+    "ownedProcessGroup": "packages/cli/src/wordpresshx/cli/project/development/OwnedProcessGroup.hx",
     "wordpressProvider": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
     "browserReloadServer": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
     "wordpressReloadAdapter": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
@@ -92,6 +93,12 @@
     "dependencyOrderImplemented": true,
     "boundedGraphRestartImplemented": true,
     "reverseShutdownImplemented": true,
+    "posixProcessGroupImplemented": true,
+    "posixProcessGroupProbe": "numeric-signal-zero",
+    "posixGracefulTimeoutMs": 3000,
+    "posixForcedSignal": "SIGKILL",
+    "windowsJobObjectImplemented": false,
+    "windowsExternalServiceBehavior": "fail-closed-before-spawn",
     "runtimeEnvironmentAllowlistImplemented": true,
     "wordpressProviderImplemented": true,
     "postPublishReloadRequestImplemented": true,
@@ -148,6 +155,9 @@
     "runtimeSecretNonPropagation": "passed",
     "boundedCrashRestartExhaustion": "passed",
     "reverseServiceShutdown": "passed",
+    "posixDescendantCleanupLocal": "passed-exact-node-22.17.0",
+    "posixDescendantCleanupHostedLinux": "pending-superseding-evidence",
+    "windowsDescendantCleanup": "pending-job-object-adapter",
     "wordpressProviderControlledProcess": "passed",
     "wordpressComposeV2Syntax": "passed",
     "wordpressGeneratedConfigPrivacy": "passed",
@@ -215,6 +225,7 @@
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "actualHaxeWaitCompilationParity": "runtime-tested-by-sdk040",
     "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
+    "externalDevelopmentServiceDescendantCleanup": "runtime-tested-local-posix-pending-hosted-linux",
     "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",
@@ -231,6 +242,7 @@
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
     "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
-    "Windows, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
+    "The POSIX descendant-cleanup regression passes locally on exact Node 22.17.0; the full hosted Linux gate and Windows Job Object adapter remain pending.",
+    "Windows external services fail closed before spawn; Windows watcher behavior, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

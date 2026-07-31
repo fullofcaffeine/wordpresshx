@@ -133,6 +133,10 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
   coalesced serialized rebuilds, input-stability checks, last-good retention,
   clean compiler shutdown, and strictly typed external-service supervision with
   bounded readiness, collision-safe ports, restart, and reverse shutdown. It
+  records the implemented POSIX process-group boundary and its exact-Node local
+  child/grandchild regression separately from the pending hosted Linux rerun
+  and unimplemented Windows Job Object adapter. Windows external services fail
+  closed rather than reverting to direct-child ownership. It
   also records the Haxe-derived `wp70-release` provider's exact image lock,
   private generated Compose configuration, secret interpolation, and bounded
   lifecycle. Its controlled process/configuration proof is distinct from a real

@@ -4379,6 +4379,7 @@ for sdk044_code_path in (
     "servicePlanReader",
     "serviceSupervisor",
     "developmentProcessLaunch",
+    "ownedProcessGroup",
     "wordpressProvider",
     "browserReloadServer",
     "wordpressReloadAdapter",
@@ -4431,6 +4432,14 @@ sdk044_services = dev_loop_implementation["services"]
 assert sdk044_services["authority"] == "validated-typed-haxe-semantic-plan"
 assert sdk044_services["implicitShellCommands"] is False
 assert sdk044_services["compileWatchOnlyImplemented"] is True
+assert sdk044_services["posixProcessGroupImplemented"] is True
+assert sdk044_services["posixProcessGroupProbe"] == "numeric-signal-zero"
+assert sdk044_services["posixGracefulTimeoutMs"] == 3000
+assert sdk044_services["posixForcedSignal"] == "SIGKILL"
+assert sdk044_services["windowsJobObjectImplemented"] is False
+assert sdk044_services["windowsExternalServiceBehavior"] == (
+    "fail-closed-before-spawn"
+)
 for sdk044_implemented_service_part in (
     "serviceSupervisorImplemented",
     "readinessImplemented",
@@ -4564,10 +4573,42 @@ assert sdk044_verification["browserReloadClientAssetSha256"] == (
     sdk044_browser_reload_lock["assetSha256"]
 )
 assert sdk044_verification["reloadEndpointSecurityMutations"] == 5
+assert sdk044_verification["posixDescendantCleanupLocal"] == (
+    "passed-exact-node-22.17.0"
+)
+assert sdk044_verification["posixDescendantCleanupHostedLinux"] == (
+    "pending-superseding-evidence"
+)
+assert sdk044_verification["windowsDescendantCleanup"] == (
+    "pending-job-object-adapter"
+)
 assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
     "runtime-tested-by-sdk090"
 )
+assert dev_loop_implementation["claims"][
+    "externalDevelopmentServiceDescendantCleanup"
+] == "runtime-tested-local-posix-pending-hosted-linux"
+sdk044_running_service_source = Path(
+    "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx"
+).read_text(encoding="utf-8")
+sdk044_process_group_source = Path(
+    sdk044_code["ownedProcessGroup"]
+).read_text(encoding="utf-8")
+sdk044_process_tree_test_source = Path(
+    "scripts/dev-loop/test-production.py"
+).read_text(encoding="utf-8")
+assert "detached: launch.ownership == PosixProcessGroup" in (
+    sdk044_running_service_source
+)
+assert 'NodeGlobals.process().platform == "win32"' in (
+    sdk044_running_service_source
+)
+assert 'group.signal("SIGTERM")' in sdk044_running_service_source
+assert 'group.signal("SIGKILL")' in sdk044_running_service_source
+assert "processProbe().kill(-processGroupId, 0)" in sdk044_process_group_source
+assert "run_process_tree_service_case" in sdk044_process_tree_test_source
+assert "--local-process-tree" in sdk044_process_tree_test_source
 sdk044_reference_authorities = {
     ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (
         "40254f38d9c07c069c7c3e19831096dcc2d6c95d",
@@ -7252,7 +7293,7 @@ assert strict_haxe_project_scope["entryPath"] == (
 )
 assert strict_haxe_project_scope["haxeFileCount"] == len(
     strict_haxe_project_paths
-) == 66
+) == 67
 assert strict_haxe_project_scope["findingCount"] == strict_haxe_findings(
     strict_haxe_project_paths
 ) == 0

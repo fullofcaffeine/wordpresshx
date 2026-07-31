@@ -16,6 +16,7 @@ import wordpresshx.cli.closedjson.CanonicalJson;
 import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.closedjson.JsonValue.JsonField;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
+import wordpresshx.cli.project.development.DevelopmentProcessLaunch.DevelopmentProcessOwnership;
 
 /** SDK-owned WordPress 7.0/MariaDB development process derived from Haxe intent. */
 class WordPressProvider {
@@ -122,6 +123,7 @@ class WordPressProvider {
 			arguments: commonArguments.concat(["up", "--abort-on-container-exit", "--force-recreate", "--remove-orphans"]),
 			workingDirectory: workingDirectory,
 			environment: environment,
+			ownership: DirectChild,
 			cleanup: done -> cleanup(commonArguments, workingDirectory, environment, composePath, pluginPath, bootstrapPath, pluginDirectory, done)
 		};
 	}

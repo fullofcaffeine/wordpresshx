@@ -8,6 +8,7 @@ import json
 import os
 import queue
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -135,14 +136,21 @@ function writeServicePlan(mode, source) {
   const lockBytes = fs.readFileSync('.wphx/project.lock.json');
   const lock = JSON.parse(lockBytes);
   const sourceDigest = sha256(Buffer.from(source));
-  const nodes = mode === 'timeout'
+  const nodes = mode === 'none'
+    ? []
+    : mode === 'timeout'
     ? [serviceNode(sourceDigest, 'timeout', [], {intervalMs: 50, kind: 'tcp', path: '/', text: '', timeoutMs: 300})]
+    : mode === 'process-tree'
+      ? [serviceNode(sourceDigest, 'process-tree', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000})]
     : mode === 'wordpress'
       ? [wordpressNode(sourceDigest)]
       : [
         serviceNode(sourceDigest, 'api', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000}),
         serviceNode(sourceDigest, 'frontend', ['api'], {intervalMs: 50, kind: 'log', path: '/', text: 'FRONTEND_READY', timeoutMs: 3000})
       ];
+  if (mode === 'process-tree') {
+    nodes[0].payload.environment = ['WPHX_TREE_SECRET'];
+  }
   const plan = {
     canonicalization: 'wordpress-hx.canonical-json.v1',
     generator: {
@@ -187,7 +195,11 @@ function compile(hxml) {
     const hxmlSource = fs.readFileSync(hxml, 'utf8').split(/\\r?\\n/);
     if (!hxmlSource.includes('--no-output')) process.exit(65);
     record('compile', {hxml});
-    writeServicePlan(process.env.WPHX_FAKE_SERVICE_PLAN, source);
+    const modePath = '.wphx/runtime/service-mode.txt';
+    const serviceMode = fs.existsSync(modePath)
+      ? fs.readFileSync(modePath, 'utf8').trim()
+      : process.env.WPHX_FAKE_SERVICE_PLAN;
+    writeServicePlan(serviceMode, source);
     process.exit(0);
   }, delay);
 }
@@ -367,7 +379,8 @@ server.listen(port, '127.0.0.1', () => {
 
 def install_service_fixture(project: Path) -> None:
     (project / "src/dev-service.mjs").write_text(
-        """import fs from 'node:fs';
+        """import {spawn} from 'node:child_process';
+import fs from 'node:fs';
 import http from 'node:http';
 
 const [serviceId, portText, tracePath] = process.argv.slice(2);
@@ -376,8 +389,10 @@ function record(event) {
   fs.appendFileSync(tracePath, JSON.stringify({
     event,
     pid: process.pid,
+    ppid: process.ppid,
     port,
     secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined,
+    treeSecretPresent: process.env.WPHX_TREE_SECRET === 'tree-secret-value',
     serviceId
   }) + '\\n');
 }
@@ -398,7 +413,14 @@ function stop(signal) {
 }
 process.on('SIGTERM', () => stop('SIGTERM'));
 process.on('SIGINT', () => stop('SIGINT'));
-if (serviceId === 'timeout') {
+if (serviceId === 'process-tree') {
+  spawn(process.execPath, ['src/dev-service-child.mjs', serviceId, portText, tracePath], {
+    env: process.env,
+    stdio: 'inherit'
+  });
+  record('started');
+  timer = setInterval(() => {}, 1000);
+} else if (serviceId === 'timeout') {
   record('started');
   timer = setInterval(() => {}, 1000);
 } else {
@@ -411,6 +433,70 @@ if (serviceId === 'timeout') {
     if (serviceId === 'frontend') process.stdout.write('FRONTEND_READY\\n');
   });
 }
+"""
+    )
+    (project / "src/dev-service-child.mjs").write_text(
+        """import {spawn} from 'node:child_process';
+import fs from 'node:fs';
+
+const [serviceId, portText, tracePath] = process.argv.slice(2);
+function record(event) {
+  fs.appendFileSync(tracePath, JSON.stringify({
+    event,
+    pid: process.pid,
+    ppid: process.ppid,
+    port: Number(portText),
+    role: 'child',
+    secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined,
+    serviceId,
+    treeSecretPresent: process.env.WPHX_TREE_SECRET === 'tree-secret-value'
+  }) + '\\n');
+}
+spawn(process.execPath, ['src/dev-service-grandchild.mjs', serviceId, portText, tracePath], {
+  env: process.env,
+  stdio: 'inherit'
+});
+record('started');
+process.on('SIGTERM', () => {
+  record('stopped');
+  process.exit(0);
+});
+setInterval(() => {}, 1000);
+"""
+    )
+    (project / "src/dev-service-grandchild.mjs").write_text(
+        """import fs from 'node:fs';
+import http from 'node:http';
+
+const [serviceId, portText, tracePath] = process.argv.slice(2);
+const port = Number(portText);
+function record(event) {
+  fs.appendFileSync(tracePath, JSON.stringify({
+    event,
+    pid: process.pid,
+    ppid: process.ppid,
+    port,
+    role: 'grandchild',
+    secretPresent: process.env.WPHX_UNDECLARED_SECRET !== undefined,
+    serviceId,
+    treeSecretPresent: process.env.WPHX_TREE_SECRET === 'tree-secret-value'
+  }) + '\\n');
+}
+const server = http.createServer((request, response) => {
+  response.statusCode = request.url === '/health' ? 204 : 404;
+  response.end();
+});
+process.on('SIGTERM', () => record('ignored-term'));
+server.listen(port, '127.0.0.1', () => record('started'));
+"""
+    )
+    (project / "src/dev-service-unrelated.mjs").write_text(
+        """import fs from 'node:fs';
+
+const [pidPath] = process.argv.slice(2);
+fs.writeFileSync(pidPath, String(process.pid));
+process.on('SIGTERM', () => process.exit(0));
+setInterval(() => {}, 1000);
 """
     )
 
@@ -438,6 +524,7 @@ class DevSession:
             "docker",
             "run",
             "--rm",
+            "--init",
             "--name",
             self.name,
             "--network",
@@ -459,6 +546,8 @@ class DevSession:
             command.extend(["--env", f"WPHX_FAKE_SERVICE_PLAN={service_mode}"])
         if service_mode == "wordpress":
             command.extend(["--env", "WP_DB_PASSWORD=declared-test-only"])
+        if service_mode == "process-tree":
+            command.extend(["--env", "WPHX_TREE_SECRET=tree-secret-value"])
         command.extend(
             [
                 "-w",
@@ -607,6 +696,52 @@ class DevSession:
                 f"stdout:{result.stdout}\nstderr:{result.stderr}"
             )
 
+    def run_node_result(self, source: str, *arguments: object) -> str:
+        result = subprocess.run(
+            [
+                "docker",
+                "exec",
+                "--workdir",
+                "/evidence/project",
+                self.name,
+                "node",
+                "-e",
+                source,
+                *[str(argument) for argument in arguments],
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"in-container probe failed {result.returncode}\n"
+                f"stdout:{result.stdout}\nstderr:{result.stderr}"
+            )
+        return result.stdout.strip()
+
+    def start_unrelated(self, pid_path: str) -> None:
+        result = subprocess.run(
+            [
+                "docker",
+                "exec",
+                "--detach",
+                "--workdir",
+                "/evidence/project",
+                self.name,
+                "node",
+                "src/dev-service-unrelated.mjs",
+                pid_path,
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"could not start unrelated process: {result.stderr}"
+            )
+
     def force_cleanup(self) -> None:
         if self.process.poll() is None:
             subprocess.run(
@@ -615,6 +750,146 @@ class DevSession:
                 capture_output=True,
                 check=False,
             )
+            self.process.wait(timeout=10)
+
+
+class LocalDevSession(DevSession):
+    """Run the process-tree case without weakening the exact hosted Docker gate."""
+
+    def __init__(
+        self,
+        runtime: Path,
+        evidence: Path,
+        project: Path,
+        tools: Path,
+        *,
+        service_mode: str | None = None,
+    ) -> None:
+        if sys.platform == "win32":
+            raise AssertionError(
+                "the local process-group probe is POSIX-only; Windows requires its Job Object gate"
+            )
+        self.name = "wordpresshx-sdk044-local-" + uuid.uuid4().hex[:12]
+        self.events = []
+        self.stdout_lines = []
+        self.stderr_lines = []
+        self.updates = queue.Queue()
+        environment = os.environ.copy()
+        environment.update(
+            {
+                "PATH": f"{tools.resolve()}{os.pathsep}{environment['PATH']}",
+                "WPHX_FAKE_TRACE": str(evidence / "compiler-events.jsonl"),
+                "WPHX_UNDECLARED_SECRET": "must-not-reach-services",
+            }
+        )
+        if service_mode is not None:
+            environment["WPHX_FAKE_SERVICE_PLAN"] = service_mode
+        if service_mode == "process-tree":
+            environment["WPHX_TREE_SECRET"] = "tree-secret-value"
+        self.project = project
+        self.process = subprocess.Popen(
+            [
+                "node",
+                str((runtime / "index.js").resolve()),
+                "dev",
+                "--project",
+                str(project.resolve()),
+                "--json",
+            ],
+            cwd=project,
+            env=environment,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            bufsize=1,
+            start_new_session=True,
+        )
+        assert self.process.stdout is not None
+        assert self.process.stderr is not None
+        self.stdout_thread = threading.Thread(
+            target=self._read_stdout, args=(self.process.stdout,), daemon=True
+        )
+        self.stderr_thread = threading.Thread(
+            target=self._read_stderr, args=(self.process.stderr,), daemon=True
+        )
+        self.stdout_thread.start()
+        self.stderr_thread.start()
+
+    def stop(self) -> None:
+        self.process.send_signal(signal.SIGINT)
+        status = self.process.wait(timeout=15)
+        self.stdout_thread.join(timeout=2)
+        self.stderr_thread.join(timeout=2)
+        assert status == 130, f"local development process exited {status}"
+
+    def signal_pid(self, pid: int) -> None:
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+
+    def assert_container_removed(self, timeout: float = 5.0) -> None:
+        assert self.process.poll() is not None
+
+    def run_node(self, source: str) -> None:
+        result = subprocess.run(
+            ["node", "-e", source],
+            cwd=self.project,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"local edit failed {result.returncode}\n"
+                f"stdout:{result.stdout}\nstderr:{result.stderr}"
+            )
+
+    def run_node_result(self, source: str, *arguments: object) -> str:
+        result = subprocess.run(
+            ["node", "-e", source, *[str(argument) for argument in arguments]],
+            cwd=self.project,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"local probe failed {result.returncode}\n"
+                f"stdout:{result.stdout}\nstderr:{result.stderr}"
+            )
+        return result.stdout.strip()
+
+    def start_unrelated(self, pid_path: str) -> None:
+        subprocess.Popen(
+            ["node", "src/dev-service-unrelated.mjs", pid_path],
+            cwd=self.project,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+
+    def force_cleanup(self) -> None:
+        trace_path = self.project / ".wphx/runtime/service-trace.jsonl"
+        if trace_path.exists():
+            for value in service_trace(self.project):
+                if value.get("event") != "started":
+                    continue
+                pid = int(value["pid"])
+                try:
+                    os.killpg(pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    try:
+                        os.kill(pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                except PermissionError:
+                    pass
+        if self.process.poll() is None:
+            try:
+                os.killpg(self.process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
             self.process.wait(timeout=10)
 
 
@@ -753,6 +1028,24 @@ def service_ids(events: list[dict[str, object]], event_name: str) -> list[object
     ]
 
 
+def wait_for_process_group_gone(
+    session: DevSession, process_group_id: int, timeout: float = 2.0
+) -> None:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        result = session.run_node_result(
+            "try{process.kill(-Number(process.argv[1]),0);"
+            "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+            process_group_id,
+        )
+        if result == "dead":
+            return
+        time.sleep(0.025)
+    raise AssertionError(
+        f"owned process group still live after bounded termination: {process_group_id}"
+    )
+
+
 def prepare_service_case(
     parent: Path, name: str
 ) -> tuple[Path, Path, Path]:
@@ -762,6 +1055,33 @@ def prepare_service_case(
     shutil.copytree(PROJECT_FIXTURE, project)
     install_service_fixture(project)
     return evidence, project, make_tools(evidence)
+
+
+def admit_runtime_environment(
+    project: Path, name: str, service_id: str
+) -> None:
+    config_path = project / "wordpress-hx.json"
+    config = json.loads(config_path.read_text())
+    runtime_environment = config["environment"]["runtime"]
+    runtime_environment.append(
+        {
+            "name": name,
+            "required": True,
+            "classification": "secret-runtime",
+            "services": [service_id],
+        }
+    )
+    runtime_environment.sort(key=lambda value: value["name"])
+    config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n")
+
+    lock_path = project / ".wphx/project.lock.json"
+    lock = json.loads(lock_path.read_text())
+    lock["project"]["configSemanticSha256"] = hashlib.sha256(
+        canonical(config)
+    ).hexdigest()
+    lock.pop("lockDigest")
+    lock["lockDigest"] = hashlib.sha256(canonical(lock)).hexdigest()
+    lock_path.write_bytes(canonical(lock, newline=True))
 
 
 def validate_wordpress_compose(path: Path) -> None:
@@ -976,6 +1296,123 @@ def run_timeout_service_case(runtime: Path, parent: Path) -> dict[str, object]:
         session.force_cleanup()
 
 
+def run_process_tree_service_case(
+    runtime: Path, parent: Path, *, local: bool = False
+) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(parent, "services-process-tree")
+    admit_runtime_environment(project, "WPHX_TREE_SECRET", "process-tree")
+    mode_path = project / ".wphx/runtime/service-mode.txt"
+    mode_path.parent.mkdir(parents=True, exist_ok=True)
+    mode_path.write_text("process-tree\n")
+    session_class = LocalDevSession if local else DevSession
+    session = session_class(
+        runtime, evidence, project, tools, service_mode="process-tree"
+    )
+    unrelated_pid: int | None = None
+    try:
+        _, ready = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId")
+            == "process-tree",
+        )
+        session.wait_for("watch-ready")
+        port = int(
+            str(ready["payload"]["url"])
+            .removeprefix("http://127.0.0.1:")
+            .removesuffix("/")
+        )
+        started = [
+            value
+            for value in service_trace(project)
+            if value["event"] == "started"
+        ]
+        assert len(started) == 3, started
+        assert all(value["treeSecretPresent"] is True for value in started)
+        assert all(value["secretPresent"] is False for value in started)
+        owned_pids = [int(value["pid"]) for value in started]
+        assert len(set(owned_pids)) == 3
+        process_group_id = owned_pids[0]
+
+        unrelated_path = ".wphx/runtime/unrelated.pid"
+        session.start_unrelated(unrelated_path)
+        unrelated_host_path = project / unrelated_path
+        deadline = time.monotonic() + 5
+        while not unrelated_host_path.exists() and time.monotonic() < deadline:
+            time.sleep(0.025)
+        assert unrelated_host_path.exists()
+        unrelated_pid = int(unrelated_host_path.read_text())
+
+        transition_start = len(session.events)
+        session.run_node(
+            "const fs=require('fs');"
+            "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
+            "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove process tree\\n');"
+        )
+        session.wait_for(
+            "service-stopped",
+            after=transition_start,
+            predicate=lambda value: value["payload"].get("serviceId")
+            == "process-tree",
+            timeout=15,
+        )
+        session.wait_for(
+            "build-published",
+            after=transition_start,
+            predicate=lambda value: value["payload"].get("generation") == 2,
+        )
+
+        stopped_trace = service_trace(project)
+        assert any(
+            value["event"] == "ignored-term"
+            and value.get("role") == "grandchild"
+            for value in stopped_trace
+        ), stopped_trace
+        wait_for_process_group_gone(session, process_group_id)
+        assert (
+            session.run_node_result(
+                "try{process.kill(Number(process.argv[1]),0);"
+                "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+                unrelated_pid,
+            )
+            == "alive"
+        )
+        assert (
+            session.run_node_result(
+                "const net=require('net');"
+                "const server=net.createServer();"
+                "server.once('error',()=>process.exit(1));"
+                "server.listen(Number(process.argv[1]),'127.0.0.1',()=>{"
+                "process.stdout.write('free');server.close()})",
+                port,
+            )
+            == "free"
+        )
+
+        session.signal_pid(unrelated_pid)
+        unrelated_pid = None
+        session.stop()
+        session.wait_for("command-completed", timeout=2)
+        validate_event_stream(session.events)
+        assert service_ids(session.events, "service-stopped") == [
+            "process-tree",
+            "compiler",
+        ]
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {
+            "descendants": 2,
+            "forcedIgnoringDescendant": True,
+            "ownedProcessCount": 3,
+            "ownedProcessGroupGone": True,
+            "portReleased": port,
+            "unrelatedProcessPreserved": True,
+        }
+    finally:
+        if unrelated_pid is not None and session.process.poll() is None:
+            session.signal_pid(unrelated_pid)
+        session.force_cleanup()
+
+
 def run_wordpress_service_case(
     runtime: Path, parent: Path, browser_tooling: Path
 ) -> dict[str, object]:
@@ -1185,6 +1622,7 @@ def run_service_cases(
 ) -> dict[str, object]:
     return {
         "healthy": run_healthy_service_case(runtime, parent),
+        "processTree": run_process_tree_service_case(runtime, parent),
         "restart": run_restart_service_case(runtime, parent),
         "timeout": run_timeout_service_case(runtime, parent),
         "wordpress": run_wordpress_service_case(runtime, parent, browser_tooling),
@@ -1452,9 +1890,20 @@ def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
 
 
 def main() -> None:
+    if len(sys.argv) == 3 and sys.argv[1] == "--local-process-tree":
+        temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
+        with tempfile.TemporaryDirectory(
+            prefix="wordpresshx-sdk044-process-tree-", dir=temporary_parent
+        ) as raw:
+            summary = run_process_tree_service_case(
+                Path(sys.argv[2]), Path(raw), local=True
+            )
+        print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
+        return
     if len(sys.argv) != 3:
         raise SystemExit(
-            "usage: test-production.py <compiled-runtime-root> <browser-tooling-root>"
+            "usage: test-production.py <compiled-runtime-root> <browser-tooling-root>\n"
+            "   or: test-production.py --local-process-tree <compiled-runtime-root>"
         )
     summary = run(Path(sys.argv[1]), Path(sys.argv[2]))
     print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
