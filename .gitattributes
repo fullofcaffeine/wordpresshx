@@ -5,3 +5,10 @@ review/oracle/results/**/ORACLE-*.md whitespace=-trailing-space
 # Project-contract fixtures carry exact byte digests and must survive checkout
 # without platform line-ending conversion.
 fixtures/project-cli/project/** -text
+
+# The CLI dependency lock authenticates these sources byte-for-byte. Preserve
+# their committed bytes on Windows instead of allowing core.autocrlf to rewrite
+# the subject that the verifier hashes.
+packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx -text
+packages/cli/profiles/development-reload-client.hxml -text
+packages/cli/assets/development-reload-client.js -text

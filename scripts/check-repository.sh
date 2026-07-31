@@ -4713,6 +4713,12 @@ sdk044_windows_workflow = Path(
 ).read_text(encoding="utf-8")
 sdk044_git_attributes = Path(".gitattributes").read_text(encoding="utf-8")
 assert "fixtures/project-cli/project/** -text" in sdk044_git_attributes
+for sdk044_byte_locked_path in (
+    "packages/cli/dev-reload-client/src/wordpresshx/cli/development/browser/ReloadClient.hx",
+    "packages/cli/profiles/development-reload-client.hxml",
+    "packages/cli/assets/development-reload-client.js",
+):
+    assert f"{sdk044_byte_locked_path} -text" in sdk044_git_attributes
 assert "windows-dev-loop:" in sdk044_windows_workflow
 assert "runs-on: windows-2022" in sdk044_windows_workflow
 assert "haxe.exe profiles/wphx.hxml" in sdk044_windows_workflow
@@ -4725,6 +4731,10 @@ assert "Prove complete Windows development service cleanup" in (
 )
 assert "--windows-process-tree packages/cli/build" in sdk044_windows_workflow
 assert "profiles/windows-service-host-test.hxml" in sdk044_windows_workflow
+assert "$PSNativeCommandUseErrorActionPreference = $true" in (
+    sdk044_windows_workflow
+)
+assert "-js build/win-probe.js" in sdk044_windows_workflow
 assert "invalid internal service-host invocation" in sdk044_entry_source
 assert "run_process_tree_service_case" in sdk044_process_tree_test_source
 assert "run_rapid_leader_service_case" in sdk044_process_tree_test_source

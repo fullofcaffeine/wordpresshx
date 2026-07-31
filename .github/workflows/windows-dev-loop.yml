@@ -27,6 +27,8 @@ jobs:
       - name: Install exact Haxe and formatter dependencies
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
           haxelib.exe install formatter 1.18.0 --quiet
           haxelib.exe install helder.set 0.3.1 --quiet
           haxelib.exe install hxnodejs 10.0.0 --quiet
@@ -38,7 +40,7 @@ jobs:
           python.exe packages/cli/scripts/verify-dependency-lock.py
           Push-Location packages/cli
           haxe.exe profiles/wphx.hxml -js build/index.js
-          haxe.exe profiles/windows-service-host-test.hxml -js build/windows-service-host-test.js
+          haxe.exe profiles/windows-service-host-test.hxml -js build/win-probe.js
           Pop-Location
           python.exe packages/cli/scripts/add-node-shebang.py packages/cli/build/index.js
       - name: Check strictly typed Haxe service supervision

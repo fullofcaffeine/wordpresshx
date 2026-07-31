@@ -823,7 +823,7 @@ class LocalDevSession(DevSession):
         command = (
             [
                 "node",
-                str((runtime / "windows-service-host-test.js").resolve()),
+                str((runtime / "win-probe.js").resolve()),
                 str(project.resolve()),
                 service_mode,
             ]
