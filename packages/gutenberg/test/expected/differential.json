@@ -167,14 +167,14 @@
     }
   },
   "artifacts": {
-    "generatedTreeSha256": "80b313070c496e3188488fbdf07dd1582f20b58c0114dfac602f73f7efc3270b",
+    "generatedTreeSha256": "44b6a87790318b1cf6ac765c41d57dba08a7d0378dcdae9bbb6b8abc02419fd9",
     "strictBundle": {
-      "bytes": 13357,
-      "sha256": "3331d250dcd704c2d85545cea22aa97bb1e325b8dfc0280e93c54cfb47862395"
+      "bytes": 13267,
+      "sha256": "50929d1c07c5673d3dc4b84d19ca503b44f0250e5638ecab8857215d52aa2e16"
     },
     "classicBundle": {
-      "bytes": 13431,
-      "sha256": "5d4ad0bd814a78a424284af6ab2ca8448c1ca40abacb1cd4262bde35379bb181"
+      "bytes": 13451,
+      "sha256": "d1c1b104a23749151bf9e6db3a573af700852b4c9db8db9966ff0c8122b5e9ef"
     }
   },
   "budgets": {

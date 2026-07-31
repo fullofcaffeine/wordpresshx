@@ -8783,12 +8783,19 @@ assert g25_browser_profile["strictBundle"] == (
 assert g25_browser_profile["classicBundle"] == (
     sdk031_local["generatedArtifacts"]["classicBundle"]
 )
-assert g25_receipt["localVerification"]["differential"]["evaluationOrder"] == (
+g25_differential = g25_receipt["localVerification"]["differential"]
+assert g25_differential["evaluationOrder"] == (
     "prop-first>prop-second>child-first>child-second"
 )
-assert g25_receipt["localVerification"]["differential"][
-    "generatedTreeSha256"
-] == sdk035_expected["artifacts"]["generatedTreeSha256"]
+assert g25_differential["generatedTreeSha256"] == (
+    sdk035_receipt["localVerification"]["artifacts"]["generatedTreeSha256"]
+)
+assert g25_differential["strictBundle"] == (
+    sdk035_receipt["localVerification"]["artifacts"]["strictBundle"]
+)
+assert g25_differential["classicBundle"] == (
+    sdk035_receipt["localVerification"]["artifacts"]["classicBundle"]
+)
 assert set(g25_receipt["replayedReceipts"]) == {
     "SDK-024-PRIVATE-PHP-RUNTIME",
     "SDK-025-PHP-SOURCE-CORRELATION",
@@ -9345,7 +9352,10 @@ assert sdk035_local["targetShape"]["allowedDifferences"] == (
 assert sdk035_local["targetShape"][
     "unexplainedSemanticDifferenceCount"
 ] == sdk035_expected["targetShape"]["unexplainedSemanticDifferenceCount"] == 0
-assert sdk035_local["artifacts"] == sdk035_expected["artifacts"] | {
+assert sdk035_local["artifacts"] == {
+    "generatedTreeSha256": g25_differential["generatedTreeSha256"],
+    "strictBundle": g25_differential["strictBundle"],
+    "classicBundle": g25_differential["classicBundle"],
     "machineLocalPathLeaks": 0
 }
 assert sdk035_local["runtimeTranscript"]["description"] == (

@@ -52,7 +52,7 @@
     },
     "differentialProfile": {
       "path": "packages/gutenberg/test/expected/differential.json",
-      "sha256": "1698f4442ca803bdc56288e3f13b55a38a68788a7e68fcdd191a210029a86834"
+      "sha256": "e0070aace62238da7b81a6fa0c25a4264b52212bdbb0abea7b45b1d63e769189"
     },
     "browserProfile": {
       "path": "packages/gutenberg/test/expected/browser-profile.json",
@@ -68,7 +68,7 @@
     },
     "repositoryGate": {
       "path": "scripts/check-repository.sh",
-      "sha256": "85d7cefb7265cff4dbf7c445ff39535d9a06c481effb21045ae5b45ded58e668"
+      "sha256": "5dcd3404201f744b49bbfe96291ab2ec5106e54275f12925a8dfb643919be1a4"
     }
   },
   "previousCompiler": {
@@ -159,7 +159,12 @@
       "format": "passed",
       "strictGeneration": "passed-twice",
       "classicGeneration": "passed-twice",
-      "exactNodeContainer": "not-completed-local-docker-daemon-unresponsive"
+      "exactNodeContainer": "not-completed-local-docker-daemon-unresponsive",
+      "exactNodeLocalReplay": "passed",
+      "generatedTreeSha256": "44b6a87790318b1cf6ac765c41d57dba08a7d0378dcdae9bbb6b8abc02419fd9",
+      "strictBundle": "13267-bytes-50929d1c07c5673d3dc4b84d19ca503b44f0250e5638ecab8857215d52aa2e16",
+      "classicBundle": "13451-bytes-d1c1b104a23749151bf9e6db3a573af700852b4c9db8db9966ff0c8122b5e9ef",
+      "runtimeTranscript": "passed-identical"
     },
     "browserProfile": {
       "exactNode": "22.17.0",
@@ -221,6 +226,23 @@
         "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30626342589",
         "outcome": "failed-at-browser-profile-byte-snapshot",
         "reason": "Genes 1.41.4 deterministically changed the strict and classic browser-profile bundles while preserving their typed public surface, zero weak types, and exact runtime transcript."
+      },
+      {
+        "commit": "917d076e34aa1f06d844bdc0fb5d3aa81d9f5e20",
+        "runId": 30627760190,
+        "jobId": 91146833849,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30627760190",
+        "outcome": "failed-at-differential-byte-snapshot",
+        "reason": "The refreshed browser profile and full HXX gate passed, then Genes 1.41.4 deterministically changed the strict/classic differential tree and bundle bytes while preserving the public contract and byte-identical runtime transcript."
+      }
+    ],
+    "partialPasses": [
+      {
+        "commit": "917d076e34aa1f06d844bdc0fb5d3aa81d9f5e20",
+        "runId": 30627760190,
+        "jobId": 91146833809,
+        "job": "wordpress-runtime",
+        "outcome": "passed"
       }
     ]
   },
