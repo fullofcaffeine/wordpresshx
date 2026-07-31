@@ -156,8 +156,12 @@ uses an SDK sentinel and process group, while Windows uses a packaged native
 adapter with a private hidden console that assigns the still-suspended service
 to a kill-on-close Job Object before user code starts. Graceful shutdown is
 bounded and the forced path never uses `taskkill` or a stored service PID.
-Hosted Windows runtime verification is still pending, so this is not yet a
-Windows support claim. For a generated plugin, the already-required
+The focused hosted Windows corpus passes normal shutdown, forced cleanup of an
+ignoring descendant, rapid root replacement, abrupt supervisor loss, port and
+secret cleanup, and an unrelated-process control. It calls the production
+typed `ServiceSupervisor` and `RunningService` directly; it does not claim the
+separately withheld Windows watcher or generated-output durability paths. For a
+generated plugin, the already-required
 declaration is the complete common path:
 
 ```haxe

@@ -489,7 +489,10 @@ Costs and limits:
   service runtime, and controlled WordPress-boundary reload in real Chromium;
   it does not prove a real generated WordPress site, Next.js, Windows watcher
   behavior, network filesystems, or production behavior. The focused Windows
-  Job Object corpus is separate and remains pending until its hosted run passes.
+  Job Object corpus separately passes hosted normal, forced, rapid-replacement,
+  abrupt-supervisor, port/secret-cleanup, and unrelated-process cases through
+  the production typed supervisor. It does not exercise Windows generated-
+  output publication or filesystem watching.
 
 ## Evidence and commands
 

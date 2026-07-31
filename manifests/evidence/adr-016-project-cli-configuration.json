@@ -6,7 +6,7 @@
   "subject": {
     "adr": {
       "path": "docs/adr/016-project-and-cli-configuration.md",
-      "sha256": "afac8917a0fd3234a1080a461a6a76af032892127cad42242bc6972b2b8e30f3"
+      "sha256": "8765dca7b1f5172739b53c7b4bfe699d85462d8f209a821101dadcde8a5f6da9"
     },
     "architecture": {
       "path": "manifests/project-cli-architecture.json",

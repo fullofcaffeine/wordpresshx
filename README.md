@@ -58,8 +58,11 @@ shutdown reaches their workers and watchers. On POSIX, a live sentinel owns the
 process-group identity. The Windows implementation uses a narrow native helper
 that allocates a private hidden console, creates the user process suspended,
 assigns it to a kill-on-close Job Object, and resumes it only after ownership
-exists; its focused hosted Windows runtime result remains pending. Neither path
-forces the Haxe parent to kill a stored, potentially reused PID. A generated
+exists. Its focused hosted Windows process-tree corpus passes normal, forced,
+rapid-replacement, and abrupt-supervisor cleanup without killing an unrelated
+process. This is process-ownership evidence, not a claim that Windows watcher
+or generated-output durability is supported. Neither platform path forces the
+Haxe parent to kill a stored, potentially reused PID. A generated
 plugin now needs only its existing `WordPress.plugin()`
 authority for `wphx dev` to derive, install, activate, and reload it in the
 exact WordPress 7.0/MariaDB provider. Next.js remains an optional integration

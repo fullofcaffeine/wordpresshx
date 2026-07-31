@@ -4455,7 +4455,7 @@ assert sdk044_services["posixGracefulTimeoutMs"] == 3000
 assert sdk044_services["posixForcedSignal"] == "SIGKILL"
 assert sdk044_services["windowsJobObjectImplemented"] is True
 assert sdk044_services["windowsExternalServiceBehavior"] == (
-    "owned-job-object-pending-hosted-runtime-proof"
+    "owned-job-object-runtime-tested-hosted-windows"
 )
 assert sdk044_services["windowsJobObjectStartup"] == (
     "create-suspended-assign-before-resume"
@@ -4623,16 +4623,23 @@ assert sdk044_verification["posixProcessGroupIdentityReuseLocal"] == (
 assert sdk044_verification["posixDescendantCleanupHostedLinux"] == (
     "passed-run-30616078317-job-91109457929"
 )
-assert sdk044_verification["windowsDescendantCleanup"] == (
-    "implemented-pending-hosted-windows-runtime-proof"
-)
+for sdk044_windows_proof in (
+    "windowsDescendantCleanup",
+    "windowsRapidPayloadLeaderExit",
+    "windowsAbruptSupervisorExit",
+    "windowsPortAndRuntimeSecretCleanup",
+    "windowsUnrelatedProcessPreservation",
+):
+    assert sdk044_verification[sdk044_windows_proof] == (
+        "passed-run-30623166613-job-91132188345"
+    )
 assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
     "runtime-tested-by-sdk090"
 )
 assert dev_loop_implementation["claims"][
     "externalDevelopmentServiceDescendantCleanup"
-] == "runtime-tested-hosted-linux"
+] == "runtime-tested-hosted-linux-and-windows"
 sdk044_running_service_source = Path(
     "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx"
 ).read_text(encoding="utf-8")
@@ -4795,7 +4802,7 @@ for sdk044_unproven_claim in (
     )
 assert dev_loop_implementation["claims"][
     "windowsWatcherAndProcessBehavior"
-] == "process-tree-implementation-pending-hosted-runtime-proof"
+] == "process-tree-runtime-tested-hosted-windows"
 assert dev_loop_implementation["claims"]["publicPackagePublication"] == (
     "blocked"
 )
@@ -4842,6 +4849,11 @@ assert sdk044_receipt["verification"] == {
         "prevented-by-live-sentinel-and-distinct-replacement-group"
     ),
     "unrelatedProcessPreservationHostedLinux": "passed",
+    "windowsJobObjectDescendantCleanupHostedWindows": "passed",
+    "windowsRapidPayloadLeaderExitHostedWindows": "passed",
+    "windowsParentPipeEofCleanupHostedWindows": "passed",
+    "windowsUnrelatedProcessPreservationHostedWindows": "passed",
+    "windowsPortAndRuntimeSecretCleanupHostedWindows": "passed",
     "wordpressProviderControlledProcess": "passed",
     "wordpressComposeV2Syntax": "passed",
     "wordpressGeneratedConfigPrivacy": "passed",
@@ -4894,6 +4906,18 @@ elif sdk044_hosted["status"] == "passed":
     sdk044_evidence_suffix = "hosted"
 else:
     raise AssertionError("SDK-044 dev-loop hosted status is invalid")
+sdk044_windows_hosted = sdk044_receipt["windowsHostedWorkflow"]
+assert sdk044_windows_hosted == {
+    "workflow": "Windows development service ownership",
+    "job": "windows-dev-loop",
+    "step": "Prove complete Windows development service cleanup",
+    "runId": 30623166613,
+    "jobId": 91132188345,
+    "commit": "85dc3dd65d705b41d862707138649270495ef7b9",
+    "status": "passed",
+    "required": True,
+    "scope": "focused-production-supervisor-and-running-service-process-tree-proof",
+}
 for sdk044_claim_record in (
     dev_loop_implementation["claims"],
     sdk044_receipt["claims"],
@@ -4914,7 +4938,10 @@ for sdk044_claim_record in (
     )
     assert sdk044_claim_record[
         "externalDevelopmentServiceDescendantCleanup"
-    ] == "runtime-tested-hosted-linux"
+    ] == "runtime-tested-hosted-linux-and-windows"
+    assert sdk044_claim_record[
+        "windowsWatcherAndProcessBehavior"
+    ] == "process-tree-runtime-tested-hosted-windows"
     assert sdk044_claim_record["wordpressDevelopmentProvider"] == (
         "controlled-process-and-compose-syntax-runtime-tested-"
         + sdk044_evidence_suffix
