@@ -27,12 +27,17 @@ jobs:
       - name: Install exact Haxe and formatter dependencies
         shell: pwsh
         run: |
-          npm.cmd install --global lix@15.12.4
-          lix.cmd install haxe 4.3.7 --global
           haxelib.exe install formatter 1.18.0 --quiet
+          haxelib.exe install helder.set 0.3.1 --quiet
+          haxelib.exe install hxnodejs 10.0.0 --quiet
+          haxelib.exe git genes-ts https://github.com/fullofcaffeine/genes-ts.git 122162abefc2035b307508e521348ea4fb36dab7 --quiet --skip-dependencies
+          $genesPath = (haxelib.exe libpath genes-ts).Trim()
+          if ((git -C $genesPath rev-parse HEAD).Trim() -ne "122162abefc2035b307508e521348ea4fb36dab7") {
+            throw "Genes checkout does not match the exact CLI dependency lock"
+          }
+          python.exe packages/cli/scripts/verify-dependency-lock.py
           Push-Location packages/cli
-          lix.cmd --silent download
-          haxe.cmd profiles/wphx.hxml -js build/index.js
+          haxe.exe profiles/wphx.hxml -js build/index.js
           Pop-Location
           python.exe packages/cli/scripts/add-node-shebang.py packages/cli/build/index.js
       - name: Check strictly typed Haxe service supervision
