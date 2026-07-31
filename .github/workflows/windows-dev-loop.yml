@@ -32,7 +32,7 @@ jobs:
           haxelib.exe install formatter 1.18.0 --quiet
           Push-Location packages/cli
           lix.cmd --silent download
-          haxe.exe profiles/wphx.hxml -js build/index.js
+          haxe.cmd profiles/wphx.hxml -js build/index.js
           Pop-Location
           python.exe packages/cli/scripts/add-node-shebang.py packages/cli/build/index.js
       - name: Check strictly typed Haxe service supervision

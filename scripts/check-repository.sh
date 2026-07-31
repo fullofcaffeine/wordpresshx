@@ -4711,6 +4711,7 @@ sdk044_windows_workflow = Path(
 ).read_text(encoding="utf-8")
 assert "windows-dev-loop:" in sdk044_windows_workflow
 assert "runs-on: windows-2022" in sdk044_windows_workflow
+assert "haxe.cmd profiles/wphx.hxml" in sdk044_windows_workflow
 assert "Prove complete Windows development service cleanup" in (
     sdk044_windows_workflow
 )
