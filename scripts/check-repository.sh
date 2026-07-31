@@ -10,6 +10,7 @@ required_files=(
   .github/workflows/output-context.yml
   .github/workflows/repository.yml
   .github/workflows/unsafe-boundary-policy.yml
+  .github/workflows/windows-dev-loop.yml
   .beads/hooks/pre-commit
   .beads/hooks/pre-push
   AGENTS.md
@@ -29,6 +30,9 @@ required_files=(
   LICENSES/evidence/licenses/gutenberg-23.4.0-LICENSE.md
   LICENSES/evidence/licenses/wordpress-7.0-license.txt
   wordpress-hx-sdk-product-requirements.md
+  packages/cli/native/windows-service-host/windows_service_host.cpp
+  packages/cli/src/wordpresshx/cli/project/development/WindowsServiceHost.hx
+  scripts/dev-loop/windows_fake_haxe.cpp
   docs/README.md
   docs/adr/README.md
   docs/adr/001-product-and-repository-boundary.md
@@ -4447,9 +4451,30 @@ assert sdk044_services["posixIdentityRelease"] == (
 )
 assert sdk044_services["posixGracefulTimeoutMs"] == 3000
 assert sdk044_services["posixForcedSignal"] == "SIGKILL"
-assert sdk044_services["windowsJobObjectImplemented"] is False
+assert sdk044_services["windowsJobObjectImplemented"] is True
 assert sdk044_services["windowsExternalServiceBehavior"] == (
-    "fail-closed-before-spawn"
+    "owned-job-object-pending-hosted-runtime-proof"
+)
+assert sdk044_services["windowsJobObjectStartup"] == (
+    "create-suspended-assign-before-resume"
+)
+assert sdk044_services["windowsJobObjectLimit"] == (
+    "JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE"
+)
+assert sdk044_services["windowsConsoleGroupIdentity"] == (
+    "sdk-owned-live-native-host"
+)
+assert sdk044_services["windowsConsoleAllocation"] == (
+    "private-hidden-console-after-detached-launch"
+)
+assert sdk044_services["windowsControlAndPayloadBoundary"] == (
+    "private-stdin-and-explicit-inherited-handle-list"
+)
+assert sdk044_services["windowsGracefulRequest"] == (
+    "CTRL_BREAK_EVENT-to-live-helper-owned-console-group"
+)
+assert sdk044_services["windowsForcedTermination"] == (
+    "job-handle-never-taskkill-or-stored-pid"
 )
 for sdk044_implemented_service_part in (
     "serviceSupervisorImplemented",
@@ -4597,7 +4622,7 @@ assert sdk044_verification["posixDescendantCleanupHostedLinux"] == (
     "passed-run-30616078317-job-91109457929"
 )
 assert sdk044_verification["windowsDescendantCleanup"] == (
-    "pending-job-object-adapter"
+    "implemented-pending-hosted-windows-runtime-proof"
 )
 assert sdk044_verification["outcome"] == "passed"
 assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
@@ -4615,15 +4640,24 @@ sdk044_entry_source = Path(
 sdk044_service_host_source = Path(
     sdk044_code["serviceHost"]
 ).read_text(encoding="utf-8")
+sdk044_windows_host_source = Path(
+    sdk044_code["windowsServiceHost"]
+).read_text(encoding="utf-8")
+sdk044_windows_native_source = Path(
+    sdk044_code["windowsNativeAdapter"]
+).read_text(encoding="utf-8")
 sdk044_process_tree_test_source = Path(
     "scripts/dev-loop/test-production.py"
 ).read_text(encoding="utf-8")
-assert "detached: groupOwned" in sdk044_running_service_source
+assert "detached: treeOwned" in sdk044_running_service_source
 assert "ServiceHost.arguments(" in sdk044_running_service_source
 assert '["ignore", "pipe", "pipe", "ipc"]' in sdk044_running_service_source
-assert 'NodeGlobals.process().platform == "win32"' in (
+assert 'nodeProcess.platform == "win32"' in (
     sdk044_running_service_source
 )
+assert "WindowsServiceHost.executable(" in sdk044_running_service_source
+assert "WindowsServiceHost.arguments(" in sdk044_running_service_source
+assert "WindowsServiceHost.send(" in sdk044_running_service_source
 assert "ServiceHost.GRACEFUL_STOP" in sdk044_running_service_source
 assert "ServiceHost.FORCE_STOP" in sdk044_running_service_source
 assert "processGroupId" not in sdk044_running_service_source
@@ -4639,6 +4673,48 @@ assert "nodeProcess.kill(-nodeProcess.pid, signal)" in (
 assert 'nodeProcess.once(disconnectEvent, terminateOwnedGroup)' in (
     sdk044_service_host_source
 )
+assert "wphx-windows-service-host.exe" in sdk044_windows_host_source
+assert "child.stdin.write(command" in sdk044_windows_host_source
+for sdk044_windows_native_token in (
+    "JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE",
+    "AllocConsole",
+    "ShowWindow",
+    "CREATE_SUSPENDED",
+    "AssignProcessToJobObject",
+    "ResumeThread",
+    "PROC_THREAD_ATTRIBUTE_HANDLE_LIST",
+    "GenerateConsoleCtrlEvent",
+    "TerminateJobObject",
+):
+    assert sdk044_windows_native_token in sdk044_windows_native_source
+assert sdk044_windows_native_source.index("CREATE_SUSPENDED") < (
+    sdk044_windows_native_source.index("AssignProcessToJobObject")
+)
+assert sdk044_windows_native_source.index("AssignProcessToJobObject") < (
+    sdk044_windows_native_source.index("ResumeThread")
+)
+assert sdk044_windows_native_source.index("AllocatePrivateConsole()") < (
+    sdk044_windows_native_source.index("CreateProcessW(")
+)
+assert "run_abrupt_supervisor_exit_case" in sdk044_process_tree_test_source
+assert '"parentPipeEofTerminatesTree": True' in (
+    sdk044_process_tree_test_source
+)
+for sdk044_windows_forbidden_token in (
+    "taskkill",
+    "OpenProcess(",
+    "system(",
+):
+    assert sdk044_windows_forbidden_token not in sdk044_windows_native_source
+sdk044_windows_workflow = Path(
+    ".github/workflows/windows-dev-loop.yml"
+).read_text(encoding="utf-8")
+assert "windows-dev-loop:" in sdk044_windows_workflow
+assert "runs-on: windows-2022" in sdk044_windows_workflow
+assert "Prove complete Windows development service cleanup" in (
+    sdk044_windows_workflow
+)
+assert "--local-process-tree packages/cli/build" in sdk044_windows_workflow
 assert "invalid internal service-host invocation" in sdk044_entry_source
 assert "run_process_tree_service_case" in sdk044_process_tree_test_source
 assert "run_rapid_leader_service_case" in sdk044_process_tree_test_source
@@ -4690,13 +4766,15 @@ for sdk044_reference in dev_loop_implementation["referencePatterns"]:
 for sdk044_unproven_claim in (
     "wordpressDevelopmentService",
     "nextjsDevelopmentService",
-    "windowsWatcherAndProcessBehavior",
     "networkFilesystemBehavior",
     "productionSupport",
 ):
     assert dev_loop_implementation["claims"][sdk044_unproven_claim] == (
         "not-tested"
     )
+assert dev_loop_implementation["claims"][
+    "windowsWatcherAndProcessBehavior"
+] == "process-tree-implementation-pending-hosted-runtime-proof"
 assert dev_loop_implementation["claims"]["publicPackagePublication"] == (
     "blocked"
 )
@@ -7351,7 +7429,7 @@ assert strict_haxe_project_scope["entryPath"] == (
 )
 assert strict_haxe_project_scope["haxeFileCount"] == len(
     strict_haxe_project_paths
-) == 67
+) == 68
 assert strict_haxe_project_scope["findingCount"] == strict_haxe_findings(
     strict_haxe_project_paths
 ) == 0

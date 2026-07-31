@@ -151,7 +151,13 @@ ZIP. A skipped producer is never represented as a site build.
 project-bound Haxe wait cache when its lease is safe, watches the authenticated
 effective-input graph, and serializes coalesced rebuilds. Failed rebuilds keep
 the exact last-good manifest live. `wphx dev --services=none` is the explicit
-compile/watch-only form. For a generated plugin, the already-required
+compile/watch-only form. External service trees are owned as one unit: POSIX
+uses an SDK sentinel and process group, while Windows uses a packaged native
+adapter with a private hidden console that assigns the still-suspended service
+to a kill-on-close Job Object before user code starts. Graceful shutdown is
+bounded and the forced path never uses `taskkill` or a stored service PID.
+Hosted Windows runtime verification is still pending, so this is not yet a
+Windows support claim. For a generated plugin, the already-required
 declaration is the complete common path:
 
 ```haxe

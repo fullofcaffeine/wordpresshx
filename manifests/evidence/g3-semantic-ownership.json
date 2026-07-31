@@ -73,7 +73,7 @@
     },
     "cliDocumentation": {
       "path": "packages/cli/README.md",
-      "sha256": "8470cdd3eab09b5cc6d6be528628d83f373399b4a1d610c147d506997a2d7923"
+      "sha256": "7abaeb9f03c6ceccd90fac906050f51057a3192dc31c37e1a250dc905a3bf4a7"
     }
   },
   "acceptance": {

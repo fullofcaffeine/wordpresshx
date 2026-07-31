@@ -53,11 +53,13 @@ clean/doctor command foundation with exact project discovery and fail-closed
 publication. SDK-044 now implements and locally production-gate verifies the
 real compile/watch core, isolated compiler lifecycle, last-good rebuilds, and
 clean compiler shutdown, typed service supervision, and automatic WordPress
-reload. External services now enter dedicated POSIX process groups so shutdown
-reaches their workers and watchers. An SDK-owned sentinel keeps each group
-identity stable even when the user command exits rapidly, then releases it only
-with the final group-wide stop; the exact Linux hosted rerun and the separate
-Windows Job Object adapter remain open evidence work. A generated
+reload. External services now enter an SDK-owned process-tree boundary so
+shutdown reaches their workers and watchers. On POSIX, a live sentinel owns the
+process-group identity. The Windows implementation uses a narrow native helper
+that allocates a private hidden console, creates the user process suspended,
+assigns it to a kill-on-close Job Object, and resumes it only after ownership
+exists; its focused hosted Windows runtime result remains pending. Neither path
+forces the Haxe parent to kill a stored, potentially reused PID. A generated
 plugin now needs only its existing `WordPress.plugin()`
 authority for `wphx dev` to derive, install, activate, and reload it in the
 exact WordPress 7.0/MariaDB provider. Next.js remains an optional integration

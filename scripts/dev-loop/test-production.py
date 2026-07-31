@@ -248,6 +248,14 @@ if (args.length === 1 && args[0] === '--version') {
 """
     )
     haxe.chmod(0o755)
+    if sys.platform == "win32":
+        fake_haxe = os.environ.get("WPHX_WINDOWS_FAKE_HAXE_EXE")
+        if fake_haxe is None:
+            raise AssertionError(
+                "WPHX_WINDOWS_FAKE_HAXE_EXE is required for the Windows Job Object gate"
+            )
+        shutil.copy2(fake_haxe, tools / "haxe.exe")
+        os.environ["WPHX_WINDOWS_FAKE_HAXE_SCRIPT"] = str(haxe.resolve())
     lix = tools / "lix"
     lix.write_text(
         "#!/bin/sh\nset -eu\n[ \"${1:-}\" = --version ]\nprintf '%s\\n' 15.12.2\n"
@@ -415,15 +423,19 @@ function stop(signal) {
 }
 process.on('SIGTERM', () => stop('SIGTERM'));
 process.on('SIGINT', () => stop('SIGINT'));
+process.on('SIGBREAK', () => stop('SIGBREAK'));
 if (serviceId === 'process-tree' || serviceId === 'process-tree-rapid') {
   const rapidMarker = '.wphx/runtime/rapid-leader-exit.once';
   const rapidExit = serviceId === 'process-tree-rapid' && !fs.existsSync(rapidMarker);
   if (rapidExit) {
     fs.writeFileSync(rapidMarker, 'armed\\n');
-    process.on('SIGUSR1', () => {
+    const rapidTrigger = '.wphx/runtime/rapid-leader-trigger';
+    const rapidTimer = setInterval(() => {
+      if (!fs.existsSync(rapidTrigger)) return;
+      clearInterval(rapidTimer);
       record('leader-exit');
       process.exit(0);
-    });
+    }, 10);
   }
   spawn(process.execPath, ['src/dev-service-child.mjs', serviceId, portText, tracePath, String(process.pid), rapidExit ? 'rapid' : 'stable'], {
     env: process.env,
@@ -472,6 +484,10 @@ process.on('SIGTERM', () => {
   record('stopped');
   process.exit(0);
 });
+process.on('SIGBREAK', () => {
+  record('stopped');
+  process.exit(0);
+});
 setInterval(() => {}, 1000);
 """
     )
@@ -498,10 +514,11 @@ const server = http.createServer((request, response) => {
   response.end();
 });
 process.on('SIGTERM', () => record('ignored-term'));
+process.on('SIGBREAK', () => record('ignored-term'));
 server.listen(port, '127.0.0.1', () => {
   record('started');
   if (behavior === 'rapid') {
-    setTimeout(() => process.kill(Number(rootPid), 'SIGUSR1'), 200);
+    setTimeout(() => fs.writeFileSync('.wphx/runtime/rapid-leader-trigger', rootPid + '\\n'), 200);
   }
 });
 """
@@ -781,10 +798,6 @@ class LocalDevSession(DevSession):
         *,
         service_mode: str | None = None,
     ) -> None:
-        if sys.platform == "win32":
-            raise AssertionError(
-                "the local process-group probe is POSIX-only; Windows requires its Job Object gate"
-            )
         self.name = "wordpresshx-sdk044-local-" + uuid.uuid4().hex[:12]
         self.events = []
         self.stdout_lines = []
@@ -803,6 +816,9 @@ class LocalDevSession(DevSession):
         if service_mode in {"process-tree", "process-tree-rapid"}:
             environment["WPHX_TREE_SECRET"] = "tree-secret-value"
         self.project = project
+        creationflags = (
+            subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+        )
         self.process = subprocess.Popen(
             [
                 "node",
@@ -818,7 +834,8 @@ class LocalDevSession(DevSession):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             bufsize=1,
-            start_new_session=True,
+            start_new_session=sys.platform != "win32",
+            creationflags=creationflags,
         )
         assert self.process.stdout is not None
         assert self.process.stderr is not None
@@ -832,7 +849,9 @@ class LocalDevSession(DevSession):
         self.stderr_thread.start()
 
     def stop(self) -> None:
-        self.process.send_signal(signal.SIGINT)
+        self.process.send_signal(
+            signal.CTRL_BREAK_EVENT if sys.platform == "win32" else signal.SIGINT
+        )
         status = self.process.wait(timeout=15)
         self.stdout_thread.join(timeout=2)
         self.stderr_thread.join(timeout=2)
@@ -840,8 +859,8 @@ class LocalDevSession(DevSession):
 
     def signal_pid(self, pid: int) -> None:
         try:
-            os.kill(pid, signal.SIGKILL)
-        except ProcessLookupError:
+            os.kill(pid, signal.SIGTERM if sys.platform == "win32" else signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
             pass
 
     def assert_container_removed(self, timeout: float = 5.0) -> None:
@@ -877,15 +896,24 @@ class LocalDevSession(DevSession):
         return result.stdout.strip()
 
     def start_unrelated(self, pid_path: str) -> None:
+        creationflags = (
+            subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+        )
         subprocess.Popen(
             ["node", "src/dev-service-unrelated.mjs", pid_path],
             cwd=self.project,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            start_new_session=True,
+            start_new_session=sys.platform != "win32",
+            creationflags=creationflags,
         )
 
     def force_cleanup(self) -> None:
+        if sys.platform == "win32":
+            if self.process.poll() is None:
+                self.process.kill()
+                self.process.wait(timeout=10)
+            return
         trace_path = self.project / ".wphx/runtime/service-trace.jsonl"
         if trace_path.exists():
             for value in service_trace(self.project):
@@ -1050,7 +1078,8 @@ def wait_for_process_group_gone(
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         result = session.run_node_result(
-            "try{process.kill(-Number(process.argv[1]),0);"
+            "const id=Number(process.argv[1]);"
+            "try{process.kill(process.platform==='win32'?id:-id,0);"
             "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
             process_group_id,
         )
@@ -1065,11 +1094,36 @@ def wait_for_process_group_gone(
 def process_group_alive(session: DevSession, process_group_id: int) -> bool:
     return (
         session.run_node_result(
-            "try{process.kill(-Number(process.argv[1]),0);"
+            "const id=Number(process.argv[1]);"
+            "try{process.kill(process.platform==='win32'?id:-id,0);"
             "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
             process_group_id,
         )
         == "alive"
+    )
+
+
+def wait_for_process_ids_gone(
+    session: DevSession, process_ids: list[int], timeout: float = 2.0
+) -> None:
+    deadline = time.monotonic() + timeout
+    remaining = process_ids
+    while time.monotonic() < deadline:
+        remaining = [
+            process_id
+            for process_id in process_ids
+            if session.run_node_result(
+                "try{process.kill(Number(process.argv[1]),0);"
+                "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+                process_id,
+            )
+            == "alive"
+        ]
+        if not remaining:
+            return
+        time.sleep(0.025)
+    raise AssertionError(
+        f"owned process IDs still live after bounded termination: {remaining}"
     )
 
 
@@ -1397,6 +1451,7 @@ def run_process_tree_service_case(
             for value in stopped_trace
         ), stopped_trace
         wait_for_process_group_gone(session, process_group_id)
+        wait_for_process_ids_gone(session, owned_pids)
         assert (
             session.run_node_result(
                 "try{process.kill(Number(process.argv[1]),0);"
@@ -1506,6 +1561,10 @@ def run_rapid_leader_service_case(
             for value in service_trace(project)
         )
         wait_for_process_group_gone(session, first_group_id)
+        wait_for_process_ids_gone(
+            session,
+            [int(value["pid"]) for value in started[:3]],
+        )
         assert process_group_alive(session, second_group_id)
         assert (
             session.run_node_result(
@@ -1540,6 +1599,10 @@ def run_rapid_leader_service_case(
             predicate=lambda value: value["payload"].get("generation") == 2,
         )
         wait_for_process_group_gone(session, second_group_id)
+        wait_for_process_ids_gone(
+            session,
+            [int(value["pid"]) for value in started[3:]],
+        )
         assert (
             session.run_node_result(
                 "const net=require('net');"
@@ -1581,6 +1644,96 @@ def run_rapid_leader_service_case(
         }
     finally:
         if unrelated_pid is not None and session.process.poll() is None:
+            session.signal_pid(unrelated_pid)
+        session.force_cleanup()
+
+
+def run_abrupt_supervisor_exit_case(
+    runtime: Path, parent: Path
+) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(
+        parent, "services-process-tree-abrupt-supervisor"
+    )
+    service_id = "process-tree"
+    admit_runtime_environment(project, "WPHX_TREE_SECRET", service_id)
+    mode_path = project / ".wphx/runtime/service-mode.txt"
+    mode_path.parent.mkdir(parents=True, exist_ok=True)
+    mode_path.write_text(service_id + "\n")
+    session = LocalDevSession(
+        runtime, evidence, project, tools, service_mode=service_id
+    )
+    unrelated_pid: int | None = None
+    try:
+        _, ready = session.wait_for(
+            "service-ready",
+            predicate=lambda value: value["payload"].get("serviceId")
+            == service_id,
+        )
+        session.wait_for("watch-ready")
+        port = int(
+            str(ready["payload"]["url"])
+            .removeprefix("http://127.0.0.1:")
+            .removesuffix("/")
+        )
+        started = [
+            value
+            for value in service_trace(project)
+            if value["event"] == "started"
+        ]
+        assert len(started) == 3, started
+        assert all(value["treeSecretPresent"] is True for value in started)
+        owned_pids = [int(value["pid"]) for value in started]
+        root = next(value for value in started if value.get("role") is None)
+        process_group_id = int(root["ppid"])
+        assert process_group_id not in owned_pids
+
+        unrelated_path = ".wphx/runtime/unrelated.pid"
+        session.start_unrelated(unrelated_path)
+        unrelated_host_path = project / unrelated_path
+        deadline = time.monotonic() + 5
+        while not unrelated_host_path.exists() and time.monotonic() < deadline:
+            time.sleep(0.025)
+        assert unrelated_host_path.exists()
+        unrelated_pid = int(unrelated_host_path.read_text())
+
+        session.process.kill()
+        session.process.wait(timeout=10)
+        session.stdout_thread.join(timeout=2)
+        session.stderr_thread.join(timeout=2)
+
+        wait_for_process_group_gone(session, process_group_id, timeout=5)
+        wait_for_process_ids_gone(session, owned_pids, timeout=5)
+        assert (
+            session.run_node_result(
+                "try{process.kill(Number(process.argv[1]),0);"
+                "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+                unrelated_pid,
+            )
+            == "alive"
+        )
+        assert (
+            session.run_node_result(
+                "const net=require('net');"
+                "const server=net.createServer();"
+                "server.once('error',()=>process.exit(1));"
+                "server.listen(Number(process.argv[1]),'127.0.0.1',()=>{"
+                "process.stdout.write('free');server.close()})",
+                port,
+            )
+            == "free"
+        )
+
+        session.signal_pid(unrelated_pid)
+        unrelated_pid = None
+        return {
+            "ownedProcessCount": 4,
+            "parentPipeEofTerminatesTree": True,
+            "portReleased": port,
+            "runtimeSecretProcessesGone": True,
+            "unrelatedProcessPreserved": True,
+        }
+    finally:
+        if unrelated_pid is not None:
             session.signal_pid(unrelated_pid)
         session.force_cleanup()
 
@@ -2074,7 +2227,14 @@ def main() -> None:
             rapid_summary = run_rapid_leader_service_case(
                 Path(sys.argv[2]), Path(raw), local=True
             )
-            summary = {"normal": summary, "rapidLeader": rapid_summary}
+            abrupt_summary = run_abrupt_supervisor_exit_case(
+                Path(sys.argv[2]), Path(raw)
+            )
+            summary = {
+                "abruptSupervisorExit": abrupt_summary,
+                "normal": summary,
+                "rapidLeader": rapid_summary,
+            }
         print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
         return
     if len(sys.argv) != 3:

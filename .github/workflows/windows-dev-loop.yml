@@ -1,0 +1,54 @@
+name: Windows development service ownership
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-dev-loop:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install exact project Node runtime
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22.17.0
+          package-manager-cache: false
+      - name: Install Haxe 4.3.7
+        uses: krdlab/setup-haxe@d93667502be3b4f31a94a3308a74388f2e178a8d # v2.1.0
+        with:
+          haxe-version: 4.3.7
+      - name: Install exact Haxe and formatter dependencies
+        shell: pwsh
+        run: |
+          npm.cmd install --global lix@15.12.4
+          lix.cmd install haxe 4.3.7 --global
+          haxelib.exe install formatter 1.18.0 --quiet
+          Push-Location packages/cli
+          lix.cmd --silent download
+          haxe.exe profiles/wphx.hxml -js build/index.js
+          Pop-Location
+          python.exe packages/cli/scripts/add-node-shebang.py packages/cli/build/index.js
+      - name: Check strictly typed Haxe service supervision
+        shell: pwsh
+        run: |
+          haxelib.exe run formatter --check -s packages/cli/src
+          python.exe -c "import pathlib,re,sys; paths=[pathlib.Path('packages/cli/src/wordpresshx/cli/project/DevEngine.hx'),pathlib.Path('packages/cli/src/wordpresshx/cli/project/development')]; files=[p for root in paths for p in ([root] if root.is_file() else root.rglob('*.hx'))]; bad=[f'{p}:{i}:{line}' for p in files for i,line in enumerate(p.read_text(encoding='utf-8').splitlines(),1) if re.search(r'\b(?:Dynamic|Any|cast|Reflect|untyped)\b',line)]; print('\n'.join(bad)); sys.exit(bool(bad))"
+      - name: Compile the Win32 Job Object host and test launcher
+        shell: cmd
+        run: |
+          call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          if not exist packages\cli\build\native mkdir packages\cli\build\native
+          cl /nologo /std:c++20 /EHsc /W4 /WX /permissive- /utf-8 /DUNICODE /D_UNICODE packages\cli\native\windows-service-host\windows_service_host.cpp /Fe:packages\cli\build\native\wphx-windows-service-host.exe
+          cl /nologo /std:c++20 /EHsc /W4 /WX /permissive- /utf-8 /DUNICODE /D_UNICODE scripts\dev-loop\windows_fake_haxe.cpp /Fe:packages\cli\build\native\wphx-windows-fake-haxe.exe
+      - name: Prove complete Windows development service cleanup
+        shell: pwsh
+        run: |
+          $env:WPHX_WINDOWS_FAKE_HAXE_EXE = (Resolve-Path packages/cli/build/native/wphx-windows-fake-haxe.exe)
+          python.exe scripts/dev-loop/test-production.py --local-process-tree packages/cli/build

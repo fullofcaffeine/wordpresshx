@@ -349,11 +349,16 @@ HTTP, TCP, process, or admitted log probe. A process existing is not equivalent
 to an HTTP service being ready.
 
 Secret runtime variables are passed only to declared services and are redacted
-from output. Commands are spawned in owned process groups. Graceful termination
-has a bounded timeout followed by forced termination of owned descendants;
-compatible attached processes are never killed. Unexpected exits produce a
-structured service diagnostic and follow the typed bounded restart policy rather
-than an infinite silent loop.
+from output. Commands are spawned in owned process-tree boundaries. POSIX uses
+an SDK-owned sentinel as the stable process-group leader. Windows uses a narrow
+native adapter: it allocates its own hidden console, creates the service
+suspended, assigns it to a kill-on-close Job Object, and only then resumes it.
+The helper remains the live console-group identity for the bounded graceful
+request, while forced cleanup uses the Job handle rather than `taskkill`,
+`OpenProcess`, or a stored service PID. Compatible attached and unrelated
+processes are never killed. Unexpected
+exits produce a structured service diagnostic and follow the typed bounded
+restart policy rather than an infinite silent loop.
 
 Core recognizes only its built-in WordPress provider and the explicit external
 boundary. Next.js support belongs to an optional, versioned integration package
@@ -482,8 +487,9 @@ Costs and limits:
 - The historical contract corpus proves architecture and deterministic state
   transitions. SDK-044 separately proves the watcher, process cleanup, typed
   service runtime, and controlled WordPress-boundary reload in real Chromium;
-  it does not prove a real generated WordPress site, Next.js, Windows, network
-  filesystems, or production behavior.
+  it does not prove a real generated WordPress site, Next.js, Windows watcher
+  behavior, network filesystems, or production behavior. The focused Windows
+  Job Object corpus is separate and remains pending until its hosted run passes.
 
 ## Evidence and commands
 

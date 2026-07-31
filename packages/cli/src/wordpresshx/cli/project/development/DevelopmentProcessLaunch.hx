@@ -21,5 +21,5 @@ typedef DevelopmentProcessLaunch = {
  */
 enum DevelopmentProcessOwnership {
 	DirectChild;
-	PosixProcessGroup;
+	OwnedProcessTree;
 }

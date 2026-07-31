@@ -17,6 +17,11 @@ import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentService;
 import wordpresshx.cli.project.development.DevelopmentPlan.DevelopmentServiceKind;
 import wordpresshx.cli.project.development.DevelopmentProcessLaunch.DevelopmentProcessOwnership;
 
+private typedef OwnedSpawnOptions = {
+	> js.node.ChildProcessSpawnOptions,
+	final windowsHide:Bool;
+}
+
 /** One owned no-shell process with bounded output retained only for readiness. */
 class RunningService {
 	static inline final LOG_WINDOW = 65536;
@@ -31,7 +36,8 @@ class RunningService {
 	public var stopping(default, null) = false;
 
 	final child:NodeChildProcess;
-	final groupOwned:Bool;
+	final treeOwned:Bool;
+	final windowsOwned:Bool;
 	final events:DevelopmentEvents;
 	final onFailure:RunningService->CliFailure->Void;
 	final cleanup:Null<(Void->Void)->Void>;
@@ -53,38 +59,48 @@ class RunningService {
 			case External: externalLaunch(service, port, workingDirectory, environment);
 			case WordPress: WordPressProvider.launch(project, service, port, workingDirectory, environment, reload);
 		};
-		if (launch.ownership == PosixProcessGroup && NodeGlobals.process().platform == "win32") {
-			throw new CliFailure("WPHX2326", "development service " + service.id + " requires Windows Job Object ownership before it can start", 7,
-				"service-start", null, [
-					"Run this external service on a supported POSIX host or install a WordPressHx build with the Windows Job Object adapter."
-				]);
-		}
-		final groupOwned = launch.ownership == PosixProcessGroup;
+		final treeOwned = launch.ownership == OwnedProcessTree;
 		final nodeProcess = NodeGlobals.process();
-		final executable = groupOwned ? nodeProcess.execPath : launch.executable;
-		final arguments = groupOwned ? ServiceHost.arguments(nodeProcess.argv[1], launch.executable, launch.arguments) : launch.arguments;
-		final child = ChildProcess.spawn(executable, arguments, {
+		final windowsOwned = treeOwned && nodeProcess.platform == "win32";
+		final executable = if (windowsOwned) {
+			WindowsServiceHost.executable(nodeProcess.argv[1]);
+		} else if (treeOwned) {
+			nodeProcess.execPath;
+		} else {
+			launch.executable;
+		};
+		final arguments = if (windowsOwned) {
+			WindowsServiceHost.arguments(launch.executable, launch.arguments);
+		} else if (treeOwned) {
+			ServiceHost.arguments(nodeProcess.argv[1], launch.executable, launch.arguments);
+		} else {
+			launch.arguments;
+		};
+		final spawnOptions:OwnedSpawnOptions = {
 			cwd: launch.workingDirectory,
-			detached: groupOwned,
+			detached: treeOwned,
 			env: launch.environment,
 			shell: false,
-			stdio: groupOwned ? ["ignore", "pipe", "pipe", "ipc"] : ["ignore", "pipe", "pipe"]
-		});
+			stdio: windowsOwned ? ["pipe", "pipe", "pipe"] : treeOwned ? ["ignore", "pipe", "pipe", "ipc"] : ["ignore", "pipe", "pipe"],
+			windowsHide: windowsOwned
+		};
+		final child = ChildProcess.spawn(executable, arguments, spawnOptions);
 		try {
 			final plugin = project.deployablePlugin;
-			return new RunningService(service, port, child, groupOwned, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
+			return new RunningService(service, port, child, treeOwned, windowsOwned, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
 		} catch (error:Exception) {
 			child.kill("SIGKILL");
 			throw error;
 		}
 	}
 
-	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, groupOwned:Bool, events:DevelopmentEvents,
+	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, treeOwned:Bool, windowsOwned:Bool, events:DevelopmentEvents,
 			onFailure:RunningService->CliFailure->Void, cleanup:Null<(Void->Void)->Void>, wordpressPluginEntry:Null<String>) {
 		this.service = service;
 		this.port = port;
 		this.child = child;
-		this.groupOwned = groupOwned;
+		this.treeOwned = treeOwned;
+		this.windowsOwned = windowsOwned;
 		this.events = events;
 		this.onFailure = onFailure;
 		this.cleanup = cleanup;
@@ -92,7 +108,7 @@ class RunningService {
 		this.url = service.url.scheme + "://127.0.0.1:" + port + service.url.path;
 		capture(child.stdout);
 		capture(child.stderr);
-		if (groupOwned) {
+		if (treeOwned && !windowsOwned) {
 			final messageEvent:Event<String->Void> = "message";
 			child.on(messageEvent, processHostMessage);
 		}
@@ -113,14 +129,14 @@ class RunningService {
 		stopReason = reason;
 		stopCallback = callback;
 		if (!alive) {
-			if (!groupOwned) {
+			if (!treeOwned) {
 				finishStop();
 			} else {
 				beginGroupStop();
 			}
 			return;
 		}
-		if (!groupOwned) {
+		if (!treeOwned) {
 			child.kill("SIGTERM");
 			stopTimer = Timer.delay(() -> {
 				if (alive) {
@@ -198,7 +214,7 @@ class RunningService {
 	}
 
 	function beginGroupStop():Void {
-		if (!groupOwned) {
+		if (!treeOwned) {
 			finishStop();
 			return;
 		}
@@ -231,7 +247,7 @@ class RunningService {
 			stopTimer.stop();
 			stopTimer = null;
 		}
-		if (!groupOwned) {
+		if (!treeOwned) {
 			finishStop();
 			return;
 		}
@@ -239,11 +255,16 @@ class RunningService {
 	}
 
 	function sendHostCommand(command:String):Void {
-		if (!hostAlive || !hostChannelConnected(child)) {
+		if (!hostAlive) {
 			return;
 		}
 		try {
-			sendIpc(child, command);
+			if (windowsOwned) {
+				final windowsCommand = command == ServiceHost.GRACEFUL_STOP ? WindowsServiceHost.GRACEFUL_STOP : WindowsServiceHost.FORCE_STOP;
+				WindowsServiceHost.send(child, windowsCommand);
+			} else if (hostChannelConnected(child)) {
+				sendIpc(child, command);
+			}
 		} catch (_:Exception) {}
 	}
 
@@ -266,7 +287,7 @@ class RunningService {
 			],
 			workingDirectory: workingDirectory,
 			environment: environment,
-			ownership: PosixProcessGroup,
+			ownership: OwnedProcessTree,
 			cleanup: null
 		};
 	}

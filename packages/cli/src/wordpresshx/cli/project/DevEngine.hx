@@ -26,6 +26,7 @@ class DevEngine {
 	final pending:Map<String, Bool> = [];
 	final sigintEvent:Event<Void->Void> = "SIGINT";
 	final sigtermEvent:Event<Void->Void> = "SIGTERM";
+	final sigbreakEvent:Event<Void->Void> = "SIGBREAK";
 	var context:ProjectContext;
 	var debounce:Null<Timer>;
 	var building = false;
@@ -56,6 +57,9 @@ class DevEngine {
 		final nodeProcess = NodeGlobals.process();
 		nodeProcess.on(sigintEvent, onSigint);
 		nodeProcess.on(sigtermEvent, onSigterm);
+		if (nodeProcess.platform == "win32") {
+			nodeProcess.on(sigbreakEvent, onSigbreak);
+		}
 		compiler.ensure(context, (available, started) -> {
 			if (shuttingDown) {
 				return;
@@ -292,6 +296,10 @@ class DevEngine {
 		shutdown("SIGTERM", 143);
 	}
 
+	function onSigbreak():Void {
+		shutdown("SIGBREAK", 130);
+	}
+
 	function shutdown(signal:String, exitCode:Int):Void {
 		if (shuttingDown) {
 			return;
@@ -320,6 +328,9 @@ class DevEngine {
 				final nodeProcess = NodeGlobals.process();
 				nodeProcess.removeListener(sigintEvent, onSigint);
 				nodeProcess.removeListener(sigtermEvent, onSigterm);
+				if (nodeProcess.platform == "win32") {
+					nodeProcess.removeListener(sigbreakEvent, onSigbreak);
+				}
 				nodeProcess.exitCode = exitCode;
 				active = null;
 			});
