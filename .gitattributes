@@ -1,3 +1,7 @@
 # Content-addressed Oracle reports are imported byte-for-byte; Markdown hard
 # line breaks may intentionally end with spaces.
 review/oracle/results/**/ORACLE-*.md whitespace=-trailing-space
+
+# Project-contract fixtures carry exact byte digests and must survive checkout
+# without platform line-ending conversion.
+fixtures/project-cli/project/** -text

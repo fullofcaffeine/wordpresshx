@@ -4709,6 +4709,8 @@ for sdk044_windows_forbidden_token in (
 sdk044_windows_workflow = Path(
     ".github/workflows/windows-dev-loop.yml"
 ).read_text(encoding="utf-8")
+sdk044_git_attributes = Path(".gitattributes").read_text(encoding="utf-8")
+assert "fixtures/project-cli/project/** -text" in sdk044_git_attributes
 assert "windows-dev-loop:" in sdk044_windows_workflow
 assert "runs-on: windows-2022" in sdk044_windows_workflow
 assert "haxe.exe profiles/wphx.hxml" in sdk044_windows_workflow
