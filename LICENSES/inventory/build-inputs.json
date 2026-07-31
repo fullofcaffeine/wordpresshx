@@ -81,7 +81,7 @@
     },
     {
       "path": "packages/gutenberg/dependency-lock.json",
-      "sha256": "0af68e8e13a726352a8435bddc833b4394ffa5038fc8a6ca794beeb6d07ecdf0",
+      "sha256": "a7a4d82e64bc5f9d1e2f34124494d2c52422a0a570828055223a2467547147fe",
       "parser": "haxe-or-browser-dependency-lock",
       "componentObservationCount": 5
     },
@@ -787,7 +787,26 @@
           "locator": "/compiler",
           "scope": "compiler",
           "declaredLicenses": []
-        },
+        }
+      ]
+    },
+    {
+      "id": "haxelib:genes-ts@1.41.4#bb6930d3ad5d9c0f",
+      "ecosystem": "haxelib",
+      "name": "genes-ts",
+      "version": "1.41.4",
+      "resolution": "git:98a51bdb7a5a1e31002b9ba47855d41905ea48ef#tree=9c62fb279029eeafbf18a37cbab632b46ecd96bc",
+      "declaredLicenses": [
+        "MIT"
+      ],
+      "licenseEvidenceStatus": "exact-component-license-evidence-recorded",
+      "distributionClass": "repository-build-input",
+      "publicationDecision": "not-a-final-artifact-conclusion",
+      "reviewBindings": [],
+      "exactLicenseEvidenceIds": [
+        "genes-ts-1.41.4"
+      ],
+      "observedIn": [
         {
           "source": "packages/gutenberg/dependency-lock.json",
           "locator": "/compiler",
@@ -61055,7 +61074,7 @@
   "summary": {
     "sourceCount": 23,
     "componentObservationCount": 3825,
-    "uniqueComponentCount": 1781,
+    "uniqueComponentCount": 1782,
     "unresolvedLicenseEvidenceCount": 0
   }
 }

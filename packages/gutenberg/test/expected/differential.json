@@ -13,8 +13,8 @@
   },
   "compilerProvenance": {
     "name": "genes-ts",
-    "version": "1.38.0",
-    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+    "version": "1.41.4",
+    "commit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
     "referenceFixture": {
       "path": "tests/genes-ts/snapshot/react/src/DualJsxMain.hx",
       "blob": "eb27affc2acea430120308cd262a4d31b0ac4edb",

@@ -37,8 +37,8 @@ safe_logical_path = TOOLS.safe_logical_path
 
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 STABLE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/@+\-]{0,255}$")
-GENES_COMMIT = "122162abefc2035b307508e521348ea4fb36dab7"
-GENES_VERSION = "1.38.0"
+GENES_COMMIT = "98a51bdb7a5a1e31002b9ba47855d41905ea48ef"
+GENES_VERSION = "1.41.4"
 PROOF_RECEIPT = "G2.4-WORDPRESS-SCRIPTS-SOURCE-CORRELATION"
 WEBPACK_PREFIX = "webpack://@wordpress-hx/sdk-033-build-tooling/"
 HAXE_CLASSPATH_PREFIX = "haxe://classpath/"

@@ -3,7 +3,7 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "WordPressHx lock-derived build inputs",
-  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/4bf07f9739a33abb2a443347dd73fc6185713e69e740daa6e6ea6738bd938ee6",
+  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/2c0a3eea25e02c647719899f19df9983b667ce8589ddf27d18f8061edbf16840",
   "creationInfo": {
     "created": "1970-01-01T00:00:00Z",
     "creators": [
@@ -407,6 +407,24 @@
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
           "referenceLocator": "pkg:generic/genes-ts@1.38.0?ecosystem=haxelib"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-576695ab7766fe7ba875",
+      "name": "genes-ts",
+      "versionInfo": "1.41.4",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: haxelib:genes-ts@1.41.4#bb6930d3ad5d9c0f",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/genes-ts@1.41.4?ecosystem=haxelib"
         }
       ]
     },
@@ -32183,6 +32201,11 @@
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
       "relatedSpdxElement": "SPDXRef-Package-3df7212975ce721856fc"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-576695ab7766fe7ba875"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",

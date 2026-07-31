@@ -66,7 +66,7 @@ haxe_library_cache="$(
     );
   '
 )"
-genes_root="${haxe_library_cache}/genes-ts/1.38.0/github/122162abefc2035b307508e521348ea4fb36dab7/src"
+genes_root="${haxe_library_cache}/genes-ts/1.41.4/github/98a51bdb7a5a1e31002b9ba47855d41905ea48ef/src"
 haxe_stdlib_root="${lix_haxe_root}/versions/4.3.7/std"
 (
   cd "${package_root}"

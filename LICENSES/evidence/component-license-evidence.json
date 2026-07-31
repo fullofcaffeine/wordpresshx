@@ -81,6 +81,31 @@
       "distributionConclusion": "build-input-and-compiler-output-origin-review-required"
     },
     {
+      "id": "genes-ts-1.41.4",
+      "match": {
+        "ecosystem": "haxelib",
+        "name": "genes-ts",
+        "version": "1.41.4",
+        "resolution": "git:98a51bdb7a5a1e31002b9ba47855d41905ea48ef#tree=9c62fb279029eeafbf18a37cbab632b46ecd96bc"
+      },
+      "artifact": {
+        "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.41.4/genes-ts-1.41.4.zip",
+        "sha256": "355d7b8cb29da9652b2dd07f15e0acb360d17d26f8de5683e6ef5bfe0b5a6dab",
+        "packageMetadataSha256": null
+      },
+      "licenseEvidence": {
+        "artifactPath": "https://github.com/fullofcaffeine/genes-ts/blob/98a51bdb7a5a1e31002b9ba47855d41905ea48ef/LICENSE",
+        "sourceSha256": "db06c7b27c072c83ad42ec1826ea0e2e28485222b1e047a92e411552079a7c2d",
+        "snapshotPath": "LICENSES/evidence/licenses/genes-ts-1.41.4-LICENSE",
+        "snapshotSha256": "a93bc9bb0d10dbd48382d4c7dad2ba9e6e852f4269b8c0f96018588392d1249f",
+        "normalization": "one-final-lf-appended",
+        "observedExpression": "MIT"
+      },
+      "metadataObservation": "The exact active compiler source and packaged haxelib.json declare MIT; the release archive remains a separate notice-boundary input.",
+      "evidenceConclusion": "exact-source-license-text-recorded",
+      "distributionConclusion": "build-input-and-compiler-output-origin-review-required"
+    },
+    {
       "id": "gradient-parser-1.1.1",
       "match": {
         "ecosystem": "npm",

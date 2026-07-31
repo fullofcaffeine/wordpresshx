@@ -27,9 +27,18 @@ mutable sibling checkout.
 The exact upstream and package proof is recorded in
 [`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
 
-G2.5 is the active package pin: exact Genes v1.38.0 at release commit
-`122162abefc2035b307508e521348ea4fb36dab7`, with the generic linked JSX
-carrier from PR #10 and generalized native-property compatibility from PR #42.
+G2.5 preserves the exact Genes v1.38.0 adoption that removed the legacy JSX
+carriers. The active package pin is now Genes v1.41.4 at release commit
+`98a51bdb7a5a1e31002b9ba47855d41905ea48ef`. It retains the linked-carrier and
+native-property fixes and adds the generalized React/hook foundation from
+upstream PR #74.
+
+WordPressHx reuses that release's context, dependency-list, and state-tuple
+contracts. It deliberately retains its local React-node, object-ref,
+reconciliation-key, and element-event adapters: those carry React 18 and exact
+WordPress/Gutenberg Haxe ergonomics that are not identical to the current
+generic Genes contracts. The provider calls remain `@wordpress/element`
+imports; no WordPress symbol or runtime choice was moved into Genes.
 
 The fixture is intentionally independent of WordPress package symbols.
 WordPress package externs and React/Gutenberg HXX belong to SDK-032; official
@@ -130,7 +139,7 @@ release adoption and upstream provenance.
 
 SDK-035 adds a deliberately small cross-printer contract on top of the SDK-032
 compile-time HXX lowerer. One Haxe facade exports typed summary functions and a
-hook-driven counter that returns inline markup. The active Genes 1.38.0 source
+hook-driven counter that returns inline markup. The active Genes 1.41.4 source
 is compiled twice: strict split-ESM TSX, and classic split-ESM JavaScript with
 adjacent declarations. The SDK parser has already produced typed Genes JSX
 intent, so both profiles set `genes.react.no_inline_markup`; running Genes'

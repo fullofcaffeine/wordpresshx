@@ -24,16 +24,16 @@
   },
   "compiler": {
     "name": "genes-ts",
-    "version": "1.38.0",
-    "tag": "v1.38.0",
+    "version": "1.41.4",
+    "tag": "v1.41.4",
     "repository": "https://github.com/fullofcaffeine/genes-ts",
-    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
-    "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+    "commit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
+    "tree": "9c62fb279029eeafbf18a37cbab632b46ecd96bc",
     "releaseArtifact": {
-      "name": "submit.zip",
-      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.38.0/submit.zip",
-      "sizeBytes": 335627,
-      "sha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab"
+      "name": "genes-ts-1.41.4.zip",
+      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.41.4/genes-ts-1.41.4.zip",
+      "sizeBytes": 422522,
+      "sha256": "355d7b8cb29da9652b2dd07f15e0acb360d17d26f8de5683e6ef5bfe0b5a6dab"
     },
     "admission": {
       "kind": "generalized-upstream-fix-release",
@@ -73,6 +73,30 @@
           "reviewedTip": "5de91a0d9616560d8ecc19f3aa2fca13912dee10",
           "mergeCommit": "d0e9d392811d18eef42e3bfc3c0ce1ec2a6abbf7",
           "mergeTree": "9ab74f5d25af85701dfec5917fdf3ea3a25d5184"
+        }
+      },
+      "sharedReactUpgrade": {
+        "previous": {
+          "version": "1.38.0",
+          "tag": "v1.38.0",
+          "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+          "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+          "releaseArtifactSha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab"
+        },
+        "reactFoundation": {
+          "pullRequest": 74,
+          "url": "https://github.com/fullofcaffeine/genes-ts/pull/74",
+          "reviewedTip": "8b19bc9b5363a4a0719a488042387cdfbc3414f2",
+          "mergeCommit": "332456f54c695a16a7313d48dbc1d96e28ed7297",
+          "wordpressSpecific": false
+        },
+        "releaseHead": {
+          "pullRequest": 106,
+          "url": "https://github.com/fullofcaffeine/genes-ts/pull/106",
+          "reviewedTip": "c2c5b896d341f89375c50888e27866528d038a85",
+          "mergeCommit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
+          "scope": "general-direct-module-functions-not-required-by-this-adoption",
+          "wordpressSpecific": false
         }
       }
     }

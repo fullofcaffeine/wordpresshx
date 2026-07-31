@@ -20,15 +20,26 @@ is recorded by
 [`SDK-031-STRICT-BROWSER-PROFILE`](../../manifests/evidence/sdk-031-strict-browser-profile.json).
 
 G2.5 supersedes that package-local compiler input with immutable Genes
-`v1.38.0` without rewriting SDK-031's historical evidence. Its adoption receipt binds the current immutable release,
+`v1.38.0` without rewriting SDK-031's historical evidence. Its adoption receipt binds that immutable release,
 the generic linked JSX protocol, the generalized upstream compatibility PR,
 an empty SDK-owned weak-type inventory, and fresh replays of every affected
 browser/CLI gate. The baseline selection in `manifests/upstream.lock.json`
-remains `v1.33.0`; the active package pin lives in
-`packages/gutenberg/dependency-lock.json`.
+remains `v1.33.0`.
+
+The active Gutenberg package pin is now immutable Genes `v1.41.4`, release
+commit `98a51bdb7a5a1e31002b9ba47855d41905ea48ef`, tree
+`9c62fb279029eeafbf18a37cbab632b46ecd96bc`, and release artifact SHA-256
+`355d7b8cb29da9652b2dd07f15e0acb360d17d26f8de5683e6ef5bfe0b5a6dab`.
+It contains the generalized React/hook foundation merged in upstream PR #74.
+WordPressHx consumes the shared context, dependency-list, and state-tuple
+contracts while retaining React 18 or WordPress-specific adapters whose
+semantics are not identical. `@wordpress/element` remains the runtime provider.
+The current pin and exact scope are recorded by
+[`GXR-01-SHARED-REACT-FOUNDATION-ADOPTION`](../../manifests/evidence/gxr-01-shared-react-foundation-adoption.json).
 
 SDK-035 originally closed the representative React differential with immutable
-Genes 1.36.3; G2.5 replays and extends it under Genes 1.38.0. One SDK-owned Haxe/HXX facade is emitted as strict TSX and as
+Genes 1.36.3; G2.5 replayed and extended it under Genes 1.38.0, and GXR-01
+replays the compiler half under Genes 1.41.4. One SDK-owned Haxe/HXX facade is emitted as strict TSX and as
 classic JavaScript plus declarations, consumed under strict TypeScript 5.9.3,
 and executed through pure functions, React SSR, a mounted hook, and a real
 click. The clean replay and all four isolated runtime transcripts match. The

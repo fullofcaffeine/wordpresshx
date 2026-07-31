@@ -346,7 +346,7 @@
     "independentMutationCount": 36,
     "targets": [
       "haxe-interp-4.3.7",
-      "genes-ts-1.38.0-typescript-5.9.3-node-22.17.0",
+      "genes-ts-1.41.4-typescript-5.9.3-node-22.17.0",
       "stock-haxe-php-8.4.7",
       "react-dom-server-18.3.1",
       "wordpress-7.0-mariadb-11.4.5"

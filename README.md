@@ -120,9 +120,10 @@ They pin Haxe Formatter 1.18.0 and Gitleaks 8.30.0, format staged Haxe, reject m
 
 The browser-compiler selection baseline is the immutable genes-ts `v1.33.0`
 release. SDK-031 preserves the historical `v1.36.3` strict-fixture evidence,
-while G2.5 pins the active Gutenberg/browser packages to `v1.38.0` and its
-typed linked JSX carriers. Exact commits, trees, package digests, upstream
-PR/CI, and clean replays are recorded in the
+G2.5 preserves the `v1.38.0` typed-linked-carrier adoption, and the active
+Gutenberg/browser package now pins `v1.41.4` with the generalized React/hook
+foundation from upstream PR #74. Exact commits, trees, package digests,
+upstream PR/CI, and clean replays are recorded in the
 [browser compiler pin](docs/architecture/browser-compiler.md). These are
 compiler-input and bounded fixture claims, not yet a complete WordPress browser
 support claim.

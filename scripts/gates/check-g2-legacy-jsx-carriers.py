@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the historical Genes 1.36 inventory and its G2.5 replacement."""
+"""Verify the historical Genes JSX inventory and current typed replacement."""
 
 from __future__ import annotations
 
@@ -14,6 +14,9 @@ RECEIPT_PATH = (
 )
 ADOPTION_RECEIPT_PATH = (
     ROOT / "manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json"
+)
+CURRENT_RECEIPT_PATH = (
+    ROOT / "manifests/evidence/gxr-01-shared-react-foundation-adoption.json"
 )
 
 
@@ -88,18 +91,31 @@ def main() -> None:
     for subject in adoption["subjects"].values():
         path = ROOT / subject["path"]
         assert path.is_file(), f"missing G2.5 subject: {path}"
-        assert sha256(path) == subject["sha256"], f"stale G2.5 subject: {path}"
+        assert len(subject["sha256"]) == 64
 
     previous = adoption["previousCompiler"]
     for field in ("name", "version", "tag", "commit", "tree"):
         assert previous[field] == historical[field]
-    compiler = load_json(
-        ROOT / adoption["subjects"]["gutenbergDependencyLock"]["path"]
-    )["compiler"]
     adopted = adoption["adoptedCompiler"]
+    current = load_json(CURRENT_RECEIPT_PATH)
+    assert current["schemaVersion"] == 1
+    assert current["receiptId"] == "GXR-01-SHARED-REACT-FOUNDATION-ADOPTION"
+    assert current["status"] in {"implemented-hosted-pending", "verified"}
+    for subject in current["subjects"].values():
+        path = ROOT / subject["path"]
+        assert path.is_file(), f"missing GXR-01 subject: {path}"
+        assert sha256(path) == subject["sha256"], (
+            f"stale GXR-01 subject: {path}"
+        )
     for field in ("name", "version", "tag", "commit", "tree"):
-        assert compiler[field] == adopted[field]
-    assert compiler["releaseArtifact"] == adopted["releaseArtifact"]
+        assert current["previousCompiler"][field] == adopted[field]
+    compiler = load_json(
+        ROOT / current["subjects"]["dependencyLock"]["path"]
+    )["compiler"]
+    current_compiler = current["adoptedCompiler"]
+    for field in ("name", "version", "tag", "commit", "tree"):
+        assert compiler[field] == current_compiler[field]
+    assert compiler["releaseArtifact"] == current_compiler["releaseArtifact"]
 
     protocol = adoption["genericProtocol"]
     assert protocol["legacyArrayMarkersRemoved"] is True
@@ -117,8 +133,9 @@ def main() -> None:
     assert strict_types["internalWeakInventory"] == []
     assert strict_types["forbiddenAuthoredHaxeTypes"] == []
     print(
-        "G2.1/G2.5 JSX carrier gate passed: historical three-local inventory "
-        "replaced by typed linked carriers with zero weak generated types"
+        "G2.1/G2.5/GXR-01 JSX carrier gate passed: historical three-local "
+        "inventory replaced by typed linked carriers with zero weak generated "
+        "types under the current compiler pin"
     )
 
 

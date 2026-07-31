@@ -86,8 +86,8 @@ def verify_metadata(lock: dict) -> None:
         "compiler",
     )
     assert compiler["name"] == "genes-ts"
-    assert compiler["version"] == "1.38.0"
-    assert compiler["tag"] == "v1.38.0"
+    assert compiler["version"] == "1.41.4"
+    assert compiler["tag"] == "v1.41.4"
     assert compiler["repository"] == "https://github.com/fullofcaffeine/genes-ts"
     assert SHA1.fullmatch(compiler["commit"])
     assert SHA1.fullmatch(compiler["tree"])
@@ -97,16 +97,19 @@ def verify_metadata(lock: dict) -> None:
         {"name", "url", "sizeBytes", "sha256"},
         "compiler release artifact",
     )
-    assert release_artifact["name"] == "submit.zip"
+    assert release_artifact["name"] == f"genes-ts-{compiler['version']}.zip"
     assert release_artifact["url"] == (
-        f"{compiler['repository']}/releases/download/{compiler['tag']}/submit.zip"
+        f"{compiler['repository']}/releases/download/{compiler['tag']}/"
+        f"{release_artifact['name']}"
     )
     assert release_artifact["sizeBytes"] > 0
     assert SHA256.fullmatch(release_artifact["sha256"])
 
     admission = compiler["admission"]
     assert_exact_keys(
-        admission, {"kind", "baseline", "change", "adoption"}, "admission"
+        admission,
+        {"kind", "baseline", "change", "adoption", "sharedReactUpgrade"},
+        "admission",
     )
     assert admission["kind"] == "generalized-upstream-fix-release"
     assert admission["baseline"] == {
@@ -153,6 +156,32 @@ def verify_metadata(lock: dict) -> None:
             "mergeTree": "9ab74f5d25af85701dfec5917fdf3ea3a25d5184",
         },
     }
+    shared_react_upgrade = admission["sharedReactUpgrade"]
+    assert shared_react_upgrade["previous"] == {
+        "version": "1.38.0",
+        "tag": "v1.38.0",
+        "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+        "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+        "releaseArtifactSha256": (
+            "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab"
+        ),
+    }
+    assert shared_react_upgrade["reactFoundation"] == {
+        "pullRequest": 74,
+        "url": "https://github.com/fullofcaffeine/genes-ts/pull/74",
+        "reviewedTip": "8b19bc9b5363a4a0719a488042387cdfbc3414f2",
+        "mergeCommit": "332456f54c695a16a7313d48dbc1d96e28ed7297",
+        "wordpressSpecific": False,
+    }
+    assert shared_react_upgrade["releaseHead"] == {
+        "pullRequest": 106,
+        "url": "https://github.com/fullofcaffeine/genes-ts/pull/106",
+        "reviewedTip": "c2c5b896d341f89375c50888e27866528d038a85",
+        "mergeCommit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
+        "scope": "general-direct-module-functions-not-required-by-this-adoption",
+        "wordpressSpecific": False,
+    }
+    assert compiler["commit"] == shared_react_upgrade["releaseHead"]["mergeCommit"]
 
     assert len(lock["dependencies"]) == 1
     dependency = lock["dependencies"][0]
@@ -336,12 +365,18 @@ def verify_genes_git(compiler: dict) -> None:
     admission = compiler["admission"]
     baseline = admission["baseline"]
     change = admission["change"]
+    shared_react_upgrade = admission["sharedReactUpgrade"]
+    previous = shared_react_upgrade["previous"]
+    react_foundation = shared_react_upgrade["reactFoundation"]
     assert compiler["commit"] in resolve_tag(
         compiler["repository"], compiler["tag"]
     ), "active Genes tag does not resolve to commit"
     assert baseline["commit"] in resolve_tag(
         compiler["repository"], baseline["tag"]
     ), "baseline Genes tag does not resolve to commit"
+    assert previous["commit"] in resolve_tag(
+        compiler["repository"], previous["tag"]
+    ), "previous Genes tag does not resolve to commit"
 
     with tempfile.TemporaryDirectory(prefix="wordpresshx-sdk031-genes-") as root:
         subprocess.run(["git", "init", "--quiet", root], check=True)
@@ -362,6 +397,10 @@ def verify_genes_git(compiler: dict) -> None:
                 (
                     f"refs/tags/{compiler['tag']}:"
                     "refs/tags/wordpresshx-sdk031-active"
+                ),
+                (
+                    f"refs/tags/{previous['tag']}:"
+                    "refs/tags/wordpresshx-shared-react-previous"
                 ),
             ],
             check=True,
@@ -386,6 +425,16 @@ def verify_genes_git(compiler: dict) -> None:
             ],
             text=True,
         ).strip()
+        previous_commit = subprocess.check_output(
+            [
+                "git",
+                "-C",
+                root,
+                "rev-parse",
+                "refs/tags/wordpresshx-shared-react-previous^{commit}",
+            ],
+            text=True,
+        ).strip()
         tree = subprocess.check_output(
             ["git", "-C", root, "rev-parse", f"{commit}^{{tree}}"], text=True
         ).strip()
@@ -401,6 +450,16 @@ def verify_genes_git(compiler: dict) -> None:
             (baseline_commit, change["fixCommit"], "baseline -> fix"),
             (change["fixCommit"], change["mergeCommit"], "fix -> merge"),
             (change["mergeCommit"], commit, "merge -> release"),
+            (
+                previous_commit,
+                react_foundation["mergeCommit"],
+                "previous -> React foundation",
+            ),
+            (
+                react_foundation["mergeCommit"],
+                commit,
+                "React foundation -> active release",
+            ),
         ):
             ancestry = subprocess.run(
                 ["git", "-C", root, "merge-base", "--is-ancestor", ancestor, descendant]
@@ -414,11 +473,14 @@ def verify_genes_git(compiler: dict) -> None:
         )
     assert baseline_commit == baseline["commit"]
     assert baseline_tree == baseline["tree"]
+    assert previous_commit == previous["commit"]
     assert commit == compiler["commit"]
     assert tree == compiler["tree"]
     assert fix_tree == change["fixTree"]
     assert haxelib["name"] == compiler["name"]
-    assert haxelib["version"] == compiler["version"]
+    # The Git source manifest intentionally remains a development manifest.
+    # Release packaging injects the immutable version checked in verify_network.
+    assert haxelib["version"] == "0.0.0"
     assert haxelib["dependencies"] == {"helder.set": "0.3.1"}
 
 

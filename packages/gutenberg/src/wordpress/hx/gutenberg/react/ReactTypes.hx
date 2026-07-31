@@ -1,6 +1,5 @@
 package wordpress.hx.gutenberg.react;
 
-import genes.ts.Unknown;
 import haxe.extern.EitherType;
 import wordpress.hx.gutenberg.browser.BrowserNode;
 
@@ -52,32 +51,10 @@ extern class ReactRefObject<T> {
 }
 
 /** Profile-admitted React context value supplied by `@wordpress/element`. */
-@:ts.type("import('react').Context<$0>")
-extern class ReactContext<T> {}
+typedef ReactContext<T> = genes.react.Context<T>;
 
 /** React hook dependency list; its entries remain `unknown`, never `any`. */
-@:ts.type("import('react').DependencyList")
-typedef HookDependencies = Array<Unknown>;
-
-@:genes.compilerInternal
-private typedef StateStorage<T> = {
-	@:native("[0]")
-	var current:T;
-
-	@:native("[1]")
-	var replace:T->Void;
-}
+typedef HookDependencies = genes.react.DependencyList<genes.ts.Unknown>;
 
 /** Typed view over the tuple returned by React's `useState`. */
-@:ts.type("[ $0, import('react').Dispatch<import('react').SetStateAction<$0>> ]")
-abstract State<T>(StateStorage<T>) {
-	public var value(get, never):T;
-
-	private inline function get_value():T {
-		return this.current;
-	}
-
-	public inline function set(next:T):Void {
-		this.replace(next);
-	}
-}
+typedef State<T> = genes.react.State<T>;

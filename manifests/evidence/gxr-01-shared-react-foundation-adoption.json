@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "GXR-01-SHARED-REACT-FOUNDATION-ADOPTION",
+  "bead": "wordpresshx-sdk-plan.3.2",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-07-31",
+  "profileId": "wp70-release",
+  "subjects": {
+    "dependencyLock": {
+      "path": "packages/gutenberg/dependency-lock.json",
+      "sha256": "a7a4d82e64bc5f9d1e2f34124494d2c52422a0a570828055223a2467547147fe"
+    },
+    "genesPin": {
+      "path": "packages/gutenberg/haxe_libraries/genes-ts.hxml",
+      "sha256": "9019b7ebf18296c942462fa25125370d9321b1bae2501264a7d43450ad49ff9d"
+    },
+    "reactTypes": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/ReactTypes.hx",
+      "sha256": "0e1b4792f4589a4882ac17ac6170643b2dbcf9a1523517cc09057f1130a893fe"
+    },
+    "wordpressElementHooks": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/react/Hooks.hx",
+      "sha256": "b6568427750fee9d24403cfa05ae7f34f953e3bdd604a536e6e2cde32eae496a"
+    },
+    "dependencyVerifier": {
+      "path": "packages/gutenberg/scripts/verify-dependency-lock.py",
+      "sha256": "09c7818988d86f1cc4b55a3f3ef48053cad97f18c45bcc5dad082ebf8acf1c8a"
+    },
+    "sourceCorrelationPackager": {
+      "path": "packages/gutenberg/scripts/package-source-correlation.py",
+      "sha256": "0a55833314c645326956ada8b5a16262ee11e6881588ccce5e749d5308d8263f"
+    },
+    "assetGate": {
+      "path": "packages/gutenberg/scripts/test-assets.sh",
+      "sha256": "50d065cc43ade068f9e7e4efe333259bf66bef047f9d1e0b9d85ef15a4446a57"
+    },
+    "editorPluginGate": {
+      "path": "packages/gutenberg/scripts/test-editor-plugin.sh",
+      "sha256": "88730fff819ece651f993ddd1204d175022a1527130c3424eb1f076bb8f95a30"
+    },
+    "dataStoreGate": {
+      "path": "packages/gutenberg/scripts/test-data-store.sh",
+      "sha256": "1a58a8eb2066f5cf95bfa5be5bd3d6cffdbebcb391a648d1b80f36b5b47b44a5"
+    },
+    "differentialVerifier": {
+      "path": "packages/gutenberg/scripts/verify-differential-profile.py",
+      "sha256": "31f710004cb3280f11616a8d35685182d0a9afc497613fbd4a989fa6d5c5e7c7"
+    },
+    "differentialProfile": {
+      "path": "packages/gutenberg/test/expected/differential.json",
+      "sha256": "1698f4442ca803bdc56288e3f13b55a38a68788a7e68fcdd191a210029a86834"
+    },
+    "schemaCodecTargetMatrix": {
+      "path": "manifests/schema-codec-architecture.json",
+      "sha256": "8b23a8b677fd2287a8241af9d023fbd42cd0c1015a28b9cde890e15552462400"
+    },
+    "outputContextTargetMatrix": {
+      "path": "manifests/output-context-architecture.json",
+      "sha256": "86308747c3bfe700e48bfbbf6da82d648a3c2179886b4d01760b1ca4fb4fb2c9"
+    }
+  },
+  "previousCompiler": {
+    "name": "genes-ts",
+    "version": "1.38.0",
+    "tag": "v1.38.0",
+    "commit": "122162abefc2035b307508e521348ea4fb36dab7",
+    "tree": "739500b4f4f2513adc3d993cdab6e0e7620965a3",
+    "releaseArtifactSha256": "d5abd09c3f0d1479095efe91518df3e902a2f6d04ff91a1f99b09c9d076282ab",
+    "adoptionReceipt": "G2.5-TYPED-LINKED-JSX-CARRIER-ADOPTION"
+  },
+  "adoptedCompiler": {
+    "name": "genes-ts",
+    "version": "1.41.4",
+    "tag": "v1.41.4",
+    "commit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
+    "tree": "9c62fb279029eeafbf18a37cbab632b46ecd96bc",
+    "releaseArtifact": {
+      "name": "genes-ts-1.41.4.zip",
+      "sizeBytes": 422522,
+      "sha256": "355d7b8cb29da9652b2dd07f15e0acb360d17d26f8de5683e6ef5bfe0b5a6dab",
+      "url": "https://github.com/fullofcaffeine/genes-ts/releases/download/v1.41.4/genes-ts-1.41.4.zip"
+    },
+    "publishedAt": "2026-07-31T05:15:55Z",
+    "releaseUrl": "https://github.com/fullofcaffeine/genes-ts/releases/tag/v1.41.4",
+    "sourceManifestVersion": "0.0.0",
+    "packagedHaxelibVersion": "1.41.4"
+  },
+  "upstreamReactFoundation": {
+    "classification": "framework-neutral-react-and-hook-contract",
+    "pullRequest": 74,
+    "url": "https://github.com/fullofcaffeine/genes-ts/pull/74",
+    "reviewedTip": "8b19bc9b5363a4a0719a488042387cdfbc3414f2",
+    "mergeCommit": "332456f54c695a16a7313d48dbc1d96e28ed7297",
+    "mergedAt": "2026-07-28T05:15:41Z",
+    "wordpressSymbolsAdded": false,
+    "hostedVerification": {
+      "ciRunId": 30329714076,
+      "codeqlRunId": 30329714064,
+      "allChecksPassed": true
+    }
+  },
+  "consumption": {
+    "sharedContracts": [
+      "genes.react.Context<T>",
+      "genes.react.DependencyList<genes.ts.Unknown>",
+      "genes.react.State<T>"
+    ],
+    "retainedAdapters": [
+      {
+        "name": "ReactNode",
+        "reason": "WordPressHx preserves implicit scalar and child-array Haxe conversions not provided by the generic Genes Node contract."
+      },
+      {
+        "name": "ReactKey",
+        "reason": "Ordinary Haxe component props require direct string and integer coercions; the Genes key union is an HXX semantic contract."
+      },
+      {
+        "name": "ReactRefObject",
+        "reason": "The exact WordPress React 18 boundary is read-only RefObject<T>; Genes currently models the mutable React 19 RefObject<T | null> contract."
+      },
+      {
+        "name": "ReactMouseEvent and ReactKeyboardEvent",
+        "reason": "The WordPress profile preserves its exact HTMLButtonElement callback boundary; substituting the generic intrinsic event contract changes HXX assignability."
+      }
+    ],
+    "runtimeProvider": "@wordpress/element",
+    "runtimeProviderChanged": false,
+    "wordpressSpecificGenesBranch": false,
+    "nextJsSpecificGenesBranch": false,
+    "cliCompilerPinChanged": false
+  },
+  "localVerification": {
+    "immutableDependency": {
+      "metadata": "passed",
+      "releaseArtifactAndGitLineage": "passed"
+    },
+    "strictHxx": {
+      "profile": "passed",
+      "format": "passed",
+      "weakTypeGuard": "passed",
+      "strictGeneration": "passed-twice",
+      "compileNegatives": "passed",
+      "exactNodeContainer": "not-completed-local-docker-daemon-unresponsive"
+    },
+    "strictClassicDifferential": {
+      "profile": "passed",
+      "format": "passed",
+      "strictGeneration": "passed-twice",
+      "classicGeneration": "passed-twice",
+      "exactNodeContainer": "not-completed-local-docker-daemon-unresponsive"
+    },
+    "editorPlugin": {
+      "strictGeneration": "passed",
+      "exactNodeAndWordPress": "pending-hosted"
+    },
+    "typedDataStore": {
+      "strictGeneration": "passed",
+      "pureReducerActionSelectorRuntime": "passed",
+      "exactNodeAndWordPress": "pending-hosted"
+    },
+    "nextJsHx": {
+      "repositoryState": "existing-genes-1.41.0-pin-containing-pr-74",
+      "command": "PATH=<pinned-node-20.19.3-bin>:$PATH npm run test:client-components",
+      "node": "20.19.3",
+      "outcome": "passed",
+      "summary": "deterministic Hook-aware output, 59 exact Haxe failures, official React lint, strict Next production build, streamed Flight replacement, and hydrated interaction"
+    }
+  },
+  "historicalEvidencePolicy": {
+    "sdk031AndG25ReceiptsRewritten": false,
+    "reason": "Historical receipts continue to identify the exact compiler and tracked bytes reviewed at their own commits; this receipt alone binds the current pin."
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "required": true,
+    "status": "pending-main-push",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null
+  },
+  "claims": {
+    "generalizedReactFoundationConsumed": "compiler-tested",
+    "fullBrowserRuntimeReplay": "pending-hosted",
+    "realWordPressReplay": "pending-hosted",
+    "nextJsHxCompatibility": "focused-client-component-and-hook-gate-passed",
+    "publicPackagePublication": "blocked",
+    "productionSupport": "not-tested",
+    "publicationAuthorized": false
+  }
+}

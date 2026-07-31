@@ -170,9 +170,11 @@ This directory contains immutable toolchain/upstream locks, architecture locks, 
 
 The first resolved external input is genes-ts `v1.33.0`, recorded by
 `wordpresshx-sdk-030`. SDK-031 preserves the historical `v1.36.3` strict
-fixture; G2.5 admits the active `v1.38.0` browser compiler through
-`packages/gutenberg/dependency-lock.json`, preserving the baseline and adding
-the linked-carrier and generalized property-alias lineage. The canonical public Git and Beads
+fixture; G2.5 preserves the `v1.38.0` linked-carrier adoption. GXR-01 admits
+the active `v1.41.4` Gutenberg compiler through
+`packages/gutenberg/dependency-lock.json`, preserving both older lineages and
+adding the generalized React/hook foundation from upstream PR #74. The
+canonical public Git and Beads
 transport is recorded by `evidence/sdk-004-canonical-repository.json`. The
 first co-located PHP compiler import is recorded by
 `evidence/sdk-020-reflaxe-php-bootstrap.json`; it is an internal source receipt,

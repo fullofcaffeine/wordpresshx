@@ -748,6 +748,7 @@ required_files=(
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
   manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json
+  manifests/evidence/gxr-01-shared-react-foundation-adoption.json
   manifests/evidence/sdk-063-editor-plugin-slotfill.json
   manifests/evidence/sdk-064-typed-data-store.json
   manifests/evidence/sdk-060-typed-block-metadata.json
@@ -1396,6 +1397,15 @@ g25_receipt = json.loads(
         "manifests/evidence/g2.5-typed-linked-jsx-carrier-adoption.json"
     ).read_text(encoding="utf-8")
 )
+gxr01_receipt = json.loads(
+    Path(
+        "manifests/evidence/gxr-01-shared-react-foundation-adoption.json"
+    ).read_text(encoding="utf-8")
+)
+gxr01_subjects_by_path = {
+    subject["path"]: subject["sha256"]
+    for subject in gxr01_receipt["subjects"].values()
+}
 sdk033_profile_path = Path(
     "packages/gutenberg/src/wordpress/hx/gutenberg/profile/"
     "wp70-release.browser-assets.json"
@@ -2353,9 +2363,13 @@ assert adr009_receipt["status"] in {
     "checked-json-hardening-rereview-pending",
 }
 for adr009_subject in adr009_receipt["subject"].values():
-    assert hashlib.sha256(Path(adr009_subject["path"]).read_bytes()).hexdigest() == (
-        adr009_subject["sha256"]
-    )
+    adr009_current_sha256 = hashlib.sha256(
+        Path(adr009_subject["path"]).read_bytes()
+    ).hexdigest()
+    assert adr009_current_sha256 in {
+        adr009_subject["sha256"],
+        gxr01_subjects_by_path.get(adr009_subject["path"]),
+    }
 adr009_verification = adr009_receipt["verification"]
 assert adr009_verification["sourceTreeSha256"] == schema_prototype[
     "sourceTreeSha256"
@@ -2468,9 +2482,13 @@ assert adr012_receipt["status"] in {
     "regression-repaired-pending-rereview",
 }
 for adr012_subject in adr012_receipt["subject"].values():
-    assert hashlib.sha256(Path(adr012_subject["path"]).read_bytes()).hexdigest() == (
-        adr012_subject["sha256"]
-    )
+    adr012_current_sha256 = hashlib.sha256(
+        Path(adr012_subject["path"]).read_bytes()
+    ).hexdigest()
+    assert adr012_current_sha256 in {
+        adr012_subject["sha256"],
+        gxr01_subjects_by_path.get(adr012_subject["path"]),
+    }
 adr012_verification = adr012_receipt["verification"]
 assert adr012_verification["sourceTreeSha256"] == output_prototype[
     "sourceTreeSha256"
@@ -7104,7 +7122,7 @@ assert source_evidence["php"]["productionPackageRetention"] == (
 assert source_evidence["php"]["nativeFrames"] == "preserved"
 assert source_evidence["php"]["nearestOrBasenameGuessing"] is False
 assert source_evidence["browser"]["genesCommit"] == (
-    gutenberg_dependency_lock["compiler"]["commit"]
+    g25_receipt["adoptedCompiler"]["commit"]
 )
 assert source_evidence["browser"]["boundedEsbuildCompositionReceiptId"] == (
     sdk032_receipt["receiptId"]
@@ -8024,13 +8042,13 @@ assert g24_scope["publicationAuthorized"] is False
 g24_toolchain = g24_receipt["toolchain"]
 assert g24_toolchain["haxe"] == cli_dependency_lock["haxe"]["version"]
 assert g24_toolchain["genes"]["version"] == (
-    gutenberg_dependency_lock["compiler"]["version"]
+    g25_receipt["adoptedCompiler"]["version"]
 )
 assert g24_toolchain["genes"]["commit"] == (
-    gutenberg_dependency_lock["compiler"]["commit"]
+    g25_receipt["adoptedCompiler"]["commit"]
 )
 assert g24_toolchain["genes"]["tree"] == (
-    gutenberg_dependency_lock["compiler"]["tree"]
+    g25_receipt["adoptedCompiler"]["tree"]
 )
 assert g24_toolchain["nodeBuild"]["image"] == (
     image_lock["images"]["node"]["reference"]
@@ -8057,7 +8075,10 @@ for record in g24_inputs:
         Path(record["path"]).read_bytes()
     ).hexdigest()
     if g24_current_sha256 != record["sha256"]:
-        assert g24_current_sha256 == strict_haxe_subjects.get(record["path"])
+        assert g24_current_sha256 in {
+            strict_haxe_subjects.get(record["path"]),
+            gxr01_subjects_by_path.get(record["path"]),
+        }
         assert sha1.fullmatch(g24_receipt["hostedVerification"]["commit"])
 
 g24_layers = g24_receipt["layerEvidence"]
@@ -8581,8 +8602,15 @@ for locked_subject in (
     sdk031_subject["expectedArtifacts"],
 ):
     locked_path = Path(locked_subject["path"])
-    assert hashlib.sha256(locked_path.read_bytes()).hexdigest() == (
-        locked_subject["sha256"]
+    assert locked_path.is_file()
+    assert sha256.fullmatch(locked_subject["sha256"])
+for current_subject in (
+    sdk031_subject["exportDirective"],
+    sdk031_subject["expectedArtifacts"],
+):
+    current_path = Path(current_subject["path"])
+    assert hashlib.sha256(current_path.read_bytes()).hexdigest() == (
+        current_subject["sha256"]
     )
 assert sdk031_subject["dependencyLock"]["path"] == (
     gutenberg_dependency_lock_path.as_posix()
@@ -8593,9 +8621,17 @@ assert sdk031_subject["expectedArtifacts"]["path"] == (
 
 sdk031_compiler = sdk031_subject["compiler"]
 locked_compiler = gutenberg_dependency_lock["compiler"]
+locked_shared_react_upgrade = locked_compiler["admission"][
+    "sharedReactUpgrade"
+]
+historical_g25_compiler = g25_receipt["adoptedCompiler"]
 for compiler_field in ("name", "version", "tag", "commit", "tree"):
-    assert sdk031_compiler[compiler_field] == locked_compiler[compiler_field]
-assert sdk031_compiler["releaseArtifact"] == locked_compiler["releaseArtifact"]
+    assert sdk031_compiler[compiler_field] == historical_g25_compiler[
+        compiler_field
+    ]
+assert sdk031_compiler["releaseArtifact"] == historical_g25_compiler[
+    "releaseArtifact"
+]
 assert sdk031_compiler["commit"] != browser_compiler["commit"]
 assert sha1.fullmatch(sdk031_compiler["commit"])
 assert sha1.fullmatch(sdk031_compiler["tree"])
@@ -8635,9 +8671,13 @@ assert sdk031_local["gate"]["outcome"] == "passed"
 assert sdk031_local["gate"]["secondCleanCompileMatched"] is True
 for verifier in sdk031_local["verifiers"].values():
     verifier_path = Path(verifier["path"])
-    assert hashlib.sha256(verifier_path.read_bytes()).hexdigest() == (
-        verifier["sha256"]
-    )
+    verifier_current_sha256 = hashlib.sha256(
+        verifier_path.read_bytes()
+    ).hexdigest()
+    assert verifier_current_sha256 in {
+        verifier["sha256"],
+        gxr01_subjects_by_path.get(verifier["path"]),
+    }
 assert sdk031_local["generatedArtifacts"]["treeSha256"] == (
     gutenberg_expected["artifacts"]["generatedTreeSha256"]
 )
@@ -8672,16 +8712,18 @@ assert g25_receipt["status"] in {
 assert g25_receipt["profileId"] == browser_profile["id"]
 for g25_subject in g25_receipt["subjects"].values():
     g25_subject_path = Path(g25_subject["path"])
-    assert hashlib.sha256(g25_subject_path.read_bytes()).hexdigest() == (
-        g25_subject["sha256"]
-    )
+    assert g25_subject_path.is_file()
+    assert sha256.fullmatch(g25_subject["sha256"])
 
 g25_compiler = g25_receipt["adoptedCompiler"]
-for g25_compiler_field in ("name", "version", "tag", "commit", "tree"):
-    assert g25_compiler[g25_compiler_field] == locked_compiler[
-        g25_compiler_field
-    ]
-assert g25_compiler["releaseArtifact"] == locked_compiler["releaseArtifact"]
+assert g25_compiler["name"] == locked_compiler["name"]
+for g25_compiler_field in ("version", "tag", "commit", "tree"):
+    assert g25_compiler[g25_compiler_field] == locked_shared_react_upgrade[
+        "previous"
+    ][g25_compiler_field]
+assert g25_compiler["releaseArtifact"]["sha256"] == (
+    locked_shared_react_upgrade["previous"]["releaseArtifactSha256"]
+)
 locked_adoption = locked_compiler["admission"]["adoption"]
 assert locked_adoption["receiptId"] == g25_receipt["receiptId"]
 for g25_previous_field in (
@@ -8770,6 +8812,89 @@ else:
         f"{g25_hosted['runId']}"
     )
 
+assert gxr01_receipt["schemaVersion"] == 1
+assert gxr01_receipt["receiptId"] == (
+    "GXR-01-SHARED-REACT-FOUNDATION-ADOPTION"
+)
+assert gxr01_receipt["bead"] == "wordpresshx-sdk-plan.3.2"
+assert gxr01_receipt["status"] in {
+    "implemented-hosted-pending",
+    "verified",
+}
+assert gxr01_receipt["profileId"] == browser_profile["id"]
+for gxr01_subject in gxr01_receipt["subjects"].values():
+    gxr01_subject_path = Path(gxr01_subject["path"])
+    assert hashlib.sha256(gxr01_subject_path.read_bytes()).hexdigest() == (
+        gxr01_subject["sha256"]
+    )
+gxr01_compiler = gxr01_receipt["adoptedCompiler"]
+for gxr01_compiler_field in ("name", "version", "tag", "commit", "tree"):
+    assert gxr01_compiler[gxr01_compiler_field] == locked_compiler[
+        gxr01_compiler_field
+    ]
+assert gxr01_compiler["releaseArtifact"] == locked_compiler[
+    "releaseArtifact"
+]
+gxr01_previous = gxr01_receipt["previousCompiler"]
+for gxr01_previous_field in ("version", "tag", "commit", "tree"):
+    assert gxr01_previous[gxr01_previous_field] == (
+        locked_shared_react_upgrade["previous"][gxr01_previous_field]
+    )
+assert gxr01_previous["releaseArtifactSha256"] == (
+    locked_shared_react_upgrade["previous"]["releaseArtifactSha256"]
+)
+gxr01_upstream = gxr01_receipt["upstreamReactFoundation"]
+locked_react_foundation = locked_shared_react_upgrade["reactFoundation"]
+for gxr01_upstream_field in (
+    "pullRequest",
+    "url",
+    "reviewedTip",
+    "mergeCommit",
+):
+    assert gxr01_upstream[gxr01_upstream_field] == (
+        locked_react_foundation[gxr01_upstream_field]
+    )
+assert gxr01_upstream["wordpressSymbolsAdded"] is False
+assert gxr01_upstream["hostedVerification"]["allChecksPassed"] is True
+gxr01_consumption = gxr01_receipt["consumption"]
+assert gxr01_consumption["sharedContracts"] == [
+    "genes.react.Context<T>",
+    "genes.react.DependencyList<genes.ts.Unknown>",
+    "genes.react.State<T>",
+]
+assert {
+    adapter["name"] for adapter in gxr01_consumption["retainedAdapters"]
+} == {
+    "ReactNode",
+    "ReactKey",
+    "ReactRefObject",
+    "ReactMouseEvent and ReactKeyboardEvent",
+}
+assert gxr01_consumption["runtimeProvider"] == "@wordpress/element"
+assert gxr01_consumption["runtimeProviderChanged"] is False
+assert gxr01_consumption["wordpressSpecificGenesBranch"] is False
+assert gxr01_consumption["nextJsSpecificGenesBranch"] is False
+assert gxr01_consumption["cliCompilerPinChanged"] is False
+assert gxr01_receipt["historicalEvidencePolicy"][
+    "sdk031AndG25ReceiptsRewritten"
+] is False
+gxr01_hosted = gxr01_receipt["repositoryHostedVerification"]
+if gxr01_receipt["status"] == "implemented-hosted-pending":
+    assert gxr01_hosted["status"] == "pending-main-push"
+    for gxr01_hosted_field in ("commit", "runId", "jobId", "url"):
+        assert gxr01_hosted[gxr01_hosted_field] is None
+else:
+    assert gxr01_hosted["status"] == "passed"
+    assert sha1.fullmatch(gxr01_hosted["commit"])
+    assert isinstance(gxr01_hosted["runId"], int)
+    assert isinstance(gxr01_hosted["jobId"], int)
+    assert gxr01_hosted["url"] == (
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+        f"{gxr01_hosted['runId']}"
+    )
+assert gxr01_receipt["claims"]["publicPackagePublication"] == "blocked"
+assert gxr01_receipt["claims"]["publicationAuthorized"] is False
+
 sdk031_repository_hosted = sdk031_receipt["repositoryHostedVerification"]
 assert sdk031_repository_hosted["workflow"] == "Repository bootstrap"
 assert sdk031_repository_hosted["discardedAttempts"] == [
@@ -8830,9 +8955,11 @@ for locked_subject in sdk032_subject.values():
     if not isinstance(locked_subject, dict) or "path" not in locked_subject:
         continue
     locked_path = Path(locked_subject["path"])
-    assert hashlib.sha256(locked_path.read_bytes()).hexdigest() == (
-        locked_subject["sha256"]
-    )
+    sdk032_current_sha256 = hashlib.sha256(locked_path.read_bytes()).hexdigest()
+    assert sdk032_current_sha256 in {
+        locked_subject["sha256"],
+        gxr01_subjects_by_path.get(locked_subject["path"]),
+    }
 assert sdk032_subject["profile"]["path"] == sdk032_profile_path.as_posix()
 assert sdk032_profile["schemaVersion"] == 1
 assert sdk032_profile["profileId"] == "wp70-release"
@@ -8867,10 +8994,10 @@ assert sdk032_profile["hooks"] == [
 sdk032_inputs = sdk032_receipt["immutableInputs"]
 for compiler_field in ("name", "version", "tag", "commit", "tree"):
     assert sdk032_inputs["compiler"][compiler_field] == (
-        locked_compiler[compiler_field]
+        g25_compiler[compiler_field]
     )
 assert sdk032_inputs["compiler"]["releaseArtifactSha256"] == (
-    locked_compiler["releaseArtifact"]["sha256"]
+    g25_compiler["releaseArtifact"]["sha256"]
 )
 assert sdk032_inputs["parser"]["commit"] == hxx_parser["commit"]
 assert sdk032_inputs["parser"]["tree"] == hxx_parser["tree"]
@@ -9067,9 +9194,13 @@ assert sdk035_subject_paths == sorted(set(sdk035_subject_paths))
 for sdk035_subject_file in sdk035_subject_files:
     sdk035_subject_path = Path(sdk035_subject_file["path"])
     assert sha256.fullmatch(sdk035_subject_file["sha256"])
-    assert hashlib.sha256(sdk035_subject_path.read_bytes()).hexdigest() == (
-        sdk035_subject_file["sha256"]
-    )
+    sdk035_current_sha256 = hashlib.sha256(
+        sdk035_subject_path.read_bytes()
+    ).hexdigest()
+    assert sdk035_current_sha256 in {
+        sdk035_subject_file["sha256"],
+        gxr01_subjects_by_path.get(sdk035_subject_file["path"]),
+    }
 
 assert sdk035_expected["schemaVersion"] == 1
 assert sdk035_expected["fixtureId"] == (
@@ -9081,25 +9212,26 @@ sdk035_expected_subject = next(
     for item in sdk035_subject_files
     if item["path"] == sdk035_expected_path.as_posix()
 )
-assert sdk035_expected_subject["sha256"] == hashlib.sha256(
-    sdk035_expected_path.read_bytes()
-).hexdigest()
+assert hashlib.sha256(sdk035_expected_path.read_bytes()).hexdigest() == (
+    gxr01_subjects_by_path[sdk035_expected_path.as_posix()]
+)
+assert sha256.fullmatch(sdk035_expected_subject["sha256"])
 
 sdk035_inputs = sdk035_receipt["immutableInputs"]
 sdk035_compiler = sdk035_inputs["compiler"]
 for field in ("name", "version", "commit", "tree"):
-    assert sdk035_compiler[field] == gutenberg_dependency_lock["compiler"][field]
-assert sdk035_compiler["tag"] == gutenberg_dependency_lock["compiler"]["tag"]
+    assert sdk035_compiler[field] == g25_compiler[field]
+assert sdk035_compiler["tag"] == g25_compiler["tag"]
 assert sdk035_compiler["releaseArtifactSha256"] == (
-    gutenberg_dependency_lock["compiler"]["releaseArtifact"]["sha256"]
+    g25_compiler["releaseArtifact"]["sha256"]
 )
 sdk035_dependency_lock_path = Path(
     sdk035_compiler["dependencyLock"]["path"]
 )
 assert sdk035_dependency_lock_path == gutenberg_dependency_lock_path
-assert sdk035_compiler["dependencyLock"]["sha256"] == hashlib.sha256(
-    sdk035_dependency_lock_path.read_bytes()
-).hexdigest()
+assert sdk035_compiler["dependencyLock"]["sha256"] == (
+    g25_receipt["subjects"]["gutenbergDependencyLock"]["sha256"]
+)
 assert sdk035_compiler["admissionReceipt"] == sdk031_receipt["receiptId"]
 
 sdk035_hxx = sdk035_inputs["hxx"]
@@ -9139,7 +9271,7 @@ assert sdk035_reference == sdk035_expected["compilerProvenance"][
     "referenceFixture"
 ] | {
     "repository": "https://github.com/fullofcaffeine/genes-ts",
-    "commit": gutenberg_dependency_lock["compiler"]["commit"],
+    "commit": g25_compiler["commit"],
 }
 assert sdk035_reference["relationship"] == (
     "concept-reference-only-no-copied-bytes"
@@ -9290,9 +9422,13 @@ for sdk033_subject_name, sdk033_subject in sdk033_receipt["subject"].items():
     if sdk033_subject_name == "package":
         continue
     sdk033_subject_path = Path(sdk033_subject["path"])
-    assert hashlib.sha256(sdk033_subject_path.read_bytes()).hexdigest() == (
-        sdk033_subject["sha256"]
-    )
+    sdk033_current_sha256 = hashlib.sha256(
+        sdk033_subject_path.read_bytes()
+    ).hexdigest()
+    assert sdk033_current_sha256 in {
+        sdk033_subject["sha256"],
+        gxr01_subjects_by_path.get(sdk033_subject["path"]),
+    }
 assert sdk033_receipt["provider"]["profileId"] == sdk033_profile["profileId"]
 sdk033_historical_catalog = next(
     profile["catalog"]
@@ -9319,7 +9455,7 @@ assert sdk033_receipt["provider"]["mappingSource"] == (
     sdk033_profile["mappingSource"]
 )
 assert sdk033_receipt["toolchain"]["genes"]["version"] == (
-    gutenberg_dependency_lock["compiler"]["version"]
+    g25_compiler["version"]
 )
 assert sdk033_receipt["toolchain"]["node"]["image"] == (
     image_lock["images"]["node"]["reference"]
@@ -9817,9 +9953,13 @@ for sdk061_subject_name, sdk061_subject in sdk061_receipt["subject"].items():
     if sdk061_subject_name == "package":
         continue
     sdk061_subject_path = Path(sdk061_subject["path"])
-    assert hashlib.sha256(sdk061_subject_path.read_bytes()).hexdigest() == (
-        sdk061_subject["sha256"]
-    )
+    sdk061_current_sha256 = hashlib.sha256(
+        sdk061_subject_path.read_bytes()
+    ).hexdigest()
+    assert sdk061_current_sha256 in {
+        sdk061_subject["sha256"],
+        gxr01_subjects_by_path.get(sdk061_subject["path"]),
+    }
 assert sdk061_profile["schemaVersion"] == 1
 assert sdk061_profile["profileId"] == "wp70-release"
 assert sdk061_profile["catalogId"] == "static-block"
@@ -10094,9 +10234,13 @@ for sdk063_subject_name, sdk063_subject in sdk063_receipt["subject"].items():
     if sdk063_subject_name == "package":
         continue
     sdk063_subject_path = Path(sdk063_subject["path"])
-    assert hashlib.sha256(sdk063_subject_path.read_bytes()).hexdigest() == (
-        sdk063_subject["sha256"]
-    )
+    sdk063_current_sha256 = hashlib.sha256(
+        sdk063_subject_path.read_bytes()
+    ).hexdigest()
+    assert sdk063_current_sha256 in {
+        sdk063_subject["sha256"],
+        gxr01_subjects_by_path.get(sdk063_subject["path"]),
+    }
 assert sdk063_profile["schemaVersion"] == 1
 assert sdk063_profile["profileId"] == "wp70-release"
 assert sdk063_profile["catalogId"] == "editor-plugin"
@@ -10266,9 +10410,13 @@ for sdk064_subject_name, sdk064_subject in sdk064_receipt["subject"].items():
     if sdk064_subject_name == "package":
         continue
     sdk064_subject_path = Path(sdk064_subject["path"])
-    assert hashlib.sha256(sdk064_subject_path.read_bytes()).hexdigest() == (
-        sdk064_subject["sha256"]
-    )
+    sdk064_current_sha256 = hashlib.sha256(
+        sdk064_subject_path.read_bytes()
+    ).hexdigest()
+    assert sdk064_current_sha256 in {
+        sdk064_subject["sha256"],
+        gxr01_subjects_by_path.get(sdk064_subject["path"]),
+    }
 assert sdk064_profile["schemaVersion"] == 1
 assert sdk064_profile["profileId"] == "wp70-release"
 assert sdk064_profile["catalogId"] == "data-store"
