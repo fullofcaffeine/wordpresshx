@@ -30,6 +30,10 @@
       "path": "packages/gutenberg/scripts/package-source-correlation.py",
       "sha256": "0a55833314c645326956ada8b5a16262ee11e6881588ccce5e749d5308d8263f"
     },
+    "sourceCorrelationVerifier": {
+      "path": "packages/gutenberg/scripts/verify-source-correlation.py",
+      "sha256": "d22fd35d2964400927c5ea1e9833e273de95d4c2f5c46a53efb4db292bfc0eb4"
+    },
     "assetGate": {
       "path": "packages/gutenberg/scripts/test-assets.sh",
       "sha256": "50d065cc43ade068f9e7e4efe333259bf66bef047f9d1e0b9d85ef15a4446a57"
@@ -50,6 +54,10 @@
       "path": "packages/gutenberg/test/expected/differential.json",
       "sha256": "1698f4442ca803bdc56288e3f13b55a38a68788a7e68fcdd191a210029a86834"
     },
+    "browserProfile": {
+      "path": "packages/gutenberg/test/expected/browser-profile.json",
+      "sha256": "0529afb851628538820e19c6172921cba85b25ddd200667ad2b9623d72709449"
+    },
     "schemaCodecTargetMatrix": {
       "path": "manifests/schema-codec-architecture.json",
       "sha256": "8b23a8b677fd2287a8241af9d023fbd42cd0c1015a28b9cde890e15552462400"
@@ -57,6 +65,10 @@
     "outputContextTargetMatrix": {
       "path": "manifests/output-context-architecture.json",
       "sha256": "86308747c3bfe700e48bfbbf6da82d648a3c2179886b4d01760b1ca4fb4fb2c9"
+    },
+    "repositoryGate": {
+      "path": "scripts/check-repository.sh",
+      "sha256": "85d7cefb7265cff4dbf7c445ff39535d9a06c481effb21045ae5b45ded58e668"
     }
   },
   "previousCompiler": {
@@ -149,6 +161,14 @@
       "classicGeneration": "passed-twice",
       "exactNodeContainer": "not-completed-local-docker-daemon-unresponsive"
     },
+    "browserProfile": {
+      "exactNode": "22.17.0",
+      "deterministicGeneration": "passed-twice",
+      "strictBundle": "13843-bytes-3d44e1ec7c96aecb02c030298241538c50e73bd660a4481ffcd2c2d26f12ab4a",
+      "classicBundle": "13288-bytes-dd9441e7c4f15ea6cc00262dad4ede421f3efbe3b96b9da8fe06d3d9b2dacc22",
+      "runtimeTranscript": "passed",
+      "publicWeakTypes": 0
+    },
     "editorPlugin": {
       "strictGeneration": "passed",
       "exactNodeAndWordPress": "pending-hosted"
@@ -157,6 +177,13 @@
       "strictGeneration": "passed",
       "pureReducerActionSelectorRuntime": "passed",
       "exactNodeAndWordPress": "pending-hosted"
+    },
+    "sourceCorrelation": {
+      "exactNodeBuild": "passed",
+      "productionBundleSha256": "b590ad54552fef416fcef9a0586dc1a49269756d214e3d55c1b9f2a5e1fb1482",
+      "observedNativeFrame": "wordpresshx-sdk033-assets/build/editor.js:1:2940",
+      "mappedHaxeSource": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx:12:8",
+      "browserObservation": "passed-local-chromium-150-position-and-composed-map; exact-chromium-145-pending-hosted"
     },
     "nextJsHx": {
       "repositoryState": "existing-genes-1.41.0-pin-containing-pr-74",
@@ -177,7 +204,25 @@
     "commit": null,
     "runId": null,
     "jobId": null,
-    "url": null
+    "url": null,
+    "discardedAttempts": [
+      {
+        "commit": "e865d45b777642a790b039310f460f1148425c55",
+        "runId": 30626342589,
+        "jobId": 91142399698,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30626342589",
+        "outcome": "failed-after-real-browser-replay",
+        "reason": "The exact Genes 1.41.4 production bundle moved the authenticated minified native frame from column 3000 to 2940 while the composed source still resolved to EditorPanel.hx:12:8."
+      },
+      {
+        "commit": "e865d45b777642a790b039310f460f1148425c55",
+        "runId": 30626342589,
+        "jobId": 91142399677,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30626342589",
+        "outcome": "failed-at-browser-profile-byte-snapshot",
+        "reason": "Genes 1.41.4 deterministically changed the strict and classic browser-profile bundles while preserving their typed public surface, zero weak types, and exact runtime transcript."
+      }
+    ]
   },
   "claims": {
     "generalizedReactFoundationConsumed": "compiler-tested",

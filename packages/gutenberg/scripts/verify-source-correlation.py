@@ -34,7 +34,7 @@ EXPECTED_FRAMES = {
     "production": {
         "path": "wordpresshx-sdk033-assets/build/editor.js",
         "line": 1,
-        "column": 3000,
+        "column": 2940,
     },
 }
 EXPECTED_BROWSER_VERSIONS = {
@@ -486,12 +486,30 @@ def verify_browser(browser: Path) -> None:
         raise AssertionError("G2.4 browser replay evidence drifted")
     for mode, expected_frame in EXPECTED_FRAMES.items():
         stack = (browser / f"{mode}.stack").read_text(encoding="utf-8")
+        runtime_position = re.compile(
+            rf"/{re.escape(expected_frame['path'])}:([0-9]+):([0-9]+)"
+        )
+        observed_positions = [
+            {
+                "line": int(match.group(1)),
+                "column": int(match.group(2)),
+            }
+            for match in runtime_position.finditer(stack)
+        ]
         if (
             "G24_WORDPRESS_SCRIPTS_SOURCE_CORRELATION_FAILURE" not in stack
-            or f"/{expected_frame['path']}:{expected_frame['line']}:{expected_frame['column']}"
-            not in stack
+            or {
+                "line": expected_frame["line"],
+                "column": expected_frame["column"],
+            }
+            not in observed_positions
         ):
-            raise AssertionError(f"{mode}: native browser position drifted")
+            raise AssertionError(
+                f"{mode}: native browser position drifted "
+                f"(expected {expected_frame['path']}:"
+                f"{expected_frame['line']}:{expected_frame['column']}; "
+                f"observed {observed_positions})"
+            )
         result = read_canonical(browser / f"{mode}.json")
         correlated = [
             frame

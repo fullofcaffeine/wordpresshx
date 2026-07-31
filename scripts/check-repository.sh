@@ -8609,9 +8609,14 @@ for current_subject in (
     sdk031_subject["expectedArtifacts"],
 ):
     current_path = Path(current_subject["path"])
-    assert hashlib.sha256(current_path.read_bytes()).hexdigest() == (
-        current_subject["sha256"]
-    )
+    current_sha256 = hashlib.sha256(current_path.read_bytes()).hexdigest()
+    if current_sha256 != current_subject["sha256"]:
+        assert current_sha256 == gxr01_subjects_by_path.get(
+            current_subject["path"]
+        )
+        assert sha1.fullmatch(
+            sdk031_receipt["repositoryHostedVerification"]["commit"]
+        )
 assert sdk031_subject["dependencyLock"]["path"] == (
     gutenberg_dependency_lock_path.as_posix()
 )
@@ -8678,14 +8683,15 @@ for verifier in sdk031_local["verifiers"].values():
         verifier["sha256"],
         gxr01_subjects_by_path.get(verifier["path"]),
     }
+g25_browser_profile = g25_receipt["localVerification"]["browserProfile"]
 assert sdk031_local["generatedArtifacts"]["treeSha256"] == (
-    gutenberg_expected["artifacts"]["generatedTreeSha256"]
+    g25_browser_profile["generatedTreeSha256"]
 )
 assert sdk031_local["generatedArtifacts"]["strictBundle"] == (
-    gutenberg_expected["artifacts"]["strictBundle"]
+    g25_browser_profile["strictBundle"]
 )
 assert sdk031_local["generatedArtifacts"]["classicBundle"] == (
-    gutenberg_expected["artifacts"]["classicBundle"]
+    g25_browser_profile["classicBundle"]
 )
 assert sdk031_local["strictProfile"]["authoredPublicAny"] == 0
 assert sdk031_local["strictProfile"]["authoredPublicUnknown"] == 0
@@ -8768,9 +8774,15 @@ assert g25_receipt["localVerification"]["strictTypes"][
 assert g25_receipt["localVerification"]["strictTypes"][
     "internalWeakInventory"
 ] == []
-assert g25_receipt["localVerification"]["browserProfile"][
-    "generatedTreeSha256"
-] == gutenberg_expected["artifacts"]["generatedTreeSha256"]
+assert g25_browser_profile["generatedTreeSha256"] == (
+    sdk031_local["generatedArtifacts"]["treeSha256"]
+)
+assert g25_browser_profile["strictBundle"] == (
+    sdk031_local["generatedArtifacts"]["strictBundle"]
+)
+assert g25_browser_profile["classicBundle"] == (
+    sdk031_local["generatedArtifacts"]["classicBundle"]
+)
 assert g25_receipt["localVerification"]["differential"]["evaluationOrder"] == (
     "prop-first>prop-second>child-first>child-second"
 )
