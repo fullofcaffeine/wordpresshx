@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "GXR-01-SHARED-REACT-FOUNDATION-ADOPTION",
   "bead": "wordpresshx-sdk-plan.3.2",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "observedAt": "2026-07-31",
   "profileId": "wp70-release",
   "subjects": {
@@ -176,12 +176,12 @@
     },
     "editorPlugin": {
       "strictGeneration": "passed",
-      "exactNodeAndWordPress": "pending-hosted"
+      "exactNodeAndWordPress": "passed-hosted"
     },
     "typedDataStore": {
       "strictGeneration": "passed",
       "pureReducerActionSelectorRuntime": "passed",
-      "exactNodeAndWordPress": "pending-hosted"
+      "exactNodeAndWordPress": "passed-hosted"
     },
     "sourceCorrelation": {
       "exactNodeBuild": "passed",
@@ -205,11 +205,14 @@
   "repositoryHostedVerification": {
     "workflow": "Repository bootstrap",
     "required": true,
-    "status": "pending-main-push",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null,
+    "status": "passed",
+    "commit": "db3a5f8330bc0140eaac3097277975165c9fffd1",
+    "runId": 30628891525,
+    "jobId": 91150434622,
+    "wordpressRuntimeJobId": 91150434714,
+    "jobCount": 13,
+    "allJobsPassed": true,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30628891525",
     "discardedAttempts": [
       {
         "commit": "e865d45b777642a790b039310f460f1148425c55",
@@ -247,9 +250,9 @@
     ]
   },
   "claims": {
-    "generalizedReactFoundationConsumed": "compiler-tested",
-    "fullBrowserRuntimeReplay": "pending-hosted",
-    "realWordPressReplay": "pending-hosted",
+    "generalizedReactFoundationConsumed": "hosted-verified",
+    "fullBrowserRuntimeReplay": "passed-hosted-exact",
+    "realWordPressReplay": "passed-hosted-exact",
     "nextJsHxCompatibility": "focused-client-component-and-hook-gate-passed",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-tested",
