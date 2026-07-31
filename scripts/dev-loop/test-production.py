@@ -1956,7 +1956,7 @@ def run_service_cases(
 
 
 def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
-    temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
+    temporary_parent = Path(tempfile.gettempdir()).resolve()
     with tempfile.TemporaryDirectory(
         prefix="wordpresshx-sdk044-production-", dir=temporary_parent
     ) as raw:
@@ -2217,7 +2217,7 @@ def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
 
 def main() -> None:
     if len(sys.argv) == 3 and sys.argv[1] == "--local-process-tree":
-        temporary_parent = Path(os.environ.get("TMPDIR", "/tmp")).resolve()
+        temporary_parent = Path(tempfile.gettempdir()).resolve()
         with tempfile.TemporaryDirectory(
             prefix="wordpresshx-sdk044-process-tree-", dir=temporary_parent
         ) as raw:
