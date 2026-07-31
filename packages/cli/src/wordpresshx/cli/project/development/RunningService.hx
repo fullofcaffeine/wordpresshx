@@ -3,6 +3,7 @@ package wordpresshx.cli.project.development;
 import haxe.DynamicAccess;
 import haxe.Exception;
 import haxe.Timer;
+import js.Syntax;
 import js.lib.Error;
 import js.node.ChildProcess;
 import js.node.child_process.ChildProcess as NodeChildProcess;
@@ -20,7 +21,6 @@ import wordpresshx.cli.project.development.DevelopmentProcessLaunch.DevelopmentP
 class RunningService {
 	static inline final LOG_WINDOW = 65536;
 	static inline final STOP_TIMEOUT_MS = 3000;
-	static inline final STOP_POLL_MS = 25;
 	static final OPERATIONAL_ENVIRONMENT = ["COMSPEC", "PATH", "PATHEXT", "SystemRoot", "TEMP", "TMP"];
 
 	public final service:DevelopmentService;
@@ -31,7 +31,7 @@ class RunningService {
 	public var stopping(default, null) = false;
 
 	final child:NodeChildProcess;
-	final ownedGroup:Null<OwnedProcessGroup>;
+	final groupOwned:Bool;
 	final events:DevelopmentEvents;
 	final onFailure:RunningService->CliFailure->Void;
 	final cleanup:Null<(Void->Void)->Void>;
@@ -42,7 +42,7 @@ class RunningService {
 	var stopReason = "stopped";
 	var stopTimer:Null<Timer>;
 	var forceSent = false;
-	var forceDeadline = 0.0;
+	var hostAlive = true;
 
 	public static function start(project:DevelopmentProject, service:DevelopmentService, port:Int, reload:Null<WordPressReloadAdapter>,
 			events:DevelopmentEvents, onFailure:RunningService->CliFailure->Void):RunningService {
@@ -59,29 +59,32 @@ class RunningService {
 					"Run this external service on a supported POSIX host or install a WordPressHx build with the Windows Job Object adapter."
 				]);
 		}
-		final child = ChildProcess.spawn(launch.executable, launch.arguments, {
+		final groupOwned = launch.ownership == PosixProcessGroup;
+		final nodeProcess = NodeGlobals.process();
+		final executable = groupOwned ? nodeProcess.execPath : launch.executable;
+		final arguments = groupOwned ? ServiceHost.arguments(nodeProcess.argv[1], launch.executable, launch.arguments) : launch.arguments;
+		final child = ChildProcess.spawn(executable, arguments, {
 			cwd: launch.workingDirectory,
-			detached: launch.ownership == PosixProcessGroup,
+			detached: groupOwned,
 			env: launch.environment,
 			shell: false,
-			stdio: ["ignore", "pipe", "pipe"]
+			stdio: groupOwned ? ["ignore", "pipe", "pipe", "ipc"] : ["ignore", "pipe", "pipe"]
 		});
 		try {
 			final plugin = project.deployablePlugin;
-			final ownedGroup = launch.ownership == PosixProcessGroup ? new OwnedProcessGroup(child.pid) : null;
-			return new RunningService(service, port, child, ownedGroup, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
+			return new RunningService(service, port, child, groupOwned, events, onFailure, launch.cleanup, plugin == null ? null : plugin.entry);
 		} catch (error:Exception) {
 			child.kill("SIGKILL");
 			throw error;
 		}
 	}
 
-	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, ownedGroup:Null<OwnedProcessGroup>, events:DevelopmentEvents,
+	function new(service:DevelopmentService, port:Int, child:NodeChildProcess, groupOwned:Bool, events:DevelopmentEvents,
 			onFailure:RunningService->CliFailure->Void, cleanup:Null<(Void->Void)->Void>, wordpressPluginEntry:Null<String>) {
 		this.service = service;
 		this.port = port;
 		this.child = child;
-		this.ownedGroup = ownedGroup;
+		this.groupOwned = groupOwned;
 		this.events = events;
 		this.onFailure = onFailure;
 		this.cleanup = cleanup;
@@ -89,6 +92,10 @@ class RunningService {
 		this.url = service.url.scheme + "://127.0.0.1:" + port + service.url.path;
 		capture(child.stdout);
 		capture(child.stderr);
+		if (groupOwned) {
+			final messageEvent:Event<String->Void> = "message";
+			child.on(messageEvent, processHostMessage);
+		}
 		child.once(ChildProcessEvent.Error, processError);
 		child.once(ChildProcessEvent.Exit, processExit);
 	}
@@ -106,14 +113,14 @@ class RunningService {
 		stopReason = reason;
 		stopCallback = callback;
 		if (!alive) {
-			if (ownedGroup == null) {
+			if (!groupOwned) {
 				finishStop();
 			} else {
 				beginGroupStop();
 			}
 			return;
 		}
-		if (ownedGroup == null) {
+		if (!groupOwned) {
 			child.kill("SIGTERM");
 			stopTimer = Timer.delay(() -> {
 				if (alive) {
@@ -144,14 +151,27 @@ class RunningService {
 		onFailure(this, failure("could not start or supervise its admitted executable"));
 	}
 
-	function processExit(code:Int, signal:String):Void {
+	function processHostMessage(message:String):Void {
+		if (message != ServiceHost.PAYLOAD_EXITED && message != ServiceHost.PAYLOAD_FAILED) {
+			return;
+		}
 		alive = false;
 		if (stopping) {
-			if (ownedGroup == null) {
-				finishStop();
-			} else {
-				checkGroupStop();
-			}
+			forceGroupStop();
+			return;
+		}
+		if (failureReported) {
+			return;
+		}
+		failureReported = true;
+		onFailure(this, failure(message == ServiceHost.PAYLOAD_FAILED ? "could not start its admitted executable" : "exited before shutdown"));
+	}
+
+	function processExit(code:Int, signal:String):Void {
+		hostAlive = false;
+		alive = false;
+		if (stopping) {
+			finishStop();
 			return;
 		}
 		if (!failureReported) {
@@ -178,33 +198,53 @@ class RunningService {
 	}
 
 	function beginGroupStop():Void {
-		final group = ownedGroup;
-		if (group == null) {
+		if (!groupOwned) {
 			finishStop();
 			return;
 		}
-		forceDeadline = Timer.stamp() * 1000 + STOP_TIMEOUT_MS;
+		if (!hostAlive) {
+			finishStop();
+			return;
+		}
 		forceSent = false;
-		group.signal("SIGTERM");
-		checkGroupStop();
+		sendHostCommand(ServiceHost.GRACEFUL_STOP);
+		if (!alive) {
+			forceGroupStop();
+			return;
+		}
+		stopTimer = Timer.delay(() -> {
+			stopTimer = null;
+			forceGroupStop();
+		}, STOP_TIMEOUT_MS);
 	}
 
-	function checkGroupStop():Void {
-		final group = ownedGroup;
-		if (group == null || !group.alive()) {
+	function forceGroupStop():Void {
+		if (!hostAlive) {
 			finishStop();
 			return;
 		}
-		if (!forceSent && Timer.stamp() * 1000 >= forceDeadline) {
-			forceSent = true;
-			group.signal("SIGKILL");
+		if (forceSent) {
+			return;
 		}
-		if (stopTimer == null) {
-			stopTimer = Timer.delay(() -> {
-				stopTimer = null;
-				checkGroupStop();
-			}, STOP_POLL_MS);
+		forceSent = true;
+		if (stopTimer != null) {
+			stopTimer.stop();
+			stopTimer = null;
 		}
+		if (!groupOwned) {
+			finishStop();
+			return;
+		}
+		sendHostCommand(ServiceHost.FORCE_STOP);
+	}
+
+	function sendHostCommand(command:String):Void {
+		if (!hostAlive || !hostChannelConnected(child)) {
+			return;
+		}
+		try {
+			sendIpc(child, command);
+		} catch (_:Exception) {}
 	}
 
 	function completeStop():Void {
@@ -269,6 +309,14 @@ class RunningService {
 			return environmentFailure(service, "does not have an external command adapter");
 		}
 		return service.command;
+	}
+
+	static inline function hostChannelConnected(child:NodeChildProcess):Bool {
+		return Syntax.code("{0}.connected === true", child);
+	}
+
+	static inline function sendIpc(child:NodeChildProcess, message:String):Bool {
+		return Syntax.code("{0}.send({1})", child, message);
 	}
 
 	static function environmentFailure<T>(service:DevelopmentService, message:String):T {

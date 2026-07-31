@@ -176,7 +176,7 @@
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/WphxMain.hx",
-      "sha256": "400a5aa4504aa58dec8f4faa3af58c21eeea756c3949aaee6b731e3f34dde5ba"
+      "sha256": "0456f8294348244c0bac7573d4571a83b4f80c4a9d9b92fc742dea17368ce74b"
     },
     {
       "path": "packages/cli/scripts/check-ownership-haxe.sh",

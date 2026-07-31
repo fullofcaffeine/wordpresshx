@@ -22,7 +22,7 @@
     "servicePlanReader": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentPlanReader.hx",
     "serviceSupervisor": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
     "developmentProcessLaunch": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
-    "ownedProcessGroup": "packages/cli/src/wordpresshx/cli/project/development/OwnedProcessGroup.hx",
+    "serviceHost": "packages/cli/src/wordpresshx/cli/project/development/ServiceHost.hx",
     "wordpressProvider": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
     "browserReloadServer": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
     "wordpressReloadAdapter": "packages/cli/src/wordpresshx/cli/project/development/WordPressReloadAdapter.hx",
@@ -94,7 +94,10 @@
     "boundedGraphRestartImplemented": true,
     "reverseShutdownImplemented": true,
     "posixProcessGroupImplemented": true,
-    "posixProcessGroupProbe": "numeric-signal-zero",
+    "posixProcessGroupIdentity": "sdk-owned-stable-service-host-leader",
+    "posixControlAndPayloadExitChannel": "private-parent-child-ipc-not-inherited-by-payload",
+    "posixGroupSignals": "computed-and-sent-by-the-live-group-leader-never-by-parent-stored-pgid",
+    "posixIdentityRelease": "final-group-sigkill-terminates-the-sentinel-before-restart",
     "posixGracefulTimeoutMs": 3000,
     "posixForcedSignal": "SIGKILL",
     "windowsJobObjectImplemented": false,
@@ -156,6 +159,8 @@
     "boundedCrashRestartExhaustion": "passed",
     "reverseServiceShutdown": "passed",
     "posixDescendantCleanupLocal": "passed-exact-node-22.17.0",
+    "posixRapidPayloadLeaderExitLocal": "passed-exact-node-22.17.0",
+    "posixProcessGroupIdentityReuseLocal": "prevented-by-live-sentinel-and-distinct-replacement-group",
     "posixDescendantCleanupHostedLinux": "pending-superseding-evidence",
     "windowsDescendantCleanup": "pending-job-object-adapter",
     "wordpressProviderControlledProcess": "passed",
@@ -242,7 +247,7 @@
     "The process-control corpus uses a TCP-listening Haxe protocol test double for deterministic failure and timing control; real Haxe wait-server output parity is covered separately by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
     "The loopback WordPress reload transport is hosted tested in real Chromium against the controlled provider boundary; the optional Next.js adapter and native HMR are not implemented.",
-    "The POSIX descendant-cleanup regression passes locally on exact Node 22.17.0; the full hosted Linux gate and Windows Job Object adapter remain pending.",
+    "The POSIX descendant-cleanup and rapid payload-leader-exit regressions pass locally on exact Node 22.17.0; the full hosted Linux gate and Windows Job Object adapter remain pending.",
     "Windows external services fail closed before spawn; Windows watcher behavior, network filesystems, abrupt host failure, installed consumers, and production deployment remain untested."
   ]
 }

@@ -54,8 +54,10 @@ publication. SDK-044 now implements and locally production-gate verifies the
 real compile/watch core, isolated compiler lifecycle, last-good rebuilds, and
 clean compiler shutdown, typed service supervision, and automatic WordPress
 reload. External services now enter dedicated POSIX process groups so shutdown
-reaches their workers and watchers; the exact Linux hosted rerun and the
-separate Windows Job Object adapter remain open evidence work. A generated
+reaches their workers and watchers. An SDK-owned sentinel keeps each group
+identity stable even when the user command exits rapidly, then releases it only
+with the final group-wide stop; the exact Linux hosted rerun and the separate
+Windows Job Object adapter remain open evidence work. A generated
 plugin now needs only its existing `WordPress.plugin()`
 authority for `wphx dev` to derive, install, activate, and reload it in the
 exact WordPress 7.0/MariaDB provider. Next.js remains an optional integration

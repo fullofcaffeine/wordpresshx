@@ -4379,7 +4379,7 @@ for sdk044_code_path in (
     "servicePlanReader",
     "serviceSupervisor",
     "developmentProcessLaunch",
-    "ownedProcessGroup",
+    "serviceHost",
     "wordpressProvider",
     "browserReloadServer",
     "wordpressReloadAdapter",
@@ -4433,7 +4433,18 @@ assert sdk044_services["authority"] == "validated-typed-haxe-semantic-plan"
 assert sdk044_services["implicitShellCommands"] is False
 assert sdk044_services["compileWatchOnlyImplemented"] is True
 assert sdk044_services["posixProcessGroupImplemented"] is True
-assert sdk044_services["posixProcessGroupProbe"] == "numeric-signal-zero"
+assert sdk044_services["posixProcessGroupIdentity"] == (
+    "sdk-owned-stable-service-host-leader"
+)
+assert sdk044_services["posixControlAndPayloadExitChannel"] == (
+    "private-parent-child-ipc-not-inherited-by-payload"
+)
+assert sdk044_services["posixGroupSignals"] == (
+    "computed-and-sent-by-the-live-group-leader-never-by-parent-stored-pgid"
+)
+assert sdk044_services["posixIdentityRelease"] == (
+    "final-group-sigkill-terminates-the-sentinel-before-restart"
+)
 assert sdk044_services["posixGracefulTimeoutMs"] == 3000
 assert sdk044_services["posixForcedSignal"] == "SIGKILL"
 assert sdk044_services["windowsJobObjectImplemented"] is False
@@ -4576,6 +4587,12 @@ assert sdk044_verification["reloadEndpointSecurityMutations"] == 5
 assert sdk044_verification["posixDescendantCleanupLocal"] == (
     "passed-exact-node-22.17.0"
 )
+assert sdk044_verification["posixRapidPayloadLeaderExitLocal"] == (
+    "passed-exact-node-22.17.0"
+)
+assert sdk044_verification["posixProcessGroupIdentityReuseLocal"] == (
+    "prevented-by-live-sentinel-and-distinct-replacement-group"
+)
 assert sdk044_verification["posixDescendantCleanupHostedLinux"] == (
     "pending-superseding-evidence"
 )
@@ -4592,22 +4609,42 @@ assert dev_loop_implementation["claims"][
 sdk044_running_service_source = Path(
     "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx"
 ).read_text(encoding="utf-8")
-sdk044_process_group_source = Path(
-    sdk044_code["ownedProcessGroup"]
+sdk044_entry_source = Path(
+    "packages/cli/src/wordpresshx/cli/WphxMain.hx"
+).read_text(encoding="utf-8")
+sdk044_service_host_source = Path(
+    sdk044_code["serviceHost"]
 ).read_text(encoding="utf-8")
 sdk044_process_tree_test_source = Path(
     "scripts/dev-loop/test-production.py"
 ).read_text(encoding="utf-8")
-assert "detached: launch.ownership == PosixProcessGroup" in (
-    sdk044_running_service_source
-)
+assert "detached: groupOwned" in sdk044_running_service_source
+assert "ServiceHost.arguments(" in sdk044_running_service_source
+assert '["ignore", "pipe", "pipe", "ipc"]' in sdk044_running_service_source
 assert 'NodeGlobals.process().platform == "win32"' in (
     sdk044_running_service_source
 )
-assert 'group.signal("SIGTERM")' in sdk044_running_service_source
-assert 'group.signal("SIGKILL")' in sdk044_running_service_source
-assert "processProbe().kill(-processGroupId, 0)" in sdk044_process_group_source
+assert "ServiceHost.GRACEFUL_STOP" in sdk044_running_service_source
+assert "ServiceHost.FORCE_STOP" in sdk044_running_service_source
+assert "processGroupId" not in sdk044_running_service_source
+assert "kill(-" not in sdk044_running_service_source
+assert "PAYLOAD_EXITED" in sdk044_service_host_source
+assert "PAYLOAD_FAILED" in sdk044_service_host_source
+assert "GRACEFUL_STOP" in sdk044_service_host_source
+assert "FORCE_STOP" in sdk044_service_host_source
+assert "if (!processChannel().connected)" in sdk044_service_host_source
+assert "nodeProcess.kill(-nodeProcess.pid, signal)" in (
+    sdk044_service_host_source
+)
+assert 'nodeProcess.once(disconnectEvent, terminateOwnedGroup)' in (
+    sdk044_service_host_source
+)
+assert "invalid internal service-host invocation" in sdk044_entry_source
 assert "run_process_tree_service_case" in sdk044_process_tree_test_source
+assert "run_rapid_leader_service_case" in sdk044_process_tree_test_source
+assert "firstGroupGoneBeforeReplacementReady" in (
+    sdk044_process_tree_test_source
+)
 assert "--local-process-tree" in sdk044_process_tree_test_source
 sdk044_reference_authorities = {
     ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (

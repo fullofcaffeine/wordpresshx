@@ -3,6 +3,7 @@ package wordpresshx.cli;
 import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.generatedoutput.GeneratedOutputCommands;
 import wordpresshx.cli.project.ProjectCommands;
+import wordpresshx.cli.project.development.ServiceHost;
 import wordpresshx.cli.scaffold.ScaffoldCommands;
 
 /** Haxe-authored WordPressHx CLI entry point, emitted as Node ESM by Genes. **/
@@ -10,6 +11,15 @@ class WphxMain {
 	static function main():Void {
 		final nodeProcess = NodeGlobals.process();
 		final arguments = nodeProcess.argv.slice(2);
+		if (arguments.length > 0 && arguments[0] == ServiceHost.INTERNAL_COMMAND) {
+			try {
+				ServiceHost.run(arguments);
+			} catch (_:haxe.Exception) {
+				nodeProcess.stderr.write("wphx: invalid internal service-host invocation\n");
+				nodeProcess.exit(70);
+			}
+			return;
+		}
 		if (arguments.length == 1 && (arguments[0] == "--help" || arguments[0] == "help")) {
 			help();
 			return;

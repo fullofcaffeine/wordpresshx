@@ -142,13 +142,15 @@ function writeServicePlan(mode, source) {
     ? [serviceNode(sourceDigest, 'timeout', [], {intervalMs: 50, kind: 'tcp', path: '/', text: '', timeoutMs: 300})]
     : mode === 'process-tree'
       ? [serviceNode(sourceDigest, 'process-tree', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000})]
+    : mode === 'process-tree-rapid'
+      ? [serviceNode(sourceDigest, 'process-tree-rapid', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000})]
     : mode === 'wordpress'
       ? [wordpressNode(sourceDigest)]
       : [
         serviceNode(sourceDigest, 'api', [], {intervalMs: 50, kind: 'http', path: '/health', text: '', timeoutMs: 3000}),
         serviceNode(sourceDigest, 'frontend', ['api'], {intervalMs: 50, kind: 'log', path: '/', text: 'FRONTEND_READY', timeoutMs: 3000})
       ];
-  if (mode === 'process-tree') {
+  if (mode === 'process-tree' || mode === 'process-tree-rapid') {
     nodes[0].payload.environment = ['WPHX_TREE_SECRET'];
   }
   const plan = {
@@ -413,8 +415,17 @@ function stop(signal) {
 }
 process.on('SIGTERM', () => stop('SIGTERM'));
 process.on('SIGINT', () => stop('SIGINT'));
-if (serviceId === 'process-tree') {
-  spawn(process.execPath, ['src/dev-service-child.mjs', serviceId, portText, tracePath], {
+if (serviceId === 'process-tree' || serviceId === 'process-tree-rapid') {
+  const rapidMarker = '.wphx/runtime/rapid-leader-exit.once';
+  const rapidExit = serviceId === 'process-tree-rapid' && !fs.existsSync(rapidMarker);
+  if (rapidExit) {
+    fs.writeFileSync(rapidMarker, 'armed\\n');
+    process.on('SIGUSR1', () => {
+      record('leader-exit');
+      process.exit(0);
+    });
+  }
+  spawn(process.execPath, ['src/dev-service-child.mjs', serviceId, portText, tracePath, String(process.pid), rapidExit ? 'rapid' : 'stable'], {
     env: process.env,
     stdio: 'inherit'
   });
@@ -439,7 +450,7 @@ if (serviceId === 'process-tree') {
         """import {spawn} from 'node:child_process';
 import fs from 'node:fs';
 
-const [serviceId, portText, tracePath] = process.argv.slice(2);
+const [serviceId, portText, tracePath, rootPid, behavior] = process.argv.slice(2);
 function record(event) {
   fs.appendFileSync(tracePath, JSON.stringify({
     event,
@@ -452,7 +463,7 @@ function record(event) {
     treeSecretPresent: process.env.WPHX_TREE_SECRET === 'tree-secret-value'
   }) + '\\n');
 }
-spawn(process.execPath, ['src/dev-service-grandchild.mjs', serviceId, portText, tracePath], {
+spawn(process.execPath, ['src/dev-service-grandchild.mjs', serviceId, portText, tracePath, rootPid, behavior], {
   env: process.env,
   stdio: 'inherit'
 });
@@ -468,7 +479,7 @@ setInterval(() => {}, 1000);
         """import fs from 'node:fs';
 import http from 'node:http';
 
-const [serviceId, portText, tracePath] = process.argv.slice(2);
+const [serviceId, portText, tracePath, rootPid, behavior] = process.argv.slice(2);
 const port = Number(portText);
 function record(event) {
   fs.appendFileSync(tracePath, JSON.stringify({
@@ -487,7 +498,12 @@ const server = http.createServer((request, response) => {
   response.end();
 });
 process.on('SIGTERM', () => record('ignored-term'));
-server.listen(port, '127.0.0.1', () => record('started'));
+server.listen(port, '127.0.0.1', () => {
+  record('started');
+  if (behavior === 'rapid') {
+    setTimeout(() => process.kill(Number(rootPid), 'SIGUSR1'), 200);
+  }
+});
 """
     )
     (project / "src/dev-service-unrelated.mjs").write_text(
@@ -546,7 +562,7 @@ class DevSession:
             command.extend(["--env", f"WPHX_FAKE_SERVICE_PLAN={service_mode}"])
         if service_mode == "wordpress":
             command.extend(["--env", "WP_DB_PASSWORD=declared-test-only"])
-        if service_mode == "process-tree":
+        if service_mode in {"process-tree", "process-tree-rapid"}:
             command.extend(["--env", "WPHX_TREE_SECRET=tree-secret-value"])
         command.extend(
             [
@@ -784,7 +800,7 @@ class LocalDevSession(DevSession):
         )
         if service_mode is not None:
             environment["WPHX_FAKE_SERVICE_PLAN"] = service_mode
-        if service_mode == "process-tree":
+        if service_mode in {"process-tree", "process-tree-rapid"}:
             environment["WPHX_TREE_SECRET"] = "tree-secret-value"
         self.project = project
         self.process = subprocess.Popen(
@@ -1043,6 +1059,17 @@ def wait_for_process_group_gone(
         time.sleep(0.025)
     raise AssertionError(
         f"owned process group still live after bounded termination: {process_group_id}"
+    )
+
+
+def process_group_alive(session: DevSession, process_group_id: int) -> bool:
+    return (
+        session.run_node_result(
+            "try{process.kill(-Number(process.argv[1]),0);"
+            "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+            process_group_id,
+        )
+        == "alive"
     )
 
 
@@ -1331,7 +1358,9 @@ def run_process_tree_service_case(
         assert all(value["secretPresent"] is False for value in started)
         owned_pids = [int(value["pid"]) for value in started]
         assert len(set(owned_pids)) == 3
-        process_group_id = owned_pids[0]
+        root = next(value for value in started if value.get("role") is None)
+        process_group_id = int(root["ppid"])
+        assert process_group_id not in owned_pids
 
         unrelated_path = ".wphx/runtime/unrelated.pid"
         session.start_unrelated(unrelated_path)
@@ -1402,9 +1431,152 @@ def run_process_tree_service_case(
         return {
             "descendants": 2,
             "forcedIgnoringDescendant": True,
-            "ownedProcessCount": 3,
+            "ownedProcessCount": 4,
             "ownedProcessGroupGone": True,
             "portReleased": port,
+            "unrelatedProcessPreserved": True,
+        }
+    finally:
+        if unrelated_pid is not None and session.process.poll() is None:
+            session.signal_pid(unrelated_pid)
+        session.force_cleanup()
+
+
+def run_rapid_leader_service_case(
+    runtime: Path, parent: Path, *, local: bool = False
+) -> dict[str, object]:
+    evidence, project, tools = prepare_service_case(
+        parent, "services-process-tree-rapid"
+    )
+    service_id = "process-tree-rapid"
+    admit_runtime_environment(project, "WPHX_TREE_SECRET", service_id)
+    mode_path = project / ".wphx/runtime/service-mode.txt"
+    mode_path.parent.mkdir(parents=True, exist_ok=True)
+    mode_path.write_text(service_id + "\n")
+    session_class = LocalDevSession if local else DevSession
+    session = session_class(
+        runtime, evidence, project, tools, service_mode=service_id
+    )
+    unrelated_pid: int | None = None
+    try:
+        first_start, _ = session.wait_for(
+            "service-starting",
+            predicate=lambda value: value["payload"].get("serviceId")
+            == service_id,
+        )
+        unrelated_path = ".wphx/runtime/unrelated.pid"
+        session.start_unrelated(unrelated_path)
+        unrelated_host_path = project / unrelated_path
+        deadline = time.monotonic() + 5
+        while not unrelated_host_path.exists() and time.monotonic() < deadline:
+            time.sleep(0.025)
+        assert unrelated_host_path.exists()
+        unrelated_pid = int(unrelated_host_path.read_text())
+
+        first_stop, _ = session.wait_for(
+            "service-stopped",
+            after=first_start,
+            predicate=lambda value: value["payload"].get("serviceId")
+            == service_id,
+            timeout=15,
+        )
+        _, second_ready = session.wait_for(
+            "service-ready",
+            after=first_stop + 1,
+            predicate=lambda value: value["payload"].get("serviceId")
+            == service_id,
+            timeout=15,
+        )
+        started = [
+            value
+            for value in service_trace(project)
+            if value["event"] == "started"
+        ]
+        assert len(started) == 6, started
+        assert all(value["treeSecretPresent"] is True for value in started)
+        assert all(value["secretPresent"] is False for value in started)
+        roots = [value for value in started if value.get("role") is None]
+        assert len(roots) == 2
+        first_group_id = int(roots[0]["ppid"])
+        second_group_id = int(roots[1]["ppid"])
+        assert first_group_id != second_group_id
+        assert any(
+            value["event"] == "leader-exit"
+            and int(value["pid"]) == int(roots[0]["pid"])
+            for value in service_trace(project)
+        )
+        wait_for_process_group_gone(session, first_group_id)
+        assert process_group_alive(session, second_group_id)
+        assert (
+            session.run_node_result(
+                "try{process.kill(Number(process.argv[1]),0);"
+                "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+                unrelated_pid,
+            )
+            == "alive"
+        )
+
+        port = int(
+            str(second_ready["payload"]["url"])
+            .removeprefix("http://127.0.0.1:")
+            .removesuffix("/")
+        )
+        transition_start = len(session.events)
+        session.run_node(
+            "const fs=require('fs');"
+            "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
+            "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove rapid tree\\n');"
+        )
+        session.wait_for(
+            "service-stopped",
+            after=transition_start,
+            predicate=lambda value: value["payload"].get("serviceId")
+            == service_id,
+            timeout=15,
+        )
+        session.wait_for(
+            "build-published",
+            after=transition_start,
+            predicate=lambda value: value["payload"].get("generation") == 2,
+        )
+        wait_for_process_group_gone(session, second_group_id)
+        assert (
+            session.run_node_result(
+                "const net=require('net');"
+                "const server=net.createServer();"
+                "server.once('error',()=>process.exit(1));"
+                "server.listen(Number(process.argv[1]),'127.0.0.1',()=>{"
+                "process.stdout.write('free');server.close()})",
+                port,
+            )
+            == "free"
+        )
+        assert (
+            session.run_node_result(
+                "try{process.kill(Number(process.argv[1]),0);"
+                "process.stdout.write('alive')}catch{process.stdout.write('dead')}",
+                unrelated_pid,
+            )
+            == "alive"
+        )
+
+        session.signal_pid(unrelated_pid)
+        unrelated_pid = None
+        session.stop()
+        session.wait_for("command-completed", timeout=2)
+        validate_event_stream(session.events)
+        assert service_ids(session.events, "service-stopped") == [
+            service_id,
+            service_id,
+            "compiler",
+        ]
+        assert not session.stderr_lines
+        session.assert_container_removed()
+        return {
+            "firstGroupGoneBeforeReplacementReady": True,
+            "rapidPayloadLeaderExit": True,
+            "replacementGroupDistinct": True,
+            "replacementGroupStopped": True,
             "unrelatedProcessPreserved": True,
         }
     finally:
@@ -1623,6 +1795,7 @@ def run_service_cases(
     return {
         "healthy": run_healthy_service_case(runtime, parent),
         "processTree": run_process_tree_service_case(runtime, parent),
+        "processTreeRapidLeader": run_rapid_leader_service_case(runtime, parent),
         "restart": run_restart_service_case(runtime, parent),
         "timeout": run_timeout_service_case(runtime, parent),
         "wordpress": run_wordpress_service_case(runtime, parent, browser_tooling),
@@ -1898,6 +2071,10 @@ def main() -> None:
             summary = run_process_tree_service_case(
                 Path(sys.argv[2]), Path(raw), local=True
             )
+            rapid_summary = run_rapid_leader_service_case(
+                Path(sys.argv[2]), Path(raw), local=True
+            )
+            summary = {"normal": summary, "rapidLeader": rapid_summary}
         print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
         return
     if len(sys.argv) != 3:
