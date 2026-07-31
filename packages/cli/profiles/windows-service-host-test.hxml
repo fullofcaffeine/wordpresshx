@@ -1,0 +1,10 @@
+-lib genes-ts
+-lib hxnodejs
+-cp src
+-cp test/windows-service-host/src
+-cp ../../compiler/reflaxe.php/src
+-cp ../../compiler/wordpress/src
+-main sdk044.windows.Main
+--macro nullSafety("sdk044.windows", Strict)
+-D js-es=6
+-dce full

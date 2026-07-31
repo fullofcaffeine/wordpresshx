@@ -797,6 +797,7 @@ class LocalDevSession(DevSession):
         tools: Path,
         *,
         service_mode: str | None = None,
+        service_probe: bool = False,
     ) -> None:
         self.name = "wordpresshx-sdk044-local-" + uuid.uuid4().hex[:12]
         self.events = []
@@ -819,15 +820,25 @@ class LocalDevSession(DevSession):
         creationflags = (
             subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
         )
-        self.process = subprocess.Popen(
+        command = (
             [
+                "node",
+                str((runtime / "windows-service-host-test.js").resolve()),
+                str(project.resolve()),
+                service_mode,
+            ]
+            if service_probe and service_mode is not None
+            else [
                 "node",
                 str((runtime / "index.js").resolve()),
                 "dev",
                 "--project",
                 str(project.resolve()),
                 "--json",
-            ],
+            ]
+        )
+        self.process = subprocess.Popen(
+            command,
             cwd=project,
             env=environment,
             text=True,
@@ -1378,16 +1389,30 @@ def run_timeout_service_case(runtime: Path, parent: Path) -> dict[str, object]:
 
 
 def run_process_tree_service_case(
-    runtime: Path, parent: Path, *, local: bool = False
+    runtime: Path,
+    parent: Path,
+    *,
+    local: bool = False,
+    service_probe: bool = False,
 ) -> dict[str, object]:
     evidence, project, tools = prepare_service_case(parent, "services-process-tree")
     admit_runtime_environment(project, "WPHX_TREE_SECRET", "process-tree")
     mode_path = project / ".wphx/runtime/service-mode.txt"
     mode_path.parent.mkdir(parents=True, exist_ok=True)
     mode_path.write_text("process-tree\n")
-    session_class = LocalDevSession if local else DevSession
-    session = session_class(
-        runtime, evidence, project, tools, service_mode="process-tree"
+    session = (
+        LocalDevSession(
+            runtime,
+            evidence,
+            project,
+            tools,
+            service_mode="process-tree",
+            service_probe=service_probe,
+        )
+        if local
+        else DevSession(
+            runtime, evidence, project, tools, service_mode="process-tree"
+        )
     )
     unrelated_pid: int | None = None
     try:
@@ -1425,24 +1450,27 @@ def run_process_tree_service_case(
         assert unrelated_host_path.exists()
         unrelated_pid = int(unrelated_host_path.read_text())
 
-        transition_start = len(session.events)
-        session.run_node(
-            "const fs=require('fs');"
-            "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
-            "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove process tree\\n');"
-        )
-        session.wait_for(
-            "service-stopped",
-            after=transition_start,
-            predicate=lambda value: value["payload"].get("serviceId")
-            == "process-tree",
-            timeout=15,
-        )
-        session.wait_for(
-            "build-published",
-            after=transition_start,
-            predicate=lambda value: value["payload"].get("generation") == 2,
-        )
+        if service_probe:
+            session.stop()
+        else:
+            transition_start = len(session.events)
+            session.run_node(
+                "const fs=require('fs');"
+                "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
+                "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove process tree\\n');"
+            )
+            session.wait_for(
+                "service-stopped",
+                after=transition_start,
+                predicate=lambda value: value["payload"].get("serviceId")
+                == "process-tree",
+                timeout=15,
+            )
+            session.wait_for(
+                "build-published",
+                after=transition_start,
+                predicate=lambda value: value["payload"].get("generation") == 2,
+            )
 
         stopped_trace = service_trace(project)
         assert any(
@@ -1474,13 +1502,16 @@ def run_process_tree_service_case(
 
         session.signal_pid(unrelated_pid)
         unrelated_pid = None
-        session.stop()
+        if not service_probe:
+            session.stop()
         session.wait_for("command-completed", timeout=2)
         validate_event_stream(session.events)
-        assert service_ids(session.events, "service-stopped") == [
-            "process-tree",
-            "compiler",
-        ]
+        expected_stopped = (
+            ["process-tree"]
+            if service_probe
+            else ["process-tree", "compiler"]
+        )
+        assert service_ids(session.events, "service-stopped") == expected_stopped
         assert not session.stderr_lines
         session.assert_container_removed()
         return {
@@ -1498,7 +1529,11 @@ def run_process_tree_service_case(
 
 
 def run_rapid_leader_service_case(
-    runtime: Path, parent: Path, *, local: bool = False
+    runtime: Path,
+    parent: Path,
+    *,
+    local: bool = False,
+    service_probe: bool = False,
 ) -> dict[str, object]:
     evidence, project, tools = prepare_service_case(
         parent, "services-process-tree-rapid"
@@ -1508,9 +1543,19 @@ def run_rapid_leader_service_case(
     mode_path = project / ".wphx/runtime/service-mode.txt"
     mode_path.parent.mkdir(parents=True, exist_ok=True)
     mode_path.write_text(service_id + "\n")
-    session_class = LocalDevSession if local else DevSession
-    session = session_class(
-        runtime, evidence, project, tools, service_mode=service_id
+    session = (
+        LocalDevSession(
+            runtime,
+            evidence,
+            project,
+            tools,
+            service_mode=service_id,
+            service_probe=service_probe,
+        )
+        if local
+        else DevSession(
+            runtime, evidence, project, tools, service_mode=service_id
+        )
     )
     unrelated_pid: int | None = None
     try:
@@ -1580,24 +1625,27 @@ def run_rapid_leader_service_case(
             .removeprefix("http://127.0.0.1:")
             .removesuffix("/")
         )
-        transition_start = len(session.events)
-        session.run_node(
-            "const fs=require('fs');"
-            "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
-            "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove rapid tree\\n');"
-        )
-        session.wait_for(
-            "service-stopped",
-            after=transition_start,
-            predicate=lambda value: value["payload"].get("serviceId")
-            == service_id,
-            timeout=15,
-        )
-        session.wait_for(
-            "build-published",
-            after=transition_start,
-            predicate=lambda value: value["payload"].get("generation") == 2,
-        )
+        if service_probe:
+            session.stop()
+        else:
+            transition_start = len(session.events)
+            session.run_node(
+                "const fs=require('fs');"
+                "fs.writeFileSync('.wphx/runtime/service-mode.txt','none\\n');"
+                "fs.appendFileSync('src/acme/site/Site.hx','\\n// remove rapid tree\\n');"
+            )
+            session.wait_for(
+                "service-stopped",
+                after=transition_start,
+                predicate=lambda value: value["payload"].get("serviceId")
+                == service_id,
+                timeout=15,
+            )
+            session.wait_for(
+                "build-published",
+                after=transition_start,
+                predicate=lambda value: value["payload"].get("generation") == 2,
+            )
         wait_for_process_group_gone(session, second_group_id)
         wait_for_process_ids_gone(
             session,
@@ -1625,14 +1673,16 @@ def run_rapid_leader_service_case(
 
         session.signal_pid(unrelated_pid)
         unrelated_pid = None
-        session.stop()
+        if not service_probe:
+            session.stop()
         session.wait_for("command-completed", timeout=2)
         validate_event_stream(session.events)
-        assert service_ids(session.events, "service-stopped") == [
-            service_id,
-            service_id,
-            "compiler",
-        ]
+        expected_stopped = (
+            [service_id, service_id]
+            if service_probe
+            else [service_id, service_id, "compiler"]
+        )
+        assert service_ids(session.events, "service-stopped") == expected_stopped
         assert not session.stderr_lines
         session.assert_container_removed()
         return {
@@ -1649,7 +1699,7 @@ def run_rapid_leader_service_case(
 
 
 def run_abrupt_supervisor_exit_case(
-    runtime: Path, parent: Path
+    runtime: Path, parent: Path, *, service_probe: bool = False
 ) -> dict[str, object]:
     evidence, project, tools = prepare_service_case(
         parent, "services-process-tree-abrupt-supervisor"
@@ -1660,7 +1710,12 @@ def run_abrupt_supervisor_exit_case(
     mode_path.parent.mkdir(parents=True, exist_ok=True)
     mode_path.write_text(service_id + "\n")
     session = LocalDevSession(
-        runtime, evidence, project, tools, service_mode=service_id
+        runtime,
+        evidence,
+        project,
+        tools,
+        service_mode=service_id,
+        service_probe=service_probe,
     )
     unrelated_pid: int | None = None
     try:
@@ -2216,19 +2271,31 @@ def run(runtime: Path, browser_tooling: Path) -> dict[str, object]:
 
 
 def main() -> None:
-    if len(sys.argv) == 3 and sys.argv[1] == "--local-process-tree":
+    if len(sys.argv) == 3 and sys.argv[1] in {
+        "--local-process-tree",
+        "--windows-process-tree",
+    }:
+        service_probe = sys.argv[1] == "--windows-process-tree"
         temporary_parent = Path(tempfile.gettempdir()).resolve()
         with tempfile.TemporaryDirectory(
             prefix="wordpresshx-sdk044-process-tree-", dir=temporary_parent
         ) as raw:
             summary = run_process_tree_service_case(
-                Path(sys.argv[2]), Path(raw), local=True
+                Path(sys.argv[2]),
+                Path(raw),
+                local=True,
+                service_probe=service_probe,
             )
             rapid_summary = run_rapid_leader_service_case(
-                Path(sys.argv[2]), Path(raw), local=True
+                Path(sys.argv[2]),
+                Path(raw),
+                local=True,
+                service_probe=service_probe,
             )
             abrupt_summary = run_abrupt_supervisor_exit_case(
-                Path(sys.argv[2]), Path(raw)
+                Path(sys.argv[2]),
+                Path(raw),
+                service_probe=service_probe,
             )
             summary = {
                 "abruptSupervisorExit": abrupt_summary,
@@ -2240,7 +2307,8 @@ def main() -> None:
     if len(sys.argv) != 3:
         raise SystemExit(
             "usage: test-production.py <compiled-runtime-root> <browser-tooling-root>\n"
-            "   or: test-production.py --local-process-tree <compiled-runtime-root>"
+            "   or: test-production.py --local-process-tree <compiled-runtime-root>\n"
+            "   or: test-production.py --windows-process-tree <compiled-runtime-root>"
         )
     summary = run(Path(sys.argv[1]), Path(sys.argv[2]))
     print(json.dumps(summary, sort_keys=True, separators=(",", ":")))

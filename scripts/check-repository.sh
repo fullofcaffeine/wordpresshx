@@ -31,7 +31,9 @@ required_files=(
   LICENSES/evidence/licenses/wordpress-7.0-license.txt
   wordpress-hx-sdk-product-requirements.md
   packages/cli/native/windows-service-host/windows_service_host.cpp
+  packages/cli/profiles/windows-service-host-test.hxml
   packages/cli/src/wordpresshx/cli/project/development/WindowsServiceHost.hx
+  packages/cli/test/windows-service-host/src/sdk044/windows/Main.hx
   scripts/dev-loop/windows_fake_haxe.cpp
   docs/README.md
   docs/adr/README.md
@@ -4721,7 +4723,8 @@ assert "122162abefc2035b307508e521348ea4fb36dab7" in (
 assert "Prove complete Windows development service cleanup" in (
     sdk044_windows_workflow
 )
-assert "--local-process-tree packages/cli/build" in sdk044_windows_workflow
+assert "--windows-process-tree packages/cli/build" in sdk044_windows_workflow
+assert "profiles/windows-service-host-test.hxml" in sdk044_windows_workflow
 assert "invalid internal service-host invocation" in sdk044_entry_source
 assert "run_process_tree_service_case" in sdk044_process_tree_test_source
 assert "run_rapid_leader_service_case" in sdk044_process_tree_test_source
@@ -4729,6 +4732,7 @@ assert "firstGroupGoneBeforeReplacementReady" in (
     sdk044_process_tree_test_source
 )
 assert "--local-process-tree" in sdk044_process_tree_test_source
+assert "--windows-process-tree" in sdk044_process_tree_test_source
 sdk044_reference_authorities = {
     ("haxe.elixir.codex", "lib/haxe_watcher.ex"): (
         "40254f38d9c07c069c7c3e19831096dcc2d6c95d",

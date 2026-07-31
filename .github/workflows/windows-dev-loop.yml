@@ -38,13 +38,14 @@ jobs:
           python.exe packages/cli/scripts/verify-dependency-lock.py
           Push-Location packages/cli
           haxe.exe profiles/wphx.hxml -js build/index.js
+          haxe.exe profiles/windows-service-host-test.hxml -js build/windows-service-host-test.js
           Pop-Location
           python.exe packages/cli/scripts/add-node-shebang.py packages/cli/build/index.js
       - name: Check strictly typed Haxe service supervision
         shell: pwsh
         run: |
-          haxelib.exe run formatter --check -s packages/cli/src
-          python.exe -c "import pathlib,re,sys; paths=[pathlib.Path('packages/cli/src/wordpresshx/cli/project/DevEngine.hx'),pathlib.Path('packages/cli/src/wordpresshx/cli/project/development')]; files=[p for root in paths for p in ([root] if root.is_file() else root.rglob('*.hx'))]; bad=[f'{p}:{i}:{line}' for p in files for i,line in enumerate(p.read_text(encoding='utf-8').splitlines(),1) if re.search(r'\b(?:Dynamic|Any|cast|Reflect|untyped)\b',line)]; print('\n'.join(bad)); sys.exit(bool(bad))"
+          haxelib.exe run formatter --check -s packages/cli/src -s packages/cli/test/windows-service-host/src
+          python.exe -c "import pathlib,re,sys; paths=[pathlib.Path('packages/cli/src/wordpresshx/cli/project/DevEngine.hx'),pathlib.Path('packages/cli/src/wordpresshx/cli/project/development'),pathlib.Path('packages/cli/test/windows-service-host/src')]; files=[p for root in paths for p in ([root] if root.is_file() else root.rglob('*.hx'))]; bad=[f'{p}:{i}:{line}' for p in files for i,line in enumerate(p.read_text(encoding='utf-8').splitlines(),1) if re.search(r'\b(?:Dynamic|Any|cast|Reflect|untyped)\b',line)]; print('\n'.join(bad)); sys.exit(bool(bad))"
       - name: Compile the Win32 Job Object host and test launcher
         shell: cmd
         run: |
@@ -56,4 +57,4 @@ jobs:
         shell: pwsh
         run: |
           $env:WPHX_WINDOWS_FAKE_HAXE_EXE = (Resolve-Path packages/cli/build/native/wphx-windows-fake-haxe.exe)
-          python.exe scripts/dev-loop/test-production.py --local-process-tree packages/cli/build
+          python.exe scripts/dev-loop/test-production.py --windows-process-tree packages/cli/build
