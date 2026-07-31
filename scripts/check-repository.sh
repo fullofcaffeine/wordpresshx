@@ -4594,7 +4594,7 @@ assert sdk044_verification["posixProcessGroupIdentityReuseLocal"] == (
     "prevented-by-live-sentinel-and-distinct-replacement-group"
 )
 assert sdk044_verification["posixDescendantCleanupHostedLinux"] == (
-    "pending-superseding-evidence"
+    "passed-run-30616078317-job-91109457929"
 )
 assert sdk044_verification["windowsDescendantCleanup"] == (
     "pending-job-object-adapter"
@@ -4605,7 +4605,7 @@ assert dev_loop_implementation["claims"]["wordpressExactImagePair"] == (
 )
 assert dev_loop_implementation["claims"][
     "externalDevelopmentServiceDescendantCleanup"
-] == "runtime-tested-local-posix-pending-hosted-linux"
+] == "runtime-tested-hosted-linux"
 sdk044_running_service_source = Path(
     "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx"
 ).read_text(encoding="utf-8")
@@ -4737,6 +4737,12 @@ assert sdk044_receipt["verification"] == {
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
+    "posixDescendantCleanupHostedLinux": "passed",
+    "posixRapidPayloadLeaderExitHostedLinux": "passed",
+    "posixProcessGroupIdentityReuse": (
+        "prevented-by-live-sentinel-and-distinct-replacement-group"
+    ),
+    "unrelatedProcessPreservationHostedLinux": "passed",
     "wordpressProviderControlledProcess": "passed",
     "wordpressComposeV2Syntax": "passed",
     "wordpressGeneratedConfigPrivacy": "passed",
@@ -4807,6 +4813,9 @@ for sdk044_claim_record in (
     assert sdk044_claim_record["externalDevelopmentService"] == (
         "controlled-process-runtime-tested-" + sdk044_evidence_suffix
     )
+    assert sdk044_claim_record[
+        "externalDevelopmentServiceDescendantCleanup"
+    ] == "runtime-tested-hosted-linux"
     assert sdk044_claim_record["wordpressDevelopmentProvider"] == (
         "controlled-process-and-compose-syntax-runtime-tested-"
         + sdk044_evidence_suffix
@@ -6380,14 +6389,14 @@ elif sdk026_hosted["status"] == "passed":
     assert sdk026_hosted["commit"] == sdk026_implementation_commit
     assert isinstance(sdk026_hosted["runId"], int)
     assert isinstance(sdk026_hosted["jobId"], int)
-    assert sdk026_hosted["runId"] == 29695491419
-    assert sdk026_hosted["jobId"] == 88215411504
-    assert sdk026_hosted["completedAt"] == "2026-07-19T16:53:52Z"
+    assert sdk026_hosted["runId"] == 30616078317
+    assert sdk026_hosted["jobId"] == 91109457929
+    assert sdk026_hosted["completedAt"] == "2026-07-31T08:37:30Z"
     assert sdk026_hosted["url"] == (
-        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/29695491419"
+        "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30616078317"
     )
     assert sdk026_hosted["fullMatrixStatus"] == "passed"
-    assert sdk026_hosted["jobCount"] == 11
+    assert sdk026_hosted["jobCount"] == 13
     assert sdk026_receipt["verification"]["repository"]["outcome"] == (
         "passed-local"
     )

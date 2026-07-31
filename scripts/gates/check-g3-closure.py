@@ -198,15 +198,23 @@ def validate_acceptance(
         "outcome": "passed",
     }, "transaction-validator acceptance changed")
     sdk026 = children.get("SDK-026-GENERATED-PHP-QUALITY", {})
-    expected_quality = (
-        "local-runtime-tested" if pending else "hosted-runtime-tested"
+    observed_quality = nested(
+        sdk026,
+        "claims",
+        "lintFormatWpcsCompatibilityStaticAnalysis",
     )
-    expected_fail_closed = (
-        "local-negative-tested" if pending else "hosted-negative-tested"
+    observed_fail_closed = nested(
+        sdk026,
+        "claims",
+        "failClosedBeforePublication",
     )
     audit.check(
-        nested(sdk026, "claims", "lintFormatWpcsCompatibilityStaticAnalysis")
-        == expected_quality,
+        observed_quality
+        in (
+            {"local-runtime-tested", "hosted-runtime-tested"}
+            if pending
+            else {"hosted-runtime-tested"}
+        ),
         (
             "SDK-026 quality tools are not locally runtime-tested"
             if pending
@@ -214,8 +222,12 @@ def validate_acceptance(
         ),
     )
     audit.check(
-        nested(sdk026, "claims", "failClosedBeforePublication")
-        == expected_fail_closed,
+        observed_fail_closed
+        in (
+            {"local-negative-tested", "hosted-negative-tested"}
+            if pending
+            else {"hosted-negative-tested"}
+        ),
         "SDK-026 fail-closed publication proof changed",
     )
 

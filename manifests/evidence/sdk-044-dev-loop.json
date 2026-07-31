@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "receiptId": "SDK-044-DEV-LOOP",
   "bead": "wordpresshx-sdk-044",
-  "status": "verified-with-process-tree-regression-open",
-  "observedAt": "2026-07-21T12:30:03Z",
-  "implementationCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+  "status": "verified",
+  "observedAt": "2026-07-31T08:37:30Z",
+  "implementationCommit": "1cd2684bc1eb05bf5a03fa9b5923b54d2d5c5250",
   "subject": {
     "implementationManifest": {
       "path": "manifests/dev-loop-implementation.json",
-      "sha256": "ec1e7a822903e4d9500c6f458c9f78a5f44ca9d77c8cb95543ef974c2fe714b8"
+      "sha256": "e4acb7ac65b33a2bc658178c82b441695900540eb656108c3e4ef333ca6cd0a8"
     },
     "implementationFiles": [
       {
@@ -85,7 +85,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProcessLaunch.hx",
-        "sha256": "48da3bcd3e520c50e54c8a76804309bbee861f869d7bfe4a63e456c4c9de072e"
+        "sha256": "7f9c69d6a8c2e7c2b07b20cfa6a2e9ee6e612da9cf08fecd4f46960778b8683c"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/DevelopmentProject.hx",
@@ -105,7 +105,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/RunningService.hx",
-        "sha256": "d6e874ea4632fbb8b730a3ae78f5780f6422b196d3ba5cdc1ccc0faffb15ad2b"
+        "sha256": "1d23c6dbb4260a44050d530dc3adfeefaa0e26e34ce9bce9469aeab563923499"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/ServiceSupervisor.hx",
@@ -113,7 +113,7 @@
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/WordPressProvider.hx",
-        "sha256": "e18fd0d9c8488b7b582ff79b63fa23f4ba3bf9300fca361946a06d79494edaec"
+        "sha256": "b2172b7cf5df1e8e4151dd0cee384470fea1213a4f160fe1a85107f30b513924"
       },
       {
         "path": "packages/cli/src/wordpresshx/cli/project/development/BrowserReloadServer.hx",
@@ -145,16 +145,16 @@
       },
       {
         "path": "packages/cli/scripts/verify-dependency-lock.py",
-        "sha256": "5b6f5a143b76276aef627fc6c38c944c607a83831f4945c9664270e656f04404"
+        "sha256": "232f725869bfe0bc89a775bee2fca20ece5d1f56305dcd0156e7fc25d4d8941e"
       }
     ],
     "dependencyLock": {
       "path": "packages/cli/dependency-lock.json",
-      "sha256": "87b666d6ec765effe284443299f6fda1b2c10496e41b06e30996c21e0636067b"
+      "sha256": "2d0108b3b00fa5f487fdf9d5d5a9c32264dfa3a2767228d5dc6ad59d6736632c"
     },
     "validator": {
       "path": "scripts/dev-loop/test-production.py",
-      "sha256": "6b96e3f06a0efac6adbdd2e3c3106c318607f9e48f23f8b684ece8a74a38ff29"
+      "sha256": "45700bc2efa4936195a28309658dfe3fa9abbd6e2dd05439687a8ab7eb504bc4"
     },
     "gate": {
       "path": "scripts/dev-loop/test-production.sh",
@@ -174,17 +174,17 @@
     },
     "effectiveInputsFixture": {
       "path": "fixtures/project-cli/valid/effective-inputs.json",
-      "sha256": "0fb6ce6340fc42b9bdc5d9173c5e14d2c8016d5daa08d9af6192df6f8ce2af81"
+      "sha256": "66b69548168e1c4ded646569e084a449267735c5c110a704eda9d4b6dbc8e11d"
     },
     "architectureDocument": {
       "path": "docs/architecture/build-and-dev-loop.md",
-      "sha256": "c2c1bf33e792d286e682fba3c83152bf13e535cba42e89f219863062db9cd4b7"
+      "sha256": "e208ffe4359fefe9070679f3bd450c31a3076756339376e3fcf2506533d1635d"
     }
   },
   "historicalVerification": {
     "algorithm": "sha256-lines-of-sha256-two-spaces-path-lf-v1",
-    "subjectCommit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
-    "subjectContentSha256": "a75a1ac1d46460801dd6ba724ae94f74b573942992484d03a0d77f338783e141",
+    "subjectCommit": "1cd2684bc1eb05bf5a03fa9b5923b54d2d5c5250",
+    "subjectContentSha256": "680f4b7c29b322e60903ca099a0716ff2fc9abf93805fb6ac85022dcebed6171",
     "depthOneFallback": "self-contained-subject-digest-inventory"
   },
   "implementation": {
@@ -218,6 +218,10 @@
     "httpLogAndTcpReadiness": "passed",
     "restartExhaustionExitCode": 7,
     "runtimeSecretNonPropagation": "passed",
+    "posixDescendantCleanupHostedLinux": "passed",
+    "posixRapidPayloadLeaderExitHostedLinux": "passed",
+    "posixProcessGroupIdentityReuse": "prevented-by-live-sentinel-and-distinct-replacement-group",
+    "unrelatedProcessPreservationHostedLinux": "passed",
     "wordpressProviderControlledProcess": "passed",
     "wordpressComposeV2Syntax": "passed",
     "wordpressGeneratedConfigPrivacy": "passed",
@@ -267,14 +271,14 @@
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "step": "Test production compile and watch development loop",
-    "runId": 29829506192,
-    "jobId": 88630562921,
-    "commit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+    "runId": 30616078317,
+    "jobId": 91109457929,
+    "commit": "1cd2684bc1eb05bf5a03fa9b5923b54d2d5c5250",
     "status": "passed",
     "required": true
   },
   "limitations": [
-    "DEV-N001: external services are not currently launched in owned POSIX process groups or Windows jobs; direct-child shutdown is tested, but a spawned descendant can survive. wordpresshx-sdk-044.4 owns the repair and superseding evidence.",
+    "POSIX external-service descendants are owned and cleaned up through a live group-leading sentinel; Windows still requires the separate Job Object adapter tracked by wordpresshx-sdk-044.4.1.",
     "The current producer graph has no registered PHP, browser, asset, or deployable site producers.",
     "The deterministic process-control corpus uses a TCP-listening Haxe protocol test double; real Haxe wait output parity is covered by SDK-040.",
     "The SDK-owned WordPress provider's generated Compose syntax and controlled process lifecycle are hosted tested, and its exact image pair is separately runtime tested by SDK-090; this gate does not start that pair through wphx dev or mount and install a generated site because target producers are not registered.",
@@ -287,7 +291,7 @@
     "lastGoodRetention": "runtime-tested-hosted",
     "managedCompilerLifecycle": "controlled-process-runtime-tested-hosted",
     "externalDevelopmentService": "controlled-process-runtime-tested-hosted",
-    "externalDevelopmentServiceDescendantCleanup": "regression-open",
+    "externalDevelopmentServiceDescendantCleanup": "runtime-tested-hosted-linux",
     "wordpressDevelopmentProvider": "controlled-process-and-compose-syntax-runtime-tested-hosted",
     "wordpressExactImagePair": "runtime-tested-by-sdk090",
     "postPublishReloadRequest": "controlled-event-runtime-tested-hosted",

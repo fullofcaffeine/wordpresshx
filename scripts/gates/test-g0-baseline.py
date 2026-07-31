@@ -176,7 +176,7 @@ def main() -> int:
                 "commit": invented_commit,
                 "status": "passed",
                 "fullMatrixStatus": "passed",
-                "jobCount": 10,
+                "jobCount": 13,
             }
 
         mutate_json(root, "manifests/evidence/g0-product-baseline.json", mutate)

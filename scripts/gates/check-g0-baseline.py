@@ -1365,7 +1365,7 @@ def validate_receipt_state(audit: Audit, receipt: dict[str, Any]) -> None:
             "commit": None,
             "status": "pending",
             "fullMatrixStatus": "pending",
-            "jobCount": 10,
+            "jobCount": 13,
         }, "pending G0 hosted record is not exact")
     else:
         expected_claims["g0ProductAuthorityAndBaseline"] = "verified"
@@ -1373,7 +1373,7 @@ def validate_receipt_state(audit: Audit, receipt: dict[str, Any]) -> None:
         audit.check(hosted.get("commit") == implementation.get("commit"), "G0 hosted and implementation commits differ")
         audit.check(hosted.get("status") == "passed", "G0 hosted workflow did not pass")
         audit.check(hosted.get("fullMatrixStatus") == "passed", "G0 complete hosted matrix did not pass")
-        audit.check(hosted.get("jobCount") == 10, "G0 hosted matrix must contain 10 jobs")
+        audit.check(hosted.get("jobCount") == 13, "G0 hosted matrix must contain 13 jobs")
     audit.check(receipt.get("claims") == expected_claims, "G0 receipt claims changed or broadened")
 
 
