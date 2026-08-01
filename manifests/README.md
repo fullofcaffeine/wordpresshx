@@ -2,6 +2,19 @@
 
 This directory contains immutable toolchain/upstream locks, architecture locks, evidence receipts, and future release manifests. No placeholder hash may be interpreted as a pin; exact identities are added by the corresponding gate bead.
 
+- `testing-strategy.json` is the checked behavior-first test authority. It
+  keeps compiler/adapter, WordPress runtime/ABI, package/install,
+  Gutenberg/browser, and migration/downstream scorecards independent; maps
+  R0-R5 feedback rings and example tiers; records the representative
+  ADR-009/ADR-012 red/oracle/tracer workflow; and defines a conservative,
+  observation-only semantic selector. Its timing and hosted-run observations
+  are recorded separately in `evidence/testing-strategy-baseline.json` and do
+  not broaden any product or publication claim. The controlled historical
+  `JsonPlan.success` sensitivity replay is byte-bound separately in
+  `evidence/testing-strategy-json-red-proof.json`; the older Oracle report is
+  retained as independent finding authority, not misreported as having run the
+  later overlay.
+
 - `package-topology.json` is the accepted ADR-003 public-artifact, source-module, dependency-direction, and independent-versioning map. Its `not-published` claim and `publicationAuthorized: false` are deliberate; topology acceptance is not a registry release.
 - `php-emission-policy.json` is the accepted ADR-005 semantic file/symbol/edge
   classification, native public PHP ABI, bounded private stock-Haxe lane,

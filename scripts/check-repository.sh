@@ -36,6 +36,7 @@ required_files=(
   packages/cli/test/windows-service-host/src/sdk044/windows/Main.hx
   scripts/dev-loop/windows_fake_haxe.cpp
   docs/README.md
+  docs/testing-strategy.md
   docs/adr/README.md
   docs/adr/001-product-and-repository-boundary.md
   docs/adr/002-exact-compatibility-profiles.md
@@ -71,7 +72,12 @@ required_files=(
   docs/release/release-checklist.md
   docs/release/rollback-checklist.md
   docs/security/wp70-build-tool-advisories.md
+  manifests/testing-strategy.json
+  manifests/evidence/testing-strategy-baseline.json
+  manifests/evidence/testing-strategy-json-red-proof.json
   packages/README.md
+  scripts/testing/strategy.py
+  scripts/testing/reproduce-json-plan-red.sh
   packages/contracts/README.md
   packages/contracts/test.hxml
   packages/contracts/src/wordpress/hx/contracts/CanonicalWireJson.hx
@@ -12625,6 +12631,8 @@ python3 scripts/semantic-plan/test-contract.py
 python3 scripts/contracts/validate-schema-authority.py
 python3 scripts/output-context/validate-architecture.py
 python3 scripts/adoption/validate-architecture.py
+python3 scripts/testing/strategy.py validate
+python3 scripts/testing/strategy.py self-test
 python3 scripts/ownership/test-contract.py
 python3 scripts/generated-output-vcs/test-policy.py
 python3 scripts/project-cli/test-contract.py

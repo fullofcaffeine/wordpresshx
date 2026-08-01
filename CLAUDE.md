@@ -79,3 +79,14 @@ _Add your project-specific conventions here_
 - When Haxe can safely infer, default, derive, validate, or generate something, do it in the Haxe layer instead of requiring repetitive author code or handwritten PHP, JavaScript, JSON, shell, or framework configuration.
 - Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
 - Keep the common path concise, typed, IDE-visible, deterministic, and compatible with explicit advanced options and narrow escape hatches.
+
+### Behavior-First Testing
+
+- Define meaningful behavior with preconditions, action, observable result, edge behavior, owning surface, and protected claim before broad automation.
+- Begin at the lowest faithful owner, record the intended red command and result in Beads or durable evidence, make it green, and then run the next broader real boundary. Retain a focused regression for stable lower owners discovered through browser or system tests.
+- Use an independent oracle: specification, manually authored expectation, pinned differential reference, invariant, reviewed golden with provenance, or real consumer behavior. Do not derive expected values from the implementation under test.
+- Prove one authored-Haxe-to-native-runtime tracer bullet before expanding a new capability.
+- Keep compiler/adapter, WordPress runtime/ABI, package/install, Gutenberg/browser, and migration/downstream scorecards independent. Examples support only their declared flagship, capability-showcase, or compile-only tier.
+- Preserve the R0-R5 rings, always-run sentinels, conservative select-all fallback, cold release proof, cache/artifact separation, and the explicit no-retry/quarantine policy. Affected selection remains observation-only until full-backstop recall evidence and an aggregator justify promotion.
+- High-risk compiler, runtime, ABI, package, security, migration, and claim changes require a review pass distinct from implementation.
+- Follow `manifests/testing-strategy.json` and `docs/testing-strategy.md` for the checked authority, commands, timings, and claim boundaries.

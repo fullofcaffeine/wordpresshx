@@ -1,0 +1,1369 @@
+{
+  "schemaVersion": 1,
+  "strategyId": "wordpresshx-testing-v1",
+  "status": "adopted-selector-observation-only",
+  "reference": {
+    "version": "2026-07-31-v3",
+    "checksumsSha256": "1860a0ec220bb3483746122cc304828698748122507f075462754ea1909473d6",
+    "sourceRole": "design-reference-not-runtime-dependency"
+  },
+  "authority": {
+    "bead": "wordpresshx-sdk-plan.3.5",
+    "document": "docs/testing-strategy.md",
+    "selectionMode": "observation-only",
+    "officialHaxeQualificationSurface": "compiler-adapter",
+    "publicClaimBroadeningAllowed": false,
+    "releaseProof": "blocked-no-release-command",
+    "ratioPolicy": "surface-portfolios-no-repository-quota"
+  },
+  "audit": [
+    {
+      "conclusionId": "behavior-formulation",
+      "disposition": "partial",
+      "evidence": [
+        "Beads acceptance criteria already capture many bounded scenarios",
+        "fixtures and evidence manifests already name exact inputs and outcomes"
+      ],
+      "increment": "require scenario preconditions, action, observable result, edge behavior, owning surface, and protected claim for meaningful changes"
+    },
+    {
+      "conclusionId": "tdd-red-state",
+      "disposition": "partial",
+      "evidence": [
+        "ADR012-F004 rereview records three source-level failures before correction",
+        "negative compile fixtures already assert exact failure reasons"
+      ],
+      "increment": "record the pre-fix command and intended failure in the owning Bead or durable implementation note"
+    },
+    {
+      "conclusionId": "independent-oracle",
+      "disposition": "partial",
+      "evidence": [
+        "pinned WordPress source and native runtime probes exist",
+        "generated artifacts and native PHP or browser observers are usually distinct"
+      ],
+      "increment": "name the independent authority for each new or materially changed expectation and reject circular snapshot refreshes"
+    },
+    {
+      "conclusionId": "tracer-bullet",
+      "disposition": "partial",
+      "evidence": [
+        "compiler WordPress and Gutenberg fixtures already cross real boundaries",
+        "no repository-wide rule requires one narrow real path before fixture expansion"
+      ],
+      "increment": "require one authored-source to real-observer path before broad new capability permutations"
+    },
+    {
+      "conclusionId": "lowest-faithful-double-lock",
+      "disposition": "partial",
+      "evidence": [
+        "focused validators and real WordPress or browser lanes coexist",
+        "their distinct claim ownership was previously implicit"
+      ],
+      "increment": "bind focused diagnosis, vertical boundary proof, and retained system behavior to stable test-owner identities"
+    },
+    {
+      "conclusionId": "portfolio-not-quota",
+      "disposition": "absent",
+      "evidence": [
+        "test README rejects replacing real boundaries with mocks",
+        "no separate surface scorecards or behavior-owner portfolio existed"
+      ],
+      "increment": "maintain five independent scorecards and measure claim ownership instead of a repository-wide test ratio"
+    },
+    {
+      "conclusionId": "executable-examples",
+      "disposition": "partial",
+      "evidence": [
+        "editor sidebar and Todo data-store lab build and run on exact WordPress with Chromium",
+        "their README files already state bounded non-claims"
+      ],
+      "increment": "classify both as capability showcases and bind each advertised claim to its exact command"
+    },
+    {
+      "conclusionId": "r0-r5-feedback",
+      "disposition": "absent",
+      "evidence": [
+        "focused, aggregate, hosted, runtime, and blocked release commands exist",
+        "all hosted workflows currently run on every push and pull request"
+      ],
+      "increment": "name R0 through R5 without moving evidence and add semantic affected selection in observation mode only"
+    },
+    {
+      "conclusionId": "targeted-verification",
+      "disposition": "partial",
+      "evidence": [
+        "high-risk output, security, licensing, and PHP readability work already receives independent Oracle review",
+        "not every high-risk Bead names the review questions or disposition format"
+      ],
+      "increment": "require a distinct review pass for compiler representation, ABI, package, security, migration, and claim changes"
+    }
+  ],
+  "surfaces": [
+    {
+      "surfaceId": "compiler-adapter",
+      "name": "Generic PHP compiler, WordPress emitter profile, and typed output adapters",
+      "owner": "compiler/reflaxe.php plus one-way compiler/wordpress and contract adapters",
+      "archetypes": [
+        "compiler",
+        "diagnostics"
+      ],
+      "status": "admitted-slice",
+      "claims": [
+        "typed authored PHP IR emits deterministic PHP for the admitted slice",
+        "WordPress public adapters emit readable native PHP for the admitted fixtures",
+        "ordinary-Haxe Reflaxe driver and official Haxe target qualification remain unimplemented"
+      ],
+      "authoredInputs": [
+        "Haxe-authored typed PHP IR fixtures",
+        "Haxe-authored WordPress plugin and adapter plans",
+        "typed contract and output-context values"
+      ],
+      "producedOutputs": [
+        "native PHP files",
+        "source-correlation maps",
+        "typed final-sink plans"
+      ],
+      "supportedProfiles": [],
+      "testedProfiles": [
+        "generic typed-IR slice on PHP 7.4.33 and 8.4.7",
+        "wp70-release public-adapter fixtures",
+        "ADR-009 and ADR-012 bounded prototypes"
+      ],
+      "focusedOwners": [
+        "generic-php-focused",
+        "wordpress-profile-focused",
+        "output-context-focused"
+      ],
+      "verticalIntegrationOwners": [
+        "generic-php-package",
+        "wordpress-public-php-runtime",
+        "output-context-vertical"
+      ],
+      "realRuntimeOrSystemOwners": [
+        "wordpress-public-php-runtime",
+        "output-context-vertical"
+      ],
+      "browserE2eOwners": [],
+      "examples": [],
+      "upstreamOracleAndPin": [
+        "PHP 7.4.33 and 8.4.7 native parsers and runtimes",
+        "Haxe 4.3.7 exact compiler input",
+        "manually reviewed PHP goldens and native non-Haxe consumers"
+      ],
+      "adaptations": [
+        "co-located reflaxe.php provenance is recorded separately from WordPress profile behavior"
+      ],
+      "knownSkips": [
+        "Reflaxe registration and arbitrary typed-Haxe AST lowering",
+        "complete Haxe runtime and standard-library strategy",
+        "official Haxe tests/unit qualification"
+      ],
+      "quarantines": [],
+      "selectorOwnership": [
+        "compiler/reflaxe.php/*",
+        "compiler/wordpress/*",
+        "packages/contracts/*",
+        "fixtures/output-context/*"
+      ],
+      "fullBackstopCommand": "Repository bootstrap workflow haxe, contract-schema, and wordpress-runtime jobs",
+      "releaseCommand": null,
+      "lastCleanProofs": [
+        {
+          "workflow": "Repository bootstrap",
+          "job": "haxe",
+          "runId": 30631257659,
+          "jobId": 91157871070,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "generic-php-focused",
+            "generic-php-package",
+            "wordpress-profile-focused"
+          ]
+        },
+        {
+          "workflow": "Output-context safety",
+          "job": "output-context",
+          "runId": 30631257692,
+          "jobId": 91157871404,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "output-context-focused",
+            "output-context-vertical"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 30631257659,
+          "jobId": 91157870967,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "wordpress-public-php-runtime"
+          ]
+        }
+      ],
+      "unprovenOwners": [],
+      "residualRisks": [
+        "wordpresshx-g1.4",
+        "wordpresshx-g4.1.1",
+        "wordpresshx-sdk-plan.3"
+      ]
+    },
+    {
+      "surfaceId": "wordpress-runtime-abi",
+      "name": "WordPress PHP runtime, bootstrap topology, globals, references, and public ABI",
+      "owner": "compiler/wordpress and exact WordPress runtime harnesses",
+      "archetypes": [
+        "framework",
+        "runtime-stdlib"
+      ],
+      "status": "partial",
+      "claims": [
+        "bounded generated plugin fixtures activate and call through native WordPress 7.0 APIs",
+        "exact PHP warnings, exceptions, WordPress errors, hooks, filters, REST, blocks, and references remain observable",
+        "general WordPress compatibility and production support remain unclaimed"
+      ],
+      "authoredInputs": [
+        "Haxe plugin and public-adapter fixtures",
+        "native independent WordPress consumer probes"
+      ],
+      "producedOutputs": [
+        "ordinary WordPress plugin files",
+        "native activation and runtime observations"
+      ],
+      "supportedProfiles": [],
+      "testedProfiles": [
+        "WordPress 7.0 with PHP 8.4 and exact MySQL and MariaDB lanes",
+        "PHP 7.4.33 and 8.4.7 public adapter syntax and runtime"
+      ],
+      "focusedOwners": [
+        "wordpress-profile-focused",
+        "wordpress-runtime-harness"
+      ],
+      "verticalIntegrationOwners": [
+        "wordpress-public-php-runtime",
+        "output-context-vertical",
+        "plugin-package-install"
+      ],
+      "realRuntimeOrSystemOwners": [
+        "wordpress-runtime-harness",
+        "wordpress-public-php-runtime",
+        "output-context-vertical",
+        "plugin-package-install"
+      ],
+      "browserE2eOwners": [],
+      "examples": [],
+      "upstreamOracleAndPin": [
+        "pinned official WordPress 7.0 distribution and public behavior",
+        "native non-Haxe PHP and WordPress consumers",
+        "exact MySQL 8.4.10 and MariaDB 11.4.5 images"
+      ],
+      "adaptations": [],
+      "knownSkips": [
+        "complete WordPress public ABI and topology inventory",
+        "themes and full-site runtime behavior",
+        "WordPress version ranges"
+      ],
+      "quarantines": [],
+      "selectorOwnership": [
+        "compiler/wordpress/*",
+        "scripts/wordpress/*",
+        "docker/wordpress/*",
+        "scripts/runtime-support/*"
+      ],
+      "fullBackstopCommand": "Repository bootstrap workflow wordpress-runtime job",
+      "releaseCommand": null,
+      "lastCleanProofs": [
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 30631257659,
+          "jobId": 91157870967,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "wordpress-profile-focused",
+            "wordpress-public-php-runtime"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 29605790579,
+          "jobId": 87968572776,
+          "commit": "ea82d94e17fef93f23bfe831c7fa97ba5dbc511e",
+          "status": "passed",
+          "evidence": "manifests/evidence/sdk-090-wordpress-harness.json",
+          "ownersCovered": [
+            "wordpress-runtime-harness"
+          ]
+        },
+        {
+          "workflow": "Output-context safety",
+          "job": "output-context",
+          "runId": 30631257692,
+          "jobId": 91157871404,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "output-context-vertical"
+          ]
+        }
+      ],
+      "unprovenOwners": [
+        "plugin-package-install"
+      ],
+      "residualRisks": [
+        "wordpresshx-g4",
+        "wordpresshx-sdk-051",
+        "wordpresshx-sdk-055"
+      ]
+    },
+    {
+      "surfaceId": "package-install",
+      "name": "Plugin, mu-plugin, theme, full-site, clean install, and package behavior",
+      "owner": "packages/cli, scaffold, ownership, determinism, and final-artifact lanes",
+      "archetypes": [
+        "package-cli"
+      ],
+      "status": "experimental",
+      "claims": [
+        "bounded compiler package and generated plugin artifacts replay deterministically in clean fixtures",
+        "two generated Gutenberg showcase plugins install and activate on exact WordPress 7.0",
+        "no public SDK package, theme, full-site artifact, upgrade, uninstall, or release claim exists"
+      ],
+      "authoredInputs": [
+        "Haxe project and plugin declarations",
+        "typed build, ownership, and scaffold plans"
+      ],
+      "producedOutputs": [
+        "deterministic internal ZIPs",
+        "ordinary plugin directories",
+        "ownership and build receipts"
+      ],
+      "supportedProfiles": [],
+      "testedProfiles": [
+        "clean source-only reflaxe.php package consumer",
+        "wp70-release generated plugin fixtures"
+      ],
+      "focusedOwners": [
+        "generated-output-policy"
+      ],
+      "verticalIntegrationOwners": [
+        "generic-php-package",
+        "plugin-package-install",
+        "editor-sidebar-example",
+        "todo-data-store-example"
+      ],
+      "realRuntimeOrSystemOwners": [
+        "plugin-package-install",
+        "development-service-runtime",
+        "editor-sidebar-example",
+        "todo-data-store-example"
+      ],
+      "browserE2eOwners": [
+        "editor-sidebar-example",
+        "todo-data-store-example"
+      ],
+      "examples": [
+        "editor-sidebar",
+        "todo-data-store-lab"
+      ],
+      "upstreamOracleAndPin": [
+        "clean Haxelib consumer resolution",
+        "WordPress public plugin install and activation behavior",
+        "byte-identical independent rebuild invariant"
+      ],
+      "adaptations": [],
+      "knownSkips": [
+        "public registry installation",
+        "mu-plugin lifecycle",
+        "theme and full-site packages",
+        "upgrade, uninstall, rollback, SBOM, notices, and downloaded release verification"
+      ],
+      "quarantines": [],
+      "selectorOwnership": [
+        "packages/cli/*",
+        "scripts/scaffold/*",
+        "scripts/ownership/*",
+        "scripts/determinism/*",
+        "scripts/generated-output-vcs/*"
+      ],
+      "fullBackstopCommand": "Repository bootstrap workflow haxe, generated-output-vcs, and wordpress-runtime jobs",
+      "releaseCommand": null,
+      "lastCleanProofs": [
+        {
+          "workflow": "Repository bootstrap",
+          "job": "haxe",
+          "runId": 30631257659,
+          "jobId": 91157871070,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "generic-php-package",
+            "development-service-runtime"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "generated-output-vcs",
+          "runId": 30631257659,
+          "jobId": 91157870972,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "generated-output-policy"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 30631257659,
+          "jobId": 91157870967,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "editor-sidebar-example",
+            "todo-data-store-example"
+          ]
+        },
+        {
+          "workflow": "Windows development service ownership",
+          "job": "windows-dev-loop",
+          "runId": 30631257802,
+          "jobId": 91157871398,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "development-service-runtime"
+          ]
+        }
+      ],
+      "unprovenOwners": [
+        "plugin-package-install"
+      ],
+      "residualRisks": [
+        "wordpresshx-sdk-051",
+        "wordpresshx-sdk-plan.2",
+        "wordpresshx-sdk-plan.3"
+      ]
+    },
+    {
+      "surfaceId": "gutenberg-browser",
+      "name": "Gutenberg editor, WordPress data, Genes browser generation, and user-visible behavior",
+      "owner": "packages/gutenberg with immutable Genes and WordPress browser profiles",
+      "archetypes": [
+        "browser-app",
+        "framework"
+      ],
+      "status": "partial",
+      "claims": [
+        "bounded Haxe/HXX editor and data-store fixtures generate strict TSX and run in real Gutenberg on Chromium",
+        "focused compile negatives, strict target builds, native WordPress runtime, and distinctive browser flows form separate evidence",
+        "general Gutenberg, Interactivity API, browser matrix, and production support remain unclaimed"
+      ],
+      "authoredInputs": [
+        "strictly typed Haxe and inline HXX",
+        "typed Gutenberg component, block, and data-store declarations"
+      ],
+      "producedOutputs": [
+        "strict TSX and JavaScript bundles",
+        "WordPress asset metadata and plugin files",
+        "browser evidence and screenshots"
+      ],
+      "supportedProfiles": [],
+      "testedProfiles": [
+        "wp70-release with Genes 1.41.4",
+        "Chromium from Playwright 1.58.2",
+        "bounded Gutenberg 23.4 forward source inventory"
+      ],
+      "focusedOwners": [
+        "gutenberg-browser-profile"
+      ],
+      "verticalIntegrationOwners": [
+        "gutenberg-browser-profile",
+        "output-context-vertical",
+        "editor-sidebar-example",
+        "todo-data-store-example",
+        "static-block-migration"
+      ],
+      "realRuntimeOrSystemOwners": [
+        "output-context-vertical",
+        "editor-sidebar-example",
+        "todo-data-store-example",
+        "static-block-migration"
+      ],
+      "browserE2eOwners": [
+        "editor-sidebar-example",
+        "todo-data-store-example",
+        "static-block-migration"
+      ],
+      "examples": [
+        "editor-sidebar",
+        "todo-data-store-lab"
+      ],
+      "upstreamOracleAndPin": [
+        "immutable Genes 1.41.4 compiler release",
+        "pinned official WordPress 7.0 and Gutenberg package behavior",
+        "real Chromium user-visible state and accessibility observations"
+      ],
+      "adaptations": [
+        "WordPress-specific React and Gutenberg adapters remain local while language-general generation stays in Genes"
+      ],
+      "knownSkips": [
+        "Interactivity API",
+        "cross-browser matrix",
+        "front-end persisted Todo application",
+        "complete Gutenberg component and block coverage"
+      ],
+      "quarantines": [],
+      "selectorOwnership": [
+        "packages/gutenberg/*",
+        "packages/hxx/*",
+        "packages/cli/browser-tooling/*"
+      ],
+      "fullBackstopCommand": "Repository bootstrap workflow haxe and wordpress-runtime jobs",
+      "releaseCommand": null,
+      "lastCleanProofs": [
+        {
+          "workflow": "Repository bootstrap",
+          "job": "haxe",
+          "runId": 30631257659,
+          "jobId": 91157871070,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "gutenberg-browser-profile"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 30631257659,
+          "jobId": 91157870967,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "editor-sidebar-example",
+            "todo-data-store-example",
+            "static-block-migration"
+          ]
+        },
+        {
+          "workflow": "Output-context safety",
+          "job": "output-context",
+          "runId": 30631257692,
+          "jobId": 91157871404,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "output-context-vertical"
+          ]
+        }
+      ],
+      "unprovenOwners": [],
+      "residualRisks": [
+        "wordpresshx-sdk-067",
+        "wordpresshx-sdk-092",
+        "wordpresshx-sdk-plan.3"
+      ]
+    },
+    {
+      "surfaceId": "migration-downstream",
+      "name": "Generated-artifact migration, removal, adoption, and downstream ecosystem compatibility",
+      "owner": "generated-output, profile-diff, adoption-contract, and downstream consumer lanes",
+      "archetypes": [
+        "migration",
+        "portability"
+      ],
+      "status": "experimental",
+      "claims": [
+        "bounded generated-output policy and profile-diff fixtures fail closed under deterministic mutations",
+        "static-block migration and removal are exercised on the exact fixture",
+        "production adoption generator, broad downstream ecosystem, and compatibility promises remain unimplemented"
+      ],
+      "authoredInputs": [
+        "typed profile, generated-output, migration, and adoption declarations",
+        "pinned external consumer fixtures"
+      ],
+      "producedOutputs": [
+        "profile diffs",
+        "generated-output ownership records",
+        "bounded migration and adoption reports"
+      ],
+      "supportedProfiles": [],
+      "testedProfiles": [
+        "wp70-release to bounded static-block legacy migration",
+        "synthetic generated-output VCS policy",
+        "synthetic ADR-015 adoption architecture"
+      ],
+      "focusedOwners": [
+        "generated-output-policy",
+        "adoption-contract-focused"
+      ],
+      "verticalIntegrationOwners": [
+        "static-block-migration",
+        "plugin-package-install"
+      ],
+      "realRuntimeOrSystemOwners": [
+        "static-block-migration"
+      ],
+      "browserE2eOwners": [
+        "static-block-migration"
+      ],
+      "examples": [],
+      "upstreamOracleAndPin": [
+        "WordPress block serialization and deprecation behavior",
+        "clean Git and artifact replay invariants",
+        "strict external TypeScript and native PHP consumers"
+      ],
+      "adaptations": [],
+      "knownSkips": [
+        "production source-derived adoption generator",
+        "real third-party provider ABI",
+        "complete install-update-remove ecosystem portfolio"
+      ],
+      "quarantines": [],
+      "selectorOwnership": [
+        "scripts/generated-output-vcs/*",
+        "scripts/profiles/*",
+        "scripts/adoption/*",
+        "packages/gutenberg/test/static-block-fixture/*"
+      ],
+      "fullBackstopCommand": "Repository bootstrap plus Adoption-contract architecture workflows",
+      "releaseCommand": null,
+      "lastCleanProofs": [
+        {
+          "workflow": "Adoption-contract architecture",
+          "job": "adoption-contract",
+          "runId": 30631257796,
+          "jobId": 91157871282,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "adoption-contract-focused"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "generated-output-vcs",
+          "runId": 30631257659,
+          "jobId": 91157870972,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "generated-output-policy"
+          ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 30631257659,
+          "jobId": 91157870967,
+          "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+          "status": "passed",
+          "evidence": "manifests/evidence/testing-strategy-baseline.json",
+          "ownersCovered": [
+            "static-block-migration"
+          ]
+        }
+      ],
+      "unprovenOwners": [
+        "plugin-package-install"
+      ],
+      "residualRisks": [
+        "wordpresshx-g6.1",
+        "wordpresshx-sdk-072",
+        "wordpresshx-sdk-plan.2"
+      ]
+    }
+  ],
+  "testOwners": [
+    {
+      "testId": "testing-strategy-contract",
+      "name": "Testing strategy, scorecards, examples, and selector contract",
+      "surfaces": [],
+      "layer": "static",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "python3 scripts/testing/strategy.py validate && python3 scripts/testing/strategy.py self-test",
+      "pathPatterns": [
+        "docs/testing-strategy.md",
+        "manifests/testing-strategy.json",
+        "manifests/evidence/testing-strategy-baseline.json",
+        "scripts/testing/*",
+        "test/README.md",
+        "examples/README.md",
+        "examples/*/README.md"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": true,
+      "oracle": "closed manifest invariants and deliberately mutated selector change classes",
+      "claimContribution": "attributes evidence without advancing any product claim"
+    },
+    {
+      "testId": "repository-bootstrap",
+      "name": "Repository-wide policy and invariant bootstrap",
+      "surfaces": [],
+      "layer": "static",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash scripts/check-repository.sh",
+      "pathPatterns": [
+        "scripts/check-repository.sh",
+        ".github/workflows/*",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "README.md",
+        "SUPPORT.md",
+        "docs/release/*",
+        "manifests/release-support-policy.json"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": true,
+      "oracle": "closed repository inventories, exact pins, independent policy mutations, and Git history checks",
+      "claimContribution": "prevents cross-surface evidence drift but is not runtime compatibility proof"
+    },
+    {
+      "testId": "generic-php-focused",
+      "name": "Generic typed PHP IR, printer, and correlation fixture",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/*"
+      ],
+      "reverseDependencies": [
+        "generic-php-package",
+        "wordpress-profile-focused"
+      ],
+      "alwaysRun": false,
+      "oracle": "manually reviewed PHP goldens plus native php -l and runtime output",
+      "claimContribution": "admitted typed-IR slice only"
+    },
+    {
+      "testId": "generic-php-package",
+      "name": "Clean standalone generic PHP compiler package consumer",
+      "surfaces": [
+        "compiler-adapter",
+        "package-install"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/reflaxe.php/scripts/test-package.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/*"
+      ],
+      "reverseDependencies": [
+        "wordpress-public-php-runtime"
+      ],
+      "alwaysRun": false,
+      "oracle": "clean Haxelib resolution failure-before-install, byte-identical packages, and native PHP consumer execution",
+      "claimContribution": "package seam for the admitted compiler slice, not public release readiness"
+    },
+    {
+      "testId": "wordpress-runtime-harness",
+      "name": "Pinned vanilla WordPress distribution and database harness",
+      "surfaces": [
+        "wordpress-runtime-abi"
+      ],
+      "layer": "system",
+      "rings": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash scripts/wordpress/test-harness.sh",
+      "pathPatterns": [
+        "scripts/wordpress/*",
+        "docker/wordpress/*"
+      ],
+      "reverseDependencies": [
+        "wordpress-public-php-runtime",
+        "output-context-vertical",
+        "plugin-package-install",
+        "editor-sidebar-example",
+        "todo-data-store-example",
+        "static-block-migration"
+      ],
+      "alwaysRun": false,
+      "oracle": "pinned official WordPress 7.0 distribution and fresh native installation over exact MySQL and MariaDB images",
+      "claimContribution": "vanilla harness and shared topology only; it does not prove an SDK, plugin, theme, or browser claim"
+    },
+    {
+      "testId": "wordpress-profile-focused",
+      "name": "WordPress public PHP emitter and native adapter fixture",
+      "surfaces": [
+        "compiler-adapter",
+        "wordpress-runtime-abi"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "pathPatterns": [
+        "compiler/wordpress/*"
+      ],
+      "reverseDependencies": [
+        "wordpress-public-php-runtime",
+        "plugin-package-install"
+      ],
+      "alwaysRun": false,
+      "oracle": "manually reviewed native WordPress PHP shapes and an ordinary non-Haxe PHP caller",
+      "claimContribution": "bounded public adapter generation and local native call behavior"
+    },
+    {
+      "testId": "wordpress-public-php-runtime",
+      "name": "Generated public PHP on exact PHP and clean WordPress",
+      "surfaces": [
+        "compiler-adapter",
+        "wordpress-runtime-abi"
+      ],
+      "layer": "system",
+      "rings": [
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash compiler/wordpress/scripts/test.sh && bash compiler/wordpress/scripts/test-php-matrix.sh && bash compiler/wordpress/scripts/test-wordpress.sh",
+      "pathPatterns": [
+        "compiler/wordpress/*",
+        "scripts/wordpress/*",
+        "docker/wordpress/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "pinned PHP runtimes and official WordPress 7.0 public bootstrap, hook, REST, block, reflection, and reference behavior",
+      "claimContribution": "exact bounded fixture runtime evidence, not broad WordPress support"
+    },
+    {
+      "testId": "output-context-focused",
+      "name": "Schema and output-context architecture invariants",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "python3 scripts/contracts/validate-schema-authority.py && python3 scripts/output-context/validate-architecture.py",
+      "pathPatterns": [
+        "packages/contracts/*",
+        "fixtures/output-context/*",
+        "scripts/contracts/*",
+        "scripts/output-context/*",
+        "manifests/schema-codec-architecture.json",
+        "manifests/output-context-architecture.json"
+      ],
+      "reverseDependencies": [
+        "output-context-vertical"
+      ],
+      "alwaysRun": false,
+      "oracle": "closed conversion graph, exact negative diagnostics, manually authored boundary vectors, and independent mutation corpus",
+      "claimContribution": "diagnoses bounded contract and sink invariants"
+    },
+    {
+      "testId": "output-context-vertical",
+      "name": "Haxe, Genes, PHP, React, and WordPress output-context tracer",
+      "surfaces": [
+        "compiler-adapter",
+        "wordpress-runtime-abi",
+        "gutenberg-browser"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash scripts/output-context/test.sh",
+      "pathPatterns": [
+        "packages/contracts/*",
+        "fixtures/output-context/*",
+        "scripts/output-context/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "native PHP JSON_THROW_ON_ERROR, JavaScript JSON.parse, React SSR, and official WordPress sink behavior",
+      "claimContribution": "bounded cross-target output-context prototype only"
+    },
+    {
+      "testId": "generated-output-policy",
+      "name": "Generated-output ownership, drift, and clean replay policy",
+      "surfaces": [
+        "package-install",
+        "migration-downstream"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "python3 scripts/generated-output-vcs/test-policy.py",
+      "pathPatterns": [
+        "scripts/generated-output-vcs/*",
+        "manifests/generated-output-vcs-*.json"
+      ],
+      "reverseDependencies": [
+        "plugin-package-install"
+      ],
+      "alwaysRun": false,
+      "oracle": "independent temporary Git repositories and manifest-bound byte comparisons",
+      "claimContribution": "bounded generated-output policy, not final release installation"
+    },
+    {
+      "testId": "plugin-package-install",
+      "name": "Haxe-first plugin build, package, install, and activation",
+      "surfaces": [
+        "package-install",
+        "wordpress-runtime-abi",
+        "migration-downstream"
+      ],
+      "layer": "system",
+      "rings": [
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash scripts/scaffold/test-production.sh && bash scripts/scaffold/test-plugin-wordpress.sh",
+      "pathPatterns": [
+        "packages/cli/*",
+        "scripts/scaffold/*",
+        "scripts/ownership/*",
+        "scripts/determinism/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "clean generated artifact, exact WordPress activation, ownership transaction, and byte-identical rebuild",
+      "claimContribution": "bounded internal generated plugin path, not public package support"
+    },
+    {
+      "testId": "development-service-runtime",
+      "name": "Owned local development service and process-tree behavior",
+      "surfaces": [
+        "package-install"
+      ],
+      "layer": "system",
+      "rings": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash scripts/dev-loop/test-production.sh",
+      "pathPatterns": [
+        "packages/cli/src/wordpresshx/cli/project/development/*",
+        "packages/cli/src/wordpresshx/cli/project/DevEngine.hx",
+        "packages/cli/native/windows-service-host/*",
+        "packages/cli/test/windows-service-host/*",
+        "scripts/dev-loop/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "native POSIX process groups and Windows Job Objects observed through owned child/grandchild, readiness, shutdown, port, and unrelated-process probes",
+      "claimContribution": "development-service ownership only; it does not prove WordPress ABI or package release behavior"
+    },
+    {
+      "testId": "unsafe-boundary-policy",
+      "name": "Unsafe-boundary lifecycle and security policy",
+      "surfaces": [],
+      "layer": "static",
+      "rings": [
+        "R0",
+        "R2",
+        "R4"
+      ],
+      "command": "python3 scripts/security/test-unsafe-boundary-policy.py",
+      "pathPatterns": [
+        "scripts/security/*",
+        "fixtures/unsafe-boundary/*",
+        "schemas/unsafe-boundary-*.json",
+        "manifests/unsafe-boundary-policy.json"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "closed waiver/lifecycle schemas, live Beads authority, repository-confined evidence, exact deadlines, and independent fail-closed mutations",
+      "claimContribution": "security governance only; a passing waiver policy does not advance a product-surface compatibility claim"
+    },
+    {
+      "testId": "gutenberg-browser-profile",
+      "name": "Genes and Gutenberg focused generation and strict target contracts",
+      "surfaces": [
+        "gutenberg-browser"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash packages/gutenberg/scripts/test.sh && bash packages/gutenberg/scripts/test-hxx.sh && bash packages/gutenberg/scripts/test-differential.sh",
+      "pathPatterns": [
+        "packages/gutenberg/*",
+        "packages/hxx/*"
+      ],
+      "reverseDependencies": [
+        "editor-sidebar-example",
+        "todo-data-store-example",
+        "static-block-migration"
+      ],
+      "alwaysRun": false,
+      "oracle": "strict TypeScript consumer contracts, classic-profile differential invariants, React runtime, and reviewed generated snapshots",
+      "claimContribution": "bounded browser compiler and HXX profiles"
+    },
+    {
+      "testId": "editor-sidebar-example",
+      "name": "Editor sidebar capability showcase",
+      "surfaces": [
+        "gutenberg-browser",
+        "package-install"
+      ],
+      "layer": "browser-e2e",
+      "rings": [
+        "R3",
+        "R4"
+      ],
+      "command": "bash packages/gutenberg/scripts/test-editor-plugin.sh",
+      "pathPatterns": [
+        "examples/editor-sidebar/*",
+        "packages/gutenberg/test/editor-plugin-*",
+        "packages/gutenberg/scripts/*editor*",
+        "packages/gutenberg/src/wordpress/hx/gutenberg/editor/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "public Gutenberg SlotFill behavior observed through keyboard, focus, post-type, unregister, axe, console, page, and request assertions",
+      "claimContribution": "Tier B editor-extension showcase only"
+    },
+    {
+      "testId": "todo-data-store-example",
+      "name": "Todo native data-store capability showcase",
+      "surfaces": [
+        "gutenberg-browser",
+        "package-install"
+      ],
+      "layer": "browser-e2e",
+      "rings": [
+        "R3",
+        "R4"
+      ],
+      "command": "bash packages/gutenberg/scripts/test-data-store.sh",
+      "pathPatterns": [
+        "examples/todo-data-store-lab/*",
+        "packages/gutenberg/test/data-store-*",
+        "packages/gutenberg/scripts/*data-store*",
+        "packages/gutenberg/src/wordpress/hx/gutenberg/data/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "WordPress @wordpress/data public behavior plus user-visible mutation, failure/recovery, focus, accessibility, and fatal browser error checks",
+      "claimContribution": "Tier B in-memory data-store showcase, not Todo Studio persistence"
+    },
+    {
+      "testId": "static-block-migration",
+      "name": "Typed static block generation, serialization, and legacy migration",
+      "surfaces": [
+        "gutenberg-browser",
+        "migration-downstream"
+      ],
+      "layer": "browser-e2e",
+      "rings": [
+        "R3",
+        "R4"
+      ],
+      "command": "bash packages/gutenberg/scripts/test-static-block.sh",
+      "pathPatterns": [
+        "packages/gutenberg/test/static-block-fixture/*",
+        "packages/gutenberg/scripts/*static-block*",
+        "packages/gutenberg/src/wordpress/hx/gutenberg/block/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "WordPress block parser, serializer, deprecation migration, editor save, and front-end rendering behavior",
+      "claimContribution": "bounded static-block fixture migration only"
+    },
+    {
+      "testId": "adoption-contract-focused",
+      "name": "Precise-or-omitted adoption architecture",
+      "surfaces": [
+        "migration-downstream"
+      ],
+      "layer": "focused",
+      "rings": [
+        "R0",
+        "R2",
+        "R4"
+      ],
+      "command": "bash scripts/adoption/test.sh",
+      "pathPatterns": [
+        "scripts/adoption/*",
+        "fixtures/adoption-contract/*",
+        "schemas/adoption-*.json",
+        "manifests/adoption-contract-architecture.json"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "closed public schemas, exact manually reviewed fixture authorities, and independent mutation corpus",
+      "claimContribution": "synthetic architecture only; production generator and provider runtime remain absent"
+    }
+  ],
+  "rings": [
+    {
+      "ringId": "R0",
+      "role": "active focused red-green owner",
+      "commands": [
+        "python3 scripts/testing/strategy.py validate",
+        "python3 scripts/contracts/validate-schema-authority.py",
+        "surface-specific focused owner from testOwners"
+      ],
+      "remoteWorkflows": [],
+      "currentState": "available-local-no-single-universal-runner",
+      "budgetState": "initial samples only; no p50 or p95 claim"
+    },
+    {
+      "ringId": "R1",
+      "role": "representative local tracer smoke",
+      "commands": [
+        "bash compiler/wordpress/scripts/test.sh",
+        "bash scripts/output-context/test.sh when Docker is healthy"
+      ],
+      "remoteWorkflows": [],
+      "currentState": "available-per-surface",
+      "budgetState": "initial samples only; Docker-dependent paths remain environment-sensitive"
+    },
+    {
+      "ringId": "R2",
+      "role": "clean required pull-request evidence",
+      "commands": [
+        "bash scripts/check-repository.sh",
+        "all current required workflow jobs"
+      ],
+      "remoteWorkflows": [
+        "Repository bootstrap",
+        "Output-context safety",
+        "Adoption-contract architecture",
+        "Unsafe-boundary policy",
+        "Windows development service ownership"
+      ],
+      "currentState": "all-workflows-run-no-affected-skipping",
+      "budgetState": "baseline critical path exceeds the reference starting objective; no evidence moved"
+    },
+    {
+      "ringId": "R3",
+      "role": "affected extended framework browser package and platform proof",
+      "commands": [
+        "individual exact WordPress, Gutenberg, output-context, adoption, and Windows commands"
+      ],
+      "remoteWorkflows": [
+        "workflow_dispatch for each focused hosted workflow"
+      ],
+      "currentState": "not-separated-from-R2-on-pull-requests; selector-is-observation-only",
+      "budgetState": "no standalone percentile history"
+    },
+    {
+      "ringId": "R4",
+      "role": "main full current-primary backstop and selector recall owner",
+      "commands": [
+        "all five hosted workflows on every main push"
+      ],
+      "remoteWorkflows": [
+        "Repository bootstrap",
+        "Output-context safety",
+        "Adoption-contract architecture",
+        "Unsafe-boundary policy",
+        "Windows development service ownership"
+      ],
+      "currentState": "complete-current-primary-backstop-no-nightly-schedule",
+      "budgetState": "one clean baseline sample recorded; selector miss rate not yet measurable"
+    },
+    {
+      "ringId": "R5",
+      "role": "clean release-artifact install and exact claim matrix",
+      "commands": [
+        "python3 scripts/release/test-governance.py proves publication remains blocked"
+      ],
+      "remoteWorkflows": [
+        "none"
+      ],
+      "currentState": "withheld-until-final-artifact-and-publication-authority-exist",
+      "budgetState": "not measurable; no release proof command exists"
+    }
+  ],
+  "examples": [
+    {
+      "exampleId": "editor-sidebar",
+      "tier": "capability-showcase",
+      "owner": "examples/editor-sidebar/README.md",
+      "surfaces": [
+        "gutenberg-browser",
+        "package-install"
+      ],
+      "advertisedClaim": "typed Haxe/HXX registers and operates a native Gutenberg SlotFill editor extension on exact WordPress 7.0",
+      "testCommand": "bash packages/gutenberg/scripts/test-editor-plugin.sh",
+      "interactiveCommand": "bash packages/gutenberg/scripts/start-example-server.sh editor-sidebar",
+      "status": "executable-at-declared-tier"
+    },
+    {
+      "exampleId": "todo-data-store-lab",
+      "tier": "capability-showcase",
+      "owner": "examples/todo-data-store-lab/README.md",
+      "surfaces": [
+        "gutenberg-browser",
+        "package-install"
+      ],
+      "advertisedClaim": "compile-time checked Haxe state, actions, selectors, and HXX drive native @wordpress/data behavior on exact WordPress 7.0",
+      "testCommand": "bash packages/gutenberg/scripts/test-data-store.sh",
+      "interactiveCommand": "bash packages/gutenberg/scripts/start-example-server.sh todo-data-store-lab",
+      "status": "executable-at-declared-tier"
+    }
+  ],
+  "representativeWorkflow": {
+    "workflowId": "adr009-adr012-json-native-boundary",
+    "surfaces": [
+      "compiler-adapter",
+      "wordpress-runtime-abi",
+      "gutenberg-browser"
+    ],
+    "scenario": {
+      "preconditions": "a non-strict or foreign caller supplies a typed WireValue at the final JSON sink, including exact depth boundaries and malformed shapes",
+      "action": "OutputCodec returns WireValue, CanonicalWireJson validates and snapshots it, and OutputSinks constructs a private JsonPlan",
+      "observableResult": "every successful byte sequence decodes in PHP JSON_THROW_ON_ERROR and JavaScript JSON.parse and reaches the native sink plan",
+      "errorOrEdge": "raw-success construction, 65 nested containers, null or malformed shapes, cycles, invalid Unicode, duplicates, and unsupported values fail without bytes or escaping exceptions",
+      "protectedClaim": "bounded ADR-009 and ADR-012 modeled success means native-decoder-accepted bytes through the sole sink-owned path"
+    },
+    "redState": {
+      "subjectCommit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
+      "controlledOverlayFixture": "fixtures/output-context/test-negative/json_plan_success/Main.hx",
+      "command": "bash scripts/testing/reproduce-json-plan-red.sh",
+      "expectedFailure": "the pre-fix public JsonPlan.success accepts caller-authored bytes; the regression owner must fail because successful construction is not sink-owned",
+      "evidence": "manifests/evidence/testing-strategy-json-red-proof.json",
+      "independentReview": "review/oracle/results/adr012-f004-rereview-0e01ab5/ORACLE-REREVIEW.md"
+    },
+    "oracle": {
+      "kind": "native-decoder-plus-independent-reviewed-boundary-vectors",
+      "authority": "JSON grammar as enforced independently by PHP JSON_THROW_ON_ERROR and JavaScript JSON.parse, with manually authored C0, depth, Unicode, malformed-shape, duplicate, and cycle vectors",
+      "independence": "the expected validity and failures are not generated by CanonicalWireJson or OutputSinks"
+    },
+    "focusedOwner": "output-context-focused",
+    "tracerBullet": {
+      "path": "Haxe TodoCard codec -> WireValue -> CanonicalWireJson.encodeChecked -> private JsonPlan -> generated native plan -> PHP, JavaScript, WordPress, and React observers",
+      "observer": "scripts/contracts/test-schema-authority.sh and scripts/output-context/test.sh",
+      "status": "runtime-tested-bounded-prototype"
+    },
+    "broaderProof": "Output-context safety workflow run 30631257692 passed at commit 338b149; the corrected commit still awaits the required fresh content-addressed independent rereview",
+    "reviewDisposition": "changes-repaired-pending-fresh-independent-rereview",
+    "claimEffect": "unchanged-bounded-prototype-no-publication"
+  },
+  "selector": {
+    "mode": "observation-only",
+    "alwaysRunTestIds": [
+      "testing-strategy-contract",
+      "repository-bootstrap"
+    ],
+    "fullExpansionPatterns": [
+      ".github/workflows/*",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "README.md",
+      "SUPPORT.md",
+      "docs/release/*",
+      "manifests/testing-strategy.json",
+      "manifests/release-support-policy.json",
+      "scripts/check-repository.sh",
+      "scripts/testing/*"
+    ],
+    "unknownPathPolicy": "select-all",
+    "backstop": "all-current-primary-workflows-on-main",
+    "promotionRequirements": [
+      "record representative selections and omissions with reasons",
+      "measure selector misses against full main runs",
+      "add a required aggregator before any selected gate becomes authoritative",
+      "retain always-run sentinels and conservative expansion",
+      "obtain owner review before removing existing pull-request evidence"
+    ]
+  },
+  "flakePolicy": {
+    "automaticRetry": "forbidden-for-deterministic-test-failures",
+    "deterministicFailure": "preserve-first-failure-and-exit-nonzero",
+    "quarantineRequiredFields": [
+      "test-id",
+      "owner",
+      "bead",
+      "reason",
+      "first-and-last-failure-evidence",
+      "expiry",
+      "nonblocking-execution-lane",
+      "nonpassing-claim-contribution"
+    ],
+    "currentQuarantines": [],
+    "measurementState": "no repository-wide flake classifier yet; recent workflow failures are not relabeled as flakes without evidence"
+  },
+  "claims": {
+    "justified": [
+      "test evidence is now mechanically attributed to five independent product surfaces",
+      "the two maintained examples are executable Tier B capability showcases",
+      "affected selection explains semantic ownership and fails safe in observation mode"
+    ],
+    "unchanged": [
+      "all bounded compiler, WordPress, package, Gutenberg, and migration receipt claims",
+      "all current pull-request and main workflow execution",
+      "publication and stable release remain blocked"
+    ],
+    "narrowed": [],
+    "deferred": [
+      "official Haxe target qualification until a real arbitrary-Haxe custom compiler entry exists",
+      "authoritative affected-only pull-request selection until wordpresshx-sdk-plan.3.6 supplies recall evidence and an aggregator",
+      "Tier A flagship, theme, full-site, and release examples until their owning Beads close",
+      "p50 and p95 budgets until wordpresshx-sdk-plan.3.6 supplies comparable timing history"
+    ]
+  }
+}

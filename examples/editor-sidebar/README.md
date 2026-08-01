@@ -5,6 +5,11 @@ plugin registration, post-type rule, state, Gutenberg controls, and markup in
 Haxe/HXX. The build produces an ordinary native WordPress plugin; there is no
 browser HXX parser and no handwritten JavaScript registration entry.
 
+**QA tier: Tier B — capability showcase.** The complete command below builds,
+packages, installs, activates, and exercises the advertised WordPress/editor
+boundary. The `--skip-wordpress` shortcut is useful while iterating but cannot
+support that runtime claim.
+
 It answers one practical question: **can a Haxe component participate in the
 real Gutenberg editor without recreating Gutenberg?** The installed test opens
 the native SlotFill menu, enters the sidebar with the keyboard, changes state,

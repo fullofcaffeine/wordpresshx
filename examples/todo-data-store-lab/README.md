@@ -6,6 +6,11 @@ rehearsal live in an immutable Haxe state model. WordPress' real
 `@wordpress/data` registry owns registration, dispatch, selection,
 subscription, and React updates.
 
+**QA tier: Tier B — capability showcase.** The complete command below builds,
+packages, installs, activates, and exercises the advertised data-store/editor
+boundary. The `--skip-wordpress` shortcut is a focused development check and
+cannot support that runtime claim.
+
 The useful difference from plain JavaScript is visible before the browser
 runs: the store key, state, reducer, action discriminator, dispatched actions,
 selectors, and hooks form one compiler-checked contract. If they disagree, the

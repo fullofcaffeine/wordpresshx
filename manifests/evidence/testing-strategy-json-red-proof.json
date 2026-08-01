@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "TESTING-STRATEGY-JSON-RED-001",
+  "bead": "wordpresshx-sdk-plan.3.5",
+  "reproducedAt": "2026-08-01T07:00:54Z",
+  "reviewedSubject": {
+    "commit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
+    "tree": "a18c63f427d5030e19e0923a7408fe239abd7e4b",
+    "outputSinksSha256": "bd96f307bf835f6757102ca83dafd5bf06e0f52ce36ac043158c715ee621f8c1"
+  },
+  "controlledOverlay": {
+    "role": "current compile-negative copied unchanged into the historical source tree to test whether that exact source exposed the forbidden API",
+    "path": "fixtures/output-context/test-negative/json_plan_success/Main.hx",
+    "sha256": "398f3cb682ec7908ca884c4a5feed13f614afa60352a0bd2e42be154228ac450"
+  },
+  "comparison": {
+    "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+    "currentOutputSinksPath": "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx",
+    "currentOutputSinksSha256": "8ad435ddecbd7f2a2f51c0650ad50f55069ab828115b8bc4d0295ddcd15c4c23"
+  },
+  "reproduction": {
+    "script": "scripts/testing/reproduce-json-plan-red.sh",
+    "scriptSha256": "c1429eabdcfe5ea80c6ed357066367ee95764272a436fcb23bd6cb9865356eab",
+    "command": "bash scripts/testing/reproduce-json-plan-red.sh",
+    "haxeVersion": "4.3.7",
+    "subjectExit": 0,
+    "subjectOutput": "",
+    "subjectOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "currentExit": 1,
+    "currentOutput": "fixtures/output-context/test-negative/json_plan_success/Main.hx:5: characters 12-19 : Class<wordpress.hx.output.prototype.JsonPlan> has no field success",
+    "currentOutputSha256": "ade3d96bb3ca5525cbeef408dd90f55b1a73f2cda09d0d1f2d8d1d0c292ab61b",
+    "currentDiagnostic": "Class<wordpress.hx.output.prototype.JsonPlan> has no field success",
+    "interpretation": "the reviewed subject accepted the forbidden public raw-success call; the current boundary rejects that same application fixture for the intended accessibility reason"
+  },
+  "independentReview": {
+    "path": "review/oracle/results/adr012-f004-rereview-0e01ab5/ORACLE-REREVIEW.md",
+    "sha256": "ee960c76303b0affb8f1f569dc8a13554dd566c2a13a86e6528c6c2bbda8f7db",
+    "role": "independent source finding and required negative-test design; it did not execute the later controlled overlay"
+  },
+  "claims": {
+    "redSensitivity": "reproduced",
+    "currentBoundary": "focused-compile-negative-passed",
+    "freshIndependentAcceptance": "pending",
+    "publicationAuthorized": false
+  }
+}

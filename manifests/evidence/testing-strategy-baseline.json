@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "TESTING-STRATEGY-BASELINE-001",
+  "bead": "wordpresshx-sdk-plan.3.5",
+  "observedAt": "2026-08-01T07:26:07Z",
+  "subject": {
+    "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+    "strategyReferenceVersion": "2026-07-31-v3",
+    "strategyReferenceChecksumsSha256": "1860a0ec220bb3483746122cc304828698748122507f075462754ea1909473d6"
+  },
+  "measurementSemantics": {
+    "localSamples": "one first invocation followed immediately by one repeat invocation on the same workstation",
+    "coldClaim": false,
+    "warmClaim": false,
+    "coldWarmDeferral": "no controlled cache/artifact reset protocol existed before this no-topology-change audit; wordpresshx-sdk-plan.3.6 owns comparable cold/warm and p50/p95 collection rather than relabeling first/repeat samples",
+    "percentileClaim": false,
+    "hostedSamples": "one clean GitHub Actions run at the exact subject commit",
+    "comparisonUse": "initial baseline only; do not infer p50, p95, cache correctness, or a duration budget"
+  },
+  "localBefore": [
+    {
+      "ring": "R0",
+      "command": "python3 scripts/contracts/validate-schema-authority.py",
+      "firstMilliseconds": 100,
+      "repeatMilliseconds": 40,
+      "outcome": "passed",
+      "uniqueEvidence": "closed schema and contract architecture invariants"
+    },
+    {
+      "ring": "R1",
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "firstMilliseconds": 3070,
+      "repeatMilliseconds": 2490,
+      "outcome": "passed",
+      "uniqueEvidence": "Haxe-authored WordPress emitter through generated PHP lint, native non-Haxe caller, and source correlation"
+    },
+    {
+      "ring": "R2",
+      "command": "bash scripts/check-repository.sh",
+      "firstMilliseconds": 86820,
+      "repeatMilliseconds": 71350,
+      "outcome": "passed",
+      "uniqueEvidence": "repository policy, architecture, schema, ownership, security-tooling, and claim invariants"
+    },
+    {
+      "ring": "R3",
+      "command": "bash scripts/output-context/test.sh",
+      "firstMilliseconds": null,
+      "repeatMilliseconds": null,
+      "outcome": "partial-then-environment-blocked",
+      "uniqueEvidence": "Haxe, Genes, PHP-plan, and React proof passed before the WordPress Docker boundary",
+      "blocker": "local Docker daemon did not respond while entering scripts/output-context/test-wordpress.sh; the owned measurement process group was terminated after more than 240 seconds"
+    }
+  ],
+  "hostedBefore": [
+    {
+      "ring": "R4",
+      "workflow": "Repository bootstrap",
+      "runId": 30631257659,
+      "jobId": 91157871070,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "criticalPathSeconds": 905,
+      "uniqueEvidence": "fresh hosted checkout and complete Repository bootstrap matrix; haxe was the critical-path job",
+      "outcome": "passed"
+    },
+    {
+      "ring": "R2-R4",
+      "workflow": "Output-context safety",
+      "runId": 30631257692,
+      "jobId": 91157871404,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "criticalPathSeconds": 98,
+      "uniqueEvidence": "Haxe, Genes, PHP, React, and clean WordPress terminal-context tracer",
+      "outcome": "passed"
+    },
+    {
+      "ring": "R2-R4",
+      "workflow": "Adoption-contract architecture",
+      "runId": 30631257796,
+      "jobId": 91157871282,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "criticalPathSeconds": 59,
+      "uniqueEvidence": "bounded precise-or-omitted adoption architecture",
+      "outcome": "passed"
+    },
+    {
+      "ring": "R2-R4",
+      "workflow": "Unsafe-boundary policy",
+      "runId": 30631257685,
+      "jobId": 91157871089,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "criticalPathSeconds": 203,
+      "uniqueEvidence": "unsafe-boundary policy and fail-closed lifecycle mutations",
+      "outcome": "passed"
+    },
+    {
+      "ring": "R2-R4",
+      "workflow": "Windows development service ownership",
+      "runId": 30631257802,
+      "jobId": 91157871398,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "criticalPathSeconds": 101,
+      "uniqueEvidence": "native Windows Job Object child and grandchild ownership",
+      "outcome": "passed"
+    }
+  ],
+  "hostedJobEvidence": [
+    {
+      "workflow": "Repository bootstrap",
+      "job": "haxe",
+      "runId": 30631257659,
+      "jobId": 91157871070,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "compiler-adapter",
+          "ownersCovered": [
+            "generic-php-focused",
+            "generic-php-package",
+            "wordpress-profile-focused"
+          ]
+        },
+        {
+          "surfaceId": "package-install",
+          "ownersCovered": [
+            "generic-php-package",
+            "development-service-runtime"
+          ]
+        },
+        {
+          "surfaceId": "gutenberg-browser",
+          "ownersCovered": [
+            "gutenberg-browser-profile"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Repository bootstrap",
+      "job": "wordpress-runtime",
+      "runId": 30631257659,
+      "jobId": 91157870967,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "compiler-adapter",
+          "ownersCovered": [
+            "wordpress-public-php-runtime"
+          ]
+        },
+        {
+          "surfaceId": "wordpress-runtime-abi",
+          "ownersCovered": [
+            "wordpress-profile-focused",
+            "wordpress-public-php-runtime"
+          ]
+        },
+        {
+          "surfaceId": "package-install",
+          "ownersCovered": [
+            "editor-sidebar-example",
+            "todo-data-store-example"
+          ]
+        },
+        {
+          "surfaceId": "gutenberg-browser",
+          "ownersCovered": [
+            "editor-sidebar-example",
+            "todo-data-store-example",
+            "static-block-migration"
+          ]
+        },
+        {
+          "surfaceId": "migration-downstream",
+          "ownersCovered": [
+            "static-block-migration"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Repository bootstrap",
+      "job": "generated-output-vcs",
+      "runId": 30631257659,
+      "jobId": 91157870972,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "package-install",
+          "ownersCovered": [
+            "generated-output-policy"
+          ]
+        },
+        {
+          "surfaceId": "migration-downstream",
+          "ownersCovered": [
+            "generated-output-policy"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Output-context safety",
+      "job": "output-context",
+      "runId": 30631257692,
+      "jobId": 91157871404,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "compiler-adapter",
+          "ownersCovered": [
+            "output-context-focused",
+            "output-context-vertical"
+          ]
+        },
+        {
+          "surfaceId": "wordpress-runtime-abi",
+          "ownersCovered": [
+            "output-context-vertical"
+          ]
+        },
+        {
+          "surfaceId": "gutenberg-browser",
+          "ownersCovered": [
+            "output-context-vertical"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Adoption-contract architecture",
+      "job": "adoption-contract",
+      "runId": 30631257796,
+      "jobId": 91157871282,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "migration-downstream",
+          "ownersCovered": [
+            "adoption-contract-focused"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Unsafe-boundary policy",
+      "job": "unsafe-boundary-policy",
+      "runId": 30631257685,
+      "jobId": 91157871089,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [],
+      "outcome": "passed"
+    },
+    {
+      "workflow": "Windows development service ownership",
+      "job": "windows-dev-loop",
+      "runId": 30631257802,
+      "jobId": 91157871398,
+      "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "surfaceCoverage": [
+        {
+          "surfaceId": "package-install",
+          "ownersCovered": [
+            "development-service-runtime"
+          ]
+        }
+      ],
+      "outcome": "passed"
+    }
+  ],
+  "recentWorkflowHistory": {
+    "window": "latest 20 runs per workflow where available",
+    "repositoryBootstrap": {
+      "runs": 20,
+      "success": 13,
+      "failure": 7,
+      "rerunAttempts": 0
+    },
+    "outputContext": {
+      "runs": 20,
+      "success": 20,
+      "failure": 0,
+      "rerunAttempts": 0
+    },
+    "adoptionContract": {
+      "runs": 20,
+      "success": 20,
+      "failure": 0,
+      "rerunAttempts": 0
+    },
+    "unsafeBoundary": {
+      "runs": 20,
+      "success": 20,
+      "failure": 0,
+      "rerunAttempts": 0
+    },
+    "windowsDevelopment": {
+      "runs": 13,
+      "success": 7,
+      "failure": 6,
+      "rerunAttempts": 0
+    },
+    "classification": "workflow conclusions are not flake classifications; observed development failures remain ordinary failures unless independently classified"
+  },
+  "currentTopology": {
+    "pullRequest": "all five workflows run; no affected owner can authorize a skip",
+    "main": "all five workflows run as the current-primary full backstop",
+    "nightly": "no scheduled nightly trigger",
+    "release": "no release proof command; publication is blocked",
+    "selector": "new strategy selector will remain observation-only"
+  },
+  "postChange": {
+    "recordedAt": "2026-08-01T07:26:07Z",
+    "measurementSubject": {
+      "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
+      "strategySha256": "8e7fdfe6595a8720d2ccc4b09a8bf61d66ce0ea4212b738062e7aa361bc41048",
+      "validatorSha256": "88864626bbd05f65a47e95737553ea517cd229d38714175d8c5b631ccb922f31",
+      "repositoryGateSha256": "8e8c0ae1b666130ebd59ff52f7bb2f859874eaf75fb02d1232316ee078a46b89"
+    },
+    "localSamples": [
+      {
+        "ring": "R0",
+        "command": "python3 scripts/contracts/validate-schema-authority.py",
+        "firstMilliseconds": 70,
+        "repeatMilliseconds": 50,
+        "outcome": "passed",
+        "comparison": "within single-sample noise; no owner or assertion removed"
+      },
+      {
+        "ring": "R1",
+        "command": "bash compiler/wordpress/scripts/test.sh",
+        "firstMilliseconds": 2660,
+        "repeatMilliseconds": 2500,
+        "outcome": "passed",
+        "comparison": "within single-sample noise; native PHP and source-correlation proof retained"
+      },
+      {
+        "ring": "R2",
+        "command": "bash scripts/check-repository.sh",
+        "firstMilliseconds": 79240,
+        "repeatMilliseconds": 79580,
+        "outcome": "passed",
+        "comparison": "both exact-subject runs passed near the initial 86820ms/71350ms observations; invocation order did not predict duration, and no latency budget or regression conclusion is inferred from two samples"
+      }
+    ],
+    "hostedRuns": [],
+    "hostedStatus": "pending-main-push",
+    "claimCoverageChange": "five product surfaces, R0-R5, example tiers, red-state provenance, and semantic owner selection are now explicit; product compatibility claims are unchanged",
+    "maintenanceCostChange": "one checked JSON authority and one standard-library Python validator/selector were added; no existing runner, workflow, fixture, or required gate was removed"
+  },
+  "claims": {
+    "timingBaseline": "observed-single-samples",
+    "flakeRate": "not-measured",
+    "selectorMissRate": "not-measured",
+    "publicCompatibility": "unchanged",
+    "releaseReadiness": "blocked"
+  }
+}

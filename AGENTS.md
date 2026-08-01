@@ -59,6 +59,18 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
 - Turn statically knowable framework invariants into source-positioned Haxe compile errors. Invalid stores, actions, selectors, blocks, components, metadata, capabilities, and configuration should fail before PHP, JavaScript, WordPress, or Gutenberg runs; reserve runtime validation for values that genuinely depend on the installed environment or request.
 - Keep advanced behavior available through explicit typed options and narrow escape hatches. Ergonomic helpers must not hide ownership, weaken validation, introduce ambiguous magic, or couple the core SDK to an optional integration.
 
+## Behavior-First Testing
+
+- Before broad automation for meaningful behavior, record the preconditions, action or compilation path, observable result, edge or failure behavior, owning product surface, and exact protected claim.
+- Start a fix at the lowest faithful owner. Record the focused command and concise intended red result in its Bead or durable evidence, make it green, then run the next broader real boundary. Keep the focused regression when a browser or system test discovers a stable lower-level compiler, generator, or PHP defect.
+- Give every material expectation an independent oracle: an upstream specification, manually authored expectation, pinned differential reference, invariant, reviewed golden with provenance, or real consumer behavior. Never generate an expected value with the implementation under test or refresh a snapshot without semantic review.
+- Establish one tracer bullet through authored Haxe, generation/compilation, native target checks, the relevant WordPress or browser boundary, and a real observer before multiplying fixtures.
+- Keep independent scorecards for compiler/adapter, WordPress runtime and public ABI, package/install, Gutenberg/browser, and migration/downstream behavior. A green result for one surface must not advance another surface's claim.
+- Treat maintained examples as executable ecosystem QA and label each as a flagship application, capability showcase, or compile-only snippet. It may support only the level it actually builds, installs, boots, or exercises.
+- Preserve the R0-R5 feedback rings, always-run sentinels, conservative selector fallback, cold release proof, cache/artifact separation, and explicit no-retry/quarantine policy. Affected-test selection remains observation-only until its false-negative evidence justifies promotion.
+- For compiler representation, runtime, ABI, package, security, migration, or claim changes, perform a review pass distinct from implementation that challenges oracle independence, negative cases, mocked boundaries, selector omissions, and scorecard laundering.
+- The checked authority, commands, current timings, and bounded claims live in `manifests/testing-strategy.json` and `docs/testing-strategy.md`.
+
 ## Product Documentation and Positioning
 
 - Lead the WordPressHx README, related NextJsHx integration documentation, and
