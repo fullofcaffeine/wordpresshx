@@ -68,12 +68,22 @@ with zipfile.ZipFile(archive_path) as archive:
     assert "COPYING" in archive.namelist()
     copying = archive.read("COPYING")
     source = json.loads(archive.read("package-source.json"))
+    semantic_matrix = json.loads(archive.read("semantic-capabilities.json"))
 assert hashlib.sha256(copying).hexdigest() == (
     "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
 )
 assert source["licenseMaterials"]["expression"] == "GPL-2.0-or-later"
 assert source["licenseMaterials"]["completeText"]["path"] == "COPYING"
 assert source["sourceCorrespondence"]["status"] == "complete-source-only-archive"
+assert semantic_matrix["summary"] == {
+    "capabilityCount": 26,
+    "categoryCount": 13,
+    "stateCounts": {
+        "admitted": 12,
+        "unsupported-owned": 7,
+        "unverified-owned": 7,
+    },
+}
 assert artifact["package"]["completeLicenseText"]["path"] == "COPYING"
 assert artifact["package"]["sourceCorrespondence"] == (
     "complete-source-only-archive"

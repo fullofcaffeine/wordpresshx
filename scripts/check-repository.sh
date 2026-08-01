@@ -764,6 +764,7 @@ required_files=(
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-027-generic-php-compiler-readiness.json
   manifests/evidence/reflaxe-php-tracer.json
+  manifests/evidence/reflaxe-php-semantic-matrix.json
   manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
@@ -1082,6 +1083,11 @@ sdk027_receipt = json.loads(
 )
 reflaxe_php_tracer_receipt = json.loads(
     Path("manifests/evidence/reflaxe-php-tracer.json").read_text(
+        encoding="utf-8"
+    )
+)
+reflaxe_php_semantic_receipt = json.loads(
+    Path("manifests/evidence/reflaxe-php-semantic-matrix.json").read_text(
         encoding="utf-8"
     )
 )
@@ -6521,6 +6527,66 @@ reflaxe_php_tracer_input_records = {
     record["path"]: record["sha256"]
     for record in reflaxe_php_tracer_receipt["authenticatedInputs"]
 }
+reflaxe_php_semantic_input_records = {
+    record["path"]: record["sha256"]
+    for record in reflaxe_php_semantic_receipt["authenticatedInputs"]
+}
+assert reflaxe_php_semantic_receipt["schemaVersion"] == 1
+assert reflaxe_php_semantic_receipt["receiptId"] == (
+    "REFLAXE-PHP-SEMANTIC-MATRIX-001"
+)
+assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
+assert reflaxe_php_semantic_receipt["status"] == (
+    "implemented-local-hosted-pending"
+)
+assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
+    "compiler-adapter"
+)
+assert reflaxe_php_semantic_receipt["redState"]["exitCode"] == 1
+assert reflaxe_php_semantic_receipt["redState"]["partialOutputPublished"] is False
+assert reflaxe_php_semantic_receipt["capabilityMatrix"] == {
+    "authority": (
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/"
+        "PhpSemanticCapabilities.hx"
+    ),
+    "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
+    "capabilityCount": 26,
+    "categoryCount": 13,
+    "admittedCount": 12,
+    "unsupportedOwnedCount": 7,
+    "unverifiedOwnedCount": 7,
+    "sourceDerived": True,
+    "mutationCount": 5,
+}
+assert reflaxe_php_semantic_receipt["localEvidence"]["outcome"] == "passed"
+assert reflaxe_php_semantic_receipt["localEvidence"][
+    "stockHaxeDifferential"
+] == "byte-identical-stdout"
+assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
+    "empty"
+)
+assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
+assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
+assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
+assert reflaxe_php_semantic_receipt["authority"] == {
+    "hostedProof": False,
+    "officialHaxeQualification": False,
+    "wordpressCompatibility": False,
+    "publicationAuthorized": False,
+    "standaloneExtractionRequiredNow": False,
+}
+assert list(reflaxe_php_semantic_input_records) == sorted(
+    reflaxe_php_semantic_input_records
+)
+assert len(reflaxe_php_semantic_input_records) == 17
+for semantic_input_path, semantic_input_sha256 in (
+    reflaxe_php_semantic_input_records.items()
+):
+    assert sha256.fullmatch(semantic_input_sha256)
+    assert Path(semantic_input_path).is_file()
+    assert hashlib.sha256(Path(semantic_input_path).read_bytes()).hexdigest() == (
+        semantic_input_sha256
+    )
 assert list(reflaxe_php_tracer_input_records) == sorted(
     reflaxe_php_tracer_input_records
 )
@@ -6528,8 +6594,12 @@ assert len(reflaxe_php_tracer_input_records) == 16
 for tracer_input_path, tracer_input_sha256 in reflaxe_php_tracer_input_records.items():
     assert sha256.fullmatch(tracer_input_sha256)
     assert Path(tracer_input_path).is_file()
-    assert hashlib.sha256(Path(tracer_input_path).read_bytes()).hexdigest() == (
-        tracer_input_sha256
+    tracer_current_sha256 = hashlib.sha256(
+        Path(tracer_input_path).read_bytes()
+    ).hexdigest()
+    assert tracer_current_sha256 in (
+        tracer_input_sha256,
+        reflaxe_php_semantic_input_records.get(tracer_input_path),
     )
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
@@ -6544,6 +6614,7 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
             g13_activation_input_records.get(sdk026_input_path),
             g3_closure_subject_records.get(sdk026_input_path),
             reflaxe_php_tracer_input_records.get(sdk026_input_path),
+            reflaxe_php_semantic_input_records.get(sdk026_input_path),
         )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
@@ -7389,6 +7460,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
         g13_activation_input_records.get(strict_haxe_path),
         g3_closure_subject_records.get(strict_haxe_path),
         reflaxe_php_tracer_input_records.get(strict_haxe_path),
+        reflaxe_php_semantic_input_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -7451,7 +7523,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
     (
         "generic-php-compiler",
         "compiler/reflaxe.php",
-        42,
+        45,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
@@ -7646,6 +7718,7 @@ for record in sdk025_inputs:
             g13_activation_input_records.get(record["path"]),
             g3_closure_subject_records.get(record["path"]),
             reflaxe_php_tracer_input_records.get(record["path"]),
+            reflaxe_php_semantic_input_records.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 

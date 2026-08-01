@@ -78,6 +78,7 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 	}
 
 	override public function onCompileEnd():Void {
+		PhpSemanticCapabilities.requireAdmitted(ExactHaxeRangeMap);
 		final mainModule = getMainModule();
 		final mainClass = switch (mainModule) {
 			case TClassDecl(classRef): classRef.get();

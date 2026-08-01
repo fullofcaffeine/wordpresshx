@@ -17,6 +17,7 @@ python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" --self-test
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${package_root}"
 haxe test.hxml
 bash scripts/test-compiler-tracer.sh
+bash scripts/test-semantic-matrix.sh
 php -l build/generic-printer-fixture.php
 php -l build/source-correlation-fixture.php
 

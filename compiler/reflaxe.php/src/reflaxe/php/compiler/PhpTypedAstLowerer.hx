@@ -26,6 +26,7 @@ class PhpTypedAstLowerer {
 	}
 
 	public function lowerClass(classType:ClassType, varFields:Array<ClassVarData>, funcFields:Array<ClassFuncData>):PhpClass {
+		PhpSemanticCapabilities.requireAdmitted(StaticClass);
 		PhpTypedAstValidator.validateClass(classType);
 		if (varFields.length != 0) {
 			Context.fatalError("reflaxe.php tracer does not yet support application fields", classType.pos);
@@ -46,6 +47,7 @@ class PhpTypedAstLowerer {
 	}
 
 	function lowerMethod(functionData:ClassFuncData):PhpMethod {
+		PhpSemanticCapabilities.requireAdmitted(StaticVoidNoArgMethod);
 		if (!functionData.isStatic) {
 			Context.fatalError("reflaxe.php tracer supports only static application methods", functionData.field.pos);
 		}
@@ -78,6 +80,27 @@ class PhpTypedAstLowerer {
 				}
 				statements;
 			case TCall(target, arguments): [lowerCall(expression, target, arguments)];
+			case TVar(variable, initialValue):
+				PhpSemanticCapabilities.requireAdmitted(InitializedIntLocal);
+				if (initialValue == null) {
+					Context.fatalError("reflaxe.php local bindings require an initial value", expression.pos);
+					[];
+				} else {
+					[
+						mapped(PhpLocal(variable.name, lowerIntValue(initialValue)), expression, "local-int")
+					];
+				}
+			case TIf(condition, thenBranch, elseBranch):
+				PhpSemanticCapabilities.requireAdmitted(IfElse);
+				if (elseBranch == null) {
+					Context.fatalError("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
+					[];
+				} else {
+					[
+						mapped(PhpIfElse(lowerIntCondition(condition), lowerStatementList(thenBranch), lowerStatementList(elseBranch)), expression,
+							"if-int-equality")
+					];
+				}
 			case TReturn(null): [mapped(PhpReturnVoid, expression, "return")];
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner);
 			case _:
@@ -88,6 +111,7 @@ class PhpTypedAstLowerer {
 	function lowerCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpStmt {
 		return switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (classRef.get().module == "Sys" && fieldRef.get().name == "println" && arguments.length == 1):
+				PhpSemanticCapabilities.requireAdmitted(SysPrintlnString);
 				final value = lowerValue(arguments[0]);
 				mapped(PhpEcho(PhpBinop(".", value, PhpConst("PHP_EOL"))), call, "sys-println");
 			case _:
@@ -97,8 +121,36 @@ class PhpTypedAstLowerer {
 
 	function lowerValue(expression:TypedExpr):PhpExpr {
 		return switch (expression.expr) {
-			case TConst(TString(value)): PhpString(value);
+			case TConst(TString(value)):
+				PhpSemanticCapabilities.requireAdmitted(StringLiteral);
+				PhpString(value);
 			case TMeta(_, inner) | TParenthesis(inner): lowerValue(inner);
+			case _: unsupportedValue(expression);
+		}
+	}
+
+	function lowerIntValue(expression:TypedExpr):PhpExpr {
+		return switch (expression.expr) {
+			case TConst(TInt(value)):
+				PhpSemanticCapabilities.requireAdmitted(IntLiteral);
+				PhpInt(value);
+			case TLocal(variable):
+				PhpSemanticCapabilities.requireAdmitted(InitializedIntLocal);
+				PhpVar(variable.name);
+			case TBinop(OpAdd, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntAddition);
+				PhpBinop("+", lowerIntValue(left), lowerIntValue(right));
+			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner);
+			case _: unsupportedValue(expression);
+		}
+	}
+
+	function lowerIntCondition(expression:TypedExpr):PhpExpr {
+		return switch (expression.expr) {
+			case TBinop(OpEq, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntEquality);
+				PhpBinop("===", lowerIntValue(left), lowerIntValue(right));
+			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner);
 			case _: unsupportedValue(expression);
 		}
 	}

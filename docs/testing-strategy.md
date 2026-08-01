@@ -64,7 +64,7 @@ the narrower example or compiler jobs.
 
 | Surface | Current evidence | Current limit |
 | --- | --- | --- |
-| `compiler-adapter` | Typed generic PHP IR/printer fixtures, one ordinary-Haxe → custom Reflaxe driver → mapped PHP → native PHP tracer, clean package consumer, WordPress emitter fixtures, and bounded contract/output adapters | The real driver path admits only a static `main` with `Sys.println(String)`; it is not broad typed-Haxe lowering or official Haxe target qualification |
+| `compiler-adapter` | Typed generic PHP IR/printer fixtures, an ordinary-Haxe → custom Reflaxe driver → mapped PHP → native PHP tracer, a typed semantic matrix with a stock-Haxe/PHP numeric-control-flow differential, clean package consumer, WordPress emitter fixtures, and bounded contract/output adapters | The real driver path admits only the matrix’s exact records; runtime/stdlib breadth and official Haxe target qualification remain unproved |
 | `wordpress-runtime-abi` | Exact PHP lanes plus clean WordPress 7.0/MySQL/MariaDB activation, hook, filter, REST, block, reflection, reference, and error observations | No general WordPress compatibility, version range, theme, full-site, or production claim |
 | `package-install` | Deterministic internal compiler/plugin packages, ownership replay, and two generated showcase plugins installed on WordPress | No public SDK package, theme/full-site package, upgrade/uninstall matrix, notices, or release proof |
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
@@ -103,6 +103,14 @@ and correlation, while native `php -l` and execution retain the real boundary.
 Its owner remains explicitly unproven by hosted evidence until a clean workflow
 runs the exact command; local green evidence does not borrow an older typed-IR
 or WordPress proof.
+
+The incremental runtime owner extends that path without changing the claim
+model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
+registry and currently lists 12 admitted, 7 explicitly unsupported, and 7
+unverified capabilities across 13 categories. Its first differential fixture
+checks small `Int` addition, an initialized local, equality, and `if/else` under
+both stock Haxe 4.3.7 and exact PHP 8.4.7. Empty PHP stderr is part of the
+contract, so warnings and fatals cannot be retried or normalized away.
 
 Mocks are useful when the mocked component is not the claim. A mock that removes
 WordPress bootstrap, PHP reference semantics, package installation, Gutenberg

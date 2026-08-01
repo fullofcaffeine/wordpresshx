@@ -11,6 +11,9 @@ has been authorized.
 - Added the first ordinary-Haxe Reflaxe registration and typed-AST tracer:
   `Sys.println(String)` lowers through the generic PHP IR into deterministic,
   source-mapped, executable PHP without application-authored backend IR.
+- Added a typed, generated semantic capability matrix and the first stock-Haxe
+  differential slice for small `Int` addition, an initialized local, equality,
+  and `if/else`, with PHP warnings and errors kept visible.
 - Added deterministic package-artifact construction and an isolated external
   Haxelib consumer proof.
 - Added typed PHPDoc declarations, native typed properties, and the PHP

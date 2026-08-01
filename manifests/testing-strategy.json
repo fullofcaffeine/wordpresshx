@@ -128,6 +128,7 @@
       "testedProfiles": [
         "generic typed-IR slice on PHP 7.4.33 and 8.4.7",
         "ordinary-Haxe tracer through deterministic PHP, exact source map, and local native PHP",
+        "small Int addition, initialized local, equality, and if/else under stock Haxe 4.3.7 and exact PHP 8.4.7",
         "wp70-release public-adapter fixtures",
         "ADR-009 and ADR-012 bounded prototypes"
       ],
@@ -139,6 +140,7 @@
       ],
       "verticalIntegrationOwners": [
         "ordinary-haxe-php-tracer",
+        "reflaxe-php-semantic-matrix",
         "generic-php-package",
         "wordpress-public-php-runtime",
         "output-context-vertical"
@@ -216,7 +218,8 @@
       ],
       "unprovenOwners": [
         "compiler-qualification-contract",
-        "ordinary-haxe-php-tracer"
+        "ordinary-haxe-php-tracer",
+        "reflaxe-php-semantic-matrix"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -806,6 +809,7 @@
       ],
       "reverseDependencies": [
         "ordinary-haxe-php-tracer",
+        "reflaxe-php-semantic-matrix",
         "generic-php-package",
         "wordpress-profile-focused"
       ],
@@ -839,6 +843,35 @@
       "alwaysRun": false,
       "oracle": "Haxe Sys.println semantics, a manually authored PHP/stdout minimum, independent range-map source-slice validation, and native php -l/runtime observation",
       "claimContribution": "first ordinary-Haxe custom-driver architecture tracer only; not broad Haxe, PHP, WordPress, or official-suite compatibility"
+    },
+    {
+      "testId": "reflaxe-php-semantic-matrix",
+      "name": "Typed semantic capability matrix and stock-Haxe/PHP differential slice",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/semantic-capabilities.json",
+        "compiler/reflaxe.php/scripts/semantic-matrix.py",
+        "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+        "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
+        "compiler/reflaxe.php/test/semantic-matrix/*"
+      ],
+      "reverseDependencies": [
+        "generic-php-package",
+        "wordpress-profile-focused"
+      ],
+      "alwaysRun": false,
+      "oracle": "the typed capability registry, stock Haxe 4.3.7 execution, manually authored PHP/stdout, independent source-map checks, and exact native PHP 8.4.7 with stderr required empty",
+      "claimContribution": "only the 12 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
     },
     {
       "testId": "generic-php-package",
@@ -1240,6 +1273,7 @@
       "role": "representative local tracer smoke",
       "commands": [
         "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+        "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
         "bash compiler/wordpress/scripts/test.sh",
         "bash scripts/output-context/test.sh when Docker is healthy"
       ],

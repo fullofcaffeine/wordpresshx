@@ -25,6 +25,7 @@ PACKAGE_DOCUMENTS = (
     "README.md",
     "haxelib.json",
     "provenance.json",
+    "semantic-capabilities.json",
 )
 MACHINE_LOCAL_PATTERNS = (
     re.compile("/" + r"Users/[^/\s]+/"),

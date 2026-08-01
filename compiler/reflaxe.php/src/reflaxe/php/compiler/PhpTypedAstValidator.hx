@@ -13,6 +13,7 @@ using reflaxe.helpers.ClassFieldHelper;
 class PhpTypedAstValidator {
 	#if macro
 	public static function validateModules(moduleTypes:Array<ModuleType>):Void {
+		PhpSemanticCapabilities.requireAdmitted(UnsupportedAstDiagnostic);
 		final config = new PhpCompilerConfig();
 		for (moduleType in moduleTypes) {
 			switch (moduleType) {
@@ -77,6 +78,23 @@ class PhpTypedAstValidator {
 				}
 			case TCall(target, arguments):
 				validateCall(expression, target, arguments);
+			case TVar(variable, initialValue):
+				if (TypeTools.toString(variable.t) != "Int") {
+					Context.error("reflaxe.php supports only Int local bindings in the admitted semantic slice", expression.pos);
+				}
+				if (initialValue == null) {
+					Context.error("reflaxe.php local bindings require an initial value", expression.pos);
+				} else {
+					validateIntValue(initialValue);
+				}
+			case TIf(condition, thenBranch, elseBranch):
+				validateIntCondition(condition);
+				validateStatement(thenBranch);
+				if (elseBranch == null) {
+					Context.error("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
+				} else {
+					validateStatement(elseBranch);
+				}
 			case TReturn(null):
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStatement(inner);
@@ -101,6 +119,32 @@ class PhpTypedAstValidator {
 				validateValue(inner);
 			case _:
 				Context.error("reflaxe.php tracer supports only string literal values", expression.pos);
+		}
+	}
+
+	static function validateIntValue(expression:TypedExpr):Void {
+		switch (expression.expr) {
+			case TConst(TInt(_)):
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
+			case TBinop(OpAdd, left, right):
+				validateIntValue(left);
+				validateIntValue(right);
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateIntValue(inner);
+			case _:
+				Context.error("reflaxe.php supports only Int literals, locals, and addition in the admitted semantic slice", expression.pos);
+		}
+	}
+
+	static function validateIntCondition(expression:TypedExpr):Void {
+		switch (expression.expr) {
+			case TBinop(OpEq, left, right):
+				validateIntValue(left);
+				validateIntValue(right);
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateIntCondition(inner);
+			case _:
+				Context.error("reflaxe.php supports only Int equality conditions in the admitted semantic slice", expression.pos);
 		}
 	}
 	#end

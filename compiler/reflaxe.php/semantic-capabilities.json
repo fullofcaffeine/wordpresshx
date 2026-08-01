@@ -1,0 +1,216 @@
+{
+  "capabilities": [
+    {
+      "category": "calls-closures",
+      "evidence": "validator rejects parameters and non-Void returns",
+      "id": "call.arguments-and-returns",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "validator rejects closure expressions",
+      "id": "call.closure",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "call.sys-println-string",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "validator rejects array construction and access",
+      "id": "collection.array",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.if-else",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.int-equality",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "declaration.static-void-no-arg-method",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "diagnostics",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "diagnostic.unsupported-ast",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "path-environment-filesystem-network-timezone",
+      "evidence": "filesystem semantics are not classified",
+      "id": "environment.filesystem",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "path-environment-filesystem-network-timezone",
+      "evidence": "network semantics are not classified",
+      "id": "environment.network",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "path-environment-filesystem-network-timezone",
+      "evidence": "path and environment semantics are not classified",
+      "id": "environment.path",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "path-environment-filesystem-network-timezone",
+      "evidence": "timezone semantics are not classified",
+      "id": "environment.timezone",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "exceptions",
+      "evidence": "validator rejects try, throw, and catch statements",
+      "id": "exception.try-throw-catch",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "module.application-source-root",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "validator rejects instance methods and fields",
+      "id": "module.instance-layout",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "module.static-class",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "null-behavior",
+      "evidence": "validator rejects null values",
+      "id": "null.nullable-value",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "numeric",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "numeric.int-addition",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "numeric",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "numeric.int-literal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "numeric",
+      "evidence": "overflow, division, and modulo are not classified",
+      "id": "numeric.overflow-division-modulo",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "ordering",
+      "evidence": "collection and object ordering are not classified",
+      "id": "ordering.collection-and-object",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "runtime-stdlib",
+      "evidence": "no owned Haxe runtime or standard-library projection exists",
+      "id": "runtime.haxe-stdlib",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unsupported-owned"
+    },
+    {
+      "category": "source-maps",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "source-map.exact-haxe-ranges",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "string-unicode",
+      "evidence": "runtime Unicode operations are not classified",
+      "id": "string.unicode-runtime",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "unverified-owned"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.initialized-int-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "id": "value.string-literal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    }
+  ],
+  "claims": {
+    "permitted": [
+      "the exact admitted records passed their named local evidence owners",
+      "unsupported and unverified records remain explicitly owned"
+    ],
+    "withheld": [
+      "broad Haxe language compatibility",
+      "complete runtime or standard-library support",
+      "official Haxe target qualification",
+      "WordPress compatibility",
+      "publication or production support"
+    ]
+  },
+  "matrixId": "reflaxe-php-semantic-capabilities-v1",
+  "schemaVersion": 1,
+  "sourceAuthority": {
+    "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
+    "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
+    "sha256": "aa74469b5ae77c4fb5256f519a658a7d48f7e09e4393d1fa88091e8723a67aa6"
+  },
+  "status": "incremental-runtime-semantics-hosted-pending",
+  "summary": {
+    "capabilityCount": 26,
+    "categoryCount": 13,
+    "stateCounts": {
+      "admitted": 12,
+      "unsupported-owned": 7,
+      "unverified-owned": 7
+    }
+  }
+}

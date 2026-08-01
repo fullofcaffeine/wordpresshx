@@ -49,6 +49,20 @@ It imports neither compiler internals nor PHP IR. Additions to this lowering
 surface must start with a concrete behavior scenario and retain both the
 focused deterministic regression and the real Haxe → PHP → native-PHP path.
 
+The next incremental behavior owner is:
+
+```bash
+bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh
+```
+
+It derives [`semantic-capabilities.json`](semantic-capabilities.json) from the
+typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
+and currently admits only small `Int` literals/addition, one initialized local,
+`Int` equality, and `if/else` beyond the original tracer. The same authored
+fixture runs under stock Haxe and generated PHP; their stdout must be identical,
+and any PHP warning, error, or fatal fails the lane. Unsupported and unverified
+runtime/stdlib features remain named and owned in the matrix.
+
 Prove the release-shaped package seam independently:
 
 ```bash
