@@ -115,6 +115,14 @@ def file_sha256(relative_path: str) -> str:
     return hashlib.sha256((ROOT / relative_path).read_bytes()).hexdigest()
 
 
+def historical_validation_action(subject_available: bool, shallow_checkout: bool) -> str:
+    if subject_available:
+        return "validate-source-and-tree"
+    if shallow_checkout:
+        return "retain-receipt-identity-only"
+    raise StrategyError("JSON red proof historical subject is absent from a complete checkout")
+
+
 def validate_strategy(model: dict[str, object]) -> None:
     exact_keys(
         model,
@@ -507,27 +515,46 @@ def validate_red_proof(receipt: dict[str, object]) -> None:
         raise StrategyError("testing strategy JSON red proof lacks a timestamp")
 
     subject = require_dict(receipt.get("reviewedSubject"), "JSON red proof reviewedSubject")
-    exact_keys(subject, {"commit", "tree", "outputSinksSha256"}, "JSON red proof reviewedSubject")
+    exact_keys(subject, {"commit", "tree", "outputSinksSha256", "shallowHistoryDisposition"}, "JSON red proof reviewedSubject")
     for field in ("commit", "tree"):
         if not isinstance(subject.get(field), str) or re.fullmatch(r"[0-9a-f]{40}", subject[field]) is None:
             raise StrategyError(f"JSON red proof reviewedSubject lacks exact {field}")
-    historical = subprocess.run(
-        ["git", "show", f"{subject['commit']}:fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx"],
+    if subject.get("shallowHistoryDisposition") != "validate exact source and tree when present; in a shallow checkout retain receipt identity without claiming replay":
+        raise StrategyError("JSON red proof shallow-history disposition changed")
+    subject_available = subprocess.run(
+        ["git", "cat-file", "-e", f"{subject['commit']}^{{commit}}"],
         cwd=ROOT,
-        check=True,
+        check=False,
         capture_output=True,
-    ).stdout
-    if hashlib.sha256(historical).hexdigest() != subject.get("outputSinksSha256"):
-        raise StrategyError("JSON red proof historical source digest drifted")
-    resolved_tree = subprocess.run(
-        ["git", "rev-parse", f"{subject['commit']}^{{tree}}"],
+    ).returncode == 0
+    shallow_checkout = subprocess.run(
+        ["git", "rev-parse", "--is-shallow-repository"],
         cwd=ROOT,
         check=True,
         text=True,
         capture_output=True,
-    ).stdout.strip()
-    if resolved_tree != subject.get("tree"):
-        raise StrategyError("JSON red proof historical tree drifted")
+    ).stdout.strip() == "true"
+    history_action = historical_validation_action(subject_available, shallow_checkout)
+    if history_action == "validate-source-and-tree":
+        historical = subprocess.run(
+            ["git", "show", f"{subject['commit']}:fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        if hashlib.sha256(historical).hexdigest() != subject.get("outputSinksSha256"):
+            raise StrategyError("JSON red proof historical source digest drifted")
+        resolved_tree = subprocess.run(
+            ["git", "rev-parse", f"{subject['commit']}^{{tree}}"],
+            cwd=ROOT,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+        if resolved_tree != subject.get("tree"):
+            raise StrategyError("JSON red proof historical tree drifted")
+    elif history_action != "retain-receipt-identity-only":
+        raise StrategyError("JSON red proof historical validation reached an unknown action")
 
     overlay = require_dict(receipt.get("controlledOverlay"), "JSON red proof controlledOverlay")
     exact_keys(overlay, {"role", "path", "sha256"}, "JSON red proof controlledOverlay")
@@ -989,7 +1016,20 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
             continue
         raise StrategyError(f"testing strategy baseline mutation passed unexpectedly: {label}")
 
-    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 4 evidence mutations, conservative fallback, reverse dependencies")
+    if historical_validation_action(True, False) != "validate-source-and-tree":
+        raise StrategyError("complete history did not validate the exact historical subject")
+    if historical_validation_action(True, True) != "validate-source-and-tree":
+        raise StrategyError("available history was skipped merely because the checkout is shallow")
+    if historical_validation_action(False, True) != "retain-receipt-identity-only":
+        raise StrategyError("missing shallow history did not retain bounded receipt identity")
+    try:
+        historical_validation_action(False, False)
+    except StrategyError:
+        pass
+    else:
+        raise StrategyError("complete history accepted a missing historical subject")
+
+    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 4 evidence mutations, 4 history modes, conservative fallback, reverse dependencies")
 
 
 def print_human(result: dict[str, object]) -> None:

@@ -139,6 +139,11 @@ The earlier
 is the independent finding and negative-test design; it is not represented as
 if it had executed the later overlay.
 
+A full checkout validates that historical source and tree before accepting the
+receipt. A deliberately shallow CI checkout retains the exact receipt identity
+without claiming it replayed unavailable history; a complete checkout missing
+the subject fails closed.
+
 ### Oracle and tracer bullet
 
 The expectation is independent of the checked encoder. Manually authored
@@ -181,6 +186,11 @@ output-context run reached its Haxe/Genes/React proof, then was stopped after
 the local Docker daemon did not enter the WordPress lane. The clean hosted
 Output-context workflow completed in 98s and is the complete-system baseline
 for that environment.
+
+After the strategy change and its shallow-history portability correction, the
+same local R0/R1/R2 first/repeat commands measured 0.07s/0.05s,
+2.66s/2.50s, and 106.82s/89.08s. The spread is retained as observation rather
+than presented as an optimization result.
 
 They are also deliberately called first invocation and immediate repeat—not
 “cold” and “warm.” The repository did not have a controlled pre-change

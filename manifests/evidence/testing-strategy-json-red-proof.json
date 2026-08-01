@@ -6,7 +6,8 @@
   "reviewedSubject": {
     "commit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
     "tree": "a18c63f427d5030e19e0923a7408fe239abd7e4b",
-    "outputSinksSha256": "bd96f307bf835f6757102ca83dafd5bf06e0f52ce36ac043158c715ee621f8c1"
+    "outputSinksSha256": "bd96f307bf835f6757102ca83dafd5bf06e0f52ce36ac043158c715ee621f8c1",
+    "shallowHistoryDisposition": "validate exact source and tree when present; in a shallow checkout retain receipt identity without claiming replay"
   },
   "controlledOverlay": {
     "role": "current compile-negative copied unchanged into the historical source tree to test whether that exact source exposed the forbidden API",
