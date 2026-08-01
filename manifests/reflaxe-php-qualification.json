@@ -1,0 +1,454 @@
+{
+  "activeInventoryContract": {
+    "adaptationRequiresExactPatchAndRationale": true,
+    "available": false,
+    "inactiveOrDummyMayPass": false,
+    "officialPhpSpecificCasePolicy": "manual-semantic-decision-not-automatic-custom-target-evidence",
+    "producer": "production-reflaxe-php-driver-after-preprocessing-macro-registration-and-target-defines",
+    "requiredCaseDispositions": [
+      "active-applicable",
+      "adapted-with-provenance",
+      "unsupported-owned",
+      "target-inapplicable"
+    ],
+    "requiredObservationFields": [
+      "sourceIdentity",
+      "activeAssertionIdentity",
+      "targetDefines",
+      "capabilities",
+      "compileCommand",
+      "phpCheckCommand",
+      "runtimeCommand",
+      "outcome",
+      "oracle"
+    ],
+    "unownedSkipAllowed": false
+  },
+  "authority": {
+    "bead": "wordpresshx-reflaxe-php.1",
+    "compilerSurface": "compiler-adapter",
+    "driverBead": "wordpresshx-reflaxe-php.2",
+    "executionBead": "wordpresshx-reflaxe-php.4",
+    "publicClaimAllowed": false
+  },
+  "candidateInventory": {
+    "candidateSets": [
+      {
+        "candidateId": "unitstd",
+        "count": 67,
+        "pathBlobSha256": "a8f5688a650bfcd7120bac7a14b0fdedcc43640a5fa47336b2def656cac7463c",
+        "root": "tests/unit/src/unitstd/",
+        "selection": "recursive files ending .unit.hx"
+      },
+      {
+        "candidateId": "issues",
+        "count": 1112,
+        "pathBlobSha256": "519199187a1e1a31e2e2da5e2c1e4a3352cb5717697dd131cb6b5f74bf59c85d",
+        "root": "tests/unit/src/unit/issues/",
+        "selection": "recursive Haxe source files"
+      },
+      {
+        "candidateId": "hxcppIssues",
+        "count": 8,
+        "pathBlobSha256": "03d9ef4a512d8af5334bb6d4804070e65551f6985e792e9c0f23fc1b3c4a65e1",
+        "root": "tests/unit/src/unit/hxcpp_issues/",
+        "selection": "recursive Haxe source files"
+      }
+    ],
+    "derivation": "git-tree-path-and-blob-identities-from-exact-commit",
+    "presenceIsPass": false,
+    "topLevelRegistrationSha256": "34ef2443ed74d025f257bafe94adc7d40e5a5ee8a02d9d971b73eb408d29e1a4",
+    "topLevelRegistrations": [
+      {
+        "guards": [],
+        "line": 51,
+        "name": "TestOps"
+      },
+      {
+        "guards": [],
+        "line": 52,
+        "name": "TestBasetypes"
+      },
+      {
+        "guards": [],
+        "line": 53,
+        "name": "TestNumericSuffixes"
+      },
+      {
+        "guards": [],
+        "line": 54,
+        "name": "TestNumericSeparator"
+      },
+      {
+        "guards": [],
+        "line": 55,
+        "name": "TestExceptions"
+      },
+      {
+        "guards": [],
+        "line": 56,
+        "name": "TestBytes"
+      },
+      {
+        "guards": [],
+        "line": 57,
+        "name": "TestIO"
+      },
+      {
+        "guards": [],
+        "line": 58,
+        "name": "TestLocals"
+      },
+      {
+        "guards": [],
+        "line": 59,
+        "name": "TestLocalStatic"
+      },
+      {
+        "guards": [],
+        "line": 60,
+        "name": "TestEReg"
+      },
+      {
+        "guards": [],
+        "line": 61,
+        "name": "TestXML"
+      },
+      {
+        "guards": [],
+        "line": 62,
+        "name": "TestMisc"
+      },
+      {
+        "guards": [],
+        "line": 63,
+        "name": "TestJson"
+      },
+      {
+        "guards": [],
+        "line": 64,
+        "name": "TestResource"
+      },
+      {
+        "guards": [],
+        "line": 65,
+        "name": "TestInt64"
+      },
+      {
+        "guards": [],
+        "line": 66,
+        "name": "TestReflect"
+      },
+      {
+        "guards": [],
+        "line": 67,
+        "name": "TestSerialize"
+      },
+      {
+        "guards": [],
+        "line": 68,
+        "name": "TestSerializerCrossTarget"
+      },
+      {
+        "guards": [],
+        "line": 69,
+        "name": "TestMeta"
+      },
+      {
+        "guards": [],
+        "line": 70,
+        "name": "TestType"
+      },
+      {
+        "guards": [],
+        "line": 71,
+        "name": "TestOrder"
+      },
+      {
+        "guards": [],
+        "line": 72,
+        "name": "TestGADT"
+      },
+      {
+        "guards": [],
+        "line": 73,
+        "name": "TestGeneric"
+      },
+      {
+        "guards": [],
+        "line": 74,
+        "name": "TestArrowFunctions"
+      },
+      {
+        "guards": [],
+        "line": 75,
+        "name": "TestCasts"
+      },
+      {
+        "guards": [],
+        "line": 76,
+        "name": "TestSyntaxModule"
+      },
+      {
+        "guards": [],
+        "line": 77,
+        "name": "TestNull"
+      },
+      {
+        "guards": [],
+        "line": 78,
+        "name": "TestNullCoalescing"
+      },
+      {
+        "guards": [],
+        "line": 79,
+        "name": "TestNumericCasts"
+      },
+      {
+        "guards": [],
+        "line": 80,
+        "name": "TestHashMap"
+      },
+      {
+        "guards": [],
+        "line": 81,
+        "name": "TestRest"
+      },
+      {
+        "guards": [
+          "!hlc"
+        ],
+        "line": 82,
+        "name": "TestHttp"
+      },
+      {
+        "guards": [
+          "!no_pattern_matching"
+        ],
+        "line": 84,
+        "name": "TestMatch"
+      },
+      {
+        "guards": [
+          "cs"
+        ],
+        "line": 87,
+        "name": "TestCSharp"
+      },
+      {
+        "guards": [
+          "java"
+        ],
+        "line": 90,
+        "name": "TestJava"
+      },
+      {
+        "guards": [
+          "lua"
+        ],
+        "line": 93,
+        "name": "TestLua"
+      },
+      {
+        "guards": [
+          "python"
+        ],
+        "line": 96,
+        "name": "TestPython"
+      },
+      {
+        "guards": [
+          "hl"
+        ],
+        "line": 99,
+        "name": "TestHL"
+      },
+      {
+        "guards": [
+          "php"
+        ],
+        "line": 102,
+        "name": "TestPhp"
+      },
+      {
+        "guards": [
+          "(java || cs)"
+        ],
+        "line": 105,
+        "name": "TestOverloads"
+      },
+      {
+        "guards": [],
+        "line": 107,
+        "name": "TestOverloadsForEveryone"
+      },
+      {
+        "guards": [],
+        "line": 108,
+        "name": "TestInterface"
+      },
+      {
+        "guards": [],
+        "line": 109,
+        "name": "TestNaN"
+      },
+      {
+        "guards": [
+          "((dce == \"full\") && !interp)"
+        ],
+        "line": 111,
+        "name": "TestDCE"
+      },
+      {
+        "guards": [],
+        "line": 113,
+        "name": "TestMapComprehension"
+      },
+      {
+        "guards": [],
+        "line": 114,
+        "name": "TestMacro"
+      },
+      {
+        "guards": [],
+        "line": 115,
+        "name": "TestKeyValueIterator"
+      },
+      {
+        "guards": [],
+        "line": 116,
+        "name": "TestFieldVariance"
+      },
+      {
+        "guards": [],
+        "line": 117,
+        "name": "TestConstrainedMonomorphs"
+      },
+      {
+        "guards": [],
+        "line": 118,
+        "name": "TestDefaultTypeParameters"
+      }
+    ]
+  },
+  "contractId": "reflaxe-php-qualification-v1",
+  "declaredProfiles": {
+    "driverAvailable": false,
+    "haxeCommit": "e0b355c6be312c1b17382603f018cf52522ec651",
+    "haxeVersion": "4.3.7",
+    "phpPrimaryRuntime": {
+      "image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+      "version": "8.4.7"
+    },
+    "phpSyntaxFloor": {
+      "image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+      "version": "7.4.33"
+    },
+    "runtimeStdlibMatrixAvailable": false
+  },
+  "extraction": {
+    "currentHome": "compiler/reflaxe.php",
+    "dependencyDirection": "compiler/reflaxe.php <- compiler/wordpress <- SDK",
+    "futureBead": "wordpresshx-reflaxe-php.5",
+    "priority": "low"
+  },
+  "independentOracles": [
+    "pinned-official-haxe-test-expectations-and-language-semantics",
+    "manually-reviewed-minimal-php-expectations",
+    "native-php-parser-and-runtime-observation"
+  ],
+  "residualBeads": [
+    "wordpresshx-reflaxe-php.2",
+    "wordpresshx-reflaxe-php.3",
+    "wordpresshx-reflaxe-php.4",
+    "wordpresshx-reflaxe-php.5",
+    "wordpresshx-reflaxe-php.6"
+  ],
+  "schemaVersion": 1,
+  "sharedReflaxePolicy": {
+    "classificationLocal": true,
+    "orchestrationLocal": true,
+    "sharedFrameworkChangeRequiresTwoTargets": true,
+    "suiteTransportLocal": true
+  },
+  "status": "candidate-inventory-locked-active-qualification-unproven",
+  "surfaceIsolation": {
+    "compilerEvidenceMayAdvanceOtherClaims": false,
+    "crossSurfaceEvidenceMayAdvanceCompilerClaim": false,
+    "nonQualifyingSurfaces": [
+      "wordpress-runtime-abi",
+      "package-install",
+      "gutenberg-browser",
+      "migration-downstream"
+    ],
+    "qualificationSurface": "compiler-adapter"
+  },
+  "upstreamHaxe": {
+    "authorityFiles": [
+      {
+        "gitBlob": "b7ee7589db0227141c962c0d91ba6b0141f2409b",
+        "path": "README.md",
+        "sha256": "708b5a3386662e375c8bf90493687a764e9b7d251c500db854c8f76c570685ae"
+      },
+      {
+        "gitBlob": "b4142af748da6420ab697e7485b105c8e6689486",
+        "path": "extra/LICENSE.txt",
+        "sha256": "f84691d619932ebfd4fa3568f8311f87ed4bf12e747e9aaa619a92cb1d2d359d"
+      },
+      {
+        "gitBlob": "aabb2eea52172b6f12ae072fdfd0c6a61224f0dd",
+        "path": "tests/unit/compile-each.hxml",
+        "sha256": "7b97cd643c2fb5af847603da3f1ad464c8edd0f4d3b32fb77db994e2eca7e911"
+      },
+      {
+        "gitBlob": "84ab6768a246ccdfa0a92fb9917eb0aeeedbcc20",
+        "path": "tests/unit/compile-php.hxml",
+        "sha256": "e746bc165fba324f582e70150b878a489e357ca6834ee03b692d39b07aa9cda5"
+      },
+      {
+        "gitBlob": "cb505fd0f7fa1e19da51164fc6e1827d7c9cc67a",
+        "path": "tests/unit/src/unit/TestMain.hx",
+        "sha256": "0cd5d2832f8903649bf45138dd38dd8f4eeec2051c5446c4c1f98834335329dc"
+      },
+      {
+        "gitBlob": "43c6e396c75e753d1f17a4e8c0b93eb3005d5006",
+        "path": "tests/unit/src/unit/UnitBuilder.hx",
+        "sha256": "905f81c59ffc21fb49b0a9f340db03381ed67980cd62ee6b58beffeae7af4fd3"
+      },
+      {
+        "gitBlob": "f6dbea087e6847c1b5390e62b3a9c670388d7882",
+        "path": "tests/unit/src/unit/TestIssues.hx",
+        "sha256": "e15d323e384d190d355784053843eaabe040e4ab889fc0ae902d8d777659ec3a"
+      }
+    ],
+    "commit": "e0b355c6be312c1b17382603f018cf52522ec651",
+    "licenseConclusion": "pending-exact-suite-file-review",
+    "repository": "https://github.com/HaxeFoundation/haxe",
+    "suiteRoot": "tests/unit",
+    "tree": "55d2c4c59ed55c52fa0660e2fe385081a94b23d1",
+    "version": "4.3.7"
+  },
+  "workflow": {
+    "distinctHighRiskReviewRequired": true,
+    "focusedAndRuntimeDoubleLock": true,
+    "redEvidenceRequired": true,
+    "rings": [
+      "R0",
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ],
+    "scenarioFields": [
+      "preconditions",
+      "input",
+      "actionOrCompilationPath",
+      "observableResult",
+      "errorOrEdgeBehavior",
+      "owningSurface",
+      "protectedClaim"
+    ],
+    "tracerBeforeExpansion": true
+  }
+}

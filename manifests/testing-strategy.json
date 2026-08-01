@@ -131,6 +131,7 @@
         "ADR-009 and ADR-012 bounded prototypes"
       ],
       "focusedOwners": [
+        "compiler-qualification-contract",
         "generic-php-focused",
         "wordpress-profile-focused",
         "output-context-focused"
@@ -163,6 +164,8 @@
       "selectorOwnership": [
         "compiler/reflaxe.php/*",
         "compiler/wordpress/*",
+        "scripts/compiler-qualification/*",
+        "manifests/reflaxe-php-qualification.json",
         "packages/contracts/*",
         "fixtures/output-context/*"
       ],
@@ -209,8 +212,11 @@
           ]
         }
       ],
-      "unprovenOwners": [],
+      "unprovenOwners": [
+        "compiler-qualification-contract"
+      ],
       "residualRisks": [
+        "wordpresshx-reflaxe-php",
         "wordpresshx-g1.4",
         "wordpresshx-g4.1.1",
         "wordpresshx-sdk-plan.3"
@@ -748,6 +754,34 @@
       "alwaysRun": true,
       "oracle": "closed repository inventories, exact pins, independent policy mutations, and Git history checks",
       "claimContribution": "prevents cross-surface evidence drift but is not runtime compatibility proof"
+    },
+    {
+      "testId": "compiler-qualification-contract",
+      "name": "Source-derived reflaxe.php qualification contract",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "static",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "python3 scripts/compiler-qualification/qualification.py validate && python3 scripts/compiler-qualification/qualification.py self-test",
+      "pathPatterns": [
+        "compiler/reflaxe.php/*",
+        "scripts/compiler-qualification/*",
+        "manifests/reflaxe-php-qualification.json",
+        "manifests/toolchain.lock.json",
+        "docs/compiler/reflaxe-php-qualification.md"
+      ],
+      "reverseDependencies": [
+        "generic-php-focused"
+      ],
+      "alwaysRun": false,
+      "oracle": "exact pinned Haxe Git tree/path/blob identities, closed classification invariants, and independent fail-closed mutations",
+      "claimContribution": "locks candidate qualification inputs and process while explicitly withholding active compiler qualification"
     },
     {
       "testId": "generic-php-focused",
