@@ -967,6 +967,7 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
         "testing-strategy-contract",
         "repository-bootstrap",
         "generic-php-focused",
+        "ordinary-haxe-php-tracer",
         "generic-php-package",
         "wordpress-profile-focused",
         "wordpress-public-php-runtime",

@@ -11,11 +11,15 @@ The current admitted surface is deliberately bounded:
   and statement-level generated/source byte correlation;
 - content-bound logical source files, semantic node IDs, explicit line-trace
   anchors, and a deterministic caller-named range-map writer; and
+- a real Reflaxe registration/driver tracer that lowers an ordinary Haxe
+  `static main` containing `Sys.println(String)` through that IR, without
+  application-authored backend IR; and
 - a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers.
 
-This is not yet a complete arbitrary-Haxe PHP backend. The Reflaxe driver,
-typed-AST lowering breadth, Haxe runtime/stdlib strategy, WordPress package
-index/trace policy, and public release remain separate gated work.
+This is not yet a complete arbitrary-Haxe PHP backend. The first driver path is
+an architecture tracer, not a compatibility claim: typed-AST lowering breadth,
+the Haxe runtime/stdlib strategy, official Haxe-suite qualification, WordPress
+package index/trace policy, and public release remain separate gated work.
 
 ## Boundary
 
@@ -33,8 +37,17 @@ bash compiler/reflaxe.php/scripts/test.sh
 
 The test compiles the Haxe test harness with Haxe 4.3.7, checks deterministic
 snapshots and rejected unsafe names/operators, emits a neutral multibyte
-source-correlation fixture, writes ignored PHP/map artifacts, runs `php -l`, and
-executes both fixtures.
+source-correlation fixture, and runs `php -l` plus native PHP execution. It also
+compiles the ordinary-Haxe tracer twice, compares the emitted PHP and exact map,
+checks the PHP against a manually reviewed golden, verifies source spans with an
+independent reader, and proves unsupported typed AST fails without partial
+output.
+
+The tracer's intentionally tiny application source is
+[`test/compiler-tracer/src/tracer/Main.hx`](test/compiler-tracer/src/tracer/Main.hx).
+It imports neither compiler internals nor PHP IR. Additions to this lowering
+surface must start with a concrete behavior scenario and retain both the
+focused deterministic regression and the real Haxe → PHP → native-PHP path.
 
 Prove the release-shaped package seam independently:
 

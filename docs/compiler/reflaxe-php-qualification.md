@@ -13,9 +13,12 @@ may use the generic compiler.
 
 ## What is qualified today
 
-The current compiler surface is still an admitted typed-IR/printer slice. It
-does not yet have a production Reflaxe driver, arbitrary typed-Haxe AST
-lowering, a complete runtime/stdlib strategy, or an official Haxe-suite result.
+The compiler now has a real Reflaxe registration and one deliberately narrow
+ordinary-Haxe tracer: a static `main` with `Sys.println(String)` lowers through
+the generic PHP IR into deterministic, mapped PHP and executes under native
+PHP. This establishes the driver architecture; it does not imply arbitrary
+typed-Haxe lowering, a complete runtime/stdlib strategy, or an official
+Haxe-suite result.
 
 [`manifests/reflaxe-php-qualification.json`](../../manifests/reflaxe-php-qualification.json)
 locks the exact upstream Haxe source from which future qualification starts. It
@@ -23,9 +26,10 @@ records the candidate `unitstd`, issue, and hxcpp-issue source sets by their
 sorted path/blob identities, plus the top-level cases registered by
 `TestMain.hx`. Candidate presence is never a passing test result.
 
-The active inventory can only be produced after the real compiler driver
-exists. It must observe preprocessing, macro registration, target defines, and
-capability selection. Every case then needs one of four explicit dispositions:
+The tracer is not the active official-suite inventory producer. That inventory
+must be added as a source-derived compiler facility that observes
+preprocessing, macro registration, target defines, and capability selection.
+Every case then needs one of four explicit dispositions:
 
 - active and applicable;
 - adapted with an exact patch and rationale;
@@ -68,7 +72,7 @@ Regeneration is an explicit maintenance action:
 python3 scripts/compiler-qualification/qualification.py generate --upstream ../haxe
 ```
 
-The real ordinary-Haxe tracer is tracked by `wordpresshx-reflaxe-php.2`; the
+The ordinary-Haxe tracer is implemented under `wordpresshx-reflaxe-php.2`; the
 active official-suite execution is tracked by `wordpresshx-reflaxe-php.4`; and
-eventual standalone packaging/extraction is tracked by
+eventual standalone packaging/extraction remains low priority under
 `wordpresshx-reflaxe-php.5`.

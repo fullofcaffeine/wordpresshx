@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "REFLAXE-PHP-TRACER-001",
+  "bead": "wordpresshx-reflaxe-php.2",
+  "status": "implemented-local-hosted-pending",
+  "scenario": {
+    "preconditions": "Haxe 4.3.7, reflaxe 4.0.0-beta, an explicit application source root, and native PHP 7.4 or newer",
+    "input": "ordinary tracer.Main with a static main calling Sys.println with one String literal",
+    "actionOrCompilationPath": "Haxe typed AST -> custom Reflaxe registration -> typed PHP IR -> deterministic printer/range map -> php -l -> native PHP execution",
+    "observableResult": "readable main.php prints exactly reflaxe.php typed PHP tracer followed by one newline",
+    "errorOrEdgeBehavior": "an unsupported Int value fails at its Haxe source position and publishes neither PHP nor a range map",
+    "owningSurface": "compiler-adapter",
+    "protectedClaim": "first ordinary-Haxe custom compiler tracer only; not broad Haxe, PHP, WordPress, package, or official-suite compatibility"
+  },
+  "redState": {
+    "command": "cd compiler/reflaxe.php && haxe test/compiler-tracer/build.hxml",
+    "exitCode": 1,
+    "failure": "(unknown) : Type not found : reflaxe.php.compiler.CompilerInit",
+    "reason": "the real compiler registration and driver did not exist"
+  },
+  "independentOracle": [
+    "Haxe Sys.println appends a line terminator",
+    "manually authored expected/main.php and expected.stdout",
+    "independent Python source-slice and digest verification",
+    "native PHP parser and runtime observation"
+  ],
+  "localEvidence": {
+    "focusedAndVerticalCommand": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+    "outcome": "passed",
+    "deterministicCompilations": 2,
+    "phpSyntax": "passed",
+    "nativeRuntime": "passed",
+    "unsupportedAst": "source-positioned-failure-no-partial-output",
+    "strictHaxe": "8-files-zero-findings",
+    "firstMilliseconds": 1440,
+    "repeatMilliseconds": 1230,
+    "coldClaim": false,
+    "warmClaim": false
+  },
+  "localToolchain": {
+    "haxe": "4.3.7",
+    "reflaxe": "4.0.0-beta",
+    "php": "8.4.7"
+  },
+  "broaderEvidence": [
+    {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed"
+    },
+    {
+      "command": "bash compiler/reflaxe.php/scripts/test-package.sh",
+      "outcome": "passed-after-null-safety-regression-fix"
+    },
+    {
+      "command": "python3 scripts/compiler-qualification/qualification.py validate && python3 scripts/compiler-qualification/qualification.py self-test",
+      "outcome": "passed-12-fail-closed-mutations"
+    },
+    {
+      "command": "python3 scripts/testing/strategy.py validate && python3 scripts/testing/strategy.py self-test",
+      "outcome": "passed-selector-owner-and-scorecard-contract"
+    }
+  ],
+  "review": {
+    "distinctFromImplementation": true,
+    "questions": [
+      "Does the test fail if PHP output, stdout, mappings, or unsupported-AST behavior drift?",
+      "Are expected values independent from the implementation under test?",
+      "Can application source import backend IR or publish partial output after rejection?",
+      "Does the semantic owner select focused, package, WordPress-profile, and full backstop evidence without borrowing their claims?",
+      "Does any claim exceed the admitted tracer?"
+    ],
+    "findingsAndDispositions": [
+      "Generic package branding leaked into the neutral fixture; replaced with reflaxe.php-only text and the isolation gate retained.",
+      "Late Reflaxe after-generation diagnostics can print without a failing process; unsupported AST moved to a shared after-typing preflight using Context.error.",
+      "Declaring the real Reflaxe dependency exposed three existing null-safety failures in the clean installed-package consumer; fixed with an in-bounds code-unit read and narrowed method-body locals, then retained the package vertical.",
+      "The initial map generator digest covered only new driver files; expanded to every Haxe source under the generic reflaxe.php implementation.",
+      "The semantic selector did not initially require the new tracer for generic compiler changes; reciprocal ownership and the selector self-test now enforce it."
+    ],
+    "remainingRisks": [
+      "typed-AST lowering intentionally supports only the tracer grammar",
+      "runtime and standard-library ownership are not implemented",
+      "official Haxe-suite active inventory and hosted execution are not implemented",
+      "standalone extraction remains low priority"
+    ]
+  },
+  "authenticatedInputs": [
+    {
+      "path": "compiler/reflaxe.php/haxelib.json",
+      "sha256": "2d3c2ac5de1d79508b81834fcce642127ff2cccb226aa4baeb41317ed0fab9f2"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "sha256": "0ec8048bce303dee305b6cc586b734f83e62c3debb457a100e38a8350cc19f96"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test.sh",
+      "sha256": "42f61179492a24c6261d6ff542b51f94c8bf19989e45e8fc8cadffaa2f582f2c"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/verify-compiler-tracer.py",
+      "sha256": "16f9119f4984bc07e1bee588eabe77e7fdf4f607f4e3664121df24dd63d32ae5"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
+      "sha256": "a7cf93a0106b79358569e59e31076fa68ab00ebefa0b8d11c6a616d84f5b5883"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
+      "sha256": "19bbd2b95673cde44a5a4329f1007a00af153c6c6f9a9b6c3a41281e193580f5"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompilerConfig.hx",
+      "sha256": "63ac6a69ba62f51d15479449120970cc9f203a08c3fe4e1413cc619c52cab04f"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
+      "sha256": "0125395fc74f7b2e00e16a4ec3901c65065c232bf1274c339321288b3b471579"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
+      "sha256": "c89925b564d550236a429dc4e25f237d89937231d08f75366525cf7e0ca7b609"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
+      "sha256": "2a633e14cbcc0576eb68b016cdbbbbdbb7f3105b534f2ce220a134a102a4ecd1"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx",
+      "sha256": "e6647b6c8cf278de7d4ead803a8c316bb10f41c615ebc58eb47498e240e0ab4f"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+      "sha256": "b464f040ed89955cd23b7a4bece8deb9e9001f59dbd7e47839ca07e45bab979a"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected.stdout",
+      "sha256": "49c4600a7f9bafc98eafbb8ad174d33a8354048ae46667f42bd14227ca11a094"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/main.php",
+      "sha256": "6220e9de3b9e443702a3b26b989f435b72d3de92bd8338f43a28d55fd7d10d35"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/negative/unsupported-value/src/tracer/Main.hx",
+      "sha256": "bbda0795b2743e190caa5eb14056212adb038a8a08cae6bf2d5fd6056a2bf584"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/src/tracer/Main.hx",
+      "sha256": "5523b9def02e4317639a85f683bf47873aed30322588b654e47cad54e569c256"
+    }
+  ],
+  "authority": {
+    "hostedProof": false,
+    "officialHaxeQualification": false,
+    "wordpressCompatibility": false,
+    "publicationAuthorized": false
+  }
+}

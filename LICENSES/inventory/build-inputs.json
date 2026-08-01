@@ -15,7 +15,7 @@
   "sources": [
     {
       "path": "compiler/reflaxe.php/haxelib.json",
-      "sha256": "e5f31c718ed5a683d7f90bd78aaf11e8244bdf9cfd1b5dd80020424a457aebcb",
+      "sha256": "2d3c2ac5de1d79508b81834fcce642127ff2cccb226aa4baeb41317ed0fab9f2",
       "parser": "haxelib-manifest",
       "componentObservationCount": 1
     },

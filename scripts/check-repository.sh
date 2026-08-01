@@ -763,6 +763,7 @@ required_files=(
   manifests/evidence/sdk-020-reflaxe-php-bootstrap.json
   manifests/evidence/sdk-021-php-ir-printer.json
   manifests/evidence/sdk-027-generic-php-compiler-readiness.json
+  manifests/evidence/reflaxe-php-tracer.json
   manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
@@ -1078,6 +1079,11 @@ sdk027_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-027-generic-php-compiler-readiness.json"
     ).read_text(encoding="utf-8")
+)
+reflaxe_php_tracer_receipt = json.loads(
+    Path("manifests/evidence/reflaxe-php-tracer.json").read_text(
+        encoding="utf-8"
+    )
 )
 strict_haxe_migration = json.loads(
     Path("manifests/evidence/strict-haxe-migration.json").read_text(
@@ -6486,6 +6492,45 @@ g3_closure_subject_records = {
     record["path"]: record["sha256"]
     for record in g3_closure_receipt["currentSubjects"].values()
 }
+assert reflaxe_php_tracer_receipt["schemaVersion"] == 1
+assert reflaxe_php_tracer_receipt["receiptId"] == "REFLAXE-PHP-TRACER-001"
+assert reflaxe_php_tracer_receipt["bead"] == "wordpresshx-reflaxe-php.2"
+assert reflaxe_php_tracer_receipt["status"] == "implemented-local-hosted-pending"
+assert reflaxe_php_tracer_receipt["scenario"]["owningSurface"] == "compiler-adapter"
+assert reflaxe_php_tracer_receipt["redState"] == {
+    "command": "cd compiler/reflaxe.php && haxe test/compiler-tracer/build.hxml",
+    "exitCode": 1,
+    "failure": "(unknown) : Type not found : reflaxe.php.compiler.CompilerInit",
+    "reason": "the real compiler registration and driver did not exist",
+}
+assert reflaxe_php_tracer_receipt["localEvidence"]["outcome"] == "passed"
+assert reflaxe_php_tracer_receipt["localEvidence"]["deterministicCompilations"] == 2
+assert reflaxe_php_tracer_receipt["localEvidence"]["unsupportedAst"] == (
+    "source-positioned-failure-no-partial-output"
+)
+assert reflaxe_php_tracer_receipt["localEvidence"]["coldClaim"] is False
+assert reflaxe_php_tracer_receipt["localEvidence"]["warmClaim"] is False
+assert reflaxe_php_tracer_receipt["review"]["distinctFromImplementation"] is True
+assert reflaxe_php_tracer_receipt["authority"] == {
+    "hostedProof": False,
+    "officialHaxeQualification": False,
+    "wordpressCompatibility": False,
+    "publicationAuthorized": False,
+}
+reflaxe_php_tracer_input_records = {
+    record["path"]: record["sha256"]
+    for record in reflaxe_php_tracer_receipt["authenticatedInputs"]
+}
+assert list(reflaxe_php_tracer_input_records) == sorted(
+    reflaxe_php_tracer_input_records
+)
+assert len(reflaxe_php_tracer_input_records) == 16
+for tracer_input_path, tracer_input_sha256 in reflaxe_php_tracer_input_records.items():
+    assert sha256.fullmatch(tracer_input_sha256)
+    assert Path(tracer_input_path).is_file()
+    assert hashlib.sha256(Path(tracer_input_path).read_bytes()).hexdigest() == (
+        tracer_input_sha256
+    )
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
@@ -6498,6 +6543,7 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
             sdk045_plugin_subject_records.get(sdk026_input_path),
             g13_activation_input_records.get(sdk026_input_path),
             g3_closure_subject_records.get(sdk026_input_path),
+            reflaxe_php_tracer_input_records.get(sdk026_input_path),
         )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
@@ -7342,6 +7388,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
         strict_haxe_digest,
         g13_activation_input_records.get(strict_haxe_path),
         g3_closure_subject_records.get(strict_haxe_path),
+        reflaxe_php_tracer_input_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -7404,7 +7451,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
     (
         "generic-php-compiler",
         "compiler/reflaxe.php",
-        34,
+        42,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
@@ -7598,6 +7645,7 @@ for record in sdk025_inputs:
             strict_haxe_subjects.get(record["path"]),
             g13_activation_input_records.get(record["path"]),
             g3_closure_subject_records.get(record["path"]),
+            reflaxe_php_tracer_input_records.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 

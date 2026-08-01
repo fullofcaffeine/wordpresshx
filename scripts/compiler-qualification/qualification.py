@@ -331,7 +331,7 @@ def build_contract(upstream: Path) -> dict[str, object]:
                 "version": primary_cli.get("version"),
                 "image": primary_cli.get("reference"),
             },
-            "driverAvailable": False,
+            "driverAvailable": True,
             "runtimeStdlibMatrixAvailable": False,
         },
         "independentOracles": [
@@ -379,7 +379,6 @@ def build_contract(upstream: Path) -> dict[str, object]:
             "dependencyDirection": "compiler/reflaxe.php <- compiler/wordpress <- SDK",
         },
         "residualBeads": [
-            "wordpresshx-reflaxe-php.2",
             "wordpresshx-reflaxe-php.3",
             "wordpresshx-reflaxe-php.4",
             "wordpresshx-reflaxe-php.5",
@@ -507,7 +506,7 @@ def validate_contract(model: dict[str, object]) -> None:
         "activeInventoryContract",
     )
     if active.get("available") is not False:
-        fail("active inventory is claimed before the production driver exists")
+        fail("active inventory is claimed before its source-derived producer exists")
     required_dispositions = strings(active.get("requiredCaseDispositions"), "requiredCaseDispositions")
     if set(required_dispositions) != {
         "active-applicable",
@@ -530,7 +529,7 @@ def validate_contract(model: dict[str, object]) -> None:
     )
     if profiles.get("haxeVersion") != haxe_lock.get("version") or profiles.get("haxeCommit") != haxe_lock.get("commit"):
         fail("declared Haxe profile differs from the lock")
-    if profiles.get("driverAvailable") is not False or profiles.get("runtimeStdlibMatrixAvailable") is not False:
+    if profiles.get("driverAvailable") is not True or profiles.get("runtimeStdlibMatrixAvailable") is not False:
         fail("compiler implementation status is overstated")
     php_lock = require_dict(require_dict(lock.get("runtimeImages"), "runtimeImages").get("php"), "runtimeImages.php")
     for contract_key, lock_key in (("phpSyntaxFloor", "syntaxFloor"), ("phpPrimaryRuntime", "primaryCli")):
@@ -640,9 +639,13 @@ def self_test(model: dict[str, object]) -> None:
     require_dict(invented_pass["candidateInventory"], "candidateInventory")["presenceIsPass"] = True
     mutations.append(("candidate presence pass", invented_pass))
 
-    active_without_driver = copy.deepcopy(model)
-    require_dict(active_without_driver["activeInventoryContract"], "activeInventoryContract")["available"] = True
-    mutations.append(("active inventory before driver", active_without_driver))
+    invented_active_inventory = copy.deepcopy(model)
+    require_dict(invented_active_inventory["activeInventoryContract"], "activeInventoryContract")["available"] = True
+    mutations.append(("invented active inventory", invented_active_inventory))
+
+    missing_tracer_driver = copy.deepcopy(model)
+    require_dict(missing_tracer_driver["declaredProfiles"], "declaredProfiles")["driverAvailable"] = False
+    mutations.append(("missing tracer driver", missing_tracer_driver))
 
     unowned_skip = copy.deepcopy(model)
     require_dict(unowned_skip["activeInventoryContract"], "activeInventoryContract")["unownedSkipAllowed"] = True

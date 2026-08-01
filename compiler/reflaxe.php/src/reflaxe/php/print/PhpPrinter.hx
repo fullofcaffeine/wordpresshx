@@ -236,8 +236,9 @@ class PhpPrinter {
 						final methodEndByte = methodStartByte + Bytes.ofString(methodText).length;
 						addExactMapping(mappings, "member", semanticStartByte(methodText, methodStartByte, 1), methodEndByte, method.source,
 							method.semanticNodeId, 1, false);
-						if (method.body != null) {
-							collectStatementMappings(method.body, 2, methodText, methodStartByte, 0, mappings, 2);
+						final methodBody = method.body;
+						if (methodBody != null) {
+							collectStatementMappings(methodBody, 2, methodText, methodStartByte, 0, mappings, 2);
 						}
 					}
 			}
@@ -528,10 +529,11 @@ class PhpPrinter {
 			+ method.parameters.map(parameter -> printParameter(parameter, depth)).join(", ")
 			+ ")"
 			+ printReturnType(method.returnType);
-		if (method.body == null) {
+		final methodBody = method.body;
+		if (methodBody == null) {
 			return signature + ";";
 		}
-		return signature + " {\n" + printStatements(method.body, depth + 1) + "\n" + prefix + "}";
+		return signature + " {\n" + printStatements(methodBody, depth + 1) + "\n" + prefix + "}";
 	}
 
 	function printMethodDoc(documentation:PhpMethodDoc, depth:Int):String {

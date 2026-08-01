@@ -54,7 +54,7 @@ class PhpMethodDoc {
 			throw label + " must be one safe non-empty line";
 		}
 		for (index in 0...value.length) {
-			final code = value.charCodeAt(index);
+			final code = StringTools.fastCodeAt(value, index);
 			if (code < 32 || code == 127) {
 				throw label + " contains a control character";
 			}

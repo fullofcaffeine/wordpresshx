@@ -112,7 +112,7 @@
       "claims": [
         "typed authored PHP IR emits deterministic PHP for the admitted slice",
         "WordPress public adapters emit readable native PHP for the admitted fixtures",
-        "ordinary-Haxe Reflaxe driver and official Haxe target qualification remain unimplemented"
+        "one ordinary-Haxe static-main and Sys.println(String) tracer lowers through the custom Reflaxe driver; broader lowering and official Haxe target qualification remain unimplemented"
       ],
       "authoredInputs": [
         "Haxe-authored typed PHP IR fixtures",
@@ -127,6 +127,7 @@
       "supportedProfiles": [],
       "testedProfiles": [
         "generic typed-IR slice on PHP 7.4.33 and 8.4.7",
+        "ordinary-Haxe tracer through deterministic PHP, exact source map, and local native PHP",
         "wp70-release public-adapter fixtures",
         "ADR-009 and ADR-012 bounded prototypes"
       ],
@@ -137,6 +138,7 @@
         "output-context-focused"
       ],
       "verticalIntegrationOwners": [
+        "ordinary-haxe-php-tracer",
         "generic-php-package",
         "wordpress-public-php-runtime",
         "output-context-vertical"
@@ -156,7 +158,7 @@
         "co-located reflaxe.php provenance is recorded separately from WordPress profile behavior"
       ],
       "knownSkips": [
-        "Reflaxe registration and arbitrary typed-Haxe AST lowering",
+        "typed-Haxe AST lowering beyond the admitted static-main and Sys.println(String) tracer",
         "complete Haxe runtime and standard-library strategy",
         "official Haxe tests/unit qualification"
       ],
@@ -213,10 +215,12 @@
         }
       ],
       "unprovenOwners": [
-        "compiler-qualification-contract"
+        "compiler-qualification-contract",
+        "ordinary-haxe-php-tracer"
       ],
       "residualRisks": [
-        "wordpresshx-reflaxe-php",
+        "wordpresshx-reflaxe-php.3",
+        "wordpresshx-reflaxe-php.4",
         "wordpresshx-g1.4",
         "wordpresshx-g4.1.1",
         "wordpresshx-sdk-plan.3"
@@ -801,12 +805,40 @@
         "compiler/reflaxe.php/*"
       ],
       "reverseDependencies": [
+        "ordinary-haxe-php-tracer",
         "generic-php-package",
         "wordpress-profile-focused"
       ],
       "alwaysRun": false,
       "oracle": "manually reviewed PHP goldens plus native php -l and runtime output",
       "claimContribution": "admitted typed-IR slice only"
+    },
+    {
+      "testId": "ordinary-haxe-php-tracer",
+      "name": "Ordinary Haxe through custom Reflaxe driver and native PHP",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/*",
+        "compiler/reflaxe.php/test/compiler-tracer/*",
+        "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+        "compiler/reflaxe.php/scripts/verify-compiler-tracer.py"
+      ],
+      "reverseDependencies": [
+        "generic-php-package",
+        "wordpress-profile-focused"
+      ],
+      "alwaysRun": false,
+      "oracle": "Haxe Sys.println semantics, a manually authored PHP/stdout minimum, independent range-map source-slice validation, and native php -l/runtime observation",
+      "claimContribution": "first ordinary-Haxe custom-driver architecture tracer only; not broad Haxe, PHP, WordPress, or official-suite compatibility"
     },
     {
       "testId": "generic-php-package",
@@ -1207,6 +1239,7 @@
       "ringId": "R1",
       "role": "representative local tracer smoke",
       "commands": [
+        "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
         "bash compiler/wordpress/scripts/test.sh",
         "bash scripts/output-context/test.sh when Docker is healthy"
       ],
