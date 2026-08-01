@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "TESTING-STRATEGY-BASELINE-001",
   "bead": "wordpresshx-sdk-plan.3.5",
-  "observedAt": "2026-08-01T08:38:16Z",
+  "observedAt": "2026-08-01T09:00:46Z",
   "subject": {
     "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
     "strategyReferenceVersion": "2026-07-31-v3",
@@ -315,7 +315,7 @@
     "selector": "new strategy selector will remain observation-only"
   },
   "postChange": {
-    "recordedAt": "2026-08-01T08:38:16Z",
+    "recordedAt": "2026-08-01T09:00:46Z",
     "measurementSubject": {
       "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
       "strategySha256": "8e7fdfe6595a8720d2ccc4b09a8bf61d66ce0ea4212b738062e7aa361bc41048",
@@ -348,8 +348,103 @@
         "comparison": "both cross-workflow-identity validator runs passed after the shallow-history regression; their 107510ms/79230ms spread reinforces that invocation order does not define cold/warm state, and no latency budget or regression conclusion is inferred from two samples"
       }
     ],
-    "hostedRuns": [],
-    "hostedStatus": "pending-main-push",
+    "hostedRuns": [
+      {
+        "workflow": "Repository bootstrap",
+        "runId": 30692403169,
+        "commit": "68ce0f729e6452f8a5956e281b1fa040ca954905",
+        "status": "passed",
+        "jobs": [
+          {
+            "name": "repository",
+            "jobId": 91349336651,
+            "durationMilliseconds": 25000,
+            "status": "passed"
+          },
+          {
+            "name": "haxe",
+            "jobId": 91349336705,
+            "durationMilliseconds": 886000,
+            "status": "passed"
+          },
+          {
+            "name": "wordpress-runtime",
+            "jobId": 91349336654,
+            "durationMilliseconds": 598000,
+            "status": "passed"
+          },
+          {
+            "name": "security",
+            "jobId": 91349336666,
+            "durationMilliseconds": 255000,
+            "status": "passed"
+          },
+          {
+            "name": "generated-output-vcs",
+            "jobId": 91349336663,
+            "durationMilliseconds": 6000,
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "workflow": "Output-context safety",
+        "runId": 30692403163,
+        "commit": "68ce0f729e6452f8a5956e281b1fa040ca954905",
+        "status": "passed",
+        "jobs": [
+          {
+            "name": "output-context",
+            "jobId": 91349336742,
+            "durationMilliseconds": 99000,
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "workflow": "Adoption-contract architecture",
+        "runId": 30692403148,
+        "commit": "68ce0f729e6452f8a5956e281b1fa040ca954905",
+        "status": "passed",
+        "jobs": [
+          {
+            "name": "adoption-contract",
+            "jobId": 91349336602,
+            "durationMilliseconds": 65000,
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "workflow": "Unsafe-boundary policy",
+        "runId": 30692403166,
+        "commit": "68ce0f729e6452f8a5956e281b1fa040ca954905",
+        "status": "passed",
+        "jobs": [
+          {
+            "name": "unsafe-boundary-policy",
+            "jobId": 91349336606,
+            "durationMilliseconds": 224000,
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "workflow": "Windows development service ownership",
+        "runId": 30692403159,
+        "commit": "68ce0f729e6452f8a5956e281b1fa040ca954905",
+        "status": "passed",
+        "jobs": [
+          {
+            "name": "windows-dev-loop",
+            "jobId": 91349336655,
+            "durationMilliseconds": 97000,
+            "status": "passed"
+          }
+        ]
+      }
+    ],
+    "hostedStatus": "passed",
     "claimCoverageChange": "five product surfaces, R0-R5, example tiers, red-state provenance, and semantic owner selection are now explicit; product compatibility claims are unchanged",
     "maintenanceCostChange": "one checked JSON authority and one standard-library Python validator/selector were added; no existing runner, workflow, fixture, or required gate was removed"
   },
