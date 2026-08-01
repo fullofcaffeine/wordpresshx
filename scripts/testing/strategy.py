@@ -38,6 +38,13 @@ REQUIRED_CONCLUSIONS = {
 }
 REQUIRED_RINGS = {f"R{index}" for index in range(6)}
 REQUIRED_EXAMPLE_TIERS = {"flagship-application", "capability-showcase", "compile-only-snippet"}
+EXPECTED_POST_HOSTED_JOBS = {
+    "Repository bootstrap": {"repository", "haxe", "wordpress-runtime", "security", "generated-output-vcs"},
+    "Output-context safety": {"output-context"},
+    "Adoption-contract architecture": {"adoption-contract"},
+    "Unsafe-boundary policy": {"unsafe-boundary-policy"},
+    "Windows development service ownership": {"windows-dev-loop"},
+}
 
 
 class StrategyError(ValueError):
@@ -800,12 +807,57 @@ def validate_baseline(receipt: dict[str, object], model: dict[str, object]) -> N
             value = sample.get(field)
             if not isinstance(value, int) or isinstance(value, bool) or value < 0:
                 raise StrategyError(f"testing strategy postChange localSamples[{index}] has invalid {field}")
-    if not isinstance(post_change.get("hostedRuns"), list):
-        raise StrategyError("testing strategy post-change hostedRuns must be an array")
+    hosted_runs = require_list(post_change.get("hostedRuns"), "testing strategy postChange hostedRuns")
     if post_change.get("hostedStatus") not in {"pending-main-push", "passed"}:
         raise StrategyError("testing strategy post-change hosted status is invalid")
-    if post_change.get("hostedStatus") == "pending-main-push" and post_change.get("hostedRuns") != []:
+    if post_change.get("hostedStatus") == "pending-main-push" and hosted_runs != []:
         raise StrategyError("testing strategy post-change hosted evidence contradicts pending status")
+    observed_hosted_workflows: set[str] = set()
+    observed_hosted_run_ids: set[int] = set()
+    observed_hosted_job_ids: set[int] = set()
+    observed_hosted_commit: str | None = None
+    for index, raw_run in enumerate(hosted_runs):
+        hosted_run = require_dict(raw_run, f"testing strategy postChange hostedRuns[{index}]")
+        exact_keys(hosted_run, {"workflow", "runId", "commit", "status", "jobs"}, f"testing strategy postChange hostedRuns[{index}]")
+        workflow = hosted_run.get("workflow")
+        if not isinstance(workflow, str) or workflow not in EXPECTED_POST_HOSTED_JOBS or workflow in observed_hosted_workflows:
+            raise StrategyError("testing strategy post-change hosted workflow set is invalid")
+        observed_hosted_workflows.add(workflow)
+        run_id = hosted_run.get("runId")
+        if not isinstance(run_id, int) or isinstance(run_id, bool) or run_id <= 0 or run_id in observed_hosted_run_ids:
+            raise StrategyError("testing strategy post-change hosted run identity is invalid")
+        observed_hosted_run_ids.add(run_id)
+        hosted_commit = hosted_run.get("commit")
+        if not isinstance(hosted_commit, str) or re.fullmatch(r"[0-9a-f]{40}", hosted_commit) is None:
+            raise StrategyError("testing strategy post-change hosted commit is invalid")
+        if observed_hosted_commit is None:
+            observed_hosted_commit = hosted_commit
+        elif observed_hosted_commit != hosted_commit:
+            raise StrategyError("testing strategy post-change hosted runs mix subjects")
+        if hosted_run.get("status") != "passed":
+            raise StrategyError("testing strategy post-change hosted run is not passed")
+        jobs = require_list(hosted_run.get("jobs"), f"testing strategy postChange hostedRuns[{index}] jobs")
+        observed_job_names: set[str] = set()
+        for job_index, raw_job in enumerate(jobs):
+            job = require_dict(raw_job, f"testing strategy postChange hostedRuns[{index}] jobs[{job_index}]")
+            exact_keys(job, {"name", "jobId", "durationMilliseconds", "status"}, f"testing strategy postChange hostedRuns[{index}] jobs[{job_index}]")
+            name = job.get("name")
+            if not isinstance(name, str) or not name or name in observed_job_names:
+                raise StrategyError("testing strategy post-change hosted job name is invalid")
+            observed_job_names.add(name)
+            job_id = job.get("jobId")
+            duration = job.get("durationMilliseconds")
+            if not isinstance(job_id, int) or isinstance(job_id, bool) or job_id <= 0 or job_id in observed_hosted_job_ids:
+                raise StrategyError("testing strategy post-change hosted job identity is invalid")
+            observed_hosted_job_ids.add(job_id)
+            if not isinstance(duration, int) or isinstance(duration, bool) or duration <= 0:
+                raise StrategyError("testing strategy post-change hosted job duration is invalid")
+            if job.get("status") != "passed":
+                raise StrategyError("testing strategy post-change hosted job is not passed")
+        if observed_job_names != EXPECTED_POST_HOSTED_JOBS[workflow]:
+            raise StrategyError(f"testing strategy post-change hosted job coverage is incomplete for {workflow}")
+    if post_change.get("hostedStatus") == "passed" and observed_hosted_workflows != set(EXPECTED_POST_HOSTED_JOBS):
+        raise StrategyError("testing strategy post-change passed status lacks all five workflows")
     for field in ("claimCoverageChange", "maintenanceCostChange"):
         value = post_change.get(field)
         if not isinstance(value, str) or not value or value == "pending":
@@ -1009,6 +1061,32 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
     require_dict(swapped_proofs[0], "mutation proof")["ownersCovered"] = second_coverage
     require_dict(swapped_proofs[1], "mutation proof")["ownersCovered"] = first_coverage
     baseline_mutations.append(("swapped-valid-job-owner-coverage", baseline, swapped_coverage_model))
+    incomplete_post_hosted = copy.deepcopy(baseline)
+    mutated_post = require_dict(incomplete_post_hosted.get("postChange"), "mutation postChange")
+    mutated_hosted_runs = require_list(mutated_post.get("hostedRuns"), "mutation postChange hostedRuns")
+    if mutated_hosted_runs:
+        first_hosted_run = require_dict(mutated_hosted_runs[0], "mutation postChange hosted run")
+        require_list(first_hosted_run.get("jobs"), "mutation postChange hosted jobs").pop()
+    else:
+        mutated_post["hostedStatus"] = "passed"
+    baseline_mutations.append(("incomplete-post-hosted-evidence", incomplete_post_hosted, model))
+    reused_cross_workflow_job = copy.deepcopy(baseline)
+    reused_post = require_dict(reused_cross_workflow_job.get("postChange"), "mutation postChange")
+    reused_post["hostedStatus"] = "passed"
+    synthetic_runs: list[object] = []
+    next_job_id = 1000
+    for run_index, (workflow, job_names) in enumerate(EXPECTED_POST_HOSTED_JOBS.items()):
+        synthetic_jobs: list[object] = []
+        for job_name in sorted(job_names):
+            synthetic_jobs.append({"name": job_name, "jobId": next_job_id, "durationMilliseconds": 1, "status": "passed"})
+            next_job_id += 1
+        synthetic_runs.append({"workflow": workflow, "runId": 2000 + run_index, "commit": "a" * 40, "status": "passed", "jobs": synthetic_jobs})
+    first_run = require_dict(synthetic_runs[0], "mutation first hosted run")
+    second_run = require_dict(synthetic_runs[1], "mutation second hosted run")
+    reused_job_id = require_dict(require_list(first_run.get("jobs"), "mutation first hosted jobs")[0], "mutation first hosted job").get("jobId")
+    require_dict(require_list(second_run.get("jobs"), "mutation second hosted jobs")[0], "mutation second hosted job")["jobId"] = reused_job_id
+    reused_post["hostedRuns"] = synthetic_runs
+    baseline_mutations.append(("reused-cross-workflow-job-identity", reused_cross_workflow_job, model))
     for label, mutated_baseline, mutated_model in baseline_mutations:
         try:
             validate_baseline(mutated_baseline, mutated_model)
@@ -1029,7 +1107,7 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
     else:
         raise StrategyError("complete history accepted a missing historical subject")
 
-    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 4 evidence mutations, 4 history modes, conservative fallback, reverse dependencies")
+    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 6 evidence mutations, 4 history modes, conservative fallback, reverse dependencies")
 
 
 def print_human(result: dict[str, object]) -> None:

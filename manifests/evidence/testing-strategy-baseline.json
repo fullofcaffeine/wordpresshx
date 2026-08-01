@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "TESTING-STRATEGY-BASELINE-001",
   "bead": "wordpresshx-sdk-plan.3.5",
-  "observedAt": "2026-08-01T07:51:48Z",
+  "observedAt": "2026-08-01T08:38:16Z",
   "subject": {
     "commit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
     "strategyReferenceVersion": "2026-07-31-v3",
@@ -315,11 +315,11 @@
     "selector": "new strategy selector will remain observation-only"
   },
   "postChange": {
-    "recordedAt": "2026-08-01T07:51:48Z",
+    "recordedAt": "2026-08-01T08:38:16Z",
     "measurementSubject": {
       "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
       "strategySha256": "8e7fdfe6595a8720d2ccc4b09a8bf61d66ce0ea4212b738062e7aa361bc41048",
-      "validatorSha256": "259507ed3dbac08a1c2f2b5492c02bffeae7fc1526e6aa2e5e002f7beccfe727",
+      "validatorSha256": "b1cecd9c15c4a3de7c6c1da5be286f6e9d063f51ed3b0b898df689dfaa85e7de",
       "repositoryGateSha256": "8e8c0ae1b666130ebd59ff52f7bb2f859874eaf75fb02d1232316ee078a46b89"
     },
     "localSamples": [
@@ -342,10 +342,10 @@
       {
         "ring": "R2",
         "command": "bash scripts/check-repository.sh",
-        "firstMilliseconds": 106820,
-        "repeatMilliseconds": 89080,
+        "firstMilliseconds": 107510,
+        "repeatMilliseconds": 79230,
         "outcome": "passed",
-        "comparison": "both corrected-validator runs passed after the shallow-history regression; their 106820ms/89080ms spread reinforces that invocation order does not define cold/warm state, and no latency budget or regression conclusion is inferred from two samples"
+        "comparison": "both cross-workflow-identity validator runs passed after the shallow-history regression; their 107510ms/79230ms spread reinforces that invocation order does not define cold/warm state, and no latency budget or regression conclusion is inferred from two samples"
       }
     ],
     "hostedRuns": [],

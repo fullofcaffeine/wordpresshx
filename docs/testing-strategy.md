@@ -189,7 +189,7 @@ for that environment.
 
 After the strategy change and its shallow-history portability correction, the
 same local R0/R1/R2 first/repeat commands measured 0.07s/0.05s,
-2.66s/2.50s, and 106.82s/89.08s. The spread is retained as observation rather
+2.66s/2.50s, and 107.51s/79.23s. The spread is retained as observation rather
 than presented as an optimization result.
 
 They are also deliberately called first invocation and immediate repeat—not
