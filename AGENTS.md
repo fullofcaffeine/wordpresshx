@@ -44,6 +44,12 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
   require owner authority. A human specialist may be consulted voluntarily or
   when the user explicitly requests one, but human participation is not a
   default blocking gate.
+- For an exceptionally complex manual GPT-5.6 Pro handoff, use the globally
+  installed `$oracle-review` skill. It prepares a content-addressed, sanitized
+  Repomix package, checks for pending requests, and manages the `/tmp/oracle`
+  archive lifecycle; the independence and authority rules above still apply.
+  Public source and install instructions:
+  https://github.com/fullofcaffeine/caf-skills/tree/main/skills/oracle-review
 
 ## Strictly Typed Haxe
 
