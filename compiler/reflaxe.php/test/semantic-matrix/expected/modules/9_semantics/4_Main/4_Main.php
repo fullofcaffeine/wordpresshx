@@ -32,5 +32,12 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-array-read:fail' . PHP_EOL;
 		}
+		$label = 'Haxe ' . '→ PHP 🚀';
+		echo $label . PHP_EOL;
+		if ( $label === 'Haxe → PHP 🚀' ) {
+			echo 'unicode-string:pass' . PHP_EOL;
+		} else {
+			echo 'unicode-string:fail' . PHP_EOL;
+		}
 	}
 }

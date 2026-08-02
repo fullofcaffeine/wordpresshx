@@ -141,6 +141,14 @@ class PrinterTest {
 	}
 
 	static function testExactSourceCorrelation():Void {
+		final unicodePositions = new PhpSourceFile("source:unicode-position", "project", "test/fixtures/UnicodePosition.hx", PhpHaxeSource, "a→🚀b");
+		assertEquals("0", Std.string(unicodePositions.byteOffsetForCharacterOffset(0)), "character position at UTF-8 start");
+		assertEquals("1", Std.string(unicodePositions.byteOffsetForCharacterOffset(1)), "character position after ASCII");
+		assertEquals("4", Std.string(unicodePositions.byteOffsetForCharacterOffset(2)), "character position after three-byte scalar");
+		assertEquals("8", Std.string(unicodePositions.byteOffsetForCharacterOffset(3)), "character position after four-byte scalar");
+		assertEquals("9", Std.string(unicodePositions.byteOffsetForCharacterOffset(4)), "character position at UTF-8 end");
+		assertThrows(() -> unicodePositions.byteOffsetForCharacterOffset(5), "out-of-bounds character position");
+
 		final content = File.getContent("test/fixtures/SourceFixture.hx");
 		final sourceFile = new PhpSourceFile("source:fixture", "project", "test/fixtures/SourceFixture.hx", PhpHaxeSource, content);
 		final classSource = exactDelimited(sourceFile, "class SourceFixture", content.length);

@@ -61,7 +61,7 @@ if (( negative_status == 0 )); then
 	echo "unsupported typed AST unexpectedly compiled" >&2
 	exit 1
 fi
-if [[ "${negative_diagnostic}" != *"reflaxe.php tracer supports only string literal values"* ]]; then
+if [[ "${negative_diagnostic}" != *"reflaxe.php supports only String literals, String locals, and exact String concatenation without coercion"* ]]; then
 	printf '%s\n' "${negative_diagnostic}" >&2
 	echo "unsupported typed AST did not preserve its source diagnostic" >&2
 	exit 1

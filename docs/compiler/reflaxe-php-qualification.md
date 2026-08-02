@@ -13,12 +13,14 @@ may use the generic compiler.
 
 ## What is qualified today
 
-The compiler now has a real Reflaxe registration and one deliberately narrow
-ordinary-Haxe tracer: a static `main` with `Sys.println(String)` lowers through
-the generic PHP IR into deterministic, mapped PHP and executes under native
-PHP. This establishes the driver architecture; it does not imply arbitrary
-typed-Haxe lowering, a complete runtime/stdlib strategy, or an official
-Haxe-suite result.
+The compiler now has a real Reflaxe registration and a deliberately bounded
+ordinary-Haxe path. Two Haxe modules lower through the generic PHP IR into one
+mapped PHP file per type plus a dependency-ordered bootstrap, then execute under
+native PHP. The checked semantic matrix currently covers small `Int` control
+flow and calls, fixed proven `Array<Int>` reads, and exact UTF-8 String
+concatenation/equality/printing. This establishes a useful compiler path; it
+does not imply arbitrary typed-Haxe lowering, a complete runtime/standard-library
+strategy, or an official Haxe-suite result.
 
 [`manifests/reflaxe-php-qualification.json`](../../manifests/reflaxe-php-qualification.json)
 locks the exact upstream Haxe source from which future qualification starts. It

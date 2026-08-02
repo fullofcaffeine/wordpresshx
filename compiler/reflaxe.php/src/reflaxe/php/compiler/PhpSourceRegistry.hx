@@ -28,11 +28,11 @@ class PhpSourceRegistry {
 	public function range(position:Position):PhpSourceRange {
 		final info = Context.getPosInfos(position);
 		final source = source(position);
-		if (info.min < 0 || info.max <= info.min || info.max > source.byteLength) {
+		if (info.min < 0 || info.max <= info.min || info.max > source.content.length) {
 			Context.fatalError("reflaxe.php received an invalid or empty Haxe source position", position);
 			return source.exactRange(0, 1);
 		}
-		return source.exactRange(info.min, info.max);
+		return source.exactRange(source.byteOffsetForCharacterOffset(info.min), source.byteOffsetForCharacterOffset(info.max));
 	}
 
 	public function buildInputsSha256():String {

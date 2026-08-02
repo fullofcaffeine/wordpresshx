@@ -5,6 +5,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var StaticClass = "module.static-class";
 	var StaticVoidNoArgMethod = "declaration.static-void-no-arg-method";
 	var StringLiteral = "value.string-literal";
+	var InitializedStringLocal = "value.initialized-string-local";
 	var SysPrintlnString = "call.sys-println-string";
 	var UnsupportedAstDiagnostic = "diagnostic.unsupported-ast";
 	var ExactHaxeRangeMap = "source-map.exact-haxe-ranges";
@@ -28,6 +29,9 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var NullableValue = "null.nullable-value";
 	var HaxeStdlib = "runtime.haxe-stdlib";
 	var NumericEdgeSemantics = "numeric.overflow-division-modulo";
+	var StringConcatenation = "string.concat-exact-operands";
+	var StringEquality = "string.equality";
+	var Utf8StringLiteralRoundTrip = "string.utf8-literal-round-trip";
 	var UnicodeRuntime = "string.unicode-runtime";
 	var CollectionOrdering = "ordering.collection-and-object";
 	var PathEnvironment = "environment.path";
@@ -88,8 +92,9 @@ class PhpSemanticCapabilities {
 			record(ApplicationSourceRoot, ModuleTypeLayout, Admitted, tracer, owner),
 			record(StaticClass, ModuleTypeLayout, Admitted, tracer, owner),
 			record(StaticVoidNoArgMethod, ModuleTypeLayout, Admitted, tracer, owner),
-			record(StringLiteral, ValuesCollections, Admitted, tracer, owner),
-			record(SysPrintlnString, CallsClosures, Admitted, tracer, owner),
+			record(StringLiteral, ValuesCollections, Admitted, semantic, owner),
+			record(InitializedStringLocal, ValuesCollections, Admitted, semantic, owner),
+			record(SysPrintlnString, CallsClosures, Admitted, semantic, owner),
 			record(UnsupportedAstDiagnostic, Diagnostics, Admitted, tracer, owner),
 			record(ExactHaxeRangeMap, SourceMaps, Admitted, tracer, owner),
 			record(IntLiteral, Numeric, Admitted, semantic, owner),
@@ -105,6 +110,9 @@ class PhpSemanticCapabilities {
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
 			record(IntReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
+			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
+			record(StringEquality, StringUnicode, Admitted, semantic, owner),
+			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned, "validator rejects instance methods and fields", owner),
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
 				"general Array runtime behavior beyond fixed Int literals and proven reads is rejected", owner),

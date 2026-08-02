@@ -30,7 +30,7 @@
     },
     {
       "category": "calls-closures",
-      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.sys-println-string",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -212,10 +212,31 @@
     },
     {
       "category": "string-unicode",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "string.concat-exact-operands",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "string-unicode",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "string.equality",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "string-unicode",
       "evidence": "runtime Unicode operations are not classified",
       "id": "string.unicode-runtime",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unverified-owned"
+    },
+    {
+      "category": "string-unicode",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "string.utf8-literal-round-trip",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "values-collections",
@@ -226,7 +247,14 @@
     },
     {
       "category": "values-collections",
-      "evidence": "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.initialized-string-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "value.string-literal",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -250,14 +278,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "924b8f59afbca0d32a16e747b6e2588fab4dca7c34c0a57edadbd48e34b30c99"
+    "sha256": "701310df8e965567a504dea94a00cf3af5e8db1a3b5883d261963ac3d1ef4c07"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 33,
+    "capabilityCount": 37,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 20,
+      "admitted": 24,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

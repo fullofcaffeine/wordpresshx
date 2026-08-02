@@ -88,6 +88,7 @@ assert_compile_negative "do-while" "reflaxe.php does not yet support do-while lo
 assert_compile_negative "compound-assignment" "reflaxe.php does not yet support compound assignment"
 assert_compile_negative "dynamic-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "out-of-bounds-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
+assert_compile_negative "string-coercion" "reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string semantic slices passed"

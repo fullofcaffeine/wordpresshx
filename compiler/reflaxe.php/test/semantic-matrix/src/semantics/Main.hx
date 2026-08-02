@@ -28,5 +28,13 @@ class Main {
 		} else {
 			Sys.println("int-array-read:fail");
 		}
+
+		final label = "Haxe " + "→ PHP 🚀";
+		Sys.println(label);
+		if (label == "Haxe → PHP 🚀") {
+			Sys.println("unicode-string:pass");
+		} else {
+			Sys.println("unicode-string:fail");
+		}
 	}
 }

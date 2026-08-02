@@ -118,10 +118,16 @@ class PhpTypedAstLowerer {
 							[
 								mapped(PhpLocal(variable.name, lowerIntValue(initialValue, intArrayLengths)), expression, "local-int")
 							];
+						case "String":
+							PhpSemanticCapabilities.requireAdmitted(InitializedStringLocal);
+							[
+								mapped(PhpLocal(variable.name, lowerStringValue(initialValue)), expression, "local-string")
+							];
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
 						case _:
-							Context.fatalError("reflaxe.php supports only Int and Array<Int> local bindings in the admitted semantic slice", expression.pos);
+							Context.fatalError("reflaxe.php supports only Int, String, and Array<Int> local bindings in the admitted semantic slice",
+								expression.pos);
 							[];
 					}
 				}
@@ -131,10 +137,11 @@ class PhpTypedAstLowerer {
 					Context.fatalError("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
 					[];
 				} else {
+					final loweredCondition = lowerCondition(condition, intArrayLengths);
 					[
-						mapped(PhpIfElse(lowerIntCondition(condition, intArrayLengths), lowerStatementList(thenBranch, intArrayLengths),
+						mapped(PhpIfElse(loweredCondition.expression, lowerStatementList(thenBranch, intArrayLengths),
 							lowerStatementList(elseBranch, intArrayLengths)),
-							expression, "if-int-equality")
+							expression, loweredCondition.mappingKind)
 					];
 				}
 			case TWhile(condition, body, true):
@@ -194,20 +201,30 @@ class PhpTypedAstLowerer {
 		return switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (classRef.get().module == "Sys" && fieldRef.get().name == "println" && arguments.length == 1):
 				PhpSemanticCapabilities.requireAdmitted(SysPrintlnString);
-				final value = lowerValue(arguments[0]);
+				final value = lowerStringValue(arguments[0]);
 				mapped(PhpEcho(PhpBinop(".", value, PhpConst("PHP_EOL"))), call, "sys-println");
 			case _:
 				unsupportedCall(call);
 		}
 	}
 
-	function lowerValue(expression:TypedExpr):PhpExpr {
+	function lowerStringValue(expression:TypedExpr):PhpExpr {
 		return switch (expression.expr) {
 			case TConst(TString(value)):
 				PhpSemanticCapabilities.requireAdmitted(StringLiteral);
+				PhpSemanticCapabilities.requireAdmitted(Utf8StringLiteralRoundTrip);
 				PhpString(value);
-			case TMeta(_, inner) | TParenthesis(inner): lowerValue(inner);
-			case _: unsupportedValue(expression);
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "String"):
+				PhpSemanticCapabilities.requireAdmitted(InitializedStringLocal);
+				PhpVar(variable.name);
+			case TBinop(OpAdd, left, right):
+				if (TypeTools.toString(left.t) != "String" || TypeTools.toString(right.t) != "String") {
+					Context.fatalError("reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted", expression.pos);
+				}
+				PhpSemanticCapabilities.requireAdmitted(StringConcatenation);
+				PhpBinop(".", lowerStringValue(left), lowerStringValue(right));
+			case TMeta(_, inner) | TParenthesis(inner): lowerStringValue(inner);
+			case _: unsupportedStringValue(expression);
 		}
 	}
 
@@ -225,7 +242,7 @@ class PhpTypedAstLowerer {
 			case TArray(base, index): lowerProvenIntArrayRead(expression, base, index, intArrayLengths);
 			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
-			case _: unsupportedValue(expression);
+			case _: unsupportedIntValue(expression);
 		}
 	}
 
@@ -264,7 +281,23 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(IntLessOrEqual);
 				PhpBinop("<=", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner, intArrayLengths);
-			case _: unsupportedValue(expression);
+			case _: unsupportedIntCondition(expression);
+		}
+	}
+
+	function lowerCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):{expression:PhpExpr, mappingKind:String} {
+		return switch (expression.expr) {
+			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
+				PhpSemanticCapabilities.requireAdmitted(StringEquality);
+				{
+					expression: PhpBinop("===", lowerStringValue(left), lowerStringValue(right)),
+					mappingKind: "if-string-equality"
+				};
+			case TMeta(_, inner) | TParenthesis(inner): lowerCondition(inner, intArrayLengths);
+			case _: {
+					expression: lowerIntCondition(expression, intArrayLengths),
+					mappingKind: "if-int-equality"
+				};
 		}
 	}
 
@@ -279,13 +312,23 @@ class PhpTypedAstLowerer {
 	}
 
 	function unsupportedCall(expression:TypedExpr):PhpStmt {
-		Context.fatalError("reflaxe.php tracer supports only Sys.println(String)", expression.pos);
+		Context.fatalError("reflaxe.php tracer supports only Sys.println with an admitted String expression", expression.pos);
 		return PhpReturnVoid;
 	}
 
-	function unsupportedValue(expression:TypedExpr):PhpExpr {
-		Context.fatalError("reflaxe.php tracer supports only string literal values", expression.pos);
+	function unsupportedStringValue(expression:TypedExpr):PhpExpr {
+		Context.fatalError("reflaxe.php supports only String literals, String locals, and exact String concatenation without coercion", expression.pos);
 		return PhpString("");
+	}
+
+	function unsupportedIntValue(expression:TypedExpr):PhpExpr {
+		Context.fatalError("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
+		return PhpInt(0);
+	}
+
+	function unsupportedIntCondition(expression:TypedExpr):PhpExpr {
+		Context.fatalError("reflaxe.php supports only Int equality and <= conditions in the admitted semantic slice", expression.pos);
+		return PhpBool(false);
 	}
 
 	function unreachableMethod(functionData:ClassFuncData):PhpMethod {

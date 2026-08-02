@@ -102,13 +102,15 @@ class PhpTypedAstValidator {
 				} else {
 					switch (TypeTools.toString(variable.t)) {
 						case "Int": validateIntValue(initialValue, intArrayLengths);
+						case "String": validateStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
-							Context.error("reflaxe.php supports only Int and Array<Int> local bindings in the admitted semantic slice", expression.pos);
+							Context.error("reflaxe.php supports only Int, String, and Array<Int> local bindings in the admitted semantic slice",
+								expression.pos);
 					}
 				}
 			case TIf(condition, thenBranch, elseBranch):
-				validateIntCondition(condition, intArrayLengths);
+				validateCondition(condition, intArrayLengths);
 				validateStatement(thenBranch, intArrayLengths);
 				if (elseBranch == null) {
 					Context.error("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
@@ -158,19 +160,27 @@ class PhpTypedAstValidator {
 	static function validateCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
 		switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (classRef.get().module == "Sys" && fieldRef.get().name == "println" && arguments.length == 1):
-				validateValue(arguments[0]);
+				validateStringValue(arguments[0]);
 			case _:
-				Context.error("reflaxe.php tracer supports only Sys.println(String)", call.pos);
+				Context.error("reflaxe.php tracer supports only Sys.println with an admitted String expression", call.pos);
 		}
 	}
 
-	static function validateValue(expression:TypedExpr):Void {
+	static function validateStringValue(expression:TypedExpr):Void {
 		switch (expression.expr) {
 			case TConst(TString(_)):
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "String"):
+			case TBinop(OpAdd, left, right):
+				if (TypeTools.toString(left.t) != "String" || TypeTools.toString(right.t) != "String") {
+					Context.error("reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted", expression.pos);
+				} else {
+					validateStringValue(left);
+					validateStringValue(right);
+				}
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateValue(inner);
+				validateStringValue(inner);
 			case _:
-				Context.error("reflaxe.php tracer supports only string literal values", expression.pos);
+				Context.error("reflaxe.php supports only String literals, String locals, and exact String concatenation without coercion", expression.pos);
 		}
 	}
 
@@ -188,7 +198,7 @@ class PhpTypedAstValidator {
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only Int literals, locals, and addition in the admitted semantic slice", expression.pos);
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
 		}
 	}
 
@@ -223,7 +233,19 @@ class PhpTypedAstValidator {
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntCondition(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only Int equality conditions in the admitted semantic slice", expression.pos);
+				Context.error("reflaxe.php supports only Int equality and <= conditions in the admitted semantic slice", expression.pos);
+		}
+	}
+
+	static function validateCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+		switch (expression.expr) {
+			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
+				validateStringValue(left);
+				validateStringValue(right);
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateCondition(inner, intArrayLengths);
+			case _:
+				validateIntCondition(expression, intArrayLengths);
 		}
 	}
 	#end

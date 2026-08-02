@@ -45,6 +45,7 @@ def verify_map(
     expected_anchors: set[str],
 ) -> None:
     generated = (output_root / generated_path).read_bytes()
+    source_text = source.decode("utf-8")
     document = json.loads((output_root / (generated_path + ".haxe-map.json")).read_text(encoding="utf-8"))
     require(document["format"] == "reflaxe.php-range-map.v1", f"range-map format drifted for {generated_path}")
     require(document["generated"]["path"] == generated_path, f"generated path drifted for {generated_path}")
@@ -68,6 +69,18 @@ def verify_map(
         require(origin["sourceId"] == source_record["id"], f"source identity drifted for {mapping_id}")
         span = origin["sourceSpan"]
         require(fragment in source[span["startByte"] : span["endByte"]], f"source span lost its owner for {mapping_id}")
+        haxe_offsets = re.search(r":([0-9]+):([0-9]+)$", mapping_id)
+        if haxe_offsets is not None:
+            start_character = int(haxe_offsets.group(1))
+            end_character = int(haxe_offsets.group(2))
+            require(
+                span["startByte"] == len(source_text[:start_character].encode("utf-8")),
+                f"Haxe character-to-byte start conversion drifted for {mapping_id}",
+            )
+            require(
+                span["endByte"] == len(source_text[:end_character].encode("utf-8")),
+                f"Haxe character-to-byte end conversion drifted for {mapping_id}",
+            )
         generated_span = mapping["generatedSpan"]
         require(
             0 <= generated_span["startByte"] < generated_span["endByte"] <= len(generated),
@@ -155,6 +168,11 @@ def main() -> None:
         "stmt:if-int-equality:541:654": ("statement", 2, b"if (selected == 5)"),
         "stmt:sys-println:565:599": ("statement", 3, b'Sys.println("int-array-read:pass")'),
         "stmt:sys-println:615:649": ("statement", 3, b'Sys.println("int-array-read:fail")'),
+        "stmt:local-string:658:692": ("statement", 2, 'final label = "Haxe " + "→ PHP 🚀"'.encode("utf-8")),
+        "stmt:sys-println:695:713": ("statement", 2, b"Sys.println(label)"),
+        "stmt:if-string-equality:717:840": ("statement", 2, 'if (label == "Haxe → PHP 🚀")'.encode("utf-8")),
+        "stmt:sys-println:751:785": ("statement", 3, b'Sys.println("unicode-string:pass")'),
+        "stmt:sys-println:801:835": ("statement", 3, b'Sys.println("unicode-string:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {"stmt:return-int:96:115"})
@@ -177,7 +195,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string maps passed")
 
 
 if __name__ == "__main__":

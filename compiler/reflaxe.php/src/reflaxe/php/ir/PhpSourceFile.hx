@@ -42,6 +42,14 @@ class PhpSourceFile {
 		return PhpSourceRange.exact(this, startByte, endByte);
 	}
 
+	/** Convert a Unicode-character offset into the UTF-8 byte coordinates used by emitted maps. **/
+	public function byteOffsetForCharacterOffset(characterOffset:Int):Int {
+		if (characterOffset < 0 || characterOffset > content.length) {
+			throw "Source character offset is out of bounds: " + characterOffset;
+		}
+		return Bytes.ofString(content.substr(0, characterOffset)).length;
+	}
+
 	public static function positionIn(bytes:Bytes, byteOffset:Int):PhpSourcePosition {
 		if (bytes == null || byteOffset < 0 || byteOffset > bytes.length) {
 			throw "PHP source byte offset is out of bounds: " + byteOffset;

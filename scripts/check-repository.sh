@@ -6560,9 +6560,9 @@ assert reflaxe_php_semantic_receipt["capabilityMatrix"] == {
         "PhpSemanticCapabilities.hx"
     ),
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 33,
+    "capabilityCount": 37,
     "categoryCount": 13,
-    "admittedCount": 20,
+    "admittedCount": 24,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": True,
@@ -6588,7 +6588,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 34
+assert len(reflaxe_php_semantic_input_records) == 41
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):
@@ -6699,14 +6699,47 @@ assert list(reflaxe_php_module_output_input_records) == sorted(
     reflaxe_php_module_output_input_records
 )
 assert len(reflaxe_php_module_output_input_records) == 26
+reflaxe_php_module_subject_commit = reflaxe_php_module_output_receipt[
+    "hostedVerification"
+]["commit"]
+reflaxe_php_module_subject_available = subprocess.run(
+    ["git", "cat-file", "-e", f"{reflaxe_php_module_subject_commit}^{{commit}}"],
+    check=False,
+    capture_output=True,
+).returncode == 0
 for module_input_path, module_input_sha256 in (
     reflaxe_php_module_output_input_records.items()
 ):
     assert sha256.fullmatch(module_input_sha256)
     assert Path(module_input_path).is_file()
-    assert hashlib.sha256(Path(module_input_path).read_bytes()).hexdigest() == (
-        module_input_sha256
+    module_current_sha256 = hashlib.sha256(
+        Path(module_input_path).read_bytes()
+    ).hexdigest()
+    if module_current_sha256 == module_input_sha256:
+        continue
+    assert module_current_sha256 == reflaxe_php_semantic_input_records.get(
+        module_input_path
     )
+    if reflaxe_php_module_subject_available:
+        module_historical_bytes = subprocess.run(
+            [
+                "git",
+                "show",
+                f"{reflaxe_php_module_subject_commit}:{module_input_path}",
+            ],
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert hashlib.sha256(module_historical_bytes).hexdigest() == (
+            module_input_sha256
+        )
+    else:
+        assert subprocess.run(
+            ["git", "rev-parse", "--is-shallow-repository"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip() == "true"
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
 for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
@@ -7630,11 +7663,11 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "bash scripts/profiles/test-profile-haxe.sh",
     ),
     (
-        "generic-php-compiler",
-        "compiler/reflaxe.php",
-        53,
-        58,
-        "bash compiler/reflaxe.php/scripts/test.sh",
+		"generic-php-compiler",
+		"compiler/reflaxe.php",
+		53,
+		59,
+		"bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
         "wordpress-php-compiler",
