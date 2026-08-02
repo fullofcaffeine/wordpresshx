@@ -78,5 +78,12 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'nullable-string:fail' . PHP_EOL;
 		}
+		$returnedMissing = Hx_9_semantics_10_Calculator::roundTrip( $missing );
+		$returnedPresent = Hx_9_semantics_10_Calculator::roundTrip( $present );
+		if ( ( Hx_9_semantics_10_Calculator::isMissing( $returnedMissing ) && Hx_9_semantics_10_Calculator::isPresent( $returnedPresent ) ) ) {
+			echo 'nullable-string-return:pass' . PHP_EOL;
+		} else {
+			echo 'nullable-string-return:fail' . PHP_EOL;
+		}
 	}
 }

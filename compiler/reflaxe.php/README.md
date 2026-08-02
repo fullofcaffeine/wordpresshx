@@ -104,7 +104,10 @@ initialized from `null` or an admitted String, passed to a source-owned required
 compiler emits PHP 7.4-compatible `?string` signatures, native `null`, and
 strict `===`/`!==` checks. `Null<Int>`, `Null<Bool>`, nullable objects or arrays,
 mutation, optional/default parameters, dereference/flow narrowing, foreign
-callers, and general null/runtime behavior remain rejected or unclaimed.
+callers, and general null/runtime behavior remain rejected or unclaimed. The
+same bounded slice admits a unary source-owned `Null<String> -> Null<String>`
+function and call, emitting `?string` for both parameter and return type; it
+does not generalize nullable returns to other types or expression shapes.
 The same fail-closed rule applies to the admitted Boolean slice: exact Bool
 literals, locals, logical negation, direct conditions, required non-null
 parameters/returns, source-owned calls, and lazily evaluated `&&`/`||` lower to

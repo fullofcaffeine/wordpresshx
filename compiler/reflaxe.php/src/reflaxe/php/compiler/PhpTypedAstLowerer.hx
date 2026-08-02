@@ -138,8 +138,16 @@ class PhpTypedAstLowerer {
 				}
 				final parameters = lowerRequiredParameters(functionData, "String", PhpStringType);
 				{parameters: parameters, returnType: PhpStringType};
+			case "Null<String>":
+				if (!hasRequiredNullableStringParameter(functionData)) {
+					Context.fatalError("reflaxe.php nullable String returns require exactly one required Null<String> parameter", functionData.field.pos);
+				}
+				PhpSemanticCapabilities.requireAdmitted(RequiredNullableStringParameter);
+				PhpSemanticCapabilities.requireAdmitted(NullableStringReturn);
+				final parameters = lowerRequiredParameters(functionData, "Null<String>", PhpNullableType(PhpStringType));
+				{parameters: parameters, returnType: PhpNullableType(PhpStringType)};
 			case _:
-				Context.fatalError("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice",
+				Context.fatalError("reflaxe.php supports only Void, Int, Bool, String, and Null<String> method returns in the admitted semantic slice",
 					functionData.field.pos);
 				{parameters: [], returnType: PhpVoidType};
 		}
@@ -268,8 +276,14 @@ class PhpTypedAstLowerer {
 					case "String":
 						PhpSemanticCapabilities.requireAdmitted(StringReturn);
 						[mapped(PhpReturn(lowerStringValue(value)), expression, "return-string")];
+					case "Null<String>":
+						PhpSemanticCapabilities.requireAdmitted(NullableStringReturn);
+						[
+							mapped(PhpReturn(lowerNullableStringValue(value)), expression, "return-nullable-string")
+						];
 					case _:
-						Context.fatalError("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
+						Context.fatalError("reflaxe.php supports only Int, Bool, String, and Null<String> return expressions in the admitted semantic slice",
+							value.pos);
 						[];
 				}
 			case TTry(tryExpression, catches): lowerHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths);
@@ -451,9 +465,25 @@ class PhpTypedAstLowerer {
 			case TLocal(variable) if (isNullableStringType(variable.t)):
 				PhpSemanticCapabilities.requireAdmitted(InitializedNullableStringLocal);
 				PhpVar(variable.name);
+			case TCall(target, arguments): lowerStaticApplicationNullableStringReturnCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerNullableStringValue(inner);
 			case _:
 				Context.fatalError("reflaxe.php nullable String values support only null, String literals, and exact Null<String> locals", expression.pos);
+				PhpNull;
+		}
+	}
+
+	function lowerStaticApplicationNullableStringReturnCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef))
+				if (sources.owns(classRef.get().pos) && isRequiredNullableStringReturnField(classRef.get(), fieldRef.get())):
+				if (arguments.length != 1) {
+					Context.fatalError("reflaxe.php nullable String return calls require exactly one argument", call.pos);
+				}
+				PhpSemanticCapabilities.requireAdmitted(StaticApplicationNullableStringReturnCall);
+				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerNullableStringValue));
+			case _:
+				Context.fatalError("reflaxe.php supports only source-owned nullable String return calls in the admitted semantic slice", call.pos);
 				PhpNull;
 		}
 	}
@@ -590,6 +620,11 @@ class PhpTypedAstLowerer {
 	static function isRequiredNullableStringBoolField(classType:ClassType, field:ClassField):Bool {
 		final functionData = field.findFuncData(classType, true);
 		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredNullableStringParameter(functionData);
+	}
+
+	static function isRequiredNullableStringReturnField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && isNullableStringType(functionData.ret) && hasRequiredNullableStringParameter(functionData);
 	}
 
 	static function isNullableStringType(type:Type):Bool {

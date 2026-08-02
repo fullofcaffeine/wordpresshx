@@ -97,7 +97,7 @@ assert_compile_negative() {
 }
 
 assert_compile_negative "optional-parameter" "reflaxe.php supports only required parameters without defaults"
-assert_compile_negative "non-int-signature" "reflaxe.php supports only Void, Int, Bool, and String method returns"
+assert_compile_negative "non-int-signature" "reflaxe.php supports only Void, Int, Bool, String, and Null<String> method returns"
 assert_compile_negative "foreign-static-call" "reflaxe.php supports only source-owned static Int calls"
 assert_compile_negative "do-while" "reflaxe.php does not yet support do-while loops"
 assert_compile_negative "compound-assignment" "reflaxe.php does not yet support compound assignment"
@@ -120,6 +120,8 @@ assert_compile_negative "non-immediate-exception-throw" "reflaxe.php exception t
 assert_compile_negative "catch-local-name-collision" "reflaxe.php requires unique method-local PHP names across Haxe lexical scopes"
 assert_compile_negative "nullable-int-local" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
 assert_compile_negative "mutable-nullable-string" "reflaxe.php supports assignment only to Int variables in the admitted semantic slice"
+assert_compile_negative "nullable-int-return" "reflaxe.php supports only Void, Int, Bool, String, and Null<String> method returns in the admitted semantic slice"
+assert_compile_negative "multiple-nullable-string-return-parameters" "reflaxe.php nullable String returns require exactly one required Null<String> parameter"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
 echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null semantic slices passed"

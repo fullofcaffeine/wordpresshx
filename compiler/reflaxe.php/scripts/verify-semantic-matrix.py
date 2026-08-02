@@ -161,11 +161,13 @@ def main() -> None:
         "stmt:return-bool:284:304": ("statement", 2, b"return value == null"),
         "method:semantics.Calculator:isPresent": ("member", 1, b"public static function isPresent"),
         "stmt:return-bool:373:393": ("statement", 2, b"return value != null"),
+        "method:semantics.Calculator:roundTrip": ("member", 1, b"public static function roundTrip"),
+        "stmt:return-nullable-string:470:482": ("statement", 2, b"return value"),
         "method:semantics.Calculator:negate": ("member", 1, b"public static function negate"),
-        "stmt:return-bool:451:464": ("statement", 2, b"return !value"),
+        "stmt:return-bool:540:553": ("statement", 2, b"return !value"),
         "method:semantics.Calculator:probe": ("member", 1, b"public static function probe"),
-        "stmt:sys-println:521:546": ("statement", 2, b'Sys.println("bool-probe")'),
-        "stmt:return-bool:550:562": ("statement", 2, b"return value"),
+        "stmt:sys-println:610:635": ("statement", 2, b'Sys.println("bool-probe")'),
+        "stmt:return-bool:639:651": ("statement", 2, b"return value"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -227,6 +229,11 @@ def main() -> None:
         "stmt:if-bool:1998:2226": ("statement", 2, b"if (Calculator.isMissing(missing)"),
         "stmt:sys-println:2135:2170": ("statement", 3, b'Sys.println("nullable-string:pass")'),
         "stmt:sys-println:2186:2221": ("statement", 3, b'Sys.println("nullable-string:fail")'),
+        "stmt:local-nullable-string:2230:2297": ("statement", 2, b"final returnedMissing:Null<String> = Calculator.roundTrip(missing)"),
+        "stmt:local-nullable-string:2300:2367": ("statement", 2, b"final returnedPresent:Null<String> = Calculator.roundTrip(present)"),
+        "stmt:if-bool:2370:2564": ("statement", 2, b"if (Calculator.isMissing(returnedMissing)"),
+        "stmt:sys-println:2459:2501": ("statement", 3, b'Sys.println("nullable-string-return:pass")'),
+        "stmt:sys-println:2517:2559": ("statement", 3, b'Sys.println("nullable-string-return:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -234,9 +241,10 @@ def main() -> None:
             "stmt:return-string:194:215",
             "stmt:return-bool:284:304",
             "stmt:return-bool:373:393",
-            "stmt:return-bool:451:464",
-            "stmt:sys-println:521:546",
-            "stmt:return-bool:550:562",
+            "stmt:return-nullable-string:470:482",
+            "stmt:return-bool:540:553",
+            "stmt:sys-println:610:635",
+            "stmt:return-bool:639:651",
         })
     verify_map(
         output_root,

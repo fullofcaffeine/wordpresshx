@@ -70,7 +70,7 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's current bounded nullable-String checkpoint is
+The compiler scorecard's last hosted bounded nullable-String checkpoint is
 independently hosted by Repository bootstrap run `30753775194`, Haxe job
 `91512308969`, at commit
 `47b1b66ea8638fcc2755435d18e85f8597306697`. That proof covers the semantic
@@ -110,14 +110,15 @@ The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
-its exact command; the current 59-record subject has now crossed that boundary.
+its exact command; the current 61-record nullable-return subject is hosted
+pending while the 59-record predecessor remains the latest hosted authority.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 59 admitted, 6 explicitly
-unsupported, and 7 unverified capabilities across 13 categories. Its
+registry. The current local subject lists 61 admitted, 6 explicitly unsupported,
+and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
@@ -152,7 +153,9 @@ required source-owned parameters/calls, and strict null equality/inequality,
 emitting PHP `?string`, `null`, `===`, and `!==`. `Null<Int>`, nullable mutation,
 other nullable domains, and weak handwritten PHP await separately owned
 runtime/adapter contracts. Broader array and Unicode operations remain outside
-this subject. Every compile-negative
+this subject. The local extension also exercises one unary source-owned
+`Null<String> -> Null<String>` return and call; a two-parameter nullable return
+and `Null<Int>` return remain compile-negative. Every compile-negative
 fixture must first run successfully under stock Haxe with empty stderr, so a
 malformed source program cannot be mistaken for a compiler limitation.
 

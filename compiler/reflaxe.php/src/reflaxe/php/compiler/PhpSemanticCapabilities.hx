@@ -59,6 +59,8 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedNullableStringLocal = "null.initialized-nullable-string-local";
 	var RequiredNullableStringParameter = "call.required-nullable-string-parameter";
 	var StaticApplicationNullableStringCall = "call.static-application-nullable-string-call";
+	var NullableStringReturn = "call.nullable-string-return";
+	var StaticApplicationNullableStringReturnCall = "call.static-application-nullable-string-return-call";
 	var NullableStringNullEquality = "null.nullable-string-equality";
 	var NullableStringNullInequality = "null.nullable-string-inequality";
 	var NullableValue = "null.nullable-value";
@@ -178,6 +180,8 @@ class PhpSemanticCapabilities {
 			record(InitializedNullableStringLocal, NullBehavior, Admitted, semantic, owner),
 			record(RequiredNullableStringParameter, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationNullableStringCall, CallsClosures, Admitted, semantic, owner),
+			record(NullableStringReturn, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationNullableStringReturnCall, CallsClosures, Admitted, semantic, owner),
 			record(NullableStringNullEquality, NullBehavior, Admitted, semantic, owner),
 			record(NullableStringNullInequality, NullBehavior, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
@@ -191,7 +195,7 @@ class PhpSemanticCapabilities {
 			record(TryThrowCatch, Exceptions, UnsupportedOwned,
 				"only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned,
-				"only explicit Null<String> locals, required parameters, source-owned calls, and local ==/!= null checks are admitted", owner),
+				"only explicit Null<String> locals, required parameters/returns, source-owned calls, and local ==/!= null checks are admitted", owner),
 			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "no owned Haxe runtime or standard-library projection exists", owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),
 			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "runtime Unicode operations are not classified", owner),

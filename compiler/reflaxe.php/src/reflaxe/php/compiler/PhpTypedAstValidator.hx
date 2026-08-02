@@ -101,8 +101,14 @@ class PhpTypedAstValidator {
 					validateRequiredParameters(functionData, hasRequiredNullableStringParameter(functionData) ? "Null<String>" : "Bool");
 				case "String":
 					validateRequiredParameters(functionData, "String");
+				case "Null<String>":
+					if (!hasRequiredNullableStringParameter(functionData)) {
+						Context.error("reflaxe.php nullable String returns require exactly one required Null<String> parameter", functionData.field.pos);
+					} else {
+						validateRequiredParameters(functionData, "Null<String>");
+					}
 				case _:
-					Context.error("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice",
+					Context.error("reflaxe.php supports only Void, Int, Bool, String, and Null<String> method returns in the admitted semantic slice",
 						functionData.field.pos);
 			}
 		if (functionData.expr == null) {
@@ -195,8 +201,10 @@ class PhpTypedAstValidator {
 					case "Int": validateIntValue(value, intArrayLengths);
 					case "Bool": validateBoolValue(value);
 					case "String": validateStringValue(value);
+					case "Null<String>": validateNullableStringValue(value);
 					case _:
-						Context.error("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
+						Context.error("reflaxe.php supports only Int, Bool, String, and Null<String> return expressions in the admitted semantic slice",
+							value.pos);
 				}
 			case TTry(tryExpression, catches):
 				validateHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths, exceptionState);
@@ -351,10 +359,27 @@ class PhpTypedAstValidator {
 		switch (expression.expr) {
 			case TConst(TNull | TString(_)):
 			case TLocal(variable) if (isNullableStringType(variable.t)):
+			case TCall(target, arguments):
+				validateStaticApplicationNullableStringReturnCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateNullableStringValue(inner);
 			case _:
 				Context.error("reflaxe.php nullable String values support only null, String literals, and exact Null<String> locals", expression.pos);
+		}
+	}
+
+	static function validateStaticApplicationNullableStringReturnCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
+		switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef))
+				if (new PhpCompilerConfig().owns(classRef.get().pos)
+					&& isRequiredNullableStringReturnField(classRef.get(), fieldRef.get())):
+				if (arguments.length != 1) {
+					Context.error("reflaxe.php nullable String return calls require exactly one argument", call.pos);
+				} else {
+					validateNullableStringValue(arguments[0]);
+				}
+			case _:
+				Context.error("reflaxe.php supports only source-owned nullable String return calls in the admitted semantic slice", call.pos);
 		}
 	}
 
@@ -489,6 +514,11 @@ class PhpTypedAstValidator {
 	static function isRequiredNullableStringBoolField(classType:ClassType, field:ClassField):Bool {
 		final functionData = field.findFuncData(classType, true);
 		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredNullableStringParameter(functionData);
+	}
+
+	static function isRequiredNullableStringReturnField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && isNullableStringType(functionData.ret) && hasRequiredNullableStringParameter(functionData);
 	}
 
 	static function isNullableStringType(type:Type):Bool {

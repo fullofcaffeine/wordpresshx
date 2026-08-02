@@ -81,5 +81,13 @@ class Main {
 		} else {
 			Sys.println("nullable-string:fail");
 		}
+
+		final returnedMissing:Null<String> = Calculator.roundTrip(missing);
+		final returnedPresent:Null<String> = Calculator.roundTrip(present);
+		if (Calculator.isMissing(returnedMissing) && Calculator.isPresent(returnedPresent)) {
+			Sys.println("nullable-string-return:pass");
+		} else {
+			Sys.println("nullable-string-return:fail");
+		}
 	}
 }

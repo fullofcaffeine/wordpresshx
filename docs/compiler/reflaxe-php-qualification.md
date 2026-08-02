@@ -30,7 +30,10 @@ source-owned `Null<String>` parameters and calls, and `== null` / `!= null`
 checks. It lowers to PHP 7.4-compatible `?string`, native `null`, and strict
 identity checks. Other nullable types, mutation, optional/default parameters,
 foreign callers, dereference/flow narrowing, and general null semantics remain
-unqualified. The admitted object subset adds one
+unqualified. A unary source-owned `Null<String> -> Null<String>` identity and
+call additionally prove PHP `?string` return typing and nullable-return local
+initialization; multiple parameters, other nullable return domains, and broader
+nullable expressions remain unqualified. The admitted object subset adds one
 non-inherited class with a private typed
 `String` field, constructor-only initialization, a required `String`
 constructor and instance method, native construction, and an instance call.

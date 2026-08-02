@@ -38,6 +38,13 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.nullable-string-return",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.read-only-string-closure-capture",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -109,6 +116,13 @@
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.static-application-nullable-string-call",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.static-application-nullable-string-return-call",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -373,7 +387,7 @@
     },
     {
       "category": "null-behavior",
-      "evidence": "only explicit Null<String> locals, required parameters, source-owned calls, and local ==/!= null checks are admitted",
+      "evidence": "only explicit Null<String> locals, required parameters/returns, source-owned calls, and local ==/!= null checks are admitted",
       "id": "null.nullable-value",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -523,14 +537,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "ffe2fcd9c31069912ed3756ff84515f4930fcb8d454baa9747acd47c65c14d09"
+    "sha256": "97d0d8107dd4ce19ff6c95fa1a02503e7580d8be62425991d9d4174aea363ef9"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 72,
+    "capabilityCount": 74,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 59,
+      "admitted": 61,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

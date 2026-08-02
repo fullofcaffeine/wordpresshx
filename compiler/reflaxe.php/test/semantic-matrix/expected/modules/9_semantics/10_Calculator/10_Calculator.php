@@ -27,4 +27,8 @@ class Hx_9_semantics_10_Calculator {
 		echo 'bool-probe' . PHP_EOL;
 		return $value;
 	}
+
+	public static function roundTrip(?string $value): ?string {
+		return $value;
+	}
 }

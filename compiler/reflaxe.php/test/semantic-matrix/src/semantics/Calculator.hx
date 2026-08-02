@@ -17,6 +17,10 @@ class Calculator {
 		return value != null;
 	}
 
+	public static function roundTrip(value:Null<String>):Null<String> {
+		return value;
+	}
+
 	public static function negate(value:Bool):Bool {
 		return !value;
 	}
