@@ -51,6 +51,9 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var StaticApplicationBoolCall = "call.static-application-bool-call";
 	var StaticApplicationStringCall = "call.static-application-string-call";
 	var Closure = "call.closure";
+	var ThrowHaxeException = "exception.throw-haxe-exception";
+	var CatchHaxeException = "exception.catch-haxe-exception";
+	var CaughtHaxeExceptionMessage = "exception.caught-haxe-exception-message";
 	var TryThrowCatch = "exception.try-throw-catch";
 	var NullableValue = "null.nullable-value";
 	var HaxeStdlib = "runtime.haxe-stdlib";
@@ -162,6 +165,9 @@ class PhpSemanticCapabilities {
 			record(StringClosureReturn, CallsClosures, Admitted, semantic, owner),
 			record(ReadOnlyStringClosureCapture, CallsClosures, Admitted, semantic, owner),
 			record(StringClosureInvoke, CallsClosures, Admitted, semantic, owner),
+			record(ThrowHaxeException, Exceptions, Admitted, semantic, owner),
+			record(CatchHaxeException, Exceptions, Admitted, semantic, owner),
+			record(CaughtHaxeExceptionMessage, Exceptions, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
@@ -170,7 +176,8 @@ class PhpSemanticCapabilities {
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
 				"general Array runtime behavior beyond fixed Int literals and proven reads is rejected", owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
-			record(TryThrowCatch, Exceptions, UnsupportedOwned, "validator rejects try, throw, and catch statements", owner),
+			record(TryThrowCatch, Exceptions, UnsupportedOwned,
+				"only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned, "test-semantic-matrix.sh rejects a stock-Haxe-valid null String call before output", owner),
 			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "no owned Haxe runtime or standard-library projection exists", owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),

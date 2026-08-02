@@ -260,9 +260,46 @@ class PhpTypedAstLowerer {
 						Context.fatalError("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
 						[];
 				}
+			case TTry(tryExpression, catches): lowerHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths);
 			case _:
 				unsupportedStatement(expression);
+		}
+	}
+
+	function lowerHaxeExceptionTry(expression:TypedExpr, tryExpression:TypedExpr, catches:Array<{v:TVar, expr:TypedExpr}>,
+			intArrayLengths:Map<Int, Int>):Array<PhpStmt> {
+		if (catches.length != 1 || !isHaxeExceptionType(catches[0].v.t)) {
+			Context.fatalError("reflaxe.php supports exactly one haxe.Exception catch", expression.pos);
+			return [];
+		}
+		final throwStatement = switch (tryExpression.expr) {
+			case TBlock([throwExpression]):
+				switch (throwExpression.expr) {
+					case TThrow(value): lowerHaxeExceptionThrow(throwExpression, value);
+					case _:
+						Context.fatalError("reflaxe.php exception try blocks require one immediate haxe.Exception throw", tryExpression.pos);
+						PhpReturnVoid;
+				}
+			case _:
+				Context.fatalError("reflaxe.php exception try blocks require one immediate haxe.Exception throw", tryExpression.pos);
+				PhpReturnVoid;
+		}
+		PhpSemanticCapabilities.requireAdmitted(CatchHaxeException);
+		return [
+			mapped(PhpTryCatch([throwStatement], "\\RuntimeException", catches[0].v.name, lowerStatementList(catches[0].expr, intArrayLengths)), expression,
+				"try-haxe-exception")
+		];
+	}
+
+	function lowerHaxeExceptionThrow(expression:TypedExpr, value:TypedExpr):PhpStmt {
+		return switch (value.expr) {
+			case TNew(classRef, _, arguments) if (isHaxeExceptionClass(classRef.get()) && arguments.length == 1):
+				PhpSemanticCapabilities.requireAdmitted(ThrowHaxeException);
+				mappedSpan(PhpThrow(PhpNew("\\RuntimeException", [lowerStringValue(arguments[0])])), expression, value, "throw-haxe-exception");
+			case _:
+				Context.fatalError("reflaxe.php supports throwing only a new haxe.Exception with one admitted String message", value.pos);
+				PhpReturnVoid;
 		}
 	}
 
@@ -321,13 +358,32 @@ class PhpTypedAstLowerer {
 				}
 				PhpSemanticCapabilities.requireAdmitted(StringConcatenation);
 				PhpBinop(".", lowerStringValue(left), lowerStringValue(right));
-			case TCall(target, arguments): lowerStaticApplicationStringCall(expression, target, arguments);
+			case TCall(target, arguments):
+				switch (target.expr) {
+					case TField(receiver, FInstance(classRef, _, fieldRef))
+						if (isHaxeExceptionClass(classRef.get()) && fieldRef.get().name == "get_message" && arguments.length == 0):
+						lowerCaughtExceptionMessage(receiver);
+					case _: lowerStaticApplicationStringCall(expression, target, arguments);
+				}
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isHaxeExceptionClass(classRef.get())
+				&& fieldRef.get().name == "message"):
+				lowerCaughtExceptionMessage(receiver);
 			case TField(receiver, FInstance(classRef, _, fieldRef))
 				if (sources.owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
 				PhpSemanticCapabilities.requireAdmitted(InstanceStringFieldRead);
 				PhpObjectProperty(lowerObjectValue(receiver), fieldRef.get().name);
 			case TMeta(_, inner) | TParenthesis(inner): lowerStringValue(inner);
 			case _: unsupportedStringValue(expression);
+		}
+	}
+
+	function lowerCaughtExceptionMessage(receiver:TypedExpr):PhpExpr {
+		PhpSemanticCapabilities.requireAdmitted(CaughtHaxeExceptionMessage);
+		return switch (receiver.expr) {
+			case TLocal(variable) if (isHaxeExceptionType(variable.t)): PhpMethodCall(PhpVar(variable.name), "getMessage", []);
+			case _:
+				Context.fatalError("reflaxe.php reads exception messages only from the exact caught haxe.Exception local", receiver.pos);
+				PhpString("");
 		}
 	}
 
@@ -457,6 +513,17 @@ class PhpTypedAstLowerer {
 		}
 	}
 
+	static function isHaxeExceptionType(type:Type):Bool {
+		return switch (TypeTools.follow(type)) {
+			case TInst(classRef, _): isHaxeExceptionClass(classRef.get());
+			case _: false;
+		}
+	}
+
+	static function isHaxeExceptionClass(classType:ClassType):Bool {
+		return classType.pack.join(".") == "haxe" && classType.name == "Exception";
+	}
+
 	function lowerStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
 		return switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
@@ -510,6 +577,16 @@ class PhpTypedAstLowerer {
 	function mapped(statement:PhpStmt, expression:TypedExpr, kind:String):PhpStmt {
 		final info = Context.getPosInfos(expression.pos);
 		return PhpMapped(statement, sources.range(expression.pos), "stmt:" + kind + ":" + info.min + ":" + info.max, true);
+	}
+
+	function mappedSpan(statement:PhpStmt, startExpression:TypedExpr, endExpression:TypedExpr, kind:String):PhpStmt {
+		final start = Context.getPosInfos(startExpression.pos);
+		final end = Context.getPosInfos(endExpression.pos);
+		if (start.file != end.file || end.max < start.min) {
+			Context.fatalError("reflaxe.php cannot combine unrelated Haxe source positions", startExpression.pos);
+		}
+		final position = Context.makePosition({file: start.file, min: start.min, max: end.max});
+		return PhpMapped(statement, sources.range(position), "stmt:" + kind + ":" + start.min + ":" + end.max, true);
 	}
 
 	function unsupportedStatement(expression:TypedExpr):Array<PhpStmt> {

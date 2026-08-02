@@ -212,6 +212,12 @@ def main() -> None:
         "stmt:local-string-closure:1533:1610": ("statement", 2, b"final render = function(value:String):String"),
         "stmt:return-string:1583:1604": ("statement", 3, b"return prefix + value"),
         "stmt:sys-println:1613:1640": ("statement", 2, b'Sys.println(render("pass"))'),
+        "stmt:try-haxe-exception:1645:1915": ("statement", 2, b"try {"),
+        "stmt:throw-haxe-exception:1654:1700": ("statement", 3, b'throw new haxe.Exception("expected-exception")'),
+        "stmt:local-string:1740:1770": ("statement", 3, b"final message = error.message"),
+        "stmt:if-string-equality:1774:1911": ("statement", 3, b'if (message == "expected-exception")'),
+        "stmt:sys-println:1817:1852": ("statement", 4, b'Sys.println("exception-catch:pass")'),
+        "stmt:sys-println:1870:1905": ("statement", 4, b'Sys.println("exception-catch:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -248,7 +254,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception maps passed")
 
 
 if __name__ == "__main__":

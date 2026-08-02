@@ -62,5 +62,16 @@ class Main {
 			return prefix + value;
 		};
 		Sys.println(render("pass"));
+
+		try {
+			throw new haxe.Exception("expected-exception");
+		} catch (error:haxe.Exception) {
+			final message = error.message;
+			if (message == "expected-exception") {
+				Sys.println("exception-catch:pass");
+			} else {
+				Sys.println("exception-catch:fail");
+			}
+		}
 	}
 }

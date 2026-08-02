@@ -275,7 +275,28 @@
     },
     {
       "category": "exceptions",
-      "evidence": "validator rejects try, throw, and catch statements",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "exception.catch-haxe-exception",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "exceptions",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "exception.caught-haxe-exception-message",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "exceptions",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "exception.throw-haxe-exception",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "exceptions",
+      "evidence": "only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted",
       "id": "exception.try-throw-catch",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -460,14 +481,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "f4ee1f0fc5c7e45d81a61e926b2594d80270288fc86a7beb54507c914204273c"
+    "sha256": "6e58f5bf4aa5f898bc75395bea0372d224c9056c8379aa98c09b89dcbe74f8f3"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 63,
+    "capabilityCount": 66,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 50,
+      "admitted": 53,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

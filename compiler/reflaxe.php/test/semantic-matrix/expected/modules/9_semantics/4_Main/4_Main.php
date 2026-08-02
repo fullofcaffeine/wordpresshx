@@ -61,5 +61,15 @@ class Hx_9_semantics_4_Main {
 			return $prefix . $value;
 		};
 		echo $render( 'pass' ) . PHP_EOL;
+		try {
+			throw new \RuntimeException( 'expected-exception' );
+		} catch (\RuntimeException $error) {
+			$message = $error->getMessage();
+			if ( $message === 'expected-exception' ) {
+				echo 'exception-catch:pass' . PHP_EOL;
+			} else {
+				echo 'exception-catch:fail' . PHP_EOL;
+			}
+		}
 	}
 }

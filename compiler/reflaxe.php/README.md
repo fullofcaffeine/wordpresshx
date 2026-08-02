@@ -31,6 +31,9 @@ The current admitted surface is deliberately bounded:
 - required unary `String -> String` closures with read-only lexical `String`
   captures lowered to typed static PHP closures, explicit by-value `use`
   clauses, direct invocation, and independently mapped closure bodies;
+- one immediate `throw new haxe.Exception(String)` guarded by one exact
+  `catch (error:haxe.Exception)`, lowered to native `RuntimeException`, with
+  typed `error.message` access lowered to `getMessage()`;
 - Haxe source-character positions converted to authenticated UTF-8 byte ranges,
   so non-ASCII source before or inside a mapped statement remains traceable; and
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
@@ -115,6 +118,14 @@ PHP closure with `string` parameter/return types and by-value captures, then is
 invoked directly from Haxe. Multiple/optional parameters, non-String or mutable
 captures, nested closures, `this`, closure escape/return, recursion, variadics,
 foreign callables, and general function values remain rejected or unclaimed.
+The exception slice proves only one immediate Haxe `Exception` throw and one
+matching catch in the same method, including a typed caught-message read.
+Multiple or nested try blocks, arbitrary thrown values, other exception types,
+finally, rethrow, exception inheritance, foreign exceptions, and broad
+exception/runtime behavior remain rejected or unclaimed. Haxe lexical local
+names must also remain unique within an admitted method because PHP catch and
+ordinary locals share function scope; a stock-Haxe-valid collision fails before
+publication instead of silently changing behavior.
 Its three-module fixture runs under stock Haxe and generated PHP; their stdout
 must be byte-identical, and any PHP warning, error, or fatal fails the lane.
 Optional/default and signature types outside the admitted `Int`/`Bool`/`String` subset, foreign static calls, compound

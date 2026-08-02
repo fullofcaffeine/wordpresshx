@@ -7,6 +7,11 @@ import haxe.macro.TypeTools;
 import reflaxe.data.ClassFuncData;
 
 using reflaxe.helpers.ClassFieldHelper;
+
+private typedef PhpExceptionValidationState = {
+	var tryCount:Int;
+	final methodLocalNames:Map<String, Bool>;
+}
 #end
 
 /** Rejects unsupported application AST before Reflaxe's after-generation emission phase. **/
@@ -104,7 +109,11 @@ class PhpTypedAstValidator {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return;
 		}
-		validateStatement(functionData.expr, new Map<Int, Int>());
+		final methodLocalNames:Map<String, Bool> = [];
+		for (argument in functionData.args) {
+			methodLocalNames.set(argument.getName(), true);
+		}
+		validateStatement(functionData.expr, new Map<Int, Int>(), {tryCount: 0, methodLocalNames: methodLocalNames});
 	}
 
 	static function validateRequiredParameters(functionData:ClassFuncData, haxeType:String):Void {
@@ -126,15 +135,16 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateStatement(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+	static function validateStatement(expression:TypedExpr, intArrayLengths:Map<Int, Int>, exceptionState:PhpExceptionValidationState):Void {
 		switch (expression.expr) {
 			case TBlock(expressions):
 				for (child in expressions) {
-					validateStatement(child, intArrayLengths);
+					validateStatement(child, intArrayLengths, exceptionState);
 				}
 			case TCall(target, arguments):
 				validateCall(expression, target, arguments);
 			case TVar(variable, initialValue):
+				reserveMethodLocalName(variable.name, expression, exceptionState);
 				if (initialValue == null) {
 					Context.error("reflaxe.php local bindings require an initial value", expression.pos);
 				} else {
@@ -145,7 +155,7 @@ class PhpTypedAstValidator {
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
 							if (PhpStringClosureShape.isType(variable.t)) {
-								validateStringClosure(initialValue);
+								validateStringClosure(initialValue, exceptionState);
 							} else if (PhpStringClosureShape.isFunctionType(variable.t)) {
 								Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
 							} else if (ownedClass(variable.t) == null) {
@@ -157,15 +167,15 @@ class PhpTypedAstValidator {
 				}
 			case TIf(condition, thenBranch, elseBranch):
 				validateCondition(condition, intArrayLengths);
-				validateStatement(thenBranch, intArrayLengths);
+				validateStatement(thenBranch, intArrayLengths, exceptionState);
 				if (elseBranch == null) {
 					Context.error("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
 				} else {
-					validateStatement(elseBranch, intArrayLengths);
+					validateStatement(elseBranch, intArrayLengths, exceptionState);
 				}
 			case TWhile(condition, body, true):
 				validateIntCondition(condition, intArrayLengths);
-				validateStatement(body, intArrayLengths);
+				validateStatement(body, intArrayLengths, exceptionState);
 			case TWhile(_, _, false):
 				Context.error("reflaxe.php does not yet support do-while loops", expression.pos);
 			case TBinop(OpAssign, target, value):
@@ -187,8 +197,10 @@ class PhpTypedAstValidator {
 					case _:
 						Context.error("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
 				}
+			case TTry(tryExpression, catches):
+				validateHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths, exceptionState);
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateStatement(inner, intArrayLengths);
+				validateStatement(inner, intArrayLengths, exceptionState);
 			case _:
 				Context.error("reflaxe.php tracer does not support statement " + expression.expr.getName(), expression.pos);
 		}
@@ -236,7 +248,16 @@ class PhpTypedAstValidator {
 					validateStringValue(right);
 				}
 			case TCall(target, arguments):
-				validateStaticApplicationStringCall(expression, target, arguments);
+				switch (target.expr) {
+					case TField(receiver, FInstance(classRef, _, fieldRef))
+						if (isHaxeExceptionClass(classRef.get()) && fieldRef.get().name == "get_message" && arguments.length == 0):
+						validateCaughtExceptionReceiver(receiver);
+					case _:
+						validateStaticApplicationStringCall(expression, target, arguments);
+				}
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isHaxeExceptionClass(classRef.get())
+				&& fieldRef.get().name == "message"):
+				validateCaughtExceptionReceiver(receiver);
 			case TField(receiver, FInstance(classRef, _, fieldRef))
 				if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
 				validateObjectValue(receiver);
@@ -248,13 +269,60 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateStringClosure(expression:TypedExpr):Void {
+	static function validateStringClosure(expression:TypedExpr, exceptionState:PhpExceptionValidationState):Void {
 		final plan = PhpStringClosureShape.analyze(expression);
 		if (plan == null) {
 			Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
 			return;
 		}
-		validateStatement(plan.functionData.expr, new Map<Int, Int>());
+		validateStatement(plan.functionData.expr, new Map<Int, Int>(), exceptionState);
+	}
+
+	static function validateHaxeExceptionTry(expression:TypedExpr, tryExpression:TypedExpr, catches:Array<{v:TVar, expr:TypedExpr}>,
+			intArrayLengths:Map<Int, Int>, exceptionState:PhpExceptionValidationState):Void {
+		if (exceptionState.tryCount != 0) {
+			Context.error("reflaxe.php supports only one non-nested haxe.Exception try/catch per method", expression.pos);
+		}
+		if (catches.length != 1 || !isHaxeExceptionType(catches[0].v.t)) {
+			Context.error("reflaxe.php supports exactly one haxe.Exception catch", expression.pos);
+		}
+		exceptionState.tryCount++;
+		reserveMethodLocalName(catches[0].v.name, catches[0].expr, exceptionState);
+		switch (tryExpression.expr) {
+			case TBlock([throwExpression]):
+				switch (throwExpression.expr) {
+					case TThrow(value): validateHaxeExceptionThrow(value);
+					case _:
+						Context.error("reflaxe.php exception try blocks require one immediate haxe.Exception throw", tryExpression.pos);
+				}
+			case _:
+				Context.error("reflaxe.php exception try blocks require one immediate haxe.Exception throw", tryExpression.pos);
+		}
+		validateStatement(catches[0].expr, intArrayLengths, exceptionState);
+	}
+
+	static function validateHaxeExceptionThrow(value:TypedExpr):Void {
+		switch (value.expr) {
+			case TNew(classRef, _, arguments) if (isHaxeExceptionClass(classRef.get()) && arguments.length == 1):
+				validateStringValue(arguments[0]);
+			case _:
+				Context.error("reflaxe.php supports throwing only a new haxe.Exception with one admitted String message", value.pos);
+		}
+	}
+
+	static function validateCaughtExceptionReceiver(receiver:TypedExpr):Void {
+		switch (receiver.expr) {
+			case TLocal(variable) if (isHaxeExceptionType(variable.t)):
+			case _:
+				Context.error("reflaxe.php reads exception messages only from the exact caught haxe.Exception local", receiver.pos);
+		}
+	}
+
+	static function reserveMethodLocalName(name:String, expression:TypedExpr, exceptionState:PhpExceptionValidationState):Void {
+		if (exceptionState.methodLocalNames.exists(name)) {
+			Context.error("reflaxe.php requires unique method-local PHP names across Haxe lexical scopes", expression.pos);
+		}
+		exceptionState.methodLocalNames.set(name, true);
 	}
 
 	static function validateBoolValue(expression:TypedExpr):Void {
@@ -361,6 +429,17 @@ class PhpTypedAstValidator {
 				new PhpCompilerConfig().owns(classType.pos) ? classType : null;
 			case _: null;
 		}
+	}
+
+	static function isHaxeExceptionType(type:Type):Bool {
+		return switch (TypeTools.follow(type)) {
+			case TInst(classRef, _): isHaxeExceptionClass(classRef.get());
+			case _: false;
+		}
+	}
+
+	static function isHaxeExceptionClass(classType:ClassType):Bool {
+		return classType.pack.join(".") == "haxe" && classType.name == "Exception";
 	}
 
 	static function validateStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {

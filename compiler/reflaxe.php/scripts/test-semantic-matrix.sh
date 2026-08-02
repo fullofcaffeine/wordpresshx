@@ -115,6 +115,9 @@ assert_compile_negative "multiple-closure-parameters" "reflaxe.php supports only
 assert_compile_negative "non-string-closure-capture" "reflaxe.php supports only required unary String closures with read-only String captures"
 assert_compile_negative "nested-string-closure" "reflaxe.php supports only required unary String closures with read-only String captures"
 assert_compile_negative "mutable-string-capture" "reflaxe.php supports assignment only to Int variables in the admitted semantic slice"
+assert_compile_negative "non-haxe-exception-catch" "reflaxe.php supports exactly one haxe.Exception catch"
+assert_compile_negative "non-immediate-exception-throw" "reflaxe.php exception try blocks require one immediate haxe.Exception throw"
+assert_compile_negative "catch-local-name-collision" "reflaxe.php requires unique method-local PHP names across Haxe lexical scopes"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception semantic slices passed"

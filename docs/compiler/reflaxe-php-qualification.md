@@ -31,10 +31,13 @@ constructor and instance method, native construction, and an instance call.
 The admitted callback subset adds a required unary `String -> String` closure,
 read-only lexical `String` capture by value, direct invocation, native PHP
 `string` signature types, and exact mapping for both the closure declaration
-and its body.
+and its body. The admitted exception subset adds one immediate
+`throw new haxe.Exception(String)` with one exact `haxe.Exception` catch and a
+typed caught-message read, lowered to `RuntimeException` and `getMessage()`.
 Mutable fields, inheritance, interfaces, overrides, accessors, nullable object
-values, mutable/non-String captures, nested or escaping closures, and broad
-object/function semantics are not qualified. This establishes a useful compiler path;
+values, mutable/non-String captures, nested or escaping closures, multiple or
+nested try blocks, other thrown/caught types, finally, rethrow, and broad
+object/function/exception semantics are not qualified. This establishes a useful compiler path;
 it does not imply arbitrary typed-Haxe lowering, a complete
 runtime/standard-library strategy, an external weak-PHP ABI claim, or an
 official Haxe-suite result.

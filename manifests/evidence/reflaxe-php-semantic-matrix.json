@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-hosted-exact-matrix",
+  "status": "implemented-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
-    "input": "three ordinary Haxe modules covering the existing admitted Int, fixed Array<Int>, exact String, Bool, and bounded object slices plus one required unary String closure local with a read-only lexical String capture and direct invocation",
+    "input": "three ordinary Haxe modules covering the existing admitted Int, fixed Array<Int>, exact String, Bool, bounded object, and required unary String closure slices plus one immediate throw new haxe.Exception(String) guarded by one exact haxe.Exception catch with a typed message read",
     "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST lowering -> deterministic per-type PHP and exact maps -> dependency-ordered bootstrap -> php -l -> native PHP execution",
-    "observableResult": "stock Haxe and generated PHP print byte-identical ten-line stdout ending closure-capture:pass; generated Main.php contains a static typed PHP closure, explicit by-value use capture, native invocation, and separate closure-body mapping while PHP stderr stays empty",
-    "errorOrEdgeBehavior": "multiple closure parameters, non-String captures, nested closures, and mutable captured Strings are valid stock Haxe but fail before target publication; all previous unsupported constructs remain classified, exact maps/dependencies are checked, and native PHP warnings, errors, and fatals are never retried or hidden",
+    "observableResult": "stock Haxe and generated PHP print byte-identical eleven-line stdout ending exception-catch:pass; generated Main.php contains a native RuntimeException throw/catch, getMessage call, and exact try/throw/local/if/print mappings while PHP stderr stays empty",
+    "errorOrEdgeBehavior": "non-Haxe exception types, non-immediate exception throws, and Haxe-lexical/PHP-function-scope catch-local name collisions are valid stock Haxe but fail before target publication; all previous unsupported constructs remain classified, exact maps/dependencies are checked, and native PHP warnings, errors, and fatals are never retried or hidden",
     "owningSurface": "compiler-adapter",
-    "protectedClaim": "the previous 45 admitted records plus an initialized required unary non-null String closure local, read-only lexical String capture by value, String return, direct invocation, and exact closure-body mapping only; call.closure remains unsupported as a broad capability, and mutable/by-reference or non-String captures, this/object capture, nested or escaping closures, optional/multiple parameters, recursion, variadics, foreign callables, weak-PHP ABI, broad runtime, WordPress, and release claims remain withheld"
+    "protectedClaim": "the previous 50 admitted records plus one immediate throw of a newly constructed haxe.Exception with an admitted String message, one exact haxe.Exception catch, and typed caught-message access only; broad exception.try-throw-catch remains unsupported, and multiple/nested try, finally, rethrow, other thrown/caught types, exception inheritance, foreign exceptions, local-name shadowing, weak-PHP ABI, broad runtime, WordPress, and release claims remain withheld"
   },
   "redState": {
     "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
@@ -99,6 +99,14 @@
       "reason": "the compiler rejected the first initialized String-to-String closure local before lexical capture, native closure construction, callable local invocation, or closure-body mapping existed",
       "stockHaxeOutcome": "passed-and-matched-the-manually-authored-ten-line-transcript-ending-closure-capture:pass-with-empty-stderr",
       "partialOutputPublished": false
+    },
+    {
+      "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
+      "exitCode": 1,
+      "failure": "test/semantic-matrix/src/semantics/Main.hx:66: lines 66-75: reflaxe.php tracer does not support statement TTry",
+      "reason": "the compiler rejected the first immediate Haxe Exception try/throw/catch before bounded exception validation, lowering, and mapping existed",
+      "stockHaxeOutcome": "passed-and-matched-the-manually-authored-eleven-line-transcript-ending-exception-catch:pass-with-empty-stderr",
+      "partialOutputPublished": false
     }
   ],
   "independentOracle": [
@@ -111,14 +119,15 @@
     "stock Haxe acceptance and true result for a null Bool argument contrasted with the compiler-owned non-null Bool subset",
     "stock Haxe evaluation of false && probe, true || probe, true && probe, and (true || probe) && false contrasted with one manually expected probe line",
     "stock Haxe object construction and method dispatch plus manually authored Greeter.php/Main.php/bootstrap expectations and independently checked type-dependency/source-map records",
-    "stock Haxe lexical capture and function-value invocation plus manually authored native PHP closure bytes, four stock-Haxe-valid negative boundaries, and independently checked declaration/body source mappings"
+    "stock Haxe lexical capture and function-value invocation plus manually authored native PHP closure bytes, four stock-Haxe-valid negative boundaries, and independently checked declaration/body source mappings",
+    "stock Haxe Haxe-Exception catch behavior plus manually authored RuntimeException/getMessage PHP, three stock-Haxe-valid negative boundaries, and independently checked try/throw/body source mappings"
   ],
   "capabilityMatrix": {
     "authority": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 63,
+    "capabilityCount": 66,
     "categoryCount": 13,
-    "admittedCount": 50,
+    "admittedCount": 53,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": true,
@@ -131,9 +140,9 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-50-capability-subject-passed-run-30749072309",
+    "exactPhp74And84Matrix": "current-53-capability-subject-hosted-pending; predecessor-50-capability-subject-passed-run-30749072309",
     "sourceMap": "independently-verified",
-    "strictHaxe": "72-files-zero-findings",
+    "strictHaxe": "75-files-zero-findings",
     "firstMilliseconds": 10750,
     "repeatMilliseconds": 10790,
     "coldClaim": false,
@@ -144,8 +153,8 @@
     "reflaxe": "4.0.0-beta",
     "php": "8.4.7"
   },
-  "hostedVerification": {
-    "relation": "current-50-capability-subject",
+  "previousHostedVerification": {
+    "relation": "predecessor-50-capability-subject-only",
     "admittedCapabilityCount": 50,
     "workflow": "Repository bootstrap",
     "runId": 30749072309,
@@ -170,7 +179,7 @@
       "Test clean standalone PHP compiler package artifact",
       "Test exact PHP 7.4 and 8.4 runtime matrix"
     ],
-    "scope": "the 50 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "scope": "the predecessor 50 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only; it does not prove the current 53-record exception subject",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -209,6 +218,10 @@
       "The closure slice is decomposed into five exact admitted records while broad call.closure remains unsupported, preventing one lexical callback from laundering arbitrary Haxe function values into the compiler claim.",
       "Capture discovery uses typed Haxe variable identities and emits a static PHP closure with explicit by-value captures; String reassignment remains rejected, so the admitted program cannot silently inherit PHP/Haxe mutable-capture divergence.",
       "Distinct review found that the first green closure output mapped only its containing local; the generic printer now descends into closure-valued locals so the emitted return has its own exact Haxe range and generated byte span."
+      ,
+      "The exception slice is decomposed into three exact admitted records while broad exception.try-throw-catch remains unsupported, so a single catch cannot imply general exception semantics.",
+      "Distinct review found that PHP catch locals are function-scoped while Haxe catch locals are lexical; the admitted compiler subset now requires method-local target names to be unique and a stock-Haxe-valid collision fails before publication.",
+      "The throw keyword's typed-AST position did not cover its constructed value; the lowerer now combines the keyword and value positions so the exact map covers the complete immediate throw statement."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
@@ -220,6 +233,7 @@
       "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, source-owned static calls, lazy conjunction/disjunction, and typed parenthesized grouping are admitted; nullable Bool, truthiness, equality, mutation, bitwise operations, and external weak-PHP callers are not implemented",
       "only a private constructor-set String field and required String constructor/instance method are admitted for objects; inheritance, interfaces, overrides, accessors, mutable/static fields, nullable objects, reflection, anonymous structures, and general object semantics remain unsupported",
       "only required unary String closures with read-only String captures and direct calls are admitted; mutable/by-reference or non-String captures, this/object capture, nested or escaping closures, optional/multiple parameters, recursion, variadics, foreign callables, and general function values remain unsupported",
+      "only one immediate newly constructed haxe.Exception with an admitted String message, one matching catch, and a caught-message read are admitted; multiple/nested try, finally, rethrow, arbitrary values, other exception types, inheritance, and foreign exceptions remain unsupported",
       "official Haxe-suite qualification remains blocked on this Bead",
       "cyclic owned module dependencies, general autoloading, namespaces, and additional PHP profiles remain unsupported",
       "standalone extraction remains deliberately low priority"
@@ -228,7 +242,7 @@
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "ab2c8d9b4de1ca62f28bb0016425e0570d5041474dab5b3d66ac658b7ea48924"
+      "sha256": "250d76c5393f6c7e5003e8e848161e4299c7bbbbfa6efda08473b183dace592b"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -248,7 +262,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "afcea5baf186aad1cc6f33b22896664857629dadf49a0bbd01725cf5bf4d0de6"
+      "sha256": "f06022dd8d0928c0da3ed1b8116b20a277bf70de8b67128db621387f53497cc7"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -256,11 +270,11 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "faf132218a24f30e6f981fdaa6050eb76ad2d7a666d49a38f7f29f9bfc9c0d30"
+      "sha256": "43ddc6927bd6de1f97d4580f3cd7614d3811f4779d3624232cac1049b681bc15"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
-      "sha256": "2f17148868de23efb0f8f2b86f501b833c2d44bb18ada36531c128bad4013dc9"
+      "sha256": "44cc71eb16860e56377ddad27d3bdcff0ed5c26cbb8594f57c05b87eca74a4af"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
@@ -272,7 +286,7 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-      "sha256": "f4ee1f0fc5c7e45d81a61e926b2594d80270288fc86a7beb54507c914204273c"
+      "sha256": "6e58f5bf4aa5f898bc75395bea0372d224c9056c8379aa98c09b89dcbe74f8f3"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
@@ -284,11 +298,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "3531ef25860ecbfc7341c44646d8f1ad4c1bf61b828f4a7d7f5109f4da5ce6e7"
+      "sha256": "582cffeb8ad60eebcb7f570ebaa9d9a5f1a8321ee1a5140ffeb63abb13830850"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "abede93f805c3abaace32603adc21555e5f10aef357106d954cf66c8ac551bba"
+      "sha256": "afd46951c2140d8a84ecde3c8d8322cd72ff0be6242a7e34db0de9c79bf0131d"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
@@ -312,7 +326,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected.stdout",
-      "sha256": "cd70496c9d68316748fca3fbc9feade833be3f7b248f1c919c037281c4056224"
+      "sha256": "5ff483d02f7a1d17063b92f2cd328acbe85ab22bf9ef1deb8ea71768557101f2"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
@@ -324,11 +338,19 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "2f041e79555091defce213cbdcb7761268f29f36d855a2c42d072b4e00885e80"
+      "sha256": "2d227e43388cacf7e674e55f4f810fd8e66f3e8b5db0c7de11aae1acbba04c27"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/7_Greeter/7_Greeter.php",
       "sha256": "9e28fc8d29f877d0a865d76e53b12797f11b45661722b361b6cff3dda422de76"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/catch-local-name-collision/build.hxml",
+      "sha256": "c67315659595c881516f1d41b6e288234d68306828b5a2f312165048eeb562e9"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/catch-local-name-collision/src/semantics/Main.hx",
+      "sha256": "5d06a1435754b5637742e1ce108b39628c5bc45c168a8190b6c90760195637b8"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/compound-assignment/build.hxml",
@@ -427,6 +449,22 @@
       "sha256": "e92b8764482f700ee279e3385726d7bbb6dd0dcde3617e7434d05a9afdee7e63"
     },
     {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-haxe-exception-catch/build.hxml",
+      "sha256": "56eef028a38758727e9b5e6ec9917259b94adccd6c7e60a610236209af6f008e"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-haxe-exception-catch/src/semantics/Main.hx",
+      "sha256": "287a03cf341fcdc59dd1a49b2fe7b551ae429725f79cd88e33df3226f6939998"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-immediate-exception-throw/build.hxml",
+      "sha256": "f9df48c3f878dcbfcdd484e611077b02075e7098aa6e905b29c5a3a512011ddf"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-immediate-exception-throw/src/semantics/Main.hx",
+      "sha256": "8fbf9566f8c3475aa2e60a474a739420ea1dd51fefd0a0a1e8ef1b48ca1225b4"
+    },
+    {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-int-signature/build.hxml",
       "sha256": "4f160b11229bbd82d4e02026a24073459cc6b53b9d6a8859cccbfd867bd781fb"
     },
@@ -492,7 +530,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "72ade14222a43a595deae7b58b6c28b9fa4715c244c2a81e1674e8bad4e1b42a"
+      "sha256": "b13861eff77396265d4f765b5b1226e515c47736899c181e4b47560cd5f29537"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",
@@ -500,7 +538,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,
