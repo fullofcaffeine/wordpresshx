@@ -8,6 +8,13 @@ has been authorized.
 
 ## Unreleased
 
+- Replaced the temporary monolithic compiler output with collision-safe
+  per-type PHP artifacts and exact maps, a source-derived dependency-ordered
+  bootstrap, the explicit `php74-modern-v1` policy, a content-addressed graph,
+  and staged hash ownership that preserves unowned files and fails on drift.
+- Added fixed `Array<Int>` literals and compiler-proven constant in-bounds
+  reads; dynamic and out-of-bounds access remains rejected until an owned Haxe-
+  compatible array runtime exists.
 - Added the first ordinary-Haxe Reflaxe registration and typed-AST tracer:
   `Sys.println(String)` lowers through the generic PHP IR into deterministic,
   source-mapped, executable PHP without application-authored backend IR.

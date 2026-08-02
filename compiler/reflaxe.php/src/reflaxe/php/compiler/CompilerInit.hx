@@ -28,7 +28,8 @@ class CompilerInit {
 			expressionPreprocessors: [],
 			ignoreBodilessFunctions: false,
 			ignoreExterns: true,
-			trackUsedTypes: true
+			trackUsedTypes: true,
+			deleteOldOutput: false
 		});
 	}
 	#else

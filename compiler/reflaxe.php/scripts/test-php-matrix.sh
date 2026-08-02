@@ -4,12 +4,19 @@ set -euo pipefail
 package_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fixture="build/generic-printer-fixture.php"
 correlation_fixture="build/source-correlation-fixture.php"
+semantic_fixture="build/exact-php-semantic-matrix"
 expected_output='{"total":14,"count":4,"error":"RuntimeException","label":"generic"}'
+semantic_expected_output="$(tr -d '\n' < "${package_root}/test/semantic-matrix/expected.stdout")"
 
 if [[ ! -f "${package_root}/${fixture}" || ! -f "${package_root}/${correlation_fixture}" ]]; then
   echo "missing generated PHP fixture; run scripts/test.sh first" >&2
   exit 1
 fi
+rm -rf -- "${package_root}/${semantic_fixture}"
+(
+  cd "${package_root}"
+  haxe test/semantic-matrix/build.hxml -D "reflaxe_php_output=${semantic_fixture}"
+)
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is required for the exact PHP runtime matrix" >&2
@@ -35,6 +42,8 @@ run_fixture() {
 
   docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php -l "${fixture}"
 	docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php -l "${correlation_fixture}"
+  docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" sh -euc \
+    "find '${semantic_fixture}' -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
   output="$(docker run --rm --network none --mount "type=bind,src=${package_root},dst=/work,readonly" -w /work "${image}" php "${fixture}")"
   if [[ "${output}" != "${expected_output}" ]]; then
     echo "${label} runtime mismatch: ${output}" >&2
@@ -49,6 +58,14 @@ run_fixture() {
 		printf '%s\n' "${output}" >&2
 		exit 1
 	fi
+  output="$(docker run --rm --network none \
+    --mount "type=bind,src=${package_root},dst=/work,readonly" \
+    -w /work "${image}" php -d error_reporting=-1 -d display_errors=stderr \
+    "${semantic_fixture}/bootstrap.php" 2>&1)"
+  if [[ "${output}" != "${semantic_expected_output}" ]]; then
+    echo "${label} per-module semantic runtime mismatch or emitted stderr: ${output}" >&2
+    exit 1
+  fi
   echo "${label} ${version} lint/runtime fixture passed"
 }
 

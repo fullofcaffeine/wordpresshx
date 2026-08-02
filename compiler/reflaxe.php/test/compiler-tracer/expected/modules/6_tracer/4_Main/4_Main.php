@@ -7,5 +7,3 @@ class Hx_6_tracer_4_Main {
 		echo 'reflaxe.php typed PHP tracer' . PHP_EOL;
 	}
 }
-
-Hx_6_tracer_4_Main::main();

@@ -20,16 +20,24 @@ second_output="${temporary_root}/second"
 compile_tracer "${first_output}"
 compile_tracer "${second_output}"
 
-cmp "${first_output}/main.php" "${second_output}/main.php"
-cmp "${first_output}/main.php.haxe-map.json" "${second_output}/main.php.haxe-map.json"
-cmp "${tracer_root}/expected/main.php" "${first_output}/main.php"
-php -l "${first_output}/main.php" >/dev/null
-php "${first_output}/main.php" >"${temporary_root}/actual.stdout"
+diff -ru "${first_output}" "${second_output}"
+expected_php_count=0
+while IFS= read -r expected_php; do
+	relative_php="${expected_php#${tracer_root}/expected/}"
+	cmp "${expected_php}" "${first_output}/${relative_php}"
+	expected_php_count=$((expected_php_count + 1))
+done < <(find "${tracer_root}/expected" -type f -name '*.php' | sort)
+generated_php_count="$(find "${first_output}" -type f -name '*.php' | wc -l | tr -d ' ')"
+test "${generated_php_count}" = "${expected_php_count}"
+while IFS= read -r generated_php; do
+	php -l "${generated_php}" >/dev/null
+done < <(find "${first_output}" -type f -name '*.php' | sort)
+php -d error_reporting=-1 -d display_errors=1 "${first_output}/bootstrap.php" >"${temporary_root}/actual.stdout" 2>"${temporary_root}/actual.stderr"
+test ! -s "${temporary_root}/actual.stderr"
 cmp "${tracer_root}/expected.stdout" "${temporary_root}/actual.stdout"
 python3 "${package_root}/scripts/verify-compiler-tracer.py" \
 	"${tracer_root}/src/tracer/Main.hx" \
-	"${first_output}/main.php" \
-	"${first_output}/main.php.haxe-map.json"
+	"${first_output}"
 
 if rg -n 'reflaxe\.php\.(ir|compiler)' "${tracer_root}/src"; then
 	echo "ordinary-Haxe tracer imports compiler implementation or PHP IR" >&2
@@ -58,10 +66,44 @@ if [[ "${negative_diagnostic}" != *"reflaxe.php tracer supports only string lite
 	echo "unsupported typed AST did not preserve its source diagnostic" >&2
 	exit 1
 fi
-if [[ -e "${negative_output}/main.php" || -e "${negative_output}/main.php.haxe-map.json" ]]; then
+if [[ -d "${negative_output}" ]] && find "${negative_output}" -type f -print -quit | grep -q .; then
 	echo "unsupported typed AST emitted partial output" >&2
 	exit 1
 fi
+
+assert_profile_negative() {
+	local fixture="$1"
+	local expected_diagnostic="$2"
+	local profile_output="${temporary_root}/profile-${fixture}"
+	local profile_diagnostic
+	local profile_exit
+	set +e
+	if [[ "${fixture}" == "missing" ]]; then
+		profile_diagnostic="$(
+			cd "${package_root}"
+			haxe test/compiler-tracer/negative/missing-profile/build.hxml -D "reflaxe_php_output=${profile_output}" 2>&1
+		)"
+	else
+		profile_diagnostic="$(
+			cd "${package_root}"
+			haxe test/compiler-tracer/build.hxml -D reflaxe_php_profile=php-latest -D "reflaxe_php_output=${profile_output}" 2>&1
+		)"
+	fi
+	profile_exit=$?
+	set -e
+	if (( profile_exit == 0 )) || [[ "${profile_diagnostic}" != *"${expected_diagnostic}"* ]]; then
+		printf '%s\n' "${profile_diagnostic}" >&2
+		echo "PHP profile negative fixture did not fail closed: ${fixture}" >&2
+		exit 1
+	fi
+	if [[ -d "${profile_output}" ]] && find "${profile_output}" -type f -print -quit | grep -q .; then
+		echo "PHP profile negative fixture emitted partial output: ${fixture}" >&2
+		exit 1
+	fi
+}
+
+assert_profile_negative "missing" "reflaxe.php requires -D reflaxe_php_profile=<exact profile ID>"
+assert_profile_negative "invalid" "Unsupported reflaxe.php target profile: php-latest"
 
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" \
 	"${package_root}/src/reflaxe/php/compiler" \

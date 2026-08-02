@@ -2,6 +2,13 @@ package reflaxe.php.tests;
 
 import haxe.crypto.Sha256;
 import haxe.io.Bytes;
+import haxe.io.Path;
+import reflaxe.php.compiler.PhpArtifactLayout;
+import reflaxe.php.compiler.PhpGeneratedOutputOwner;
+import reflaxe.php.compiler.PhpGeneratedOutputOwner.PhpOwnedGeneratedFile;
+import reflaxe.php.compiler.PhpModulePlan;
+import reflaxe.php.compiler.PhpModulePlan.PhpModuleNode;
+import reflaxe.php.compiler.PhpTargetProfile;
 import reflaxe.php.ir.PhpArrayEntry;
 import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
@@ -41,6 +48,8 @@ class PrinterTest {
 		testFileDeclarationsAndSourceRanges();
 		testExactSourceCorrelation();
 		testFailClosedNamesAndOperators();
+		testCompilerArtifactPlanning();
+		testGeneratedOutputOwnership();
 		writeExecutableFixture();
 		Sys.println("reflaxe.php printer tests passed");
 	}
@@ -211,6 +220,101 @@ class PrinterTest {
 		])), "case-insensitive duplicate class-like declarations");
 	}
 
+	static function testCompilerArtifactPlanning():Void {
+		assertEquals("modules/9_semantics/10_Calculator/10_Calculator.php", PhpArtifactLayout.typePath("semantics.Calculator", "Calculator"),
+			"collision-safe module path");
+		assertEquals("semantics.Calculator@Calculator", PhpArtifactLayout.typeIdentity("semantics.Calculator", "Calculator"), "module/type identity");
+		final calculator = new PhpModuleNode("semantics.Calculator@Calculator", "modules/calculator.php", []);
+		final main = new PhpModuleNode("semantics.Main@Main", "modules/main.php", [calculator.identity]);
+		final ordered = PhpModulePlan.order([main, calculator]);
+		assertEquals("semantics.Calculator@Calculator,semantics.Main@Main", ordered.map(node -> node.identity).join(","),
+			"dependency-first callback-independent order");
+		assertThrows(() -> PhpModulePlan.order([
+			new PhpModuleNode("fixture.Left@Left", "modules/collision.php", []),
+			new PhpModuleNode("fixture.Right@Right", "modules/collision.php", [])
+		]), "colliding module path");
+		assertThrows(() -> PhpModulePlan.order([
+			new PhpModuleNode("fixture.Main@Main", "modules/main.php", ["fixture.Missing@Missing"])
+		]), "missing module dependency");
+		assertThrows(() -> PhpModulePlan.order([
+			new PhpModuleNode("fixture.Left@Left", "modules/left.php", ["fixture.Right@Right"]),
+			new PhpModuleNode("fixture.Right@Right", "modules/right.php", ["fixture.Left@Left"])
+		]), "cyclic module dependency");
+		final profile = PhpTargetProfile.parse("php74-modern-v1");
+		assertEquals("php74-modern-v1", profile.value(), "exact PHP profile identity");
+		if (profile.minimumPhpVersionId() != 70400 || !profile.usesStrictTypes() || !profile.usesNativeIntTypes()) {
+			throw "php74-modern-v1 policy drifted";
+		}
+		assertThrows(() -> PhpTargetProfile.parse("php-latest"), "floating PHP profile");
+	}
+
+	static function testGeneratedOutputOwnership():Void {
+		final root = "build/generated-output-owner-test";
+		final rollbackRoot = "build/generated-output-owner-rollback-test";
+		final collisionRoot = "build/generated-output-owner-collision-test";
+		for (testRoot in [root, rollbackRoot, collisionRoot]) {
+			deleteTree(testRoot);
+		}
+
+		final owner = new PhpGeneratedOutputOwner(root);
+		owner.publish([
+			new PhpOwnedGeneratedFile("modules/alpha.php", "alpha-v1\n"),
+			new PhpOwnedGeneratedFile("modules/stale.php", "stale-v1\n")
+		]);
+		File.saveContent(root + "/user.txt", "unowned\n");
+		owner.publish([
+			new PhpOwnedGeneratedFile("modules/next.php", "next-v1\n"),
+			new PhpOwnedGeneratedFile("modules/alpha.php", "alpha-v2\n")
+		]);
+		assertEquals("alpha-v2\n", File.getContent(root + "/modules/alpha.php"), "owned update");
+		assertEquals("next-v1\n", File.getContent(root + "/modules/next.php"), "owned addition");
+		assertEquals("unowned\n", File.getContent(root + "/user.txt"), "unowned preservation");
+		if (FileSystem.exists(root + "/modules/stale.php")) {
+			throw "stale owned output was not removed";
+		}
+		final canonicalManifest = File.getContent(root + "/" + PhpGeneratedOutputOwner.MANIFEST_PATH);
+		owner.publish([
+			new PhpOwnedGeneratedFile("modules/alpha.php", "alpha-v2\n"),
+			new PhpOwnedGeneratedFile("modules/next.php", "next-v1\n")
+		]);
+		assertEquals(canonicalManifest, File.getContent(root + "/" + PhpGeneratedOutputOwner.MANIFEST_PATH), "canonical ownership manifest");
+		File.saveContent(root + "/modules/alpha.php", "locally-modified\n");
+		assertThrows(() -> owner.publish([
+			new PhpOwnedGeneratedFile("modules/alpha.php", "alpha-v3\n"),
+			new PhpOwnedGeneratedFile("modules/next.php", "next-v1\n")
+		]), "modified owned output");
+
+		final rollbackOwner = new PhpGeneratedOutputOwner(rollbackRoot);
+		rollbackOwner.publish([
+			new PhpOwnedGeneratedFile("modules/keep.php", "keep-v1\n"),
+			new PhpOwnedGeneratedFile("modules/remove.php", "remove-v1\n")
+		]);
+		final previousManifest = File.getContent(rollbackRoot + "/" + PhpGeneratedOutputOwner.MANIFEST_PATH);
+		final failingOwner = new PhpGeneratedOutputOwner(rollbackRoot, checkpoint -> {
+			if (checkpoint == "after-artifacts") {
+				throw "injected publication failure";
+			}
+		});
+		assertThrows(() -> failingOwner.publish([
+			new PhpOwnedGeneratedFile("modules/keep.php", "keep-v2\n"),
+			new PhpOwnedGeneratedFile("modules/add.php", "add-v1\n")
+		]), "owned publication rollback");
+		assertEquals("keep-v1\n", File.getContent(rollbackRoot + "/modules/keep.php"), "rollback restored update");
+		assertEquals("remove-v1\n", File.getContent(rollbackRoot + "/modules/remove.php"), "rollback restored stale file");
+		if (FileSystem.exists(rollbackRoot + "/modules/add.php")) {
+			throw "rollback retained a new output";
+		}
+		assertEquals(previousManifest, File.getContent(rollbackRoot + "/" + PhpGeneratedOutputOwner.MANIFEST_PATH), "rollback restored manifest");
+
+		FileSystem.createDirectory(collisionRoot + "/modules");
+		File.saveContent(collisionRoot + "/modules/collision.php", "user-owned\n");
+		assertThrows(() -> new PhpGeneratedOutputOwner(collisionRoot).publish([new PhpOwnedGeneratedFile("modules/collision.php", "generated\n")]),
+			"unowned output collision");
+		for (testRoot in [root, rollbackRoot, collisionRoot]) {
+			deleteTree(testRoot);
+		}
+	}
+
 	static function writeExecutableFixture():Void {
 		final declarations = fixtureDeclarations();
 		final statements:Array<PhpStmt> = [
@@ -321,5 +425,19 @@ class PrinterTest {
 		if (!threw) {
 			throw label + " did not fail closed";
 		}
+	}
+
+	static function deleteTree(path:String):Void {
+		if (!FileSystem.exists(path)) {
+			return;
+		}
+		if (!FileSystem.isDirectory(path)) {
+			FileSystem.deleteFile(path);
+			return;
+		}
+		for (entry in FileSystem.readDirectory(path)) {
+			deleteTree(Path.join([path, entry]));
+		}
+		FileSystem.deleteDirectory(path);
 	}
 }

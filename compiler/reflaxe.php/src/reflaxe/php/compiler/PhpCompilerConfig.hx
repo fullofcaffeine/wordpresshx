@@ -11,9 +11,22 @@ import sys.FileSystem;
 class PhpCompilerConfig {
 	#if macro
 	public final sourceRoot:String;
+	public final targetProfile:PhpTargetProfile;
 
 	public function new() {
 		PhpSemanticCapabilities.requireAdmitted(ApplicationSourceRoot);
+		final configuredProfile = Context.definedValue("reflaxe_php_profile");
+		if (configuredProfile == null || StringTools.trim(configuredProfile).length == 0) {
+			Context.fatalError("reflaxe.php requires -D reflaxe_php_profile=<exact profile ID>", Context.currentPos());
+			this.targetProfile = Php74ModernV1;
+		} else {
+			try {
+				this.targetProfile = PhpTargetProfile.parse(configuredProfile);
+			} catch (message:String) {
+				Context.fatalError(message, Context.currentPos());
+				this.targetProfile = Php74ModernV1;
+			}
+		}
 		final configuredRoot = Context.definedValue("reflaxe_php_source_root");
 		if (configuredRoot == null || StringTools.trim(configuredRoot).length == 0) {
 			Context.fatalError("reflaxe.php requires -D reflaxe_php_source_root=<application source directory>", Context.currentPos());

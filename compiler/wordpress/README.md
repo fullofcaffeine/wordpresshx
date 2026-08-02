@@ -15,6 +15,16 @@ The profile checks callback visibility, static shape, argument and return types,
 by-reference parameters, duplicate registrations, and reserved generated names
 before emitting PHP.
 
+The compiler package boundary also consumes reflaxe.php's emitted artifact
+graph without reaching back into the generic compiler. A focused tracer compiles
+ordinary Haxe into collision-safe per-type PHP files, per-file maps, an explicit
+`bootstrap.php`, and a content-addressed graph manifest under the exact
+`php74-modern-v1` profile. The WordPress-owned packager validates every PHP/map
+binding, creates a deterministic `ABSPATH`-guarded plugin ZIP, excludes maps
+from the runtime package, and boots the PHP copied out of that ZIP. This proves
+the one-way packaging seam only; it does not claim that the tracer application
+is a supported WordPress plugin or that broad Haxe semantics are complete.
+
 G1.3 adds the first lifecycle boundary: the Haxe plan names a public static
 zero-argument `Void` method, and the profile emits
 `register_activation_hook(__FILE__, callable)` in the plugin root after loading
@@ -62,6 +72,7 @@ gate:
 
 ```bash
 bash compiler/wordpress/scripts/test.sh
+bash compiler/wordpress/scripts/test-reflaxe-module-package.sh
 bash scripts/php-quality/test-production.sh
 ```
 

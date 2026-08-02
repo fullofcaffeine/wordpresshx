@@ -970,6 +970,7 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
         "generic-php-package",
+        "wordpress-reflaxe-module-package",
         "wordpress-profile-focused",
         "wordpress-public-php-runtime",
     }

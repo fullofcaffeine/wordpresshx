@@ -6,9 +6,9 @@
   "scenario": {
     "preconditions": "Haxe 4.3.7, reflaxe 4.0.0-beta, an explicit application source root, and native PHP 7.4 or newer",
     "input": "ordinary tracer.Main with a static main calling Sys.println with one String literal",
-    "actionOrCompilationPath": "Haxe typed AST -> custom Reflaxe registration -> typed PHP IR -> deterministic printer/range map -> php -l -> native PHP execution",
-    "observableResult": "readable main.php prints exactly reflaxe.php typed PHP tracer followed by one newline",
-    "errorOrEdgeBehavior": "an unsupported Int value fails at its Haxe source position and publishes neither PHP nor a range map",
+    "actionOrCompilationPath": "Haxe typed AST -> custom Reflaxe registration -> typed PHP IR -> per-type PHP and exact map -> dependency-ordered bootstrap -> php -l -> native PHP execution",
+    "observableResult": "the readable Main type artifact and separate bootstrap print exactly reflaxe.php typed PHP tracer followed by one newline",
+    "errorOrEdgeBehavior": "an unsupported Int value or missing/floating PHP profile fails at its Haxe/configuration boundary and publishes no partial artifact graph",
     "owningSurface": "compiler-adapter",
     "protectedClaim": "first ordinary-Haxe custom compiler tracer only; not broad Haxe, PHP, WordPress, package, or official-suite compatibility"
   },
@@ -20,7 +20,7 @@
   },
   "independentOracle": [
     "Haxe Sys.println appends a line terminator",
-    "manually authored expected/main.php and expected.stdout",
+    "manually authored expected per-type PHP, bootstrap.php, and expected.stdout",
     "independent Python source-slice and digest verification",
     "native PHP parser and runtime observation"
   ],
@@ -31,7 +31,8 @@
     "phpSyntax": "passed",
     "nativeRuntime": "passed",
     "unsupportedAst": "source-positioned-failure-no-partial-output",
-    "strictHaxe": "8-files-zero-findings",
+    "targetProfile": "exact-php74-modern-v1-missing-and-floating-values-rejected",
+    "strictHaxe": "14-files-zero-findings",
     "firstMilliseconds": 1440,
     "repeatMilliseconds": 1230,
     "coldClaim": false,
@@ -74,7 +75,8 @@
       "Late Reflaxe after-generation diagnostics can print without a failing process; unsupported AST moved to a shared after-typing preflight using Context.error.",
       "Declaring the real Reflaxe dependency exposed three existing null-safety failures in the clean installed-package consumer; fixed with an in-bounds code-unit read and narrowed method-body locals, then retained the package vertical.",
       "The initial map generator digest covered only new driver files; expanded to every Haxe source under the generic reflaxe.php implementation.",
-      "The semantic selector did not initially require the new tracer for generic compiler changes; reciprocal ownership and the selector self-test now enforce it."
+      "The semantic selector did not initially require the new tracer for generic compiler changes; reciprocal ownership and the selector self-test now enforce it.",
+      "The original monolithic main.php expectation was replaced by an independently checked per-type artifact, exact map, content-addressed graph, and separate bootstrap under an exact PHP profile."
     ],
     "remainingRisks": [
       "typed-AST lowering intentionally supports only the tracer grammar",
@@ -90,27 +92,27 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
-      "sha256": "0ec8048bce303dee305b6cc586b734f83e62c3debb457a100e38a8350cc19f96"
+      "sha256": "9e0f9060eac116c4637b563979c76800333783a92588144dfc9d2fe79c5e398a"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
-      "sha256": "42f61179492a24c6261d6ff542b51f94c8bf19989e45e8fc8cadffaa2f582f2c"
+      "sha256": "25b24ee057922ca0d32005b00d08bb71fc1319f8bad17d2029560b5bca53c134"
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-compiler-tracer.py",
-      "sha256": "16f9119f4984bc07e1bee588eabe77e7fdf4f607f4e3664121df24dd63d32ae5"
+      "sha256": "15619ca1a78ed3298f4fa63d92598ea44ca6190c4d06b669b9b6627342cc1107"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
-      "sha256": "a7cf93a0106b79358569e59e31076fa68ab00ebefa0b8d11c6a616d84f5b5883"
+      "sha256": "4a44ca8495f049b06b4dfa239b3042eba623ab0b481848a8b5f4a51db4a252ba"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
-      "sha256": "19bbd2b95673cde44a5a4329f1007a00af153c6c6f9a9b6c3a41281e193580f5"
+      "sha256": "1244eff097d0b1db92bd0323b881412daae5bec835387041499f518b907aee41"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompilerConfig.hx",
-      "sha256": "63ac6a69ba62f51d15479449120970cc9f203a08c3fe4e1413cc619c52cab04f"
+      "sha256": "76402d3cb13eb417f04c2f4bc789451a6048e9f2a1675b16c1cd20c4347bdfa1"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
@@ -118,11 +120,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "c89925b564d550236a429dc4e25f237d89937231d08f75366525cf7e0ca7b609"
+      "sha256": "048d2f53f012f2ffe9977b50b515f6c7e235324257db421eeebcb6cdb75803d9"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "2a633e14cbcc0576eb68b016cdbbbbdbb7f3105b534f2ce220a134a102a4ecd1"
+      "sha256": "a895dae24e0d5418bb148e9daa5914ee151bbab1c7d56ee03f14b6313aadb953"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpMethodDoc.hx",
@@ -133,12 +135,24 @@
       "sha256": "b464f040ed89955cd23b7a4bece8deb9e9001f59dbd7e47839ca07e45bab979a"
     },
     {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/build.hxml",
+      "sha256": "9efe8f218c9eb0912271f3e62a85ac92af3eda16dccac04141ca495fa65fc758"
+    },
+    {
       "path": "compiler/reflaxe.php/test/compiler-tracer/expected.stdout",
       "sha256": "49c4600a7f9bafc98eafbb8ad174d33a8354048ae46667f42bd14227ca11a094"
     },
     {
-      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/main.php",
-      "sha256": "6220e9de3b9e443702a3b26b989f435b72d3de92bd8338f43a28d55fd7d10d35"
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/bootstrap.php",
+      "sha256": "0a920afde087e958d8156a9e3419cc28bd8eb51c5e92361341f6687565d3bf3b"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/modules/6_tracer/4_Main/4_Main.php",
+      "sha256": "a3175b72566b470966a4c292fc46303cfefbee2f27f3b73baba69683cd4ccff2"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/negative/missing-profile/build.hxml",
+      "sha256": "265be34b4e34d92f70ea58da4522afc0e10dd40388ac5291c9cb8f3d51df46cd"
     },
     {
       "path": "compiler/reflaxe.php/test/compiler-tracer/negative/unsupported-value/src/tracer/Main.hx",

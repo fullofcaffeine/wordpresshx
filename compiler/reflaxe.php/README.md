@@ -16,6 +16,12 @@ The current admitted surface is deliberately bounded:
   application-authored backend IR;
 - required Haxe `Int` parameters/returns and source-owned static calls lowered
   to PHP native `int` signatures and deterministic cross-module calls; and
+- deterministic collision-safe PHP files and exact maps per owned Haxe type,
+  plus a separate dependency-ordered `bootstrap.php`, a content-addressed
+  artifact-graph manifest, and staged generated-file ownership; and
+- the explicit `php74-modern-v1` target profile, which selects PHP 7.4 as its
+  floor, `strict_types=1`, and native `int` signatures without a floating
+  "latest PHP" mode; and
 - a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers.
 
 This is not yet a complete arbitrary-Haxe PHP backend. The first driver path is
@@ -73,10 +79,29 @@ because native PHP would emit an undefined-key warning where stock Haxe returns
 Unsupported and unverified runtime/stdlib features remain named and owned in
 the matrix.
 
-The current driver still stages all classes into `main.php`. That is a tracer
-shape, not the intended file model. `wordpresshx-reflaxe-php.7` owns the next
-step: deterministic per-module PHP files, exact per-file maps, and a separate
-entry/bootstrap artifact under an explicit modern-PHP profile.
+The current driver emits one file per owned Haxe type. Path segments are
+length-prefixed, so distinct module/type identities cannot collapse through a
+separator or case-normalization shortcut. A source-derived dependency plan
+orders the generated bootstrap independently of Reflaxe callback order. Cyclic
+owned dependencies currently fail closed; namespaces, a general autoloader,
+additional PHP profiles, and broader Haxe module/runtime semantics remain
+future capabilities rather than implied support.
+
+Generated publication uses `.reflaxe.php-owned-files.v1`: only files whose
+previous content and length still match the ledger may be updated or removed,
+unowned collisions and locally modified generated files fail before
+publication, artifacts are staged and verified, and the ownership ledger is
+published last. The focused owner exercises stale removal, collision and edit
+rejection, same-process rollback, and preservation of unrelated files:
+
+```bash
+bash compiler/reflaxe.php/scripts/test-generated-output-owner.sh
+```
+
+The downstream WordPress compiler independently packages the authenticated
+module graph into a deterministic plugin-shaped artifact. That one-way proof
+does not add WordPress concepts to this package or broaden the compiler's Haxe
+semantic claims.
 
 Prove the release-shaped package seam independently:
 

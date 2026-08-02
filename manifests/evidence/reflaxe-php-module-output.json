@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
+  "bead": "wordpresshx-reflaxe-php.7",
+  "status": "implemented-local-hosted-pending",
+  "scenario": {
+    "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1, and native PHP 8.4.7",
+    "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
+    "actionOrCompilationPath": "authored Haxe -> Reflaxe callbacks in arbitrary order -> source-derived typed dependency plan -> one mapped PHP artifact per owned type -> separate mapped bootstrap -> staged ownership -> downstream WordPress package builder -> extracted PHP runtime",
+    "observableResult": "collision-safe per-type paths and maps are deterministic, Calculator loads before Main, bootstrap invokes the Haxe-selected main, and PHP copied from the deterministic WordPress-owned ZIP prints the manually authored tracer result with empty stderr",
+    "errorOrEdgeBehavior": "missing or floating profiles, missing/cyclic dependencies, path collisions, stale or modified owned files, unowned collisions, malformed ledgers, stale package digests, and unsupported AST publish no accepted output",
+    "owningSurface": "compiler-adapter-and-package-install",
+    "protectedClaim": "per-type artifact identity/path, source-derived dependency order, explicit php74-modern-v1 policy, exact per-file maps, same-process staged ownership/rollback, and one-way deterministic WordPress packaging only; namespaces, general autoloading, cross-process crash recovery, broad modern-PHP syntax, WordPress runtime compatibility, official Haxe qualification, publication, and production support remain unclaimed"
+  },
+  "redState": {
+    "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml; test -f build/semantic-matrix/bootstrap.php",
+    "exitCode": 1,
+    "failure": "the compiler emitted only _GeneratedFiles.json, main.php, and main.php.haxe-map.json; bootstrap.php did not exist",
+    "reason": "the tracer still used Reflaxe's monolithic output shape and did not own a module graph or separate entry artifact",
+    "partialAcceptedGraphPublished": false
+  },
+  "independentOracle": [
+    "stock Haxe 4.3.7 execution of the same authored fixtures",
+    "manually reviewed per-type PHP, bootstrap.php, and expected stdout",
+    "independent Python verification of source spans, paths, graph edges, hashes, and ownership records",
+    "native PHP parser/runtime observation of both the build graph and PHP extracted from the WordPress-owned ZIP",
+    "byte-identical clean rebuild and package invariants"
+  ],
+  "localEvidence": {
+    "focusedCommand": "haxe -cp compiler/reflaxe.php/src -cp compiler/reflaxe.php/test --run reflaxe.php.tests.PrinterTest",
+    "compilerVerticals": [
+      "bash compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "bash compiler/reflaxe.php/scripts/test-generated-output-owner.sh"
+    ],
+    "packageVertical": "bash compiler/wordpress/scripts/test-reflaxe-module-package.sh",
+    "outcome": "passed",
+    "deterministicCompilerTrees": 2,
+    "deterministicWordPressPackages": 2,
+    "nativePhpStderr": "empty",
+    "exactPhp74And84Matrix": "implemented-local-docker-unavailable-hosted-pending",
+    "strictHaxe": "58-files-zero-findings",
+    "firstMilliseconds": 1200,
+    "repeatMilliseconds": 1030,
+    "coldClaim": false,
+    "warmClaim": false
+  },
+  "targetProfile": {
+    "id": "php74-modern-v1",
+    "minimumPhpVersionId": 70400,
+    "strictTypes": true,
+    "nativeIntTypes": true,
+    "floatingProfileAccepted": false
+  },
+  "artifactContract": {
+    "format": "reflaxe.php-artifact-graph.v1",
+    "pathEncoding": "length-prefixed ASCII Haxe module/type segments",
+    "moduleFileCountInSemanticTracer": 2,
+    "bootstrapSeparated": true,
+    "callbackOrderAuthoritative": false,
+    "dependencyOrderSourceDerived": true,
+    "ownershipManifest": ".reflaxe.php-owned-files.v1",
+    "manifestPublishedLast": true,
+    "machinePathsAllowed": false
+  },
+  "wordpressConsumer": {
+    "dependencyDirection": "reflaxe.php <- compiler/wordpress",
+    "command": "bash compiler/wordpress/scripts/test-reflaxe-module-package.sh",
+    "packageFormat": "wordpresshx.reflaxe-module-package.v1",
+    "productionSourceMapsIncluded": false,
+    "packagedPhpExecuted": true,
+    "realWordPressRuntimeUsed": false,
+    "wordpressCompatibilityClaimed": false
+  },
+  "review": {
+    "distinctFromImplementation": true,
+    "questions": [
+      "Can Reflaxe callback order alter the graph, paths, or bootstrap?",
+      "Are dependencies derived from typed source rather than hand-authored package metadata?",
+      "Can an unowned or locally modified file be overwritten or removed?",
+      "Can a failed compilation or package validation publish a partial accepted artifact?",
+      "Do any maps, manifests, diagnostics, or ZIP entries contain machine-local paths?",
+      "Does the WordPress package proof overstate real WordPress runtime compatibility?"
+    ],
+    "findingsAndDispositions": [
+      "Reflaxe's generic output cleanup was incompatible with exact ownership; disabled it and made the compiler publish through a content-bound manifest-last owner.",
+      "A basename-only module path could collide; replaced it with length-prefixed module and type segments plus duplicate identity/path rejection.",
+      "Compiler callback order could not define include order; collected typed static references and topologically ordered the complete graph after lowering.",
+      "A floating PHP target would make syntax policy implicit; required the exact php74-modern-v1 profile and added missing/unknown profile negatives.",
+      "The first WordPress consumer design could have confused package boot with WordPress compatibility; the package manifest explicitly records wordpressRuntimeCompatibility as not-claimed and the test does not enter the WordPress runtime scorecard.",
+      "Cross-process crash journaling, symlink-component confinement, namespaces, and autoloaders are not established by this slice and remain outside the protected claim."
+    ]
+  },
+  "authenticatedInputs": [
+    {
+      "path": "compiler/reflaxe.php/README.md",
+      "sha256": "43cdc85d39fcf81516c941b4a7bbde4b17a18e232649a9d0d6e60dbba5075c65"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
+      "sha256": "9e0f9060eac116c4637b563979c76800333783a92588144dfc9d2fe79c5e398a"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-generated-output-owner.sh",
+      "sha256": "5d3bfd7fb258ac35aec30fd408ea518b894c9f6ad4bdcbe178fda2ed268cb66c"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-php-matrix.sh",
+      "sha256": "a980059a838854460d6c406382fbb1e2b18db083432256ee32340e1b05948ef9"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "sha256": "09cc2550cfe2c124caddba7a80d154f2475d51ec3e406a6a1b71c8d78b69f099"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test.sh",
+      "sha256": "25b24ee057922ca0d32005b00d08bb71fc1319f8bad17d2029560b5bca53c134"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/verify-compiler-tracer.py",
+      "sha256": "15619ca1a78ed3298f4fa63d92598ea44ca6190c4d06b669b9b6627342cc1107"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
+      "sha256": "2e56f4dc3078814396d10f9cf0bba4d015d013ec5e78525d66d90deadec325b3"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
+      "sha256": "4a44ca8495f049b06b4dfa239b3042eba623ab0b481848a8b5f4a51db4a252ba"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpArtifactLayout.hx",
+      "sha256": "c6597fc8fceeaffc81f7d7df603eaefee253c637b422782a56dd4321545f25b3"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpArtifactManifestWriter.hx",
+      "sha256": "295b2b29f71746cf34632a74ead6b9aa05041c09712295505ccf201a231c0a64"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
+      "sha256": "1244eff097d0b1db92bd0323b881412daae5bec835387041499f518b907aee41"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompilerConfig.hx",
+      "sha256": "76402d3cb13eb417f04c2f4bc789451a6048e9f2a1675b16c1cd20c4347bdfa1"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpGeneratedOutputOwner.hx",
+      "sha256": "fb2699a51b9368c781e63c02ea9e5b9343c0d346ffc0565329e6b94ca33abe11"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpModulePlan.hx",
+      "sha256": "2609c63865374bfeec2b364a3954739ab567f42da327ae1256f504b1065d53ff"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTargetProfile.hx",
+      "sha256": "925a1905fd19e990c492f547bcc8a3dba16485fcbaddaa326301db4ece005453"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/bootstrap.php",
+      "sha256": "0a920afde087e958d8156a9e3419cc28bd8eb51c5e92361341f6687565d3bf3b"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/compiler-tracer/expected/modules/6_tracer/4_Main/4_Main.php",
+      "sha256": "a3175b72566b470966a4c292fc46303cfefbee2f27f3b73baba69683cd4ccff2"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx",
+      "sha256": "b8cd09ad8d78e9c1543060c4b841364e7a5ccadd24467356e845f38c79f51abb"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
+      "sha256": "a3ee656ad3b3c8aeaf418bfdcdccf4c235e36511b92cf0318842869f8e72a031"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
+      "sha256": "faf0b756b51c16b1ca3b24b7e77ff8c6f5ccfa5d151a186f4894a9cccfce0883"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
+      "sha256": "03ca493e08954710559c5ee334bd9a4839d6523e3481f460c7eea60d9015e5f9"
+    },
+    {
+      "path": "compiler/wordpress/README.md",
+      "sha256": "ef5e09994f8c7a432d68a822622ee77644355cf2c19923ecc9d11e872b35b8a8"
+    },
+    {
+      "path": "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
+      "sha256": "e67532fe25ac7eb68a85f6ddae0186bbeb36111d59b92c0ce02410fc77e0c4bc"
+    },
+    {
+      "path": "compiler/wordpress/scripts/test-reflaxe-module-package.sh",
+      "sha256": "f99887e7bce2fbc9713996b2d971b4d6fe67da426ded492c2e7bcdf4b4d901e8"
+    },
+    {
+      "path": "compiler/wordpress/scripts/test.sh",
+      "sha256": "9772e58310f424920b42230de620cf4d881831130e156ae128617b7c88009a35"
+    }
+  ],
+  "authority": {
+    "hostedProof": false,
+    "officialHaxeQualification": false,
+    "wordpressRuntimeCompatibility": false,
+    "publicationAuthorized": false
+  }
+}

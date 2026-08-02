@@ -765,6 +765,7 @@ required_files=(
   manifests/evidence/sdk-027-generic-php-compiler-readiness.json
   manifests/evidence/reflaxe-php-tracer.json
   manifests/evidence/reflaxe-php-semantic-matrix.json
+  manifests/evidence/reflaxe-php-module-output.json
   manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
@@ -1088,6 +1089,11 @@ reflaxe_php_tracer_receipt = json.loads(
 )
 reflaxe_php_semantic_receipt = json.loads(
     Path("manifests/evidence/reflaxe-php-semantic-matrix.json").read_text(
+        encoding="utf-8"
+    )
+)
+reflaxe_php_module_output_receipt = json.loads(
+    Path("manifests/evidence/reflaxe-php-module-output.json").read_text(
         encoding="utf-8"
     )
 )
@@ -6531,6 +6537,10 @@ reflaxe_php_semantic_input_records = {
     record["path"]: record["sha256"]
     for record in reflaxe_php_semantic_receipt["authenticatedInputs"]
 }
+reflaxe_php_module_output_input_records = {
+    record["path"]: record["sha256"]
+    for record in reflaxe_php_module_output_receipt["authenticatedInputs"]
+}
 assert reflaxe_php_semantic_receipt["schemaVersion"] == 1
 assert reflaxe_php_semantic_receipt["receiptId"] == (
     "REFLAXE-PHP-SEMANTIC-MATRIX-001"
@@ -6578,7 +6588,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 32
+assert len(reflaxe_php_semantic_input_records) == 34
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):
@@ -6590,7 +6600,7 @@ for semantic_input_path, semantic_input_sha256 in (
 assert list(reflaxe_php_tracer_input_records) == sorted(
     reflaxe_php_tracer_input_records
 )
-assert len(reflaxe_php_tracer_input_records) == 16
+assert len(reflaxe_php_tracer_input_records) == 19
 for tracer_input_path, tracer_input_sha256 in reflaxe_php_tracer_input_records.items():
     assert sha256.fullmatch(tracer_input_sha256)
     assert Path(tracer_input_path).is_file()
@@ -6600,6 +6610,69 @@ for tracer_input_path, tracer_input_sha256 in reflaxe_php_tracer_input_records.i
     assert tracer_current_sha256 in (
         tracer_input_sha256,
         reflaxe_php_semantic_input_records.get(tracer_input_path),
+    )
+assert reflaxe_php_module_output_receipt["schemaVersion"] == 1
+assert reflaxe_php_module_output_receipt["receiptId"] == (
+    "REFLAXE-PHP-MODULE-OUTPUT-001"
+)
+assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
+assert reflaxe_php_module_output_receipt["status"] == (
+    "implemented-local-hosted-pending"
+)
+assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
+    "compiler-adapter-and-package-install"
+)
+assert reflaxe_php_module_output_receipt["redState"]["exitCode"] == 1
+assert reflaxe_php_module_output_receipt["redState"][
+    "partialAcceptedGraphPublished"
+] is False
+assert reflaxe_php_module_output_receipt["targetProfile"] == {
+    "id": "php74-modern-v1",
+    "minimumPhpVersionId": 70400,
+    "strictTypes": True,
+    "nativeIntTypes": True,
+    "floatingProfileAccepted": False,
+}
+assert reflaxe_php_module_output_receipt["artifactContract"] == {
+    "format": "reflaxe.php-artifact-graph.v1",
+    "pathEncoding": "length-prefixed ASCII Haxe module/type segments",
+    "moduleFileCountInSemanticTracer": 2,
+    "bootstrapSeparated": True,
+    "callbackOrderAuthoritative": False,
+    "dependencyOrderSourceDerived": True,
+    "ownershipManifest": ".reflaxe.php-owned-files.v1",
+    "manifestPublishedLast": True,
+    "machinePathsAllowed": False,
+}
+assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
+    "dependencyDirection": "reflaxe.php <- compiler/wordpress",
+    "command": "bash compiler/wordpress/scripts/test-reflaxe-module-package.sh",
+    "packageFormat": "wordpresshx.reflaxe-module-package.v1",
+    "productionSourceMapsIncluded": False,
+    "packagedPhpExecuted": True,
+    "realWordPressRuntimeUsed": False,
+    "wordpressCompatibilityClaimed": False,
+}
+assert reflaxe_php_module_output_receipt["review"][
+    "distinctFromImplementation"
+] is True
+assert reflaxe_php_module_output_receipt["authority"] == {
+    "hostedProof": False,
+    "officialHaxeQualification": False,
+    "wordpressRuntimeCompatibility": False,
+    "publicationAuthorized": False,
+}
+assert list(reflaxe_php_module_output_input_records) == sorted(
+    reflaxe_php_module_output_input_records
+)
+assert len(reflaxe_php_module_output_input_records) == 26
+for module_input_path, module_input_sha256 in (
+    reflaxe_php_module_output_input_records.items()
+):
+    assert sha256.fullmatch(module_input_sha256)
+    assert Path(module_input_path).is_file()
+    assert hashlib.sha256(Path(module_input_path).read_bytes()).hexdigest() == (
+        module_input_sha256
     )
 assert list(sdk026_input_records) == sorted(sdk026_input_records)
 assert len(sdk026_input_records) == 17
@@ -6615,6 +6688,7 @@ for sdk026_input_path, sdk026_input_sha256 in sdk026_input_records.items():
             g3_closure_subject_records.get(sdk026_input_path),
             reflaxe_php_tracer_input_records.get(sdk026_input_path),
             reflaxe_php_semantic_input_records.get(sdk026_input_path),
+            reflaxe_php_module_output_input_records.get(sdk026_input_path),
         )
 sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
@@ -7461,6 +7535,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
         g3_closure_subject_records.get(strict_haxe_path),
         reflaxe_php_tracer_input_records.get(strict_haxe_path),
         reflaxe_php_semantic_input_records.get(strict_haxe_path),
+        reflaxe_php_module_output_input_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -7513,10 +7588,11 @@ assert set(strict_haxe_scopes) == {
     "cli-ownership-contract",
     "cli-project-and-development",
 }
-for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate in (
+for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_haxe_current_count, strict_haxe_gate in (
     (
         "core-profile-contract",
         "packages/core",
+        18,
         18,
         "bash scripts/profiles/test-profile-haxe.sh",
     ),
@@ -7524,11 +7600,13 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
         "generic-php-compiler",
         "compiler/reflaxe.php",
         53,
+        58,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
         "wordpress-php-compiler",
         "compiler/wordpress",
+        26,
         26,
         "bash compiler/wordpress/scripts/test.sh",
     ),
@@ -7541,8 +7619,8 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
         for path in tracked_haxe_paths
         if str(path).startswith(strict_haxe_scope_prefix)
     )
-    assert len(strict_haxe_scope_paths) == strict_haxe_count
-    assert strict_haxe_scope["haxeFileCount"] == strict_haxe_count
+    assert len(strict_haxe_scope_paths) == strict_haxe_current_count
+    assert strict_haxe_scope["haxeFileCount"] == strict_haxe_recorded_count
     assert strict_haxe_scope["findingCount"] == strict_haxe_findings(
         strict_haxe_scope_paths
     ) == 0
@@ -7719,6 +7797,7 @@ for record in sdk025_inputs:
             g3_closure_subject_records.get(record["path"]),
             reflaxe_php_tracer_input_records.get(record["path"]),
             reflaxe_php_semantic_input_records.get(record["path"]),
+            reflaxe_php_module_output_input_records.get(record["path"]),
         }
         assert sha1.fullmatch(sdk025_implementation["implementationCommit"])
 
@@ -11607,8 +11686,10 @@ assert len(activation_inputs) == 12
 for entry in activation_inputs:
     input_path = Path(entry["path"])
     assert input_path.is_file()
-    assert hashlib.sha256(input_path.read_bytes()).hexdigest() == (
-        entry["sha256"]
+    activation_current_sha256 = hashlib.sha256(input_path.read_bytes()).hexdigest()
+    assert activation_current_sha256 in (
+        entry["sha256"],
+        reflaxe_php_module_output_input_records.get(entry["path"]),
     )
     assert entry["path"].startswith("compiler/wordpress/")
     assert not entry["path"].startswith("compiler/reflaxe.php/")

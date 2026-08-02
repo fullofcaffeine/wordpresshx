@@ -119,6 +119,19 @@ out-of-bounds reads are compile-negative owners and publish no partial PHP. The
 array restriction is semantic: raw missing-key access warns in PHP but returns
 `null` in stock Haxe, so broader indexing awaits an owned runtime representation.
 
+The module-output tracer is a separate behavior owner. It begins with the same
+two-module Haxe source but protects artifact topology rather than adding a new
+language-semantic claim: every owned type receives a collision-safe PHP path and
+exact map, the complete typed static-reference graph determines a callback-order-
+independent bootstrap, and the exact `php74-modern-v1` profile owns syntax and
+native-type policy. Its focused owner exercises graph/path/profile and generated-
+file ownership failures. Its generic vertical executes the emitted bootstrap;
+the downstream `wordpress-reflaxe-module-package` vertical then validates and
+packages that exact graph, extracts the deterministic plugin-shaped ZIP, and
+executes the packaged PHP. The package scorecard gains only this one-way package
+boundary. No real WordPress runtime/ABI result is inferred because the proof does
+not boot WordPress.
+
 Mocks are useful when the mocked component is not the claim. A mock that removes
 WordPress bootstrap, PHP reference semantics, package installation, Gutenberg
 state, or browser behavior cannot prove that boundary.

@@ -112,7 +112,7 @@
       "claims": [
         "typed authored PHP IR emits deterministic PHP for the admitted slice",
         "WordPress public adapters emit readable native PHP for the admitted fixtures",
-        "one ordinary-Haxe static-main and Sys.println(String) tracer lowers through the custom Reflaxe driver; broader lowering and official Haxe target qualification remain unimplemented"
+        "ordinary-Haxe tracer and bounded semantic fixtures lower through the custom Reflaxe driver into deterministic per-type PHP, exact maps, and a separate dependency-ordered bootstrap under an explicit PHP profile; broader lowering and official Haxe target qualification remain unimplemented"
       ],
       "authoredInputs": [
         "Haxe-authored typed PHP IR fixtures",
@@ -122,12 +122,14 @@
       "producedOutputs": [
         "native PHP files",
         "source-correlation maps",
+        "content-addressed per-type PHP artifact graphs",
         "typed final-sink plans"
       ],
       "supportedProfiles": [],
       "testedProfiles": [
         "generic typed-IR slice on PHP 7.4.33 and 8.4.7",
         "ordinary-Haxe tracer through deterministic PHP, exact source map, and local native PHP",
+        "php74-modern-v1 per-type artifacts, source-derived load order, staged ownership, and a downstream deterministic WordPress package-boundary proof",
         "small Int addition, initialized local, equality, if/else, required Int parameters/returns, a source-owned cross-module static call, explicit Int assignment, Int <=, and pre-test while under stock Haxe 4.3.7 and exact PHP 8.4.7",
         "wp70-release public-adapter fixtures",
         "ADR-009 and ADR-012 bounded prototypes"
@@ -142,6 +144,7 @@
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
         "generic-php-package",
+        "wordpress-reflaxe-module-package",
         "wordpress-public-php-runtime",
         "output-context-vertical"
       ],
@@ -219,7 +222,8 @@
       "unprovenOwners": [
         "compiler-qualification-contract",
         "ordinary-haxe-php-tracer",
-        "reflaxe-php-semantic-matrix"
+        "reflaxe-php-semantic-matrix",
+        "wordpress-reflaxe-module-package"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -351,6 +355,7 @@
       "status": "experimental",
       "claims": [
         "bounded compiler package and generated plugin artifacts replay deterministically in clean fixtures",
+        "the WordPress compiler packages an authenticated reflaxe.php per-type graph into a deterministic plugin-shaped ZIP without runtime source maps",
         "two generated Gutenberg showcase plugins install and activate on exact WordPress 7.0",
         "no public SDK package, theme, full-site artifact, upgrade, uninstall, or release claim exists"
       ],
@@ -366,6 +371,7 @@
       "supportedProfiles": [],
       "testedProfiles": [
         "clean source-only reflaxe.php package consumer",
+        "deterministic WordPress-owned package of the exact reflaxe.php module graph; WordPress runtime compatibility remains unclaimed",
         "wp70-release generated plugin fixtures"
       ],
       "focusedOwners": [
@@ -373,6 +379,7 @@
       ],
       "verticalIntegrationOwners": [
         "generic-php-package",
+        "wordpress-reflaxe-module-package",
         "plugin-package-install",
         "editor-sidebar-example",
         "todo-data-store-example"
@@ -406,6 +413,8 @@
       "quarantines": [],
       "selectorOwnership": [
         "packages/cli/*",
+        "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
+        "compiler/wordpress/scripts/test-reflaxe-module-package.sh",
         "scripts/scaffold/*",
         "scripts/ownership/*",
         "scripts/determinism/*",
@@ -466,6 +475,7 @@
         }
       ],
       "unprovenOwners": [
+        "wordpress-reflaxe-module-package",
         "plugin-package-install"
       ],
       "residualRisks": [
@@ -811,6 +821,7 @@
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
         "generic-php-package",
+        "wordpress-reflaxe-module-package",
         "wordpress-profile-focused"
       ],
       "alwaysRun": false,
@@ -838,6 +849,7 @@
       ],
       "reverseDependencies": [
         "generic-php-package",
+        "wordpress-reflaxe-module-package",
         "wordpress-profile-focused"
       ],
       "alwaysRun": false,
@@ -871,7 +883,7 @@
       ],
       "alwaysRun": false,
       "oracle": "the typed capability registry, stock Haxe 4.3.7 execution, manually authored PHP/stdout, independent source-map checks, and exact native PHP 8.4.7 with stderr required empty",
-      "claimContribution": "only the 18 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
+      "claimContribution": "only the 20 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
     },
     {
       "testId": "generic-php-package",
@@ -896,6 +908,29 @@
       "alwaysRun": false,
       "oracle": "clean Haxelib resolution failure-before-install, byte-identical packages, and native PHP consumer execution",
       "claimContribution": "package seam for the admitted compiler slice, not public release readiness"
+    },
+    {
+      "testId": "wordpress-reflaxe-module-package",
+      "name": "WordPress-owned package of an authenticated reflaxe.php module graph",
+      "surfaces": [
+        "compiler-adapter",
+        "package-install"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/wordpress/scripts/test-reflaxe-module-package.sh",
+      "pathPatterns": [
+        "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
+        "compiler/wordpress/scripts/test-reflaxe-module-package.sh"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "the authenticated generic artifact graph, manually reviewed compiler-tracer stdout, deterministic ZIP invariants, PHP parser/runtime observation, and an independently generated ABSPATH-guarded root",
+      "claimContribution": "one-way deterministic packaging and packaged-PHP boot for the admitted compiler graph only; no WordPress runtime compatibility or release claim"
     },
     {
       "testId": "wordpress-runtime-harness",
