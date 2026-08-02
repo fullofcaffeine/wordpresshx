@@ -9,3 +9,4 @@ bool-short-circuit:pass
 instance-layout:pass
 closure-capture:pass
 exception-catch:pass
+nullable-string:pass

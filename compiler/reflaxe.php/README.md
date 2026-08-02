@@ -98,6 +98,13 @@ compiler explicitly rejects a null String argument instead of generating a PHP
 call with different behavior. Calls from handwritten weakly typed PHP are a
 separate adapter/ABI concern and are not covered by this source-owned call
 claim.
+The first explicit nullable slice is narrower: `Null<String>` locals may be
+initialized from `null` or an admitted String, passed to a source-owned required
+`Null<String>` parameter, and compared with `null` using `==` or `!=`. The
+compiler emits PHP 7.4-compatible `?string` signatures, native `null`, and
+strict `===`/`!==` checks. `Null<Int>`, `Null<Bool>`, nullable objects or arrays,
+mutation, optional/default parameters, dereference/flow narrowing, foreign
+callers, and general null/runtime behavior remain rejected or unclaimed.
 The same fail-closed rule applies to the admitted Boolean slice: exact Bool
 literals, locals, logical negation, direct conditions, required non-null
 parameters/returns, source-owned calls, and lazily evaluated `&&`/`||` lower to

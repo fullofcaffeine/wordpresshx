@@ -71,5 +71,12 @@ class Hx_9_semantics_4_Main {
 				echo 'exception-catch:fail' . PHP_EOL;
 			}
 		}
+		$missing = null;
+		$present = 'present';
+		if ( ( ( ( Hx_9_semantics_10_Calculator::isMissing( $missing ) && Hx_9_semantics_10_Calculator::isPresent( $present ) ) && Hx_9_semantics_10_Calculator::isMissing( null ) ) && Hx_9_semantics_10_Calculator::isPresent( 'direct' ) ) ) {
+			echo 'nullable-string:pass' . PHP_EOL;
+		} else {
+			echo 'nullable-string:fail' . PHP_EOL;
+		}
 	}
 }

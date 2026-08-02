@@ -98,7 +98,7 @@ class PhpTypedAstValidator {
 				case "Int":
 					validateRequiredParameters(functionData, "Int");
 				case "Bool":
-					validateRequiredParameters(functionData, "Bool");
+					validateRequiredParameters(functionData, hasRequiredNullableStringParameter(functionData) ? "Null<String>" : "Bool");
 				case "String":
 					validateRequiredParameters(functionData, "String");
 				case _:
@@ -152,6 +152,7 @@ class PhpTypedAstValidator {
 						case "Int": validateIntValue(initialValue, intArrayLengths);
 						case "Bool": validateBoolValue(initialValue);
 						case "String": validateStringValue(initialValue);
+						case "Null<String>": validateNullableStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
 							if (PhpStringClosureShape.isType(variable.t)) {
@@ -334,6 +335,8 @@ class PhpTypedAstValidator {
 			case TBinop(OpBoolAnd | OpBoolOr, left, right):
 				validateBoolValue(left);
 				validateBoolValue(right);
+			case TBinop(OpEq | OpNotEq, left, right):
+				validateNullableStringNullCheck(expression, left, right);
 			case TCall(target, arguments):
 				validateStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
@@ -342,6 +345,24 @@ class PhpTypedAstValidator {
 				Context.error("reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
 					expression.pos);
 		}
+	}
+
+	static function validateNullableStringValue(expression:TypedExpr):Void {
+		switch (expression.expr) {
+			case TConst(TNull | TString(_)):
+			case TLocal(variable) if (isNullableStringType(variable.t)):
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateNullableStringValue(inner);
+			case _:
+				Context.error("reflaxe.php nullable String values support only null, String literals, and exact Null<String> locals", expression.pos);
+		}
+	}
+
+	static function validateNullableStringNullCheck(expression:TypedExpr, left:TypedExpr, right:TypedExpr):Void {
+		if (isNullableStringLocal(left) && isNullLiteral(right)) {
+			return;
+		}
+		Context.error("reflaxe.php nullable String checks require an exact Null<String> local on the left and null on the right", expression.pos);
 	}
 
 	static function validateIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
@@ -444,12 +465,49 @@ class PhpTypedAstValidator {
 
 	static function validateStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
 		switch (target.expr) {
-			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
-				for (argument in arguments) {
-					validateBoolValue(argument);
+			case TField(_, FStatic(classRef, fieldRef)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
+				if (isRequiredNullableStringBoolField(classRef.get(), fieldRef.get())) {
+					if (arguments.length != 1) {
+						Context.error("reflaxe.php nullable String Bool calls require exactly one argument", call.pos);
+					} else {
+						validateNullableStringValue(arguments[0]);
+					}
+				} else {
+					for (argument in arguments) {
+						validateBoolValue(argument);
+					}
 				}
 			case _:
 				Context.error("reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice", call.pos);
+		}
+	}
+
+	static function hasRequiredNullableStringParameter(functionData:ClassFuncData):Bool {
+		return functionData.args.length == 1 && isNullableStringType(functionData.args[0].type);
+	}
+
+	static function isRequiredNullableStringBoolField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredNullableStringParameter(functionData);
+	}
+
+	static function isNullableStringType(type:Type):Bool {
+		return TypeTools.toString(type) == "Null<String>";
+	}
+
+	static function isNullableStringLocal(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TLocal(variable): isNullableStringType(variable.t);
+			case TMeta(_, inner) | TParenthesis(inner): isNullableStringLocal(inner);
+			case _: false;
+		}
+	}
+
+	static function isNullLiteral(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TConst(TNull): true;
+			case TMeta(_, inner) | TParenthesis(inner): isNullLiteral(inner);
+			case _: false;
 		}
 	}
 

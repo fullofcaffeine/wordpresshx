@@ -157,11 +157,15 @@ def main() -> None:
         "stmt:return-int:96:115": ("statement", 2, b"return left + right"),
         "method:semantics.Calculator:decorate": ("member", 1, b"public static function decorate"),
         "stmt:return-string:194:215": ("statement", 2, b"return prefix + value"),
+        "method:semantics.Calculator:isMissing": ("member", 1, b"public static function isMissing"),
+        "stmt:return-bool:284:304": ("statement", 2, b"return value == null"),
+        "method:semantics.Calculator:isPresent": ("member", 1, b"public static function isPresent"),
+        "stmt:return-bool:373:393": ("statement", 2, b"return value != null"),
         "method:semantics.Calculator:negate": ("member", 1, b"public static function negate"),
-        "stmt:return-bool:273:286": ("statement", 2, b"return !value"),
+        "stmt:return-bool:451:464": ("statement", 2, b"return !value"),
         "method:semantics.Calculator:probe": ("member", 1, b"public static function probe"),
-        "stmt:sys-println:343:368": ("statement", 2, b'Sys.println("bool-probe")'),
-        "stmt:return-bool:372:384": ("statement", 2, b"return value"),
+        "stmt:sys-println:521:546": ("statement", 2, b'Sys.println("bool-probe")'),
+        "stmt:return-bool:550:562": ("statement", 2, b"return value"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -218,14 +222,21 @@ def main() -> None:
         "stmt:if-string-equality:1774:1911": ("statement", 3, b'if (message == "expected-exception")'),
         "stmt:sys-println:1817:1852": ("statement", 4, b'Sys.println("exception-catch:pass")'),
         "stmt:sys-println:1870:1905": ("statement", 4, b'Sys.println("exception-catch:fail")'),
+        "stmt:local-nullable-string:1919:1953": ("statement", 2, b"final missing:Null<String> = null"),
+        "stmt:local-nullable-string:1956:1995": ("statement", 2, b'final present:Null<String> = "present"'),
+        "stmt:if-bool:1998:2226": ("statement", 2, b"if (Calculator.isMissing(missing)"),
+        "stmt:sys-println:2135:2170": ("statement", 3, b'Sys.println("nullable-string:pass")'),
+        "stmt:sys-println:2186:2221": ("statement", 3, b'Sys.println("nullable-string:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
             "stmt:return-int:96:115",
             "stmt:return-string:194:215",
-            "stmt:return-bool:273:286",
-            "stmt:sys-println:343:368",
-            "stmt:return-bool:372:384",
+            "stmt:return-bool:284:304",
+            "stmt:return-bool:373:393",
+            "stmt:return-bool:451:464",
+            "stmt:sys-println:521:546",
+            "stmt:return-bool:550:562",
         })
     verify_map(
         output_root,
@@ -254,7 +265,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null maps passed")
 
 
 if __name__ == "__main__":

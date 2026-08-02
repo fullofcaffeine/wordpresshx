@@ -73,5 +73,13 @@ class Main {
 				Sys.println("exception-catch:fail");
 			}
 		}
+
+		final missing:Null<String> = null;
+		final present:Null<String> = "present";
+		if (Calculator.isMissing(missing) && Calculator.isPresent(present) && Calculator.isMissing(null) && Calculator.isPresent("direct")) {
+			Sys.println("nullable-string:pass");
+		} else {
+			Sys.println("nullable-string:fail");
+		}
 	}
 }

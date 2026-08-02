@@ -55,6 +55,12 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var CatchHaxeException = "exception.catch-haxe-exception";
 	var CaughtHaxeExceptionMessage = "exception.caught-haxe-exception-message";
 	var TryThrowCatch = "exception.try-throw-catch";
+	var NullLiteral = "null.null-literal";
+	var InitializedNullableStringLocal = "null.initialized-nullable-string-local";
+	var RequiredNullableStringParameter = "call.required-nullable-string-parameter";
+	var StaticApplicationNullableStringCall = "call.static-application-nullable-string-call";
+	var NullableStringNullEquality = "null.nullable-string-equality";
+	var NullableStringNullInequality = "null.nullable-string-inequality";
 	var NullableValue = "null.nullable-value";
 	var HaxeStdlib = "runtime.haxe-stdlib";
 	var NumericEdgeSemantics = "numeric.overflow-division-modulo";
@@ -168,6 +174,12 @@ class PhpSemanticCapabilities {
 			record(ThrowHaxeException, Exceptions, Admitted, semantic, owner),
 			record(CatchHaxeException, Exceptions, Admitted, semantic, owner),
 			record(CaughtHaxeExceptionMessage, Exceptions, Admitted, semantic, owner),
+			record(NullLiteral, NullBehavior, Admitted, semantic, owner),
+			record(InitializedNullableStringLocal, NullBehavior, Admitted, semantic, owner),
+			record(RequiredNullableStringParameter, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationNullableStringCall, CallsClosures, Admitted, semantic, owner),
+			record(NullableStringNullEquality, NullBehavior, Admitted, semantic, owner),
+			record(NullableStringNullInequality, NullBehavior, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
@@ -178,7 +190,8 @@ class PhpSemanticCapabilities {
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
 			record(TryThrowCatch, Exceptions, UnsupportedOwned,
 				"only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted", owner),
-			record(NullableValue, NullBehavior, UnsupportedOwned, "test-semantic-matrix.sh rejects a stock-Haxe-valid null String call before output", owner),
+			record(NullableValue, NullBehavior, UnsupportedOwned,
+				"only explicit Null<String> locals, required parameters, source-owned calls, and local ==/!= null checks are admitted", owner),
 			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "no owned Haxe runtime or standard-library projection exists", owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),
 			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "runtime Unicode operations are not classified", owner),

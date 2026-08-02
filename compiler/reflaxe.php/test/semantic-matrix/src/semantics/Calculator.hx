@@ -9,6 +9,14 @@ class Calculator {
 		return prefix + value;
 	}
 
+	public static function isMissing(value:Null<String>):Bool {
+		return value == null;
+	}
+
+	public static function isPresent(value:Null<String>):Bool {
+		return value != null;
+	}
+
 	public static function negate(value:Bool):Bool {
 		return !value;
 	}

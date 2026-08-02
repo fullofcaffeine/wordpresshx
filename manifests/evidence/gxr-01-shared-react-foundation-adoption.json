@@ -68,7 +68,7 @@
     },
     "repositoryGate": {
       "path": "scripts/check-repository.sh",
-      "sha256": "cde2b782e69c8cb0a88590a498e5d05b9eb48ebb6f88d9c122049273f4796529"
+      "sha256": "a908731d7a8892c6f9c77559d56cafb7053cb4fce5ba430c61a4c18db601c67b"
     }
   },
   "previousCompiler": {

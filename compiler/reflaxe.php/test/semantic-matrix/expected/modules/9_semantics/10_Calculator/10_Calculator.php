@@ -11,6 +11,14 @@ class Hx_9_semantics_10_Calculator {
 		return $prefix . $value;
 	}
 
+	public static function isMissing(?string $value): bool {
+		return $value === null;
+	}
+
+	public static function isPresent(?string $value): bool {
+		return $value !== null;
+	}
+
 	public static function negate(bool $value): bool {
 		return ! $value;
 	}

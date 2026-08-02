@@ -109,15 +109,16 @@ only when it protects a distinct user promise.
 The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
-Its owner remains explicitly unproven by hosted evidence until a clean workflow
-runs the exact command; local green evidence does not borrow an older typed-IR
+The latest exact hosted predecessor is retained as historical authority only;
+a newly expanded local semantic subject remains hosted-pending until a clean
+workflow runs its exact command and does not borrow the predecessor, typed-IR,
 or WordPress proof.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The last hosted subject lists 45 admitted, 6 explicitly unsupported,
+registry. The last hosted subject lists 53 admitted, 6 explicitly unsupported,
 and 7 unverified capabilities across 13 categories. The next local subject
-lists 50 admitted records while that exact hosted 45-record predecessor remains
+lists 59 admitted records while that exact hosted 53-record predecessor remains
 the only hosted authority. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
@@ -147,9 +148,13 @@ String coercion are compile-negative owners and publish no partial PHP. The
 String signature slice additionally lowers required non-null String
 parameters/returns and source-owned calls to native PHP `string`; the Bool
 signature slice does the same with native PHP `bool`. Stock-Haxe-valid null
-arguments and foreign String/Bool calls fail before publication. Broader
-array and Unicode operations, nullable String/Bool values, and calls from weak handwritten
-PHP await separately owned runtime/adapter contracts. Every compile-negative
+arguments to non-null signatures and foreign String/Bool calls fail before
+publication. The bounded nullable slice admits only `Null<String>` locals,
+required source-owned parameters/calls, and strict null equality/inequality,
+emitting PHP `?string`, `null`, `===`, and `!==`. `Null<Int>`, nullable mutation,
+other nullable domains, and weak handwritten PHP await separately owned
+runtime/adapter contracts. Broader array and Unicode operations remain outside
+this subject. Every compile-negative
 fixture must first run successfully under stock Haxe with empty stderr, so a
 malformed source program cannot be mistaken for a compiler limitation.
 

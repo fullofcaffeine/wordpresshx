@@ -24,7 +24,13 @@ Bool literals/locals, logical negation, direct conditions, required non-null
 Bool parameters/returns, source-owned static Bool calls, and lazy `&&`/`||`
 with typed parenthesized grouping, without PHP truthiness. Null arguments are
 rejected before emission because ordinary non-null-safe Haxe and strict PHP do
-not otherwise agree at that boundary. The admitted object subset adds one
+not otherwise agree at that boundary. One explicit nullable subset admits only
+`Null<String>` locals initialized from `null` or an admitted String, required
+source-owned `Null<String>` parameters and calls, and `== null` / `!= null`
+checks. It lowers to PHP 7.4-compatible `?string`, native `null`, and strict
+identity checks. Other nullable types, mutation, optional/default parameters,
+foreign callers, dereference/flow narrowing, and general null semantics remain
+unqualified. The admitted object subset adds one
 non-inherited class with a private typed
 `String` field, constructor-only initialization, a required `String`
 constructor and instance method, native construction, and an instance call.

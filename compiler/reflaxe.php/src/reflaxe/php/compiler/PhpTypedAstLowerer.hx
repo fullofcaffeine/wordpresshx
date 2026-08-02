@@ -18,6 +18,8 @@ import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpStmt;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
+
+using reflaxe.helpers.ClassFieldHelper;
 #end
 
 /** The deliberately small first typed-Haxe AST to PHP IR lowering slice. **/
@@ -116,12 +118,17 @@ class PhpTypedAstLowerer {
 				final parameters = lowerRequiredParameters(functionData, "Int", PhpIntType);
 				{parameters: parameters, returnType: PhpIntType};
 			case "Bool":
-				PhpSemanticCapabilities.requireAdmitted(RequiredBoolParameters);
 				PhpSemanticCapabilities.requireAdmitted(BoolReturn);
 				if (functionData.args.length == 0) {
 					Context.fatalError("reflaxe.php Bool-returning methods currently require at least one Bool parameter", functionData.field.pos);
 				}
-				final parameters = lowerRequiredParameters(functionData, "Bool", PhpBoolType);
+				final parameters = if (hasRequiredNullableStringParameter(functionData)) {
+					PhpSemanticCapabilities.requireAdmitted(RequiredNullableStringParameter);
+					lowerRequiredParameters(functionData, "Null<String>", PhpNullableType(PhpStringType));
+				} else {
+					PhpSemanticCapabilities.requireAdmitted(RequiredBoolParameters);
+					lowerRequiredParameters(functionData, "Bool", PhpBoolType);
+				};
 				{parameters: parameters, returnType: PhpBoolType};
 			case "String":
 				PhpSemanticCapabilities.requireAdmitted(RequiredStringParameters);
@@ -183,6 +190,11 @@ class PhpTypedAstLowerer {
 							PhpSemanticCapabilities.requireAdmitted(InitializedStringLocal);
 							[
 								mapped(PhpLocal(variable.name, lowerStringValue(initialValue)), expression, "local-string")
+							];
+						case "Null<String>":
+							PhpSemanticCapabilities.requireAdmitted(InitializedNullableStringLocal);
+							[
+								mapped(PhpLocal(variable.name, lowerNullableStringValue(initialValue)), expression, "local-nullable-string")
 							];
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
@@ -420,10 +432,38 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(BoolShortCircuitOr);
 				PhpSemanticCapabilities.requireAdmitted(BoolParenthesizedGrouping);
 				PhpParenthesized(PhpBinop("||", lowerBoolValue(left), lowerBoolValue(right)));
+			case TBinop(OpEq, left, right): lowerNullableStringNullCheck(expression, left, right, true);
+			case TBinop(OpNotEq, left, right): lowerNullableStringNullCheck(expression, left, right, false);
 			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerBoolValue(inner);
 			case _: unsupportedBoolValue(expression);
 		}
+	}
+
+	function lowerNullableStringValue(expression:TypedExpr):PhpExpr {
+		return switch (expression.expr) {
+			case TConst(TNull):
+				PhpSemanticCapabilities.requireAdmitted(NullLiteral);
+				PhpNull;
+			case TConst(TString(value)):
+				PhpSemanticCapabilities.requireAdmitted(StringLiteral);
+				PhpString(value);
+			case TLocal(variable) if (isNullableStringType(variable.t)):
+				PhpSemanticCapabilities.requireAdmitted(InitializedNullableStringLocal);
+				PhpVar(variable.name);
+			case TMeta(_, inner) | TParenthesis(inner): lowerNullableStringValue(inner);
+			case _:
+				Context.fatalError("reflaxe.php nullable String values support only null, String literals, and exact Null<String> locals", expression.pos);
+				PhpNull;
+		}
+	}
+
+	function lowerNullableStringNullCheck(expression:TypedExpr, left:TypedExpr, right:TypedExpr, equality:Bool):PhpExpr {
+		if (!isNullableStringLocal(left) || !isNullLiteral(right)) {
+			Context.fatalError("reflaxe.php nullable String checks require an exact Null<String> local on the left and null on the right", expression.pos);
+		}
+		PhpSemanticCapabilities.requireAdmitted(equality ? NullableStringNullEquality : NullableStringNullInequality);
+		return PhpBinop(equality ? "===" : "!==", lowerNullableStringValue(left), PhpNull);
 	}
 
 	function lowerIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
@@ -527,11 +567,48 @@ class PhpTypedAstLowerer {
 	function lowerStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
 		return switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
-				PhpSemanticCapabilities.requireAdmitted(StaticApplicationBoolCall);
-				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerBoolValue));
+				if (isRequiredNullableStringBoolField(classRef.get(), fieldRef.get())) {
+					if (arguments.length != 1) {
+						Context.fatalError("reflaxe.php nullable String Bool calls require exactly one argument", call.pos);
+					}
+					PhpSemanticCapabilities.requireAdmitted(StaticApplicationNullableStringCall);
+					PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerNullableStringValue));
+				} else {
+					PhpSemanticCapabilities.requireAdmitted(StaticApplicationBoolCall);
+					PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerBoolValue));
+				}
 			case _:
 				Context.fatalError("reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice", call.pos);
 				PhpBool(false);
+		}
+	}
+
+	static function hasRequiredNullableStringParameter(functionData:ClassFuncData):Bool {
+		return functionData.args.length == 1 && isNullableStringType(functionData.args[0].type);
+	}
+
+	static function isRequiredNullableStringBoolField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredNullableStringParameter(functionData);
+	}
+
+	static function isNullableStringType(type:Type):Bool {
+		return TypeTools.toString(type) == "Null<String>";
+	}
+
+	static function isNullableStringLocal(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TLocal(variable): isNullableStringType(variable.t);
+			case TMeta(_, inner) | TParenthesis(inner): isNullableStringLocal(inner);
+			case _: false;
+		}
+	}
+
+	static function isNullLiteral(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TConst(TNull): true;
+			case TMeta(_, inner) | TParenthesis(inner): isNullLiteral(inner);
+			case _: false;
 		}
 	}
 
