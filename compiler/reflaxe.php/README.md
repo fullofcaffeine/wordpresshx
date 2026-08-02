@@ -25,6 +25,9 @@ The current admitted surface is deliberately bounded:
   non-null parameters/returns, and source-owned static calls lowered to native
   PHP `bool`, plus lazy `&&`/`||` with explicit typed grouping so PHP preserves
   Haxe precedence and short-circuit evaluation without admitting truthiness;
+- one non-inherited source-owned class shape with a private constructor-set
+  `String` field, required `String` constructor and instance method, a typed
+  object local, native construction, field read, and instance call;
 - Haxe source-character positions converted to authenticated UTF-8 byte ranges,
   so non-ASCII source before or inside a mapped statement remains traceable; and
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
@@ -97,11 +100,18 @@ so mixed `(a || b) && c` grouping is retained rather than delegated to target
 precedence. A stock-Haxe-valid null Bool argument and foreign Bool calls are
 rejected before emission. PHP truthy coercion, bitwise Bool operations, Bool
 equality/mutation, and weak-PHP callers remain separate capabilities.
-Its two-module fixture runs under stock Haxe and generated PHP; their stdout
+The same fixture now includes a third source-owned class. It proves a narrow
+modern object path: Haxe `new Greeter(...)` becomes a dedicated PHP class with a
+private typed property, `__construct`, and native instance call. The field must
+be private, `String`-typed, and constructor-only; mutable fields, inheritance,
+interfaces, overrides, accessors, nullable objects, and general object/runtime
+semantics still fail closed or remain unclaimed.
+Its three-module fixture runs under stock Haxe and generated PHP; their stdout
 must be byte-identical, and any PHP warning, error, or fatal fails the lane.
 Optional/default and signature types outside the admitted `Int`/`Bool`/`String` subset, foreign static calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
-String coercion, null String/Bool arguments, and foreign String/Bool calls fail without
+String coercion, null String/Bool arguments, foreign String/Bool calls, mutable
+instance fields, and inherited instance layouts fail without
 partial output. Arbitrary array access stays
 rejected because native PHP would emit an undefined-key warning where stock
 Haxe returns `null`; String length/indexing/normalization also remain unclaimed

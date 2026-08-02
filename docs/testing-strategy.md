@@ -106,8 +106,10 @@ or WordPress proof.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 37 admitted, 6 explicitly
-unsupported, and 7 unverified capabilities across 13 categories. Its
+registry. The last hosted subject lists 37 admitted, 6 explicitly unsupported,
+and 7 unverified capabilities across 13 categories. The next local subject
+lists 45 admitted records while that exact hosted 37-record predecessor remains
+the only hosted authority. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
@@ -120,7 +122,11 @@ checks literals, an initialized local, logical negation, a direct condition,
 required non-null parameters/return, and a source-owned call without admitting
 PHP truthiness. It also observes lazy `&&`/`||` evaluation with a side-effecting
 probe and a mixed `(a || b) && c` expression whose typed PHP grouping prevents
-target-precedence drift. Empty PHP stderr is
+target-precedence drift. A third module now exercises the first narrow object
+tracer: a private constructor-set `String` field, required `String` constructor
+and instance method, source-owned object local/construction, field read, and
+instance call. Mutable fields and inheritance have stock-Haxe-valid negative
+owners and publish no partial target files. Empty PHP stderr remains
 part of the contract, so warnings and fatals cannot be retried or normalized
 away. Optional/default and signatures outside the admitted `Int`/`Bool`/`String` subset, foreign calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit

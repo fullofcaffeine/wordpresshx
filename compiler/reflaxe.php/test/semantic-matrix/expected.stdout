@@ -6,3 +6,4 @@ unicode-string:pass
 bool-control:pass
 bool-probe
 bool-short-circuit:pass
+instance-layout:pass

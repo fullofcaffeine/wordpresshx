@@ -183,6 +183,14 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 							dependencies.set(identity, true);
 						}
 					}
+				case TField(_, FInstance(classRef, _, _)) | TNew(classRef, _, _):
+					final dependencyClass = classRef.get();
+					if (sources.owns(dependencyClass.pos)) {
+						final identity = PhpArtifactLayout.typeIdentity(dependencyClass.module, dependencyClass.name);
+						if (identity != self) {
+							dependencies.set(identity, true);
+						}
+					}
 				case _:
 			}
 			TypedExprTools.iter(expression, visit);

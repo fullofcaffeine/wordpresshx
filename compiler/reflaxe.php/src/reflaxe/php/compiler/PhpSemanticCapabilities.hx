@@ -25,6 +25,14 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IntLessOrEqual = "control.int-less-or-equal";
 	var WhileLoop = "control.while";
 	var InstanceLayout = "module.instance-layout";
+	var PrivateInstanceStringField = "module.private-instance-string-field";
+	var RequiredStringConstructor = "declaration.required-string-constructor";
+	var RequiredStringInstanceMethod = "declaration.required-string-instance-method";
+	var InitializedObjectLocal = "value.initialized-source-owned-object-local";
+	var SourceOwnedConstructorCall = "call.source-owned-constructor";
+	var SourceOwnedStringInstanceCall = "call.source-owned-string-instance-call";
+	var InstanceStringFieldRead = "value.instance-string-field-read";
+	var InstanceStringFieldConstructorAssignment = "control.instance-string-field-constructor-assignment";
 	var IntArrayLiteral = "collection.int-array-literal";
 	var ProvenIntArrayRead = "collection.proven-int-array-read";
 	var ArrayCollection = "collection.array";
@@ -105,6 +113,9 @@ class PhpSemanticCapabilities {
 			record(ApplicationSourceRoot, ModuleTypeLayout, Admitted, tracer, owner),
 			record(StaticClass, ModuleTypeLayout, Admitted, tracer, owner),
 			record(StaticVoidNoArgMethod, ModuleTypeLayout, Admitted, tracer, owner),
+			record(RequiredStringConstructor, ModuleTypeLayout, Admitted, semantic, owner),
+			record(RequiredStringInstanceMethod, ModuleTypeLayout, Admitted, semantic, owner),
+			record(PrivateInstanceStringField, ModuleTypeLayout, Admitted, semantic, owner),
 			record(StringLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(InitializedStringLocal, ValuesCollections, Admitted, semantic, owner),
 			record(SysPrintlnString, CallsClosures, Admitted, semantic, owner),
@@ -115,6 +126,8 @@ class PhpSemanticCapabilities {
 			record(IntAddition, Numeric, Admitted, semantic, owner),
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InitializedBoolLocal, ValuesCollections, Admitted, semantic, owner),
+			record(InitializedObjectLocal, ValuesCollections, Admitted, semantic, owner),
+			record(InstanceStringFieldRead, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
 			record(BoolCondition, ControlFlow, Admitted, semantic, owner),
 			record(BoolParenthesizedGrouping, ControlFlow, Admitted, semantic, owner),
@@ -123,6 +136,7 @@ class PhpSemanticCapabilities {
 			record(BoolNot, ControlFlow, Admitted, semantic, owner),
 			record(IfElse, ControlFlow, Admitted, semantic, owner),
 			record(IntAssignment, ControlFlow, Admitted, semantic, owner),
+			record(InstanceStringFieldConstructorAssignment, ControlFlow, Admitted, semantic, owner),
 			record(IntLessOrEqual, ControlFlow, Admitted, semantic, owner),
 			record(WhileLoop, ControlFlow, Admitted, semantic, owner),
 			record(IntArrayLiteral, ValuesCollections, Admitted, semantic, owner),
@@ -136,10 +150,13 @@ class PhpSemanticCapabilities {
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationBoolCall, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationStringCall, CallsClosures, Admitted, semantic, owner),
+			record(SourceOwnedConstructorCall, CallsClosures, Admitted, semantic, owner),
+			record(SourceOwnedStringInstanceCall, CallsClosures, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
-			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned, "validator rejects instance methods and fields", owner),
+			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned,
+				"only a non-inherited private-String-field constructor and String instance-method slice is admitted", owner),
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
 				"general Array runtime behavior beyond fixed Int literals and proven reads is rejected", owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),

@@ -108,6 +108,9 @@ assert_compile_negative "null-string-call" "reflaxe.php supports only String lit
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
 assert_compile_negative "null-bool-call" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "foreign-bool-call" "reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice"
+assert_compile_negative "mutable-instance-field" "reflaxe.php instance fields must be constructor-initialized and immutable after construction"
+assert_compile_negative "inherited-instance-layout" "reflaxe.php instance layout does not yet support inheritance or interfaces"
+assert_compile_negative "instance-field-initializer" "reflaxe.php instance fields do not yet support declaration initializers"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool-short-circuit semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout semantic slices passed"

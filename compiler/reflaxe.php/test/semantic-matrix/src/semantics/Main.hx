@@ -53,5 +53,8 @@ class Main {
 		} else {
 			Sys.println("bool-short-circuit:fail");
 		}
+
+		final greeter = new Greeter("instance-layout:");
+		Sys.println(greeter.render("pass"));
 	}
 }

@@ -33,6 +33,17 @@ class PhpTypedAstValidator {
 	}
 
 	public static function validateClass(classType:ClassType):Void {
+		if (classType.superClass != null || classType.interfaces.length != 0) {
+			Context.error("reflaxe.php instance layout does not yet support inheritance or interfaces", classType.pos);
+		}
+		if (classType.constructor != null) {
+			final constructorData = classType.constructor.get().findFuncData(classType, false);
+			if (constructorData == null) {
+				Context.error("reflaxe.php application constructor has no typed function data", classType.constructor.get().pos);
+			} else {
+				validateMethod(constructorData);
+			}
+		}
 		validateFields(classType, classType.fields.get(), false);
 		validateFields(classType, classType.statics.get(), true);
 	}
@@ -40,8 +51,18 @@ class PhpTypedAstValidator {
 	static function validateFields(classType:ClassType, fields:Array<ClassField>, isStatic:Bool):Void {
 		for (field in fields) {
 			switch (field.kind) {
-				case FVar(_, _):
-					Context.error("reflaxe.php tracer does not yet support application fields", field.pos);
+				case FVar(_, write):
+					if (isStatic || field.isPublic || TypeTools.toString(field.type) != "String") {
+						Context.error("reflaxe.php supports only private instance String fields in the admitted instance-layout slice", field.pos);
+					}
+					if (field.hasDefaultValue()) {
+						Context.error("reflaxe.php instance fields do not yet support declaration initializers", field.pos);
+					}
+					switch (write) {
+						case AccCtor:
+						case _:
+							Context.error("reflaxe.php instance fields must be constructor-initialized and immutable after construction", field.pos);
+					}
 				case FMethod(_):
 					final functionData = field.findFuncData(classType, isStatic);
 					if (functionData == null) {
@@ -54,23 +75,31 @@ class PhpTypedAstValidator {
 	}
 
 	static function validateMethod(functionData:ClassFuncData):Void {
-		if (!functionData.isStatic) {
-			Context.error("reflaxe.php tracer supports only static application methods", functionData.field.pos);
+		final isConstructor = functionData.field.name == "new";
+		if (isConstructor) {
+			if (functionData.isStatic || TypeTools.toString(functionData.ret) != "Void" || functionData.args.length == 0) {
+				Context.error("reflaxe.php constructors require at least one required String parameter", functionData.field.pos);
+			}
+			validateRequiredParameters(functionData, "String");
+		} else if (!functionData.isStatic && TypeTools.toString(functionData.ret) != "String") {
+			Context.error("reflaxe.php supports only String-returning instance methods in the admitted instance-layout slice", functionData.field.pos);
 		}
-		switch (TypeTools.toString(functionData.ret)) {
-			case "Void":
-				if (functionData.args.length != 0) {
-					Context.error("reflaxe.php Void methods do not yet support parameters", functionData.field.pos);
-				}
-			case "Int":
-				validateRequiredParameters(functionData, "Int");
-			case "Bool":
-				validateRequiredParameters(functionData, "Bool");
-			case "String":
-				validateRequiredParameters(functionData, "String");
-			case _:
-				Context.error("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice", functionData.field.pos);
-		}
+		if (!isConstructor)
+			switch (TypeTools.toString(functionData.ret)) {
+				case "Void":
+					if (functionData.args.length != 0) {
+						Context.error("reflaxe.php Void methods do not yet support parameters", functionData.field.pos);
+					}
+				case "Int":
+					validateRequiredParameters(functionData, "Int");
+				case "Bool":
+					validateRequiredParameters(functionData, "Bool");
+				case "String":
+					validateRequiredParameters(functionData, "String");
+				case _:
+					Context.error("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice",
+						functionData.field.pos);
+			}
 		if (functionData.expr == null) {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return;
@@ -115,8 +144,11 @@ class PhpTypedAstValidator {
 						case "String": validateStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
-							Context.error("reflaxe.php supports only Int, Bool, String, and Array<Int> local bindings in the admitted semantic slice",
-								expression.pos);
+							if (ownedClass(variable.t) == null) {
+								Context.error("reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings", expression.pos);
+							} else {
+								validateObjectValue(initialValue);
+							}
 					}
 				}
 			case TIf(condition, thenBranch, elseBranch):
@@ -133,7 +165,13 @@ class PhpTypedAstValidator {
 			case TWhile(_, _, false):
 				Context.error("reflaxe.php does not yet support do-while loops", expression.pos);
 			case TBinop(OpAssign, target, value):
-				validateIntAssignment(expression, target, value, intArrayLengths);
+				switch (target.expr) {
+					case TField(receiver, FInstance(classRef, _, fieldRef))
+						if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
+						validateObjectValue(receiver);
+						validateStringValue(value);
+					case _: validateIntAssignment(expression, target, value, intArrayLengths);
+				}
 			case TBinop(OpAssignOp(_), _, _):
 				Context.error("reflaxe.php does not yet support compound assignment", expression.pos);
 			case TReturn(null):
@@ -195,6 +233,9 @@ class PhpTypedAstValidator {
 				}
 			case TCall(target, arguments):
 				validateStaticApplicationStringCall(expression, target, arguments);
+			case TField(receiver, FInstance(classRef, _, fieldRef))
+				if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
+				validateObjectValue(receiver);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStringValue(inner);
 			case _:
@@ -269,8 +310,37 @@ class PhpTypedAstValidator {
 				for (argument in arguments) {
 					validateStringValue(argument);
 				}
+			case TField(receiver, FInstance(classRef, _, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
+				validateObjectValue(receiver);
+				for (argument in arguments) {
+					validateStringValue(argument);
+				}
 			case _:
 				Context.error("reflaxe.php supports only source-owned static String calls in the admitted semantic slice", call.pos);
+		}
+	}
+
+	static function validateObjectValue(expression:TypedExpr):Void {
+		switch (expression.expr) {
+			case TConst(TThis):
+			case TLocal(variable) if (ownedClass(variable.t) != null):
+			case TNew(classRef, _, arguments) if (new PhpCompilerConfig().owns(classRef.get().pos)):
+				for (argument in arguments) {
+					validateStringValue(argument);
+				}
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateObjectValue(inner);
+			case _:
+				Context.error("reflaxe.php supports only this, source-owned object locals, and source-owned construction", expression.pos);
+		}
+	}
+
+	static function ownedClass(type:Type):Null<ClassType> {
+		return switch (TypeTools.follow(type)) {
+			case TInst(classRef, _):
+				final classType = classRef.get();
+				new PhpCompilerConfig().owns(classType.pos) ? classType : null;
+			case _: null;
 		}
 	}
 

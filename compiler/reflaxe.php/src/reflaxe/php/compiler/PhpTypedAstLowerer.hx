@@ -13,6 +13,7 @@ import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
 import reflaxe.php.ir.PhpParameter;
+import reflaxe.php.ir.PhpProperty;
 import reflaxe.php.ir.PhpStmt;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
@@ -30,17 +31,36 @@ class PhpTypedAstLowerer {
 	public function lowerClass(classType:ClassType, varFields:Array<ClassVarData>, funcFields:Array<ClassFuncData>):PhpClass {
 		PhpSemanticCapabilities.requireAdmitted(StaticClass);
 		PhpTypedAstValidator.validateClass(classType);
-		if (varFields.length != 0) {
-			Context.fatalError("reflaxe.php tracer does not yet support application fields", classType.pos);
+		if (classType.superClass != null || classType.interfaces.length != 0) {
+			Context.fatalError("reflaxe.php instance layout does not yet support inheritance or interfaces", classType.pos);
 		}
+		final orderedFields = varFields.copy();
+		orderedFields.sort((left, right) -> compareText(left.field.name, right.field.name));
+		final properties = orderedFields.map(lowerProperty);
 		final orderedFunctions = funcFields.copy();
 		orderedFunctions.sort((left, right) -> compareText(left.field.name, right.field.name));
 		final methods = orderedFunctions.map(lowerMethod);
-		return new PhpClass(PhpClassKindClass, PhpIdentifier.named(className(classType)), sources.range(classType.pos), null, [], [], methods,
+		return new PhpClass(PhpClassKindClass, PhpIdentifier.named(className(classType)), sources.range(classType.pos), null, [], properties, methods,
 			"class:"
 			+ classType.module
 			+ ":"
 			+ classType.name);
+	}
+
+	function lowerProperty(variableData:ClassVarData):PhpProperty {
+		if (variableData.isStatic || variableData.field.isPublic || TypeTools.toString(variableData.field.type) != "String") {
+			Context.fatalError("reflaxe.php supports only private instance String fields in the admitted instance-layout slice", variableData.field.pos);
+		}
+		switch (variableData.write) {
+			case AccCtor:
+			case _:
+				Context.fatalError("reflaxe.php instance fields must be constructor-initialized and immutable after construction", variableData.field.pos);
+		}
+		if (variableData.findDefaultExpr() != null) {
+			Context.fatalError("reflaxe.php instance fields do not yet support declaration initializers", variableData.field.pos);
+		}
+		PhpSemanticCapabilities.requireAdmitted(PrivateInstanceStringField);
+		return new PhpProperty(PhpPrivate, false, PhpIdentifier.named(variableData.field.name), null, PhpStringType);
 	}
 
 	public function className(classType:ClassType):String {
@@ -49,21 +69,33 @@ class PhpTypedAstLowerer {
 	}
 
 	function lowerMethod(functionData:ClassFuncData):PhpMethod {
-		if (!functionData.isStatic) {
-			Context.fatalError("reflaxe.php tracer supports only static application methods", functionData.field.pos);
+		final isConstructor = functionData.field.name == "new";
+		if (!functionData.isStatic && !isConstructor && TypeTools.toString(functionData.ret) != "String") {
+			Context.fatalError("reflaxe.php supports only String-returning instance methods in the admitted instance-layout slice", functionData.field.pos);
 		}
-		final signature = lowerMethodSignature(functionData);
+		if (!functionData.isStatic) {
+			PhpSemanticCapabilities.requireAdmitted(isConstructor ? RequiredStringConstructor : RequiredStringInstanceMethod);
+		}
+		final signature = isConstructor ? lowerConstructorSignature(functionData) : lowerMethodSignature(functionData);
 		if (functionData.expr == null) {
 			Context.fatalError("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return unreachableMethod(functionData);
 		}
 		final body = lowerStatementList(functionData.expr, new Map<Int, Int>());
-		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, true, false, PhpIdentifier.named(functionData.field.name),
-			signature.parameters, sources.range(functionData.field.pos), signature.returnType, body,
-			"method:"
+		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, functionData.isStatic, false,
+			PhpIdentifier.named(isConstructor ? "__construct" : functionData.field.name), signature.parameters, sources.range(functionData.field.pos),
+			signature.returnType, body, "method:"
 			+ functionData.classType.module
 			+ ":"
 			+ functionData.field.name);
+	}
+
+	function lowerConstructorSignature(functionData:ClassFuncData):{parameters:Array<PhpParameter>, returnType:Null<PhpType>} {
+		if (functionData.isStatic || TypeTools.toString(functionData.ret) != "Void" || functionData.args.length == 0) {
+			Context.fatalError("reflaxe.php constructors require at least one required String parameter", functionData.field.pos);
+		}
+		PhpSemanticCapabilities.requireAdmitted(RequiredStringConstructor);
+		return {parameters: lowerRequiredParameters(functionData, "String", PhpStringType), returnType: null};
 	}
 
 	function lowerMethodSignature(functionData:ClassFuncData):{parameters:Array<PhpParameter>, returnType:PhpType} {
@@ -154,9 +186,16 @@ class PhpTypedAstLowerer {
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
 						case _:
-							Context.fatalError("reflaxe.php supports only Int, Bool, String, and Array<Int> local bindings in the admitted semantic slice",
-								expression.pos);
-							[];
+							if (ownedClass(variable.t) == null) {
+								Context.fatalError("reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings",
+									expression.pos);
+								[];
+							} else {
+								PhpSemanticCapabilities.requireAdmitted(InitializedObjectLocal);
+								[
+									mapped(PhpLocal(variable.name, lowerObjectValue(initialValue)), expression, "local-object")
+								];
+							}
 					}
 				}
 			case TIf(condition, thenBranch, elseBranch):
@@ -180,7 +219,17 @@ class PhpTypedAstLowerer {
 			case TWhile(_, _, false):
 				Context.fatalError("reflaxe.php does not yet support do-while loops", expression.pos);
 				[];
-			case TBinop(OpAssign, target, value): [lowerIntAssignment(expression, target, value, intArrayLengths)];
+			case TBinop(OpAssign, target, value):
+				switch (target.expr) {
+					case TField(receiver, FInstance(classRef, _, fieldRef))
+						if (sources.owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
+						PhpSemanticCapabilities.requireAdmitted(InstanceStringFieldConstructorAssignment);
+						[
+							mapped(PhpAssign(PhpObjectProperty(lowerObjectValue(receiver), fieldRef.get().name), lowerStringValue(value)), expression,
+								"assign-instance-string")
+						];
+					case _: [lowerIntAssignment(expression, target, value, intArrayLengths)];
+				}
 			case TBinop(OpAssignOp(_), _, _):
 				Context.fatalError("reflaxe.php does not yet support compound assignment", expression.pos);
 				[];
@@ -264,6 +313,10 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(StringConcatenation);
 				PhpBinop(".", lowerStringValue(left), lowerStringValue(right));
 			case TCall(target, arguments): lowerStaticApplicationStringCall(expression, target, arguments);
+			case TField(receiver, FInstance(classRef, _, fieldRef))
+				if (sources.owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
+				PhpSemanticCapabilities.requireAdmitted(InstanceStringFieldRead);
+				PhpObjectProperty(lowerObjectValue(receiver), fieldRef.get().name);
 			case TMeta(_, inner) | TParenthesis(inner): lowerStringValue(inner);
 			case _: unsupportedStringValue(expression);
 		}
@@ -343,9 +396,35 @@ class PhpTypedAstLowerer {
 			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
 				PhpSemanticCapabilities.requireAdmitted(StaticApplicationStringCall);
 				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerStringValue));
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
+				PhpSemanticCapabilities.requireAdmitted(SourceOwnedStringInstanceCall);
+				PhpMethodCall(lowerObjectValue(receiver), fieldRef.get().name, arguments.map(lowerStringValue));
 			case _:
 				Context.fatalError("reflaxe.php supports only source-owned static String calls in the admitted semantic slice", call.pos);
 				PhpString("");
+		}
+	}
+
+	function lowerObjectValue(expression:TypedExpr):PhpExpr {
+		return switch (expression.expr) {
+			case TConst(TThis): PhpVar("this");
+			case TLocal(variable) if (ownedClass(variable.t) != null): PhpVar(variable.name);
+			case TNew(classRef, _, arguments) if (sources.owns(classRef.get().pos)):
+				PhpSemanticCapabilities.requireAdmitted(SourceOwnedConstructorCall);
+				PhpNew(className(classRef.get()), arguments.map(lowerStringValue));
+			case TMeta(_, inner) | TParenthesis(inner): lowerObjectValue(inner);
+			case _:
+				Context.fatalError("reflaxe.php supports only this, source-owned object locals, and source-owned construction", expression.pos);
+				PhpNull;
+		}
+	}
+
+	function ownedClass(type:Type):Null<ClassType> {
+		return switch (TypeTools.follow(type)) {
+			case TInst(classRef, _):
+				final classType = classRef.get();
+				sources.owns(classType.pos) ? classType : null;
+			case _: null;
 		}
 	}
 
@@ -437,8 +516,8 @@ class PhpTypedAstLowerer {
 	}
 
 	function unreachableMethod(functionData:ClassFuncData):PhpMethod {
-		return new PhpMethod(PhpPrivate, true, false, PhpIdentifier.named(functionData.field.name), [], sources.range(functionData.field.pos), PhpVoidType,
-			[], "method:unreachable:" + functionData.field.name);
+		return new PhpMethod(PhpPrivate, functionData.isStatic, false, PhpIdentifier.named(functionData.field.name), [],
+			sources.range(functionData.field.pos), PhpVoidType, [], "method:unreachable:" + functionData.field.name);
 	}
 
 	static function compareText(left:String, right:String):Int {

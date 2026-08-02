@@ -14,7 +14,7 @@ may use the generic compiler.
 ## What is qualified today
 
 The compiler now has a real Reflaxe registration and a deliberately bounded
-ordinary-Haxe path. Two Haxe modules lower through the generic PHP IR into one
+ordinary-Haxe path. Three Haxe modules lower through the generic PHP IR into one
 mapped PHP file per type plus a dependency-ordered bootstrap, then execute under
 native PHP. The checked semantic matrix currently covers small `Int` control
 flow and calls, fixed proven `Array<Int>` reads, and exact UTF-8 String
@@ -24,7 +24,13 @@ Bool literals/locals, logical negation, direct conditions, required non-null
 Bool parameters/returns, source-owned static Bool calls, and lazy `&&`/`||`
 with typed parenthesized grouping, without PHP truthiness. Null arguments are
 rejected before emission because ordinary non-null-safe Haxe and strict PHP do
-not otherwise agree at that boundary. This establishes a useful compiler path;
+not otherwise agree at that boundary. The admitted object subset adds one
+non-inherited class with a private typed
+`String` field, constructor-only initialization, a required `String`
+constructor and instance method, native construction, and an instance call.
+Mutable fields, inheritance, interfaces, overrides, accessors, nullable object
+values, and broad object semantics are not qualified. This establishes a useful
+compiler path;
 it does not imply arbitrary typed-Haxe lowering, a complete
 runtime/standard-library strategy, an external weak-PHP ABI claim, or an
 official Haxe-suite result.

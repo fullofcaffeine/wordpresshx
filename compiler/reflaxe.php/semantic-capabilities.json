@@ -52,6 +52,20 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.source-owned-constructor",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.source-owned-string-instance-call",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.static-application-bool-call",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -143,6 +157,13 @@
     {
       "category": "control-flow",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.instance-string-field-constructor-assignment",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "control.int-assignment",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -165,6 +186,20 @@
       "category": "control-flow",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "control.while",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "declaration.required-string-constructor",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "declaration.required-string-instance-method",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -226,10 +261,17 @@
     },
     {
       "category": "module-type-layout",
-      "evidence": "validator rejects instance methods and fields",
+      "evidence": "only a non-inherited private-String-field constructor and String instance-method slice is admitted",
       "id": "module.instance-layout",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
+    },
+    {
+      "category": "module-type-layout",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "module.private-instance-string-field",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "module-type-layout",
@@ -339,7 +381,21 @@
     {
       "category": "values-collections",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.initialized-source-owned-object-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "value.initialized-string-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.instance-string-field-read",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -369,14 +425,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "cfdb7b6f5bd5d6b5462106d8b1209cab1a9877a32deb138c9758c09a3fe578d8"
+    "sha256": "da399873baba0420db2130e3daa4a1e469f8ab8c3504fb0eb6ab0907f06a9de2"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 50,
+    "capabilityCount": 58,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 37,
+      "admitted": 45,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

@@ -54,5 +54,7 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'bool-short-circuit:fail' . PHP_EOL;
 		}
+		$greeter = new Hx_9_semantics_7_Greeter( 'instance-layout:' );
+		echo $greeter->render( 'pass' ) . PHP_EOL;
 	}
 }

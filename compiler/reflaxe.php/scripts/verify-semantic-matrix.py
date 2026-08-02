@@ -98,6 +98,7 @@ def main() -> None:
         for path in sorted(source_root.rglob("*.hx"))
     }
     calculator_path = "modules/9_semantics/10_Calculator/10_Calculator.php"
+    greeter_path = "modules/9_semantics/7_Greeter/7_Greeter.php"
     main_path = "modules/9_semantics/4_Main/4_Main.php"
     expected_paths = {
         ".reflaxe.php-owned-files.v1",
@@ -105,6 +106,8 @@ def main() -> None:
         "bootstrap.php.haxe-map.json",
         calculator_path,
         calculator_path + ".haxe-map.json",
+        greeter_path,
+        greeter_path + ".haxe-map.json",
         main_path,
         main_path + ".haxe-map.json",
         "reflaxe.php-artifacts.json",
@@ -130,13 +133,18 @@ def main() -> None:
         "method": "main",
         "path": "bootstrap.php",
     }, "semantic entrypoint drifted")
-    require(artifact_manifest["loadOrder"] == [calculator_path, main_path], "source-derived load order drifted")
+    require(artifact_manifest["loadOrder"] == [calculator_path, greeter_path, main_path], "source-derived load order drifted")
     artifacts = {artifact["path"]: artifact for artifact in artifact_manifest["artifacts"]}
-    require(set(artifacts) == {"bootstrap.php", calculator_path, main_path}, "artifact records drifted")
+    require(set(artifacts) == {"bootstrap.php", calculator_path, greeter_path, main_path}, "artifact records drifted")
     require(artifacts[calculator_path]["dependencies"] == [], "calculator dependencies drifted")
-    require(artifacts[main_path]["dependencies"] == ["semantics.Calculator@Calculator"], "main dependency edge drifted")
+    require(artifacts[greeter_path]["dependencies"] == [], "greeter dependencies drifted")
     require(
-        artifacts["bootstrap.php"]["dependencies"] == ["semantics.Calculator@Calculator", "semantics.Main@Main"],
+        artifacts[main_path]["dependencies"] == ["semantics.Calculator@Calculator", "semantics.Greeter@Greeter"],
+        "main dependency edge drifted",
+    )
+    require(
+        artifacts["bootstrap.php"]["dependencies"]
+        == ["semantics.Calculator@Calculator", "semantics.Greeter@Greeter", "semantics.Main@Main"],
         "bootstrap dependencies drifted",
     )
     for path, artifact in artifacts.items():
@@ -154,6 +162,13 @@ def main() -> None:
         "method:semantics.Calculator:probe": ("member", 1, b"public static function probe"),
         "stmt:sys-println:343:368": ("statement", 2, b'Sys.println("bool-probe")'),
         "stmt:return-bool:372:384": ("statement", 2, b"return value"),
+    }
+    greeter_expected = {
+        "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
+        "method:semantics.Greeter:new": ("member", 1, b"public function new"),
+        "stmt:assign-instance-string:99:119": ("statement", 2, b"this.prefix = prefix"),
+        "method:semantics.Greeter:render": ("member", 1, b"public function render"),
+        "stmt:return-string:174:200": ("statement", 2, b"return this.prefix + value"),
     }
     main_expected = {
         "class:semantics.Main:Main": ("declaration", 0, b"class Main"),
@@ -191,6 +206,8 @@ def main() -> None:
         "stmt:if-bool:1240:1401": ("statement", 2, b"if (!andSkipped && orSkipped && !andEvaluated && !grouped)"),
         "stmt:sys-println:1304:1342": ("statement", 3, b'Sys.println("bool-short-circuit:pass")'),
         "stmt:sys-println:1358:1396": ("statement", 3, b'Sys.println("bool-short-circuit:fail")'),
+        "stmt:local-object:1405:1453": ("statement", 2, b'final greeter = new Greeter("instance-layout:")'),
+        "stmt:sys-println:1456:1491": ("statement", 2, b'Sys.println(greeter.render("pass"))'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -200,6 +217,14 @@ def main() -> None:
             "stmt:sys-println:343:368",
             "stmt:return-bool:372:384",
         })
+    verify_map(
+        output_root,
+        greeter_path,
+        "semantics/Greeter.hx",
+        sources["semantics/Greeter.hx"],
+        greeter_expected,
+        {"stmt:assign-instance-string:99:119", "stmt:return-string:174:200"},
+    )
     verify_map(
         output_root,
         main_path,
@@ -219,7 +244,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool-short-circuit maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout maps passed")
 
 
 if __name__ == "__main__":
