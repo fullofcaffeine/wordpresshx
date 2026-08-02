@@ -70,6 +70,13 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
+The compiler scorecard's current object-layout checkpoint is independently
+hosted by Repository bootstrap run `30746099409`, Haxe job `91491856372`, at
+commit `969b4e6c576c20db8ec733c9f49d6940314b9cf7`. That proof covers the semantic
+matrix's 45 exact admitted records and native PHP 7.4.33/8.4.7 only; it does not
+advance WordPress compatibility, official Haxe target qualification, or
+publication.
+
 Official Haxe target qualification applies only to the actual compiler-facing
 surface. WordPress, package, or browser success cannot substitute for a custom
 Haxe-to-PHP compiler result. Conversely, a future regular-Haxe compiler result

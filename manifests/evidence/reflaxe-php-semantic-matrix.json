@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "implemented-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
     "input": "three ordinary Haxe modules covering the existing admitted Int, fixed Array<Int>, exact String, and Bool slices plus one non-inherited Greeter with a private constructor-set String field, required String constructor and instance method, source-owned object local/construction, field read, and instance call",
@@ -122,7 +122,7 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-45-capability-subject-hosted-pending; predecessor-37-capability-subject-passed-run-30743659740",
+    "exactPhp74And84Matrix": "current-45-capability-subject-passed-run-30746099409",
     "sourceMap": "independently-verified",
     "strictHaxe": "63-files-zero-findings",
     "firstMilliseconds": 8396,
@@ -135,20 +135,20 @@
     "reflaxe": "4.0.0-beta",
     "php": "8.4.7"
   },
-  "previousHostedVerification": {
-    "relation": "predecessor-37-capability-subject-only",
-    "admittedCapabilityCount": 37,
+  "hostedVerification": {
+    "relation": "current-45-capability-subject",
+    "admittedCapabilityCount": 45,
     "workflow": "Repository bootstrap",
-    "runId": 30743659740,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30743659740",
-    "commit": "479b2559dcddacbeece5bc38d76627eb767d32ad",
+    "runId": 30746099409,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30746099409",
+    "commit": "969b4e6c576c20db8ec733c9f49d6940314b9cf7",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 91485406556,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30743659740/job/91485406556",
+      "jobId": 91491856372,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30746099409/job/91491856372",
       "status": "passed",
-      "completedAt": "2026-08-02T10:39:09Z"
+      "completedAt": "2026-08-02T11:52:28Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -161,7 +161,7 @@
       "Test clean standalone PHP compiler package artifact",
       "Test exact PHP 7.4 and 8.4 runtime matrix"
     ],
-    "scope": "the 37 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "scope": "the 45 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -451,7 +451,7 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,
