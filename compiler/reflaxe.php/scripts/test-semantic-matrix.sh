@@ -111,6 +111,10 @@ assert_compile_negative "foreign-bool-call" "reflaxe.php supports only source-ow
 assert_compile_negative "mutable-instance-field" "reflaxe.php instance fields must be constructor-initialized and immutable after construction"
 assert_compile_negative "inherited-instance-layout" "reflaxe.php instance layout does not yet support inheritance or interfaces"
 assert_compile_negative "instance-field-initializer" "reflaxe.php instance fields do not yet support declaration initializers"
+assert_compile_negative "multiple-closure-parameters" "reflaxe.php supports only required unary String closures with read-only String captures"
+assert_compile_negative "non-string-closure-capture" "reflaxe.php supports only required unary String closures with read-only String captures"
+assert_compile_negative "nested-string-closure" "reflaxe.php supports only required unary String closures with read-only String captures"
+assert_compile_negative "mutable-string-capture" "reflaxe.php supports assignment only to Int variables in the admitted semantic slice"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure semantic slices passed"

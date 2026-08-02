@@ -8,6 +8,7 @@ import reflaxe.data.ClassFuncData;
 import reflaxe.data.ClassVarData;
 import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
+import reflaxe.php.ir.PhpClosureCapture;
 import reflaxe.php.ir.PhpArrayEntry;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpIdentifier;
@@ -186,7 +187,15 @@ class PhpTypedAstLowerer {
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
 						case _:
-							if (ownedClass(variable.t) == null) {
+							if (PhpStringClosureShape.isType(variable.t)) {
+								PhpSemanticCapabilities.requireAdmitted(InitializedStringClosureLocal);
+								[
+									mapped(PhpLocal(variable.name, lowerStringClosure(initialValue)), expression, "local-string-closure")
+								];
+							} else if (PhpStringClosureShape.isFunctionType(variable.t)) {
+								Context.fatalError("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
+								[];
+							} else if (ownedClass(variable.t) == null) {
 								Context.fatalError("reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings",
 									expression.pos);
 								[];
@@ -322,6 +331,20 @@ class PhpTypedAstLowerer {
 		}
 	}
 
+	function lowerStringClosure(expression:TypedExpr):PhpExpr {
+		final plan = PhpStringClosureShape.analyze(expression);
+		if (plan == null) {
+			Context.fatalError("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
+			return PhpString("");
+		}
+		PhpSemanticCapabilities.requireAdmitted(RequiredStringClosureParameter);
+		PhpSemanticCapabilities.requireAdmitted(StringClosureReturn);
+		PhpSemanticCapabilities.requireAdmitted(ReadOnlyStringClosureCapture);
+		final parameters = plan.functionData.args.map(argument -> PhpParameter.named(PhpIdentifier.named(argument.v.name), PhpStringType));
+		final captures = plan.captures.map(variable -> new PhpClosureCapture(PhpIdentifier.named(variable.name)));
+		return PhpClosure(parameters, captures, lowerStatementList(plan.functionData.expr, new Map<Int, Int>()), true, PhpStringType);
+	}
+
 	function lowerBoolValue(expression:TypedExpr):PhpExpr {
 		return switch (expression.expr) {
 			case TConst(TBool(value)):
@@ -393,6 +416,12 @@ class PhpTypedAstLowerer {
 
 	function lowerStaticApplicationStringCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
 		return switch (target.expr) {
+			case TLocal(variable) if (PhpStringClosureShape.isType(target.t) && TypeTools.toString(call.t) == "String"):
+				if (arguments.length != 1) {
+					Context.fatalError("reflaxe.php String closures require exactly one String argument", call.pos);
+				}
+				PhpSemanticCapabilities.requireAdmitted(StringClosureInvoke);
+				PhpInvoke(PhpVar(variable.name), arguments.map(lowerStringValue));
 			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
 				PhpSemanticCapabilities.requireAdmitted(StaticApplicationStringCall);
 				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerStringValue));

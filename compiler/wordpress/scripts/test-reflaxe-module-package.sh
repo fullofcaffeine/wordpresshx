@@ -44,35 +44,35 @@ manifest_path = Path(sys.argv[3])
 extract_root = Path(sys.argv[4])
 package = json.loads(manifest_path.read_text(encoding="utf-8"))
 graph = json.loads((graph_root / "reflaxe.php-artifacts.json").read_text(encoding="utf-8"))
-assert package["format"] == "wordpresshx.reflaxe-module-package.v1"
-assert package["sourceGraph"]["loadOrder"] == graph["loadOrder"]
-assert package["package"]["sourceMapsIncluded"] is False
+assert package["format"] == "wordpresshx.reflaxe-module-package.v1", "package format drifted"
+assert package["sourceGraph"]["loadOrder"] == graph["loadOrder"], "source graph load order drifted"
+assert package["package"]["sourceMapsIncluded"] is False, "source maps entered the runtime package"
 assert package["claims"] == {
     "deterministicPackage": True,
     "moduleGraphPreserved": True,
     "publicationAuthorized": False,
     "wordpressRuntimeCompatibility": "not-claimed",
-}
-assert package["package"]["sha256"] == hashlib.sha256(archive_path.read_bytes()).hexdigest()
+}, "package claims drifted"
+assert package["package"]["sha256"] == hashlib.sha256(archive_path.read_bytes()).hexdigest(), "archive digest drifted"
 expected_runtime = {artifact["path"] for artifact in graph["artifacts"]}
 with zipfile.ZipFile(archive_path) as archive:
     entries = archive.namelist()
-    assert entries == sorted(entries)
-    assert all(not entry.endswith((".map", ".map.json", ".haxe-map.json")) for entry in entries)
+    assert entries == sorted(entries), "archive entries are not sorted"
+    assert all(not entry.endswith((".map", ".map.json", ".haxe-map.json")) for entry in entries), "source map entered archive"
     packaged_runtime = {
         entry.removeprefix("wordpresshx-reflaxe-module-proof/includes/application/")
         for entry in entries
         if entry.startswith("wordpresshx-reflaxe-module-proof/includes/application/")
     }
-    assert packaged_runtime == expected_runtime
+    assert packaged_runtime == expected_runtime, f"runtime inventory drifted: expected={sorted(expected_runtime)} actual={sorted(packaged_runtime)}"
     for info in archive.infolist():
-        assert info.date_time == (1980, 1, 1, 0, 0, 0)
+        assert info.date_time == (1980, 1, 1, 0, 0, 0), f"archive timestamp drifted: {info.filename}"
         relative = PurePosixPath(info.filename)
         destination = extract_root.joinpath(*relative.parts)
         destination.parent.mkdir(parents=True, exist_ok=True)
         data = archive.read(info)
         destination.write_bytes(data)
-        assert not any(marker in data for marker in (b"/Users/", b"/home/", b"workspace/code"))
+        assert not any(marker in data for marker in (b"/Users/", b"/home/", b"workspace/code")), f"machine path leaked: {info.filename}"
 for artifact in graph["artifacts"]:
     packaged = (
         extract_root
@@ -81,7 +81,7 @@ for artifact in graph["artifacts"]:
         / "application"
         / artifact["path"]
     ).read_bytes()
-    assert hashlib.sha256(packaged).hexdigest() == artifact["sha256"]
+    assert hashlib.sha256(packaged).hexdigest() == artifact["sha256"], f"packaged artifact digest drifted: {artifact['path']}"
 PY
 
 while IFS= read -r php_file; do

@@ -14,6 +14,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IntAddition = "numeric.int-addition";
 	var InitializedIntLocal = "value.initialized-int-local";
 	var InitializedBoolLocal = "value.initialized-bool-local";
+	var InitializedStringClosureLocal = "value.initialized-string-closure-local";
 	var IntEquality = "control.int-equality";
 	var BoolCondition = "control.bool-condition";
 	var BoolParenthesizedGrouping = "control.bool-parenthesized-grouping";
@@ -31,6 +32,10 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedObjectLocal = "value.initialized-source-owned-object-local";
 	var SourceOwnedConstructorCall = "call.source-owned-constructor";
 	var SourceOwnedStringInstanceCall = "call.source-owned-string-instance-call";
+	var RequiredStringClosureParameter = "call.required-non-null-string-closure-parameter";
+	var StringClosureReturn = "call.non-null-string-closure-return";
+	var ReadOnlyStringClosureCapture = "call.read-only-string-closure-capture";
+	var StringClosureInvoke = "call.string-closure-invoke";
 	var InstanceStringFieldRead = "value.instance-string-field-read";
 	var InstanceStringFieldConstructorAssignment = "control.instance-string-field-constructor-assignment";
 	var IntArrayLiteral = "collection.int-array-literal";
@@ -126,6 +131,7 @@ class PhpSemanticCapabilities {
 			record(IntAddition, Numeric, Admitted, semantic, owner),
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InitializedBoolLocal, ValuesCollections, Admitted, semantic, owner),
+			record(InitializedStringClosureLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InitializedObjectLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InstanceStringFieldRead, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
@@ -152,6 +158,10 @@ class PhpSemanticCapabilities {
 			record(StaticApplicationStringCall, CallsClosures, Admitted, semantic, owner),
 			record(SourceOwnedConstructorCall, CallsClosures, Admitted, semantic, owner),
 			record(SourceOwnedStringInstanceCall, CallsClosures, Admitted, semantic, owner),
+			record(RequiredStringClosureParameter, CallsClosures, Admitted, semantic, owner),
+			record(StringClosureReturn, CallsClosures, Admitted, semantic, owner),
+			record(ReadOnlyStringClosureCapture, CallsClosures, Admitted, semantic, owner),
+			record(StringClosureInvoke, CallsClosures, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),

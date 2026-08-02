@@ -168,6 +168,15 @@ class PrinterTest {
 		assertEquals("statement", rendered.mappingAt(2).nodeKind, "statement mapping kind");
 		assertEquals("true", Std.string(rendered.mappingAt(2).traceAnchor), "statement trace anchor intent");
 
+		final closureReturn = PhpMapped(PhpReturn(PhpString("mapped")), throwSource, "source-fixture:closure:return", true);
+		final closureLocal = PhpMapped(PhpLocal("callback",
+			PhpClosure([PhpParameter.named(id("value"), PhpStringType)], [], [closureReturn], true, PhpStringType)), methodSource,
+			"source-fixture:closure:local", true);
+		final renderedClosure = printer.printFile(new PhpFile("build/closure-correlation-fixture.php", null, true, [], [closureLocal]));
+		assertEquals("2", Std.string(renderedClosure.mappingCount), "closure statement mapping count");
+		assertEquals("source-fixture:closure:return", renderedClosure.mappingAt(1).id, "closure body mapping identity");
+		assertEquals("1", Std.string(renderedClosure.mappingAt(1).structuralDepth), "closure body mapping depth");
+
 		final hash = Sha256.encode("neutral-range-map-fixture").toLowerCase();
 		final writer = new PhpRangeMapWriter(new PhpRangeMapConfig("reflaxe.php-range-map.v1", "reflaxe.php.fixture", "0.0.0", hash,
 			Sha256.encode(content).toLowerCase()));

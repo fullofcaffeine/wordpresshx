@@ -28,9 +28,13 @@ not otherwise agree at that boundary. The admitted object subset adds one
 non-inherited class with a private typed
 `String` field, constructor-only initialization, a required `String`
 constructor and instance method, native construction, and an instance call.
+The admitted callback subset adds a required unary `String -> String` closure,
+read-only lexical `String` capture by value, direct invocation, native PHP
+`string` signature types, and exact mapping for both the closure declaration
+and its body.
 Mutable fields, inheritance, interfaces, overrides, accessors, nullable object
-values, and broad object semantics are not qualified. This establishes a useful
-compiler path;
+values, mutable/non-String captures, nested or escaping closures, and broad
+object/function semantics are not qualified. This establishes a useful compiler path;
 it does not imply arbitrary typed-Haxe lowering, a complete
 runtime/standard-library strategy, an external weak-PHP ABI claim, or an
 official Haxe-suite result.

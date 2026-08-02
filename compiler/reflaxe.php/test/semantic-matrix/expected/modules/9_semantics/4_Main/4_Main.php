@@ -56,5 +56,10 @@ class Hx_9_semantics_4_Main {
 		}
 		$greeter = new Hx_9_semantics_7_Greeter( 'instance-layout:' );
 		echo $greeter->render( 'pass' ) . PHP_EOL;
+		$prefix = 'closure-capture:';
+		$render = static function (string $value) use ($prefix): string {
+			return $prefix . $value;
+		};
+		echo $render( 'pass' ) . PHP_EOL;
 	}
 }

@@ -287,6 +287,10 @@ class PhpPrinter {
 			case PhpTryCatch(tryBody, _, _, catchBody):
 				cursor = collectStatementMappings(tryBody, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
 				collectStatementMappings(catchBody, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+			case PhpLocal(_, PhpClosure(_, _, body, _, _)) | PhpStaticLocal(_, PhpClosure(_, _, body, _, _)):
+				collectStatementMappings(body, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
+			case PhpLocal(_, PhpStaticClosure(_, body)) | PhpStaticLocal(_, PhpStaticClosure(_, body)):
+				collectStatementMappings(body, depth + 1, container, containerStartByte, cursor, mappings, structuralDepth);
 			case PhpMapped(_, _, _, _):
 				throw "Nested PHP mapping wrappers are not admitted";
 			case _:

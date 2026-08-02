@@ -24,7 +24,21 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.non-null-string-closure-return",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.non-null-string-return",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.read-only-string-closure-capture",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -39,6 +53,13 @@
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.required-non-null-bool-parameters",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.required-non-null-string-closure-parameter",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -81,6 +102,13 @@
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.static-application-string-call",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.string-closure-invoke",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -388,6 +416,13 @@
     {
       "category": "values-collections",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.initialized-string-closure-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "value.initialized-string-local",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -425,14 +460,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "da399873baba0420db2130e3daa4a1e469f8ab8c3504fb0eb6ab0907f06a9de2"
+    "sha256": "f4ee1f0fc5c7e45d81a61e926b2594d80270288fc86a7beb54507c914204273c"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 58,
+    "capabilityCount": 63,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 45,
+      "admitted": 50,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

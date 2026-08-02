@@ -220,7 +220,7 @@
     },
     {
       "path": "compiler/wordpress/scripts/test-reflaxe-module-package.sh",
-      "sha256": "f99887e7bce2fbc9713996b2d971b4d6fe67da426ded492c2e7bcdf4b4d901e8"
+      "sha256": "61eaa27f25bed323c0745a39a6c064ebadfeb2dc6fefe03c62c4523010575881"
     },
     {
       "path": "compiler/wordpress/scripts/test.sh",

@@ -144,7 +144,11 @@ class PhpTypedAstValidator {
 						case "String": validateStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
-							if (ownedClass(variable.t) == null) {
+							if (PhpStringClosureShape.isType(variable.t)) {
+								validateStringClosure(initialValue);
+							} else if (PhpStringClosureShape.isFunctionType(variable.t)) {
+								Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
+							} else if (ownedClass(variable.t) == null) {
 								Context.error("reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings", expression.pos);
 							} else {
 								validateObjectValue(initialValue);
@@ -244,6 +248,15 @@ class PhpTypedAstValidator {
 		}
 	}
 
+	static function validateStringClosure(expression:TypedExpr):Void {
+		final plan = PhpStringClosureShape.analyze(expression);
+		if (plan == null) {
+			Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
+			return;
+		}
+		validateStatement(plan.functionData.expr, new Map<Int, Int>());
+	}
+
 	static function validateBoolValue(expression:TypedExpr):Void {
 		switch (expression.expr) {
 			case TConst(TBool(_)):
@@ -306,6 +319,12 @@ class PhpTypedAstValidator {
 
 	static function validateStaticApplicationStringCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
 		switch (target.expr) {
+			case TLocal(_) if (PhpStringClosureShape.isType(target.t) && TypeTools.toString(call.t) == "String"):
+				if (arguments.length != 1) {
+					Context.error("reflaxe.php String closures require exactly one String argument", call.pos);
+				} else {
+					validateStringValue(arguments[0]);
+				}
 			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
 				for (argument in arguments) {
 					validateStringValue(argument);

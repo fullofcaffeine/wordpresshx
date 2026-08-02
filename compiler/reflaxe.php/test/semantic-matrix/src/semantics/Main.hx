@@ -56,5 +56,11 @@ class Main {
 
 		final greeter = new Greeter("instance-layout:");
 		Sys.println(greeter.render("pass"));
+
+		final prefix = "closure-capture:";
+		final render = function(value:String):String {
+			return prefix + value;
+		};
+		Sys.println(render("pass"));
 	}
 }

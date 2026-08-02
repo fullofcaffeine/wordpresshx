@@ -28,6 +28,9 @@ The current admitted surface is deliberately bounded:
 - one non-inherited source-owned class shape with a private constructor-set
   `String` field, required `String` constructor and instance method, a typed
   object local, native construction, field read, and instance call;
+- required unary `String -> String` closures with read-only lexical `String`
+  captures lowered to typed static PHP closures, explicit by-value `use`
+  clauses, direct invocation, and independently mapped closure bodies;
 - Haxe source-character positions converted to authenticated UTF-8 byte ranges,
   so non-ASCII source before or inside a mapped statement remains traceable; and
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
@@ -106,12 +109,19 @@ private typed property, `__construct`, and native instance call. The field must
 be private, `String`-typed, and constructor-only; mutable fields, inheritance,
 interfaces, overrides, accessors, nullable objects, and general object/runtime
 semantics still fail closed or remain unclaimed.
+The callback slice additionally proves one required unary `String -> String`
+function value with read-only `String` captures. It lowers to a native static
+PHP closure with `string` parameter/return types and by-value captures, then is
+invoked directly from Haxe. Multiple/optional parameters, non-String or mutable
+captures, nested closures, `this`, closure escape/return, recursion, variadics,
+foreign callables, and general function values remain rejected or unclaimed.
 Its three-module fixture runs under stock Haxe and generated PHP; their stdout
 must be byte-identical, and any PHP warning, error, or fatal fails the lane.
 Optional/default and signature types outside the admitted `Int`/`Bool`/`String` subset, foreign static calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
 String coercion, null String/Bool arguments, foreign String/Bool calls, mutable
-instance fields, and inherited instance layouts fail without
+instance fields, inherited instance layouts, unsupported closure shapes, and
+mutable captured Strings fail without
 partial output. Arbitrary array access stays
 rejected because native PHP would emit an undefined-key warning where stock
 Haxe returns `null`; String length/indexing/normalization also remain unclaimed
