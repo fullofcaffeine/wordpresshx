@@ -5,12 +5,12 @@
   "status": "implemented-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
-    "input": "ordinary Haxe with small Int literals and addition, an initialized Int local, Int equality, and if/else",
+    "input": "two ordinary Haxe modules with small Int literals/addition, an initialized Int local, Int equality, if/else, required Int parameters/return, and a cross-module static application call",
     "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST lowering -> deterministic PHP and range map -> php -l -> native PHP execution",
     "observableResult": "stock Haxe and generated PHP both print exactly numeric-control-flow:pass followed by one newline",
     "errorOrEdgeBehavior": "unsupported constructs remain explicitly classified; native PHP stderr must be empty and warnings, errors, and fatals are never retried or hidden",
     "owningSurface": "compiler-adapter",
-    "protectedClaim": "small Int literals/addition, initialized Int local binding, Int equality, and if/else only; no numeric-edge, broad runtime, WordPress, or release claim"
+    "protectedClaim": "small Int literals/addition, initialized Int local binding, Int equality, if/else, required Int parameters/return, and source-owned static Int calls only; no optional/default, arbitrary-call, per-module-output, numeric-edge, broad runtime, WordPress, or release claim"
   },
   "redState": {
     "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
@@ -19,6 +19,16 @@
     "reason": "the typed-AST lowerer did not admit or emit local bindings and therefore could not reach the control-flow slice",
     "partialOutputPublished": false
   },
+  "additionalRedStates": [
+    {
+      "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
+      "exitCode": 1,
+      "failure": "test/semantic-matrix/src/semantics/Main.hx:4: lines 4-6: reflaxe.php tracer does not yet support method parameters",
+      "reason": "the compiler rejected the first required-Int function signature before parameter, return, or static-call lowering existed",
+      "stockHaxeOutcome": "passed-and-printed-numeric-control-flow:pass",
+      "partialOutputPublished": false
+    }
+  ],
   "independentOracle": [
     "the same authored fixture executed by stock Haxe 4.3.7",
     "manually authored expected.stdout",
@@ -28,10 +38,10 @@
   "capabilityMatrix": {
     "authority": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 26,
+    "capabilityCount": 28,
     "categoryCount": 13,
-    "admittedCount": 12,
-    "unsupportedOwnedCount": 7,
+    "admittedCount": 15,
+    "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": true,
     "mutationCount": 5
@@ -44,9 +54,9 @@
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
     "sourceMap": "independently-verified",
-    "strictHaxe": "45-files-zero-findings",
-    "firstMilliseconds": 1800,
-    "repeatMilliseconds": 1640,
+    "strictHaxe": "49-files-zero-findings",
+    "firstMilliseconds": 3860,
+    "repeatMilliseconds": 3240,
     "coldClaim": false,
     "warmClaim": false
   },
@@ -63,13 +73,17 @@
       "Every admitted compiler branch now requires a typed capability marked admitted, while the checked JSON projection is generated from that Haxe authority and rejects stale or mutated copies.",
       "Numeric evidence is intentionally limited to small Int literals, addition, and equality; overflow, division, modulo, coercion, and platform-width behavior remain unverified-owned.",
       "Strict PHP equality is justified only by the currently validated Int operands and is not generalized to dynamic or foreign values.",
-      "Source mutation and foreign/runtime/stdlib boundaries remain outside this slice and are retained as explicit unsupported or unverified capabilities."
+      "Source mutation and foreign/runtime/stdlib boundaries remain outside this slice and are retained as explicit unsupported or unverified capabilities.",
+      "The cross-module call still emits inside the tracer's monolithic main.php; per-module file emission, dependency topology, and an entry/bootstrap artifact are explicitly withheld and tracked by wordpresshx-reflaxe-php.7.",
+      "Required Int signatures lower to native PHP int types under strict_types=1; optional/default, non-Int, and foreign static call fixtures fail before any PHP or map is published.",
+      "Haxe typing supplies arity and argument-type admission for the exact static call, while target ownership and the called method signature are independently constrained by the compiler preflight."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
       "runtime and standard-library ownership are not implemented",
       "mutable values, exceptions, null, collections, Unicode operations, and external I/O are not admitted",
       "official Haxe-suite qualification remains blocked on this Bead",
+      "the current single-file tracer is not evidence of per-module file compilation",
       "standalone extraction remains deliberately low priority"
     ]
   },
@@ -84,11 +98,11 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-package.sh",
-      "sha256": "29c2b35e08d0befce3e5eedc19dd0229f64a52f6a0a8b2b58de257e9c59214e3"
+      "sha256": "a490a4d6c92893219a3c466e3415a7205f432cd17629c2c37f62ab36e84ab08d"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "9d357a7d2702810f2289162d5050c9450ed1b5136292a973358f1ce424dd94d4"
+      "sha256": "4c57e492968410db71b52f0c499dd605ce97b9b9d741289e6e25d6d1052d1584"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -96,15 +110,15 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "e6077ee931c999cbef107d789280be4745cbd74b281addd55b34baa87cf2ebce"
+      "sha256": "0c726a12e43ea61b8999e635a28b02ab1c7dbeff46efd422b817c4359807b013"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
-      "sha256": "0aa7dd58ab642cdc20c4d1fe2b38772e2da5ec67a51e0f895dcd55796b6cd0a2"
+      "sha256": "bb05a4c9bd805e59e6e434bcc66fedf8fe3f3e78a8859adc529dc92156e4d8aa"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
-      "sha256": "dc2968aad02141e2dc67cb2af5d852a8cae926440b99e0514b228a3c9fa99b0f"
+      "sha256": "da1c7a25dadf1d68050a98ba172db1c54a8aeab5f5f3a563d3209a531d47a3d1"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompilerConfig.hx",
@@ -112,15 +126,15 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-      "sha256": "aa74469b5ae77c4fb5256f519a658a7d48f7e09e4393d1fa88091e8723a67aa6"
+      "sha256": "65afa2a8db075b696aeb91f6892a1d7dc4cca61276da896a1e54467369c3721b"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "2979b1b07b29b14d281b4c0f3038f3ffd6c095c64751b0831b757aadb93b03e7"
+      "sha256": "ad1ecac06b40fc87fb5d59e4e6e4ca72e24b772abeef9b14ed05b115a767a484"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "edb5ab00dcd3049b345f8f8f0577212b17d3e74ac5720a9165bcef78e49cc2f6"
+      "sha256": "0f8ab381332d51f3ebf06d56eeb35aaace726b2a6aa5dcf2368d63ef5d8696f5"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/build.hxml",
@@ -132,11 +146,39 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/main.php",
-      "sha256": "d3d2cfbd6be707263018164996a3a58d7c2701c8cdcb420e2a967f02fe777a44"
+      "sha256": "f04cbb678829ec854b5730968f46da554e11afcf427a95321b22bb9e9856a48c"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/foreign-static-call/build.hxml",
+      "sha256": "0c8a29f4487cb19788612def683a165b041ef200cbca685d3e110f72faa15e14"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/foreign-static-call/src/semantics/Main.hx",
+      "sha256": "d62539638b85d525499620f943d66e801c07593ad871c72f9ef5e14244b1fcea"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-int-signature/build.hxml",
+      "sha256": "39325cbb1e560d5258c63b8705d938fc139a168217d03d10a57f1272ddf57b49"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/non-int-signature/src/semantics/Main.hx",
+      "sha256": "0d0544c7321e151c4114c4da011db329f2ca017b00f39c1bc5accb31bffc2b72"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/optional-parameter/build.hxml",
+      "sha256": "0e06a2d8e1f06fb9d0c1fce3ede481d3b53c34d5006e37291210944e311d2a0a"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/optional-parameter/src/semantics/Main.hx",
+      "sha256": "b80b7edd95088110bff72670c70f479994d3f7974d6e1c9d1343985983dd0301"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Calculator.hx",
+      "sha256": "04447ba002904af5908793a8df56008273a79fdfe21b2429c36502cd922b33f1"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "bd900f8ed630da3c87adacbb90da083bb9d32fe1d7c2e52f1cd1e712f6a6bbaf"
+      "sha256": "11618e539d57cfd50e9a2b3d8bd064781ab751921a530dd0fc0b3f755f647ced"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",

@@ -57,17 +57,35 @@ class PhpTypedAstValidator {
 		if (!functionData.isStatic) {
 			Context.error("reflaxe.php tracer supports only static application methods", functionData.field.pos);
 		}
-		if (functionData.args.length != 0) {
-			Context.error("reflaxe.php tracer does not yet support method parameters", functionData.field.pos);
-		}
-		if (TypeTools.toString(functionData.ret) != "Void") {
-			Context.error("reflaxe.php tracer supports only Void methods", functionData.field.pos);
+		switch (TypeTools.toString(functionData.ret)) {
+			case "Void":
+				if (functionData.args.length != 0) {
+					Context.error("reflaxe.php Void methods do not yet support parameters", functionData.field.pos);
+				}
+			case "Int":
+				validateRequiredIntParameters(functionData);
+			case _:
+				Context.error("reflaxe.php supports only Void and Int method returns in the admitted semantic slice", functionData.field.pos);
 		}
 		if (functionData.expr == null) {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return;
 		}
 		validateStatement(functionData.expr);
+	}
+
+	static function validateRequiredIntParameters(functionData:ClassFuncData):Void {
+		if (functionData.args.length == 0) {
+			Context.error("reflaxe.php Int-returning methods currently require at least one Int parameter", functionData.field.pos);
+		}
+		for (argument in functionData.args) {
+			if (argument.opt || argument.expr != null) {
+				Context.error("reflaxe.php supports only required parameters without defaults", functionData.field.pos);
+			}
+			if (TypeTools.toString(argument.type) != "Int") {
+				Context.error("reflaxe.php supports only Int parameters in the admitted semantic slice", functionData.field.pos);
+			}
+		}
 	}
 
 	static function validateStatement(expression:TypedExpr):Void {
@@ -96,6 +114,8 @@ class PhpTypedAstValidator {
 					validateStatement(elseBranch);
 				}
 			case TReturn(null):
+			case TReturn(value):
+				validateIntValue(value);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStatement(inner);
 			case _:
@@ -129,10 +149,23 @@ class PhpTypedAstValidator {
 			case TBinop(OpAdd, left, right):
 				validateIntValue(left);
 				validateIntValue(right);
+			case TCall(target, arguments):
+				validateStaticApplicationIntCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntValue(inner);
 			case _:
 				Context.error("reflaxe.php supports only Int literals, locals, and addition in the admitted semantic slice", expression.pos);
+		}
+	}
+
+	static function validateStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
+		switch (target.expr) {
+			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "Int"):
+				for (argument in arguments) {
+					validateIntValue(argument);
+				}
+			case _:
+				Context.error("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
 		}
 	}
 

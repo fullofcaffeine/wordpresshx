@@ -1,0 +1,7 @@
+-cp src
+-cp test/semantic-matrix/negative/non-int-signature/src
+-lib reflaxe:4.0.0-beta
+-main semantics.Main
+-D reflaxe_php_output=build/semantic-matrix-negative-signature
+-D reflaxe_php_source_root=test/semantic-matrix/negative/non-int-signature/src
+--macro reflaxe.php.compiler.CompilerInit.Start()

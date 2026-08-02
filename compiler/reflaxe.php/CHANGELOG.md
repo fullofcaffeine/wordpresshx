@@ -14,6 +14,9 @@ has been authorized.
 - Added a typed, generated semantic capability matrix and the first stock-Haxe
   differential slice for small `Int` addition, an initialized local, equality,
   and `if/else`, with PHP warnings and errors kept visible.
+- Added required `Int` parameters and returns plus source-owned cross-module
+  static calls, emitted as readable native PHP `int` signatures with focused
+  optional/default, non-`Int`, and foreign-call rejection cases.
 - Added deterministic package-artifact construction and an isolated external
   Haxelib consumer proof.
 - Added typed PHPDoc declarations, native typed properties, and the PHP

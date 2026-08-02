@@ -76,11 +76,11 @@ assert source["licenseMaterials"]["expression"] == "GPL-2.0-or-later"
 assert source["licenseMaterials"]["completeText"]["path"] == "COPYING"
 assert source["sourceCorrespondence"]["status"] == "complete-source-only-archive"
 assert semantic_matrix["summary"] == {
-    "capabilityCount": 26,
+    "capabilityCount": 28,
     "categoryCount": 13,
     "stateCounts": {
-        "admitted": 12,
-        "unsupported-owned": 7,
+        "admitted": 15,
+        "unsupported-owned": 6,
         "unverified-owned": 7,
     },
 }

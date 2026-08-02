@@ -106,11 +106,14 @@ or WordPress proof.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry and currently lists 12 admitted, 7 explicitly unsupported, and 7
-unverified capabilities across 13 categories. Its first differential fixture
-checks small `Int` addition, an initialized local, equality, and `if/else` under
-both stock Haxe 4.3.7 and exact PHP 8.4.7. Empty PHP stderr is part of the
-contract, so warnings and fatals cannot be retried or normalized away.
+registry and currently lists 15 admitted, 6 explicitly unsupported, and 7
+unverified capabilities across 13 categories. Its differential fixture checks
+small `Int` addition, an initialized local, equality, `if/else`, required `Int`
+parameters/returns, and a source-owned cross-module static call under both stock
+Haxe 4.3.7 and exact PHP 8.4.7. Empty PHP stderr is part of the contract, so
+warnings and fatals cannot be retried or normalized away. Optional/default and
+non-`Int` signatures plus foreign calls are compile-negative owners and publish
+no partial PHP.
 
 Mocks are useful when the mocked component is not the claim. A mock that removes
 WordPress bootstrap, PHP reference semantics, package installation, Gutenberg

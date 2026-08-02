@@ -15,7 +15,9 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IfElse = "control.if-else";
 	var InstanceLayout = "module.instance-layout";
 	var ArrayCollection = "collection.array";
-	var ArgumentsAndReturns = "call.arguments-and-returns";
+	var RequiredIntParameters = "call.required-int-parameters";
+	var IntReturn = "call.int-return";
+	var StaticApplicationCall = "call.static-application-int-call";
 	var Closure = "call.closure";
 	var TryThrowCatch = "exception.try-throw-catch";
 	var NullableValue = "null.nullable-value";
@@ -90,9 +92,11 @@ class PhpSemanticCapabilities {
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
 			record(IfElse, ControlFlow, Admitted, semantic, owner),
+			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
+			record(IntReturn, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned, "validator rejects instance methods and fields", owner),
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned, "validator rejects array construction and access", owner),
-			record(ArgumentsAndReturns, CallsClosures, UnsupportedOwned, "validator rejects parameters and non-Void returns", owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
 			record(TryThrowCatch, Exceptions, UnsupportedOwned, "validator rejects try, throw, and catch statements", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned, "validator rejects null values", owner),

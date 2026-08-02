@@ -89,7 +89,9 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 		if (!sources.owns(mainClass.pos)) {
 			Context.fatalError("reflaxe.php selected main class is outside reflaxe_php_source_root", mainClass.pos);
 		}
-		final declarations = loweredClasses.map(value -> PhpClassDeclaration(value));
+		final orderedClasses = loweredClasses.copy();
+		orderedClasses.sort((left, right) -> compareText(left.name.value, right.name.value));
+		final declarations = orderedClasses.map(value -> PhpClassDeclaration(value));
 		final mainRange = sources.range(mainClass.pos);
 		final invokeMain = PhpMapped(PhpExprStmt(PhpStaticCall(lowerer.className(mainClass), "main", [])), mainRange,
 			"entrypoint:"

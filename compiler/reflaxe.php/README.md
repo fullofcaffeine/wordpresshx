@@ -13,7 +13,9 @@ The current admitted surface is deliberately bounded:
   anchors, and a deterministic caller-named range-map writer; and
 - a real Reflaxe registration/driver tracer that lowers an ordinary Haxe
   `static main` containing `Sys.println(String)` through that IR, without
-  application-authored backend IR; and
+  application-authored backend IR;
+- required Haxe `Int` parameters/returns and source-owned static calls lowered
+  to PHP native `int` signatures and deterministic cross-module calls; and
 - a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers.
 
 This is not yet a complete arbitrary-Haxe PHP backend. The first driver path is
@@ -57,11 +59,18 @@ bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh
 
 It derives [`semantic-capabilities.json`](semantic-capabilities.json) from the
 typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
-and currently admits only small `Int` literals/addition, one initialized local,
-`Int` equality, and `if/else` beyond the original tracer. The same authored
-fixture runs under stock Haxe and generated PHP; their stdout must be identical,
-and any PHP warning, error, or fatal fails the lane. Unsupported and unverified
-runtime/stdlib features remain named and owned in the matrix.
+and currently admits small `Int` literals/addition, initialized locals, `Int`
+equality, `if/else`, required `Int` parameters/returns, and source-owned static
+application calls beyond the original tracer. Its two-module fixture runs under
+stock Haxe and generated PHP; their stdout must be identical, and any PHP
+warning, error, or fatal fails the lane. Optional/default and non-`Int`
+signatures plus foreign static calls fail without partial output. Unsupported
+and unverified runtime/stdlib features remain named and owned in the matrix.
+
+The current driver still stages all classes into `main.php`. That is a tracer
+shape, not the intended file model. `wordpresshx-reflaxe-php.7` owns the next
+step: deterministic per-module PHP files, exact per-file maps, and a separate
+entry/bootstrap artifact under an explicit modern-PHP profile.
 
 Prove the release-shaped package seam independently:
 

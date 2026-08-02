@@ -11,6 +11,7 @@ import reflaxe.php.ir.PhpClassKind;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
+import reflaxe.php.ir.PhpParameter;
 import reflaxe.php.ir.PhpStmt;
 import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
@@ -47,26 +48,51 @@ class PhpTypedAstLowerer {
 	}
 
 	function lowerMethod(functionData:ClassFuncData):PhpMethod {
-		PhpSemanticCapabilities.requireAdmitted(StaticVoidNoArgMethod);
 		if (!functionData.isStatic) {
 			Context.fatalError("reflaxe.php tracer supports only static application methods", functionData.field.pos);
 		}
-		if (functionData.args.length != 0) {
-			Context.fatalError("reflaxe.php tracer does not yet support method parameters", functionData.field.pos);
-		}
-		if (TypeTools.toString(functionData.ret) != "Void") {
-			Context.fatalError("reflaxe.php tracer supports only Void methods", functionData.field.pos);
-		}
+		final signature = lowerMethodSignature(functionData);
 		if (functionData.expr == null) {
 			Context.fatalError("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return unreachableMethod(functionData);
 		}
 		final body = lowerStatementList(functionData.expr);
-		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, true, false, PhpIdentifier.named(functionData.field.name), [],
-			sources.range(functionData.field.pos), PhpVoidType, body, "method:"
+		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, true, false, PhpIdentifier.named(functionData.field.name),
+			signature.parameters, sources.range(functionData.field.pos), signature.returnType, body,
+			"method:"
 			+ functionData.classType.module
 			+ ":"
 			+ functionData.field.name);
+	}
+
+	function lowerMethodSignature(functionData:ClassFuncData):{parameters:Array<PhpParameter>, returnType:PhpType} {
+		return switch (TypeTools.toString(functionData.ret)) {
+			case "Void":
+				PhpSemanticCapabilities.requireAdmitted(StaticVoidNoArgMethod);
+				if (functionData.args.length != 0) {
+					Context.fatalError("reflaxe.php Void methods do not yet support parameters", functionData.field.pos);
+				}
+				{parameters: [], returnType: PhpVoidType};
+			case "Int":
+				PhpSemanticCapabilities.requireAdmitted(RequiredIntParameters);
+				PhpSemanticCapabilities.requireAdmitted(IntReturn);
+				if (functionData.args.length == 0) {
+					Context.fatalError("reflaxe.php Int-returning methods currently require at least one Int parameter", functionData.field.pos);
+				}
+				final parameters = functionData.args.map(argument -> {
+					if (argument.opt || argument.expr != null) {
+						Context.fatalError("reflaxe.php supports only required parameters without defaults", functionData.field.pos);
+					}
+					if (TypeTools.toString(argument.type) != "Int") {
+						Context.fatalError("reflaxe.php supports only Int parameters in the admitted semantic slice", functionData.field.pos);
+					}
+					PhpParameter.named(PhpIdentifier.named(argument.getName()), PhpIntType);
+				});
+				{parameters: parameters, returnType: PhpIntType};
+			case _:
+				Context.fatalError("reflaxe.php supports only Void and Int method returns in the admitted semantic slice", functionData.field.pos);
+				{parameters: [], returnType: PhpVoidType};
+		}
 	}
 
 	function lowerStatementList(expression:TypedExpr):Array<PhpStmt> {
@@ -102,6 +128,9 @@ class PhpTypedAstLowerer {
 					];
 				}
 			case TReturn(null): [mapped(PhpReturnVoid, expression, "return")];
+			case TReturn(value):
+				PhpSemanticCapabilities.requireAdmitted(IntReturn);
+				[mapped(PhpReturn(lowerIntValue(value)), expression, "return-int")];
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner);
 			case _:
 				unsupportedStatement(expression);
@@ -140,8 +169,20 @@ class PhpTypedAstLowerer {
 			case TBinop(OpAdd, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
 				PhpBinop("+", lowerIntValue(left), lowerIntValue(right));
+			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner);
 			case _: unsupportedValue(expression);
+		}
+	}
+
+	function lowerStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "Int"):
+				PhpSemanticCapabilities.requireAdmitted(StaticApplicationCall);
+				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerIntValue));
+			case _:
+				Context.fatalError("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
+				PhpInt(0);
 		}
 	}
 

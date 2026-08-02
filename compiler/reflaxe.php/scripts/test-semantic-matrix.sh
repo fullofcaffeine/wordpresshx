@@ -41,9 +41,42 @@ cmp "${fixture_root}/expected.stdout" "${temporary_root}/php.stdout"
 cmp "${temporary_root}/haxe.stdout" "${temporary_root}/php.stdout"
 
 python3 "${package_root}/scripts/verify-semantic-matrix.py" \
-	"${fixture_root}/src/semantics/Main.hx" \
+	"${fixture_root}/src" \
 	"${first_output}/main.php" \
 	"${first_output}/main.php.haxe-map.json"
+
+assert_compile_negative() {
+	local fixture="$1"
+	local expected_diagnostic="$2"
+	local negative_output="${temporary_root}/negative-${fixture}"
+	local negative_diagnostic
+	local negative_status
+	set +e
+	negative_diagnostic="$(
+		cd "${package_root}"
+		haxe "test/semantic-matrix/negative/${fixture}/build.hxml" \
+			-D "reflaxe_php_output=${negative_output}" 2>&1
+	)"
+	negative_status=$?
+	set -e
+	if (( negative_status == 0 )); then
+		echo "semantic negative fixture unexpectedly compiled: ${fixture}" >&2
+		exit 1
+	fi
+	if [[ "${negative_diagnostic}" != *"${expected_diagnostic}"* ]]; then
+		printf '%s\n' "${negative_diagnostic}" >&2
+		echo "semantic negative fixture lost its source diagnostic: ${fixture}" >&2
+		exit 1
+	fi
+	if [[ -e "${negative_output}/main.php" || -e "${negative_output}/main.php.haxe-map.json" ]]; then
+		echo "semantic negative fixture emitted partial output: ${fixture}" >&2
+		exit 1
+	fi
+}
+
+assert_compile_negative "optional-parameter" "reflaxe.php supports only required parameters without defaults"
+assert_compile_negative "non-int-signature" "reflaxe.php supports only Void and Int method returns"
+assert_compile_negative "foreign-static-call" "reflaxe.php supports only source-owned static Int calls"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow semantic slice passed"
+echo "reflaxe.php numeric/local/control-flow/function-call semantic slices passed"

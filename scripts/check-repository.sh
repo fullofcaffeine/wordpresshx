@@ -6550,10 +6550,10 @@ assert reflaxe_php_semantic_receipt["capabilityMatrix"] == {
         "PhpSemanticCapabilities.hx"
     ),
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 26,
+    "capabilityCount": 28,
     "categoryCount": 13,
-    "admittedCount": 12,
-    "unsupportedOwnedCount": 7,
+    "admittedCount": 15,
+    "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": True,
     "mutationCount": 5,
@@ -6578,7 +6578,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 17
+assert len(reflaxe_php_semantic_input_records) == 24
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):
@@ -7523,7 +7523,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_count, strict_haxe_gate 
     (
         "generic-php-compiler",
         "compiler/reflaxe.php",
-        45,
+        49,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
