@@ -27,6 +27,17 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'mutable-loop:fail' . PHP_EOL;
 		}
+		$values = array(
+			3,
+			1,
+			4,
+		);
+		$selected = $values[ 1 ] + $values[ 2 ];
+		if ( $selected === 5 ) {
+			echo 'int-array-read:pass' . PHP_EOL;
+		} else {
+			echo 'int-array-read:fail' . PHP_EOL;
+		}
 	}
 }
 

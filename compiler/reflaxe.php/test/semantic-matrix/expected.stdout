@@ -1,2 +1,3 @@
 numeric-control-flow:pass
 mutable-loop:pass
+int-array-read:pass

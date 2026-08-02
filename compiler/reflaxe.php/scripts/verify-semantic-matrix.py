@@ -56,6 +56,11 @@ def main() -> None:
         "stmt:if-int-equality:360:467": ("statement", 2, "semantics/Main.hx", b"if (total == 10)"),
         "stmt:sys-println:382:414": ("statement", 3, "semantics/Main.hx", b'Sys.println("mutable-loop:pass")'),
         "stmt:sys-println:430:462": ("statement", 3, "semantics/Main.hx", b'Sys.println("mutable-loop:fail")'),
+        "stmt:local-int-array:471:496": ("statement", 2, "semantics/Main.hx", b"final values = [3, 1, 4]"),
+        "stmt:local-int:499:538": ("statement", 2, "semantics/Main.hx", b"final selected = values[1] + values[2]"),
+        "stmt:if-int-equality:541:654": ("statement", 2, "semantics/Main.hx", b"if (selected == 5)"),
+        "stmt:sys-println:565:599": ("statement", 3, "semantics/Main.hx", b'Sys.println("int-array-read:pass")'),
+        "stmt:sys-println:615:649": ("statement", 3, "semantics/Main.hx", b'Sys.println("int-array-read:fail")'),
         "entrypoint:semantics.Main:Main": ("statement", 0, "semantics/Main.hx", b"class Main"),
     }
     mappings = document["mappings"]
@@ -88,10 +93,15 @@ def main() -> None:
             "stmt:if-int-equality:360:467",
             "stmt:sys-println:382:414",
             "stmt:sys-println:430:462",
+            "stmt:local-int-array:471:496",
+            "stmt:local-int:499:538",
+            "stmt:if-int-equality:541:654",
+            "stmt:sys-println:565:599",
+            "stmt:sys-println:615:649",
         },
         "semantic trace anchors drifted",
     )
-    print("reflaxe.php numeric/control-flow/function-call/while map passed")
+    print("reflaxe.php numeric/control-flow/function-call/while/array map passed")
 
 
 if __name__ == "__main__":

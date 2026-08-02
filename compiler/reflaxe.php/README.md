@@ -62,10 +62,14 @@ typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
 and currently admits small `Int` literals/addition, initialized locals, `Int`
 equality, `if/else`, required `Int` parameters/returns, and source-owned static
 application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
+plus fixed `Array<Int>` literals and compiler-proven constant in-bounds reads
 beyond the original tracer. Its two-module fixture runs under stock Haxe and
 generated PHP; their stdout must be identical, and any PHP warning, error, or
 fatal fails the lane. Optional/default and non-`Int` signatures, foreign static
-calls, compound assignment, and `do-while` fail without partial output.
+calls, compound assignment, `do-while`, dynamic array indices, and out-of-bounds
+array reads fail without partial output. Arbitrary array access stays rejected
+because native PHP would emit an undefined-key warning where stock Haxe returns
+`null`; a future broader capability needs an owned Haxe-compatible array runtime.
 Unsupported and unverified runtime/stdlib features remain named and owned in
 the matrix.
 

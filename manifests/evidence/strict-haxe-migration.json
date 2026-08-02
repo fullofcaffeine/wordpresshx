@@ -211,7 +211,7 @@
     {
       "id": "generic-php-compiler",
       "root": "compiler/reflaxe.php",
-      "haxeFileCount": 51,
+      "haxeFileCount": 53,
       "findingCount": 0,
       "gate": "bash compiler/reflaxe.php/scripts/test.sh",
       "outcome": "passed-hosted"

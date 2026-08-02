@@ -17,6 +17,8 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IntLessOrEqual = "control.int-less-or-equal";
 	var WhileLoop = "control.while";
 	var InstanceLayout = "module.instance-layout";
+	var IntArrayLiteral = "collection.int-array-literal";
+	var ProvenIntArrayRead = "collection.proven-int-array-read";
 	var ArrayCollection = "collection.array";
 	var RequiredIntParameters = "call.required-int-parameters";
 	var IntReturn = "call.int-return";
@@ -98,11 +100,14 @@ class PhpSemanticCapabilities {
 			record(IntAssignment, ControlFlow, Admitted, semantic, owner),
 			record(IntLessOrEqual, ControlFlow, Admitted, semantic, owner),
 			record(WhileLoop, ControlFlow, Admitted, semantic, owner),
+			record(IntArrayLiteral, ValuesCollections, Admitted, semantic, owner),
+			record(ProvenIntArrayRead, ValuesCollections, Admitted, semantic, owner),
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
 			record(IntReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned, "validator rejects instance methods and fields", owner),
-			record(ArrayCollection, ValuesCollections, UnsupportedOwned, "validator rejects array construction and access", owner),
+			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
+				"general Array runtime behavior beyond fixed Int literals and proven reads is rejected", owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
 			record(TryThrowCatch, Exceptions, UnsupportedOwned, "validator rejects try, throw, and catch statements", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned, "validator rejects null values", owner),

@@ -71,7 +71,7 @@ class PhpTypedAstValidator {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return;
 		}
-		validateStatement(functionData.expr);
+		validateStatement(functionData.expr, new Map<Int, Int>());
 	}
 
 	static function validateRequiredIntParameters(functionData:ClassFuncData):Void {
@@ -88,54 +88,68 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateStatement(expression:TypedExpr):Void {
+	static function validateStatement(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
 			case TBlock(expressions):
 				for (child in expressions) {
-					validateStatement(child);
+					validateStatement(child, intArrayLengths);
 				}
 			case TCall(target, arguments):
 				validateCall(expression, target, arguments);
 			case TVar(variable, initialValue):
-				if (TypeTools.toString(variable.t) != "Int") {
-					Context.error("reflaxe.php supports only Int local bindings in the admitted semantic slice", expression.pos);
-				}
 				if (initialValue == null) {
 					Context.error("reflaxe.php local bindings require an initial value", expression.pos);
 				} else {
-					validateIntValue(initialValue);
+					switch (TypeTools.toString(variable.t)) {
+						case "Int": validateIntValue(initialValue, intArrayLengths);
+						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
+						case _:
+							Context.error("reflaxe.php supports only Int and Array<Int> local bindings in the admitted semantic slice", expression.pos);
+					}
 				}
 			case TIf(condition, thenBranch, elseBranch):
-				validateIntCondition(condition);
-				validateStatement(thenBranch);
+				validateIntCondition(condition, intArrayLengths);
+				validateStatement(thenBranch, intArrayLengths);
 				if (elseBranch == null) {
 					Context.error("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
 				} else {
-					validateStatement(elseBranch);
+					validateStatement(elseBranch, intArrayLengths);
 				}
 			case TWhile(condition, body, true):
-				validateIntCondition(condition);
-				validateStatement(body);
+				validateIntCondition(condition, intArrayLengths);
+				validateStatement(body, intArrayLengths);
 			case TWhile(_, _, false):
 				Context.error("reflaxe.php does not yet support do-while loops", expression.pos);
 			case TBinop(OpAssign, target, value):
-				validateIntAssignment(expression, target, value);
+				validateIntAssignment(expression, target, value, intArrayLengths);
 			case TBinop(OpAssignOp(_), _, _):
 				Context.error("reflaxe.php does not yet support compound assignment", expression.pos);
 			case TReturn(null):
 			case TReturn(value):
-				validateIntValue(value);
+				validateIntValue(value, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateStatement(inner);
+				validateStatement(inner, intArrayLengths);
 			case _:
 				Context.error("reflaxe.php tracer does not support statement " + expression.expr.getName(), expression.pos);
 		}
 	}
 
-	static function validateIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr):Void {
+	static function validateIntArrayLiteral(variable:TVar, initialValue:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+		switch (initialValue.expr) {
+			case TArrayDecl(values):
+				for (value in values) {
+					validateIntValue(value, intArrayLengths);
+				}
+				intArrayLengths.set(variable.id, values.length);
+			case _:
+				Context.error("reflaxe.php supports only direct Array<Int> literals in the admitted semantic slice", initialValue.pos);
+		}
+	}
+
+	static function validateIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (target.expr) {
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
-				validateIntValue(value);
+				validateIntValue(value, intArrayLengths);
 			case _:
 				Context.error("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
 		}
@@ -160,40 +174,54 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateIntValue(expression:TypedExpr):Void {
+	static function validateIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
 			case TConst(TInt(_)):
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
 			case TBinop(OpAdd, left, right):
-				validateIntValue(left);
-				validateIntValue(right);
+				validateIntValue(left, intArrayLengths);
+				validateIntValue(right, intArrayLengths);
+			case TArray(base, index):
+				validateProvenIntArrayRead(expression, base, index, intArrayLengths);
 			case TCall(target, arguments):
-				validateStaticApplicationIntCall(expression, target, arguments);
+				validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateIntValue(inner);
+				validateIntValue(inner, intArrayLengths);
 			case _:
 				Context.error("reflaxe.php supports only Int literals, locals, and addition in the admitted semantic slice", expression.pos);
 		}
 	}
 
-	static function validateStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
+	static function validateProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+		switch [base.expr, index.expr] {
+			case [TLocal(variable), TConst(TInt(value))] if (intArrayLengths.exists(variable.id)):
+				final length = intArrayLengths.get(variable.id);
+				if (length == null || value < 0 || value >= length) {
+					Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+				}
+			case _:
+				Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+		}
+	}
+
+	static function validateStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>):Void {
 		switch (target.expr) {
 			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "Int"):
 				for (argument in arguments) {
-					validateIntValue(argument);
+					validateIntValue(argument, intArrayLengths);
 				}
 			case _:
 				Context.error("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
 		}
 	}
 
-	static function validateIntCondition(expression:TypedExpr):Void {
+	static function validateIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
 			case TBinop(OpEq | OpLte, left, right):
-				validateIntValue(left);
-				validateIntValue(right);
+				validateIntValue(left, intArrayLengths);
+				validateIntValue(right, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateIntCondition(inner);
+				validateIntCondition(inner, intArrayLengths);
 			case _:
 				Context.error("reflaxe.php supports only Int equality conditions in the admitted semantic slice", expression.pos);
 		}

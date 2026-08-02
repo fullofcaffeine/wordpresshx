@@ -37,10 +37,24 @@
     },
     {
       "category": "values-collections",
-      "evidence": "validator rejects array construction and access",
+      "evidence": "general Array runtime behavior beyond fixed Int literals and proven reads is rejected",
       "id": "collection.array",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "collection.int-array-literal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "collection.proven-int-array-read",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "control-flow",
@@ -236,14 +250,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "3e48f673f41670ab3be385cdf4cccd936eb1c1244a3dcfc6d804327e4a5a33b4"
+    "sha256": "924b8f59afbca0d32a16e747b6e2588fab4dca7c34c0a57edadbd48e34b30c99"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 31,
+    "capabilityCount": 33,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 18,
+      "admitted": 20,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

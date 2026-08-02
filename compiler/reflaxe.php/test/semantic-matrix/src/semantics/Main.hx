@@ -20,5 +20,13 @@ class Main {
 		} else {
 			Sys.println("mutable-loop:fail");
 		}
+
+		final values = [3, 1, 4];
+		final selected = values[1] + values[2];
+		if (selected == 5) {
+			Sys.println("int-array-read:pass");
+		} else {
+			Sys.println("int-array-read:fail");
+		}
 	}
 }

@@ -8,6 +8,7 @@ import reflaxe.data.ClassFuncData;
 import reflaxe.data.ClassVarData;
 import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
+import reflaxe.php.ir.PhpArrayEntry;
 import reflaxe.php.ir.PhpExpr;
 import reflaxe.php.ir.PhpIdentifier;
 import reflaxe.php.ir.PhpMethod;
@@ -56,7 +57,7 @@ class PhpTypedAstLowerer {
 			Context.fatalError("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return unreachableMethod(functionData);
 		}
-		final body = lowerStatementList(functionData.expr);
+		final body = lowerStatementList(functionData.expr, new Map<Int, Int>());
 		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, true, false, PhpIdentifier.named(functionData.field.name),
 			signature.parameters, sources.range(functionData.field.pos), signature.returnType, body,
 			"method:"
@@ -95,26 +96,34 @@ class PhpTypedAstLowerer {
 		}
 	}
 
-	function lowerStatementList(expression:TypedExpr):Array<PhpStmt> {
+	function lowerStatementList(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Array<PhpStmt> {
 		return switch (expression.expr) {
 			case TBlock(expressions):
 				final statements = new Array<PhpStmt>();
 				for (child in expressions) {
-					for (statement in lowerStatementList(child)) {
+					for (statement in lowerStatementList(child, intArrayLengths)) {
 						statements.push(statement);
 					}
 				}
 				statements;
 			case TCall(target, arguments): [lowerCall(expression, target, arguments)];
 			case TVar(variable, initialValue):
-				PhpSemanticCapabilities.requireAdmitted(InitializedIntLocal);
 				if (initialValue == null) {
 					Context.fatalError("reflaxe.php local bindings require an initial value", expression.pos);
 					[];
 				} else {
-					[
-						mapped(PhpLocal(variable.name, lowerIntValue(initialValue)), expression, "local-int")
-					];
+					switch (TypeTools.toString(variable.t)) {
+						case "Int":
+							PhpSemanticCapabilities.requireAdmitted(InitializedIntLocal);
+							[
+								mapped(PhpLocal(variable.name, lowerIntValue(initialValue, intArrayLengths)), expression, "local-int")
+							];
+						case "Array<Int>":
+							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
+						case _:
+							Context.fatalError("reflaxe.php supports only Int and Array<Int> local bindings in the admitted semantic slice", expression.pos);
+							[];
+					}
 				}
 			case TIf(condition, thenBranch, elseBranch):
 				PhpSemanticCapabilities.requireAdmitted(IfElse);
@@ -123,37 +132,58 @@ class PhpTypedAstLowerer {
 					[];
 				} else {
 					[
-						mapped(PhpIfElse(lowerIntCondition(condition), lowerStatementList(thenBranch), lowerStatementList(elseBranch)), expression,
-							"if-int-equality")
+						mapped(PhpIfElse(lowerIntCondition(condition, intArrayLengths), lowerStatementList(thenBranch, intArrayLengths),
+							lowerStatementList(elseBranch, intArrayLengths)),
+							expression, "if-int-equality")
 					];
 				}
 			case TWhile(condition, body, true):
 				PhpSemanticCapabilities.requireAdmitted(WhileLoop);
 				[
-					mapped(PhpWhile(lowerIntCondition(condition), lowerStatementList(body)), expression, "while-int")
+					mapped(PhpWhile(lowerIntCondition(condition, intArrayLengths), lowerStatementList(body, intArrayLengths)), expression, "while-int")
 				];
 			case TWhile(_, _, false):
 				Context.fatalError("reflaxe.php does not yet support do-while loops", expression.pos);
 				[];
-			case TBinop(OpAssign, target, value): [lowerIntAssignment(expression, target, value)];
+			case TBinop(OpAssign, target, value): [lowerIntAssignment(expression, target, value, intArrayLengths)];
 			case TBinop(OpAssignOp(_), _, _):
 				Context.fatalError("reflaxe.php does not yet support compound assignment", expression.pos);
 				[];
 			case TReturn(null): [mapped(PhpReturnVoid, expression, "return")];
 			case TReturn(value):
 				PhpSemanticCapabilities.requireAdmitted(IntReturn);
-				[mapped(PhpReturn(lowerIntValue(value)), expression, "return-int")];
-			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner);
+				[
+					mapped(PhpReturn(lowerIntValue(value, intArrayLengths)), expression, "return-int")
+				];
+			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths);
 			case _:
 				unsupportedStatement(expression);
 		}
 	}
 
-	function lowerIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr):PhpStmt {
+	function lowerIntArrayLocal(expression:TypedExpr, variable:TVar, initialValue:TypedExpr, intArrayLengths:Map<Int, Int>):Array<PhpStmt> {
+		return switch (initialValue.expr) {
+			case TArrayDecl(values):
+				PhpSemanticCapabilities.requireAdmitted(IntArrayLiteral);
+				final entries:Array<PhpArrayEntry> = values.map(value -> {
+					key: null,
+					value: lowerIntValue(value, intArrayLengths)
+				});
+				intArrayLengths.set(variable.id, values.length);
+				[
+					mapped(PhpLocal(variable.name, PhpLongArray(entries)), expression, "local-int-array")
+				];
+			case _:
+				Context.fatalError("reflaxe.php supports only direct Array<Int> literals in the admitted semantic slice", initialValue.pos);
+				[];
+		}
+	}
+
+	function lowerIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>):PhpStmt {
 		return switch (target.expr) {
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
 				PhpSemanticCapabilities.requireAdmitted(IntAssignment);
-				mapped(PhpAssign(PhpVar(variable.name), lowerIntValue(value)), assignment, "assign-int");
+				mapped(PhpAssign(PhpVar(variable.name), lowerIntValue(value, intArrayLengths)), assignment, "assign-int");
 			case _:
 				Context.fatalError("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
 				PhpReturnVoid;
@@ -181,7 +211,7 @@ class PhpTypedAstLowerer {
 		}
 	}
 
-	function lowerIntValue(expression:TypedExpr):PhpExpr {
+	function lowerIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TConst(TInt(value)):
 				PhpSemanticCapabilities.requireAdmitted(IntLiteral);
@@ -191,33 +221,49 @@ class PhpTypedAstLowerer {
 				PhpVar(variable.name);
 			case TBinop(OpAdd, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
-				PhpBinop("+", lowerIntValue(left), lowerIntValue(right));
-			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments);
-			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner);
+				PhpBinop("+", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TArray(base, index): lowerProvenIntArrayRead(expression, base, index, intArrayLengths);
+			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
+			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
 			case _: unsupportedValue(expression);
 		}
 	}
 
-	function lowerStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
+	function lowerProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
+		return switch [base.expr, index.expr] {
+			case [TLocal(variable), TConst(TInt(value))] if (intArrayLengths.exists(variable.id)):
+				final length = intArrayLengths.get(variable.id);
+				if (length == null || value < 0 || value >= length) {
+					Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+				}
+				PhpSemanticCapabilities.requireAdmitted(ProvenIntArrayRead);
+				PhpArrayRead(PhpVar(variable.name), PhpInt(value));
+			case _:
+				Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+				PhpInt(0);
+		}
+	}
+
+	function lowerStaticApplicationIntCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "Int"):
 				PhpSemanticCapabilities.requireAdmitted(StaticApplicationCall);
-				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerIntValue));
+				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(argument -> lowerIntValue(argument, intArrayLengths)));
 			case _:
 				Context.fatalError("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
 				PhpInt(0);
 		}
 	}
 
-	function lowerIntCondition(expression:TypedExpr):PhpExpr {
+	function lowerIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TBinop(OpEq, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntEquality);
-				PhpBinop("===", lowerIntValue(left), lowerIntValue(right));
+				PhpBinop("===", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TBinop(OpLte, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntLessOrEqual);
-				PhpBinop("<=", lowerIntValue(left), lowerIntValue(right));
-			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner);
+				PhpBinop("<=", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner, intArrayLengths);
 			case _: unsupportedValue(expression);
 		}
 	}
