@@ -39,5 +39,11 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'unicode-string:fail' . PHP_EOL;
 		}
+		$enabled = Hx_9_semantics_10_Calculator::negate( false );
+		if ( $enabled ) {
+			echo 'bool-control:pass' . PHP_EOL;
+		} else {
+			echo 'bool-control:fail' . PHP_EOL;
+		}
 	}
 }

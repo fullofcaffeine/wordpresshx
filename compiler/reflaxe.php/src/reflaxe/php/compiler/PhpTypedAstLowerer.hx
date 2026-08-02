@@ -82,6 +82,14 @@ class PhpTypedAstLowerer {
 				}
 				final parameters = lowerRequiredParameters(functionData, "Int", PhpIntType);
 				{parameters: parameters, returnType: PhpIntType};
+			case "Bool":
+				PhpSemanticCapabilities.requireAdmitted(RequiredBoolParameters);
+				PhpSemanticCapabilities.requireAdmitted(BoolReturn);
+				if (functionData.args.length == 0) {
+					Context.fatalError("reflaxe.php Bool-returning methods currently require at least one Bool parameter", functionData.field.pos);
+				}
+				final parameters = lowerRequiredParameters(functionData, "Bool", PhpBoolType);
+				{parameters: parameters, returnType: PhpBoolType};
 			case "String":
 				PhpSemanticCapabilities.requireAdmitted(RequiredStringParameters);
 				PhpSemanticCapabilities.requireAdmitted(StringReturn);
@@ -91,7 +99,8 @@ class PhpTypedAstLowerer {
 				final parameters = lowerRequiredParameters(functionData, "String", PhpStringType);
 				{parameters: parameters, returnType: PhpStringType};
 			case _:
-				Context.fatalError("reflaxe.php supports only Void, Int, and String method returns in the admitted semantic slice", functionData.field.pos);
+				Context.fatalError("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice",
+					functionData.field.pos);
 				{parameters: [], returnType: PhpVoidType};
 		}
 	}
@@ -132,6 +141,11 @@ class PhpTypedAstLowerer {
 							[
 								mapped(PhpLocal(variable.name, lowerIntValue(initialValue, intArrayLengths)), expression, "local-int")
 							];
+						case "Bool":
+							PhpSemanticCapabilities.requireAdmitted(InitializedBoolLocal);
+							[
+								mapped(PhpLocal(variable.name, lowerBoolValue(initialValue)), expression, "local-bool")
+							];
 						case "String":
 							PhpSemanticCapabilities.requireAdmitted(InitializedStringLocal);
 							[
@@ -140,7 +154,7 @@ class PhpTypedAstLowerer {
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
 						case _:
-							Context.fatalError("reflaxe.php supports only Int, String, and Array<Int> local bindings in the admitted semantic slice",
+							Context.fatalError("reflaxe.php supports only Int, Bool, String, and Array<Int> local bindings in the admitted semantic slice",
 								expression.pos);
 							[];
 					}
@@ -178,11 +192,14 @@ class PhpTypedAstLowerer {
 						[
 							mapped(PhpReturn(lowerIntValue(value, intArrayLengths)), expression, "return-int")
 						];
+					case "Bool":
+						PhpSemanticCapabilities.requireAdmitted(BoolReturn);
+						[mapped(PhpReturn(lowerBoolValue(value)), expression, "return-bool")];
 					case "String":
 						PhpSemanticCapabilities.requireAdmitted(StringReturn);
 						[mapped(PhpReturn(lowerStringValue(value)), expression, "return-string")];
 					case _:
-						Context.fatalError("reflaxe.php supports only Int and String return expressions in the admitted semantic slice", value.pos);
+						Context.fatalError("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
 						[];
 				}
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths);
@@ -252,6 +269,23 @@ class PhpTypedAstLowerer {
 		}
 	}
 
+	function lowerBoolValue(expression:TypedExpr):PhpExpr {
+		return switch (expression.expr) {
+			case TConst(TBool(value)):
+				PhpSemanticCapabilities.requireAdmitted(BoolLiteral);
+				PhpBool(value);
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "Bool"):
+				PhpSemanticCapabilities.requireAdmitted(InitializedBoolLocal);
+				PhpVar(variable.name);
+			case TUnop(OpNot, _, value):
+				PhpSemanticCapabilities.requireAdmitted(BoolNot);
+				PhpNot(lowerBoolValue(value));
+			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);
+			case TMeta(_, inner) | TParenthesis(inner): lowerBoolValue(inner);
+			case _: unsupportedBoolValue(expression);
+		}
+	}
+
 	function lowerIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TConst(TInt(value)):
@@ -307,6 +341,17 @@ class PhpTypedAstLowerer {
 		}
 	}
 
+	function lowerStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
+				PhpSemanticCapabilities.requireAdmitted(StaticApplicationBoolCall);
+				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerBoolValue));
+			case _:
+				Context.fatalError("reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice", call.pos);
+				PhpBool(false);
+		}
+	}
+
 	function lowerIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TBinop(OpEq, left, right):
@@ -328,11 +373,21 @@ class PhpTypedAstLowerer {
 					expression: PhpBinop("===", lowerStringValue(left), lowerStringValue(right)),
 					mappingKind: "if-string-equality"
 				};
-			case TMeta(_, inner) | TParenthesis(inner): lowerCondition(inner, intArrayLengths);
-			case _: {
+			case TBinop(OpEq | OpLte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
+				{
 					expression: lowerIntCondition(expression, intArrayLengths),
 					mappingKind: "if-int-equality"
 				};
+			case _ if (TypeTools.toString(expression.t) == "Bool"):
+				PhpSemanticCapabilities.requireAdmitted(BoolCondition);
+				{
+					expression: lowerBoolValue(expression),
+					mappingKind: "if-bool"
+				};
+			case TMeta(_, inner) | TParenthesis(inner): lowerCondition(inner, intArrayLengths);
+			case _:
+				Context.fatalError("reflaxe.php supports only admitted Int, String, and Bool conditions", expression.pos);
+				{expression: PhpBool(false), mappingKind: "if-unsupported"};
 		}
 	}
 
@@ -360,6 +415,11 @@ class PhpTypedAstLowerer {
 	function unsupportedIntValue(expression:TypedExpr):PhpExpr {
 		Context.fatalError("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
 		return PhpInt(0);
+	}
+
+	function unsupportedBoolValue(expression:TypedExpr):PhpExpr {
+		Context.fatalError("reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls", expression.pos);
+		return PhpBool(false);
 	}
 
 	function unsupportedIntCondition(expression:TypedExpr):PhpExpr {

@@ -10,4 +10,8 @@ class Hx_9_semantics_10_Calculator {
 	public static function decorate(string $prefix, string $value): string {
 		return $prefix . $value;
 	}
+
+	public static function negate(bool $value): bool {
+		return ! $value;
+	}
 }

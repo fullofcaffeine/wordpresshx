@@ -149,6 +149,8 @@ def main() -> None:
         "stmt:return-int:96:115": ("statement", 2, b"return left + right"),
         "method:semantics.Calculator:decorate": ("member", 1, b"public static function decorate"),
         "stmt:return-string:194:215": ("statement", 2, b"return prefix + value"),
+        "method:semantics.Calculator:negate": ("member", 1, b"public static function negate"),
+        "stmt:return-bool:273:286": ("statement", 2, b"return !value"),
     }
     main_expected = {
         "class:semantics.Main:Main": ("declaration", 0, b"class Main"),
@@ -175,9 +177,13 @@ def main() -> None:
         "stmt:if-string-equality:737:860": ("statement", 2, 'if (label == "Haxe → PHP 🚀")'.encode("utf-8")),
         "stmt:sys-println:771:805": ("statement", 3, b'Sys.println("unicode-string:pass")'),
         "stmt:sys-println:821:855": ("statement", 3, b'Sys.println("unicode-string:fail")'),
+        "stmt:local-bool:864:905": ("statement", 2, b"final enabled = Calculator.negate(false)"),
+        "stmt:if-bool:908:1011": ("statement", 2, b"if (enabled)"),
+        "stmt:sys-println:926:958": ("statement", 3, b'Sys.println("bool-control:pass")'),
+        "stmt:sys-println:974:1006": ("statement", 3, b'Sys.println("bool-control:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
-        {"stmt:return-int:96:115", "stmt:return-string:194:215"})
+        {"stmt:return-int:96:115", "stmt:return-string:194:215", "stmt:return-bool:273:286"})
     verify_map(
         output_root,
         main_path,
@@ -197,7 +203,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool maps passed")
 
 
 if __name__ == "__main__":

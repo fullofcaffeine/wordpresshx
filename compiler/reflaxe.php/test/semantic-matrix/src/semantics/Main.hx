@@ -36,5 +36,12 @@ class Main {
 		} else {
 			Sys.println("unicode-string:fail");
 		}
+
+		final enabled = Calculator.negate(false);
+		if (enabled) {
+			Sys.println("bool-control:pass");
+		} else {
+			Sys.println("bool-control:fail");
+		}
 	}
 }

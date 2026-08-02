@@ -21,6 +21,9 @@ The current admitted surface is deliberately bounded:
 - required non-null `String` parameters/returns and source-owned static String
   calls lowered to native PHP `string` signatures when every Haxe argument is
   itself an admitted non-null String expression;
+- typed `Bool` literals/locals, logical negation, direct conditions, required
+  non-null parameters/returns, and source-owned static calls lowered to native
+  PHP `bool` without admitting PHP truthiness;
 - Haxe source-character positions converted to authenticated UTF-8 byte ranges,
   so non-ASCII source before or inside a mapped statement remains traceable; and
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
@@ -85,11 +88,17 @@ compiler explicitly rejects a null String argument instead of generating a PHP
 call with different behavior. Calls from handwritten weakly typed PHP are a
 separate adapter/ABI concern and are not covered by this source-owned call
 claim.
+The same fail-closed rule applies to the admitted Boolean slice: exact Bool
+literals, locals, logical negation, direct conditions, required non-null
+parameters/returns, and source-owned calls lower to native PHP `bool`, while a
+stock-Haxe-valid null Bool argument and foreign Bool calls are rejected before
+emission. PHP truthy coercion, `&&`/`||`, Bool equality/mutation, and weak-PHP
+callers remain separate capabilities.
 Its two-module fixture runs under stock Haxe and generated PHP; their stdout
 must be byte-identical, and any PHP warning, error, or fatal fails the lane.
-Optional/default and non-`Int`/non-`String` signatures, foreign static calls, compound
+Optional/default and signature types outside the admitted `Int`/`Bool`/`String` subset, foreign static calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
-String coercion, null String arguments, and foreign String calls fail without
+String coercion, null String/Bool arguments, and foreign String/Bool calls fail without
 partial output. Arbitrary array access stays
 rejected because native PHP would emit an undefined-key warning where stock
 Haxe returns `null`; String length/indexing/normalization also remain unclaimed

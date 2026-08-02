@@ -3,3 +3,4 @@ mutable-loop:pass
 int-array-read:pass
 Haxe → PHP 🚀
 unicode-string:pass
+bool-control:pass

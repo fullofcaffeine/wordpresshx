@@ -8,4 +8,8 @@ class Calculator {
 	public static function decorate(prefix:String, value:String):String {
 		return prefix + value;
 	}
+
+	public static function negate(value:Bool):Bool {
+		return !value;
+	}
 }

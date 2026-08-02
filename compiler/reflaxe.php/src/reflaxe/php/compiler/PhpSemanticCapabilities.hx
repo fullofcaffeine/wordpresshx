@@ -10,9 +10,13 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var UnsupportedAstDiagnostic = "diagnostic.unsupported-ast";
 	var ExactHaxeRangeMap = "source-map.exact-haxe-ranges";
 	var IntLiteral = "numeric.int-literal";
+	var BoolLiteral = "value.bool-literal";
 	var IntAddition = "numeric.int-addition";
 	var InitializedIntLocal = "value.initialized-int-local";
+	var InitializedBoolLocal = "value.initialized-bool-local";
 	var IntEquality = "control.int-equality";
+	var BoolCondition = "control.bool-condition";
+	var BoolNot = "control.bool-not";
 	var IfElse = "control.if-else";
 	var IntAssignment = "control.int-assignment";
 	var IntLessOrEqual = "control.int-less-or-equal";
@@ -22,10 +26,13 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var ProvenIntArrayRead = "collection.proven-int-array-read";
 	var ArrayCollection = "collection.array";
 	var RequiredIntParameters = "call.required-int-parameters";
+	var RequiredBoolParameters = "call.required-non-null-bool-parameters";
 	var RequiredStringParameters = "call.required-non-null-string-parameters";
 	var IntReturn = "call.int-return";
+	var BoolReturn = "call.non-null-bool-return";
 	var StringReturn = "call.non-null-string-return";
 	var StaticApplicationCall = "call.static-application-int-call";
+	var StaticApplicationBoolCall = "call.static-application-bool-call";
 	var StaticApplicationStringCall = "call.static-application-string-call";
 	var Closure = "call.closure";
 	var TryThrowCatch = "exception.try-throw-catch";
@@ -101,9 +108,13 @@ class PhpSemanticCapabilities {
 			record(UnsupportedAstDiagnostic, Diagnostics, Admitted, tracer, owner),
 			record(ExactHaxeRangeMap, SourceMaps, Admitted, tracer, owner),
 			record(IntLiteral, Numeric, Admitted, semantic, owner),
+			record(BoolLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(IntAddition, Numeric, Admitted, semantic, owner),
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
+			record(InitializedBoolLocal, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
+			record(BoolCondition, ControlFlow, Admitted, semantic, owner),
+			record(BoolNot, ControlFlow, Admitted, semantic, owner),
 			record(IfElse, ControlFlow, Admitted, semantic, owner),
 			record(IntAssignment, ControlFlow, Admitted, semantic, owner),
 			record(IntLessOrEqual, ControlFlow, Admitted, semantic, owner),
@@ -111,10 +122,13 @@ class PhpSemanticCapabilities {
 			record(IntArrayLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(ProvenIntArrayRead, ValuesCollections, Admitted, semantic, owner),
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
+			record(RequiredBoolParameters, CallsClosures, Admitted, semantic, owner),
 			record(RequiredStringParameters, CallsClosures, Admitted, semantic, owner),
 			record(IntReturn, CallsClosures, Admitted, semantic, owner),
+			record(BoolReturn, CallsClosures, Admitted, semantic, owner),
 			record(StringReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationBoolCall, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationStringCall, CallsClosures, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),

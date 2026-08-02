@@ -17,6 +17,13 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.non-null-bool-return",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.non-null-string-return",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -31,7 +38,21 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.required-non-null-bool-parameters",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.required-non-null-string-parameters",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.static-application-bool-call",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -74,6 +95,20 @@
       "category": "values-collections",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "collection.proven-int-array-read",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.bool-condition",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.bool-not",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -262,6 +297,20 @@
     {
       "category": "values-collections",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.bool-literal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "value.initialized-bool-local",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "value.initialized-int-local",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -299,14 +348,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "ab6ae7ed3b8d236bcb6f7f9b913d06d2c1f6951df5d8b8439372baea97c52bd7"
+    "sha256": "17cff3e4c71222a934d8409433b74812627ec5e27e5df743e8aec32e25702733"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 40,
+    "capabilityCount": 47,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 27,
+      "admitted": 34,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

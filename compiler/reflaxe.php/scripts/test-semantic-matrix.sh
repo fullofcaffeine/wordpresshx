@@ -97,7 +97,7 @@ assert_compile_negative() {
 }
 
 assert_compile_negative "optional-parameter" "reflaxe.php supports only required parameters without defaults"
-assert_compile_negative "non-int-signature" "reflaxe.php supports only Void, Int, and String method returns"
+assert_compile_negative "non-int-signature" "reflaxe.php supports only Void, Int, Bool, and String method returns"
 assert_compile_negative "foreign-static-call" "reflaxe.php supports only source-owned static Int calls"
 assert_compile_negative "do-while" "reflaxe.php does not yet support do-while loops"
 assert_compile_negative "compound-assignment" "reflaxe.php does not yet support compound assignment"
@@ -106,6 +106,8 @@ assert_compile_negative "out-of-bounds-array-index" "reflaxe.php Array<Int> inde
 assert_compile_negative "string-coercion" "reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted"
 assert_compile_negative "null-string-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
+assert_compile_negative "null-bool-call" "reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls"
+assert_compile_negative "foreign-bool-call" "reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool semantic slices passed"

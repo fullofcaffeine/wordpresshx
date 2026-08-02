@@ -64,10 +64,12 @@ class PhpTypedAstValidator {
 				}
 			case "Int":
 				validateRequiredParameters(functionData, "Int");
+			case "Bool":
+				validateRequiredParameters(functionData, "Bool");
 			case "String":
 				validateRequiredParameters(functionData, "String");
 			case _:
-				Context.error("reflaxe.php supports only Void, Int, and String method returns in the admitted semantic slice", functionData.field.pos);
+				Context.error("reflaxe.php supports only Void, Int, Bool, and String method returns in the admitted semantic slice", functionData.field.pos);
 		}
 		if (functionData.expr == null) {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
@@ -109,10 +111,11 @@ class PhpTypedAstValidator {
 				} else {
 					switch (TypeTools.toString(variable.t)) {
 						case "Int": validateIntValue(initialValue, intArrayLengths);
+						case "Bool": validateBoolValue(initialValue);
 						case "String": validateStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
-							Context.error("reflaxe.php supports only Int, String, and Array<Int> local bindings in the admitted semantic slice",
+							Context.error("reflaxe.php supports only Int, Bool, String, and Array<Int> local bindings in the admitted semantic slice",
 								expression.pos);
 					}
 				}
@@ -137,9 +140,10 @@ class PhpTypedAstValidator {
 			case TReturn(value):
 				switch (TypeTools.toString(value.t)) {
 					case "Int": validateIntValue(value, intArrayLengths);
+					case "Bool": validateBoolValue(value);
 					case "String": validateStringValue(value);
 					case _:
-						Context.error("reflaxe.php supports only Int and String return expressions in the admitted semantic slice", value.pos);
+						Context.error("reflaxe.php supports only Int, Bool, and String return expressions in the admitted semantic slice", value.pos);
 				}
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStatement(inner, intArrayLengths);
@@ -199,6 +203,21 @@ class PhpTypedAstValidator {
 		}
 	}
 
+	static function validateBoolValue(expression:TypedExpr):Void {
+		switch (expression.expr) {
+			case TConst(TBool(_)):
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "Bool"):
+			case TUnop(OpNot, _, value):
+				validateBoolValue(value);
+			case TCall(target, arguments):
+				validateStaticApplicationBoolCall(expression, target, arguments);
+			case TMeta(_, inner) | TParenthesis(inner):
+				validateBoolValue(inner);
+			case _:
+				Context.error("reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls", expression.pos);
+		}
+	}
+
 	static function validateIntValue(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
 			case TConst(TInt(_)):
@@ -251,6 +270,17 @@ class PhpTypedAstValidator {
 		}
 	}
 
+	static function validateStaticApplicationBoolCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
+		switch (target.expr) {
+			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "Bool"):
+				for (argument in arguments) {
+					validateBoolValue(argument);
+				}
+			case _:
+				Context.error("reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice", call.pos);
+		}
+	}
+
 	static function validateIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
 			case TBinop(OpEq | OpLte, left, right):
@@ -268,10 +298,14 @@ class PhpTypedAstValidator {
 			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
 				validateStringValue(left);
 				validateStringValue(right);
+			case TBinop(OpEq | OpLte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
+				validateIntCondition(expression, intArrayLengths);
+			case _ if (TypeTools.toString(expression.t) == "Bool"):
+				validateBoolValue(expression);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateCondition(inner, intArrayLengths);
 			case _:
-				validateIntCondition(expression, intArrayLengths);
+				Context.error("reflaxe.php supports only admitted Int, String, and Bool conditions", expression.pos);
 		}
 	}
 	#end
