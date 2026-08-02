@@ -6546,9 +6546,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
     "REFLAXE-PHP-SEMANTIC-MATRIX-001"
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
-assert reflaxe_php_semantic_receipt["status"] == (
-    "implemented-local-hosted-pending"
-)
+assert reflaxe_php_semantic_receipt["status"] == "verified-hosted-exact-matrix"
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter"
 )
@@ -6578,29 +6576,28 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-50-capability-subject-hosted-pending; "
-    "predecessor-45-capability-subject-passed-run-30746099409"
+    "current-50-capability-subject-passed-run-30749072309"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
-assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
-    "relation": "predecessor-45-capability-subject-only",
-    "admittedCapabilityCount": 45,
+assert reflaxe_php_semantic_receipt["hostedVerification"] == {
+    "relation": "current-50-capability-subject",
+    "admittedCapabilityCount": 50,
     "workflow": "Repository bootstrap",
-    "runId": 30746099409,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30746099409",
-    "commit": "969b4e6c576c20db8ec733c9f49d6940314b9cf7",
+    "runId": 30749072309,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30749072309",
+    "commit": "048ddd0d004bbdb354a49c42dcf00b96a7ba96f3",
     "status": "passed",
     "job": {
         "name": "haxe",
-        "jobId": 91491856372,
+        "jobId": 91499732628,
         "url": (
             "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
-            "30746099409/job/91491856372"
+            "30749072309/job/91499732628"
         ),
         "status": "passed",
-        "completedAt": "2026-08-02T11:52:28Z",
+        "completedAt": "2026-08-02T13:17:42Z",
     },
     "exactPhpVersions": ["7.4.33", "8.4.7"],
     "requiredSteps": [
@@ -6611,7 +6608,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
         "Test exact PHP 7.4 and 8.4 runtime matrix",
     ],
     "scope": (
-        "the 45 exact admitted semantic records, deterministic generic "
+        "the 50 exact admitted semantic records, deterministic generic "
         "compiler package, clean external package consumer, and native PHP "
         "7.4.33/8.4.7 parser/runtime behavior only"
     ),
@@ -6620,7 +6617,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
