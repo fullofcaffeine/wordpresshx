@@ -71,10 +71,10 @@ the narrower example or compiler jobs.
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
 The compiler scorecard's last hosted bounded nullable-String checkpoint is
-independently hosted by Repository bootstrap run `30753775194`, Haxe job
-`91512308969`, at commit
-`47b1b66ea8638fcc2755435d18e85f8597306697`. That proof covers the semantic
-matrix's 59 exact admitted records, deterministic generic compiler package,
+independently hosted by Repository bootstrap run `30759497694`, Haxe job
+`91527368341`, at commit
+`615aff4fb12a624a945d9edfb7844ef0aa916dc0`. That proof covers the semantic
+matrix's 61 exact admitted records, deterministic generic compiler package,
 clean external package consumer, and native PHP 7.4.33/8.4.7 only; it advances
 neither WordPress compatibility, official Haxe target qualification, nor
 publication.
@@ -110,8 +110,8 @@ The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
-its exact command; the current 61-record nullable-return subject is hosted
-pending while the 59-record predecessor remains the latest hosted authority.
+its exact command; the current 61-record nullable-return subject is now hosted
+authority for its own exact bytes.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
