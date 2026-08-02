@@ -48,6 +48,14 @@ def main() -> None:
         "stmt:if-int-equality:113:237": ("statement", 2, "semantics/Main.hx", b"if (answer == 42)"),
         "stmt:sys-println:136:176": ("statement", 3, "semantics/Main.hx", b'Sys.println("numeric-control-flow:pass")'),
         "stmt:sys-println:192:232": ("statement", 3, "semantics/Main.hx", b'Sys.println("numeric-control-flow:fail")'),
+        "stmt:local-int:241:255": ("statement", 2, "semantics/Main.hx", b"var total = 0"),
+        "stmt:local-int:258:274": ("statement", 2, "semantics/Main.hx", b"var current = 1"),
+        "stmt:while-int:277:357": ("statement", 2, "semantics/Main.hx", b"while (current <= 4)"),
+        "stmt:assign-int:303:326": ("statement", 3, "semantics/Main.hx", b"total = total + current"),
+        "stmt:assign-int:331:352": ("statement", 3, "semantics/Main.hx", b"current = current + 1"),
+        "stmt:if-int-equality:360:467": ("statement", 2, "semantics/Main.hx", b"if (total == 10)"),
+        "stmt:sys-println:382:414": ("statement", 3, "semantics/Main.hx", b'Sys.println("mutable-loop:pass")'),
+        "stmt:sys-println:430:462": ("statement", 3, "semantics/Main.hx", b'Sys.println("mutable-loop:fail")'),
         "entrypoint:semantics.Main:Main": ("statement", 0, "semantics/Main.hx", b"class Main"),
     }
     mappings = document["mappings"]
@@ -72,10 +80,18 @@ def main() -> None:
             "stmt:if-int-equality:113:237",
             "stmt:sys-println:136:176",
             "stmt:sys-println:192:232",
+            "stmt:local-int:241:255",
+            "stmt:local-int:258:274",
+            "stmt:while-int:277:357",
+            "stmt:assign-int:303:326",
+            "stmt:assign-int:331:352",
+            "stmt:if-int-equality:360:467",
+            "stmt:sys-println:382:414",
+            "stmt:sys-println:430:462",
         },
         "semantic trace anchors drifted",
     )
-    print("reflaxe.php numeric/control-flow/function-call map passed")
+    print("reflaxe.php numeric/control-flow/function-call/while map passed")
 
 
 if __name__ == "__main__":

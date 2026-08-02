@@ -13,6 +13,9 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedIntLocal = "value.initialized-int-local";
 	var IntEquality = "control.int-equality";
 	var IfElse = "control.if-else";
+	var IntAssignment = "control.int-assignment";
+	var IntLessOrEqual = "control.int-less-or-equal";
+	var WhileLoop = "control.while";
 	var InstanceLayout = "module.instance-layout";
 	var ArrayCollection = "collection.array";
 	var RequiredIntParameters = "call.required-int-parameters";
@@ -92,6 +95,9 @@ class PhpSemanticCapabilities {
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
 			record(IfElse, ControlFlow, Admitted, semantic, owner),
+			record(IntAssignment, ControlFlow, Admitted, semantic, owner),
+			record(IntLessOrEqual, ControlFlow, Admitted, semantic, owner),
+			record(WhileLoop, ControlFlow, Admitted, semantic, owner),
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
 			record(IntReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),

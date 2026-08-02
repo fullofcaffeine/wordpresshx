@@ -8,5 +8,17 @@ class Main {
 		} else {
 			Sys.println("numeric-control-flow:fail");
 		}
+
+		var total = 0;
+		var current = 1;
+		while (current <= 4) {
+			total = total + current;
+			current = current + 1;
+		}
+		if (total == 10) {
+			Sys.println("mutable-loop:pass");
+		} else {
+			Sys.println("mutable-loop:fail");
+		}
 	}
 }

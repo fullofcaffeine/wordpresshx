@@ -77,6 +77,8 @@ assert_compile_negative() {
 assert_compile_negative "optional-parameter" "reflaxe.php supports only required parameters without defaults"
 assert_compile_negative "non-int-signature" "reflaxe.php supports only Void and Int method returns"
 assert_compile_negative "foreign-static-call" "reflaxe.php supports only source-owned static Int calls"
+assert_compile_negative "do-while" "reflaxe.php does not yet support do-while loops"
+assert_compile_negative "compound-assignment" "reflaxe.php does not yet support compound assignment"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while semantic slices passed"

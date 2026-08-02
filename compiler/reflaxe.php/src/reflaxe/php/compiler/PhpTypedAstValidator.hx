@@ -113,6 +113,15 @@ class PhpTypedAstValidator {
 				} else {
 					validateStatement(elseBranch);
 				}
+			case TWhile(condition, body, true):
+				validateIntCondition(condition);
+				validateStatement(body);
+			case TWhile(_, _, false):
+				Context.error("reflaxe.php does not yet support do-while loops", expression.pos);
+			case TBinop(OpAssign, target, value):
+				validateIntAssignment(expression, target, value);
+			case TBinop(OpAssignOp(_), _, _):
+				Context.error("reflaxe.php does not yet support compound assignment", expression.pos);
 			case TReturn(null):
 			case TReturn(value):
 				validateIntValue(value);
@@ -120,6 +129,15 @@ class PhpTypedAstValidator {
 				validateStatement(inner);
 			case _:
 				Context.error("reflaxe.php tracer does not support statement " + expression.expr.getName(), expression.pos);
+		}
+	}
+
+	static function validateIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr):Void {
+		switch (target.expr) {
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
+				validateIntValue(value);
+			case _:
+				Context.error("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
 		}
 	}
 
@@ -171,7 +189,7 @@ class PhpTypedAstValidator {
 
 	static function validateIntCondition(expression:TypedExpr):Void {
 		switch (expression.expr) {
-			case TBinop(OpEq, left, right):
+			case TBinop(OpEq | OpLte, left, right):
 				validateIntValue(left);
 				validateIntValue(right);
 			case TMeta(_, inner) | TParenthesis(inner):

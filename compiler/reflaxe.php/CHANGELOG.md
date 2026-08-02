@@ -17,6 +17,9 @@ has been authorized.
 - Added required `Int` parameters and returns plus source-owned cross-module
   static calls, emitted as readable native PHP `int` signatures with focused
   optional/default, non-`Int`, and foreign-call rejection cases.
+- Added explicit `Int` assignment, `Int <=`, and pre-test `while` lowering with
+  stock-Haxe/native-PHP parity; compound assignment and `do-while` remain
+  source-positioned failures.
 - Added deterministic package-artifact construction and an isolated external
   Haxelib consumer proof.
 - Added typed PHPDoc declarations, native typed properties, and the PHP

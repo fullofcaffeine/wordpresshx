@@ -127,6 +127,18 @@ class PhpTypedAstLowerer {
 							"if-int-equality")
 					];
 				}
+			case TWhile(condition, body, true):
+				PhpSemanticCapabilities.requireAdmitted(WhileLoop);
+				[
+					mapped(PhpWhile(lowerIntCondition(condition), lowerStatementList(body)), expression, "while-int")
+				];
+			case TWhile(_, _, false):
+				Context.fatalError("reflaxe.php does not yet support do-while loops", expression.pos);
+				[];
+			case TBinop(OpAssign, target, value): [lowerIntAssignment(expression, target, value)];
+			case TBinop(OpAssignOp(_), _, _):
+				Context.fatalError("reflaxe.php does not yet support compound assignment", expression.pos);
+				[];
 			case TReturn(null): [mapped(PhpReturnVoid, expression, "return")];
 			case TReturn(value):
 				PhpSemanticCapabilities.requireAdmitted(IntReturn);
@@ -134,6 +146,17 @@ class PhpTypedAstLowerer {
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner);
 			case _:
 				unsupportedStatement(expression);
+		}
+	}
+
+	function lowerIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr):PhpStmt {
+		return switch (target.expr) {
+			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
+				PhpSemanticCapabilities.requireAdmitted(IntAssignment);
+				mapped(PhpAssign(PhpVar(variable.name), lowerIntValue(value)), assignment, "assign-int");
+			case _:
+				Context.fatalError("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
+				PhpReturnVoid;
 		}
 	}
 
@@ -191,6 +214,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpEq, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntEquality);
 				PhpBinop("===", lowerIntValue(left), lowerIntValue(right));
+			case TBinop(OpLte, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntLessOrEqual);
+				PhpBinop("<=", lowerIntValue(left), lowerIntValue(right));
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner);
 			case _: unsupportedValue(expression);
 		}

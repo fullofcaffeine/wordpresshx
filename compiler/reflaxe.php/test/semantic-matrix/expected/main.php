@@ -16,6 +16,17 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'numeric-control-flow:fail' . PHP_EOL;
 		}
+		$total = 0;
+		$current = 1;
+		while ( $current <= 4 ) {
+			$total = $total + $current;
+			$current = $current + 1;
+		}
+		if ( $total === 10 ) {
+			echo 'mutable-loop:pass' . PHP_EOL;
+		} else {
+			echo 'mutable-loop:fail' . PHP_EOL;
+		}
 	}
 }
 

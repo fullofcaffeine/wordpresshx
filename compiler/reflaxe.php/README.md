@@ -61,11 +61,13 @@ It derives [`semantic-capabilities.json`](semantic-capabilities.json) from the
 typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
 and currently admits small `Int` literals/addition, initialized locals, `Int`
 equality, `if/else`, required `Int` parameters/returns, and source-owned static
-application calls beyond the original tracer. Its two-module fixture runs under
-stock Haxe and generated PHP; their stdout must be identical, and any PHP
-warning, error, or fatal fails the lane. Optional/default and non-`Int`
-signatures plus foreign static calls fail without partial output. Unsupported
-and unverified runtime/stdlib features remain named and owned in the matrix.
+application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
+beyond the original tracer. Its two-module fixture runs under stock Haxe and
+generated PHP; their stdout must be identical, and any PHP warning, error, or
+fatal fails the lane. Optional/default and non-`Int` signatures, foreign static
+calls, compound assignment, and `do-while` fail without partial output.
+Unsupported and unverified runtime/stdlib features remain named and owned in
+the matrix.
 
 The current driver still stages all classes into `main.php`. That is a tracer
 shape, not the intended file model. `wordpresshx-reflaxe-php.7` owns the next
