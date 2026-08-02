@@ -280,6 +280,14 @@ class PhpTypedAstLowerer {
 			case TUnop(OpNot, _, value):
 				PhpSemanticCapabilities.requireAdmitted(BoolNot);
 				PhpNot(lowerBoolValue(value));
+			case TBinop(OpBoolAnd, left, right):
+				PhpSemanticCapabilities.requireAdmitted(BoolShortCircuitAnd);
+				PhpSemanticCapabilities.requireAdmitted(BoolParenthesizedGrouping);
+				PhpParenthesized(PhpBinop("&&", lowerBoolValue(left), lowerBoolValue(right)));
+			case TBinop(OpBoolOr, left, right):
+				PhpSemanticCapabilities.requireAdmitted(BoolShortCircuitOr);
+				PhpSemanticCapabilities.requireAdmitted(BoolParenthesizedGrouping);
+				PhpParenthesized(PhpBinop("||", lowerBoolValue(left), lowerBoolValue(right)));
 			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerBoolValue(inner);
 			case _: unsupportedBoolValue(expression);
@@ -418,7 +426,8 @@ class PhpTypedAstLowerer {
 	}
 
 	function unsupportedBoolValue(expression:TypedExpr):PhpExpr {
-		Context.fatalError("reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls", expression.pos);
+		Context.fatalError("reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
+			expression.pos);
 		return PhpBool(false);
 	}
 

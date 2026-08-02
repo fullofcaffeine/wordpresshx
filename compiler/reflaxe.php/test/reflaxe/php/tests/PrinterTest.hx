@@ -67,6 +67,7 @@ class PrinterTest {
 				[PhpReturn(PhpBinop(".", PhpVar("prefix"), PhpCastString(PhpVar("value"))))], false, PhpStringType)),
 			"typed closure");
 		assertEquals("array( Scaler::class, 'double' )", printer.printExpr(PhpCallableArray(PhpClassConst("Scaler", "class"), id("double"))), "callable array");
+		assertEquals("( $left || $right )", printer.printExpr(PhpParenthesized(PhpBinop("||", PhpVar("left"), PhpVar("right")))), "parenthesized expression");
 		assertEquals("require __DIR__ . '/classmap.php'",
 			printer.printExpr(PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/classmap.php")), false)), "required data projection");
 		assertEquals("require_once __DIR__ . '/autoload.php'",

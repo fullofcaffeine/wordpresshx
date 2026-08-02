@@ -12,4 +12,9 @@ class Calculator {
 	public static function negate(value:Bool):Bool {
 		return !value;
 	}
+
+	public static function probe(value:Bool):Bool {
+		Sys.println("bool-probe");
+		return value;
+	}
 }

@@ -151,6 +151,9 @@ def main() -> None:
         "stmt:return-string:194:215": ("statement", 2, b"return prefix + value"),
         "method:semantics.Calculator:negate": ("member", 1, b"public static function negate"),
         "stmt:return-bool:273:286": ("statement", 2, b"return !value"),
+        "method:semantics.Calculator:probe": ("member", 1, b"public static function probe"),
+        "stmt:sys-println:343:368": ("statement", 2, b'Sys.println("bool-probe")'),
+        "stmt:return-bool:372:384": ("statement", 2, b"return value"),
     }
     main_expected = {
         "class:semantics.Main:Main": ("declaration", 0, b"class Main"),
@@ -181,9 +184,22 @@ def main() -> None:
         "stmt:if-bool:908:1011": ("statement", 2, b"if (enabled)"),
         "stmt:sys-println:926:958": ("statement", 3, b'Sys.println("bool-control:pass")'),
         "stmt:sys-println:974:1006": ("statement", 3, b'Sys.println("bool-control:fail")'),
+        "stmt:local-bool:1015:1066": ("statement", 2, b"final andSkipped = false && Calculator.probe(true)"),
+        "stmt:local-bool:1069:1119": ("statement", 2, b"final orSkipped = true || Calculator.probe(false)"),
+        "stmt:local-bool:1122:1175": ("statement", 2, b"final andEvaluated = true && Calculator.probe(false)"),
+        "stmt:local-bool:1178:1237": ("statement", 2, b"final grouped = (true || Calculator.probe(false)) && false"),
+        "stmt:if-bool:1240:1401": ("statement", 2, b"if (!andSkipped && orSkipped && !andEvaluated && !grouped)"),
+        "stmt:sys-println:1304:1342": ("statement", 3, b'Sys.println("bool-short-circuit:pass")'),
+        "stmt:sys-println:1358:1396": ("statement", 3, b'Sys.println("bool-short-circuit:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
-        {"stmt:return-int:96:115", "stmt:return-string:194:215", "stmt:return-bool:273:286"})
+        {
+            "stmt:return-int:96:115",
+            "stmt:return-string:194:215",
+            "stmt:return-bool:273:286",
+            "stmt:sys-println:343:368",
+            "stmt:return-bool:372:384",
+        })
     verify_map(
         output_root,
         main_path,
@@ -203,7 +219,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool-short-circuit maps passed")
 
 
 if __name__ == "__main__":

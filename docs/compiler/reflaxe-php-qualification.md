@@ -21,8 +21,8 @@ flow and calls, fixed proven `Array<Int>` reads, and exact UTF-8 String
 concatenation/equality/printing plus required non-null String
 parameters/returns and source-owned static String calls. It also covers exact
 Bool literals/locals, logical negation, direct conditions, required non-null
-Bool parameters/returns, and source-owned static Bool calls without PHP
-truthiness. Null arguments are
+Bool parameters/returns, source-owned static Bool calls, and lazy `&&`/`||`
+with typed parenthesized grouping, without PHP truthiness. Null arguments are
 rejected before emission because ordinary non-null-safe Haxe and strict PHP do
 not otherwise agree at that boundary. This establishes a useful compiler path;
 it does not imply arbitrary typed-Haxe lowering, a complete

@@ -209,12 +209,16 @@ class PhpTypedAstValidator {
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Bool"):
 			case TUnop(OpNot, _, value):
 				validateBoolValue(value);
+			case TBinop(OpBoolAnd | OpBoolOr, left, right):
+				validateBoolValue(left);
+				validateBoolValue(right);
 			case TCall(target, arguments):
 				validateStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateBoolValue(inner);
 			case _:
-				Context.error("reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls", expression.pos);
+				Context.error("reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
+					expression.pos);
 		}
 	}
 

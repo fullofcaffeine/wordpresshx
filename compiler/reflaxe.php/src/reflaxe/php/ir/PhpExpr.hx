@@ -32,6 +32,7 @@ enum PhpExpr {
 
 	PhpInvoke(callable:PhpExpr, args:Array<PhpExpr>);
 	PhpCallableArray(target:PhpExpr, method:PhpIdentifier);
+	PhpParenthesized(expr:PhpExpr);
 	PhpBinop(op:String, left:PhpExpr, right:PhpExpr);
 	PhpInstanceOf(value:PhpExpr, className:String);
 	PhpNullCoalesce(left:PhpExpr, right:PhpExpr);

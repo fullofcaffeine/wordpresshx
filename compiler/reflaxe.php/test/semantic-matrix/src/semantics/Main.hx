@@ -43,5 +43,15 @@ class Main {
 		} else {
 			Sys.println("bool-control:fail");
 		}
+
+		final andSkipped = false && Calculator.probe(true);
+		final orSkipped = true || Calculator.probe(false);
+		final andEvaluated = true && Calculator.probe(false);
+		final grouped = (true || Calculator.probe(false)) && false;
+		if (!andSkipped && orSkipped && !andEvaluated && !grouped) {
+			Sys.println("bool-short-circuit:pass");
+		} else {
+			Sys.println("bool-short-circuit:fail");
+		}
 	}
 }

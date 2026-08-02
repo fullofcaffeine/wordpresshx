@@ -424,6 +424,7 @@ class PhpPrinter {
 				printExpr(callable, depth) + printCallArgs(args, depth);
 			case PhpCallableArray(target, method):
 				"array( " + printExpr(target, depth) + ", " + quote(method.value) + " )";
+			case PhpParenthesized(inner): "( " + printExpr(inner, depth) + " )";
 			case PhpBinop(op, left, right):
 				printExpr(left, depth) + " " + binaryOperator(op) + " " + printExpr(right, depth);
 			case PhpInstanceOf(value, className):

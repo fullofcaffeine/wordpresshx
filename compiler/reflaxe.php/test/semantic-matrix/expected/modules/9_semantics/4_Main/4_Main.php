@@ -45,5 +45,14 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'bool-control:fail' . PHP_EOL;
 		}
+		$andSkipped = ( false && Hx_9_semantics_10_Calculator::probe( true ) );
+		$orSkipped = ( true || Hx_9_semantics_10_Calculator::probe( false ) );
+		$andEvaluated = ( true && Hx_9_semantics_10_Calculator::probe( false ) );
+		$grouped = ( ( true || Hx_9_semantics_10_Calculator::probe( false ) ) && false );
+		if ( ( ( ( ! $andSkipped && $orSkipped ) && ! $andEvaluated ) && ! $grouped ) ) {
+			echo 'bool-short-circuit:pass' . PHP_EOL;
+		} else {
+			echo 'bool-short-circuit:fail' . PHP_EOL;
+		}
 	}
 }

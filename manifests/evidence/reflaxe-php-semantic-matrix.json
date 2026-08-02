@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-hosted-exact-matrix",
+  "status": "implemented-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
-    "input": "two ordinary Haxe modules with small Int literals/addition, initialized and mutable Int locals, Int equality and <=, if/else, pre-test while, required Int parameters/return, source-owned cross-module static calls, a fixed Array<Int> literal with constant in-bounds reads, exact UTF-8 String literals/local/concatenation/equality/printing plus required non-null String parameters/return, and Bool literal/local/negation/direct-condition plus required non-null Bool parameter/return",
+    "input": "two ordinary Haxe modules with small Int literals/addition, initialized and mutable Int locals, Int equality and <=, if/else, pre-test while, required Int parameters/return, source-owned cross-module static calls, a fixed Array<Int> literal with constant in-bounds reads, exact UTF-8 String literals/local/concatenation/equality/printing plus required non-null String parameters/return, and Bool literal/local/negation/direct-condition, required non-null Bool parameter/return, lazy conjunction/disjunction, and mixed parenthesized grouping",
     "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST lowering -> deterministic per-type PHP and exact maps -> dependency-ordered bootstrap -> php -l -> native PHP execution",
-    "observableResult": "stock Haxe and generated PHP print byte-identical six-line stdout: numeric-control-flow:pass, mutable-loop:pass, int-array-read:pass, Haxe → PHP 🚀, unicode-string:pass, and bool-control:pass",
+    "observableResult": "stock Haxe and generated PHP print byte-identical eight-line stdout: numeric-control-flow:pass, mutable-loop:pass, int-array-read:pass, Haxe → PHP 🚀, unicode-string:pass, bool-control:pass, exactly one bool-probe, and bool-short-circuit:pass",
     "errorOrEdgeBehavior": "unsupported constructs, PHP truthiness, implicit String coercion, null String/Bool arguments, and foreign String/Bool calls remain explicitly classified; Haxe character positions must map to UTF-8 byte boundaries; native PHP stderr must be empty and warnings, errors, and fatals are never retried or hidden",
     "owningSurface": "compiler-adapter",
-    "protectedClaim": "small Int literals/addition, initialized Int local binding, explicit Int assignment, Int equality and <=, if/else, pre-test while, required Int parameters/return, source-owned static Int calls, fixed Array<Int> literals, compiler-proven constant in-bounds reads, initialized String locals, exact String-only concatenation/equality/printing, required non-null String parameters/return, source-owned static String calls, UTF-8 literal byte preservation, Bool literals/locals/logical negation/direct conditions, required non-null Bool parameters/return, source-owned static Bool calls, and character-to-byte source correlation only; the per-type artifact shape is owned separately by wordpresshx-reflaxe-php.7 and does not broaden these semantics; no null String/Bool arguments, PHP truthiness, Bool equality/mutation/and/or, external weak-PHP ABI, implicit String coercion, String length/indexing/normalization, invalid Unicode, dynamic/out-of-bounds array indexing, array mutation/runtime, compound update, do-while, termination, optional/default, arbitrary-call, numeric-edge, broad runtime, WordPress, or release claim"
+    "protectedClaim": "small Int literals/addition, initialized Int local binding, explicit Int assignment, Int equality and <=, if/else, pre-test while, required Int parameters/return, source-owned static Int calls, fixed Array<Int> literals, compiler-proven constant in-bounds reads, initialized String locals, exact String-only concatenation/equality/printing, required non-null String parameters/return, source-owned static String calls, UTF-8 literal byte preservation, Bool literals/locals/logical negation/direct conditions, required non-null Bool parameters/return, source-owned static Bool calls, lazy Bool conjunction/disjunction, typed parenthesized Bool grouping, and character-to-byte source correlation only; the per-type artifact shape is owned separately by wordpresshx-reflaxe-php.7 and does not broaden these semantics; no null String/Bool arguments, PHP truthiness, Bool equality/mutation/bitwise operations, external weak-PHP ABI, implicit String coercion, String length/indexing/normalization, invalid Unicode, dynamic/out-of-bounds array indexing, array mutation/runtime, compound update, do-while, termination, optional/default, arbitrary-call, numeric-edge, broad runtime, WordPress, or release claim"
   },
   "redState": {
     "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
@@ -75,6 +75,14 @@
       "reason": "the compiler rejected the first Bool local before Bool literal, logical-negation, direct-condition, required signature/return, or source-owned static-call lowering existed",
       "stockHaxeOutcome": "passed-and-matched-the-manually-authored-six-line-transcript-with-bool-control-pass",
       "partialOutputPublished": false
+    },
+    {
+      "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
+      "exitCode": 1,
+      "failure": "test/semantic-matrix/src/semantics/Main.hx:47: characters 22-53: reflaxe.php supports only Bool literals, Bool locals, logical negation, and source-owned static Bool calls",
+      "reason": "the compiler rejected the first lazy Bool conjunction before short-circuit operators or typed parenthesized target grouping existed",
+      "stockHaxeOutcome": "passed-and-matched-the-manually-authored-eight-line-transcript-with-exactly-one-bool-probe",
+      "partialOutputPublished": false
     }
   ],
   "independentOracle": [
@@ -84,14 +92,15 @@
     "native PHP parser/runtime observation and independent Python source/map verification",
     "manually known one-, three-, and four-byte UTF-8 scalar widths plus an independent Python Unicode-character-to-UTF-8-byte conversion for every mapped statement",
     "stock Haxe acceptance and null output for a String parameter contrasted with the compiler-owned non-null subset",
-    "stock Haxe acceptance and true result for a null Bool argument contrasted with the compiler-owned non-null Bool subset"
+    "stock Haxe acceptance and true result for a null Bool argument contrasted with the compiler-owned non-null Bool subset",
+    "stock Haxe evaluation of false && probe, true || probe, true && probe, and (true || probe) && false contrasted with one manually expected probe line"
   ],
   "capabilityMatrix": {
     "authority": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 47,
+    "capabilityCount": 50,
     "categoryCount": 13,
-    "admittedCount": 34,
+    "admittedCount": 37,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": true,
@@ -104,11 +113,11 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-34-capability-subject-passed-run-30741770446",
+    "exactPhp74And84Matrix": "current-37-capability-subject-hosted-pending; predecessor-34-capability-subject-passed-run-30741770446",
     "sourceMap": "independently-verified",
     "strictHaxe": "63-files-zero-findings",
-    "firstMilliseconds": 7390,
-    "repeatMilliseconds": 8160,
+    "firstMilliseconds": 7413,
+    "repeatMilliseconds": 7322,
     "coldClaim": false,
     "warmClaim": false
   },
@@ -117,8 +126,8 @@
     "reflaxe": "4.0.0-beta",
     "php": "8.4.7"
   },
-  "hostedVerification": {
-    "relation": "current-34-capability-subject",
+  "previousHostedVerification": {
+    "relation": "predecessor-34-capability-subject-only",
     "admittedCapabilityCount": 34,
     "workflow": "Repository bootstrap",
     "runId": 30741770446,
@@ -173,7 +182,9 @@
       "Every compile-negative fixture now executes successfully under stock Haxe with empty stderr before the custom compiler is required to reject it, preventing an invalid Haxe program from masquerading as a backend boundary test.",
       "PHP strict_types is selected by the caller; therefore handwritten weak-PHP callers and public adapter ABI behavior remain outside this source-owned Haxe call claim.",
       "The Bool slice admits only already-typed Bool literals/locals, logical negation, a direct if condition, required non-null signatures/return, and source-owned calls; PHP truthy coercion is never used.",
-      "Stock Haxe accepted a null Bool argument and evaluated !null as true, so the compiler rejects that otherwise valid source before native PHP bool signatures can diverge; the foreign Bool fixture separately keeps stdlib/runtime calls outside the slice."
+      "Stock Haxe accepted a null Bool argument and evaluated !null as true, so the compiler rejects that otherwise valid source before native PHP bool signatures can diverge; the foreign Bool fixture separately keeps stdlib/runtime calls outside the slice.",
+      "The first short-circuit implementation review found that the generic PHP IR could not represent grouping, so mixed (a || b) && c could have inherited PHP precedence incorrectly; a typed PhpParenthesized node and an observable mixed-group fixture now make the grouping explicit.",
+      "The short-circuit fixture expects exactly one probe line: false && probe and true || probe skip the right operand, true && probe evaluates it once, and the grouped expression skips its nested probe while remaining false."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
@@ -182,7 +193,7 @@
       "only the exact explicit Int mutation and pre-test while slice is admitted; broader mutable values and loop control remain unsupported",
       "only fixed Int-array literals and proven constant reads are admitted; dynamic access and the Haxe Array runtime are not implemented",
       "only exact UTF-8 literals, String locals, String-only concatenation/equality/printing, required non-null String signatures, and source-owned static calls are admitted; nullable Strings, external weak-PHP callers, length, indexing, normalization, invalid Unicode, and implicit coercion are not implemented",
-      "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, and source-owned static calls are admitted; nullable Bool, truthiness, equality, mutation, and/or, and external weak-PHP callers are not implemented",
+      "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, source-owned static calls, lazy conjunction/disjunction, and typed parenthesized grouping are admitted; nullable Bool, truthiness, equality, mutation, bitwise operations, and external weak-PHP callers are not implemented",
       "official Haxe-suite qualification remains blocked on this Bead",
       "cyclic owned module dependencies, general autoloading, namespaces, and additional PHP profiles remain unsupported",
       "standalone extraction remains deliberately low priority"
@@ -191,7 +202,7 @@
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "b275debed51435f7c198e796d0f5940d9fb2d31e21da59e32bc08df4954c6b51"
+      "sha256": "7924c6d07762fa533590c773afc56134ada9a27657513cf36c5243271277cd9f"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -207,11 +218,11 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-package.sh",
-      "sha256": "666d768ccb697b5d1e89164a7fcc49c709f73ab8acb9cace51ab79f9f1b4def2"
+      "sha256": "f0451ce222bb5f948d7b885095279c110d25b13744ca05241e10fe76425a4e32"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "e067478cacd308e94cbaf7f0c0b806df20cfba18a118e1bdde5e1564573612b2"
+      "sha256": "2e2d8f6d8e0eddf1ecf35f701d86b100e5116106d7637c57230edf4ce15de4b1"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -219,11 +230,11 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "5f8a52d7e6b6843249bc3573e048cd04f8a1021fbb3e50af986a2424dfdbbab8"
+      "sha256": "e970d0b61a1cb2d793fa81124d78de2e5be7b9267204727c1cc5f8d7debd3fc9"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
-      "sha256": "e8fef491fd0c20cbb3ac40d407ee09ef49d432f29d35ff6be349e0e7643b43ef"
+      "sha256": "6c1c19db518313a6aa2c3eb30b2a2bfac65e6ffebed8e72c0f6cf317c01353fb"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
@@ -235,7 +246,7 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-      "sha256": "17cff3e4c71222a934d8409433b74812627ec5e27e5df743e8aec32e25702733"
+      "sha256": "cfdb7b6f5bd5d6b5462106d8b1209cab1a9877a32deb138c9758c09a3fe578d8"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
@@ -243,19 +254,27 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "88b16acec7bfd1fbb16087baa91f4d6b7d3167e3c3d40c0ea7d1c6fac3f43006"
+      "sha256": "efb9746b564930ecd531b9013b0bcaebefc6e7fd1c1b663c8f68958463bbe7ed"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "40e8c4a83b7484c647d83d3e16025ac61ce5a102c0eb66c8900b5b3de8e88be7"
+      "sha256": "893bda9d406cfdc110e2ff485ba2ce8ee53a84219089e067ae320a76bb3e9fd5"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
+      "sha256": "ee4fcba886115dd405a44a58a645ddd654defea4d007a194dd54f68b4713fb19"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpSourceFile.hx",
       "sha256": "8c013f781f9b0dd513b92010e911b9dc8b852f7388cb9f9b75ed3bf36b855a18"
     },
     {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+      "sha256": "54743dbb8133d1ac4e82745166c9dfb624ab52557c2f153ad9c8c89d15361d63"
+    },
+    {
       "path": "compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx",
-      "sha256": "facd208ef5be7603d518e2a9858f4025efd4bb2b19acd7c2e1dfa97ad07c0b53"
+      "sha256": "660438942534fb36711e5dbe2d938b7eb4f8f488e51cfb1a29251387ff82a4a3"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/build.hxml",
@@ -263,7 +282,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected.stdout",
-      "sha256": "76735622cfc8e964bbbc1985a8847972ba495247dca9e5159590597fe7e70253"
+      "sha256": "bde94875d6cab68934ae047c5180add17d3fc041a9af0f491dd8a840e716d011"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
@@ -271,11 +290,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "5d1a58baabe3d36fd0d112a5c435f71d59f38188be3b39f07d67189ec412597d"
+      "sha256": "90ec80a232fdb9e4dffce93b9b741f61be19db289fffa12a530db8bcdb189c58"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "fced9f88d3e392f19196a9f9f8e867ff7bd667effad4d2c43b13d61af03679df"
+      "sha256": "46cf5ec6e303eb38ff8fa66005e0a53ccd7b4e7d337791e519d9a55512e86914"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/compound-assignment/build.hxml",
@@ -375,11 +394,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Calculator.hx",
-      "sha256": "84ed136884dc0fc4c4b210f7abe82e410e00b7e1d96456e470dc18e7685030f5"
+      "sha256": "6f5091558e1aaadcdad688b36552e7dfc257ddf9c946f9af10ced093e33d6f6d"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "c870e50a189f6bcfa00f4dab0bf2226cb7fef4837ac7e8368c9db73aa79fdda5"
+      "sha256": "241d56eed3135d42d3784b14a17946142cfbf656f04e78d94e5b4803cb949930"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",
@@ -387,7 +406,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,

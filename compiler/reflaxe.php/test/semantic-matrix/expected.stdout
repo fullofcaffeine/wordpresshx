@@ -4,3 +4,5 @@ int-array-read:pass
 Haxe → PHP 🚀
 unicode-string:pass
 bool-control:pass
+bool-probe
+bool-short-circuit:pass

@@ -14,4 +14,9 @@ class Hx_9_semantics_10_Calculator {
 	public static function negate(bool $value): bool {
 		return ! $value;
 	}
+
+	public static function probe(bool $value): bool {
+		echo 'bool-probe' . PHP_EOL;
+		return $value;
+	}
 }

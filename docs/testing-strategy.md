@@ -106,8 +106,10 @@ or WordPress proof.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry and currently lists 34 admitted, 6 explicitly unsupported, and 7
-unverified capabilities across 13 categories. Its differential fixture checks
+registry. The last hosted subject lists 34 admitted, 6 explicitly unsupported,
+and 7 unverified capabilities across 13 categories. Its next local subject
+lists 37 admitted records while that exact hosted 34-record predecessor remains
+the only hosted authority. Its differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
 assignment, `Int <=`, pre-test `while`, a fixed `Array<Int>` literal, and
@@ -117,7 +119,9 @@ concatenation, a typed String local, value equality, printing, and conversion of
 Haxe character positions into UTF-8 source-map byte ranges. The Bool slice
 checks literals, an initialized local, logical negation, a direct condition,
 required non-null parameters/return, and a source-owned call without admitting
-PHP truthiness. Empty PHP stderr is
+PHP truthiness. It also observes lazy `&&`/`||` evaluation with a side-effecting
+probe and a mixed `(a || b) && c` expression whose typed PHP grouping prevents
+target-precedence drift. Empty PHP stderr is
 part of the contract, so warnings and fatals cannot be retried or normalized
 away. Optional/default and signatures outside the admitted `Int`/`Bool`/`String` subset, foreign calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit

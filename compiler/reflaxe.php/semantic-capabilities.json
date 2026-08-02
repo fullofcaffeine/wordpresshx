@@ -115,6 +115,27 @@
     {
       "category": "control-flow",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.bool-parenthesized-grouping",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.bool-short-circuit-and",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.bool-short-circuit-or",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "control.if-else",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -348,14 +369,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "17cff3e4c71222a934d8409433b74812627ec5e27e5df743e8aec32e25702733"
+    "sha256": "cfdb7b6f5bd5d6b5462106d8b1209cab1a9877a32deb138c9758c09a3fe578d8"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 47,
+    "capabilityCount": 50,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 34,
+      "admitted": 37,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }
