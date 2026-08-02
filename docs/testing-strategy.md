@@ -70,11 +70,11 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's current bounded Haxe-Exception checkpoint is
-independently hosted by Repository bootstrap run `30751347692`, Haxe job
-`91505823427`, at commit
-`6905a9a637924002d49dc2b4794c3fed9ca3aa43`. That proof covers the semantic
-matrix's 53 exact admitted records, deterministic generic compiler package,
+The compiler scorecard's current bounded nullable-String checkpoint is
+independently hosted by Repository bootstrap run `30753775194`, Haxe job
+`91512308969`, at commit
+`47b1b66ea8638fcc2755435d18e85f8597306697`. That proof covers the semantic
+matrix's 59 exact admitted records, deterministic generic compiler package,
 clean external package consumer, and native PHP 7.4.33/8.4.7 only; it advances
 neither WordPress compatibility, official Haxe target qualification, nor
 publication.
@@ -109,17 +109,15 @@ only when it protects a distinct user promise.
 The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
-The latest exact hosted predecessor is retained as historical authority only;
-a newly expanded local semantic subject remains hosted-pending until a clean
-workflow runs its exact command and does not borrow the predecessor, typed-IR,
-or WordPress proof.
+Each expanded semantic subject remains local-only until a clean workflow runs
+its exact command; the current 59-record subject has now crossed that boundary.
+Older hosted subjects remain historical authority for their own bytes only and
+are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The last hosted subject lists 53 admitted, 6 explicitly unsupported,
-and 7 unverified capabilities across 13 categories. The next local subject
-lists 59 admitted records while that exact hosted 53-record predecessor remains
-the only hosted authority. Its
+registry. The current hosted subject lists 59 admitted, 6 explicitly
+unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
