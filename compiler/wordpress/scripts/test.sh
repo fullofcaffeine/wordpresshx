@@ -16,7 +16,6 @@ python3 ../../scripts/lint/haxe-weak-type-guard.py --self-test
 python3 ../../scripts/lint/haxe-weak-type-guard.py src test
 rm -rf -- build/source-correlation
 haxe test.hxml
-bash scripts/test-reflaxe-module-package.sh
 
 find build/acme-books build/acme-books-adapters build/source-correlation -type f -name '*.php' -print0 \
   | sort -z \

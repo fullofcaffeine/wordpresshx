@@ -194,7 +194,7 @@
     },
     {
       "path": "compiler/wordpress/scripts/test.sh",
-      "sha256": "9772e58310f424920b42230de620cf4d881831130e156ae128617b7c88009a35"
+      "sha256": "2bd895ce4fc23e70924ecf305d3f7def913522162a95d33461647b8742647d8d"
     }
   ],
   "authority": {

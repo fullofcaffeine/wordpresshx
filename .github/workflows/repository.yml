@@ -196,6 +196,8 @@ jobs:
           haxe-version: 4.3.7
       - name: Install Haxe Formatter 1.18.0
         run: haxelib install formatter 1.18.0 --quiet
+      - name: Install exact reflaxe.php compiler dependency
+        run: haxelib install reflaxe 4.0.0-beta --quiet
       - name: Check Haxe formatting
         run: bash scripts/lint/hx-format-guard.sh
       - name: Type the ADR-016 Haxe-only project contract
@@ -209,6 +211,8 @@ jobs:
         run: bash compiler/reflaxe.php/scripts/test-package.sh --require-clean
       - name: Test exact PHP 7.4 and 8.4 runtime matrix
         run: bash compiler/reflaxe.php/scripts/test-php-matrix.sh
+      - name: Package the reflaxe.php module graph for WordPress
+        run: bash compiler/wordpress/scripts/test-reflaxe-module-package.sh
       - name: Test WordPress public PHP profile
         run: bash compiler/wordpress/scripts/test.sh
       - name: Test public PHP on exact PHP 7.4 and 8.4
