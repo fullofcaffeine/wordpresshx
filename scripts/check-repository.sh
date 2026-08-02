@@ -6617,7 +6617,7 @@ assert reflaxe_php_module_output_receipt["receiptId"] == (
 )
 assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
 assert reflaxe_php_module_output_receipt["status"] == (
-    "implemented-local-hosted-pending"
+    "verified-hosted-exact-matrix"
 )
 assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-package-install"
@@ -6653,11 +6653,44 @@ assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
     "realWordPressRuntimeUsed": False,
     "wordpressCompatibilityClaimed": False,
 }
+assert reflaxe_php_module_output_receipt["hostedVerification"] == {
+    "workflow": "Repository bootstrap",
+    "runId": 30734022935,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30734022935",
+    "commit": "abba308b712e865138eccd1b7e825d7a38e9bae3",
+    "status": "passed",
+    "job": {
+        "name": "haxe",
+        "jobId": 91459274214,
+        "url": (
+            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+            "30734022935/job/91459274214"
+        ),
+        "status": "passed",
+        "completedAt": "2026-08-02T05:40:44Z",
+    },
+    "exactPhpVersions": ["7.4.33", "8.4.7"],
+    "requiredSteps": [
+        "Install exact reflaxe.php compiler dependency",
+        "Test generic PHP compiler package",
+        "Test clean standalone PHP compiler package artifact",
+        "Test exact PHP 7.4 and 8.4 runtime matrix",
+        "Package the reflaxe.php module graph for WordPress",
+        "Test WordPress public PHP profile",
+        "Test public PHP on exact PHP 7.4 and 8.4",
+    ],
+    "scope": (
+        "compiler package, clean package consumer, exact PHP runtime matrix, "
+        "deterministic WordPress package adapter, and public PHP profile only"
+    ),
+    "wordpressRuntimeCompatibilityAdvanced": False,
+    "officialHaxeQualificationAdvanced": False,
+}
 assert reflaxe_php_module_output_receipt["review"][
     "distinctFromImplementation"
 ] is True
 assert reflaxe_php_module_output_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressRuntimeCompatibility": False,
     "publicationAuthorized": False,
