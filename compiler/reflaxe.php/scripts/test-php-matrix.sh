@@ -6,7 +6,7 @@ fixture="build/generic-printer-fixture.php"
 correlation_fixture="build/source-correlation-fixture.php"
 semantic_fixture="build/exact-php-semantic-matrix"
 expected_output='{"total":14,"count":4,"error":"RuntimeException","label":"generic"}'
-semantic_expected_output="$(tr -d '\n' < "${package_root}/test/semantic-matrix/expected.stdout")"
+semantic_expected_output="$(<"${package_root}/test/semantic-matrix/expected.stdout")"
 
 if [[ ! -f "${package_root}/${fixture}" || ! -f "${package_root}/${correlation_fixture}" ]]; then
   echo "missing generated PHP fixture; run scripts/test.sh first" >&2

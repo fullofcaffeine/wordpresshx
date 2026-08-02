@@ -106,7 +106,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-php-matrix.sh",
-      "sha256": "a980059a838854460d6c406382fbb1e2b18db083432256ee32340e1b05948ef9"
+      "sha256": "a274b89b23ae00125593e9741be551e1112b5a432ae1cfb49950cea777d042a1"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
