@@ -244,7 +244,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-package.sh",
-      "sha256": "995cea8ba3d0ada25b480ad8e1b2c6b2c786050cd2d4bb713587b01d04811138"
+      "sha256": "2440377873fe82a023ffcbe2181aed0a292245e8f46f201bc7fe5891cedccd4d"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",

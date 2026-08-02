@@ -55,7 +55,10 @@ if ! cmp -s "${build_a}/artifact-manifest.json" "${build_b}/artifact-manifest.js
   exit 1
 fi
 
-python3 - "${build_a}/${archive_name}" "${build_a}/artifact-manifest.json" <<'PY'
+python3 - \
+  "${build_a}/${archive_name}" \
+  "${build_a}/artifact-manifest.json" \
+  "${package_root}/semantic-capabilities.json" <<'PY'
 import hashlib
 import json
 import sys
@@ -64,30 +67,47 @@ from pathlib import Path
 
 archive_path = Path(sys.argv[1])
 artifact = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+semantic_authority = Path(sys.argv[3]).read_bytes()
 with zipfile.ZipFile(archive_path) as archive:
-    assert "COPYING" in archive.namelist()
+    assert "COPYING" in archive.namelist(), "package omits complete GPL text"
     copying = archive.read("COPYING")
     source = json.loads(archive.read("package-source.json"))
-    semantic_matrix = json.loads(archive.read("semantic-capabilities.json"))
+    packaged_semantic_authority = archive.read("semantic-capabilities.json")
+    semantic_matrix = json.loads(packaged_semantic_authority)
 assert hashlib.sha256(copying).hexdigest() == (
     "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+), "packaged GPL text digest changed"
+assert source["licenseMaterials"]["expression"] == "GPL-2.0-or-later", (
+    "package source manifest has the wrong license expression"
 )
-assert source["licenseMaterials"]["expression"] == "GPL-2.0-or-later"
-assert source["licenseMaterials"]["completeText"]["path"] == "COPYING"
-assert source["sourceCorrespondence"]["status"] == "complete-source-only-archive"
-assert semantic_matrix["summary"] == {
-    "capabilityCount": 58,
-    "categoryCount": 13,
+assert source["licenseMaterials"]["completeText"]["path"] == "COPYING", (
+    "package source manifest does not bind the complete license text"
+)
+assert source["sourceCorrespondence"]["status"] == "complete-source-only-archive", (
+    "package source correspondence is incomplete"
+)
+assert packaged_semantic_authority == semantic_authority, (
+    "packaged semantic capability authority differs from the tracked source"
+)
+capabilities = semantic_matrix["capabilities"]
+states = ("admitted", "unsupported-owned", "unverified-owned")
+derived_summary = {
+    "capabilityCount": len(capabilities),
+    "categoryCount": len({capability["category"] for capability in capabilities}),
     "stateCounts": {
-        "admitted": 45,
-        "unsupported-owned": 6,
-        "unverified-owned": 7,
+        state: sum(capability["state"] == state for capability in capabilities)
+        for state in states
     },
 }
-assert artifact["package"]["completeLicenseText"]["path"] == "COPYING"
+assert semantic_matrix["summary"] == derived_summary, (
+    "semantic capability summary is not derived from its capability records"
+)
+assert artifact["package"]["completeLicenseText"]["path"] == "COPYING", (
+    "artifact manifest does not bind the complete license text"
+)
 assert artifact["package"]["sourceCorrespondence"] == (
     "complete-source-only-archive"
-)
+), "artifact manifest source correspondence is incomplete"
 PY
 
 artifact_root="${package_root}/build/package-artifact"
