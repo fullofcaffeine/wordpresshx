@@ -70,15 +70,14 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's current 53-record subject adds the bounded
-Haxe-Exception tracer bullet and has passed local focused, package, and native
-PHP proof; its exact hosted matrix is pending. The immediately preceding
-lexical-closure checkpoint remains independently hosted by Repository bootstrap
-run `30749072309`, Haxe job `91499732628`, at commit
-`048ddd0d004bbdb354a49c42dcf00b96a7ba96f3`. That predecessor proof covers 50
-exact admitted records and native PHP 7.4.33/8.4.7 only; it cannot be borrowed
-by the current 53-record subject and advances neither WordPress compatibility,
-official Haxe target qualification, nor publication.
+The compiler scorecard's current bounded Haxe-Exception checkpoint is
+independently hosted by Repository bootstrap run `30751347692`, Haxe job
+`91505823427`, at commit
+`6905a9a637924002d49dc2b4794c3fed9ca3aa43`. That proof covers the semantic
+matrix's 53 exact admitted records, deterministic generic compiler package,
+clean external package consumer, and native PHP 7.4.33/8.4.7 only; it advances
+neither WordPress compatibility, official Haxe target qualification, nor
+publication.
 
 Official Haxe target qualification applies only to the actual compiler-facing
 surface. WordPress, package, or browser success cannot substitute for a custom
