@@ -56,8 +56,23 @@ assert_compile_negative() {
 	local fixture="$1"
 	local expected_diagnostic="$2"
 	local negative_output="${temporary_root}/negative-${fixture}"
+	local stock_stdout="${temporary_root}/stock-negative-${fixture}.stdout"
+	local stock_stderr="${temporary_root}/stock-negative-${fixture}.stderr"
 	local negative_diagnostic
 	local negative_status
+	if ! (
+		cd "${package_root}"
+		haxe -cp "test/semantic-matrix/negative/${fixture}/src" --run semantics.Main
+	) >"${stock_stdout}" 2>"${stock_stderr}"; then
+		printf '%s\n' "$(<"${stock_stderr}")" >&2
+		echo "semantic negative fixture is not valid under stock Haxe: ${fixture}" >&2
+		exit 1
+	fi
+	if [[ -s "${stock_stderr}" ]]; then
+		printf '%s\n' "$(<"${stock_stderr}")" >&2
+		echo "semantic negative fixture wrote stock-Haxe stderr: ${fixture}" >&2
+		exit 1
+	fi
 	set +e
 	negative_diagnostic="$(
 		cd "${package_root}"
@@ -82,13 +97,15 @@ assert_compile_negative() {
 }
 
 assert_compile_negative "optional-parameter" "reflaxe.php supports only required parameters without defaults"
-assert_compile_negative "non-int-signature" "reflaxe.php supports only Void and Int method returns"
+assert_compile_negative "non-int-signature" "reflaxe.php supports only Void, Int, and String method returns"
 assert_compile_negative "foreign-static-call" "reflaxe.php supports only source-owned static Int calls"
 assert_compile_negative "do-while" "reflaxe.php does not yet support do-while loops"
 assert_compile_negative "compound-assignment" "reflaxe.php does not yet support compound assignment"
 assert_compile_negative "dynamic-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "out-of-bounds-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "string-coercion" "reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted"
+assert_compile_negative "null-string-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
+assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
 echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string semantic slices passed"

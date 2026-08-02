@@ -106,7 +106,7 @@ or WordPress proof.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry and currently lists 24 admitted, 6 explicitly unsupported, and 7
+registry and currently lists 27 admitted, 6 explicitly unsupported, and 7
 unverified capabilities across 13 categories. Its differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
@@ -116,11 +116,16 @@ PHP 8.4.7. It now also checks UTF-8 String literals, exact String-only
 concatenation, a typed String local, value equality, printing, and conversion of
 Haxe character positions into UTF-8 source-map byte ranges. Empty PHP stderr is
 part of the contract, so warnings and fatals cannot be retried or normalized
-away. Optional/default and non-`Int` signatures, foreign calls, compound
+away. Optional/default and non-`Int`/non-`String` signatures, foreign calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
-String coercion are compile-negative owners and publish no partial PHP. Broader
-array and Unicode operations await an owned runtime representation that can
-preserve Haxe behavior.
+String coercion are compile-negative owners and publish no partial PHP. The
+String signature slice additionally lowers required non-null String
+parameters/returns and source-owned calls to native PHP `string`; stock-Haxe-
+valid null arguments and foreign String calls fail before publication. Broader
+array and Unicode operations, nullable Strings, and calls from weak handwritten
+PHP await separately owned runtime/adapter contracts. Every compile-negative
+fixture must first run successfully under stock Haxe with empty stderr, so a
+malformed source program cannot be mistaken for a compiler limitation.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

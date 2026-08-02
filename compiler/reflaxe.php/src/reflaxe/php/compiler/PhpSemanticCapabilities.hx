@@ -22,8 +22,11 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var ProvenIntArrayRead = "collection.proven-int-array-read";
 	var ArrayCollection = "collection.array";
 	var RequiredIntParameters = "call.required-int-parameters";
+	var RequiredStringParameters = "call.required-non-null-string-parameters";
 	var IntReturn = "call.int-return";
+	var StringReturn = "call.non-null-string-return";
 	var StaticApplicationCall = "call.static-application-int-call";
+	var StaticApplicationStringCall = "call.static-application-string-call";
 	var Closure = "call.closure";
 	var TryThrowCatch = "exception.try-throw-catch";
 	var NullableValue = "null.nullable-value";
@@ -108,8 +111,11 @@ class PhpSemanticCapabilities {
 			record(IntArrayLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(ProvenIntArrayRead, ValuesCollections, Admitted, semantic, owner),
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
+			record(RequiredStringParameters, CallsClosures, Admitted, semantic, owner),
 			record(IntReturn, CallsClosures, Admitted, semantic, owner),
+			record(StringReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationStringCall, CallsClosures, Admitted, semantic, owner),
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
@@ -118,7 +124,7 @@ class PhpSemanticCapabilities {
 				"general Array runtime behavior beyond fixed Int literals and proven reads is rejected", owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
 			record(TryThrowCatch, Exceptions, UnsupportedOwned, "validator rejects try, throw, and catch statements", owner),
-			record(NullableValue, NullBehavior, UnsupportedOwned, "validator rejects null values", owner),
+			record(NullableValue, NullBehavior, UnsupportedOwned, "test-semantic-matrix.sh rejects a stock-Haxe-valid null String call before output", owner),
 			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "no owned Haxe runtime or standard-library projection exists", owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),
 			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "runtime Unicode operations are not classified", owner),

@@ -17,6 +17,13 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.non-null-string-return",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.required-int-parameters",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -24,7 +31,21 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.required-non-null-string-parameters",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.static-application-int-call",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.static-application-string-call",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -163,7 +184,7 @@
     },
     {
       "category": "null-behavior",
-      "evidence": "validator rejects null values",
+      "evidence": "test-semantic-matrix.sh rejects a stock-Haxe-valid null String call before output",
       "id": "null.nullable-value",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -278,14 +299,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "701310df8e965567a504dea94a00cf3af5e8db1a3b5883d261963ac3d1ef4c07"
+    "sha256": "ab6ae7ed3b8d236bcb6f7f9b913d06d2c1f6951df5d8b8439372baea97c52bd7"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 37,
+    "capabilityCount": 40,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 24,
+      "admitted": 27,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

@@ -29,7 +29,7 @@ class Main {
 			Sys.println("int-array-read:fail");
 		}
 
-		final label = "Haxe " + "→ PHP 🚀";
+		final label = Calculator.decorate("Haxe ", "→ PHP 🚀");
 		Sys.println(label);
 		if (label == "Haxe → PHP 🚀") {
 			Sys.println("unicode-string:pass");

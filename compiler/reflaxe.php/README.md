@@ -18,6 +18,9 @@ The current admitted surface is deliberately bounded:
   to PHP native `int` signatures and deterministic cross-module calls; and
 - exact Haxe `String` locals, String-only concatenation without implicit
   coercion, value equality, and UTF-8 literal/`Sys.println` byte preservation;
+- required non-null `String` parameters/returns and source-owned static String
+  calls lowered to native PHP `string` signatures when every Haxe argument is
+  itself an admitted non-null String expression;
 - Haxe source-character positions converted to authenticated UTF-8 byte ranges,
   so non-ASCII source before or inside a mapped statement remains traceable; and
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
@@ -75,12 +78,19 @@ application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
 plus fixed `Array<Int>` literals and compiler-proven constant in-bounds reads
 beyond the original tracer. It also admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
-Strings, String value equality, and printing the resulting String expression.
+Strings, String value equality, printing, required non-null String
+parameters/returns, and source-owned static String calls. Because ordinary Haxe
+without strict null safety permits `null` where `String` is expected, the
+compiler explicitly rejects a null String argument instead of generating a PHP
+call with different behavior. Calls from handwritten weakly typed PHP are a
+separate adapter/ABI concern and are not covered by this source-owned call
+claim.
 Its two-module fixture runs under stock Haxe and generated PHP; their stdout
 must be byte-identical, and any PHP warning, error, or fatal fails the lane.
-Optional/default and non-`Int` signatures, foreign static calls, compound
+Optional/default and non-`Int`/non-`String` signatures, foreign static calls, compound
 assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
-String coercion fail without partial output. Arbitrary array access stays
+String coercion, null String arguments, and foreign String calls fail without
+partial output. Arbitrary array access stays
 rejected because native PHP would emit an undefined-key warning where stock
 Haxe returns `null`; String length/indexing/normalization also remain unclaimed
 until an owned runtime can preserve Haxe semantics. Unsupported and unverified

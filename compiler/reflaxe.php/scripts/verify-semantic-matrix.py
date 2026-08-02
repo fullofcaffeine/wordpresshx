@@ -147,6 +147,8 @@ def main() -> None:
         "class:semantics.Calculator:Calculator": ("declaration", 0, b"class Calculator"),
         "method:semantics.Calculator:add": ("member", 1, b"public static function add"),
         "stmt:return-int:96:115": ("statement", 2, b"return left + right"),
+        "method:semantics.Calculator:decorate": ("member", 1, b"public static function decorate"),
+        "stmt:return-string:194:215": ("statement", 2, b"return prefix + value"),
     }
     main_expected = {
         "class:semantics.Main:Main": ("declaration", 0, b"class Main"),
@@ -168,14 +170,14 @@ def main() -> None:
         "stmt:if-int-equality:541:654": ("statement", 2, b"if (selected == 5)"),
         "stmt:sys-println:565:599": ("statement", 3, b'Sys.println("int-array-read:pass")'),
         "stmt:sys-println:615:649": ("statement", 3, b'Sys.println("int-array-read:fail")'),
-        "stmt:local-string:658:692": ("statement", 2, 'final label = "Haxe " + "→ PHP 🚀"'.encode("utf-8")),
-        "stmt:sys-println:695:713": ("statement", 2, b"Sys.println(label)"),
-        "stmt:if-string-equality:717:840": ("statement", 2, 'if (label == "Haxe → PHP 🚀")'.encode("utf-8")),
-        "stmt:sys-println:751:785": ("statement", 3, b'Sys.println("unicode-string:pass")'),
-        "stmt:sys-println:801:835": ("statement", 3, b'Sys.println("unicode-string:fail")'),
+        "stmt:local-string:658:712": ("statement", 2, 'final label = Calculator.decorate("Haxe ", "→ PHP 🚀")'.encode("utf-8")),
+        "stmt:sys-println:715:733": ("statement", 2, b"Sys.println(label)"),
+        "stmt:if-string-equality:737:860": ("statement", 2, 'if (label == "Haxe → PHP 🚀")'.encode("utf-8")),
+        "stmt:sys-println:771:805": ("statement", 3, b'Sys.println("unicode-string:pass")'),
+        "stmt:sys-println:821:855": ("statement", 3, b'Sys.println("unicode-string:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
-        {"stmt:return-int:96:115"})
+        {"stmt:return-int:96:115", "stmt:return-string:194:215"})
     verify_map(
         output_root,
         main_path,

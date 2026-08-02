@@ -1,11 +1,11 @@
 package semantics;
 
 class Main {
-	public static function identity(value:String):String {
+	public static function identity(value:Float):Float {
 		return value;
 	}
 
 	public static function main():Void {
-		Sys.println(identity("unsupported"));
+		Sys.println("unsupported-signature");
 	}
 }

@@ -63,9 +63,11 @@ class PhpTypedAstValidator {
 					Context.error("reflaxe.php Void methods do not yet support parameters", functionData.field.pos);
 				}
 			case "Int":
-				validateRequiredIntParameters(functionData);
+				validateRequiredParameters(functionData, "Int");
+			case "String":
+				validateRequiredParameters(functionData, "String");
 			case _:
-				Context.error("reflaxe.php supports only Void and Int method returns in the admitted semantic slice", functionData.field.pos);
+				Context.error("reflaxe.php supports only Void, Int, and String method returns in the admitted semantic slice", functionData.field.pos);
 		}
 		if (functionData.expr == null) {
 			Context.error("reflaxe.php application methods require a typed body", functionData.field.pos);
@@ -74,16 +76,21 @@ class PhpTypedAstValidator {
 		validateStatement(functionData.expr, new Map<Int, Int>());
 	}
 
-	static function validateRequiredIntParameters(functionData:ClassFuncData):Void {
+	static function validateRequiredParameters(functionData:ClassFuncData, haxeType:String):Void {
 		if (functionData.args.length == 0) {
-			Context.error("reflaxe.php Int-returning methods currently require at least one Int parameter", functionData.field.pos);
+			Context.error("reflaxe.php " + haxeType + "-returning methods currently require at least one " + haxeType + " parameter", functionData.field.pos);
 		}
 		for (argument in functionData.args) {
 			if (argument.opt || argument.expr != null) {
 				Context.error("reflaxe.php supports only required parameters without defaults", functionData.field.pos);
 			}
-			if (TypeTools.toString(argument.type) != "Int") {
-				Context.error("reflaxe.php supports only Int parameters in the admitted semantic slice", functionData.field.pos);
+			if (TypeTools.toString(argument.type) != haxeType) {
+				Context.error("reflaxe.php supports only "
+					+ haxeType
+					+ " parameters for "
+					+ haxeType
+					+ "-returning methods in the admitted semantic slice",
+					functionData.field.pos);
 			}
 		}
 	}
@@ -128,7 +135,12 @@ class PhpTypedAstValidator {
 				Context.error("reflaxe.php does not yet support compound assignment", expression.pos);
 			case TReturn(null):
 			case TReturn(value):
-				validateIntValue(value, intArrayLengths);
+				switch (TypeTools.toString(value.t)) {
+					case "Int": validateIntValue(value, intArrayLengths);
+					case "String": validateStringValue(value);
+					case _:
+						Context.error("reflaxe.php supports only Int and String return expressions in the admitted semantic slice", value.pos);
+				}
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStatement(inner, intArrayLengths);
 			case _:
@@ -177,10 +189,13 @@ class PhpTypedAstValidator {
 					validateStringValue(left);
 					validateStringValue(right);
 				}
+			case TCall(target, arguments):
+				validateStaticApplicationStringCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateStringValue(inner);
 			case _:
-				Context.error("reflaxe.php supports only String literals, String locals, and exact String concatenation without coercion", expression.pos);
+				Context.error("reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion",
+					expression.pos);
 		}
 	}
 
@@ -222,6 +237,17 @@ class PhpTypedAstValidator {
 				}
 			case _:
 				Context.error("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
+		}
+	}
+
+	static function validateStaticApplicationStringCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):Void {
+		switch (target.expr) {
+			case TField(_, FStatic(classRef, _)) if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
+				for (argument in arguments) {
+					validateStringValue(argument);
+				}
+			case _:
+				Context.error("reflaxe.php supports only source-owned static String calls in the admitted semantic slice", call.pos);
 		}
 	}
 

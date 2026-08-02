@@ -80,20 +80,34 @@ class PhpTypedAstLowerer {
 				if (functionData.args.length == 0) {
 					Context.fatalError("reflaxe.php Int-returning methods currently require at least one Int parameter", functionData.field.pos);
 				}
-				final parameters = functionData.args.map(argument -> {
-					if (argument.opt || argument.expr != null) {
-						Context.fatalError("reflaxe.php supports only required parameters without defaults", functionData.field.pos);
-					}
-					if (TypeTools.toString(argument.type) != "Int") {
-						Context.fatalError("reflaxe.php supports only Int parameters in the admitted semantic slice", functionData.field.pos);
-					}
-					PhpParameter.named(PhpIdentifier.named(argument.getName()), PhpIntType);
-				});
+				final parameters = lowerRequiredParameters(functionData, "Int", PhpIntType);
 				{parameters: parameters, returnType: PhpIntType};
+			case "String":
+				PhpSemanticCapabilities.requireAdmitted(RequiredStringParameters);
+				PhpSemanticCapabilities.requireAdmitted(StringReturn);
+				if (functionData.args.length == 0) {
+					Context.fatalError("reflaxe.php String-returning methods currently require at least one String parameter", functionData.field.pos);
+				}
+				final parameters = lowerRequiredParameters(functionData, "String", PhpStringType);
+				{parameters: parameters, returnType: PhpStringType};
 			case _:
-				Context.fatalError("reflaxe.php supports only Void and Int method returns in the admitted semantic slice", functionData.field.pos);
+				Context.fatalError("reflaxe.php supports only Void, Int, and String method returns in the admitted semantic slice", functionData.field.pos);
 				{parameters: [], returnType: PhpVoidType};
 		}
+	}
+
+	function lowerRequiredParameters(functionData:ClassFuncData, haxeType:String, phpType:PhpType):Array<PhpParameter> {
+		return functionData.args.map(argument -> {
+			if (argument.opt || argument.expr != null) {
+				Context.fatalError("reflaxe.php supports only required parameters without defaults", functionData.field.pos);
+			}
+			if (TypeTools.toString(argument.type) != haxeType) {
+				Context.fatalError("reflaxe.php supports only " + haxeType + " parameters for " + haxeType
+					+ "-returning methods in the admitted semantic slice",
+					functionData.field.pos);
+			}
+			return PhpParameter.named(PhpIdentifier.named(argument.getName()), phpType);
+		});
 	}
 
 	function lowerStatementList(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Array<PhpStmt> {
@@ -158,10 +172,19 @@ class PhpTypedAstLowerer {
 				[];
 			case TReturn(null): [mapped(PhpReturnVoid, expression, "return")];
 			case TReturn(value):
-				PhpSemanticCapabilities.requireAdmitted(IntReturn);
-				[
-					mapped(PhpReturn(lowerIntValue(value, intArrayLengths)), expression, "return-int")
-				];
+				switch (TypeTools.toString(value.t)) {
+					case "Int":
+						PhpSemanticCapabilities.requireAdmitted(IntReturn);
+						[
+							mapped(PhpReturn(lowerIntValue(value, intArrayLengths)), expression, "return-int")
+						];
+					case "String":
+						PhpSemanticCapabilities.requireAdmitted(StringReturn);
+						[mapped(PhpReturn(lowerStringValue(value)), expression, "return-string")];
+					case _:
+						Context.fatalError("reflaxe.php supports only Int and String return expressions in the admitted semantic slice", value.pos);
+						[];
+				}
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths);
 			case _:
 				unsupportedStatement(expression);
@@ -223,6 +246,7 @@ class PhpTypedAstLowerer {
 				}
 				PhpSemanticCapabilities.requireAdmitted(StringConcatenation);
 				PhpBinop(".", lowerStringValue(left), lowerStringValue(right));
+			case TCall(target, arguments): lowerStaticApplicationStringCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerStringValue(inner);
 			case _: unsupportedStringValue(expression);
 		}
@@ -272,6 +296,17 @@ class PhpTypedAstLowerer {
 		}
 	}
 
+	function lowerStaticApplicationStringCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef)) if (sources.owns(classRef.get().pos) && TypeTools.toString(call.t) == "String"):
+				PhpSemanticCapabilities.requireAdmitted(StaticApplicationStringCall);
+				PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerStringValue));
+			case _:
+				Context.fatalError("reflaxe.php supports only source-owned static String calls in the admitted semantic slice", call.pos);
+				PhpString("");
+		}
+	}
+
 	function lowerIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TBinop(OpEq, left, right):
@@ -317,7 +352,8 @@ class PhpTypedAstLowerer {
 	}
 
 	function unsupportedStringValue(expression:TypedExpr):PhpExpr {
-		Context.fatalError("reflaxe.php supports only String literals, String locals, and exact String concatenation without coercion", expression.pos);
+		Context.fatalError("reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion",
+			expression.pos);
 		return PhpString("");
 	}
 

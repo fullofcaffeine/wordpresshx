@@ -163,7 +163,7 @@
         "co-located reflaxe.php provenance is recorded separately from WordPress profile behavior"
       ],
       "knownSkips": [
-        "typed-Haxe AST lowering beyond the 24 exact admitted semantic records",
+        "typed-Haxe AST lowering beyond the 27 exact admitted semantic records",
         "complete Haxe runtime and standard-library strategy",
         "official Haxe tests/unit qualification"
       ],
@@ -883,7 +883,7 @@
       ],
       "alwaysRun": false,
       "oracle": "the typed capability registry, stock Haxe 4.3.7 execution, manually authored PHP/stdout, independent source-map checks, and exact native PHP 8.4.7 with stderr required empty",
-      "claimContribution": "only the 24 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
+      "claimContribution": "only the 27 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
     },
     {
       "testId": "generic-php-package",
