@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "implemented-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
     "input": "two ordinary Haxe modules with small Int literals/addition, initialized and mutable Int locals, Int equality and <=, if/else, pre-test while, required Int parameters/return, a cross-module static application call, a fixed Array<Int> literal with constant in-bounds reads, and exact UTF-8 String literals/local/concatenation/equality/printing",
@@ -86,6 +86,7 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
+    "exactPhp74And84Matrix": "passed-hosted-run-30736685533",
     "sourceMap": "independently-verified",
     "strictHaxe": "59-files-zero-findings",
     "firstMilliseconds": 5110,
@@ -97,6 +98,35 @@
     "haxe": "4.3.7",
     "reflaxe": "4.0.0-beta",
     "php": "8.4.7"
+  },
+  "hostedVerification": {
+    "workflow": "Repository bootstrap",
+    "runId": 30736685533,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30736685533",
+    "commit": "88a09abf3fb8a9b7197eb35add900fb74802aaf6",
+    "status": "passed",
+    "job": {
+      "name": "haxe",
+      "jobId": 91466621301,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30736685533/job/91466621301",
+      "status": "passed",
+      "completedAt": "2026-08-02T07:08:03Z"
+    },
+    "exactPhpVersions": [
+      "7.4.33",
+      "8.4.7"
+    ],
+    "requiredSteps": [
+      "Install Haxe 4.3.7",
+      "Install exact reflaxe.php compiler dependency",
+      "Test generic PHP compiler package",
+      "Test clean standalone PHP compiler package artifact",
+      "Test exact PHP 7.4 and 8.4 runtime matrix"
+    ],
+    "scope": "the 24 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "wordpressRuntimeCompatibilityAdvanced": false,
+    "officialHaxeQualificationAdvanced": false,
+    "publicationAuthorized": false
   },
   "review": {
     "distinctFromImplementation": true,
@@ -298,7 +328,7 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,

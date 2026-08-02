@@ -6547,7 +6547,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
 assert reflaxe_php_semantic_receipt["status"] == (
-    "implemented-local-hosted-pending"
+	"verified-hosted-exact-matrix"
 )
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter"
@@ -6573,13 +6573,49 @@ assert reflaxe_php_semantic_receipt["localEvidence"][
     "stockHaxeDifferential"
 ] == "byte-identical-stdout"
 assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
-    "empty"
+	"empty"
 )
+assert reflaxe_php_semantic_receipt["localEvidence"][
+	"exactPhp74And84Matrix"
+] == "passed-hosted-run-30736685533"
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
+assert reflaxe_php_semantic_receipt["hostedVerification"] == {
+	"workflow": "Repository bootstrap",
+	"runId": 30736685533,
+	"url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30736685533",
+	"commit": "88a09abf3fb8a9b7197eb35add900fb74802aaf6",
+	"status": "passed",
+	"job": {
+		"name": "haxe",
+		"jobId": 91466621301,
+		"url": (
+			"https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+			"30736685533/job/91466621301"
+		),
+		"status": "passed",
+		"completedAt": "2026-08-02T07:08:03Z",
+	},
+	"exactPhpVersions": ["7.4.33", "8.4.7"],
+	"requiredSteps": [
+		"Install Haxe 4.3.7",
+		"Install exact reflaxe.php compiler dependency",
+		"Test generic PHP compiler package",
+		"Test clean standalone PHP compiler package artifact",
+		"Test exact PHP 7.4 and 8.4 runtime matrix",
+	],
+	"scope": (
+		"the 24 exact admitted semantic records, deterministic generic "
+		"compiler package, clean external package consumer, and native PHP "
+		"7.4.33/8.4.7 parser/runtime behavior only"
+	),
+	"wordpressRuntimeCompatibilityAdvanced": False,
+	"officialHaxeQualificationAdvanced": False,
+	"publicationAuthorized": False,
+}
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": False,
+	"hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
