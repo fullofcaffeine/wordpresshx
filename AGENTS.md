@@ -44,12 +44,20 @@ bash scripts/beads/push-safe.sh  # Scan decoded records/history, then push Beads
   require owner authority. A human specialist may be consulted voluntarily or
   when the user explicitly requests one, but human participation is not a
   default blocking gate.
-- For an exceptionally complex manual GPT-5.6 Pro handoff, use the globally
-  installed `$oracle-review` skill. It prepares a content-addressed, sanitized
-  Repomix package, checks for pending requests, and manages the `/tmp/oracle`
-  archive lifecycle; the independence and authority rules above still apply.
-  Public source and install instructions:
-  https://github.com/fullofcaffeine/caf-skills/tree/main/skills/oracle-review
+- Use Oracle only for genuinely critical work when the problem or safe plan is
+  unusually hard or materially undefined, competing paths are consequential
+  and difficult to reverse, work no longer converges, or a critical plan/result
+  needs a higher-quality independent challenge. Oracle may clarify and plan
+  before implementation or review afterward; size, unfamiliarity, and generic
+  extra confidence alone are insufficient.
+- Invoke the globally installed `$oracle-review` skill and let its caf-oracle
+  facade own the ledger, agent provenance, checked evidence, dedicated browser
+  dispatch, recovery, response capture, disposition, and archive. Do not
+  maintain a parallel `/tmp/oracle` queue or manually upload and paste when the
+  tool is available. If `$show-me-your-work` is active, keep only the escalation
+  decision, request identity/status, and reconciled outcome in its trail; do not
+  duplicate Oracle artifacts. The independence and authority rules above still
+  apply.
 
 ## Strictly Typed Haxe
 

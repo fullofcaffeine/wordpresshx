@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "ADR-017-GENERATED-OUTPUT-VCS-POLICY",
   "bead": "wordpresshx-adr-017",
-  "observedAt": "2026-07-19T20:06:09Z",
+  "observedAt": "2026-08-02T20:07:28Z",
   "subject": {
     "adr": {
       "path": "docs/adr/017-generated-output-version-control-policy.md",
@@ -18,7 +18,7 @@
     },
     "validator": {
       "path": "scripts/generated-output-vcs/test-policy.py",
-      "sha256": "2dab07c7b84a21c542c2421c25b2ddccffcff714b5c8835d0f8da49592590a6b"
+      "sha256": "8d8e8fbf0f71bcfa856a6335b0e17b7599b0aa38fcf079868cf6bb7f87c2c0a8"
     },
     "fixtureReadme": {
       "path": "fixtures/generated-output-vcs/README.md",

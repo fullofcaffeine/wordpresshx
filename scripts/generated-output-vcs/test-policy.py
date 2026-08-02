@@ -7,6 +7,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -34,6 +35,23 @@ EXPECTED_GENERATED_PATHS = ["assets/site.js", "plugin/site.php"]
 POLICY_MUTATION_COUNT = 19
 RECEIPT_MUTATION_COUNT = 4
 PORTABLE_SEGMENT = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?")
+GIT_LOCAL_ENVIRONMENT_VARIABLES = (
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_CONFIG",
+    "GIT_CONFIG_PARAMETERS",
+    "GIT_CONFIG_COUNT",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_IMPLICIT_WORK_TREE",
+    "GIT_GRAFT_FILE",
+    "GIT_INDEX_FILE",
+    "GIT_NO_REPLACE_OBJECTS",
+    "GIT_REPLACE_REF_BASE",
+    "GIT_PREFIX",
+    "GIT_SHALLOW_FILE",
+    "GIT_COMMON_DIR",
+)
 
 
 def expect(condition: bool, message: str) -> None:
@@ -54,12 +72,16 @@ def canonical_json(value: object) -> bytes:
 def run(
     arguments: list[str], cwd: Path, *, check: bool = True
 ) -> subprocess.CompletedProcess[str]:
+    environment = os.environ.copy()
+    for name in GIT_LOCAL_ENVIRONMENT_VARIABLES:
+        environment.pop(name, None)
     result = subprocess.run(
         arguments,
         cwd=cwd,
         text=True,
         capture_output=True,
         check=False,
+        env=environment,
     )
     if check and result.returncode != 0:
         raise AssertionError(
