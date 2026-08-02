@@ -422,10 +422,17 @@
     },
     {
       "category": "runtime-stdlib",
-      "evidence": "no owned Haxe runtime or standard-library projection exists",
+      "evidence": "only the compiler-owned Unicode-scalar String length helper exists",
       "id": "runtime.haxe-stdlib",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
+    },
+    {
+      "category": "runtime-stdlib",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "runtime.string-length-helper",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "source-maps",
@@ -450,10 +457,17 @@
     },
     {
       "category": "string-unicode",
-      "evidence": "runtime Unicode operations are not classified",
+      "evidence": "only Unicode-scalar String length is classified",
       "id": "string.unicode-runtime",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unverified-owned"
+    },
+    {
+      "category": "string-unicode",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "string.unicode-scalar-length",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "string-unicode",
@@ -537,14 +551,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "97d0d8107dd4ce19ff6c95fa1a02503e7580d8be62425991d9d4174aea363ef9"
+    "sha256": "bf1b8b86b663c29cedc73fd2d0e74d16c9a31c6a3b70fd6326d559c3f6e9c619"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 74,
+    "capabilityCount": 76,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 61,
+      "admitted": 63,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

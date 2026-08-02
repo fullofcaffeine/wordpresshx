@@ -89,5 +89,12 @@ class Main {
 		} else {
 			Sys.println("nullable-string-return:fail");
 		}
+
+		final unicodeLength = "A🚀".length;
+		if (unicodeLength == 2) {
+			Sys.println("unicode-string-length:pass");
+		} else {
+			Sys.println("unicode-string-length:fail");
+		}
 	}
 }

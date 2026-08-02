@@ -85,5 +85,11 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'nullable-string-return:fail' . PHP_EOL;
 		}
+		$unicodeLength = \ReflaxePhpStringRuntime::length( 'A🚀' );
+		if ( $unicodeLength === 2 ) {
+			echo 'unicode-string-length:pass' . PHP_EOL;
+		} else {
+			echo 'unicode-string-length:fail' . PHP_EOL;
+		}
 	}
 }

@@ -107,6 +107,16 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 		if (!sources.owns(mainClass.pos)) {
 			Context.fatalError("reflaxe.php selected main class is outside reflaxe_php_source_root", mainClass.pos);
 		}
+		final stringRuntimeTrigger = lowerer.requiredStringRuntimeTrigger();
+		if (stringRuntimeTrigger != null) {
+			loweredTypes.push({
+				identity: PhpRuntimeLibrary.STRING_IDENTITY,
+				path: PhpRuntimeLibrary.STRING_PATH,
+				declaration: PhpRuntimeLibrary.stringRuntime(sources.range(stringRuntimeTrigger)),
+				dependencies: [],
+				position: stringRuntimeTrigger
+			});
+		}
 		final orderedTypes = orderLoweredTypes();
 		final mainIdentity = PhpArtifactLayout.typeIdentity(mainClass.module, mainClass.name);
 		if (!hasLoweredIdentity(mainIdentity)) {
@@ -125,7 +135,8 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 			final rangeMap = writer.write(rendered);
 			nextFiles.push(new PhpOwnedGeneratedFile(artifact.path, rendered.source));
 			nextFiles.push(new PhpOwnedGeneratedFile(mapPath, rangeMap));
-			manifestRecords.push(new PhpCompilationArtifactRecord(ModuleArtifact, artifact.identity, artifact.path, digest(rendered.source), mapPath,
+			final artifactKind = artifact.identity == PhpRuntimeLibrary.STRING_IDENTITY ? RuntimeArtifact : ModuleArtifact;
+			manifestRecords.push(new PhpCompilationArtifactRecord(artifactKind, artifact.identity, artifact.path, digest(rendered.source), mapPath,
 				digest(rangeMap), artifact.dependencies));
 		}
 
@@ -183,6 +194,9 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 							dependencies.set(identity, true);
 						}
 					}
+				case TField(_, FInstance(classRef, _, fieldRef))
+					if (classRef.get().pack.length == 0 && classRef.get().name == "String" && fieldRef.get().name == "length"):
+					dependencies.set(PhpRuntimeLibrary.STRING_IDENTITY, true);
 				case TField(_, FInstance(classRef, _, _)) | TNew(classRef, _, _):
 					final dependencyClass = classRef.get();
 					if (sources.owns(dependencyClass.pos)) {

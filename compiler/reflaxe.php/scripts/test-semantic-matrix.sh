@@ -48,6 +48,21 @@ test ! -s "${temporary_root}/php.stderr"
 cmp "${fixture_root}/expected.stdout" "${temporary_root}/php.stdout"
 cmp "${temporary_root}/haxe.stdout" "${temporary_root}/php.stdout"
 
+php -d error_reporting=-1 -d display_errors=1 -r '
+require $argv[1];
+try {
+	ReflaxePhpStringRuntime::length("\xFF");
+	echo "invalid-utf8:accepted\n";
+} catch (RuntimeException $error) {
+	echo $error->getMessage() === "reflaxe.php String runtime received invalid UTF-8"
+		? "invalid-utf8:rejected\n"
+		: "invalid-utf8:wrong-error\n";
+}
+' "${first_output}/runtime/ReflaxePhpStringRuntime.php" \
+	>"${temporary_root}/invalid-utf8.stdout" 2>"${temporary_root}/invalid-utf8.stderr"
+test ! -s "${temporary_root}/invalid-utf8.stderr"
+test "$(<"${temporary_root}/invalid-utf8.stdout")" = "invalid-utf8:rejected"
+
 python3 "${package_root}/scripts/verify-semantic-matrix.py" \
 	"${fixture_root}/src" \
 	"${first_output}"
@@ -124,4 +139,4 @@ assert_compile_negative "nullable-int-return" "reflaxe.php supports only Void, I
 assert_compile_negative "multiple-nullable-string-return-parameters" "reflaxe.php nullable String returns require exactly one required Null<String> parameter"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
-echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null semantic slices passed"
+echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null/runtime semantic slices passed"

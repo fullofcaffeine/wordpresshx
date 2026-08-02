@@ -65,11 +65,13 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var NullableStringNullInequality = "null.nullable-string-inequality";
 	var NullableValue = "null.nullable-value";
 	var HaxeStdlib = "runtime.haxe-stdlib";
+	var StringRuntimeHelper = "runtime.string-length-helper";
 	var NumericEdgeSemantics = "numeric.overflow-division-modulo";
 	var StringConcatenation = "string.concat-exact-operands";
 	var StringEquality = "string.equality";
 	var Utf8StringLiteralRoundTrip = "string.utf8-literal-round-trip";
 	var UnicodeRuntime = "string.unicode-runtime";
+	var UnicodeScalarLength = "string.unicode-scalar-length";
 	var CollectionOrdering = "ordering.collection-and-object";
 	var PathEnvironment = "environment.path";
 	var FileSystem = "environment.filesystem";
@@ -187,6 +189,8 @@ class PhpSemanticCapabilities {
 			record(StringConcatenation, StringUnicode, Admitted, semantic, owner),
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
+			record(StringRuntimeHelper, RuntimeStdlib, Admitted, semantic, owner),
+			record(UnicodeScalarLength, StringUnicode, Admitted, semantic, owner),
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned,
 				"only a non-inherited private-String-field constructor and String instance-method slice is admitted", owner),
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
@@ -196,9 +200,9 @@ class PhpSemanticCapabilities {
 				"only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned,
 				"only explicit Null<String> locals, required parameters/returns, source-owned calls, and local ==/!= null checks are admitted", owner),
-			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "no owned Haxe runtime or standard-library projection exists", owner),
+			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned, "only the compiler-owned Unicode-scalar String length helper exists", owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),
-			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "runtime Unicode operations are not classified", owner),
+			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "only Unicode-scalar String length is classified", owner),
 			record(CollectionOrdering, Ordering, UnverifiedOwned, "collection and object ordering are not classified", owner),
 			record(PathEnvironment, PathEnvironmentFileSystemNetworkTimezone, UnverifiedOwned, "path and environment semantics are not classified", owner),
 			record(FileSystem, PathEnvironmentFileSystemNetworkTimezone, UnverifiedOwned, "filesystem semantics are not classified", owner),

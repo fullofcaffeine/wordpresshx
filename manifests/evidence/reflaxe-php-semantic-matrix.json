@@ -2,24 +2,32 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-hosted-exact-matrix",
+  "status": "incremental-runtime-semantics-hosted-pending",
   "scenario": {
-    "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, and native PHP 8.4.7",
-    "input": "three ordinary Haxe modules covering the existing admitted semantic slices plus a unary source-owned Null<String> -> Null<String> identity called with missing and present nullable locals",
-    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST lowering -> deterministic per-type PHP and exact maps -> dependency-ordered bootstrap -> php -l -> native PHP execution",
-    "observableResult": "stock Haxe and generated PHP print byte-identical thirteen-line stdout ending nullable-string-return:pass; generated Calculator.php contains a PHP 7.4-compatible ?string parameter and return, Main.php binds both returned values, exact mappings remain valid, and PHP stderr stays empty",
-    "errorOrEdgeBehavior": "Null<Int> returns and multi-parameter nullable-String returns are valid stock Haxe but fail before target publication; nullable return calls require the exact unary source-owned target signature; all previous unsupported constructs remain classified, exact maps/dependencies are checked, and native PHP warnings, errors, and fatals are never retried or hidden",
+    "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, native PHP 8.4.7, and no mbstring dependency",
+    "input": "ordinary Haxe expression \"A🚀\".length in the existing three-module semantic tracer",
+    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST lowering -> on-demand typed PHP String runtime artifact -> dependency-ordered bootstrap -> php -l -> native PHP execution",
+    "observableResult": "stock Haxe and generated PHP print byte-identical fourteen-line stdout ending unicode-string-length:pass; the rocket counts as one Unicode scalar, so the result is 2 rather than PHP strlen byte count 5; PHP stderr stays empty",
+    "errorOrEdgeBehavior": "the generated helper rejects malformed UTF-8 with one exact RuntimeException and no hidden PHP warning; nullable String length, indexing, substring, normalization, grapheme semantics, malformed authored Haxe text, and the broader Haxe String runtime remain withheld",
     "owningSurface": "compiler-adapter",
-    "protectedClaim": "the previous 59 admitted records plus one unary source-owned Null<String> return and nullable-return call only; multiple parameters, other nullable return domains, broader nullable expressions, foreign/weak-PHP callers, general null/runtime behavior, WordPress, and release claims remain withheld"
+    "protectedClaim": "exact non-null admitted String.length only, defined as Unicode-scalar count and implemented by one compiler-owned on-demand PHP runtime helper; no broader String or runtime claim"
   },
   "redState": {
-    "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
+    "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
     "exitCode": 1,
-    "failure": "test/semantic-matrix/src/semantics/Main.hx:5: reflaxe.php tracer does not support statement TVar",
-    "reason": "the typed-AST lowerer did not admit or emit local bindings and therefore could not reach the control-flow slice",
+    "failure": "test/semantic-matrix/src/semantics/Main.hx:93: characters 25-36: reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls",
+    "reason": "the custom typed-AST lowerer rejected the first String.length expression before an owned runtime helper or dependency edge existed",
+    "stockHaxeOutcome": "passed-and-printed-unicode-string-length:pass",
     "partialOutputPublished": false
   },
   "additionalRedStates": [
+    {
+      "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
+      "exitCode": 1,
+      "failure": "test/semantic-matrix/src/semantics/Main.hx:5: reflaxe.php tracer does not support statement TVar",
+      "reason": "the typed-AST lowerer did not admit or emit local bindings and therefore could not reach the control-flow slice",
+      "partialOutputPublished": false
+    },
     {
       "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml",
       "exitCode": 1,
@@ -138,14 +146,16 @@
     "stock Haxe lexical capture and function-value invocation plus manually authored native PHP closure bytes, four stock-Haxe-valid negative boundaries, and independently checked declaration/body source mappings",
     "stock Haxe Haxe-Exception catch behavior plus manually authored RuntimeException/getMessage PHP, three stock-Haxe-valid negative boundaries, and independently checked try/throw/body source mappings",
     "stock Haxe explicit Null<String> behavior plus manually authored PHP 7.4 ?string/null/strict-identity expectations, stock-Haxe-valid Null<Int> and nullable-mutation negative boundaries, and independently checked local/call/if source mappings",
-    "stock Haxe unary nullable-String return behavior plus manually authored ?string return/call PHP, stock-Haxe-valid Null<Int> and multi-parameter nullable-return negatives, and independently checked return/local/call source mappings"
+    "stock Haxe unary nullable-String return behavior plus manually authored ?string return/call PHP, stock-Haxe-valid Null<Int> and multi-parameter nullable-return negatives, and independently checked return/local/call source mappings",
+    "stock Haxe 4.3.7 evaluates \"A🚀\".length as 2, while native PHP strlen observes 5 UTF-8 bytes; sibling haxe.rust and haxe.go runtime designs independently count Unicode scalar/rune values, and the manually authored expectation selects scalar count rather than copying the PHP helper algorithm",
+    "native PHP 8.4.7 independently observes the generated helper rejecting malformed UTF-8 with the exact modeled RuntimeException and empty stderr"
   ],
   "capabilityMatrix": {
     "authority": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 74,
+    "capabilityCount": 76,
     "categoryCount": 13,
-    "admittedCount": 61,
+    "admittedCount": 63,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": true,
@@ -158,9 +168,9 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-61-capability-subject-passed-run-30759497694",
+    "exactPhp74And84Matrix": "current-63-capability-subject-hosted-pending; predecessor-61-capability-subject-passed-run-30759497694",
     "sourceMap": "independently-verified",
-    "strictHaxe": "79-files-zero-findings",
+    "strictHaxe": "80-files-zero-findings",
     "firstMilliseconds": 10750,
     "repeatMilliseconds": 10790,
     "coldClaim": false,
@@ -171,8 +181,8 @@
     "reflaxe": "4.0.0-beta",
     "php": "8.4.7"
   },
-  "hostedVerification": {
-    "relation": "current-61-capability-subject",
+  "previousHostedVerification": {
+    "relation": "predecessor-61-capability-subject",
     "admittedCapabilityCount": 61,
     "workflow": "Repository bootstrap",
     "runId": 30759497694,
@@ -197,7 +207,7 @@
       "Test clean standalone PHP compiler package artifact",
       "Test exact PHP 7.4 and 8.4 runtime matrix"
     ],
-    "scope": "the current 61 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "scope": "the predecessor 61 exact admitted semantic records, deterministic generic compiler package, clean external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -235,8 +245,7 @@
       "The generated Greeter class uses PHP 7.4-compatible typed properties and native object syntax, while source-owned dependency collection now observes both TNew and FInstance edges so bootstrap order cannot rely on callback order.",
       "The closure slice is decomposed into five exact admitted records while broad call.closure remains unsupported, preventing one lexical callback from laundering arbitrary Haxe function values into the compiler claim.",
       "Capture discovery uses typed Haxe variable identities and emits a static PHP closure with explicit by-value captures; String reassignment remains rejected, so the admitted program cannot silently inherit PHP/Haxe mutable-capture divergence.",
-      "Distinct review found that the first green closure output mapped only its containing local; the generic printer now descends into closure-valued locals so the emitted return has its own exact Haxe range and generated byte span."
-      ,
+      "Distinct review found that the first green closure output mapped only its containing local; the generic printer now descends into closure-valued locals so the emitted return has its own exact Haxe range and generated byte span.",
       "The exception slice is decomposed into three exact admitted records while broad exception.try-throw-catch remains unsupported, so a single catch cannot imply general exception semantics.",
       "Distinct review found that PHP catch locals are function-scoped while Haxe catch locals are lexical; the admitted compiler subset now requires method-local target names to be unique and a stock-Haxe-valid collision fails before publication.",
       "The throw keyword's typed-AST position did not cover its constructed value; the lowerer now combines the keyword and value positions so the exact map covers the complete immediate throw statement.",
@@ -246,15 +255,18 @@
       "Nullable-return call admission is derived from the exact resolved source-owned target field signature rather than from the call expression alone, so an arbitrary expression typed Null<String> cannot manufacture authority.",
       "Distinct review found that the first green nullable-return declaration admitted more than one required Null<String> parameter even though the protected call path was unary; the compiler now enforces the exact unary signature and a stock-Haxe-valid negative fixture owns that boundary.",
       "The generated nullable-return method uses PHP 7.4-compatible ?string on both the parameter and return, and the vertical binds both missing and present results before observing them through the previously admitted strict null checks.",
-      "Broad nullable returns remain withheld: only one required Null<String> parameter returned directly as Null<String> and exact source-owned calls to that shape are admitted; other nullable domains, expressions, arities, foreign calls, and runtime conventions remain unsupported."
+      "Broad nullable returns remain withheld: only one required Null<String> parameter returned directly as Null<String> and exact source-owned calls to that shape are admitted; other nullable domains, expressions, arities, foreign calls, and runtime conventions remain unsupported.",
+      "The first runtime/stdlib slice is on-demand and generic: exact String.length lowers to a typed IR-authored PHP helper, the application artifact records a runtime:string dependency, the helper has its own authenticated map and ownership record, and no WordPress concept enters reflaxe.php.",
+      "Distinct review rejected native strlen because it counts UTF-8 bytes; the admitted profile instead counts Unicode scalar values without mbstring, proves A plus a non-BMP rocket equals 2 under stock Haxe and native PHP, and models malformed UTF-8 as an exact RuntimeException with empty stderr.",
+      "The two newly admitted records do not upgrade broad runtime.haxe-stdlib or string.unicode-runtime: nullable receivers, indexing, substring, normalization, grapheme behavior, other String operations, and general runtime ownership remain explicitly withheld."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
-      "runtime and standard-library ownership are not implemented",
+      "runtime and standard-library ownership is implemented only for the on-demand non-null String.length helper; the broader runtime remains unimplemented",
       "general exception and null semantics, general collections, broad Unicode operations, and external I/O are not admitted",
       "only the exact explicit Int mutation and pre-test while slice is admitted; broader mutable values and loop control remain unsupported",
       "only fixed Int-array literals and proven constant reads are admitted; dynamic access and the Haxe Array runtime are not implemented",
-      "only exact UTF-8 literals, String locals, String-only concatenation/equality/printing, required non-null String signatures, and source-owned static calls are admitted; the separate nullable subset is limited to initialized Null<String> locals, required source-owned signatures/calls, strict null equality/inequality, and one exact unary Null<String> identity return/call shape; other nullable return expressions, types, arities, mutation, optional/default parameters, dereference/flow narrowing, external weak-PHP callers, length, indexing, normalization, invalid Unicode, and implicit coercion are not implemented",
+      "only exact UTF-8 literals, String locals, String-only concatenation/equality/printing, required non-null String signatures, source-owned static calls, and non-null String.length scalar counting are admitted; the separate nullable subset is limited to initialized Null<String> locals, required source-owned signatures/calls, strict null equality/inequality, and one exact unary Null<String> identity return/call shape; other nullable return expressions, types, arities, mutation, optional/default parameters, dereference/flow narrowing, external weak-PHP callers, indexing, substring, normalization, grapheme semantics, malformed authored text, and implicit coercion are not implemented",
       "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, source-owned static calls, lazy conjunction/disjunction, and typed parenthesized grouping are admitted; nullable Bool, truthiness, equality, mutation, bitwise operations, and external weak-PHP callers are not implemented",
       "only a private constructor-set String field and required String constructor/instance method are admitted for objects; inheritance, interfaces, overrides, accessors, mutable/static fields, nullable objects, reflection, anonymous structures, and general object semantics remain unsupported",
       "only required unary String closures with read-only String captures and direct calls are admitted; mutable/by-reference or non-String captures, this/object capture, nested or escaping closures, optional/multiple parameters, recursion, variadics, foreign callables, and general function values remain unsupported",
@@ -267,7 +279,7 @@
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "abfdabb0086d9808093ede3a9029333bad334fdeebf80a35dc66a563197befde"
+      "sha256": "208682d627615f0ef14ee1c742e497e5a0dc9a36655e99bc109ea195fe876dd9"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -287,7 +299,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "510e5e1f7c1b5df9ca771caf9ea3f3270c5ea805eace6195a6a0f99cddca467e"
+      "sha256": "cb7176b544955ba2ee0196332d7e51b702a5eace19efb4f900f588400ab9971d"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -295,23 +307,31 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "c772f69c5645aca8fb8604234840463b283ad84b0bbb17c7890b7726a13fdcdf"
+      "sha256": "319d4ce3d03c23d2effb7eaf544a4a49f7e71fd8eba57148ce537b7415a67e4b"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
-      "sha256": "1797fc2a9c75d4539d7820e80ba31857912a8d3ac8308913b264da2d194b6693"
+      "sha256": "07fa75fbb39923af7c340b991fd4cca4acb28d9b2d1d403688a0a72d3638b176"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpArtifactManifestWriter.hx",
+      "sha256": "b2c639f272b7f5b73e975af14f57fb5ff24328cde1978730a736d89104e73aa3"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompiler.hx",
-      "sha256": "aabb3ffcb0bbe0ba90a25e4452d063a9af6a4900bdfae1c4c81e12b2ef56da9e"
+      "sha256": "288b08b9ee5d61607d151e67352f18aef56794692f32fe389ed4090285ba06fc"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpCompilerConfig.hx",
       "sha256": "76402d3cb13eb417f04c2f4bc789451a6048e9f2a1675b16c1cd20c4347bdfa1"
     },
     {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpRuntimeLibrary.hx",
+      "sha256": "6f70ae2d1c13c15b148ab4b54ac4f31e0a1a689cc32c804c2d5aa32374597689"
+    },
+    {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-      "sha256": "97d0d8107dd4ce19ff6c95fa1a02503e7580d8be62425991d9d4174aea363ef9"
+      "sha256": "bf1b8b86b663c29cedc73fd2d0e74d16c9a31c6a3b70fd6326d559c3f6e9c619"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
@@ -323,11 +343,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "ec171e1b2f32d65e06e10cfa6f77195b793fb4c95c6edeeb7085d99855adaa2c"
+      "sha256": "13049619b51cc0492aaaa0ea20124b6969b838f3fb0d95a353c4c1675a58190f"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "b0356a046964221692c4c609ca6e8f59b7eeb2f36091a126d68a49364934077b"
+      "sha256": "7e62d6f27ad1855fc4c7935950d9694b131371914b4a3e8e9d9f851e301ee035"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
@@ -351,11 +371,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected.stdout",
-      "sha256": "e834313b28bd39316cab352888f965a319d98f6b604aa9b610ff6a5746bd5ed4"
+      "sha256": "25dd35824b7bdf12f5028a816e6607b10eaa2b5cbd2ea902d20378211de2ac65"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
-      "sha256": "19e28f2b18222ec47ba174f6e01a34df6eb1c366716c55bbdfa548d16ee2bb58"
+      "sha256": "75ee0f53b389cd5e53778807863e09d7a604f8b64ba39b9648d66b8f60e41db1"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
@@ -363,11 +383,15 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "c34b0949a3d404b7d5200f5ff45a93643f821efed5b868255f87b5147d901b55"
+      "sha256": "99058bfef180088fec14d9454e9c4845e2ec0f148555338c269284c3ad1f5dcf"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/7_Greeter/7_Greeter.php",
       "sha256": "9e28fc8d29f877d0a865d76e53b12797f11b45661722b361b6cff3dda422de76"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpStringRuntime.php",
+      "sha256": "776afb3b73dec8699f2005e22c7255b371f633c556a112d6a960e447962cedd5"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/catch-local-name-collision/build.hxml",
@@ -587,7 +611,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "40df831c18216a306aea58ba95379018209f1d4ba17187a009e70756f9109ed7"
+      "sha256": "c200c24aba1a437496de03c573b0a21f85a06cb26c05f11123de95d89c68d453"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",
@@ -595,7 +619,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,

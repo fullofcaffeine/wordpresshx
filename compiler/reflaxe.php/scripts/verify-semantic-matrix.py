@@ -100,6 +100,7 @@ def main() -> None:
     calculator_path = "modules/9_semantics/10_Calculator/10_Calculator.php"
     greeter_path = "modules/9_semantics/7_Greeter/7_Greeter.php"
     main_path = "modules/9_semantics/4_Main/4_Main.php"
+    runtime_path = "runtime/ReflaxePhpStringRuntime.php"
     expected_paths = {
         ".reflaxe.php-owned-files.v1",
         "bootstrap.php",
@@ -110,6 +111,8 @@ def main() -> None:
         greeter_path + ".haxe-map.json",
         main_path,
         main_path + ".haxe-map.json",
+        runtime_path,
+        runtime_path + ".haxe-map.json",
         "reflaxe.php-artifacts.json",
     }
     actual_paths = {
@@ -133,18 +136,28 @@ def main() -> None:
         "method": "main",
         "path": "bootstrap.php",
     }, "semantic entrypoint drifted")
-    require(artifact_manifest["loadOrder"] == [calculator_path, greeter_path, main_path], "source-derived load order drifted")
+    require(
+        artifact_manifest["loadOrder"] == [calculator_path, greeter_path, runtime_path, main_path],
+        "source-derived load order drifted",
+    )
     artifacts = {artifact["path"]: artifact for artifact in artifact_manifest["artifacts"]}
-    require(set(artifacts) == {"bootstrap.php", calculator_path, greeter_path, main_path}, "artifact records drifted")
+    require(
+        set(artifacts) == {"bootstrap.php", calculator_path, greeter_path, main_path, runtime_path},
+        "artifact records drifted",
+    )
+    require(artifacts[runtime_path]["kind"] == "runtime", "string runtime artifact kind drifted")
+    require(artifacts[runtime_path]["identity"] == "runtime:string", "string runtime identity drifted")
+    require(artifacts[runtime_path]["dependencies"] == [], "string runtime dependencies drifted")
     require(artifacts[calculator_path]["dependencies"] == [], "calculator dependencies drifted")
     require(artifacts[greeter_path]["dependencies"] == [], "greeter dependencies drifted")
     require(
-        artifacts[main_path]["dependencies"] == ["semantics.Calculator@Calculator", "semantics.Greeter@Greeter"],
+        artifacts[main_path]["dependencies"]
+        == ["runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter"],
         "main dependency edge drifted",
     )
     require(
         artifacts["bootstrap.php"]["dependencies"]
-        == ["semantics.Calculator@Calculator", "semantics.Greeter@Greeter", "semantics.Main@Main"],
+        == ["runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter", "semantics.Main@Main"],
         "bootstrap dependencies drifted",
     )
     for path, artifact in artifacts.items():
@@ -234,6 +247,10 @@ def main() -> None:
         "stmt:if-bool:2370:2564": ("statement", 2, b"if (Calculator.isMissing(returnedMissing)"),
         "stmt:sys-println:2459:2501": ("statement", 3, b'Sys.println("nullable-string-return:pass")'),
         "stmt:sys-println:2517:2559": ("statement", 3, b'Sys.println("nullable-string-return:fail")'),
+        "stmt:local-int:2568:2602": ("statement", 2, 'final unicodeLength = "A🚀".length'.encode("utf-8")),
+        "stmt:if-int-equality:2605:2737": ("statement", 2, b"if (unicodeLength == 2)"),
+        "stmt:sys-println:2634:2675": ("statement", 3, b'Sys.println("unicode-string-length:pass")'),
+        "stmt:sys-println:2691:2732": ("statement", 3, b'Sys.println("unicode-string-length:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -264,6 +281,17 @@ def main() -> None:
     )
     verify_map(
         output_root,
+        runtime_path,
+        "semantics/Main.hx",
+        sources["semantics/Main.hx"],
+        {
+            "runtime:string": ("declaration", 0, '"A🚀".length'.encode("utf-8")),
+            "runtime:string-length": ("member", 1, '"A🚀".length'.encode("utf-8")),
+        },
+        set(),
+    )
+    verify_map(
+        output_root,
         "bootstrap.php",
         "semantics/Main.hx",
         sources["semantics/Main.hx"],
@@ -273,7 +301,7 @@ def main() -> None:
     verify_ownership(output_root, expected_paths)
     output_text = "\n".join(path.read_text(encoding="utf-8") for path in output_root.rglob("*") if path.is_file())
     require(str(output_root.resolve()) not in output_text, "machine path leaked into semantic artifacts")
-    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null maps passed")
+    print("reflaxe.php per-module numeric/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null/runtime maps passed")
 
 
 if __name__ == "__main__":

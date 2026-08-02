@@ -399,6 +399,8 @@ class PhpTypedAstValidator {
 				validateIntValue(right, intArrayLengths);
 			case TArray(base, index):
 				validateProvenIntArrayRead(expression, base, index, intArrayLengths);
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
+				validateStringValue(receiver);
 			case TCall(target, arguments):
 				validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
@@ -406,6 +408,10 @@ class PhpTypedAstValidator {
 			case _:
 				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
 		}
+	}
+
+	static function isStringClass(classType:ClassType):Bool {
+		return classType.pack.length == 0 && classType.name == "String";
 	}
 
 	static function validateProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):Void {

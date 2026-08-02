@@ -2,6 +2,7 @@ package reflaxe.php.compiler;
 
 #if macro
 import haxe.macro.Context;
+import haxe.macro.Expr.Position;
 import haxe.macro.Type;
 import haxe.macro.TypeTools;
 import reflaxe.data.ClassFuncData;
@@ -26,9 +27,15 @@ using reflaxe.helpers.ClassFieldHelper;
 class PhpTypedAstLowerer {
 	#if macro
 	final sources:PhpSourceRegistry;
+	var stringRuntimeTrigger:Null<Position>;
 
 	public function new(sources:PhpSourceRegistry) {
 		this.sources = sources;
+		this.stringRuntimeTrigger = null;
+	}
+
+	public function requiredStringRuntimeTrigger():Null<Position> {
+		return stringRuntimeTrigger;
 	}
 
 	public function lowerClass(classType:ClassType, varFields:Array<ClassVarData>, funcFields:Array<ClassFuncData>):PhpClass {
@@ -508,10 +515,21 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
 				PhpBinop("+", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TArray(base, index): lowerProvenIntArrayRead(expression, base, index, intArrayLengths);
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
+				PhpSemanticCapabilities.requireAdmitted(StringRuntimeHelper);
+				PhpSemanticCapabilities.requireAdmitted(UnicodeScalarLength);
+				if (stringRuntimeTrigger == null) {
+					stringRuntimeTrigger = expression.pos;
+				}
+				PhpStaticCall(PhpRuntimeLibrary.STRING_CLASS, "length", [lowerStringValue(receiver)]);
 			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
 			case _: unsupportedIntValue(expression);
 		}
+	}
+
+	static function isStringClass(classType:ClassType):Bool {
+		return classType.pack.length == 0 && classType.name == "String";
 	}
 
 	function lowerProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {

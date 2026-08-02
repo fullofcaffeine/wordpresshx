@@ -143,11 +143,16 @@ assignment, `do-while`, dynamic array indices, out-of-bounds reads, and implicit
 String coercion, null String/Bool arguments, foreign String/Bool calls, mutable
 instance fields, inherited instance layouts, unsupported closure shapes, and
 mutable captured Strings fail without
-partial output. Arbitrary array access stays
-rejected because native PHP would emit an undefined-key warning where stock
-Haxe returns `null`; String length/indexing/normalization also remain unclaimed
-until an owned runtime can preserve Haxe semantics. Unsupported and unverified
-runtime/stdlib features remain named and owned in the matrix.
+partial output. Arbitrary array access stays rejected because native PHP would
+emit an undefined-key warning where stock Haxe returns `null`. The first owned
+runtime slice now lowers non-null `String.length` to an on-demand,
+typed-IR-authored PHP helper that counts Unicode scalar values, so
+`"A🚀".length` is `2` rather than PHP's `strlen` byte count of `5`. It requires
+no `mbstring`, rejects malformed UTF-8 explicitly, and is emitted, mapped,
+owned, and dependency-ordered only when used. String indexing, substring,
+normalization, grapheme behavior, nullable receivers, and the broader Haxe
+runtime remain unclaimed. Unsupported and unverified runtime/stdlib features
+remain named and owned in the matrix.
 
 The current driver emits one file per owned Haxe type. Path segments are
 length-prefixed, so distinct module/type identities cannot collapse through a

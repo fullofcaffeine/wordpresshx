@@ -7,6 +7,7 @@ import reflaxe.php.map.PhpCanonicalJson.PhpJsonValue;
 
 enum abstract PhpCompilationArtifactKind(String) to String {
 	var ModuleArtifact = "module";
+	var RuntimeArtifact = "runtime";
 	var BootstrapArtifact = "bootstrap";
 
 	public inline function value():String {

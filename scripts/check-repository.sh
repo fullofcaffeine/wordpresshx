@@ -6546,7 +6546,9 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
     "REFLAXE-PHP-SEMANTIC-MATRIX-001"
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
-assert reflaxe_php_semantic_receipt["status"] == "verified-hosted-exact-matrix"
+assert reflaxe_php_semantic_receipt["status"] == (
+    "incremental-runtime-semantics-hosted-pending"
+)
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter"
 )
@@ -6558,9 +6560,9 @@ assert reflaxe_php_semantic_receipt["capabilityMatrix"] == {
         "PhpSemanticCapabilities.hx"
     ),
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 74,
+    "capabilityCount": 76,
     "categoryCount": 13,
-    "admittedCount": 61,
+    "admittedCount": 63,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": True,
@@ -6576,13 +6578,14 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-61-capability-subject-passed-run-30759497694"
+    "current-63-capability-subject-hosted-pending; "
+    "predecessor-61-capability-subject-passed-run-30759497694"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
-assert reflaxe_php_semantic_receipt["hostedVerification"] == {
-    "relation": "current-61-capability-subject",
+assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
+    "relation": "predecessor-61-capability-subject",
     "admittedCapabilityCount": 61,
     "workflow": "Repository bootstrap",
     "runId": 30759497694,
@@ -6608,7 +6611,7 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
         "Test exact PHP 7.4 and 8.4 runtime matrix",
     ],
     "scope": (
-        "the current 61 exact admitted semantic records, deterministic generic "
+        "the predecessor 61 exact admitted semantic records, deterministic generic "
         "compiler package, clean external package consumer, and native PHP "
         "7.4.33/8.4.7 parser/runtime behavior only"
     ),
@@ -6617,7 +6620,7 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": True,
+    "hostedProof": False,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
@@ -6626,7 +6629,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 82
+assert len(reflaxe_php_semantic_input_records) == 85
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):
@@ -7701,10 +7704,10 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "bash scripts/profiles/test-profile-haxe.sh",
     ),
     (
-			"generic-php-compiler",
-			"compiler/reflaxe.php",
-			53,
-			79,
+		"generic-php-compiler",
+		"compiler/reflaxe.php",
+		53,
+			80,
 		"bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
