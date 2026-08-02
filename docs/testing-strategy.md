@@ -78,8 +78,10 @@ matrix's 61 exact admitted records, deterministic generic compiler package,
 clean external package consumer, and native PHP 7.4.33/8.4.7 only; it advances
 neither WordPress compatibility, official Haxe target qualification, nor
 publication. The current 63-record subject adds the first owned runtime slice,
-non-null `String.length` with Unicode-scalar semantics, and remains locally
-verified but hosted-pending; it does not borrow the predecessor run.
+non-null `String.length` with Unicode-scalar semantics, and is independently
+hosted by Repository bootstrap run `30767482140`, Haxe job `91548663977`, at
+commit `a6322afd6df166185679fb2c639ef62c55cfe01d`; it does not borrow the
+predecessor run or advance another product surface.
 
 Official Haxe target qualification applies only to the actual compiler-facing
 surface. WordPress, package, or browser success cannot substitute for a custom
@@ -112,9 +114,10 @@ The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
-its exact command; the predecessor 61-record nullable-return subject is hosted
-authority for its own exact bytes, while the current 63-record String-length
-subject is hosted-pending.
+its exact command; the predecessor 61-record nullable-return subject remains
+historical authority for its own exact bytes, while the current 63-record
+String-length subject passed its exact hosted compiler/PHP lane in run
+`30767482140`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
