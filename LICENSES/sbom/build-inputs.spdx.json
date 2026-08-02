@@ -3,7 +3,7 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "WordPressHx lock-derived build inputs",
-  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/99811919f2acc3780ee11df04e05eb600a78a7a9e2dd6be668afe8e13164f2ea",
+  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/3ed918f4a56faeaa92cff93227c095e0e0d77f7d52bfdeab26ff1647062d38c5",
   "creationInfo": {
     "created": "1970-01-01T00:00:00Z",
     "creators": [
@@ -195,7 +195,7 @@
       ]
     },
     {
-      "SPDXID": "SPDXRef-Package-b9452190398b19d8077a",
+      "SPDXID": "SPDXRef-Package-0c12bfbb9a31cf976895",
       "name": "beads-history-reader",
       "versionInfo": "1.1.0",
       "downloadLocation": "NOASSERTION",
@@ -203,7 +203,7 @@
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: git-source:beads-history-reader@1.1.0#607d87fef5113518",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: git-source:beads-history-reader@1.1.0#7c372438a6c6db58",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
@@ -32145,7 +32145,7 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-Package-b9452190398b19d8077a"
+      "relatedSpdxElement": "SPDXRef-Package-0c12bfbb9a31cf976895"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",

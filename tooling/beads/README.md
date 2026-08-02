@@ -5,27 +5,33 @@ decoded historical issue state before it publishes the Dolt data ref. This is
 important because removing a secret from the current issue does not remove it
 from database history.
 
-Released Beads 1.1.0 cannot read historical rows whose text columns became
-`NULL` during an earlier schema migration. The failure is tracked by upstream
+The original released Beads 1.1.0 reader could not read historical rows whose
+text columns became `NULL` during an earlier schema migration. The failure is tracked by upstream
 [issue 4867](https://github.com/gastownhall/beads/issues/4867) and
 [pull request 4912](https://github.com/gastownhall/beads/pull/4912).
+The repository database has since advanced to schema 62, so the authoritative
+CI reader must also match the exact source identity in `.beads-toolchain`; the
+older schema-53 compatibility binary cannot open current Beads state.
 
 The compatibility path is deliberately narrow:
 
 1. Try the installed released `bd` first.
 2. Admit the fallback only for the exact known NULL-to-string diagnostic.
-3. Build the exact v1.1.0 source plus the single pinned upstream correction.
-4. Run the upstream embedded-Dolt regression before caching that reader.
+3. Build the exact schema-62 source commit named by the repository toolchain.
+4. Prove that the pinned upstream correction is an exact ancestor with the
+   reviewed file set, then run its embedded-Dolt regression before caching the
+   reader.
 5. Copy the embedded database into a private temporary Git repository.
 6. Read and scan only that copy; never give the compatibility reader the live
    database path.
 7. Reject any issue-set mismatch, unknown read failure, machine-local path, or
    Gitleaks finding before publication.
 
-The source identities, allowed changed files, regression, and retirement
-condition are closed in `history-reader.lock.json`. Once an admitted Beads
-release includes the equivalent fix, the installed release becomes the normal
-reader and this temporary builder can be removed.
+The source identity, schema, client identity, fix ancestry, allowed changed
+files, regression, and retirement condition are closed in
+`history-reader.lock.json` and cross-checked with `.beads-toolchain`. The
+isolated builder remains necessary while security policy requires an
+independently reconstructed historical-state reader.
 
 Run the focused checks with:
 

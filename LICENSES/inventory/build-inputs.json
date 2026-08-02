@@ -141,7 +141,7 @@
     },
     {
       "path": "tooling/beads/history-reader.lock.json",
-      "sha256": "fadc5450644858e476c221e527e666349301dd000e741d88dbce529d6ce07808",
+      "sha256": "329158e698e8c935e3dba1609ac54270a2885833a7e24f76dae42d4abb4cb19a",
       "parser": "git-source-lock",
       "componentObservationCount": 1
     },
@@ -404,11 +404,11 @@
       ]
     },
     {
-      "id": "git-source:beads-history-reader@1.1.0#607d87fef5113518",
+      "id": "git-source:beads-history-reader@1.1.0#7c372438a6c6db58",
       "ecosystem": "git-source",
       "name": "beads-history-reader",
       "version": "1.1.0",
-      "resolution": "git:8e4e59d39f3459a43cf21a3236a13eca4dd874f7",
+      "resolution": "git:c3e600c940ad6ac082934ca5242f1ca1dde7ecb1",
       "declaredLicenses": [
         "MIT"
       ],
