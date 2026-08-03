@@ -138,7 +138,14 @@
     "redDiagnostic": "WPHX4017: hook priority cannot be negative",
     "wordpressOracle": "pinned-WordPress-7.0-signed-priority-ordering",
     "focusedVerification": "passed-local",
-    "hostedVerification": "pending",
+    "hostedVerification": {
+      "workflow": "Repository bootstrap",
+      "runId": 30778248033,
+      "job": "semantic-plan",
+      "jobId": 91577776479,
+      "commit": "d411395bc8a8d0c9cb512f16e2db38cc20acaa9c",
+      "status": "passed"
+    },
     "wordpressRuntimeOrderingAndRemoval": "not-tested-sdk-050"
   },
   "hostedWorkflow": {
