@@ -14,6 +14,10 @@ $_SERVER['SERVER_NAME'] = 'wordpresshx.test';
 $_SERVER['SERVER_PORT'] = '80';
 $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 
+// The disposable test container owns these plugin files, so exercise WordPress's
+// direct filesystem implementation without an interactive credentials form.
+define('FS_METHOD', 'direct');
+
 require_once '/var/www/html/wp-load.php';
 require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';

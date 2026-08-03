@@ -179,7 +179,7 @@
     },
     {
       "path": "compiler/wordpress/runtime/remove-reflaxe-consumer.php",
-      "sha256": "45f0335b9db6efe371cba13ce060b7314332d16877b8d691167db7684669659a"
+      "sha256": "2676c235e7aaa3877070007823c75deb99da787831acef2bc191d5f56622460f"
     },
     {
       "path": "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
