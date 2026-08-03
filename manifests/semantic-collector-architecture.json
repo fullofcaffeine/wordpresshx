@@ -22,7 +22,7 @@
     },
     "nodeSchemas": [
       "wordpress-hx.semantic-node.development.service.v1",
-      "wordpress-hx.semantic-node.wordpress.hook.v1",
+      "wordpress-hx.semantic-node.wordpress.hook.v2",
       "wordpress-hx.semantic-node.wordpress.module.v1"
     ]
   },
@@ -180,6 +180,7 @@
     "directBuildCount": 2,
     "serverBuildCount": 2,
     "negativeCompileCount": 18,
+    "signedPriorityBuildCount": 1,
     "negativeSchemaMutationCount": 5,
     "collectorSourceCount": 24,
     "effectiveFileCount": 32,
@@ -187,9 +188,9 @@
     "nodeCount": 3,
     "resourceCount": 1,
     "environmentCount": 1,
-    "collectorSourceSha256": "291b617628b543393cdd004a7e5403970a85cf918d9ad5c1a264aad9612021f4",
-    "effectiveInputsFingerprint": "9118af90132fba1c929cf83aaf1e414cb0979841bc1d3795dc19eaeb91f2dfff",
-    "planDigest": "198e728fc2b5138351d8a2ad833e74bbeb6a965cdcce4ef936ab5c3585224525",
+    "collectorSourceSha256": "813266ac5d53c43f3e0968d427a5395957644bbd2624f26fa9f6237a1e53ae19",
+    "effectiveInputsFingerprint": "d5dce8b9d64bbc67ac7a0f564cb00fd596c4bdccc0d363ba6559ad793ac780eb",
+    "planDigest": "65682cd91adc1bfe9e60e2c1072b9b4ea60505489847212b277bcd088dbd25c5",
     "jsonBoundaryVectorCount": 8,
     "directVsServerByteEquality": "passed",
     "sourceLocatedDiagnostics": "passed",
@@ -199,6 +200,7 @@
     "failedCompileNoPlanOrInputs": "passed",
     "typedDevelopmentServiceDefaults": "passed",
     "typedJsonBoundary": "passed",
+    "signedPriorityCollection": "passed-hook-schema-v2",
     "outcome": "passed"
   },
   "claims": {

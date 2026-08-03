@@ -138,9 +138,6 @@ class SemanticCollector {
 		requirePattern(HOOK_NAME, hookName, "WPHX4015", "hook name is invalid", options.pos);
 		requirePattern(STABLE_ID, hookName, "WPHX4015", "hook name must be lowercase and stable in collector v1", options.pos);
 		requirePattern(MODULE_ID, hookId, "WPHX4016", "hook id must be a lowercase slug", options.pos);
-		if (priority < 0) {
-			fail("WPHX4017", "hook priority cannot be negative", fields.get("priority").pos);
-		}
 		final callbackName = callbackIdentifier(callback);
 		final acceptedArgs = validateHookFunction(hookType, Context.typeof(callback), callback.pos);
 		final owner = localTypeIdentity(options.pos);
@@ -552,9 +549,6 @@ class SemanticCollector {
 					fail("WPHX4001", "cached callback arity contradicts its typed Haxe function", entry.pos);
 				}
 				final priority = metadataInteger(entry, 7);
-				if (priority < 0) {
-					fail("WPHX4017", "hook priority cannot be negative", entry.pos);
-				}
 				session.hooks.push({
 					moduleId: moduleId,
 					hookName: hookName,
@@ -652,7 +646,7 @@ class SemanticCollector {
 		return {
 			id: "hook/" + draft.moduleId + "/" + draft.hookName + "/" + draft.hookId,
 			kind: "wordpress.hook",
-			schemaId: "wordpress-hx.semantic-node.wordpress.hook.v1",
+			schemaId: "wordpress-hx.semantic-node.wordpress.hook.v2",
 			source: draft.span,
 			relatedSources: [],
 			dependsOn: ["module/" + draft.moduleId],
@@ -1223,7 +1217,7 @@ class SemanticCollector {
 				}
 				final kind = entry.string("kind", "WPHX4099");
 				requirePattern(STABLE_ID, kind, "WPHX4099", "node schema kind is not stable", position);
-				if ((schemaId == "wordpress-hx.semantic-node.wordpress.hook.v1" && kind != "wordpress.hook")
+				if ((schemaId == "wordpress-hx.semantic-node.wordpress.hook.v2" && kind != "wordpress.hook")
 					|| (schemaId == "wordpress-hx.semantic-node.wordpress.module.v1" && kind != "wordpress.module")
 					|| (schemaId == DEVELOPMENT_SERVICE_SCHEMA && kind != DEVELOPMENT_SERVICE_KIND)) {
 					fail("WPHX4099", "core node schema kind contradicts its schema id", position);
@@ -1241,7 +1235,7 @@ class SemanticCollector {
 			}
 			nodeSchemas.sort((left, right) -> compareText(left.schemaId, right.schemaId));
 			for (required in [
-				"wordpress-hx.semantic-node.wordpress.hook.v1",
+				"wordpress-hx.semantic-node.wordpress.hook.v2",
 				"wordpress-hx.semantic-node.wordpress.module.v1"
 			]) {
 				if (!schemaIds.exists(required)) {

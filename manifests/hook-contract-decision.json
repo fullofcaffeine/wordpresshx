@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "decision": "ADR-010",
+  "bead": "wordpresshx-adr-010",
+  "status": "proposed-pending-independent-review",
+  "profileId": "wp70-release",
+  "sourceAuthority": {
+    "sourceLock": "profiles/wp70-release/source.lock.json",
+    "wordpressCommit": "26b68024931348d267b70e2a29910e1320d0094f",
+    "wordpressTree": "f3ad96f2357d2309f64a8d42a5808be502639c70",
+    "files": [
+      {
+        "path": "src/wp-includes/class-wp-hook.php",
+        "blob": "cd6860c0f81f2401709debb4a40f4704ef249748",
+        "sha256": "a66fe7372af72876fc702e50943f9a2a8dff4ed7394163e07491b80a06e27f1d"
+      },
+      {
+        "path": "src/wp-includes/plugin.php",
+        "blob": "0ca495b6f76d44986ae3725973b525aa65fffe32",
+        "sha256": "2e06902ae7d65d7dad37cbafd8e8feff83e4aeeff3a7839885ce7fe4f0c94d68"
+      }
+    ]
+  },
+  "hookReferences": {
+    "builtInAuthority": "exact-profile-typed-contract",
+    "actionType": "ActionHook<Args>",
+    "filterType": "FilterHook<Value,ExtraArgs>",
+    "actionReturn": "Void",
+    "filterReturn": "same-filtered-value-type",
+    "filterValuePosition": 0,
+    "orderedArguments": true,
+    "maximumArgumentsFromContract": true,
+    "allHookStatus": "withheld-pending-variadic-name-first-contract"
+  },
+  "acceptedArguments": {
+    "default": "infer-exact-callback-arity",
+    "actionMinimum": 0,
+    "filterMinimum": 1,
+    "greaterThanContractMaximum": "compile-error",
+    "smallerThanCallbackArity": "compile-error-without-explicit-typed-prefix-truncation",
+    "truncation": "explicit-prefix-only-and-preserves-ordered-types",
+    "nativeZeroArgumentBehavior": "callback-invoked-with-no-arguments"
+  },
+  "priority": {
+    "haxeType": "Priority",
+    "representation": "abstract-over-signed-Haxe-Int",
+    "domain": "open-signed-int-not-enum",
+    "presets": {
+      "Earliest": -100,
+      "Default": 10,
+      "Late": 100
+    },
+    "presetBoundaryClaim": false,
+    "lowerExecutesEarlier": true,
+    "samePriority": "registration-order",
+    "changedPriorityRemoval": "remove-at-original-priority-then-register-at-new-priority"
+  },
+  "callbackIdentity": {
+    "removableForms": [
+      "generated-static-method",
+      "declared-static-method",
+      "declared-named-function"
+    ],
+    "removalKey": [
+      "hook-name",
+      "callback-identity",
+      "registration-priority"
+    ],
+    "acceptedArgumentsInRemovalKey": false,
+    "removalResult": "Bool",
+    "anonymousPolicy": "PermanentListener-without-removal-api",
+    "subscriptionOwnsExactRegistration": true
+  },
+  "customAndDynamicHooks": {
+    "projectContract": "versioned-content-addressed-typed-declaration",
+    "thirdPartyContract": "ADR-015-adoption-bundle",
+    "dynamicNames": "generated-typed-pattern-constructor",
+    "arbitraryRuntimeConcatenation": false,
+    "requiredProvenance": [
+      "owner",
+      "contract-version",
+      "contract-digest",
+      "kind",
+      "ordered-argument-types",
+      "return-type",
+      "maximum-arguments",
+      "source-or-declaration-span"
+    ]
+  },
+  "nativeEmission": {
+    "registrationFunctions": [
+      "add_action",
+      "add_filter"
+    ],
+    "removalFunctions": [
+      "remove_action",
+      "remove_filter"
+    ],
+    "literalOrTypedPatternName": true,
+    "samePriorityOrderMustBeExplicitPlanData": true,
+    "publicCallbackShape": "native-php-callable"
+  },
+  "implementation": {
+    "implemented": [
+      "compile-time-action-Void-rule",
+      "compile-time-filter-value-return-rule",
+      "callback-arity-inference",
+      "native-add-action-and-add-filter-emission",
+      "signed-priority-semantic-node-v2",
+      "bounded-static-callback-runtime-fixture"
+    ],
+    "pendingBead": "wordpresshx-sdk-050",
+    "pending": [
+      "public-built-in-hook-reference-catalog",
+      "Priority-authoring-abstract-and-presets",
+      "typed-prefix-truncation-helper",
+      "stable-subscription-and-native-removal",
+      "PermanentListener-authoring-surface",
+      "custom-hook-contract-schema",
+      "dynamic-hook-pattern-constructors",
+      "explicit-same-priority-registration-order",
+      "real-order-accepted-args-and-removal-runtime-matrix"
+    ]
+  },
+  "behaviorFirstEvidence": {
+    "redState": {
+      "baseCommit": "48df6023f85ffa6de4c1554ae52776ec8b9046be",
+      "overlayFixture": "fixtures/semantic-collector/src/fixtures/semanticcollector/SignedPriorityFixture.hx",
+      "commandOwner": "haxe-semantic-collector-signed-priority",
+      "exitCode": 1,
+      "diagnostic": "WPHX4017: hook priority cannot be negative"
+    },
+    "oracle": "pinned-WordPress-7.0-WP_Hook-priority-sorting",
+    "focusedOwner": "scripts/semantic-collector/test.sh",
+    "verticalOwner": "wordpresshx-sdk-050-real-wordpress-hook-runtime",
+    "verticalStatus": "pending"
+  },
+  "claims": {
+    "architectureDecision": "pending-independent-review",
+    "signedPriorityCollection": "compile-tested-local",
+    "actionFilterFixture": "bounded-runtime-tested-historical-sdk-023",
+    "removalAndTieOrdering": "not-tested-sdk-050",
+    "broadWordPressHookCompatibility": "not-tested",
+    "publication": "unsupported",
+    "productionSupport": "not-tested"
+  }
+}

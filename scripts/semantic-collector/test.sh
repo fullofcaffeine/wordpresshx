@@ -56,6 +56,34 @@ python3 scripts/semantic-collector/test-contract.py \
   --inputs "${test_root}/direct-a/inputs.json" \
   --runtime "${test_root}/direct-a/runtime.js"
 
+signed_priority_root="${test_root}/signed-priority"
+mkdir -p "${signed_priority_root}"
+signed_priority_macro="wordpress.hx.build.SemanticPlan.install(\"fixtures/semantic-collector/config.json\",\"${signed_priority_root}/plan.json\",\"${signed_priority_root}/inputs.json\")"
+haxe \
+  -cp packages/build/src \
+  -cp fixtures/semantic-collector/src \
+  -main fixtures.semanticcollector.SignedPriorityFixture \
+  --macro "${signed_priority_macro}" \
+  -js "${signed_priority_root}/runtime.js" \
+  -dce full
+python3 - "${signed_priority_root}/plan.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+plan = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+hooks = [node for node in plan["nodes"] if node["kind"] == "wordpress.hook"]
+if len(hooks) != 1:
+    raise SystemExit("signed-priority fixture did not emit exactly one hook")
+hook = hooks[0]
+if hook["schemaId"] != "wordpress-hx.semantic-node.wordpress.hook.v2":
+    raise SystemExit("signed-priority fixture did not use hook schema v2")
+if hook["payload"]["priority"] != -20:
+    raise SystemExit("signed-priority fixture did not preserve priority -20")
+if hook["payload"]["acceptedArgs"] != 0:
+    raise SystemExit("signed-priority fixture changed inferred action arity")
+PY
+
 server_port="$(python3 - <<'PY'
 import socket
 with socket.socket() as candidate:
@@ -162,4 +190,4 @@ assert_no_pattern \
   "${test_root}/direct-a/runtime.js"
 
 echo "semantic collector source and runtime isolation scans passed"
-echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":18,\"outcome\":\"passed\",\"serverBuildCount\":2}"
+echo "SEMANTIC_COLLECTOR_COMPILE_SUMMARY={\"directBuildCount\":2,\"jsonBoundaryVectorCount\":8,\"negativeCompileCount\":18,\"outcome\":\"passed\",\"serverBuildCount\":2,\"signedPriorityBuildCount\":1}"

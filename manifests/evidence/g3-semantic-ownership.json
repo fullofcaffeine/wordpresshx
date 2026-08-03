@@ -19,7 +19,7 @@
       "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
       "bead": "wordpresshx-sdk-040",
       "path": "manifests/evidence/sdk-040-semantic-collector.json",
-      "sha256": "caf16c226b2a656df9d514e995646824d87662664078381d9fa63fc2d057eabf"
+      "sha256": "a85e23d3be10b25a85fec7ac756ffba015c0fa367dd0a631eb033b34c8642d07"
     },
     {
       "receiptId": "ADR-007-GENERATED-ARTIFACT-OWNERSHIP",

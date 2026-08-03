@@ -47,6 +47,7 @@ required_files=(
   docs/adr/007-generated-artifact-ownership.md
   docs/adr/008-profile-generation-and-api-classification.md
   docs/adr/009-schema-and-codec-authority.md
+  docs/adr/010-hook-contract-model.md
   docs/adr/011-hxx-parser-and-lowering-architecture.md
   docs/adr/012-output-context-safety.md
   docs/adr/013-genes-ts-output-and-wordpress-build-integration.md
@@ -73,6 +74,7 @@ required_files=(
   docs/release/rollback-checklist.md
   docs/security/wp70-build-tool-advisories.md
   manifests/testing-strategy.json
+  manifests/hook-contract-decision.json
   manifests/evidence/testing-strategy-baseline.json
   manifests/evidence/testing-strategy-json-red-proof.json
   packages/README.md
@@ -493,6 +495,7 @@ required_files=(
   schemas/php-haxe-map.schema.json
   schemas/semantic-emission.schema.json
   schemas/semantic-nodes/hook.schema.json
+  schemas/semantic-nodes/hook-v2.schema.json
   schemas/semantic-nodes/module.schema.json
   schemas/semantic-plan.schema.json
   schemas/semantic-collector-config.schema.json
@@ -924,6 +927,7 @@ required_files=(
   scripts/hooks/pre-commit
   scripts/hooks/pre-push
   scripts/hooks/test.sh
+  scripts/hook-contract/check-decision.py
   scripts/lint/hx-format-guard.sh
   scripts/lint/local-path-guard-staged.sh
   scripts/lint/whitespace-guard.sh
@@ -12952,6 +12956,7 @@ PY
 
 python3 scripts/profiles/check-decision-lock.py
 python3 scripts/profiles/check-classification-decision.py
+python3 scripts/hook-contract/check-decision.py
 python3 scripts/profiles/check-profile-isolation.py
 python3 scripts/profiles/validate-profile-schema.py
 python3 scripts/profiles/verify-sdk013-history.py

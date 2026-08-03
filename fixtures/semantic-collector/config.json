@@ -47,12 +47,12 @@
       ]
     },
     {
-      "schemaId": "wordpress-hx.semantic-node.wordpress.hook.v1",
+      "schemaId": "wordpress-hx.semantic-node.wordpress.hook.v2",
       "kind": "wordpress.hook",
-      "version": 1,
+      "version": 2,
       "authority": "core",
-      "path": "schemas/semantic-nodes/hook.schema.json",
-      "schemaSha256": "f9adbb92bd3023c60cf32ec67e0c09a5645f3072f78ec3dd1ff0452d772a6695",
+      "path": "schemas/semantic-nodes/hook-v2.schema.json",
+      "schemaSha256": "b312122c62354dd8d23942094e6c2cd00d8388e30b1665f7c7e6aef379dbc3c5",
       "consumerEmitters": [
         "wordpress.php"
       ]

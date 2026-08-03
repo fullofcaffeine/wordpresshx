@@ -30,6 +30,10 @@ CONTRACT = load_semantic_plan_contract()
 ContractError = CONTRACT.ContractError
 NODE_SCHEMAS = {
     **CONTRACT.NODE_SCHEMAS,
+    "wordpress-hx.semantic-node.wordpress.hook.v2": (
+        "wordpress.hook",
+        ROOT / "schemas" / "semantic-nodes" / "hook-v2.schema.json",
+    ),
     "wordpress-hx.semantic-node.development.service.v1": (
         "development.service",
         ROOT / "schemas" / "semantic-nodes" / "development-service.schema.json",
