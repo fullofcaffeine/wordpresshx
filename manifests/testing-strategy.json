@@ -222,16 +222,27 @@
           "ownersCovered": [
             "wordpress-public-php-runtime"
           ]
+        },
+        {
+          "workflow": "Reflaxe PHP WordPress consumer",
+          "job": "wordpress-consumer",
+          "runId": 30774763672,
+          "jobId": 91568049296,
+          "commit": "906d2e2edbea492728bb523c7c877215794ca342",
+          "status": "passed",
+          "evidence": "manifests/evidence/reflaxe-php-wordpress-consumer.json",
+          "ownersCovered": [
+            "typed-native-php-global",
+            "wordpress-reflaxe-consumer-package",
+            "wordpress-reflaxe-consumer-runtime"
+          ]
         }
       ],
       "unprovenOwners": [
         "compiler-qualification-contract",
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
-        "typed-native-php-global",
-        "wordpress-reflaxe-module-package",
-        "wordpress-reflaxe-consumer-package",
-        "wordpress-reflaxe-consumer-runtime"
+        "wordpress-reflaxe-module-package"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -344,11 +355,22 @@
           "ownersCovered": [
             "output-context-vertical"
           ]
+        },
+        {
+          "workflow": "Reflaxe PHP WordPress consumer",
+          "job": "wordpress-consumer",
+          "runId": 30774763672,
+          "jobId": 91568049296,
+          "commit": "906d2e2edbea492728bb523c7c877215794ca342",
+          "status": "passed",
+          "evidence": "manifests/evidence/reflaxe-php-wordpress-consumer.json",
+          "ownersCovered": [
+            "wordpress-reflaxe-consumer-runtime"
+          ]
         }
       ],
       "unprovenOwners": [
-        "plugin-package-install",
-        "wordpress-reflaxe-consumer-runtime"
+        "plugin-package-install"
       ],
       "residualRisks": [
         "wordpresshx-g4",
@@ -487,12 +509,23 @@
           "ownersCovered": [
             "development-service-runtime"
           ]
+        },
+        {
+          "workflow": "Reflaxe PHP WordPress consumer",
+          "job": "wordpress-consumer",
+          "runId": 30774763672,
+          "jobId": 91568049296,
+          "commit": "906d2e2edbea492728bb523c7c877215794ca342",
+          "status": "passed",
+          "evidence": "manifests/evidence/reflaxe-php-wordpress-consumer.json",
+          "ownersCovered": [
+            "wordpress-reflaxe-consumer-package",
+            "wordpress-reflaxe-consumer-runtime"
+          ]
         }
       ],
       "unprovenOwners": [
         "wordpress-reflaxe-module-package",
-        "wordpress-reflaxe-consumer-package",
-        "wordpress-reflaxe-consumer-runtime",
         "plugin-package-install"
       ],
       "residualRisks": [

@@ -727,6 +727,29 @@ def validate_baseline(receipt: dict[str, object], model: dict[str, object]) -> N
 
     sdk090 = strict_json(ROOT / "manifests" / "evidence" / "sdk-090-wordpress-harness.json")
     sdk090_hosted = require_dict(sdk090.get("hostedWorkflow"), "SDK-090 hostedWorkflow")
+    consumer = strict_json(ROOT / "manifests" / "evidence" / "reflaxe-php-wordpress-consumer.json")
+    consumer_hosted = require_dict(consumer.get("hostedVerification"), "reflaxe.php WordPress consumer hostedVerification")
+    consumer_identity = (
+        consumer_hosted.get("workflow"),
+        consumer_hosted.get("job"),
+        consumer_hosted.get("runId"),
+        consumer_hosted.get("jobId"),
+        consumer_hosted.get("commit"),
+    )
+    consumer_owners = {
+        "compiler-adapter": {
+            "typed-native-php-global",
+            "wordpress-reflaxe-consumer-package",
+            "wordpress-reflaxe-consumer-runtime",
+        },
+        "wordpress-runtime-abi": {"wordpress-reflaxe-consumer-runtime"},
+        "package-install": {
+            "wordpress-reflaxe-consumer-package",
+            "wordpress-reflaxe-consumer-runtime",
+        },
+    }
+    if consumer.get("status") != "verified" or consumer_hosted.get("status") != "passed":
+        raise StrategyError("reflaxe.php WordPress consumer evidence is not verified")
     for surface in require_list(model.get("surfaces"), "surfaces"):
         scorecard = require_dict(surface, "surface")
         surface_id = scorecard.get("surfaceId")
@@ -752,6 +775,11 @@ def validate_baseline(receipt: dict[str, object], model: dict[str, object]) -> N
                     raise StrategyError("surface proof identity is not bound by SDK-090 evidence")
                 if surface_id != "wordpress-runtime-abi" or proof_owners != {"wordpress-runtime-harness"}:
                     raise StrategyError("SDK-090 proof owner coverage changed")
+            elif evidence == "manifests/evidence/reflaxe-php-wordpress-consumer.json":
+                if identity != consumer_identity:
+                    raise StrategyError("surface proof identity is not bound by reflaxe.php WordPress consumer evidence")
+                if consumer_owners.get(surface_id) != proof_owners:
+                    raise StrategyError("reflaxe.php WordPress consumer proof owner coverage changed")
             else:
                 raise StrategyError("surface proof names an unrecognized evidence authority")
 

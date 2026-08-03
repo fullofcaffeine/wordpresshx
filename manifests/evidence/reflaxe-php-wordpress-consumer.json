@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-WORDPRESS-CONSUMER-001",
   "bead": "wordpresshx-reflaxe-php.6",
-  "status": "implemented-hosted-pending",
+  "status": "verified",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, php74-modern-v1, a clean generated plugin ZIP, and the checksum-pinned WordPress 7.0/PHP 8.4/MySQL harness",
     "input": "one ordinary Haxe main that calls the typed text-only WordPress option facade",
@@ -63,7 +63,7 @@
   },
   "scorecards": {
     "compilerAdapter": {
-      "status": "passed-local",
+      "status": "passed-local-and-hosted",
       "claim": "one typed native-global statement call with String arguments",
       "doesNotAdvance": [
         "wordpress-runtime-abi",
@@ -71,8 +71,8 @@
       ]
     },
     "wordpressRuntimeAbi": {
-      "status": "pending-hosted",
-      "claim": "one update_option call on exact WordPress 7.0 after hosted proof",
+      "status": "passed-hosted",
+      "claim": "one update_option call on exact WordPress 7.0 during activation and a fresh request",
       "publicPhpAbiExportClaimed": false,
       "doesNotAdvance": [
         "compiler-adapter breadth",
@@ -80,8 +80,8 @@
       ]
     },
     "packageInstall": {
-      "status": "passed-local-runtime-pending",
-      "claim": "deterministic clean plugin ZIP locally; lifecycle awaits hosted proof",
+      "status": "passed-local-and-hosted",
+      "claim": "deterministic clean plugin ZIP plus install, activation, deactivation, and native deletion",
       "doesNotAdvance": [
         "publication",
         "release readiness"
@@ -96,10 +96,10 @@
       "Negative cases: unannotated foreign calls and invalid identifiers fail before output; stale graph and partial-package mutations remain in the downstream packager owner.",
       "Raw escape path: the annotation accepts one PHP identifier only, never PHP syntax, and only public static extern methods with Haxe-checked arity/types are callable.",
       "Bootstrap topology: the WordPress root remains ABSPATH-guarded and loads only the authenticated graph bootstrap; maps and Haxe source do not enter the ZIP.",
+      "Runtime observer: the first hosted run failed visibly when delete_plugins entered the filesystem-credentials/admin path; the disposable test container now explicitly selects WordPress's direct filesystem implementation and the exact lifecycle passes without suppressing warnings.",
       "Claim scope: the fixture calls no hook, exports no public PHP ABI, supports String option values only, and cannot advance broader compiler or WordPress claims."
     ],
     "residualRisks": [
-      "hosted WordPress lifecycle is pending",
       "callback and hook lowering remain unimplemented",
       "arbitrary WordPress values require typed codecs",
       "official Haxe target qualification remains separate"
@@ -109,16 +109,16 @@
     "workflow": "Reflaxe PHP WordPress consumer",
     "workflowPath": ".github/workflows/reflaxe-wordpress-consumer.yml",
     "job": "wordpress-consumer",
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "url": null,
-    "status": "pending-main-push"
+    "commit": "906d2e2edbea492728bb523c7c877215794ca342",
+    "runId": 30774763672,
+    "jobId": 91568049296,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/30774763672/job/91568049296",
+    "status": "passed"
   },
   "claims": {
-    "typedNativePhpGlobal": "passed-local",
-    "deterministicWordPressPackage": "passed-local",
-    "exactWordPress70Lifecycle": "pending-hosted",
+    "typedNativePhpGlobal": "passed-local-and-hosted",
+    "deterministicWordPressPackage": "passed-local-and-hosted",
+    "exactWordPress70Lifecycle": "passed-hosted-bounded-consumer",
     "publicPhpAbi": "not-claimed",
     "broadWordPressCompatibility": "not-claimed",
     "officialHaxeQualification": "not-advanced",
