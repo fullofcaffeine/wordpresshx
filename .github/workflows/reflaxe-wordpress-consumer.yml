@@ -1,0 +1,40 @@
+name: Reflaxe PHP WordPress consumer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/reflaxe-wordpress-consumer.yml"
+      - "compiler/reflaxe.php/**"
+      - "compiler/wordpress/**"
+      - "docker/wordpress/**"
+      - "docker/images.lock.json"
+      - "fixtures/reflaxe-php-native-global/**"
+      - "fixtures/reflaxe-wordpress-consumer/**"
+      - "scripts/docker/**"
+      - "scripts/lint/haxe-weak-type-guard.py"
+      - "scripts/wordpress/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wordpress-consumer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Haxe 4.3.7
+        uses: krdlab/setup-haxe@d93667502be3b4f31a94a3308a74388f2e178a8d # v2.1.0
+        with:
+          haxe-version: 4.3.7
+      - name: Install exact Reflaxe dependency
+        run: haxelib install reflaxe 4.0.0-beta --quiet
+      - name: Prove the generic typed native-function owner
+        run: bash compiler/reflaxe.php/scripts/test-native-global.sh
+      - name: Prove the deterministic WordPress package owner
+        run: bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer.sh
+      - name: Prove install, activation, call, deactivation, and removal on WordPress 7.0
+        run: bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer-runtime.sh

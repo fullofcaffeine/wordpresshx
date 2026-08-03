@@ -42,7 +42,11 @@ The current admitted surface is deliberately bounded:
 - the explicit `php74-modern-v1` target profile, which selects PHP 7.4 as its
   floor, `strict_types=1`, and native `int` signatures without a floating
   "latest PHP" mode; and
-- a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers.
+- a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers; and
+- one narrow typed native-function boundary: a public static method on an
+  `extern` class may use `@:phpGlobalFunction("name")`, and an ordinary Haxe
+  statement call with admitted `String` arguments lowers to a validated,
+  root-qualified PHP global call. The function name cannot contain PHP syntax.
 
 This is not yet a complete arbitrary-Haxe PHP backend. The first driver path is
 an architecture tracer, not a compatibility claim: typed-AST lowering breadth,
@@ -76,6 +80,19 @@ The tracer's intentionally tiny application source is
 It imports neither compiler internals nor PHP IR. Additions to this lowering
 surface must start with a concrete behavior scenario and retain both the
 focused deterministic regression and the real Haxe → PHP → native-PHP path.
+
+The first native interop owner is separate from the semantic matrix:
+
+```bash
+bash compiler/reflaxe.php/scripts/test-native-global.sh
+```
+
+Its application calls a typed `printf` extern and never imports compiler
+internals or backend IR. A manually authored PHP golden and stdout expectation
+are checked with the native PHP parser/runtime. Missing annotations and invalid
+function names fail at the Haxe source boundary without partial output. This is
+not arbitrary PHP injection or broad native interop: only static extern calls
+with admitted String arguments are currently accepted.
 
 The next incremental behavior owner is:
 

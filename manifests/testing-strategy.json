@@ -129,7 +129,9 @@
       "testedProfiles": [
         "generic typed-IR slice on PHP 7.4.33 and 8.4.7",
         "ordinary-Haxe tracer through deterministic PHP, exact source map, and local native PHP",
+        "one validated typed extern call to a native PHP global with String arguments, injection-negative fixtures, deterministic PHP, and native runtime observation",
         "php74-modern-v1 per-type artifacts, source-derived load order, staged ownership, and a downstream deterministic WordPress package-boundary proof",
+        "one ordinary-Haxe WordPress text-option call packaged through the one-way WordPress consumer seam; exact WordPress runtime proof remains an independent owner",
         "small Int addition, initialized local, equality, if/else, required Int parameters/returns, a source-owned cross-module static call, explicit Int assignment, Int <=, and pre-test while under stock Haxe 4.3.7 and exact PHP 8.4.7",
         "wp70-release public-adapter fixtures",
         "ADR-009 and ADR-012 bounded prototypes"
@@ -143,13 +145,16 @@
       "verticalIntegrationOwners": [
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
+        "typed-native-php-global",
         "generic-php-package",
         "wordpress-reflaxe-module-package",
+        "wordpress-reflaxe-consumer-package",
         "wordpress-public-php-runtime",
         "output-context-vertical"
       ],
       "realRuntimeOrSystemOwners": [
         "wordpress-public-php-runtime",
+        "wordpress-reflaxe-consumer-runtime",
         "output-context-vertical"
       ],
       "browserE2eOwners": [],
@@ -163,7 +168,7 @@
         "co-located reflaxe.php provenance is recorded separately from WordPress profile behavior"
       ],
       "knownSkips": [
-        "typed-Haxe AST lowering beyond the 27 exact admitted semantic records",
+        "typed-Haxe AST lowering beyond the exact admitted semantic records",
         "complete Haxe runtime and standard-library strategy",
         "official Haxe tests/unit qualification"
       ],
@@ -223,7 +228,10 @@
         "compiler-qualification-contract",
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
-        "wordpress-reflaxe-module-package"
+        "typed-native-php-global",
+        "wordpress-reflaxe-module-package",
+        "wordpress-reflaxe-consumer-package",
+        "wordpress-reflaxe-consumer-runtime"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -266,12 +274,14 @@
       ],
       "verticalIntegrationOwners": [
         "wordpress-public-php-runtime",
+        "wordpress-reflaxe-consumer-runtime",
         "output-context-vertical",
         "plugin-package-install"
       ],
       "realRuntimeOrSystemOwners": [
         "wordpress-runtime-harness",
         "wordpress-public-php-runtime",
+        "wordpress-reflaxe-consumer-runtime",
         "output-context-vertical",
         "plugin-package-install"
       ],
@@ -337,7 +347,8 @@
         }
       ],
       "unprovenOwners": [
-        "plugin-package-install"
+        "plugin-package-install",
+        "wordpress-reflaxe-consumer-runtime"
       ],
       "residualRisks": [
         "wordpresshx-g4",
@@ -372,6 +383,7 @@
       "testedProfiles": [
         "clean source-only reflaxe.php package consumer",
         "deterministic WordPress-owned package of the exact reflaxe.php module graph; WordPress runtime compatibility remains unclaimed",
+        "ordinary-Haxe text-option consumer packaged deterministically without application PHP or backend IR; runtime compatibility remains separately scored",
         "wp70-release generated plugin fixtures"
       ],
       "focusedOwners": [
@@ -380,12 +392,15 @@
       "verticalIntegrationOwners": [
         "generic-php-package",
         "wordpress-reflaxe-module-package",
+        "wordpress-reflaxe-consumer-package",
+        "wordpress-reflaxe-consumer-runtime",
         "plugin-package-install",
         "editor-sidebar-example",
         "todo-data-store-example"
       ],
       "realRuntimeOrSystemOwners": [
         "plugin-package-install",
+        "wordpress-reflaxe-consumer-runtime",
         "development-service-runtime",
         "editor-sidebar-example",
         "todo-data-store-example"
@@ -476,6 +491,8 @@
       ],
       "unprovenOwners": [
         "wordpress-reflaxe-module-package",
+        "wordpress-reflaxe-consumer-package",
+        "wordpress-reflaxe-consumer-runtime",
         "plugin-package-install"
       ],
       "residualRisks": [
@@ -883,7 +900,34 @@
       ],
       "alwaysRun": false,
       "oracle": "the typed capability registry, stock Haxe 4.3.7 execution, manually authored PHP/stdout, independent source-map checks, and exact native PHP 8.4.7 with stderr required empty",
-      "claimContribution": "only the 27 exact admitted capability records; unsupported and unverified rows remain owned and no other product surface advances"
+      "claimContribution": "only the exact admitted capability records named by the matrix; unsupported and unverified rows remain owned and no other product surface advances"
+    },
+    {
+      "testId": "typed-native-php-global",
+      "name": "Typed extern declaration through a validated native PHP global call",
+      "surfaces": [
+        "compiler-adapter"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/reflaxe.php/scripts/test-native-global.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/*",
+        "compiler/reflaxe.php/scripts/test-native-global.sh",
+        "compiler/reflaxe.php/test/native-global/*",
+        "fixtures/reflaxe-php-native-global/*"
+      ],
+      "reverseDependencies": [
+        "wordpress-reflaxe-consumer-package",
+        "wordpress-reflaxe-consumer-runtime"
+      ],
+      "alwaysRun": false,
+      "oracle": "a manually authored PHP golden and expected stdout, native PHP parsing/execution, rejected invalid names, and rejected unannotated foreign calls",
+      "claimContribution": "one validated public-static-extern String-argument global-function boundary only; no WordPress compatibility or arbitrary native interop claim"
     },
     {
       "testId": "generic-php-package",
@@ -931,6 +975,63 @@
       "alwaysRun": false,
       "oracle": "the authenticated generic artifact graph, manually reviewed compiler-tracer stdout, deterministic ZIP invariants, PHP parser/runtime observation, and an independently generated ABSPATH-guarded root",
       "claimContribution": "one-way deterministic packaging and packaged-PHP boot for the admitted compiler graph only; no WordPress runtime compatibility or release claim"
+    },
+    {
+      "testId": "wordpress-reflaxe-consumer-package",
+      "name": "Ordinary Haxe WordPress option call in a deterministic clean plugin",
+      "surfaces": [
+        "compiler-adapter",
+        "package-install"
+      ],
+      "layer": "vertical",
+      "rings": [
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "command": "bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/*",
+        "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
+        "compiler/wordpress/scripts/test-reflaxe-wordpress-consumer.sh",
+        "compiler/wordpress/test/reflaxe-wordpress-consumer/*",
+        "fixtures/reflaxe-wordpress-consumer/*"
+      ],
+      "reverseDependencies": [
+        "wordpress-reflaxe-consumer-runtime"
+      ],
+      "alwaysRun": false,
+      "oracle": "a manually authored generated-PHP minimum, deterministic compiler graph and ZIP invariants, and an independent archive inventory that rejects PHP, Haxe, and source maps in the application package",
+      "claimContribution": "compiler-adapter and package-shape scorecards only; the package manifest continues to withhold WordPress runtime compatibility"
+    },
+    {
+      "testId": "wordpress-reflaxe-consumer-runtime",
+      "name": "Ordinary Haxe plugin lifecycle on pinned WordPress 7.0",
+      "surfaces": [
+        "compiler-adapter",
+        "wordpress-runtime-abi",
+        "package-install"
+      ],
+      "layer": "system",
+      "rings": [
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer-runtime.sh",
+      "pathPatterns": [
+        "compiler/reflaxe.php/src/reflaxe/php/compiler/*",
+        "compiler/wordpress/runtime/*reflaxe-consumer.php",
+        "compiler/wordpress/scripts/*reflaxe-wordpress-consumer*",
+        "compiler/wordpress/test/reflaxe-wordpress-consumer/*",
+        "docker/wordpress/*",
+        "fixtures/reflaxe-wordpress-consumer/*",
+        "scripts/wordpress/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "pinned official WordPress 7.0 update_option behavior, native plugin activation APIs, a fresh request, native option lookup, and clean deactivate/delete observation; expectations are manually authored rather than derived from generated PHP",
+      "claimContribution": "three separately reported bounded scorecards: typed compiler call, deterministic package lifecycle, and exact WordPress public-call behavior; no public PHP ABI export or broad WordPress support"
     },
     {
       "testId": "wordpress-runtime-harness",

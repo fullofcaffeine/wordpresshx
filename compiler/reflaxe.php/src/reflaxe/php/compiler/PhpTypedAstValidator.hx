@@ -2,9 +2,11 @@ package reflaxe.php.compiler;
 
 #if macro
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.macro.TypeTools;
 import reflaxe.data.ClassFuncData;
+import reflaxe.php.ir.PhpIdentifier;
 
 using reflaxe.helpers.ClassFieldHelper;
 
@@ -17,6 +19,35 @@ private typedef PhpExceptionValidationState = {
 /** Rejects unsupported application AST before Reflaxe's after-generation emission phase. **/
 class PhpTypedAstValidator {
 	#if macro
+	public static function nativeGlobalName(classType:ClassType, field:ClassField):Null<String> {
+		final matches = field.meta.get().filter(entry -> entry.name == ":phpGlobalFunction");
+		if (matches.length == 0) {
+			return null;
+		}
+		if (matches.length != 1) {
+			Context.fatalError("reflaxe.php native global functions require exactly one @:phpGlobalFunction annotation", field.pos);
+		}
+		if (!classType.isExtern || !field.isPublic) {
+			Context.fatalError("reflaxe.php @:phpGlobalFunction is allowed only on public static extern methods", field.pos);
+		}
+		final entry = matches[0];
+		if (entry.params.length != 1) {
+			Context.fatalError("reflaxe.php @:phpGlobalFunction requires one literal PHP function name", entry.pos);
+		}
+		final name = switch (entry.params[0].expr) {
+			case EConst(CString(value, _)): value;
+			case _:
+				Context.fatalError("reflaxe.php @:phpGlobalFunction requires one literal PHP function name", entry.params[0].pos);
+				"";
+		}
+		try {
+			PhpIdentifier.named(name);
+		} catch (_:String) {
+			Context.fatalError("reflaxe.php @:phpGlobalFunction contains an invalid PHP function name", entry.params[0].pos);
+		}
+		return "\\" + name;
+	}
+
 	public static function validateModules(moduleTypes:Array<ModuleType>):Void {
 		PhpSemanticCapabilities.requireAdmitted(UnsupportedAstDiagnostic);
 		final config = new PhpCompilerConfig();
@@ -240,8 +271,13 @@ class PhpTypedAstValidator {
 		switch (target.expr) {
 			case TField(_, FStatic(classRef, fieldRef)) if (classRef.get().module == "Sys" && fieldRef.get().name == "println" && arguments.length == 1):
 				validateStringValue(arguments[0]);
+			case TField(_, FStatic(classRef, fieldRef)) if (nativeGlobalName(classRef.get(), fieldRef.get()) != null):
+				for (argument in arguments) {
+					validateStringValue(argument);
+				}
 			case _:
-				Context.error("reflaxe.php tracer supports only Sys.println with an admitted String expression", call.pos);
+				Context.error("reflaxe.php tracer supports only Sys.println or a typed @:phpGlobalFunction extern call with admitted String arguments",
+					call.pos);
 		}
 	}
 

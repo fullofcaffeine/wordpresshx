@@ -1,0 +1,9 @@
+-cp src
+-cp ../../fixtures/reflaxe-php-native-global/negative/invalid-name/support
+-cp ../../fixtures/reflaxe-php-native-global/negative/invalid-name/src
+-lib reflaxe:4.0.0-beta
+-main native_global.Main
+-D reflaxe_php_output=build/native-global-negative-invalid-name
+-D reflaxe_php_profile=php74-modern-v1
+-D reflaxe_php_source_root=../../fixtures/reflaxe-php-native-global/negative/invalid-name/src
+--macro reflaxe.php.compiler.CompilerInit.Start()

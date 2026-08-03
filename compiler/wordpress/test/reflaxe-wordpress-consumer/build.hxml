@@ -1,0 +1,9 @@
+-cp src
+-cp ../../fixtures/reflaxe-wordpress-consumer/support
+-cp ../../fixtures/reflaxe-wordpress-consumer/src
+-lib reflaxe:4.0.0-beta
+-main wordpress_consumer.Main
+-D reflaxe_php_output=build/reflaxe-wordpress-consumer
+-D reflaxe_php_profile=php74-modern-v1
+-D reflaxe_php_source_root=../../fixtures/reflaxe-wordpress-consumer/src
+--macro reflaxe.php.compiler.CompilerInit.Start()

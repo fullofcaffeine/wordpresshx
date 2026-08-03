@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "REFLAXE-PHP-WORDPRESS-CONSUMER-001",
+  "bead": "wordpresshx-reflaxe-php.6",
+  "status": "implemented-hosted-pending",
+  "scenario": {
+    "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, php74-modern-v1, a clean generated plugin ZIP, and the checksum-pinned WordPress 7.0/PHP 8.4/MySQL harness",
+    "input": "one ordinary Haxe main that calls the typed text-only WordPress option facade",
+    "actionOrCompilationPath": "ordinary Haxe -> production reflaxe.php typed AST lowering -> authenticated per-module PHP graph -> one-way compiler/wordpress packager -> clean plugin install/activation -> fresh WordPress request -> deactivation/delete",
+    "observableResult": "the native WordPress option API stores ordinary-haxe with no activation output, and clean deletion removes the plugin files",
+    "errorOrEdgeBehavior": "missing native annotation, invalid PHP function name, stale graph, PHP warning/fatal, WordPress activation error, wrong option value, or leftover plugin files fails visibly",
+    "owningSurfaces": [
+      "compiler-adapter",
+      "wordpress-runtime-abi",
+      "package-install"
+    ],
+    "protectedClaim": "one typed String-argument native PHP global call and one exact WordPress text-option consumer; not hooks, arbitrary option values, public PHP ABI, broad Haxe/PHP/WordPress support, or release readiness"
+  },
+  "redState": {
+    "command": "cd compiler/reflaxe.php && haxe ../wordpress/test/reflaxe-wordpress-consumer/build.hxml",
+    "exitCode": 1,
+    "failure": "compiler/wordpress/test/reflaxe-wordpress-consumer/src/wordpress_consumer/Main.hx:8: characters 3-67 : reflaxe.php tracer supports only Sys.println with an admitted String expression",
+    "reason": "the production lowerer had no typed native-PHP call boundary",
+    "partialOutputPublished": false
+  },
+  "independentOracle": [
+    "a manually authored minimal PHP golden names root-qualified update_option and the exact String arguments",
+    "a separate generic printf fixture uses manually authored PHP/stdout and native PHP parsing/execution",
+    "the checksum-pinned official WordPress 7.0 distribution owns update_option, activation, option lookup, deactivation, and plugin deletion behavior",
+    "expected values are not generated from the emitted PHP or compiler algorithm"
+  ],
+  "implementation": {
+    "applicationAuthoredPhp": false,
+    "applicationBackendIr": false,
+    "genericCompilerWordPressKnowledge": false,
+    "nativeBoundary": "public static extern method with one validated @:phpGlobalFunction identifier and admitted String arguments",
+    "wordpressFacade": "wordpress.hx.wordpress.TextOptions.set(name:String, value:String):Bool",
+    "profileDirection": "compiler/reflaxe.php <- compiler/wordpress"
+  },
+  "localEvidence": {
+    "genericFocusedAndVertical": {
+      "command": "bash compiler/reflaxe.php/scripts/test-native-global.sh",
+      "outcome": "passed"
+    },
+    "fullGenericCompiler": {
+      "command": "bash compiler/reflaxe.php/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "wordpressProfile": {
+      "command": "bash compiler/wordpress/scripts/test.sh",
+      "outcome": "passed"
+    },
+    "packageBoundary": {
+      "command": "bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer.sh",
+      "outcome": "passed"
+    },
+    "wordpressRuntime": {
+      "command": "bash compiler/wordpress/scripts/test-reflaxe-wordpress-consumer-runtime.sh",
+      "outcome": "environment-unavailable-local-hosted-required",
+      "reason": "local Docker daemon unavailable"
+    },
+    "strictHaxe": "zero forbidden Dynamic/Any/cast/Reflect/untyped findings"
+  },
+  "scorecards": {
+    "compilerAdapter": {
+      "status": "passed-local",
+      "claim": "one typed native-global statement call with String arguments",
+      "doesNotAdvance": [
+        "wordpress-runtime-abi",
+        "package-install-runtime"
+      ]
+    },
+    "wordpressRuntimeAbi": {
+      "status": "pending-hosted",
+      "claim": "one update_option call on exact WordPress 7.0 after hosted proof",
+      "publicPhpAbiExportClaimed": false,
+      "doesNotAdvance": [
+        "compiler-adapter breadth",
+        "broad WordPress compatibility"
+      ]
+    },
+    "packageInstall": {
+      "status": "passed-local-runtime-pending",
+      "claim": "deterministic clean plugin ZIP locally; lifecycle awaits hosted proof",
+      "doesNotAdvance": [
+        "publication",
+        "release readiness"
+      ]
+    }
+  },
+  "targetedReview": {
+    "distinctFromImplementation": true,
+    "findingsAndDispositions": [
+      "Test sensitivity: retained both the generic printf owner and WordPress update_option vertical; either wrong function name changes a reviewed golden or runtime observation.",
+      "Oracle independence: expected PHP, stdout, option value, headers, and lifecycle state are manually authored or owned by pinned WordPress, never regenerated from compiler output.",
+      "Negative cases: unannotated foreign calls and invalid identifiers fail before output; stale graph and partial-package mutations remain in the downstream packager owner.",
+      "Raw escape path: the annotation accepts one PHP identifier only, never PHP syntax, and only public static extern methods with Haxe-checked arity/types are callable.",
+      "Bootstrap topology: the WordPress root remains ABSPATH-guarded and loads only the authenticated graph bootstrap; maps and Haxe source do not enter the ZIP.",
+      "Claim scope: the fixture calls no hook, exports no public PHP ABI, supports String option values only, and cannot advance broader compiler or WordPress claims."
+    ],
+    "residualRisks": [
+      "hosted WordPress lifecycle is pending",
+      "callback and hook lowering remain unimplemented",
+      "arbitrary WordPress values require typed codecs",
+      "official Haxe target qualification remains separate"
+    ]
+  },
+  "hostedVerification": {
+    "workflow": "Reflaxe PHP WordPress consumer",
+    "workflowPath": ".github/workflows/reflaxe-wordpress-consumer.yml",
+    "job": "wordpress-consumer",
+    "commit": null,
+    "runId": null,
+    "jobId": null,
+    "url": null,
+    "status": "pending-main-push"
+  },
+  "claims": {
+    "typedNativePhpGlobal": "passed-local",
+    "deterministicWordPressPackage": "passed-local",
+    "exactWordPress70Lifecycle": "pending-hosted",
+    "publicPhpAbi": "not-claimed",
+    "broadWordPressCompatibility": "not-claimed",
+    "officialHaxeQualification": "not-advanced",
+    "publicationAuthorized": false
+  },
+  "authenticatedInputs": [
+    {
+      "path": ".github/workflows/reflaxe-wordpress-consumer.yml",
+      "sha256": "7766225f4937d8037106303c9b8863240b2278a76f07c8bfd5653df50c5031b4"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/test-native-global.sh",
+      "sha256": "7a869dd5ee95dc2d1313187969ee5298a9cf21e406ab3c24c71426a5fdf9f9a9"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
+      "sha256": "bf1b8b86b663c29cedc73fd2d0e74d16c9a31c6a3b70fd6326d559c3f6e9c619"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
+      "sha256": "ced68a765a9285ca71626f5abcb9cb10fd3b842721295c8438c0f7922ad6beba"
+    },
+    {
+      "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
+      "sha256": "9b56d88d3641ac23e838a3027f6a9ced5d65a91b68e5ec5a4c5a4b682ab8d3ad"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/native-global/build.hxml",
+      "sha256": "92f9f9c0d37029cf5c762beea3392cc84979fa103bd6140f955892c65c1271b2"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/native-global/expected.stdout",
+      "sha256": "41bf0afc58b80d524657881d1c9d39ed16add935edaa9096f7aa914085a2ddd6"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/native-global/expected/modules/13_native_global/4_Main/4_Main.php",
+      "sha256": "34da03cfaa8a61649b038e083d291325a1b9e248d793a7743baa7d80035bb973"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/native-global/negative/invalid-name/build.hxml",
+      "sha256": "0235256414dd03211993dc9c28b77863d40f511b4d8a320f350d9a76f18ab377"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/native-global/negative/missing-annotation/build.hxml",
+      "sha256": "52667dedbad76ccbc62cf0e646c0b346c6eba3b57acf1b8a5322bd7c77fd343d"
+    },
+    {
+      "path": "compiler/wordpress/README.md",
+      "sha256": "ef5e09994f8c7a432d68a822622ee77644355cf2c19923ecc9d11e872b35b8a8"
+    },
+    {
+      "path": "compiler/wordpress/runtime/activate-reflaxe-consumer.php",
+      "sha256": "bef5ea4aeafdf304f3d2575b2706db9622ae57260ebdb9d58d39e494e68dfc67"
+    },
+    {
+      "path": "compiler/wordpress/runtime/probe-reflaxe-consumer.php",
+      "sha256": "52183d6fee33a3b979c7ed1b2ebe9216c3ebe80a63164ef8ccba5560ef68e451"
+    },
+    {
+      "path": "compiler/wordpress/runtime/remove-reflaxe-consumer.php",
+      "sha256": "45f0335b9db6efe371cba13ce060b7314332d16877b8d691167db7684669659a"
+    },
+    {
+      "path": "compiler/wordpress/scripts/package-reflaxe-module-graph.py",
+      "sha256": "e67532fe25ac7eb68a85f6ddae0186bbeb36111d59b92c0ce02410fc77e0c4bc"
+    },
+    {
+      "path": "compiler/wordpress/scripts/run-reflaxe-wordpress-consumer-lane.sh",
+      "sha256": "7c08dc92c959f75830d2735fea73395bc61134291e180b56fe77c84d08eff250"
+    },
+    {
+      "path": "compiler/wordpress/scripts/test-reflaxe-wordpress-consumer-runtime.sh",
+      "sha256": "710f12de479151e19ed15f38071b13052cfbb400338adae6f69a5e10bae7241d"
+    },
+    {
+      "path": "compiler/wordpress/scripts/test-reflaxe-wordpress-consumer.sh",
+      "sha256": "494131c31df255efb10c9b2f90fa1526c714a11a477f2aae54962d8885a5cd11"
+    },
+    {
+      "path": "compiler/wordpress/test/reflaxe-wordpress-consumer/README.md",
+      "sha256": "78c191d858b9ed9ab40819f19bff6f0ab0558071023027002b8e74201ce34c8a"
+    },
+    {
+      "path": "compiler/wordpress/test/reflaxe-wordpress-consumer/build.hxml",
+      "sha256": "f2c3cd6ace1d765c9310955428c301ae3edadfee9c695e606bd576b7666576ae"
+    },
+    {
+      "path": "compiler/wordpress/test/reflaxe-wordpress-consumer/expected/modules/18_wordpress_consumer/4_Main/4_Main.php",
+      "sha256": "b1ca60d97e5d88ab62ed57b8053db23731e7fba13b5c54de40b5c627ff406778"
+    },
+    {
+      "path": "docker/images.lock.json",
+      "sha256": "82b38134adbd4e0e8a9ba8d69c09f238ce5518c0741f63ae55406c6bdcd90069"
+    },
+    {
+      "path": "docker/wordpress/compose.yml",
+      "sha256": "df4cbc9c4f89f67addfd0efdbf2875e52580a3f434cb7f85a3d3e28057b08896"
+    },
+    {
+      "path": "docker/wordpress/health.php",
+      "sha256": "8ad0d2eafcd80c77221531d76a88fb8b2fd1527884df882732eabbf69f76f8fb"
+    },
+    {
+      "path": "docker/wordpress/install.php",
+      "sha256": "eb3db9e394a52d020d574d0f7c35cdd0414704756be8723795d2b6c61bd5d6c8"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/negative/invalid-name/src/native_global/Main.hx",
+      "sha256": "ae61339f99e3bf65ceb22dff771c7376f03dff610c9bfc4f0a8c61521ae02758"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/negative/invalid-name/support/native_global/NativePrintf.hx",
+      "sha256": "d807a5c0e79a8a8392fcf391f87c7567f5a5fe0b96bac8c43ebf5c2a3df05bf5"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/negative/missing-annotation/src/native_global/Main.hx",
+      "sha256": "3afce609785a184c5d9b6413990c9869754ad1c68be9fa917ba93939896dd3fe"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/negative/missing-annotation/support/native_global/NativePrintf.hx",
+      "sha256": "d0400f0b07ba5ae7d659ecca51799c86752079fb5cfda55bbe35300b6efdcdb3"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/src/native_global/Main.hx",
+      "sha256": "8fa0792777078a598752bac64c41d9aa8393192422a315b3b39c2cc11b15c715"
+    },
+    {
+      "path": "fixtures/reflaxe-php-native-global/support/native_global/NativePrintf.hx",
+      "sha256": "74f03e38f79e08af690b148ad2c5ecc9bc03518d51ceec9570f549556542a58b"
+    },
+    {
+      "path": "fixtures/reflaxe-wordpress-consumer/src/wordpress_consumer/Main.hx",
+      "sha256": "83b5897bd49e5f284f4b429d0df43ff0dd8f92aa97c0d0e5615670851eb36558"
+    },
+    {
+      "path": "fixtures/reflaxe-wordpress-consumer/support/wordpress/hx/wordpress/TextOptions.hx",
+      "sha256": "7a90bade791543d9d2a5a1e2027d113520faf68ea2610bf4799d133c8b0d683a"
+    }
+  ]
+}

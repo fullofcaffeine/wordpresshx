@@ -310,7 +310,7 @@
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "208682d627615f0ef14ee1c742e497e5a0dc9a36655e99bc109ea195fe876dd9"
+      "sha256": "42f77854ce0c8cdc271ef5ec8ccf6854d9eb145c3431787b7f3e3539f96a159e"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -374,11 +374,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "13049619b51cc0492aaaa0ea20124b6969b838f3fb0d95a353c4c1675a58190f"
+      "sha256": "ced68a765a9285ca71626f5abcb9cb10fd3b842721295c8438c0f7922ad6beba"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "7e62d6f27ad1855fc4c7935950d9694b131371914b4a3e8e9d9f851e301ee035"
+      "sha256": "9b56d88d3641ac23e838a3027f6a9ced5d65a91b68e5ec5a4c5a4b682ab8d3ad"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",

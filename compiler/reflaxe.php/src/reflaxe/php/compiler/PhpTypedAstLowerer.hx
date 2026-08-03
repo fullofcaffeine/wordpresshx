@@ -371,6 +371,13 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(SysPrintlnString);
 				final value = lowerStringValue(arguments[0]);
 				mapped(PhpEcho(PhpBinop(".", value, PhpConst("PHP_EOL"))), call, "sys-println");
+			case TField(_, FStatic(classRef, fieldRef)):
+				final nativeName = PhpTypedAstValidator.nativeGlobalName(classRef.get(), fieldRef.get());
+				if (nativeName == null) {
+					unsupportedCall(call);
+				} else {
+					mapped(PhpExprStmt(PhpFunctionCall(nativeName, arguments.map(lowerStringValue))), call, "native-global-call");
+				}
 			case _:
 				unsupportedCall(call);
 		}
