@@ -124,14 +124,17 @@
     "implementationStatus": "decision-and-cross-target-architecture-prototype-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "4c105d2fad5d6bf0950bf58a6eb54bd3ac2ee0b3d72e81957953a857eb561a96",
+    "sourceTreeSha256": "890fae78c828a05fc2c806283584466251de4dd4c40e548bf3d4d9ff713ebb6b",
     "schemaSha256": "68504df60f8b2f1376020435610bc5a768f4c0ae969130819ec0981de8679177",
     "transcriptSha256": "292dacd56c49b64fb373fe68bfb306abbd114de9abeb45edd02e6de85fce35be",
-    "wireJsonBoundaryTranscriptSha256": "fd02f9939f0691c61e9fbc4c0dd78a9af09b12f5060d97ea9df9cdd4eb4a2183",
+    "wireJsonBoundaryTranscriptSha256": "0a65eae9b08347f9474e243500b2de7c73b13bab22ba181211574da1a0557b54",
+    "runtimeProbeTreeSha256": "6d3294b267d14fd1d2e89583eef756559a1e5dfdf4f9d68cf031d1cfd37ae08d",
     "haxeInvariantCount": 27,
     "checkedJsonInvariantCount": 29,
     "crossTargetVectorCount": 17,
-    "wireJsonBoundaryVectorCount": 37,
+    "wireJsonBoundaryVectorCount": 39,
+    "foreignMalformedValueCount": 13,
+    "nativeDecoderSuccessCount": 9,
     "independentMutationCount": 18,
     "negativeCompileFixtureCount": 5,
     "targets": [
@@ -221,7 +224,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "accepted-base-checked-json-hardening-changes-required",
+    "architectureDecision": "checked-json-final-findings-repaired-pending-rereview",
     "typedIrPrototype": "validated",
     "productionMacroDerivation": "not-tested",
     "productionPhpEmitter": "not-tested",

@@ -80,11 +80,15 @@ final class OutputSinks {
 		return switch encoding {
 			case EncodedValue(value):
 				switch CanonicalWireJson.encodeChecked(value) {
-					case JsonEncoded(encoded): new JsonPlan(schemaId, encoded, "");
-					case JsonRejected(reason): new JsonPlan(schemaId, "", reason);
+					case JsonEncoded(encoded): new JsonPlan(schemaId, PlanEncoded(encoded));
+					case JsonRejected(reason): new JsonPlan(schemaId, PlanRejected(rejectionReason(reason, "json-encoder-rejected-without-reason")));
 				};
-			case EncodingFailure(reason): new JsonPlan(schemaId, "", reason);
+			case EncodingFailure(reason): new JsonPlan(schemaId, PlanRejected(rejectionReason(reason, "codec-rejected-without-reason")));
 		};
+	}
+
+	static function rejectionReason(reason:Null<String>, fallback:String):String {
+		return reason == null || StringTools.trim(reason) == "" ? fallback : reason;
 	}
 
 	static function ksesRulesJson<Policy>(policy:KsesPolicy<Policy>):String {
@@ -258,14 +262,26 @@ final class RichHtmlPlan {
 @:allow(wordpress.hx.output.prototype.OutputSinks)
 final class JsonPlan {
 	public final schemaId:String;
-	public final encoded:String;
-	public final failureReason:String;
 
-	private function new(schemaId:String, encoded:String, failureReason:String) {
+	final state:Null<JsonPlanState>;
+
+	private function new(schemaId:String, state:JsonPlanState) {
 		this.schemaId = schemaId;
-		this.encoded = encoded;
-		this.failureReason = failureReason;
+		this.state = state;
 	}
+
+	public function fold<Result>(onEncoded:String->Result, onRejected:String->Result):Result {
+		return switch state {
+			case PlanEncoded(value): onEncoded(value);
+			case PlanRejected(reason): onRejected(reason);
+			case null: onRejected("invalid-json-plan-state");
+		};
+	}
+}
+
+private enum JsonPlanState {
+	PlanEncoded(value:String);
+	PlanRejected(reason:String);
 }
 
 enum MarkupPlanAttribute {

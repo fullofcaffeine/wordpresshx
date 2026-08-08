@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "regression-rereview-changes-required",
+  "status": "final-rereview-findings-repaired-pending-rereview",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
@@ -336,14 +336,19 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "bee0ae6f4e138a6078a8afb09e9fbff7dfd6702a715ef024d50f370ea54ded07",
-    "transcriptSha256": "21f02c2fc4c127eefa20ab62ee1cd0a6996a65d6636623b7e9587880cb21119d",
+    "sourceTreeSha256": "344ad9542fcec290e6ac81618460367faae5e20f4813d1dbe9460258223fc39b",
+    "transcriptSha256": "1d6a709730ce4e31e0c54633715e142ac1d00ae4289659a7ad1c6fe3a83b3b4c",
     "contextCount": 11,
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 27,
+    "compileNegativeCount": 28,
     "independentMutationCount": 36,
+    "emptyFailureVectorCount": 1,
+    "typedConstructionGuardCount": 1,
+    "jsonPlanState": "closed-encoded-or-rejected",
+    "constructionGuardPhase": "haxe-onAfterTyping",
+    "compilerProfileOwnsGuard": true,
     "targets": [
       "haxe-interp-4.3.7",
       "genes-ts-1.41.4-typescript-5.9.3-node-22.17.0",
@@ -454,7 +459,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "regression-rereview-changes-required",
+    "architectureDecision": "final-rereview-findings-repaired-pending-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

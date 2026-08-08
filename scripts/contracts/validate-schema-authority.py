@@ -18,6 +18,7 @@ SEMANTIC_PLAN_ARCHITECTURE_PATH = ROOT / "manifests" / "semantic-plan-architectu
 TRANSCRIPT_PATH = (
     ROOT / "fixtures" / "schema-codec" / "expected" / "cross-target.txt"
 )
+RUNTIME_PROBE_ROOT = ROOT / "packages" / "contracts" / "test-runtime"
 
 
 class ValidationError(ValueError):
@@ -75,6 +76,15 @@ def haxe_source_tree_digest() -> str:
     return sha256("".join(sorted(source_lines)).encode("utf-8"))
 
 
+def runtime_probe_tree_digest() -> str:
+    source_lines: list[str] = []
+    for source in RUNTIME_PROBE_ROOT.rglob("*"):
+        if source.is_file():
+            relative = source.relative_to(ROOT).as_posix()
+            source_lines.append(f"{sha256(source.read_bytes())}  {relative}\n")
+    return sha256("".join(sorted(source_lines)).encode("utf-8"))
+
+
 def validate_architecture_manifest() -> None:
     architecture = require_dict(
         strict_json(
@@ -112,6 +122,7 @@ def validate_architecture_manifest() -> None:
                 / "wire-json-boundary.txt"
             ).read_bytes()
         ),
+        "runtimeProbeTreeSha256": runtime_probe_tree_digest(),
     }
     for field, expected in expected_hashes.items():
         if prototype.get(field) != expected:
@@ -122,8 +133,12 @@ def validate_architecture_manifest() -> None:
         raise ValidationError("architecture checked JSON invariant count changed")
     if prototype.get("crossTargetVectorCount") != 17:
         raise ValidationError("architecture vector count changed")
-    if prototype.get("wireJsonBoundaryVectorCount") != 37:
+    if prototype.get("wireJsonBoundaryVectorCount") != 39:
         raise ValidationError("architecture wire JSON boundary count changed")
+    if prototype.get("foreignMalformedValueCount") != 13:
+        raise ValidationError("architecture foreign malformed value count changed")
+    if prototype.get("nativeDecoderSuccessCount") != 9:
+        raise ValidationError("architecture native decoder success count changed")
     if prototype.get("independentMutationCount") != 18:
         raise ValidationError("architecture mutation count changed")
     if prototype.get("negativeCompileFixtureCount") != 5:
@@ -161,6 +176,7 @@ def validate_architecture_manifest() -> None:
         "accepted-after-review",
         "accepted-base-checked-json-hardening-pending-rereview",
         "accepted-base-checked-json-hardening-changes-required",
+        "checked-json-final-findings-repaired-pending-rereview",
     }:
         raise ValidationError("architecture decision claim is invalid")
 

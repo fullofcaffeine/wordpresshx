@@ -161,11 +161,26 @@ boundary_main="wordpress.hx.contracts.boundary.WireJsonBoundaryTest"
 		-cp ../contracts/src \
 		-cp ../contracts/test-boundary \
 		-main "${boundary_main}" \
+		-lib genes-ts \
 		-lib hxnodejs \
+		-D genes.ts \
 		-D js-es=6 \
-		-js "${test_root}/boundary-javascript.js"
+		-dce full \
+		-js "${test_root}/boundary-genes/index.ts"
 )
-"${node_command}" "${test_root}/boundary-javascript.js" >"${test_root}/boundary-javascript.txt"
+"${typescript_command}" \
+	--strict \
+	--target ES2022 \
+	--module NodeNext \
+	--moduleResolution NodeNext \
+	--rootDir "${test_root}/boundary-genes" \
+	--outDir "${test_root}/boundary-javascript" \
+	--skipLibCheck \
+	--types node \
+	--typeRoots "${typescript_root}/node_modules/@types" \
+	--pretty false \
+	"${test_root}/boundary-genes/index.ts"
+"${node_command}" "${test_root}/boundary-javascript/index.js" >"${test_root}/boundary-javascript.txt"
 "${scoped_haxe}" \
 	-cp "${package_root}/src" \
 	-cp "${package_root}/test-boundary" \
@@ -182,6 +197,21 @@ boundary_expected="${repository_root}/fixtures/schema-codec/expected/wire-json-b
 cmp "${boundary_expected}" "${test_root}/boundary-interp.txt"
 cmp "${boundary_expected}" "${test_root}/boundary-javascript.txt"
 cmp "${boundary_expected}" "${test_root}/boundary-php.txt"
+"${node_command}" "${package_root}/test-runtime/verify-wire-json-transcript.mjs" "${test_root}/boundary-javascript.txt"
+if [[ "${php_mode}" == "local" ]]; then
+	php "${package_root}/test-runtime/verify-wire-json-transcript.php" "${test_root}/boundary-php.txt"
+	php "${package_root}/test-runtime/verify-wire-json-foreign.php" "${test_root}/boundary-php"
+else
+	docker run --rm --network none \
+		--mount "type=bind,src=${repository_root},dst=/repo,readonly" \
+		--mount "type=bind,src=${test_root},dst=/work,readonly" \
+		-w /repo "${php_image}" php packages/contracts/test-runtime/verify-wire-json-transcript.php /work/boundary-php.txt
+	docker run --rm --network none \
+		--mount "type=bind,src=${repository_root},dst=/repo,readonly" \
+		--mount "type=bind,src=${test_root},dst=/work,readonly" \
+		-w /repo "${php_image}" php packages/contracts/test-runtime/verify-wire-json-foreign.php /work/boundary-php
+fi
+"${node_command}" "${package_root}/test-runtime/verify-wire-json-foreign.mjs" "${test_root}/boundary-javascript"
 
 assert_compile_failure() {
   local fixture="$1"

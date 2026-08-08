@@ -59,7 +59,7 @@ if (false === $plan_bytes) {
 $plan = json_decode($plan_bytes, true, 512, JSON_THROW_ON_ERROR);
 if (
     ! is_array($plan)
-    || 'wordpresshx.output-context-runtime-plan.v2' !== ($plan['schema'] ?? null)
+    || 'wordpresshx.output-context-runtime-plan.v3' !== ($plan['schema'] ?? null)
 ) {
     throw new RuntimeException('Haxe-generated output-context plan identity differs');
 }
@@ -105,7 +105,7 @@ if (! is_array($plan['controlJson']) || 0x20 !== count($plan['controlJson'])) {
     throw new RuntimeException('C0 JSON corpus differs');
 }
 foreach ($plan['controlJson'] as $code => $result) {
-    if ('' !== $result['failureReason']) {
+    if ('encoded' !== ($result['status'] ?? null) || array_key_exists('reason', $result)) {
         throw new RuntimeException('C0 JSON corpus unexpectedly failed');
     }
     $decoded_control = json_decode((string) $result['encoded'], true, 512, JSON_THROW_ON_ERROR);
@@ -114,18 +114,26 @@ foreach ($plan['controlJson'] as $code => $result) {
     }
 }
 if (
-    ! str_ends_with((string) $plan['depthFailure']['failureReason'], 'json-depth-limit-exceeded')
-    || '' !== $plan['depthFailure']['encoded']
-    || ! str_ends_with((string) $plan['invalidUnicodeFailure']['failureReason'], 'invalid-unicode')
-    || '' !== $plan['invalidUnicodeFailure']['encoded']
+    'rejected' !== ($plan['depthFailure']['status'] ?? null)
+    || ! str_ends_with((string) ($plan['depthFailure']['reason'] ?? ''), 'json-depth-limit-exceeded')
+    || array_key_exists('encoded', $plan['depthFailure'])
+    || 'rejected' !== ($plan['invalidUnicodeFailure']['status'] ?? null)
+    || ! str_ends_with((string) ($plan['invalidUnicodeFailure']['reason'] ?? ''), 'invalid-unicode')
+    || array_key_exists('encoded', $plan['invalidUnicodeFailure'])
 ) {
     throw new RuntimeException('JSON depth or Unicode failure changed');
 }
 if (
-    '' !== $plan['restJson']['failureReason']
-    || '' !== $plan['scriptData']['failureReason']
-    || 'invalid-domain-id' !== $plan['encodingFailure']['failureReason']
-    || '' !== $plan['encodingFailure']['encoded']
+    'encoded' !== ($plan['restJson']['status'] ?? null)
+    || array_key_exists('reason', $plan['restJson'])
+    || 'encoded' !== ($plan['scriptData']['status'] ?? null)
+    || array_key_exists('reason', $plan['scriptData'])
+    || 'rejected' !== ($plan['encodingFailure']['status'] ?? null)
+    || 'invalid-domain-id' !== ($plan['encodingFailure']['reason'] ?? null)
+    || array_key_exists('encoded', $plan['encodingFailure'])
+    || 'rejected' !== ($plan['emptyFailure']['status'] ?? null)
+    || 'codec-rejected-without-reason' !== ($plan['emptyFailure']['reason'] ?? null)
+    || array_key_exists('encoded', $plan['emptyFailure'])
 ) {
     throw new RuntimeException('Typed JSON codec result differs');
 }

@@ -23,14 +23,16 @@ final class WireJsonBoundaryTest {
 
 		final nullRoot:WireValue = null;
 		rejected(lines, "null-root", nullRoot, 64, "$: null-wire-value");
-		rejected(lines, "null-string", StringValue(null), 64, "$: null-string");
-		rejected(lines, "null-array", ArrayValue(null), 64, "$: null-array");
+		rejected(lines, "null-bool", BoolValue(null), 64, "$: invalid-bool");
+		rejected(lines, "null-integer", IntegerValue(null), 64, "$: invalid-integer");
+		rejected(lines, "null-string", StringValue(null), 64, "$: invalid-string");
+		rejected(lines, "null-array", ArrayValue(null), 64, "$: invalid-array");
 		final nullArrayElement:Array<WireValue> = [null];
 		rejected(lines, "null-array-element", ArrayValue(nullArrayElement), 64, "$[0]: null-wire-value");
-		rejected(lines, "null-object", ObjectValue(null), 64, "$: null-object");
+		rejected(lines, "null-object", ObjectValue(null), 64, "$: invalid-object");
 		final nullField:Array<WireField> = [null];
 		rejected(lines, "null-field", ObjectValue(nullField), 64, "$[0]: null-field");
-		rejected(lines, "null-field-name", ObjectValue([{name: null, value: NullValue}]), 64, "$[0]/<field-name>: null-string");
+		rejected(lines, "null-field-name", ObjectValue([{name: null, value: NullValue}]), 64, "$[0]/<field-name>: invalid-string");
 		rejected(lines, "null-field-value", ObjectValue([{name: "value", value: null}]), 64, "$/value: null-wire-value");
 
 		final invalidHigh = invalidHighSurrogate();
@@ -149,8 +151,8 @@ final class WireJsonBoundaryTest {
 
 	static function encoded(lines:Array<String>, label:String, value:WireValue, maxDepth:Int):Void {
 		switch CanonicalWireJson.encodeChecked(value, maxDepth) {
-			case JsonEncoded(_):
-				lines.push(label + "=encoded");
+			case JsonEncoded(encoded):
+				lines.push(label + "=encoded:" + encoded);
 			case JsonRejected(reason):
 				throw new haxe.Exception(label + " unexpectedly rejected: " + reason);
 		}

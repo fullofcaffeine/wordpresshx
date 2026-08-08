@@ -35,21 +35,30 @@ function renderMarkupNode(node) {
 
 const planBytes = readFileSync(planPath);
 const plan = JSON.parse(planBytes);
-assert.equal(plan.schema, "wordpresshx.output-context-runtime-plan.v2");
-assert.equal(plan.restJson.failureReason, "");
-assert.equal(plan.scriptData.failureReason, "");
-assert.equal(plan.encodingFailure.failureReason, "invalid-domain-id");
-assert.equal(plan.encodingFailure.encoded, "");
+assert.equal(plan.schema, "wordpresshx.output-context-runtime-plan.v3");
+assert.equal(plan.restJson.status, "encoded");
+assert.equal(plan.scriptData.status, "encoded");
+assert.equal(Object.hasOwn(plan.restJson, "reason"), false);
+assert.equal(Object.hasOwn(plan.scriptData, "reason"), false);
+assert.equal(plan.encodingFailure.status, "rejected");
+assert.equal(plan.encodingFailure.reason, "invalid-domain-id");
+assert.equal(Object.hasOwn(plan.encodingFailure, "encoded"), false);
+assert.equal(plan.emptyFailure.status, "rejected");
+assert.equal(plan.emptyFailure.reason, "codec-rejected-without-reason");
+assert.equal(Object.hasOwn(plan.emptyFailure, "encoded"), false);
 assert.equal(plan.controlJson.length, 0x20);
 for (let code = 0; code < 0x20; code += 1) {
   const result = plan.controlJson[code];
-  assert.equal(result.failureReason, "");
+  assert.equal(result.status, "encoded");
+  assert.equal(Object.hasOwn(result, "reason"), false);
   assert.equal(JSON.parse(result.encoded).title, `before-${String.fromCharCode(code)}-after`);
 }
-assert.match(plan.depthFailure.failureReason, /json-depth-limit-exceeded$/);
-assert.equal(plan.depthFailure.encoded, "");
-assert.match(plan.invalidUnicodeFailure.failureReason, /invalid-unicode$/);
-assert.equal(plan.invalidUnicodeFailure.encoded, "");
+assert.equal(plan.depthFailure.status, "rejected");
+assert.match(plan.depthFailure.reason, /json-depth-limit-exceeded$/);
+assert.equal(Object.hasOwn(plan.depthFailure, "encoded"), false);
+assert.equal(plan.invalidUnicodeFailure.status, "rejected");
+assert.match(plan.invalidUnicodeFailure.reason, /invalid-unicode$/);
+assert.equal(Object.hasOwn(plan.invalidUnicodeFailure, "encoded"), false);
 assert.equal(plan.richHtml.length, 4);
 assert.equal(
   plan.richHtml[2].canonicalPolicy,

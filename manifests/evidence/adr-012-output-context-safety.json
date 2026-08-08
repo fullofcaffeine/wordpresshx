@@ -2,28 +2,28 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "regression-rereview-changes-required",
-  "observedAt": "2026-07-30T05:32:44Z",
+  "status": "final-rereview-findings-repaired-pending-rereview",
+  "observedAt": "2026-08-08T00:00:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "2f7f551736f839b70dc50343eacd0e6260e79cca856370b3dd10107b513b9508"
+      "sha256": "02cf0fa2d07041c26667e3ba3ef905efb26f4fd0069a60b9256c56c359433b8f"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "e721b3c2a1b6d7117cb315ee1a9e3f7dae53d371e33ef7eef5bd903df709ab21"
+      "sha256": "dce138b68f914a5be51ce9a64e7f4ed0290b8d7ef6bc2342c36e630a135a539c"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
-      "sha256": "21f02c2fc4c127eefa20ab62ee1cd0a6996a65d6636623b7e9587880cb21119d"
+      "sha256": "1d6a709730ce4e31e0c54633715e142ac1d00ae4289659a7ad1c6fe3a83b3b4c"
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "dfcd3c132173af0004cfea186dbd9c073f5b425893aa2b792721d2361d2c8485"
+      "sha256": "3f4c00c56dd6b610670058cb756d1977627dccd86871e321c5c74672fcdb62b8"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
-      "sha256": "f583b88410cf7cf7ca33f0f9c050fb650a379ab5026806779e9f3716019a07a8"
+      "sha256": "2e922db491df18f2de5051b32711460d8832963930d265ef13a400628b131285"
     },
     "workflow": {
       "path": ".github/workflows/output-context.yml",
@@ -46,7 +46,7 @@
       "python3 scripts/output-context/validate-architecture.py",
       "bash scripts/output-context/test.sh"
     ],
-    "sourceTreeSha256": "bee0ae6f4e138a6078a8afb09e9fbff7dfd6702a715ef024d50f370ea54ded07",
+    "sourceTreeSha256": "344ad9542fcec290e6ac81618460367faae5e20f4813d1dbe9460258223fc39b",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
@@ -60,14 +60,16 @@
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 27,
+    "compileNegativeCount": 28,
+    "emptyFailureVectorCount": 1,
+    "typedConstructionGuardCount": 1,
     "independentMutationCount": 36,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "reactTextAttributeTextareaAndScriptData": "passed",
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "local-gates-insensitive-regression-rereview-changes-required"
+    "outcome": "final-rereview-findings-repaired-local-cross-target-proof-passed-pending-rereview"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -112,7 +114,7 @@
       "ADR012-F008: the Genes identity is derived from the immutable browser dependency lock and recorded consistently as 1.38.0.",
       "ADR012-F009: non-retention is stated as an enforceable SDK API policy, not as a linear-type guarantee."
     ],
-    "freshIndependentReview": "changes-required-after-regression-repair",
+    "freshIndependentReview": "required-after-final-rereview-findings-repair",
     "acceptanceAuthorized": false,
     "combinedRereviewIntegration": {
       "decision": "changes-required",
@@ -172,6 +174,14 @@
       "closedFindings": ["ADR009-RR-F001"],
       "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
       "localDisposition": "retained-after-current-main-cross-target-reproduction"
+    },
+    "finalFindingsRepair": {
+      "status": "local-cross-target-proof-passed-pending-fresh-rereview",
+      "jsonPlanState": "closed-encoded-or-rejected",
+      "emptyFailureReason": "codec-rejected-without-reason",
+      "typedConstructionGuard": "haxe-onAfterTyping-compiler-profile-owned",
+      "privateAccessNegativeTargets": ["haxe-interp-4.3.7", "genes-ts-1.41.4", "stock-haxe-php-8.4.7"],
+      "untrustedCompilerMacrosAdmitted": false
     }
   },
   "referenceReview": {
@@ -207,7 +217,7 @@
     "ADR012-R3-N001 records five stale path names in the final review prompt; the Oracle reviewed the manifest-bound equivalents and future prompts must validate paths against the packet inventory."
   ],
   "claims": {
-    "architectureDecision": "regression-rereview-changes-required",
+    "architectureDecision": "final-rereview-findings-repaired-pending-rereview",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

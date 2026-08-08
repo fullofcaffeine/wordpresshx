@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
-  "status": "checked-json-hardening-changes-required",
-  "observedAt": "2026-07-30T05:32:44Z",
+  "status": "checked-json-final-findings-repaired-pending-rereview",
+  "observedAt": "2026-08-08T00:00:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "e2cc1670638dec29eee06a863d7e1e66ca4945aa0e6295311a6788ac7736fb0c"
+      "sha256": "b87b6e5e23be1cdec476bde7eaaea8a5f2fe29593b493933a401ebbf91e834e0"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "0f5a72b18f5ec1c8750d1e410ce2a878f87e42b44a0731c280fe1554a0ad8a51"
+      "sha256": "b04148e534be0519a7e4e43e435e578af3296a899d439a5e562e1ee1f38d2e23"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -23,15 +23,31 @@
     },
     "wireJsonBoundaryTranscript": {
       "path": "fixtures/schema-codec/expected/wire-json-boundary.txt",
-      "sha256": "fd02f9939f0691c61e9fbc4c0dd78a9af09b12f5060d97ea9df9cdd4eb4a2183"
+      "sha256": "0a65eae9b08347f9474e243500b2de7c73b13bab22ba181211574da1a0557b54"
+    },
+    "runtimeProbes": {
+      "path": "packages/contracts/test-runtime/verify-wire-json-foreign.mjs",
+      "sha256": "13da13ec8cda56d511a7aa50afb201bd4702a1921f5771c1444bbae905a9c616"
+    },
+    "runtimePhpForeignProbe": {
+      "path": "packages/contracts/test-runtime/verify-wire-json-foreign.php",
+      "sha256": "e834cbbb86657f788114e1fbe30a3491643bada57fa800578459fb5702ccee6c"
+    },
+    "runtimeNodeTranscriptProbe": {
+      "path": "packages/contracts/test-runtime/verify-wire-json-transcript.mjs",
+      "sha256": "6d8a3d4be8d329982df6af60c25566a0ad67fbc78576ddbfd7d4c1e0792e6761"
+    },
+    "runtimePhpTranscriptProbe": {
+      "path": "packages/contracts/test-runtime/verify-wire-json-transcript.php",
+      "sha256": "2d916e5a3438d9e38ba67e74cbb2dbf4f489093efce8a8d74e626f30ff3c4227"
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "fdba4121309a25b77bb5f2bc212b9af051515c256f5ccd7b9cc7b9ec6771e1ef"
+      "sha256": "6a14fcce3d859ff50fbdf8eecfa525a5af411909f4940381531785ce508ce707"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
-      "sha256": "6ddca582b8d39bfdc906641d08da1b38a92352a46f9d3a62e4e186f0c6de0a29"
+      "sha256": "d1e3a3019fd3aabaa556066e6cc6d7fb528b186bb8d2bc7f0ac04ba7b64a4ed3"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -55,7 +71,7 @@
       "git diff --check",
       "git diff --cached --check"
     ],
-    "sourceTreeSha256": "4c105d2fad5d6bf0950bf58a6eb54bd3ac2ee0b3d72e81957953a857eb561a96",
+    "sourceTreeSha256": "890fae78c828a05fc2c806283584466251de4dd4c40e548bf3d4d9ff713ebb6b",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "typescriptVersion": "5.9.3",
@@ -64,7 +80,9 @@
     "strictNullSafety": true,
     "strictHaxeForbiddenTokenCount": 0,
     "crossTargetVectorCount": 17,
-    "wireJsonBoundaryVectorCount": 37,
+    "wireJsonBoundaryVectorCount": 39,
+    "foreignMalformedValueCount": 13,
+    "nativeDecoderSuccessCount": 9,
     "haxeInvariantCount": 27,
     "checkedJsonInvariantCount": 29,
     "independentMutationCount": 18,
@@ -74,7 +92,7 @@
     "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
     "documentBoundPathIndependentRules": "passed",
     "developmentEncodeValidation": "passed",
-    "outcome": "checked-json-hardening-local-gate-passed-but-insensitive-changes-required"
+    "outcome": "final-findings-repaired-local-cross-target-gates-passed-pending-rereview"
   },
   "review": {
     "initialFindingCount": 10,
@@ -83,7 +101,7 @@
     "finalReviewReranFocusedGate": true,
     "finalReviewCheckedCurrentBytes": true,
     "reviewer": "fresh Codex subagent",
-    "checkedJsonHardeningFreshReview": "changes-required",
+    "checkedJsonHardeningFreshReview": "required-after-final-findings-repair",
     "checkedJsonRereview": {
       "decision": "changes-required",
       "reviewedCommit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
@@ -118,6 +136,14 @@
       "closedFindings": ["ADR009-RR-F001"],
       "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
       "localDisposition": "retained-after-current-main-cross-target-reproduction"
+    },
+    "finalFindingsRepair": {
+      "status": "local-cross-target-proof-passed-pending-fresh-rereview",
+      "nullScalarFailures": ["invalid-bool", "invalid-integer"],
+      "foreignMalformedValueCount": 13,
+      "nativeDecoderSuccessCount": 9,
+      "targets": ["haxe-interp-4.3.7", "genes-ts-1.41.4-typescript-5.9.3-node-22.17.0", "stock-haxe-php-8.4.7"],
+      "publicJsonEncodedAuthority": "none-caller-construction-is-not-validation"
     }
   },
   "hostedWorkflow": {
@@ -136,7 +162,7 @@
     "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt."
   ],
   "claims": {
-    "architectureDecision": "accepted-base-checked-json-hardening-changes-required",
+    "architectureDecision": "checked-json-final-findings-repaired-pending-rereview",
     "typedIrPrototype": "cross-target-runtime-tested",
     "canonicalSchemaAndDiagnostics": "validated",
     "productionMacroDerivation": "not-tested",

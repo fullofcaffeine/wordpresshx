@@ -434,3 +434,23 @@ Independent local reproduction confirmed the three blocking paths across the
 available Haxe, Genes, JavaScript, and PHP lanes. F004 remains open; unrelated
 retained ADR-012 findings remain closed. See the
 [bound response and local disposition](../../review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md).
+
+The next local repair replaces the paired empty strings with a closed plan
+state. A plan is now encoded or rejected. An empty codec error becomes the
+stable rejection `codec-rejected-without-reason`; it cannot become success.
+Consumers can inspect a plan only through `fold`. They cannot pass raw JSON to
+a public success factory.
+
+A compiler-profile guard runs after Haxe typing. It rejects any direct
+`JsonPlan` construction outside `OutputSinks`, including construction exposed
+after normal macro expansion and `@:privateAccess`. The guard is part of the
+admitted compiler profile. Arbitrary untrusted compiler macros are outside this
+bounded claim. The all-target negative fixture pins the same diagnostic for
+Haxe interpretation, Genes with strict TypeScript, and generated PHP.
+
+The focused repair started with three red observations: a null boolean became
+the JSON bytes `false`, an empty codec failure produced an ambiguous plan, and
+the private constructor bypass compiled. The same tests now pass or fail at the
+intended boundary. The architecture state is
+`final-rereview-findings-repaired-pending-rereview`. F004 stays open until a
+fresh independent review accepts the current bytes.

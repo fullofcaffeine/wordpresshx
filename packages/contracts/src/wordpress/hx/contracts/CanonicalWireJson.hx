@@ -34,13 +34,17 @@ class CanonicalWireJson {
 		if (value == null) {
 			return SnapshotRejected(path + ": null-wire-value");
 		}
+		final constructorIndex = Type.enumIndex(value);
+		if (constructorIndex < 0 || constructorIndex > 5) {
+			return SnapshotRejected(path + ": invalid-wire-value");
+		}
 		return switch value {
 			case NullValue:
 				SnapshotAccepted(CanonicalNull);
 			case BoolValue(value):
-				SnapshotAccepted(CanonicalBool(value));
-			case IntegerValue(value):
-				SnapshotAccepted(CanonicalInteger(value));
+				Std.isOfType(value, Bool) ? SnapshotAccepted(CanonicalBool(value)) : SnapshotRejected(path + ": invalid-bool");
+			case IntegerValue(value): Std.isOfType(value,
+					Int) && value >= -2147483648 && value <= 2147483647 ? SnapshotAccepted(CanonicalInteger(value)) : SnapshotRejected(path + ": invalid-integer");
 			case StringValue(value):
 				snapshotString(value, path);
 			case ArrayValue(values):
@@ -51,8 +55,8 @@ class CanonicalWireJson {
 	}
 
 	static function snapshotArray(values:Null<Array<WireValue>>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
-		if (values == null) {
-			return SnapshotRejected(path + ": null-array");
+		if (values == null || !Std.isOfType(values, Array)) {
+			return SnapshotRejected(path + ": invalid-array");
 		}
 		if (containerDepth > maxDepth) {
 			return SnapshotRejected(path + ": json-depth-limit-exceeded");
@@ -70,8 +74,8 @@ class CanonicalWireJson {
 	}
 
 	static function snapshotObject(fields:Null<Array<WireField>>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
-		if (fields == null) {
-			return SnapshotRejected(path + ": null-object");
+		if (fields == null || !Std.isOfType(fields, Array)) {
+			return SnapshotRejected(path + ": invalid-object");
 		}
 		if (containerDepth > maxDepth) {
 			return SnapshotRejected(path + ": json-depth-limit-exceeded");
@@ -105,8 +109,8 @@ class CanonicalWireJson {
 	}
 
 	static function snapshotString(value:Null<String>, path:String):WireJsonSnapshotResult {
-		if (value == null) {
-			return SnapshotRejected(path + ": null-string");
+		if (value == null || !Std.isOfType(value, String)) {
+			return SnapshotRejected(path + ": invalid-string");
 		}
 		return isValidUnicode(value) ? SnapshotAccepted(CanonicalString(value)) : SnapshotRejected(path + ": invalid-unicode");
 	}

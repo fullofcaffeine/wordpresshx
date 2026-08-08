@@ -17,7 +17,7 @@
   "comparison": {
     "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
     "currentOutputSinksPath": "fixtures/output-context/src/wordpress/hx/output/prototype/OutputSinks.hx",
-    "currentOutputSinksSha256": "8ad435ddecbd7f2a2f51c0650ad50f55069ab828115b8bc4d0295ddcd15c4c23"
+    "currentOutputSinksSha256": "b3232c4b09b8b1dae319597fb625473f6ead0c44a5c17c09ed3861249dcc4409"
   },
   "reproduction": {
     "script": "scripts/testing/reproduce-json-plan-red.sh",

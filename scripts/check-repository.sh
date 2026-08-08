@@ -2373,13 +2373,15 @@ else:
 assert schema_codec_architecture["schemaVersion"] == 1
 assert schema_codec_architecture["decisionId"] == "ADR-009"
 assert schema_codec_architecture["claims"]["architectureDecision"] == (
-    "accepted-base-checked-json-hardening-changes-required"
+    "checked-json-final-findings-repaired-pending-rereview"
 )
 schema_prototype = schema_codec_architecture["prototypeEvidence"]
 assert schema_prototype["haxeInvariantCount"] == 27
 assert schema_prototype["checkedJsonInvariantCount"] == 29
 assert schema_prototype["crossTargetVectorCount"] == 17
-assert schema_prototype["wireJsonBoundaryVectorCount"] == 37
+assert schema_prototype["wireJsonBoundaryVectorCount"] == 39
+assert schema_prototype["foreignMalformedValueCount"] == 13
+assert schema_prototype["nativeDecoderSuccessCount"] == 9
 assert schema_prototype["independentMutationCount"] == 18
 assert schema_prototype["negativeCompileFixtureCount"] == 5
 assert adr009_receipt["schemaVersion"] == 1
@@ -2390,6 +2392,7 @@ assert adr009_receipt["status"] in {
     "verified",
     "checked-json-hardening-rereview-pending",
     "checked-json-hardening-changes-required",
+    "checked-json-final-findings-repaired-pending-rereview",
 }
 for adr009_subject in adr009_receipt["subject"].values():
     adr009_current_sha256 = hashlib.sha256(
@@ -2406,7 +2409,9 @@ assert adr009_verification["sourceTreeSha256"] == schema_prototype[
 assert adr009_verification["haxeInvariantCount"] == 27
 assert adr009_verification["checkedJsonInvariantCount"] == 29
 assert adr009_verification["crossTargetVectorCount"] == 17
-assert adr009_verification["wireJsonBoundaryVectorCount"] == 37
+assert adr009_verification["wireJsonBoundaryVectorCount"] == 39
+assert adr009_verification["foreignMalformedValueCount"] == 13
+assert adr009_verification["nativeDecoderSuccessCount"] == 9
 assert adr009_verification["independentMutationCount"] == 18
 assert adr009_verification["negativeCompileFixtureCount"] == 5
 assert adr009_verification["strictNullSafety"] is True
@@ -2416,6 +2421,7 @@ assert adr009_receipt["review"]["finalFreshReview"] == "no-blockers"
 if adr009_receipt["status"] in {
     "checked-json-hardening-rereview-pending",
     "checked-json-hardening-changes-required",
+    "checked-json-final-findings-repaired-pending-rereview",
 }:
     adr009_checked_review = adr009_receipt["review"]["checkedJsonRereview"]
     assert adr009_checked_review["decision"] == "changes-required"
@@ -2446,12 +2452,20 @@ if adr009_receipt["status"] in {
             "accepted-base-checked-json-hardening-pending-rereview"
         )
     else:
-        assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == (
-            "changes-required"
-        )
-        assert adr009_receipt["claims"]["architectureDecision"] == (
-            "accepted-base-checked-json-hardening-changes-required"
-        )
+        if adr009_receipt["status"] == "checked-json-hardening-changes-required":
+            assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == (
+                "changes-required"
+            )
+            assert adr009_receipt["claims"]["architectureDecision"] == (
+                "accepted-base-checked-json-hardening-changes-required"
+            )
+        else:
+            assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == (
+                "required-after-final-findings-repair"
+            )
+            assert adr009_receipt["claims"]["architectureDecision"] == (
+                "checked-json-final-findings-repaired-pending-rereview"
+            )
         adr009_final_review = adr009_receipt["review"][
             "checkedJsonFinalRereview"
         ]
@@ -2482,6 +2496,15 @@ if adr009_receipt["status"] in {
             assert hashlib.sha256(
                 Path(adr009_final_review[review_path_field]).read_bytes()
             ).hexdigest() == adr009_final_review[review_digest_field]
+        if adr009_receipt["status"] == (
+            "checked-json-final-findings-repaired-pending-rereview"
+        ):
+            adr009_repair = adr009_receipt["review"]["finalFindingsRepair"]
+            assert adr009_repair["status"] == (
+                "local-cross-target-proof-passed-pending-fresh-rereview"
+            )
+            assert adr009_repair["foreignMalformedValueCount"] == 13
+            assert adr009_repair["nativeDecoderSuccessCount"] == 9
 else:
     assert adr009_receipt["claims"]["architectureDecision"] == "accepted"
 assert adr009_receipt["claims"]["publicationAuthorized"] is False
@@ -2515,6 +2538,7 @@ assert output_context_architecture["status"] in {
     "accepted-after-review",
     "regression-repaired-pending-rereview",
     "regression-rereview-changes-required",
+    "final-rereview-findings-repaired-pending-rereview",
 }
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
@@ -2533,8 +2557,13 @@ assert output_prototype["contextCount"] == 11
 assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
 assert output_prototype["hxxPositionCount"] == 18
-assert output_prototype["compileNegativeCount"] == 27
+assert output_prototype["compileNegativeCount"] == 28
 assert output_prototype["independentMutationCount"] == 36
+assert output_prototype["emptyFailureVectorCount"] == 1
+assert output_prototype["typedConstructionGuardCount"] == 1
+assert output_prototype["jsonPlanState"] == "closed-encoded-or-rejected"
+assert output_prototype["constructionGuardPhase"] == "haxe-onAfterTyping"
+assert output_prototype["compilerProfileOwnsGuard"] is True
 assert len(output_context_architecture["referenceReview"]) == 7
 for output_reference in output_context_architecture["referenceReview"]:
     assert sha1.fullmatch(output_reference["commit"])
@@ -2554,6 +2583,7 @@ assert adr012_receipt["status"] in {
     "regression-open",
     "regression-repaired-pending-rereview",
     "regression-rereview-changes-required",
+    "final-rereview-findings-repaired-pending-rereview",
 }
 for adr012_subject in adr012_receipt["subject"].values():
     adr012_current_sha256 = hashlib.sha256(
@@ -2573,7 +2603,9 @@ assert adr012_verification["contextCount"] == 11
 assert adr012_verification["allowedEdgeCount"] == 12
 assert adr012_verification["forbiddenEdgeCount"] == 15
 assert adr012_verification["hxxPositionCount"] == 18
-assert adr012_verification["compileNegativeCount"] == 27
+assert adr012_verification["compileNegativeCount"] == 28
+assert adr012_verification["emptyFailureVectorCount"] == 1
+assert adr012_verification["typedConstructionGuardCount"] == 1
 assert adr012_verification["independentMutationCount"] == 36
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
@@ -2664,6 +2696,7 @@ if adr012_receipt["status"] in {
     "regression-open",
     "regression-repaired-pending-rereview",
     "regression-rereview-changes-required",
+    "final-rereview-findings-repaired-pending-rereview",
 }:
     adr012_combined = adr012_receipt["review"]["combinedRereviewIntegration"]
     assert adr012_combined == {
@@ -2717,12 +2750,20 @@ if adr012_receipt["status"] in {
                 "regression-repaired-pending-fresh-rereview"
             )
             expected_repair_review = "required"
-        else:
+        elif adr012_receipt["status"] == "regression-rereview-changes-required":
             assert adr012_receipt["review"]["freshIndependentReview"] == (
                 "changes-required-after-regression-repair"
             )
             assert adr012_receipt["claims"]["architectureDecision"] == (
                 "regression-rereview-changes-required"
+            )
+            expected_repair_review = "completed-changes-required"
+        else:
+            assert adr012_receipt["review"]["freshIndependentReview"] == (
+                "required-after-final-rereview-findings-repair"
+            )
+            assert adr012_receipt["claims"]["architectureDecision"] == (
+                "final-rereview-findings-repaired-pending-rereview"
             )
             expected_repair_review = "completed-changes-required"
         adr012_repair = adr012_receipt["review"]["regressionRepair"]
@@ -2772,7 +2813,10 @@ if adr012_receipt["status"] in {
             "remediationBeadClosed": False,
             "publicationAuthorized": False,
         }
-        if adr012_receipt["status"] == "regression-rereview-changes-required":
+        if adr012_receipt["status"] in {
+            "regression-rereview-changes-required",
+            "final-rereview-findings-repaired-pending-rereview",
+        }:
             adr012_final_f004_review = adr012_receipt["review"][
                 "f004FinalRereview"
             ]
@@ -2805,6 +2849,16 @@ if adr012_receipt["status"] in {
                 assert hashlib.sha256(
                     Path(adr012_final_f004_review[review_path_field]).read_bytes()
                 ).hexdigest() == adr012_final_f004_review[review_digest_field]
+            if adr012_receipt["status"] == (
+                "final-rereview-findings-repaired-pending-rereview"
+            ):
+                adr012_repair = adr012_receipt["review"]["finalFindingsRepair"]
+                assert adr012_repair["status"] == (
+                    "local-cross-target-proof-passed-pending-fresh-rereview"
+                )
+                assert adr012_repair["jsonPlanState"] == (
+                    "closed-encoded-or-rejected"
+                )
     assert adr012_receipt["review"]["acceptanceAuthorized"] is False
 else:
     assert adr012_receipt["review"]["freshIndependentReview"] == (
@@ -2834,6 +2888,7 @@ if adr012_hosted["status"] == "immutable-policy-passed":
         "regression-open",
         "regression-repaired-pending-rereview",
         "regression-rereview-changes-required",
+        "final-rereview-findings-repaired-pending-rereview",
     }
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)

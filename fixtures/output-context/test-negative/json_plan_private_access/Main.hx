@@ -1,7 +1,7 @@
 import wordpress.hx.output.prototype.OutputSinks.JsonPlan;
 
-class Main {
+final class Main {
 	static function main():Void {
-		new JsonPlan("forged.v1", null);
+		@:privateAccess new JsonPlan("forged.v1", null);
 	}
 }

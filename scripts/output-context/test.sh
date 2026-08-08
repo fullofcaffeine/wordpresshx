@@ -76,6 +76,7 @@ fi
 haxelib run formatter --check \
 	-s "${fixture_root}/src" \
 	-s "${fixture_root}/test" \
+	-s "${fixture_root}/test-regression" \
 	-s "${fixture_root}/test-negative"
 
 if grep --recursive --line-number --extended-regexp \
@@ -83,6 +84,7 @@ if grep --recursive --line-number --extended-regexp \
 	'(^|[^[:alnum:]_])(Dynamic|Any|Reflect|untyped|cast)([^[:alnum:]_]|$)' \
 	"${fixture_root}/src" \
 	"${fixture_root}/test" \
+	"${fixture_root}/test-regression" \
 	"${fixture_root}/test-negative"; then
 	echo "ADR-012 Haxe prototype contains a forbidden weak-type construct" >&2
 	exit 1
@@ -95,6 +97,7 @@ main_class="Main"
 	-cp "${repository_root}/packages/contracts/src" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+	--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 	--interp >"${test_root}/interp.txt"
 
 (
@@ -103,8 +106,9 @@ main_class="Main"
 		-cp ../../fixtures/output-context/src \
 		-cp ../../fixtures/output-context/test \
 		-cp ../../packages/contracts/src \
-		-main "${main_class}" \
-		--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+			-main "${main_class}" \
+			--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+			--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 		-lib genes-ts \
 		-lib hxnodejs \
 		-D genes.ts \
@@ -132,6 +136,7 @@ main_class="Main"
 	-cp "${repository_root}/packages/contracts/src" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+	--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 	--php "${test_root}/php"
 if [[ "${php_mode}" == "local" ]]; then
 	php "${test_root}/php/index.php" >"${test_root}/php.txt"
@@ -154,8 +159,9 @@ assert_compile_failure() {
 		-cp "${fixture_root}/src" \
 		-cp "${fixture_root}/test-negative/${fixture}" \
 		-cp "${repository_root}/packages/contracts/src" \
-		-main Main \
-		--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+			-main Main \
+			--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+			--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 		--interp >"${diagnostic}" 2>&1; then
 		echo "negative output-context fixture ${fixture} compiled successfully" >&2
 		exit 1
@@ -182,6 +188,7 @@ assert_compile_failure_all_targets() {
 					-cp "${repository_root}/packages/contracts/src" \
 					-main Main \
 					--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+					--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 					--interp >"${diagnostic}" 2>&1; then
 					echo "negative output-context fixture ${fixture} compiled successfully for ${target}" >&2
 					exit 1
@@ -196,6 +203,7 @@ assert_compile_failure_all_targets() {
 						-cp ../../packages/contracts/src \
 						-main Main \
 						--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+						--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 						-lib genes-ts \
 						-lib hxnodejs \
 						-D genes.ts \
@@ -213,6 +221,7 @@ assert_compile_failure_all_targets() {
 					-cp "${repository_root}/packages/contracts/src" \
 					-main Main \
 					--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+					--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 					--php "${test_root}/${fixture}-php" >"${diagnostic}" 2>&1; then
 					echo "negative output-context fixture ${fixture} compiled successfully for ${target}" >&2
 					exit 1
@@ -283,6 +292,17 @@ assert_compile_failure_all_targets json_plan_success \
 	'Class<wordpress.hx.output.prototype.JsonPlan> has no field success'
 assert_compile_failure_all_targets json_plan_constructor \
 	'Cannot access private constructor of wordpress.hx.output.prototype.JsonPlan'
+assert_compile_failure_all_targets json_plan_private_access \
+	'JsonPlan construction is restricted to OutputSinks'
+
+"${scoped_haxe}" \
+	-cp "${fixture_root}/src" \
+	-cp "${fixture_root}/test-regression" \
+	-cp "${repository_root}/packages/contracts/src" \
+	-main EmptyFailureMain \
+	--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
+	--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
+	--interp
 
 browser_json="$("${node_command}" "${fixture_root}/runtime/browser.mjs" "${typescript_root}" "${test_root}/interp.txt")"
 python3 - "${browser_json}" "${test_root}/interp.txt" <<'PY'

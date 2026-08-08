@@ -112,6 +112,7 @@ def validate_model(model: dict[str, object]) -> None:
         "accepted-after-review",
         "regression-repaired-pending-rereview",
         "regression-rereview-changes-required",
+        "final-rereview-findings-repaired-pending-rereview",
     }:
         raise ValidationError("output-context architecture status is invalid")
 
@@ -379,8 +380,25 @@ def validate_model(model: dict[str, object]) -> None:
         raise ValidationError("JsonPlan exposes a public raw-string success factory")
     if "@:allow(wordpress.hx.output.prototype.OutputSinks)" not in output_sinks_source:
         raise ValidationError("JsonPlan construction is not sink-owned")
-    if "function new(schemaId:String, encoded:String, failureReason:String)" not in json_plan_source:
+    if "function new(schemaId:String, state:JsonPlanState)" not in json_plan_source:
         raise ValidationError("JsonPlan private construction contract changed")
+    if "final state:Null<JsonPlanState>" not in json_plan_source:
+        raise ValidationError("JsonPlan closed state contract changed")
+    if "public function fold<Result>" not in json_plan_source:
+        raise ValidationError("JsonPlan read-only observation contract changed")
+    boundary_guard_source = (
+        FIXTURE_ROOT
+        / "src"
+        / "wordpress"
+        / "hx"
+        / "output"
+        / "prototype"
+        / "OutputContextBoundaryGuard.hx"
+    ).read_text(encoding="utf-8")
+    if "Context.onAfterTyping(validateModules)" not in boundary_guard_source:
+        raise ValidationError("typed JsonPlan construction guard is absent")
+    if "JsonPlan construction is restricted to OutputSinks" not in boundary_guard_source:
+        raise ValidationError("typed JsonPlan construction diagnostic changed")
     canonical_json_source = CANONICAL_JSON_PATH.read_text(encoding="utf-8")
     if re.search(
         r"public\s+static\s+function\s+encode\s*\(\s*value\s*:\s*WireValue",
@@ -398,8 +416,13 @@ def validate_model(model: dict[str, object]) -> None:
         "allowedEdgeCount": 12,
         "forbiddenEdgeCount": 15,
         "hxxPositionCount": 18,
-        "compileNegativeCount": 27,
+        "compileNegativeCount": 28,
         "independentMutationCount": 36,
+        "emptyFailureVectorCount": 1,
+        "typedConstructionGuardCount": 1,
+        "jsonPlanState": "closed-encoded-or-rejected",
+        "constructionGuardPhase": "haxe-onAfterTyping",
+        "compilerProfileOwnsGuard": True,
     }
     for field, expected in expected_evidence.items():
         if evidence.get(field) != expected:

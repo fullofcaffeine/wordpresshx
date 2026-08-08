@@ -424,7 +424,7 @@ Machine authority and executable fixture:
 - [`cross-target gate`](../../scripts/contracts/test-schema-authority.sh)
 
 The fixture contains 27 Haxe schema/validator invariants, 17 contract behavior
-vectors, 37 checked-JSON boundary vectors, 18 independent serialized-schema
+vectors, 39 checked-JSON boundary vectors, 18 independent serialized-schema
 mutations, and five deliberate Haxe compile failures. The independent
 validator now asserts each
 vector's meaning rather than checking canonical syntax alone. It proves missing
@@ -493,8 +493,21 @@ but found that null boolean/integer payloads still become successful bytes, the
 malformed corpus omits the Genes lane, and the public `JsonEncoded(String)`
 contract remains forgeable. Independent local reproduction confirmed the null
 scalar behavior on interp, Genes/strict TypeScript, stock JavaScript, and PHP.
-ADR-009 checked-encoder hardening therefore remains changes-required. See the
+That review left ADR-009 checked-encoder hardening changes-required. See the
 [latest review integration](../../review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md).
+
+The next local repair closes those reported paths. Null boolean and integer
+payloads now return typed failures. The malformed-value corpus runs through
+Haxe interpretation, Genes with strict TypeScript, and generated PHP. Native
+Node and PHP decoders also read every successful byte string in the transcript.
+The public `JsonEncoded` enum remains a transport shape. Its public constructor
+does not prove that caller bytes are valid JSON. Only a value returned directly
+by `CanonicalWireJson.encodeChecked` carries that checked result.
+
+This repair is not a new acceptance decision. The checked encoder is now
+`checked-json-final-findings-repaired-pending-rereview`. A fresh independent
+review must accept the current bytes before this bounded surface can return to
+accepted.
 
 ## Migration, rollback, and supersession
 

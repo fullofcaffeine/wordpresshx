@@ -3,8 +3,9 @@ package wordpress.hx.contracts;
 /**
 	Result of projecting the closed wire algebra into JSON bytes.
 
-	A success is safe to hand to a native JSON decoder. A rejection keeps the
-	failure explicit instead of publishing bytes with a weaker invariant.
+		A `JsonEncoded` value returned directly by `CanonicalWireJson.encodeChecked`
+		is safe to give to a native JSON decoder. The public enum constructor is a
+		transport shape. It does not give authority to caller-authored bytes.
 **/
 enum WireJsonEncoding {
 	JsonEncoded(value:String);

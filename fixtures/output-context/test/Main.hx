@@ -78,6 +78,18 @@ final class InvalidUnicodeCodec implements OutputCodec<String> {
 	}
 }
 
+final class EmptyFailureCodec implements OutputCodec<String> {
+	public function new() {}
+
+	public function schemaId():String {
+		return "empty-failure.v1";
+	}
+
+	public function encode(value:String):JsonEncoding {
+		return EncodingFailure("");
+	}
+}
+
 final class Main {
 	static function main():Void {
 		HxxPositionGuard.child("html", "section");
@@ -109,6 +121,7 @@ final class Main {
 		final restJson = jsonPlan(OutputSinks.restJson(Output.jsonDocument(todoCodec, todo)));
 		final scriptData = jsonPlan(OutputSinks.scriptData(Output.scriptData(todoCodec, todo)));
 		final encodingFailure = jsonPlan(OutputSinks.restJson(Output.jsonDocument(todoCodec, invalidTodo)));
+		final emptyFailure = jsonPlan(OutputSinks.restJson(Output.jsonDocument(new EmptyFailureCodec(), "rejected")));
 		final inlineStyle = OutputSinks.inlineStyle(Output.inlineStyle(inlineDeclarations));
 		final stylesheet = OutputSinks.stylesheet(Output.stylesheet([
 			new CssRule(TodoCard, [StylesheetColor(AccentColor), StylesheetDisplay(Grid), StylesheetGap(Pixels(16))]),
@@ -116,7 +129,7 @@ final class Main {
 		]));
 
 		Sys.println(PlanJson.object([
-			new JsonField("schema", PlanJson.quote("wordpresshx.output-context-runtime-plan.v2")),
+			new JsonField("schema", PlanJson.quote("wordpresshx.output-context-runtime-plan.v3")),
 			new JsonField("text", PlanJson.quote(OutputSinks.text(Output.text('<script>alert("text")</script>&"\'')))),
 			new JsonField("attribute", PlanJson.quote(OutputSinks.attribute(Output.attribute('" autofocus onfocus="alert(1)" data-note="<unsafe>"')))),
 			new JsonField("textarea", PlanJson.quote(OutputSinks.textarea(Output.textarea("</textarea><script>alert(\"textarea\")</script>&")))),
@@ -126,6 +139,7 @@ final class Main {
 			new JsonField("restJson", restJson),
 			new JsonField("scriptData", scriptData),
 			new JsonField("encodingFailure", encodingFailure),
+			new JsonField("emptyFailure", emptyFailure),
 			new JsonField("controlJson", controlJson(todoCodec)),
 			new JsonField("depthFailure", jsonPlan(OutputSinks.restJson(Output.jsonDocument(new DeepValueCodec(), 66)))),
 			new JsonField("invalidUnicodeFailure", jsonPlan(OutputSinks.restJson(Output.jsonDocument(new InvalidUnicodeCodec(), invalidUnicode())))),
@@ -205,11 +219,15 @@ final class Main {
 	}
 
 	static function jsonPlan(value:JsonPlan):String {
-		return PlanJson.object([
+		return value.fold(encoded -> PlanJson.object([
 			new JsonField("schemaId", PlanJson.quote(value.schemaId)),
-			new JsonField("encoded", PlanJson.quote(value.encoded)),
-			new JsonField("failureReason", PlanJson.quote(value.failureReason))
-		]);
+			new JsonField("status", PlanJson.quote("encoded")),
+			new JsonField("encoded", PlanJson.quote(encoded))
+		]), reason -> PlanJson.object([
+			new JsonField("schemaId", PlanJson.quote(value.schemaId)),
+			new JsonField("status", PlanJson.quote("rejected")),
+			new JsonField("reason", PlanJson.quote(reason))
+		]));
 	}
 
 	static function markupPlan(value:MarkupPlan):String {
