@@ -111,6 +111,7 @@ def validate_model(model: dict[str, object]) -> None:
         "third-review-correction-applied-pending-rereview",
         "accepted-after-review",
         "regression-repaired-pending-rereview",
+        "regression-rereview-changes-required",
     }:
         raise ValidationError("output-context architecture status is invalid")
 

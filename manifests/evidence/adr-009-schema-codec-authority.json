@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
-  "status": "checked-json-hardening-rereview-pending",
+  "status": "checked-json-hardening-changes-required",
   "observedAt": "2026-07-30T05:32:44Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "f4390980d25fa5b36ef45da23bff3f3b1a46a806bb11d43723c5360c5ab6ce90"
+      "sha256": "e2cc1670638dec29eee06a863d7e1e66ca4945aa0e6295311a6788ac7736fb0c"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "c6b931b5d57b23dbb0b268fccc36d3e3ccd6ee9d619fea7c996a074da2651af1"
+      "sha256": "0f5a72b18f5ec1c8750d1e410ce2a878f87e42b44a0731c280fe1554a0ad8a51"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -27,7 +27,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "c493705913c6edc2cbd1b34d21e0f49bcbcd345de7965fe04d42aacaae5485ee"
+      "sha256": "fdba4121309a25b77bb5f2bc212b9af051515c256f5ccd7b9cc7b9ec6771e1ef"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -74,7 +74,7 @@
     "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
     "documentBoundPathIndependentRules": "passed",
     "developmentEncodeValidation": "passed",
-    "outcome": "checked-json-hardening-passed-local-pending-fresh-rereview"
+    "outcome": "checked-json-hardening-local-gate-passed-but-insensitive-changes-required"
   },
   "review": {
     "initialFindingCount": 10,
@@ -83,7 +83,7 @@
     "finalReviewReranFocusedGate": true,
     "finalReviewCheckedCurrentBytes": true,
     "reviewer": "fresh Codex subagent",
-    "checkedJsonHardeningFreshReview": "required",
+    "checkedJsonHardeningFreshReview": "changes-required",
     "checkedJsonRereview": {
       "decision": "changes-required",
       "reviewedCommit": "0e01ab5e18fe023e43f2d45e1052bdccef658f05",
@@ -99,6 +99,25 @@
       "reviewedInputsSha256": "1af00aa963b15a63df5628b2802c4e1faf9d1d7778082eb6602e90a1d4972c36",
       "findings": ["ADR009-RR-F001", "ADR009-RR-F002"],
       "corrections": "applied-local-gates-passed-pending-fresh-rereview"
+    },
+    "checkedJsonFinalRereview": {
+      "decision": "changes-required",
+      "requestId": "orq_20260808T182309Z_38b28701",
+      "reviewedCommit": "552c7affabe16af9a1976cf6393ed34f4ba31a2b",
+      "reviewedTree": "4e27f5e61cce0b7aff947c44c334eee39477e43b",
+      "promptSha256": "607943e56c0aff103b067f2d8fc61de5833c8ea64fe6ba92ccd0027798746381",
+      "bundleSha256": "2e29e2c35f00f6fc4f000c1c2584de5c6d44fbd367b0cfc76d3c04a5b19e7b3b",
+      "integrationPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md",
+      "integrationSha256": "bc394fa9513b526fcfa6ed38bcd798d4396213431219e095483c430fed6dc6bb",
+      "recordPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/integration.json",
+      "recordSha256": "e846d97430453085e390a81095e55be12e7393491f48a9a3b479e64d7665571c",
+      "reportPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/ORACLE-REREVIEW.md",
+      "reportSha256": "9798c182dcf796e8006654259a88cdd48aea7a7fd968c29bf91cf8f03d796562",
+      "reviewedInputsPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "0c6d9f06835a47c4ee7a7f42e3169ba27593cfee40eeed00764a82d712ed948e",
+      "closedFindings": ["ADR009-RR-F001"],
+      "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
+      "localDisposition": "retained-after-current-main-cross-target-reproduction"
     }
   },
   "hostedWorkflow": {
@@ -117,7 +136,7 @@
     "PHP 7.4, packed-consumer, real WordPress, and real Gutenberg runtime behavior are not tested by this receipt."
   ],
   "claims": {
-    "architectureDecision": "accepted-base-checked-json-hardening-pending-rereview",
+    "architectureDecision": "accepted-base-checked-json-hardening-changes-required",
     "typedIrPrototype": "cross-target-runtime-tested",
     "canonicalSchemaAndDiagnostics": "validated",
     "productionMacroDerivation": "not-tested",

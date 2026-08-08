@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "decisionId": "ADR-012",
-  "status": "regression-repaired-pending-rereview",
+  "status": "regression-rereview-changes-required",
   "profileId": "wp70-release",
   "authority": {
     "owner": "wordpress-hx-output-context-v1",
@@ -454,7 +454,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "regression-repaired-pending-rereview",
+    "architectureDecision": "regression-rereview-changes-required",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

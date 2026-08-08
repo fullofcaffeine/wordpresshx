@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
-  "status": "regression-repaired-pending-rereview",
+  "status": "regression-rereview-changes-required",
   "observedAt": "2026-07-30T05:32:44Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "3a4a9c671d40b67b0762f013b148f722eaf7d53410080c7718299a9eea692881"
+      "sha256": "2f7f551736f839b70dc50343eacd0e6260e79cca856370b3dd10107b513b9508"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "f8a184231e09f064451554821e777979d81f2552c456296cd16ca1c5d00979a7"
+      "sha256": "e721b3c2a1b6d7117cb315ee1a9e3f7dae53d371e33ef7eef5bd903df709ab21"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,7 +19,7 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "d2662fc39405d6c804bb76fe549b9b46b91f5a0146a89efa751c00731fb8e7b5"
+      "sha256": "dfcd3c132173af0004cfea186dbd9c073f5b425893aa2b792721d2361d2c8485"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
@@ -67,7 +67,7 @@
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "passed",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "passed-local-pending-fresh-independent-rereview"
+    "outcome": "local-gates-insensitive-regression-rereview-changes-required"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -112,7 +112,7 @@
       "ADR012-F008: the Genes identity is derived from the immutable browser dependency lock and recorded consistently as 1.38.0.",
       "ADR012-F009: non-retention is stated as an enforceable SDK API policy, not as a linear-type guarantee."
     ],
-    "freshIndependentReview": "required-after-regression-repair",
+    "freshIndependentReview": "changes-required-after-regression-repair",
     "acceptanceAuthorized": false,
     "combinedRereviewIntegration": {
       "decision": "changes-required",
@@ -136,7 +136,7 @@
       "unsupportedDomainValueFailure": "explicit",
       "nativeDecoders": ["PHP-json_decode-JSON_THROW_ON_ERROR", "JavaScript-JSON.parse"],
       "localGate": "passed",
-      "freshIndependentRereview": "required"
+      "freshIndependentRereview": "completed-changes-required"
     },
     "f004RegressionRereview": {
       "decision": "changes-required",
@@ -153,6 +153,25 @@
       "reviewedInputsSha256": "1af00aa963b15a63df5628b2802c4e1faf9d1d7778082eb6602e90a1d4972c36",
       "findings": ["ADR012-F004-RR-F001", "ADR009-RR-F001", "ADR009-RR-F002"],
       "corrections": "applied-local-gates-passed-pending-fresh-rereview"
+    },
+    "f004FinalRereview": {
+      "decision": "changes-required",
+      "requestId": "orq_20260808T182309Z_38b28701",
+      "reviewedCommit": "552c7affabe16af9a1976cf6393ed34f4ba31a2b",
+      "reviewedTree": "4e27f5e61cce0b7aff947c44c334eee39477e43b",
+      "promptSha256": "607943e56c0aff103b067f2d8fc61de5833c8ea64fe6ba92ccd0027798746381",
+      "bundleSha256": "2e29e2c35f00f6fc4f000c1c2584de5c6d44fbd367b0cfc76d3c04a5b19e7b3b",
+      "integrationPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md",
+      "integrationSha256": "bc394fa9513b526fcfa6ed38bcd798d4396213431219e095483c430fed6dc6bb",
+      "recordPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/integration.json",
+      "recordSha256": "e846d97430453085e390a81095e55be12e7393491f48a9a3b479e64d7665571c",
+      "reportPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/ORACLE-REREVIEW.md",
+      "reportSha256": "9798c182dcf796e8006654259a88cdd48aea7a7fd968c29bf91cf8f03d796562",
+      "reviewedInputsPath": "review/oracle/results/adr012-f004-final-rereview-552c7af/reviewed-inputs.sha256",
+      "reviewedInputsSha256": "0c6d9f06835a47c4ee7a7f42e3169ba27593cfee40eeed00764a82d712ed948e",
+      "closedFindings": ["ADR009-RR-F001"],
+      "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
+      "localDisposition": "retained-after-current-main-cross-target-reproduction"
     }
   },
   "referenceReview": {
@@ -188,7 +207,7 @@
     "ADR012-R3-N001 records five stale path names in the final review prompt; the Oracle reviewed the manifest-bound equivalents and future prompts must validate paths against the packet inventory."
   ],
   "claims": {
-    "architectureDecision": "regression-repaired-pending-fresh-rereview",
+    "architectureDecision": "regression-rereview-changes-required",
     "typeSeparationPrototype": "cross-target-runtime-tested",
     "prototypeNativeLowering": "generated-plan-consumed-by-php-and-react-runtime-tests",
     "wordpressNativeEscaping": "runtime-tested",

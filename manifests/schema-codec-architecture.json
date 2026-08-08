@@ -221,7 +221,7 @@
     }
   ],
   "claims": {
-    "architectureDecision": "accepted-base-checked-json-hardening-pending-rereview",
+    "architectureDecision": "accepted-base-checked-json-hardening-changes-required",
     "typedIrPrototype": "validated",
     "productionMacroDerivation": "not-tested",
     "productionPhpEmitter": "not-tested",

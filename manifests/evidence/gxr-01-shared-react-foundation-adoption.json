@@ -60,15 +60,15 @@
     },
     "schemaCodecTargetMatrix": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "8b23a8b677fd2287a8241af9d023fbd42cd0c1015a28b9cde890e15552462400"
+      "sha256": "0f5a72b18f5ec1c8750d1e410ce2a878f87e42b44a0731c280fe1554a0ad8a51"
     },
     "outputContextTargetMatrix": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "86308747c3bfe700e48bfbbf6da82d648a3c2179886b4d01760b1ca4fb4fb2c9"
+      "sha256": "e721b3c2a1b6d7117cb315ee1a9e3f7dae53d371e33ef7eef5bd903df709ab21"
     },
     "repositoryGate": {
       "path": "scripts/check-repository.sh",
-      "sha256": "06619f4ebdf8d6d6c16a3a7deadd449b605b1565d7a8c1557b43b3da7e19ac5b"
+      "sha256": "6309513dbefa4f2948dfd3cfea68544f652a7c8cd02d90a08942122d3b875b59"
     }
   },
   "previousCompiler": {

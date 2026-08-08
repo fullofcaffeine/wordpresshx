@@ -485,11 +485,16 @@ content-addressed GPT-5.6 Pro rereview of commit
 `0e01ab5e18fe023e43f2d45e1052bdccef658f05` found that the initial C0 repair
 still had leaf-dependent depth accounting and was not total over malformed
 public `WireValue` shapes reachable through non-strict or foreign callers.
-`encodeChecked` now validates and snapshots the complete mutable input before
-encoding, counts arrays and objects as container nesting, validates field names
-before sorting, and returns stable rejection variants for every malformed
-public shape. ADR-009 remains pending a new independent rereview. See the
-[exact rereview integration](../../review/oracle/results/adr012-f004-rereview-0e01ab5/INTEGRATION.md).
+`encodeChecked` now validates and snapshots the mutable containers before
+encoding, counts arrays and objects as container nesting, and validates field
+names before sorting. A later content-addressed GPT-5.6 Pro review of correction
+commit `552c7affabe16af9a1976cf6393ed34f4ba31a2b` accepted the depth correction
+but found that null boolean/integer payloads still become successful bytes, the
+malformed corpus omits the Genes lane, and the public `JsonEncoded(String)`
+contract remains forgeable. Independent local reproduction confirmed the null
+scalar behavior on interp, Genes/strict TypeScript, stock JavaScript, and PHP.
+ADR-009 checked-encoder hardening therefore remains changes-required. See the
+[latest review integration](../../review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md).
 
 ## Migration, rollback, and supersession
 

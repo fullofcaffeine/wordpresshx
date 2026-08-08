@@ -2373,7 +2373,7 @@ else:
 assert schema_codec_architecture["schemaVersion"] == 1
 assert schema_codec_architecture["decisionId"] == "ADR-009"
 assert schema_codec_architecture["claims"]["architectureDecision"] == (
-    "accepted-base-checked-json-hardening-pending-rereview"
+    "accepted-base-checked-json-hardening-changes-required"
 )
 schema_prototype = schema_codec_architecture["prototypeEvidence"]
 assert schema_prototype["haxeInvariantCount"] == 27
@@ -2389,6 +2389,7 @@ assert adr009_receipt["status"] in {
     "implemented-hosted-pending",
     "verified",
     "checked-json-hardening-rereview-pending",
+    "checked-json-hardening-changes-required",
 }
 for adr009_subject in adr009_receipt["subject"].values():
     adr009_current_sha256 = hashlib.sha256(
@@ -2412,8 +2413,10 @@ assert adr009_verification["strictNullSafety"] is True
 assert adr009_verification["strictHaxeForbiddenTokenCount"] == 0
 assert adr009_verification["canonicalTranscriptByteIdenticalAcrossTargets"] is True
 assert adr009_receipt["review"]["finalFreshReview"] == "no-blockers"
-if adr009_receipt["status"] == "checked-json-hardening-rereview-pending":
-    assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == "required"
+if adr009_receipt["status"] in {
+    "checked-json-hardening-rereview-pending",
+    "checked-json-hardening-changes-required",
+}:
     adr009_checked_review = adr009_receipt["review"]["checkedJsonRereview"]
     assert adr009_checked_review["decision"] == "changes-required"
     assert adr009_checked_review["reviewedCommit"] == (
@@ -2435,9 +2438,50 @@ if adr009_receipt["status"] == "checked-json-hardening-rereview-pending":
         assert hashlib.sha256(
             Path(adr009_checked_review[review_path_field]).read_bytes()
         ).hexdigest() == adr009_checked_review[review_digest_field]
-    assert adr009_receipt["claims"]["architectureDecision"] == (
-        "accepted-base-checked-json-hardening-pending-rereview"
-    )
+    if adr009_receipt["status"] == "checked-json-hardening-rereview-pending":
+        assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == (
+            "required"
+        )
+        assert adr009_receipt["claims"]["architectureDecision"] == (
+            "accepted-base-checked-json-hardening-pending-rereview"
+        )
+    else:
+        assert adr009_receipt["review"]["checkedJsonHardeningFreshReview"] == (
+            "changes-required"
+        )
+        assert adr009_receipt["claims"]["architectureDecision"] == (
+            "accepted-base-checked-json-hardening-changes-required"
+        )
+        adr009_final_review = adr009_receipt["review"][
+            "checkedJsonFinalRereview"
+        ]
+        assert adr009_final_review["decision"] == "changes-required"
+        assert adr009_final_review["requestId"] == (
+            "orq_20260808T182309Z_38b28701"
+        )
+        assert adr009_final_review["reviewedCommit"] == (
+            "552c7affabe16af9a1976cf6393ed34f4ba31a2b"
+        )
+        assert adr009_final_review["closedFindings"] == ["ADR009-RR-F001"]
+        assert adr009_final_review["openFindings"] == [
+            "ADR012-F004-RR2-F001",
+            "ADR012-F004-RR2-F002",
+            "ADR009-RR2-F001",
+            "ADR009-RR2-F002",
+            "ADR009-RR2-F003",
+        ]
+        assert adr009_final_review["localDisposition"] == (
+            "retained-after-current-main-cross-target-reproduction"
+        )
+        for review_path_field, review_digest_field in (
+            ("integrationPath", "integrationSha256"),
+            ("recordPath", "recordSha256"),
+            ("reportPath", "reportSha256"),
+            ("reviewedInputsPath", "reviewedInputsSha256"),
+        ):
+            assert hashlib.sha256(
+                Path(adr009_final_review[review_path_field]).read_bytes()
+            ).hexdigest() == adr009_final_review[review_digest_field]
 else:
     assert adr009_receipt["claims"]["architectureDecision"] == "accepted"
 assert adr009_receipt["claims"]["publicationAuthorized"] is False
@@ -2470,6 +2514,7 @@ assert output_context_architecture["decisionId"] == "ADR-012"
 assert output_context_architecture["status"] in {
     "accepted-after-review",
     "regression-repaired-pending-rereview",
+    "regression-rereview-changes-required",
 }
 output_authority = output_context_architecture["authority"]
 assert output_authority["lateEscapingRequired"] is True
@@ -2508,6 +2553,7 @@ assert adr012_receipt["status"] in {
     "verified",
     "regression-open",
     "regression-repaired-pending-rereview",
+    "regression-rereview-changes-required",
 }
 for adr012_subject in adr012_receipt["subject"].values():
     adr012_current_sha256 = hashlib.sha256(
@@ -2617,6 +2663,7 @@ assert adr012_final_decision["newFindings"] == [
 if adr012_receipt["status"] in {
     "regression-open",
     "regression-repaired-pending-rereview",
+    "regression-rereview-changes-required",
 }:
     adr012_combined = adr012_receipt["review"]["combinedRereviewIntegration"]
     assert adr012_combined == {
@@ -2662,17 +2709,27 @@ if adr012_receipt["status"] in {
             "reopened-after-json-codec-regression"
         )
     else:
-        assert adr012_receipt["review"]["freshIndependentReview"] == (
-            "required-after-regression-repair"
-        )
-        assert adr012_receipt["claims"]["architectureDecision"] == (
-            "regression-repaired-pending-fresh-rereview"
-        )
+        if adr012_receipt["status"] == "regression-repaired-pending-rereview":
+            assert adr012_receipt["review"]["freshIndependentReview"] == (
+                "required-after-regression-repair"
+            )
+            assert adr012_receipt["claims"]["architectureDecision"] == (
+                "regression-repaired-pending-fresh-rereview"
+            )
+            expected_repair_review = "required"
+        else:
+            assert adr012_receipt["review"]["freshIndependentReview"] == (
+                "changes-required-after-regression-repair"
+            )
+            assert adr012_receipt["claims"]["architectureDecision"] == (
+                "regression-rereview-changes-required"
+            )
+            expected_repair_review = "completed-changes-required"
         adr012_repair = adr012_receipt["review"]["regressionRepair"]
         assert adr012_repair["finding"] == "ADR012-F004"
         assert adr012_repair["c0VectorCount"] == 32
         assert adr012_repair["localGate"] == "passed"
-        assert adr012_repair["freshIndependentRereview"] == "required"
+        assert adr012_repair["freshIndependentRereview"] == expected_repair_review
         adr012_f004_rereview = adr012_receipt["review"][
             "f004RegressionRereview"
         ]
@@ -2715,6 +2772,39 @@ if adr012_receipt["status"] in {
             "remediationBeadClosed": False,
             "publicationAuthorized": False,
         }
+        if adr012_receipt["status"] == "regression-rereview-changes-required":
+            adr012_final_f004_review = adr012_receipt["review"][
+                "f004FinalRereview"
+            ]
+            assert adr012_final_f004_review["decision"] == "changes-required"
+            assert adr012_final_f004_review["requestId"] == (
+                "orq_20260808T182309Z_38b28701"
+            )
+            assert adr012_final_f004_review["reviewedCommit"] == (
+                "552c7affabe16af9a1976cf6393ed34f4ba31a2b"
+            )
+            assert adr012_final_f004_review["closedFindings"] == [
+                "ADR009-RR-F001"
+            ]
+            assert adr012_final_f004_review["openFindings"] == [
+                "ADR012-F004-RR2-F001",
+                "ADR012-F004-RR2-F002",
+                "ADR009-RR2-F001",
+                "ADR009-RR2-F002",
+                "ADR009-RR2-F003",
+            ]
+            assert adr012_final_f004_review["localDisposition"] == (
+                "retained-after-current-main-cross-target-reproduction"
+            )
+            for review_path_field, review_digest_field in (
+                ("integrationPath", "integrationSha256"),
+                ("recordPath", "recordSha256"),
+                ("reportPath", "reportSha256"),
+                ("reviewedInputsPath", "reviewedInputsSha256"),
+            ):
+                assert hashlib.sha256(
+                    Path(adr012_final_f004_review[review_path_field]).read_bytes()
+                ).hexdigest() == adr012_final_f004_review[review_digest_field]
     assert adr012_receipt["review"]["acceptanceAuthorized"] is False
 else:
     assert adr012_receipt["review"]["freshIndependentReview"] == (
@@ -2743,6 +2833,7 @@ if adr012_hosted["status"] == "immutable-policy-passed":
         "verified",
         "regression-open",
         "regression-repaired-pending-rereview",
+        "regression-rereview-changes-required",
     }
     assert isinstance(adr012_hosted["runId"], int)
     assert isinstance(adr012_hosted["jobId"], int)

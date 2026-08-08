@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "recordId": "wordpresshx.oracle-integration.adr012-f004-final-rereview-552c7af",
+  "requestId": "orq_20260808T182309Z_38b28701",
+  "reviewedCommit": "552c7affabe16af9a1976cf6393ed34f4ba31a2b",
+  "reviewedTree": "4e27f5e61cce0b7aff947c44c334eee39477e43b",
+  "promptSha256": "607943e56c0aff103b067f2d8fc61de5833c8ea64fe6ba92ccd0027798746381",
+  "promptBodySha256": "0c94ac93bc7ec83356f841aa9590fe0b82a97c2f3c1c352ad69486b8f9fe45b4",
+  "bundleSha256": "2e29e2c35f00f6fc4f000c1c2584de5c6d44fbd367b0cfc76d3c04a5b19e7b3b",
+  "conversationHandle": "convo_9f46ba5a55f61816",
+  "requestedModel": "GPT-5.6 Pro",
+  "observedModel": "Pro",
+  "decision": "changes-required",
+  "confidence": "high",
+  "capturedAt": "2026-08-08T19:07:20.418Z",
+  "ledgerProcessing": {
+    "dispositionSha256": "52e0b2011092043d88ac043f531fc383f42f0396f0533b293985a0f5188f0360",
+    "processorModel": "gpt-5.6-sol",
+    "processorReasoningLevel": "xhigh",
+    "processed": true,
+    "archived": true
+  },
+  "report": {
+    "path": "review/oracle/results/adr012-f004-final-rereview-552c7af/ORACLE-REREVIEW.md",
+    "sha256": "9798c182dcf796e8006654259a88cdd48aea7a7fd968c29bf91cf8f03d796562"
+  },
+  "integration": {
+    "path": "review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md",
+    "sha256": "bc394fa9513b526fcfa6ed38bcd798d4396213431219e095483c430fed6dc6bb"
+  },
+  "reviewedInputs": {
+    "path": "review/oracle/results/adr012-f004-final-rereview-552c7af/reviewed-inputs.sha256",
+    "sha256": "0c6d9f06835a47c4ee7a7f42e3169ba27593cfee40eeed00764a82d712ed948e"
+  },
+  "currentSubjectCheck": {
+    "commit": "eb9a5b5ea75b4282b9f26c3e800bd1eb4dbec175",
+    "tree": "685d73859ed11200bce675e56563f0bbadddd6c1",
+    "materialReviewedPathsChangedSinceSubject": false
+  },
+  "findingDispositions": [
+    {
+      "id": "ADR012-F004-RR2-F001",
+      "severity": "blocking-high",
+      "disposition": "retained-reproduced-cross-target",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR012-F004-RR2-F002",
+      "severity": "blocking-high",
+      "disposition": "retained-reproduced-architecture-choice-required",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR2-F001",
+      "severity": "blocking-high",
+      "disposition": "retained-null-scalars-reproduced-other-foreign-shapes-require-tests",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR2-F002",
+      "severity": "major",
+      "disposition": "retained-gate-insensitivity-confirmed",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR2-F003",
+      "severity": "major",
+      "disposition": "retained-api-contract-not-current-sink-bypass",
+      "bead": "wordpresshx-g4.1.1"
+    },
+    {
+      "id": "ADR009-RR-F001",
+      "severity": "blocking-medium",
+      "disposition": "closed-bounded-depth-correction-accepted",
+      "bead": "wordpresshx-g4.1.1"
+    }
+  ],
+  "localVerification": {
+    "haxeInterp": "blocking-findings-reproduced",
+    "stockHaxeJavaScriptNode": "blocking-findings-reproduced",
+    "stockHaxePhp": "blocking-findings-reproduced",
+    "genesStrictTypeScriptNode": "blocking-findings-reproduced",
+    "adr009FocusedGate": "passed-but-insensitive-to-retained-findings",
+    "adr012FocusedGate": "react-proof-passed-docker-unavailable"
+  },
+  "authority": {
+    "adr009CheckedEncoderAccepted": false,
+    "adr009DepthSubfindingClosed": true,
+    "adr012F004Closed": false,
+    "remediationBeadClosed": false,
+    "publicationAuthorized": false,
+    "anotherOracleRequestDispatched": false
+  }
+}

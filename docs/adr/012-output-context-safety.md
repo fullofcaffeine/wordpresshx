@@ -419,3 +419,18 @@ plan construction private and sink-owned, adds all-target compile negatives,
 and uses the hardened checked encoder described by ADR-009. F004, ADR-009, and
 ADR-012 remain open pending fresh content-addressed acceptance. See the
 [exact rereview and integration](../../review/oracle/results/adr012-f004-rereview-0e01ab5/INTEGRATION.md).
+
+The final rereview of correction commit
+`552c7affabe16af9a1976cf6393ed34f4ba31a2b` also returned **changes
+required**. It accepted the hard 64-container depth correction,
+validate-before-sort behavior, immutable snapshot, C0 escaping, and removal of
+the ordinary `JsonPlan.success` factory. It found three remaining blocking
+paths: an empty codec failure creates the same paired-empty-string shape used
+as success; Haxe `@:privateAccess` can override the private plan constructor;
+and null boolean/integer payloads silently become successful JSON. The
+maintained malformed corpus also omits Genes/strict TypeScript, while the
+public `JsonEncoded(String)` documentation overstates a forgeable enum variant.
+Independent local reproduction confirmed the three blocking paths across the
+available Haxe, Genes, JavaScript, and PHP lanes. F004 remains open; unrelated
+retained ADR-012 findings remain closed. See the
+[bound response and local disposition](../../review/oracle/results/adr012-f004-final-rereview-552c7af/INTEGRATION.md).
