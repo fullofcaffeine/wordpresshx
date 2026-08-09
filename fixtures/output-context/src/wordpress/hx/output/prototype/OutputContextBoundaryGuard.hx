@@ -30,6 +30,16 @@ final class OutputContextBoundaryGuard {
 					final classType = classRef.get();
 					validateFields(classType, classType.fields.get());
 					validateFields(classType, classType.statics.get());
+					switch classType.constructor {
+						case null:
+						case constructor:
+							validateField(classType, constructor.get());
+					}
+					switch classType.init {
+						case null:
+						case expression:
+							validateExpression(classType, expression);
+					}
 				case _:
 			}
 		}
@@ -37,11 +47,15 @@ final class OutputContextBoundaryGuard {
 
 	static function validateFields(owner:ClassType, fields:Array<ClassField>):Void {
 		for (field in fields) {
-			switch field.expr() {
-				case null:
-				case expression:
-					validateExpression(owner, expression);
-			}
+			validateField(owner, field);
+		}
+	}
+
+	static function validateField(owner:ClassType, field:ClassField):Void {
+		switch field.expr() {
+			case null:
+			case expression:
+				validateExpression(owner, expression);
 		}
 	}
 
@@ -54,9 +68,15 @@ final class OutputContextBoundaryGuard {
 					&& !(owner.module == JSON_PLAN_MODULE && owner.name == SINK_NAME)) {
 					Context.error("JsonPlan construction is restricted to OutputSinks", expression.pos);
 				}
+			case TField(_, FStatic(classRef, fieldRef)) if (isTypeCreateInstance(classRef.get(), fieldRef.get())):
+				Context.error("Reflective construction is not admitted by the output-context profile", expression.pos);
 			case _:
 		}
 		TypedExprTools.iter(expression, child -> validateExpression(owner, child));
+	}
+
+	static function isTypeCreateInstance(owner:ClassType, field:ClassField):Bool {
+		return owner.module == "Type" && owner.name == "Type" && field.name == "createInstance";
 	}
 	#end
 }

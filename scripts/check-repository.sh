@@ -2380,7 +2380,7 @@ assert schema_prototype["haxeInvariantCount"] == 27
 assert schema_prototype["checkedJsonInvariantCount"] == 29
 assert schema_prototype["crossTargetVectorCount"] == 17
 assert schema_prototype["wireJsonBoundaryVectorCount"] == 39
-assert schema_prototype["foreignMalformedValueCount"] == 13
+assert schema_prototype["foreignMalformedValueCount"] == 19
 assert schema_prototype["nativeDecoderSuccessCount"] == 9
 assert schema_prototype["independentMutationCount"] == 18
 assert schema_prototype["negativeCompileFixtureCount"] == 5
@@ -2410,7 +2410,7 @@ assert adr009_verification["haxeInvariantCount"] == 27
 assert adr009_verification["checkedJsonInvariantCount"] == 29
 assert adr009_verification["crossTargetVectorCount"] == 17
 assert adr009_verification["wireJsonBoundaryVectorCount"] == 39
-assert adr009_verification["foreignMalformedValueCount"] == 13
+assert adr009_verification["foreignMalformedValueCount"] == 19
 assert adr009_verification["nativeDecoderSuccessCount"] == 9
 assert adr009_verification["independentMutationCount"] == 18
 assert adr009_verification["negativeCompileFixtureCount"] == 5
@@ -2503,7 +2503,7 @@ if adr009_receipt["status"] in {
             assert adr009_repair["status"] == (
                 "local-cross-target-proof-passed-pending-fresh-rereview"
             )
-            assert adr009_repair["foreignMalformedValueCount"] == 13
+            assert adr009_repair["foreignMalformedValueCount"] == 19
             assert adr009_repair["nativeDecoderSuccessCount"] == 9
 else:
     assert adr009_receipt["claims"]["architectureDecision"] == "accepted"
@@ -2557,10 +2557,10 @@ assert output_prototype["contextCount"] == 11
 assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
 assert output_prototype["hxxPositionCount"] == 18
-assert output_prototype["compileNegativeCount"] == 28
+assert output_prototype["compileNegativeCount"] == 32
 assert output_prototype["independentMutationCount"] == 36
 assert output_prototype["emptyFailureVectorCount"] == 1
-assert output_prototype["typedConstructionGuardCount"] == 1
+assert output_prototype["typedConstructionGuardCount"] == 5
 assert output_prototype["jsonPlanState"] == "closed-encoded-or-rejected"
 assert output_prototype["constructionGuardPhase"] == "haxe-onAfterTyping"
 assert output_prototype["compilerProfileOwnsGuard"] is True
@@ -2603,9 +2603,9 @@ assert adr012_verification["contextCount"] == 11
 assert adr012_verification["allowedEdgeCount"] == 12
 assert adr012_verification["forbiddenEdgeCount"] == 15
 assert adr012_verification["hxxPositionCount"] == 18
-assert adr012_verification["compileNegativeCount"] == 28
+assert adr012_verification["compileNegativeCount"] == 32
 assert adr012_verification["emptyFailureVectorCount"] == 1
-assert adr012_verification["typedConstructionGuardCount"] == 1
+assert adr012_verification["typedConstructionGuardCount"] == 5
 assert adr012_verification["independentMutationCount"] == 36
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"

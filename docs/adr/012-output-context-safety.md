@@ -443,10 +443,15 @@ a public success factory.
 
 A compiler-profile guard runs after Haxe typing. It rejects any direct
 `JsonPlan` construction outside `OutputSinks`, including construction exposed
-after normal macro expansion and `@:privateAccess`. The guard is part of the
-admitted compiler profile. Arbitrary untrusted compiler macros are outside this
-bounded claim. The all-target negative fixture pins the same diagnostic for
-Haxe interpretation, Genes with strict TypeScript, and generated PHP.
+after normal macro expansion and `@:privateAccess`. The next independent review
+correctly found that the first guard inspected ordinary fields and statics but
+omitted instance constructors and the class initialization expression. It also
+found that `Type.createInstance` remained available. The repaired guard visits
+fields, statics, constructors, and class initialization. The admitted profile
+now rejects reflective `Type.createInstance` access, including aliasing the
+function before use. Arbitrary untrusted compiler macros remain outside this
+bounded claim. The all-target negative fixtures pin these diagnostics for Haxe
+interpretation, Genes with strict TypeScript, and generated PHP.
 
 The focused repair started with three red observations: a null boolean became
 the JSON bytes `false`, an empty codec failure produced an ambiguous plan, and
@@ -454,3 +459,14 @@ the private constructor bypass compiled. The same tests now pass or fail at the
 intended boundary. The architecture state is
 `final-rereview-findings-repaired-pending-rereview`. F004 stays open until a
 fresh independent review accepts the current bytes.
+
+The GPT-5.6 Pro review of commit
+`99b5f21f2e36bef907650cd7c2b1d30d61dadfbd` returned **changes required**.
+In addition to the incomplete construction traversal above, it found that the
+checked JSON encoder trusted a valid foreign enum index without verifying its
+constructor identity, and that the current receipt overstated a WordPress lane
+that Docker had not run. All three findings were reproduced locally and
+repaired. The receipt now distinguishes historical WordPress runtime proof from
+the current unexecuted lane. This remains a local correction, not acceptance;
+F004 stays open until a fresh independent review accepts the corrected commit.
+See the [review and local disposition](../../review/oracle/results/adr012-f004-final-repair-99b5f21/INTEGRATION.md).

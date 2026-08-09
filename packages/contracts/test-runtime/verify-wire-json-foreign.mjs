@@ -37,5 +37,15 @@ rejected(
   {_hx_index: 99, __enum__: "wordpress.hx.contracts.WireValue"},
   "$: invalid-wire-value"
 );
+rejected(
+  "wrong-enum-identity",
+  {_hx_index: 0, __enum__: "wordpress.hx.contracts.UnknownWireValue"},
+  "$: invalid-wire-value"
+);
+rejected(
+  "bool-without-payload",
+  {_hx_index: 1, __enum__: "wordpress.hx.contracts.WireValue"},
+  "$: invalid-bool"
+);
 
 console.log("Genes foreign WireValue rejection passed");

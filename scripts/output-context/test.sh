@@ -293,6 +293,14 @@ assert_compile_failure_all_targets json_plan_constructor \
 	'Cannot access private constructor of wordpress.hx.output.prototype.JsonPlan'
 assert_compile_failure_all_targets json_plan_private_access \
 	'JsonPlan construction is restricted to OutputSinks'
+assert_compile_failure_all_targets json_plan_private_constructor \
+	'JsonPlan construction is restricted to OutputSinks'
+assert_compile_failure_all_targets json_plan_private_init \
+	'JsonPlan construction is restricted to OutputSinks'
+assert_compile_failure_all_targets json_plan_reflective_constructor \
+	'Reflective construction is not admitted by the output-context profile'
+assert_compile_failure_all_targets json_plan_reflective_alias \
+	'Reflective construction is not admitted by the output-context profile'
 
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \

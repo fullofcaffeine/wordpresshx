@@ -509,6 +509,18 @@ This repair is not a new acceptance decision. The checked encoder is now
 review must accept the current bytes before this bounded surface can return to
 accepted.
 
+The following GPT-5.6 Pro review of commit
+`99b5f21f2e36bef907650cd7c2b1d30d61dadfbd` confirmed the null-scalar, Genes,
+and public-wrapper corrections, but found one further foreign-runtime hole. A
+PHP `WireValue` could carry index `0` with an unknown constructor tag and be
+accepted as `NullValue`. The native red probe reproduced successful bytes.
+`encodeChecked` now validates enum identity, constructor index, constructor
+name, and declared parameter count before switching, and converts inspection
+failures into a stable rejection with no bytes. The native malformed corpus now
+contains 19 cases across PHP and Genes. The complete cross-target gate passes,
+but the corrected bytes still require fresh independent acceptance. See the
+[review and local disposition](../../review/oracle/results/adr012-f004-final-repair-99b5f21/INTEGRATION.md).
+
 ## Migration, rollback, and supersession
 
 No released consumer depends on this schema. Before SDK-054 lands, rollback is

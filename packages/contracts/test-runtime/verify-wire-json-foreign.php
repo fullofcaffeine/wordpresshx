@@ -38,5 +38,9 @@ wordpresshx_expect_rejected('wrong-string', WireValue::StringValue(7), '$: inval
 wordpresshx_expect_rejected('wrong-array', WireValue::ArrayValue(new stdClass()), '$: invalid-array');
 wordpresshx_expect_rejected('wrong-object', WireValue::ObjectValue(new stdClass()), '$: invalid-object');
 wordpresshx_expect_rejected('unknown-tag', new WireValue('Unknown', 99, array()), '$: invalid-wire-value');
+wordpresshx_expect_rejected('valid-index-unknown-tag', new WireValue('Unknown', 0, array()), '$: invalid-wire-value');
+wordpresshx_expect_rejected('mismatched-tag-index', new WireValue('BoolValue', 0, array(true)), '$: invalid-wire-value');
+wordpresshx_expect_rejected('null-with-parameters', new WireValue('NullValue', 0, array(true)), '$: invalid-wire-value');
+wordpresshx_expect_rejected('bool-without-parameters', new WireValue('BoolValue', 1, array()), '$: invalid-wire-value');
 
 echo "PHP foreign WireValue rejection passed\n";

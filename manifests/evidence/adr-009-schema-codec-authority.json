@@ -3,15 +3,15 @@
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
   "status": "checked-json-final-findings-repaired-pending-rereview",
-  "observedAt": "2026-08-08T00:00:00Z",
+  "observedAt": "2026-08-09T00:00:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "fb2d17664c97780b507d1cd7bae5aacacd42478b1707d5b59456222ecf0593cb"
+      "sha256": "152dde996c1c5359f2cbd59aaaa234125f4575b5c6e9c4ca957ab1ec7ac134ad"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "149c96114a093244db8fb6709035faa4f28421662ce29671164ca7e1336c4de4"
+      "sha256": "0cb1607cd4c6355b69b9d767d5f4062bddea2e9f27d3fa9eec1779fd394d7d9c"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -27,11 +27,11 @@
     },
     "runtimeProbes": {
       "path": "packages/contracts/test-runtime/verify-wire-json-foreign.mjs",
-      "sha256": "13da13ec8cda56d511a7aa50afb201bd4702a1921f5771c1444bbae905a9c616"
+      "sha256": "57ab10c65730593a1bf5f6622164d05b4e2006d563423b7abd65a3ed7e303e12"
     },
     "runtimePhpForeignProbe": {
       "path": "packages/contracts/test-runtime/verify-wire-json-foreign.php",
-      "sha256": "e834cbbb86657f788114e1fbe30a3491643bada57fa800578459fb5702ccee6c"
+      "sha256": "76a5d1d7e622daadfc5a2ac8aeb6b8a5f7e5b904a7b61e59f926bf163ce68282"
     },
     "runtimeNodeTranscriptProbe": {
       "path": "packages/contracts/test-runtime/verify-wire-json-transcript.mjs",
@@ -43,7 +43,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "6a14fcce3d859ff50fbdf8eecfa525a5af411909f4940381531785ce508ce707"
+      "sha256": "b5c25fb78dd30bcafd2af91027e838eba2cfcde5c55f46db22a1f3a2588131da"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -71,7 +71,7 @@
       "git diff --check",
       "git diff --cached --check"
     ],
-    "sourceTreeSha256": "7ab36824f4f9f4b3188bbcdb2d935ef12f5acc8d1b23351f4c483b25b84b2ccc",
+    "sourceTreeSha256": "6d5bfa7acd805929fc145ab48a6979ff7ac16f3cfde2a64b0905c3354ce33cf2",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.41.4",
     "typescriptVersion": "5.9.3",
@@ -81,7 +81,7 @@
     "strictHaxeForbiddenTokenCount": 0,
     "crossTargetVectorCount": 17,
     "wireJsonBoundaryVectorCount": 39,
-    "foreignMalformedValueCount": 13,
+    "foreignMalformedValueCount": 19,
     "nativeDecoderSuccessCount": 9,
     "haxeInvariantCount": 27,
     "checkedJsonInvariantCount": 29,
@@ -137,10 +137,22 @@
       "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
       "localDisposition": "retained-after-current-main-cross-target-reproduction"
     },
+    "checkedJsonRepairAcceptanceRereview": {
+      "decision": "changes-required",
+      "requestId": "orq_20260809T014239Z_9ab978af",
+      "reviewedCommit": "99b5f21f2e36bef907650cd7c2b1d30d61dadfbd",
+      "reviewedTree": "209a3f4cc53626c0ceb1de6bd5520e5cb3409538",
+      "responseSha256": "16feda7779a0ec6bf83f81b12a2b64b52da06a8133ab12eb93c7316902493cfd",
+      "reportPath": "review/oracle/results/adr012-f004-final-repair-99b5f21/ORACLE-REVIEW.md",
+      "integrationPath": "review/oracle/results/adr012-f004-final-repair-99b5f21/INTEGRATION.md",
+      "integrationSha256": "1d96e7966e50809d7b6387d93c4e0559668975bd52c976b3f1abbc8859d1a45a",
+      "openFinding": "ADR009-RR3-F001",
+      "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
+    },
     "finalFindingsRepair": {
       "status": "local-cross-target-proof-passed-pending-fresh-rereview",
       "nullScalarFailures": ["invalid-bool", "invalid-integer"],
-      "foreignMalformedValueCount": 13,
+      "foreignMalformedValueCount": 19,
       "nativeDecoderSuccessCount": 9,
       "targets": ["haxe-interp-4.3.7", "genes-ts-1.41.4-typescript-5.9.3-node-22.17.0", "stock-haxe-php-8.4.7"],
       "publicJsonEncodedAuthority": "none-caller-construction-is-not-validation"

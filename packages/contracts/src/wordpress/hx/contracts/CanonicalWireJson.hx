@@ -34,8 +34,7 @@ class CanonicalWireJson {
 		if (value == null) {
 			return SnapshotRejected(path + ": null-wire-value");
 		}
-		final constructorIndex = Type.enumIndex(value);
-		if (constructorIndex < 0 || constructorIndex > 5) {
+		if (!hasValidWireEnvelope(value)) {
 			return SnapshotRejected(path + ": invalid-wire-value");
 		}
 		return switch value {
@@ -52,6 +51,30 @@ class CanonicalWireJson {
 			case ObjectValue(fields):
 				snapshotObject(fields, path, containerDepth + 1, maxDepth);
 		};
+	}
+
+	static function hasValidWireEnvelope(value:WireValue):Bool {
+		try {
+			if (Type.getEnum(value) != WireValue) {
+				return false;
+			}
+			final constructorIndex = Type.enumIndex(value);
+			final constructorName = Type.enumConstructor(value);
+			// The standard enum API exposes erased payload values. We observe only
+			// their count here and never propagate them into the typed codec.
+			final parameterCount:Int = Type.enumParameters(value).length;
+			return switch constructorIndex {
+				case 0: constructorName == "NullValue" && parameterCount == 0;
+				case 1: constructorName == "BoolValue" && parameterCount == 1;
+				case 2: constructorName == "IntegerValue" && parameterCount == 1;
+				case 3: constructorName == "StringValue" && parameterCount == 1;
+				case 4: constructorName == "ArrayValue" && parameterCount == 1;
+				case 5: constructorName == "ObjectValue" && parameterCount == 1;
+				case _: false;
+			};
+		} catch (exception:haxe.Exception) {
+			return false;
+		}
 	}
 
 	static function snapshotArray(values:Null<Array<WireValue>>, path:String, containerDepth:Int, maxDepth:Int):WireJsonSnapshotResult {
