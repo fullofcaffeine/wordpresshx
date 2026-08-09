@@ -105,21 +105,30 @@ class CanonicalWireJson {
 		}
 		final fieldsSnapshot:Array<CanonicalJsonField> = [];
 		for (index in 0...fields.length) {
-			final current:Null<WireField> = fields[index];
-			if (current == null) {
-				return SnapshotRejected(path + "[" + index + "]: null-field");
-			}
-			final nameResult = snapshotString(current.name, path + "[" + index + "]/<field-name>");
-			final name = switch nameResult {
-				case SnapshotRejected(reason): return SnapshotRejected(reason);
-				case SnapshotAccepted(CanonicalString(value)): value;
-				case SnapshotAccepted(_): return SnapshotRejected(path + "[" + index + "]: invalid-field-name");
-			};
-			switch snapshot(current.value, path + "/" + name, containerDepth, maxDepth) {
-				case SnapshotRejected(reason):
-					return SnapshotRejected(reason);
-				case SnapshotAccepted(value):
-					fieldsSnapshot.push({name: name, value: value});
+			try {
+				final current:Null<WireField> = fields[index];
+				if (current == null) {
+					return SnapshotRejected(path + "[" + index + "]: null-field");
+				}
+				final fieldName:Null<String> = current.name;
+				final fieldValue:Null<WireValue> = current.value;
+				if (fieldName == null || fieldValue == null) {
+					return SnapshotRejected(path + "[" + index + "]: invalid-field");
+				}
+				final nameResult = snapshotString(fieldName, path + "[" + index + "]/<field-name>");
+				final name = switch nameResult {
+					case SnapshotRejected(reason): return SnapshotRejected(reason);
+					case SnapshotAccepted(CanonicalString(value)): value;
+					case SnapshotAccepted(_): return SnapshotRejected(path + "[" + index + "]: invalid-field-name");
+				};
+				switch snapshot(fieldValue, path + "/" + name, containerDepth, maxDepth) {
+					case SnapshotRejected(reason):
+						return SnapshotRejected(reason);
+					case SnapshotAccepted(value):
+						fieldsSnapshot.push({name: name, value: value});
+				}
+			} catch (exception:haxe.Exception) {
+				return SnapshotRejected(path + "[" + index + "]: invalid-field");
 			}
 		}
 		fieldsSnapshot.sort((left, right) -> UnicodeScalarOrder.compare(left.name, right.name));

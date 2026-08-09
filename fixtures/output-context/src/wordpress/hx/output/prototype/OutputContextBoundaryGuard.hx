@@ -13,6 +13,8 @@ final class OutputContextBoundaryGuard {
 	static final JSON_PLAN_MODULE = "wordpress.hx.output.prototype.OutputSinks";
 	static final JSON_PLAN_NAME = "JsonPlan";
 	static final SINK_NAME = "OutputSinks";
+	static final UNSERIALIZER_MODULE = "haxe.Unserializer";
+	static final UNSERIALIZER_NAME = "Unserializer";
 	static var installed = false;
 
 	public static function install():Expr {
@@ -68,15 +70,41 @@ final class OutputContextBoundaryGuard {
 					&& !(owner.module == JSON_PLAN_MODULE && owner.name == SINK_NAME)) {
 					Context.error("JsonPlan construction is restricted to OutputSinks", expression.pos);
 				}
-			case TField(_, FStatic(classRef, fieldRef)) if (isTypeCreateInstance(classRef.get(), fieldRef.get())):
-				Context.error("Reflective construction is not admitted by the output-context profile", expression.pos);
+				if (isUnserializer(constructed)) {
+					Context.error("Constructorless reconstitution is not admitted by the output-context profile", expression.pos);
+				}
+			case TField(_, fieldAccess):
+				validateFieldAccess(fieldAccess, expression);
 			case _:
 		}
 		TypedExprTools.iter(expression, child -> validateExpression(owner, child));
 	}
 
-	static function isTypeCreateInstance(owner:ClassType, field:ClassField):Bool {
-		return owner.module == "Type" && owner.name == "Type" && field.name == "createInstance";
+	static function validateFieldAccess(fieldAccess:FieldAccess, expression:TypedExpr):Void {
+		switch fieldAccess {
+			case FStatic(classRef, fieldRef):
+				final owner = classRef.get();
+				final field = fieldRef.get();
+				if (isForbiddenTypeConstructor(owner, field)) {
+					Context.error("Reflective construction is not admitted by the output-context profile", expression.pos);
+				}
+				if (isUnserializer(owner)) {
+					Context.error("Constructorless reconstitution is not admitted by the output-context profile", expression.pos);
+				}
+			case FInstance(classRef, _, _):
+				if (isUnserializer(classRef.get())) {
+					Context.error("Constructorless reconstitution is not admitted by the output-context profile", expression.pos);
+				}
+			case _:
+		}
+	}
+
+	static function isForbiddenTypeConstructor(owner:ClassType, field:ClassField):Bool {
+		return owner.module == "Type" && owner.name == "Type" && (field.name == "createInstance" || field.name == "createEmptyInstance");
+	}
+
+	static function isUnserializer(owner:ClassType):Bool {
+		return owner.module == UNSERIALIZER_MODULE && owner.name == UNSERIALIZER_NAME;
 	}
 	#end
 }

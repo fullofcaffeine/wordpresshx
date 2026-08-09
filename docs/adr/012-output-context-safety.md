@@ -470,3 +470,15 @@ repaired. The receipt now distinguishes historical WordPress runtime proof from
 the current unexecuted lane. This remains a local correction, not acceptance;
 F004 stays open until a fresh independent review accepts the corrected commit.
 See the [review and local disposition](../../review/oracle/results/adr012-f004-final-repair-99b5f21/INTEGRATION.md).
+
+The next GPT-5.6 Pro review examined corrected commit
+`5e151ed02767378ab50f4b703fdd373fa9c0874b`. It accepted the known constructor,
+reflection, discriminator, and evidence corrections but found that standard
+`haxe.Unserializer` could still restore successful plan state without invoking
+the private constructor. The bypass was reproduced under Haxe interpretation.
+The admitted compiler profile now rejects `haxe.Unserializer` and
+`Type.createEmptyInstance` at the same typed boundary, and an all-target
+negative fixture pins the behavior. The review also found the ADR-009 malformed
+field case described there. Both are locally repaired, but F004 remains open
+until a fresh review accepts the post-correction commit. See the
+[exact review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-5e151ed/INTEGRATION.md).

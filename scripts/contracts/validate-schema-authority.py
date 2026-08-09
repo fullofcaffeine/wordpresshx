@@ -135,7 +135,7 @@ def validate_architecture_manifest() -> None:
         raise ValidationError("architecture vector count changed")
     if prototype.get("wireJsonBoundaryVectorCount") != 39:
         raise ValidationError("architecture wire JSON boundary count changed")
-    if prototype.get("foreignMalformedValueCount") != 19:
+    if prototype.get("foreignMalformedValueCount") != 22:
         raise ValidationError("architecture foreign malformed value count changed")
     if prototype.get("nativeDecoderSuccessCount") != 9:
         raise ValidationError("architecture native decoder success count changed")

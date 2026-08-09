@@ -521,6 +521,17 @@ contains 19 cases across PHP and Genes. The complete cross-target gate passes,
 but the corrected bytes still require fresh independent acceptance. See the
 [review and local disposition](../../review/oracle/results/adr012-f004-final-repair-99b5f21/INTEGRATION.md).
 
+The fresh GPT-5.6 Pro review of corrected commit
+`5e151ed02767378ab50f4b703fdd373fa9c0874b` accepted that discriminator
+correction but found a new payload-totality case: a valid generated PHP array
+could contain a malformed field element, and direct field access escaped as an
+exception. The finding was reproduced on PHP 8.4.7. Field access is now inside
+the checked snapshot boundary, and missing or malformed field elements return
+`JsonRejected` without bytes. Native PHP and Genes probes cover missing names,
+missing values, and non-object elements; the semantic malformed corpus now
+contains 22 cases. This remains a local repair pending fresh acceptance. See
+the [exact review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-5e151ed/INTEGRATION.md).
+
 ## Migration, rollback, and supersession
 
 No released consumer depends on this schema. Before SDK-054 lands, rollback is

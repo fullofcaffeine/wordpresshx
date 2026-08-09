@@ -47,5 +47,12 @@ rejected(
   {_hx_index: 1, __enum__: "wordpress.hx.contracts.WireValue"},
   "$: invalid-bool"
 );
+rejected("field-without-name", WireValue.ObjectValue([{}]), "$[0]: invalid-field");
+rejected(
+  "field-without-value",
+  WireValue.ObjectValue([{name: "valid"}]),
+  "$[0]: invalid-field"
+);
+rejected("non-object-field", WireValue.ObjectValue([7]), "$[0]: invalid-field");
 
 console.log("Genes foreign WireValue rejection passed");

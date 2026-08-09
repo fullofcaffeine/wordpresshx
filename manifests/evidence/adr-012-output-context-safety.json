@@ -7,11 +7,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "5ddcf17d3e7597d918c1d067bf56d5b4f6a3a9056d125c30bda7b2bdac977771"
+      "sha256": "3538436483baba505a8dcb0123f593a0ef7e9ac56cb160b820782863771de9c9"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "07dbbba63b6bcf7d14470548a15f9d28867f96325c74ffc6958c207426156eb3"
+      "sha256": "bfcc22368d95dcd72c73ddb24a8af8baeaf771f279c1ec46b5528d306e4a7570"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,11 +19,11 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "c3fb49253e30420864d739970a2cb6de76437955708b4fb7307759d132b6c214"
+      "sha256": "0cb07ac17260daf924b08d7c194b7b05f076f65106895819485df9093848f1f0"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
-      "sha256": "bafc35d76b5dfd23cf89716e125bc4b3f8c12565c9b0dfedfbe66bc97e77401d"
+      "sha256": "38ca091d345355d6a732495a9a52b2862dc04e21cd6e67a43c288534dad4520f"
     },
     "workflow": {
       "path": ".github/workflows/output-context.yml",
@@ -46,7 +46,7 @@
       "python3 scripts/output-context/validate-architecture.py",
       "bash scripts/output-context/test.sh"
     ],
-    "sourceTreeSha256": "056734666363151d935f05278b9a990aa5afd9e06382571658afdc6193586e89",
+    "sourceTreeSha256": "fd2f830962943c2ea55d0fd6af45f29f15d9f7703c91725d44f271b23729c85e",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.41.4",
     "typescriptVersion": "5.9.3",
@@ -60,9 +60,9 @@
     "allowedEdgeCount": 12,
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
-    "compileNegativeCount": 32,
+    "compileNegativeCount": 33,
     "emptyFailureVectorCount": 1,
-    "typedConstructionGuardCount": 5,
+    "typedConstructionGuardCount": 6,
     "independentMutationCount": 36,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "reactTextAttributeTextareaAndScriptData": "passed",
@@ -175,7 +175,7 @@
       "openFindings": ["ADR012-F004-RR2-F001", "ADR012-F004-RR2-F002", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
       "localDisposition": "retained-after-current-main-cross-target-reproduction"
     },
-    "f004RepairAcceptanceRereview": {
+  "f004RepairAcceptanceRereview": {
       "decision": "changes-required",
       "requestId": "orq_20260809T014239Z_9ab978af",
       "reviewedCommit": "99b5f21f2e36bef907650cd7c2b1d30d61dadfbd",
@@ -186,13 +186,34 @@
       "integrationSha256": "1d96e7966e50809d7b6387d93c4e0559668975bd52c976b3f1abbc8859d1a45a",
       "closedFindings": ["ADR012-F004-RR2-F001", "ADR009-RR2-F001", "ADR009-RR2-F002", "ADR009-RR2-F003"],
       "openFindings": ["ADR012-F004-RR3-F001", "ADR009-RR3-F001", "ADR012-EVIDENCE-RR3-F001"],
-      "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
-    },
-    "finalFindingsRepair": {
+    "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
+  },
+  "f004FinalAcceptanceRereview": {
+    "decision": "changes-required",
+    "requestId": "orq_20260809T190746Z_2da016f8",
+    "reviewedCommit": "5e151ed02767378ab50f4b703fdd373fa9c0874b",
+    "promptSha256": "0a74b34c1dbfed6dead75129d4f6a8ec2915a264fa3cc588ecf9b768e46fcaee",
+    "bundleSha256": "ecd2e77bc76eac4c8190f5cbf9ffe6b0a6a493c172c72cc608ef74c63d4736e7",
+    "responseSha256": "78d24a58a23101fbdc8b7509a69c8a95769a426a913bcfb32578dedd5d44db17",
+    "reportPath": "review/oracle/results/adr012-f004-final-acceptance-5e151ed/ORACLE-REVIEW.md",
+    "integrationPath": "review/oracle/results/adr012-f004-final-acceptance-5e151ed/INTEGRATION.md",
+    "integrationSha256": "c12ba84fc53a23abf7df4ad788151fd868bfca176ca7ef103baa0b3498b89408",
+    "closedPriorFindings": [
+      "ADR012-F004-RR3-F001",
+      "ADR009-RR3-F001",
+      "ADR012-EVIDENCE-RR3-F001"
+    ],
+    "openFindings": [
+      "ADR012-F004-RR4-F001",
+      "ADR009-RR4-F001"
+    ],
+    "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
+  },
+  "finalFindingsRepair": {
       "status": "local-cross-target-proof-passed-pending-fresh-rereview",
       "jsonPlanState": "closed-encoded-or-rejected",
       "emptyFailureReason": "codec-rejected-without-reason",
-      "typedConstructionGuard": "haxe-onAfterTyping-fields-statics-constructor-init-and-reflection-exclusion",
+    "typedConstructionGuard": "haxe-onAfterTyping-fields-statics-constructor-init-reflection-and-constructorless-reconstitution-exclusion",
       "privateAccessNegativeTargets": ["haxe-interp-4.3.7", "genes-ts-1.41.4", "stock-haxe-php-8.4.7"],
       "untrustedCompilerMacrosAdmitted": false
     }

@@ -42,5 +42,8 @@ wordpresshx_expect_rejected('valid-index-unknown-tag', new WireValue('Unknown', 
 wordpresshx_expect_rejected('mismatched-tag-index', new WireValue('BoolValue', 0, array(true)), '$: invalid-wire-value');
 wordpresshx_expect_rejected('null-with-parameters', new WireValue('NullValue', 0, array(true)), '$: invalid-wire-value');
 wordpresshx_expect_rejected('bool-without-parameters', new WireValue('BoolValue', 1, array()), '$: invalid-wire-value');
+wordpresshx_expect_rejected('field-without-name', WireValue::ObjectValue(\Array_hx::wrap([new stdClass()])), '$[0]: invalid-field');
+wordpresshx_expect_rejected('field-without-value', WireValue::ObjectValue(\Array_hx::wrap([(object) array('name' => 'valid')])), '$[0]: invalid-field');
+wordpresshx_expect_rejected('non-object-field', WireValue::ObjectValue(\Array_hx::wrap([7])), '$[0]: invalid-field');
 
 echo "PHP foreign WireValue rejection passed\n";

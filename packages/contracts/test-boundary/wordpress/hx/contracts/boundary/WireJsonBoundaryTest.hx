@@ -29,8 +29,8 @@ final class WireJsonBoundaryTest {
 		rejected(lines, "null-object", ObjectValue(null), 64, "$: invalid-object");
 		final nullField:Array<WireField> = [null];
 		rejected(lines, "null-field", ObjectValue(nullField), 64, "$[0]: null-field");
-		rejected(lines, "null-field-name", ObjectValue([{name: null, value: NullValue}]), 64, "$[0]/<field-name>: invalid-string");
-		rejected(lines, "null-field-value", ObjectValue([{name: "value", value: null}]), 64, "$/value: null-wire-value");
+		rejected(lines, "null-field-name", ObjectValue([{name: null, value: NullValue}]), 64, "$[0]: invalid-field");
+		rejected(lines, "null-field-value", ObjectValue([{name: "value", value: null}]), 64, "$[0]: invalid-field");
 
 		final invalidHigh = invalidHighSurrogate();
 		rejected(lines, "invalid-high-surrogate-value", StringValue(invalidHigh), 64, "$: invalid-unicode");

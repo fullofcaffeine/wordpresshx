@@ -301,6 +301,8 @@ assert_compile_failure_all_targets json_plan_reflective_constructor \
 	'Reflective construction is not admitted by the output-context profile'
 assert_compile_failure_all_targets json_plan_reflective_alias \
 	'Reflective construction is not admitted by the output-context profile'
+assert_compile_failure_all_targets json_plan_unserializer \
+	'Constructorless reconstitution is not admitted by the output-context profile'
 
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \
