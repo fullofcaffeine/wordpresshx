@@ -68,8 +68,9 @@ if [[ ! -x "${typescript_command}" ]]; then
 	exit 1
 fi
 
+python3 "${repository_root}/packages/gutenberg/scripts/verify-dependency-lock.py" --metadata-only
 (
-	cd "${repository_root}/packages/cli"
+	cd "${repository_root}/packages/gutenberg"
 	lix --silent download
 )
 
@@ -101,7 +102,7 @@ main_class="Main"
 	--interp >"${test_root}/interp.txt"
 
 (
-	cd "${repository_root}/packages/cli"
+	cd "${repository_root}/packages/gutenberg"
 	"${scoped_haxe}" \
 		-cp ../../fixtures/output-context/src \
 		-cp ../../fixtures/output-context/test \
@@ -110,7 +111,6 @@ main_class="Main"
 			--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 			--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 		-lib genes-ts \
-		-lib hxnodejs \
 		-D genes.ts \
 		-D js-es=6 \
 		-dce full \
@@ -196,7 +196,7 @@ assert_compile_failure_all_targets() {
 				;;
 			genes)
 				if (
-					cd "${repository_root}/packages/cli"
+					cd "${repository_root}/packages/gutenberg"
 					"${scoped_haxe}" \
 						-cp ../../fixtures/output-context/src \
 						-cp "../../fixtures/output-context/test-negative/${fixture}" \
@@ -205,7 +205,6 @@ assert_compile_failure_all_targets() {
 						--macro 'nullSafety("wordpress.hx.output.prototype", Strict)' \
 						--macro 'wordpress.hx.output.prototype.OutputContextBoundaryGuard.install()' \
 						-lib genes-ts \
-						-lib hxnodejs \
 						-D genes.ts \
 						-D js-es=6 \
 						-js "${test_root}/${fixture}-genes/index.ts"

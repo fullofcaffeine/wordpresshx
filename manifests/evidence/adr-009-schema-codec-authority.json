@@ -7,11 +7,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "b87b6e5e23be1cdec476bde7eaaea8a5f2fe29593b493933a401ebbf91e834e0"
+      "sha256": "fb2d17664c97780b507d1cd7bae5aacacd42478b1707d5b59456222ecf0593cb"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "b04148e534be0519a7e4e43e435e578af3296a899d439a5e562e1ee1f38d2e23"
+      "sha256": "149c96114a093244db8fb6709035faa4f28421662ce29671164ca7e1336c4de4"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -47,7 +47,7 @@
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
-      "sha256": "d1e3a3019fd3aabaa556066e6cc6d7fb528b186bb8d2bc7f0ac04ba7b64a4ed3"
+      "sha256": "1dd83173ec51c9673ddcbb0314a78291171f020e01a2eb038a61d20b334d93d7"
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
@@ -59,7 +59,7 @@
     "canonicalJsonIdentity": "wordpress-hx.contract-canonical-json.v1",
     "haxeType": "wordpress.hx.contracts.schema.SchemaDocument",
     "domainCodec": "wordpress.hx.contracts.ContractCodec<T>",
-    "browserCompiler": "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7",
+    "browserCompiler": "genes-ts-1.41.4-98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
     "phpPrototypeCompiler": "stock-haxe-4.3.7-php",
     "manualParallelTargetSchemasAllowed": false,
     "runtimeReflectionRequired": false
@@ -71,9 +71,9 @@
       "git diff --check",
       "git diff --cached --check"
     ],
-    "sourceTreeSha256": "890fae78c828a05fc2c806283584466251de4dd4c40e548bf3d4d9ff713ebb6b",
+    "sourceTreeSha256": "7ab36824f4f9f4b3188bbcdb2d935ef12f5acc8d1b23351f4c483b25b84b2ccc",
     "haxeVersion": "4.3.7",
-    "genesVersion": "1.38.0",
+    "genesVersion": "1.41.4",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",

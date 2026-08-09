@@ -272,7 +272,7 @@ generated fragment class, and it contains no repository-forbidden weak Haxe
 operation. Twenty-seven compile-negative fixtures cover cross-context
 substitution, direct construction, and the closed HXX rejection categories.
 One canonical native-runtime plan is byte-identical on Haxe 4.3.7
-interpretation, Genes 1.38.0 plus TypeScript 5.9.3/Node 22.17.0, and
+interpretation, Genes 1.41.4 plus TypeScript 5.9.3/Node 22.17.0, and
 stock-Haxe PHP 8.4.7.
 
 The React and WordPress probes consume that exact Haxe-generated plan and

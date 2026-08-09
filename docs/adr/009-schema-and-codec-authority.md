@@ -435,7 +435,7 @@ and ordering, decomposed-string preservation, closed/duplicate fields, rules
 on roots/array items/union payloads, enum and tagged-union behavior,
 exact/unavailable rules, development encode validation, strict null safety,
 JSON Pointer escaping, stable errors, and byte-identical output through Haxe
-interpretation, Genes 1.38.0 plus strict TypeScript 5.9.3 on Node 22.17.0, and
+interpretation, Genes 1.41.4 plus strict TypeScript 5.9.3 on Node 22.17.0, and
 stock Haxe PHP on PHP 8.4.7.
 
 The `contract-schema` job in the public repository workflow runs that complete

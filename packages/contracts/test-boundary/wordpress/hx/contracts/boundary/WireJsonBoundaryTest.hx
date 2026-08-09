@@ -1,8 +1,5 @@
 package wordpress.hx.contracts.boundary;
 
-#if js
-import js.Node;
-#end
 import haxe.io.Bytes;
 import wordpress.hx.contracts.CanonicalWireJson;
 import wordpress.hx.contracts.WireJsonEncoding;
@@ -92,11 +89,10 @@ final class WireJsonBoundaryTest {
 				throw new haxe.Exception("valid mutation fixture was rejected: " + reason);
 		}
 
-		final output = lines.join("\n") + "\n";
 		#if js
-		Node.process.stdout.write(output);
+		RuntimeConsole.log(lines.join("\n"));
 		#else
-		Sys.print(output);
+		Sys.print(lines.join("\n") + "\n");
 		#end
 	}
 
@@ -182,3 +178,10 @@ final class WireJsonBoundaryTest {
 		}
 	}
 }
+
+#if js
+@:native("console")
+private extern class RuntimeConsole {
+	static function log(value:String):Void;
+}
+#end

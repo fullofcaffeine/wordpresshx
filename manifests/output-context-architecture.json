@@ -336,7 +336,7 @@
     "eventHandlers": "typed-callbacks-in-browser-HXX-only"
   },
   "prototypeEvidence": {
-    "sourceTreeSha256": "344ad9542fcec290e6ac81618460367faae5e20f4813d1dbe9460258223fc39b",
+    "sourceTreeSha256": "33b4078efc59104b5f20662f60c69bcdb89e9fc49e61e6fb4aa7c21bc6c1b033",
     "transcriptSha256": "1d6a709730ce4e31e0c54633715e142ac1d00ae4289659a7ad1c6fe3a83b3b4c",
     "contextCount": 11,
     "allowedEdgeCount": 12,

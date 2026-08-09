@@ -1,8 +1,5 @@
 package wordpress.hx.contracts.tests;
 
-#if js
-import js.Node;
-#end
 import haxe.io.Bytes;
 import wordpress.hx.contracts.CanonicalWireJson;
 import wordpress.hx.contracts.WireJsonEncoding;
@@ -62,11 +59,10 @@ class SchemaAuthorityTest {
 		lines.push("encode-invariants=" + verifyEncodeInvariants(codec));
 		lines.push("wire-json-invariants=" + verifyWireJsonInvariants());
 
-		final output = lines.join("\n") + "\n";
 		#if js
-		Node.process.stdout.write(output);
+		RuntimeConsole.log(lines.join("\n"));
 		#else
-		Sys.print(output);
+		Sys.print(lines.join("\n") + "\n");
 		#end
 	}
 
@@ -485,6 +481,13 @@ class SchemaAuthorityTest {
 		return {name: name, value: value};
 	}
 }
+
+#if js
+@:native("console")
+private extern class RuntimeConsole {
+	static function log(value:String):Void;
+}
+#end
 
 private class ArticleCodec implements ContractCodec<Article> {
 	static final RULES = new ArticleRules();

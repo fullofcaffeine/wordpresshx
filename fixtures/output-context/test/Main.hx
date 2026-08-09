@@ -128,7 +128,7 @@ final class Main {
 			new CssRule(TodoTitle, [StylesheetDisplay(Block)])
 		]));
 
-		Sys.println(PlanJson.object([
+		final plan = PlanJson.object([
 			new JsonField("schema", PlanJson.quote("wordpresshx.output-context-runtime-plan.v3")),
 			new JsonField("text", PlanJson.quote(OutputSinks.text(Output.text('<script>alert("text")</script>&"\'')))),
 			new JsonField("attribute", PlanJson.quote(OutputSinks.attribute(Output.attribute('" autofocus onfocus="alert(1)" data-note="<unsafe>"')))),
@@ -146,7 +146,12 @@ final class Main {
 			new JsonField("inlineStyle", PlanJson.quote(inlineStyle)),
 			new JsonField("stylesheet", PlanJson.quote(stylesheet)),
 			new JsonField("markup", markupPlan(markup))
-		]));
+		]);
+		#if js
+		RuntimeConsole.log(plan);
+		#else
+		Sys.println(plan);
+		#end
 	}
 
 	static function invalidUnicode():String {
@@ -281,6 +286,13 @@ final class Main {
 		};
 	}
 }
+
+#if js
+@:native("console")
+private extern class RuntimeConsole {
+	static function log(value:String):Void;
+}
+#end
 
 final class JsonField {
 	public final name:String;

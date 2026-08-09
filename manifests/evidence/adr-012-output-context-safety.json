@@ -7,11 +7,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "02cf0fa2d07041c26667e3ba3ef905efb26f4fd0069a60b9256c56c359433b8f"
+      "sha256": "aa7dcfba0029bd77ed41fad2f747de173f277310325c0fda3a6ca6fca6750a24"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "dce138b68f914a5be51ce9a64e7f4ed0290b8d7ef6bc2342c36e630a135a539c"
+      "sha256": "8b48d5ec7ee040ac9f2f7177731d2e81e483ae925c575acd0b77a80a6a9c3b9c"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -23,7 +23,7 @@
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
-      "sha256": "2e922db491df18f2de5051b32711460d8832963930d265ef13a400628b131285"
+      "sha256": "83c020e00c882da341da97c9ad16908ddd79b5915600e38343b20ef9379866f7"
     },
     "workflow": {
       "path": ".github/workflows/output-context.yml",
@@ -37,7 +37,7 @@
     "terminalRawStringConversionAllowed": false,
     "terminalRetentionPolicy": "opaque-until-final-sink-sdk-policy",
     "unsafeRawApiPublished": false,
-    "browserCompiler": "genes-ts-1.38.0-122162abefc2035b307508e521348ea4fb36dab7",
+    "browserCompiler": "genes-ts-1.41.4-98a51bdb7a5a1e31002b9ba47855d41905ea48ef",
     "phpPrototypeCompiler": "stock-haxe-4.3.7-php",
     "wordpressRuntimeAuthority": "wordpress-7.0"
   },
@@ -46,9 +46,9 @@
       "python3 scripts/output-context/validate-architecture.py",
       "bash scripts/output-context/test.sh"
     ],
-    "sourceTreeSha256": "344ad9542fcec290e6ac81618460367faae5e20f4813d1dbe9460258223fc39b",
+    "sourceTreeSha256": "33b4078efc59104b5f20662f60c69bcdb89e9fc49e61e6fb4aa7c21bc6c1b033",
     "haxeVersion": "4.3.7",
-    "genesVersion": "1.38.0",
+    "genesVersion": "1.41.4",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",

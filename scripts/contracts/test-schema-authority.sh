@@ -70,10 +70,10 @@ if [[ "$("${node_command}" -p 'require(process.argv[1]).version' "${typescript_r
   exit 1
 fi
 
-python3 "${repository_root}/packages/cli/scripts/verify-dependency-lock.py"
+python3 "${repository_root}/packages/gutenberg/scripts/verify-dependency-lock.py" --metadata-only
 python3 "${repository_root}/scripts/contracts/validate-schema-authority.py"
 (
-	cd "${repository_root}/packages/cli"
+	cd "${repository_root}/packages/gutenberg"
 	lix --silent download
 )
 
@@ -103,14 +103,13 @@ main_class="wordpress.hx.contracts.tests.SchemaAuthorityTest"
 	--interp >"${test_root}/interp.txt"
 
 (
-  cd "${repository_root}/packages/cli"
+  cd "${repository_root}/packages/gutenberg"
   "${scoped_haxe}" \
     -cp ../contracts/src \
 		-cp ../contracts/test \
 		-main "${main_class}" \
 		--macro 'nullSafety("wordpress.hx.contracts", Strict)' \
 		-lib genes-ts \
-    -lib hxnodejs \
     -D genes.ts \
     -D js-es=6 \
     -dce full \
@@ -156,13 +155,12 @@ boundary_main="wordpress.hx.contracts.boundary.WireJsonBoundaryTest"
 	-main "${boundary_main}" \
 	--interp >"${test_root}/boundary-interp.txt"
 (
-	cd "${repository_root}/packages/cli"
+	cd "${repository_root}/packages/gutenberg"
 	"${scoped_haxe}" \
 		-cp ../contracts/src \
 		-cp ../contracts/test-boundary \
 		-main "${boundary_main}" \
 		-lib genes-ts \
-		-lib hxnodejs \
 		-D genes.ts \
 		-D js-es=6 \
 		-dce full \
@@ -256,14 +254,13 @@ assert_compile_failure_all_targets() {
 				;;
 			genes)
 				if (
-					cd "${repository_root}/packages/cli"
+					cd "${repository_root}/packages/gutenberg"
 					"${scoped_haxe}" \
 						-cp ../contracts/src \
 						-cp "../contracts/test-negative/${fixture}" \
 						-main "${fixture_main}" \
 						--macro 'nullSafety("wordpress.hx.contracts", Strict)' \
 						-lib genes-ts \
-						-lib hxnodejs \
 						-D genes.ts \
 						-D js-es=6 \
 						-js "${test_root}/${fixture}-genes/index.ts"
