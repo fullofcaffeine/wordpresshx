@@ -310,6 +310,17 @@ def main() -> None:
 		"stmt:if-int-equality:5230:5349": ("statement", 2, b"if (remainderSummary == 4)"),
 		"stmt:sys-println:5262:5295": ("statement", 3, b'Sys.println("int-remainder:pass")'),
 		"stmt:sys-println:5311:5344": ("statement", 3, b'Sys.println("int-remainder:fail")'),
+		"stmt:local-int:5353:5393": ("statement", 2, b"final positiveQuotient = Std.int(7 / 2)"),
+		"stmt:local-int:5396:5445": ("statement", 2, b"final negativeDividendQuotient = Std.int(-7 / 2)"),
+		"stmt:local-int:5448:5496": ("statement", 2, b"final negativeDivisorQuotient = Std.int(7 / -2)"),
+		"stmt:local-int:5499:5550": ("statement", 2, b"final groupedQuotient = Std.int((9 + 7) / (2 + 2))"),
+		"stmt:local-int:5553:5608": ("statement", 2, b"final minimumQuotient = Std.int((-2147483647 - 1) / 1)"),
+		"stmt:local-int:5611:5723": ("statement", 2, b"final divisionSummary = positiveQuotient + negativeDividendQuotient + negativeDivisorQuotient + groupedQuotient"),
+		"stmt:if-int-equality:5726:5978": ("statement", 2, b"if (divisionSummary == 1)"),
+		"stmt:if-int-equality:5757:5915": ("statement", 3, b"if (minimumQuotient == (-2147483647 - 1))"),
+		"stmt:sys-println:5805:5848": ("statement", 4, b'Sys.println("int-division-truncation:pass")'),
+		"stmt:sys-println:5866:5909": ("statement", 4, b'Sys.println("int-division-truncation:fail")'),
+		"stmt:sys-println:5930:5973": ("statement", 3, b'Sys.println("int-division-truncation:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

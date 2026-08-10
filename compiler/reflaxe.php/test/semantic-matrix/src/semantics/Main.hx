@@ -186,5 +186,21 @@ class Main {
 		} else {
 			Sys.println("int-remainder:fail");
 		}
+
+		final positiveQuotient = Std.int(7 / 2);
+		final negativeDividendQuotient = Std.int(-7 / 2);
+		final negativeDivisorQuotient = Std.int(7 / -2);
+		final groupedQuotient = Std.int((9 + 7) / (2 + 2));
+		final minimumQuotient = Std.int((-2147483647 - 1) / 1);
+		final divisionSummary = positiveQuotient + negativeDividendQuotient + negativeDivisorQuotient + groupedQuotient;
+		if (divisionSummary == 1) {
+			if (minimumQuotient == (-2147483647 - 1)) {
+				Sys.println("int-division-truncation:pass");
+			} else {
+				Sys.println("int-division-truncation:fail");
+			}
+		} else {
+			Sys.println("int-division-truncation:fail");
+		}
 	}
 }

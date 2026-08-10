@@ -172,5 +172,20 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-remainder:fail' . PHP_EOL;
 		}
+		$positiveQuotient = \intdiv( 7, 2 );
+		$negativeDividendQuotient = \intdiv( -7, 2 );
+		$negativeDivisorQuotient = \intdiv( 7, -2 );
+		$groupedQuotient = \intdiv( ( 9 + 7 ), ( 2 + 2 ) );
+		$minimumQuotient = \intdiv( ( -2147483647 - 1 ), 1 );
+		$divisionSummary = $positiveQuotient + $negativeDividendQuotient + $negativeDivisorQuotient + $groupedQuotient;
+		if ( $divisionSummary === 1 ) {
+			if ( $minimumQuotient === ( -2147483647 - 1 ) ) {
+				echo 'int-division-truncation:pass' . PHP_EOL;
+			} else {
+				echo 'int-division-truncation:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-division-truncation:fail' . PHP_EOL;
+		}
 	}
 }

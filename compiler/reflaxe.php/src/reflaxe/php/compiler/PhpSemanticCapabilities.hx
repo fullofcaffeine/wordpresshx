@@ -15,6 +15,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IntSubtraction = "numeric.int-subtraction";
 	var IntMultiplication = "numeric.int-multiplication";
 	var IntModulo = "numeric.int-modulo";
+	var IntTruncatingDivision = "numeric.int-truncating-division";
 	var IntUnaryNegation = "numeric.int-unary-negation";
 	var IntParenthesizedGrouping = "numeric.int-parenthesized-grouping";
 	var InitializedIntLocal = "value.initialized-int-local";
@@ -157,6 +158,7 @@ class PhpSemanticCapabilities {
 			record(IntSubtraction, Numeric, Admitted, semantic, owner),
 			record(IntMultiplication, Numeric, Admitted, semantic, owner),
 			record(IntModulo, Numeric, Admitted, semantic, owner),
+			record(IntTruncatingDivision, Numeric, Admitted, semantic, owner),
 			record(IntUnaryNegation, Numeric, Admitted, semantic, owner),
 			record(IntParenthesizedGrouping, Numeric, Admitted, semantic, owner),
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
@@ -229,7 +231,7 @@ class PhpSemanticCapabilities {
 				"only exact Int-array length/read/write, direct result-discarded Int-array push/pop, and the compiler-owned Unicode-scalar String length helper exist",
 				owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned,
-				"division, overflow outside admitted constant proofs, and runtime-dependent modulo are not classified", owner),
+				"plain Float division, overflow outside admitted constant proofs, and runtime-dependent division or modulo are not classified", owner),
 			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "only Unicode-scalar String length is classified", owner),
 			record(CollectionOrdering, Ordering, UnverifiedOwned, "collection and object ordering are not classified", owner),
 			record(PathEnvironment, PathEnvironmentFileSystemNetworkTimezone, UnverifiedOwned, "path and environment semantics are not classified", owner),

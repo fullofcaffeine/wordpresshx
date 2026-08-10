@@ -22,6 +22,11 @@ import reflaxe.php.ir.PhpType;
 import reflaxe.php.ir.PhpVisibility;
 
 using reflaxe.helpers.ClassFieldHelper;
+
+private typedef PhpIntDivisionOperands = {
+	final left:TypedExpr;
+	final right:TypedExpr;
+}
 #end
 
 /** The deliberately small first typed-Haxe AST to PHP IR lowering slice. **/
@@ -634,6 +639,8 @@ class PhpTypedAstLowerer {
 				if (isIntArrayPushTarget(target)) {
 					Context.fatalError("reflaxe.php Array<Int>.push return values are not yet admitted", expression.pos);
 					PhpInt(0);
+				} else if (isStdIntDivisionCall(target, arguments)) {
+					lowerTruncatedIntDivision(expression, arguments, intArrayLengths);
 				} else {
 					lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 				}
@@ -710,6 +717,38 @@ class PhpTypedAstLowerer {
 				Context.fatalError("reflaxe.php supports only source-owned static Int calls in the admitted semantic slice", call.pos);
 				PhpInt(0);
 		}
+	}
+
+	function lowerTruncatedIntDivision(call:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>):PhpExpr {
+		final operands = arguments.length == 1 ? intDivisionOperands(arguments[0]) : null;
+		if (operands == null) {
+			Context.fatalError("reflaxe.php Std.int division requires compiler-proven Int constants, a nonzero divisor, and a signed 32-bit result", call.pos);
+			return PhpInt(0);
+		}
+		PhpSemanticCapabilities.requireAdmitted(IntTruncatingDivision);
+		return PhpFunctionCall("\\intdiv", [
+			lowerIntValue(operands.left, intArrayLengths),
+			lowerIntValue(operands.right, intArrayLengths)
+		]);
+	}
+
+	static function intDivisionOperands(expression:TypedExpr):Null<PhpIntDivisionOperands> {
+		return switch (expression.expr) {
+			case TBinop(OpDiv, left, right): {left: left, right: right};
+			case TMeta(_, inner) | TParenthesis(inner): intDivisionOperands(inner);
+			case _: null;
+		}
+	}
+
+	static function isStdIntTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef)): classRef.get().module == "Std" && fieldRef.get().name == "int";
+			case _: false;
+		}
+	}
+
+	static function isStdIntDivisionCall(target:TypedExpr, arguments:Array<TypedExpr>):Bool {
+		return isStdIntTarget(target) && arguments.length == 1 && intDivisionOperands(arguments[0]) != null;
 	}
 
 	function lowerStaticApplicationStringCall(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>):PhpExpr {

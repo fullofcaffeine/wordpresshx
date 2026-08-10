@@ -21,6 +21,11 @@ private typedef PhpExceptionValidationState = {
 	var tryCount:Int;
 	final methodLocalNames:Map<String, Bool>;
 }
+
+private typedef PhpIntDivisionOperands = {
+	final left:TypedExpr;
+	final right:TypedExpr;
+}
 #end
 
 /** Rejects unsupported application AST before Reflaxe's after-generation emission phase. **/
@@ -545,6 +550,11 @@ class PhpTypedAstValidator {
 			case TCall(target, arguments):
 				if (isIntArrayPushTarget(target)) {
 					Context.error("reflaxe.php Array<Int>.push return values are not yet admitted", expression.pos);
+				} else if (isStdIntDivisionCall(target, arguments)) {
+					if (arguments.length != 1 || constantTruncatedIntDivisionValue(arguments[0]) == null) {
+						Context.error("reflaxe.php Std.int division requires compiler-proven Int constants, a nonzero divisor, and a signed 32-bit result",
+							expression.pos);
+					}
 				} else {
 					validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 				}
@@ -596,6 +606,42 @@ class PhpTypedAstValidator {
 			case Modulo: leftValue % rightValue;
 		}
 		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
+	}
+
+	static function constantTruncatedIntDivisionValue(expression:TypedExpr):Null<Int> {
+		final operands = intDivisionOperands(expression);
+		if (operands == null) {
+			return null;
+		}
+		if (TypeTools.toString(operands.left.t) != "Int" || TypeTools.toString(operands.right.t) != "Int") {
+			return null;
+		}
+		final leftValue = constantIntValue(operands.left);
+		final rightValue = constantIntValue(operands.right);
+		if (leftValue == null || rightValue == null || rightValue == 0) {
+			return null;
+		}
+		final result = leftValue * 1.0 / rightValue;
+		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
+	}
+
+	static function intDivisionOperands(expression:TypedExpr):Null<PhpIntDivisionOperands> {
+		return switch (expression.expr) {
+			case TBinop(OpDiv, left, right): {left: left, right: right};
+			case TMeta(_, inner) | TParenthesis(inner): intDivisionOperands(inner);
+			case _: null;
+		}
+	}
+
+	static function isStdIntTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FStatic(classRef, fieldRef)): classRef.get().module == "Std" && fieldRef.get().name == "int";
+			case _: false;
+		}
+	}
+
+	static function isStdIntDivisionCall(target:TypedExpr, arguments:Array<TypedExpr>):Bool {
+		return isStdIntTarget(target) && arguments.length == 1 && intDivisionOperands(arguments[0]) != null;
 	}
 
 	static function isStringClass(classType:ClassType):Bool {
