@@ -280,9 +280,15 @@ def main() -> None:
         "stmt:local-int:3722:3761": ("statement", 2, b"final groupedSubtraction = 9 - (4 - 2)"),
         "stmt:local-int:3764:3827": ("statement", 2, b"final subtractionSummary = leftAssociated + groupedSubtraction"),
         "stmt:if-int-equality:3830:3974": ("statement", 2, b"if (subtractionSummary == 10)"),
-        "stmt:sys-println:3865:3909": ("statement", 3, b'Sys.println("int-subtraction-grouping:pass")'),
-        "stmt:sys-println:3925:3969": ("statement", 3, b'Sys.println("int-subtraction-grouping:fail")'),
-    }
+		"stmt:sys-println:3865:3909": ("statement", 3, b'Sys.println("int-subtraction-grouping:pass")'),
+		"stmt:sys-println:3925:3969": ("statement", 3, b'Sys.println("int-subtraction-grouping:fail")'),
+		"stmt:local-int:3978:4019": ("statement", 2, b"final multipliedByPrecedence = 2 + 3 * 4"),
+		"stmt:local-int:4022:4066": ("statement", 2, b"final multipliedAfterGrouping = (2 + 3) * 4"),
+		"stmt:local-int:4069:4148": ("statement", 2, b"final multiplicationSummary = multipliedByPrecedence + multipliedAfterGrouping"),
+		"stmt:if-int-equality:4151:4304": ("statement", 2, b"if (multiplicationSummary == 34)"),
+		"stmt:sys-println:4189:4236": ("statement", 3, b'Sys.println("int-multiplication-grouping:pass")'),
+		"stmt:sys-println:4252:4299": ("statement", 3, b'Sys.println("int-multiplication-grouping:fail")'),
+	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
             "stmt:return-int:96:115",

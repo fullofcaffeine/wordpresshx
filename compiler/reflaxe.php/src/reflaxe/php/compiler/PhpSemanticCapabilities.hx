@@ -13,6 +13,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var BoolLiteral = "value.bool-literal";
 	var IntAddition = "numeric.int-addition";
 	var IntSubtraction = "numeric.int-subtraction";
+	var IntMultiplication = "numeric.int-multiplication";
 	var IntParenthesizedGrouping = "numeric.int-parenthesized-grouping";
 	var InitializedIntLocal = "value.initialized-int-local";
 	var InitializedBoolLocal = "value.initialized-bool-local";
@@ -149,6 +150,7 @@ class PhpSemanticCapabilities {
 			record(BoolLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(IntAddition, Numeric, Admitted, semantic, owner),
 			record(IntSubtraction, Numeric, Admitted, semantic, owner),
+			record(IntMultiplication, Numeric, Admitted, semantic, owner),
 			record(IntParenthesizedGrouping, Numeric, Admitted, semantic, owner),
 			record(InitializedIntLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InitializedBoolLocal, ValuesCollections, Admitted, semantic, owner),

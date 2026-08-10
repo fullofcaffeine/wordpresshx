@@ -10,6 +10,12 @@ import reflaxe.php.ir.PhpIdentifier;
 
 using reflaxe.helpers.ClassFieldHelper;
 
+private enum ConstantIntOperation {
+	Add;
+	Subtract;
+	Multiply;
+}
+
 private typedef PhpExceptionValidationState = {
 	var tryCount:Int;
 	final methodLocalNames:Map<String, Bool>;
@@ -517,6 +523,10 @@ class PhpTypedAstValidator {
 			case TBinop(OpSub, left, right):
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
+			case TBinop(OpMult, left, right):
+				if (constantIntValue(expression) == null) {
+					Context.error("reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression", expression.pos);
+				}
 			case TArray(base, index):
 				validateProvenIntArrayIndex(expression, base, index, intArrayLengths);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
@@ -534,9 +544,34 @@ class PhpTypedAstValidator {
 			case TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, grouping, proven array reads, and source-owned calls",
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, grouping, proven array reads, and source-owned calls",
 					expression.pos);
 		}
+	}
+
+	static function constantIntValue(expression:TypedExpr):Null<Int> {
+		return switch (expression.expr) {
+			case TConst(TInt(value)): value;
+			case TBinop(OpAdd, left, right): constantIntBinaryValue(left, right, Add);
+			case TBinop(OpSub, left, right): constantIntBinaryValue(left, right, Subtract);
+			case TBinop(OpMult, left, right): constantIntBinaryValue(left, right, Multiply);
+			case TMeta(_, inner) | TParenthesis(inner): constantIntValue(inner);
+			case _: null;
+		}
+	}
+
+	static function constantIntBinaryValue(left:TypedExpr, right:TypedExpr, operation:ConstantIntOperation):Null<Int> {
+		final leftValue = constantIntValue(left);
+		final rightValue = constantIntValue(right);
+		if (leftValue == null || rightValue == null) {
+			return null;
+		}
+		final result:Float = switch (operation) {
+			case Add: leftValue * 1.0 + rightValue;
+			case Subtract: leftValue * 1.0 - rightValue;
+			case Multiply: leftValue * 1.0 * rightValue;
+		}
+		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
 	}
 
 	static function isStringClass(classType:ClassType):Bool {

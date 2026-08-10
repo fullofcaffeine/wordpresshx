@@ -142,5 +142,14 @@ class Main {
 		} else {
 			Sys.println("int-subtraction-grouping:fail");
 		}
+
+		final multipliedByPrecedence = 2 + 3 * 4;
+		final multipliedAfterGrouping = (2 + 3) * 4;
+		final multiplicationSummary = multipliedByPrecedence + multipliedAfterGrouping;
+		if (multiplicationSummary == 34) {
+			Sys.println("int-multiplication-grouping:pass");
+		} else {
+			Sys.println("int-multiplication-grouping:fail");
+		}
 	}
 }

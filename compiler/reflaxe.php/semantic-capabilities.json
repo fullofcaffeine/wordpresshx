@@ -437,6 +437,13 @@
     {
       "category": "numeric",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "numeric.int-multiplication",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "numeric",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "numeric.int-parenthesized-grouping",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -593,14 +600,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "75d666ec66ae0a1d972103fc030af866bb53612d13f72f09caac3908642d16ba"
+    "sha256": "77ea565b04f6ba44d60b027adb7f14a2a27adf104087841bfcff90e50db20db2"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 82,
+    "capabilityCount": 83,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 69,
+      "admitted": 70,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

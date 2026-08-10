@@ -132,5 +132,13 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-subtraction-grouping:fail' . PHP_EOL;
 		}
+		$multipliedByPrecedence = 2 + 3 * 4;
+		$multipliedAfterGrouping = ( 2 + 3 ) * 4;
+		$multiplicationSummary = $multipliedByPrecedence + $multipliedAfterGrouping;
+		if ( $multiplicationSummary === 34 ) {
+			echo 'int-multiplication-grouping:pass' . PHP_EOL;
+		} else {
+			echo 'int-multiplication-grouping:fail' . PHP_EOL;
+		}
 	}
 }

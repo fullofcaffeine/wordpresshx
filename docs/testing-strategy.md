@@ -70,11 +70,10 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's last hosted checkpoint covers 64 exact records. It
-includes read-only `Array<Int>.length` and non-null `String.length` with
-Unicode-scalar semantics. Repository bootstrap run `31372128871` provides that
-proof. Haxe job `93403213221` ran at commit
-`db9ff97362769d31ed62b9aabd5ee28aae97fdec`. This result does not advance
+The compiler scorecard's last hosted checkpoint covers 69 exact records. It
+includes typed `Int` subtraction and explicit grouping. Repository bootstrap
+run `31391174754` provides that proof. Haxe job `93463023123` ran at commit
+`0379ef6c0f7a5a3af2d7871050fa8e6b1ad9f1ce`. This result does not advance
 WordPress compatibility, official Haxe target qualification, or publication.
 
 Official Haxe target qualification applies only to the actual compiler-facing
@@ -114,14 +113,16 @@ passed the same clean lane in run `31377424790`. The 66-record indexed-write
 subject passed it in run `31381746528`. The 67-record non-empty-pop subject
 passed it in run `31386245792`. The current 69-record subtraction and grouping
 subject passed its exact clean lane in run `31391174754`.
+The local 70-record multiplication subject waits for its exact hosted lane.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 69 admitted, 6 explicitly
+registry. The current local subject lists 70 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
-differential fixture checks small `Int` addition and subtraction. It checks an
+differential fixture checks small `Int` addition and subtraction. It checks
+compiler-proven, 32-bit-safe constant multiplication. It also checks an
 initialized local, equality, and `if/else`. It checks required `Int` parameters
 and returns. It also checks a source-owned cross-module static call, explicit
 assignment, `Int <=`, and pre-test `while`. The array subset uses one fixed
@@ -176,10 +177,12 @@ and `Null<Int>` return remain compile-negative. Every compile-negative
 fixture must first run successfully under stock Haxe with empty stderr, so a
 malformed source program cannot be mistaken for a compiler limitation.
 
-The current numeric extension checks two distinct subtraction forms. Stock
+The numeric extension checks subtraction and multiplication grouping. Stock
 Haxe and generated PHP both produce `3` for `9 - 4 - 2`. They both produce `7`
-for `9 - (4 - 2)`. The generated PHP keeps the explicit parentheses. A
-stock-Haxe-valid Float fixture fails before target output. Overflow, division,
+for `9 - (4 - 2)`. They produce `14` for `2 + 3 * 4` and `20` for
+`(2 + 3) * 4`. The generated PHP keeps the required parentheses. Float and
+runtime-dependent multiplication fail before target output. This rule prevents
+silent Haxe 32-bit and PHP 64-bit overflow differences. Overflow, division,
 modulo, unary negation, coercion, and general numeric behavior remain outside
 this subject.
 

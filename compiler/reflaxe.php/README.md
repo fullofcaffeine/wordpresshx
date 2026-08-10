@@ -117,10 +117,12 @@ compiler explicitly rejects a null String argument instead of generating a PHP
 call with different behavior. Calls from handwritten weakly typed PHP are a
 separate adapter/ABI concern and are not covered by this source-owned call
 claim.
-The subtraction subset preserves Haxe left association and explicit grouping.
-For example, it keeps `9 - (4 - 2)` grouped in the generated PHP. The fixture
-also keeps Float subtraction outside this claim. Overflow, division, modulo,
-unary negation, coercion, and general numeric behavior remain unproved.
+The numeric subset preserves Haxe grouping and operator precedence. It keeps
+`9 - (4 - 2)` grouped in the generated PHP. It also distinguishes
+`2 + 3 * 4` from `(2 + 3) * 4`. This first multiplication path accepts only
+compiler-proven, 32-bit-safe constant expressions. Runtime-dependent and Float
+multiplication fail before output. Overflow, division, modulo, unary negation,
+coercion, and general numeric behavior remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The
