@@ -149,10 +149,17 @@
     },
     {
       "category": "values-collections",
-      "evidence": "general Array runtime behavior beyond fixed Int literals and proven reads is rejected",
+      "evidence": "general Array runtime behavior beyond fixed Int literals, exact length, and proven reads is rejected",
       "id": "collection.array",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "collection.int-array-length",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
     },
     {
       "category": "values-collections",
@@ -422,7 +429,7 @@
     },
     {
       "category": "runtime-stdlib",
-      "evidence": "only the compiler-owned Unicode-scalar String length helper exists",
+      "evidence": "only exact Int-array length and the compiler-owned Unicode-scalar String length helper exist",
       "id": "runtime.haxe-stdlib",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -551,14 +558,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "bf1b8b86b663c29cedc73fd2d0e74d16c9a31c6a3b70fd6326d559c3f6e9c619"
+    "sha256": "ca566eaadc30d132abe970dd977dc17c23e5d7e6571b3a4cc334bae8b83db0b4"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 76,
+    "capabilityCount": 77,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 63,
+      "admitted": 64,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

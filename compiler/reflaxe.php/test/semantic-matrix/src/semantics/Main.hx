@@ -96,5 +96,12 @@ class Main {
 		} else {
 			Sys.println("unicode-string-length:fail");
 		}
+
+		final valueCount = values.length;
+		if (valueCount == 3) {
+			Sys.println("int-array-length:pass");
+		} else {
+			Sys.println("int-array-length:fail");
+		}
 	}
 }

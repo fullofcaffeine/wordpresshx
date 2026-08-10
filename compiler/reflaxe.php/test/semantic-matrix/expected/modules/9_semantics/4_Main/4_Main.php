@@ -91,5 +91,11 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'unicode-string-length:fail' . PHP_EOL;
 		}
+		$valueCount = \count( $values );
+		if ( $valueCount === 3 ) {
+			echo 'int-array-length:pass' . PHP_EOL;
+		} else {
+			echo 'int-array-length:fail' . PHP_EOL;
+		}
 	}
 }

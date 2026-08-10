@@ -70,18 +70,13 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's last hosted bounded nullable-String checkpoint is
-independently hosted by Repository bootstrap run `30759497694`, Haxe job
-`91527368341`, at commit
-`615aff4fb12a624a945d9edfb7844ef0aa916dc0`. That proof covers the semantic
-matrix's 61 exact admitted records, deterministic generic compiler package,
-clean external package consumer, and native PHP 7.4.33/8.4.7 only; it advances
-neither WordPress compatibility, official Haxe target qualification, nor
-publication. The current 63-record subject adds the first owned runtime slice,
-non-null `String.length` with Unicode-scalar semantics, and is independently
-hosted by Repository bootstrap run `30767482140`, Haxe job `91548663977`, at
-commit `a6322afd6df166185679fb2c639ef62c55cfe01d`; it does not borrow the
-predecessor run or advance another product surface.
+The compiler scorecard's last hosted checkpoint covers 63 exact records. It
+includes non-null `String.length` with Unicode-scalar semantics. Repository
+bootstrap run `30767482140` provides that proof. Haxe job `91548663977` ran at
+commit `a6322afd6df166185679fb2c639ef62c55cfe01d`. The current 64-record subject
+adds exact read-only `Array<Int>.length`. It remains hosted-pending and does not
+borrow the 63-record result. Neither result advances WordPress compatibility,
+official Haxe target qualification, or publication.
 
 Official Haxe target qualification applies only to the actual compiler-facing
 surface. WordPress, package, or browser success cannot substitute for a custom
@@ -114,23 +109,24 @@ The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
-its exact command; the predecessor 61-record nullable-return subject remains
-historical authority for its own exact bytes, while the current 63-record
-String-length subject passed its exact hosted compiler/PHP lane in run
-`30767482140`.
+its exact command. The 63-record String-length subject passed its exact hosted
+compiler and PHP lane in run `30767482140`. The current 64-record array-length
+subject is local-only until the same clean lane passes.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 63 admitted, 6 explicitly unsupported,
+registry. The current local subject lists 64 admitted, 6 explicitly unsupported,
 and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
 parameters/returns, a source-owned cross-module static call, explicit `Int`
 assignment, `Int <=`, pre-test `while`, a fixed `Array<Int>` literal, and
 compiler-proven constant in-bounds reads under both stock Haxe 4.3.7 and exact
-PHP 8.4.7. It now also checks UTF-8 String literals, exact String-only
+PHP 8.4.7. It reads array length only from that proven local and lowers it to
+native PHP `count`. An inline String array remains a negative owner. The
+fixture also checks UTF-8 String literals, exact String-only
 concatenation, a typed String local, value equality, printing, and conversion of
 Haxe character positions into UTF-8 source-map byte ranges. Its first owned
 runtime helper lowers non-null `String.length` to an on-demand mapped PHP

@@ -105,8 +105,8 @@ typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
 and currently admits small `Int` literals/addition, initialized locals, `Int`
 equality, `if/else`, required `Int` parameters/returns, and source-owned static
 application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
-plus fixed `Array<Int>` literals and compiler-proven constant in-bounds reads
-beyond the original tracer. It also admits exact UTF-8 String literals,
+plus fixed `Array<Int>` literals, exact read-only length, and compiler-proven
+constant in-bounds reads beyond the original tracer. It also admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
 Strings, String value equality, printing, required non-null String
 parameters/returns, and source-owned static String calls. Because ordinary Haxe
@@ -161,8 +161,10 @@ String coercion, null String/Bool arguments, foreign String/Bool calls, mutable
 instance fields, inherited instance layouts, unsupported closure shapes, and
 mutable captured Strings fail without
 partial output. Arbitrary array access stays rejected because native PHP would
-emit an undefined-key warning where stock Haxe returns `null`. The first owned
-runtime slice now lowers non-null `String.length` to an on-demand,
+emit an undefined-key warning where stock Haxe returns `null`. Array `.length`
+uses native PHP `count` only for a proven compiler-owned `Array<Int>` local.
+Other receivers, mutation, aliases, and iteration remain rejected. The first
+owned runtime slice now lowers non-null `String.length` to an on-demand,
 typed-IR-authored PHP helper that counts Unicode scalar values, so
 `"A🚀".length` is `2` rather than PHP's `strlen` byte count of `5`. It requires
 no `mbstring`, rejects malformed UTF-8 explicitly, and is emitted, mapped,

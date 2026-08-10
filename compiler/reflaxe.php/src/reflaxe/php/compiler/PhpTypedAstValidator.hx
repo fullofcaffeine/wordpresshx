@@ -437,6 +437,8 @@ class PhpTypedAstValidator {
 				validateProvenIntArrayRead(expression, base, index, intArrayLengths);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				validateStringValue(receiver);
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isArrayClass(classRef.get()) && fieldRef.get().name == "length"):
+				validateProvenIntArrayLength(expression, receiver, intArrayLengths);
 			case TCall(target, arguments):
 				validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
@@ -448,6 +450,18 @@ class PhpTypedAstValidator {
 
 	static function isStringClass(classType:ClassType):Bool {
 		return classType.pack.length == 0 && classType.name == "String";
+	}
+
+	static function isArrayClass(classType:ClassType):Bool {
+		return classType.pack.length == 0 && classType.name == "Array";
+	}
+
+	static function validateProvenIntArrayLength(read:TypedExpr, receiver:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+		switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+			case _:
+				Context.error("reflaxe.php Array<Int> length requires a compiler-owned non-null Array<Int> local", read.pos);
+		}
 	}
 
 	static function validateProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):Void {

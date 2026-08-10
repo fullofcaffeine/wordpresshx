@@ -529,6 +529,8 @@ class PhpTypedAstLowerer {
 					stringRuntimeTrigger = expression.pos;
 				}
 				PhpStaticCall(PhpRuntimeLibrary.STRING_CLASS, "length", [lowerStringValue(receiver)]);
+			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isArrayClass(classRef.get()) && fieldRef.get().name == "length"):
+				lowerProvenIntArrayLength(expression, receiver, intArrayLengths);
 			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
 			case _: unsupportedIntValue(expression);
@@ -537,6 +539,21 @@ class PhpTypedAstLowerer {
 
 	static function isStringClass(classType:ClassType):Bool {
 		return classType.pack.length == 0 && classType.name == "String";
+	}
+
+	static function isArrayClass(classType:ClassType):Bool {
+		return classType.pack.length == 0 && classType.name == "Array";
+	}
+
+	function lowerProvenIntArrayLength(read:TypedExpr, receiver:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
+		return switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+				PhpSemanticCapabilities.requireAdmitted(IntArrayLength);
+				PhpFunctionCall("\\count", [PhpVar(variable.name)]);
+			case _:
+				Context.fatalError("reflaxe.php Array<Int> length requires a compiler-owned non-null Array<Int> local", read.pos);
+				PhpInt(0);
+		}
 	}
 
 	function lowerProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {

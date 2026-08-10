@@ -12,3 +12,4 @@ exception-catch:pass
 nullable-string:pass
 nullable-string-return:pass
 unicode-string-length:pass
+int-array-length:pass

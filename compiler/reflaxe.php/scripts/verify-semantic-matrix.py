@@ -251,6 +251,10 @@ def main() -> None:
         "stmt:if-int-equality:2605:2737": ("statement", 2, b"if (unicodeLength == 2)"),
         "stmt:sys-println:2634:2675": ("statement", 3, b'Sys.println("unicode-string-length:pass")'),
         "stmt:sys-println:2691:2732": ("statement", 3, b'Sys.println("unicode-string-length:fail")'),
+        "stmt:local-int:2741:2774": ("statement", 2, b"final valueCount = values.length"),
+        "stmt:if-int-equality:2777:2896": ("statement", 2, b"if (valueCount == 3)"),
+        "stmt:sys-println:2803:2839": ("statement", 3, b'Sys.println("int-array-length:pass")'),
+        "stmt:sys-println:2855:2891": ("statement", 3, b'Sys.println("int-array-length:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

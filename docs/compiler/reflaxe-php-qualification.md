@@ -17,7 +17,7 @@ The compiler now has a real Reflaxe registration and a deliberately bounded
 ordinary-Haxe path. Three Haxe modules lower through the generic PHP IR into one
 mapped PHP file per type plus a dependency-ordered bootstrap, then execute under
 native PHP. The checked semantic matrix currently covers small `Int` control
-flow and calls, fixed proven `Array<Int>` reads, and exact UTF-8 String
+flow and calls, fixed proven `Array<Int>` reads and length, and exact UTF-8 String
 concatenation/equality/printing plus required non-null String
 parameters/returns and source-owned static String calls. Exact non-null
 `String.length` lowers through an on-demand compiler-owned PHP runtime helper
@@ -25,7 +25,9 @@ with Unicode-scalar semantics and no `mbstring` dependency. The helper's
 artifact, dependency edge, ownership record, and source map are part of the
 same clean-room vertical; malformed UTF-8 is rejected explicitly. This does not
 qualify nullable receivers, indexing, substring, normalization, grapheme
-behavior, other String operations, or a general Haxe runtime. The matrix also covers exact
+behavior, other String operations, or a general Haxe runtime. Exact array
+length lowers to PHP `count` only for a proven compiler-owned `Array<Int>`
+local. Other arrays and general collection behavior remain unqualified. The matrix also covers exact
 Bool literals/locals, logical negation, direct conditions, required non-null
 Bool parameters/returns, source-owned static Bool calls, and lazy `&&`/`||`
 with typed parenthesized grouping, without PHP truthiness. Null arguments are
