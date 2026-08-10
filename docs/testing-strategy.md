@@ -110,7 +110,7 @@ and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
 its exact command. The 64-record array-length subject passed its exact hosted
 compiler and PHP lane in run `31372128871`. The current 65-record array-push
-subject is local-only until the same clean lane passes.
+subject passed the same clean lane in run `31377424790`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
