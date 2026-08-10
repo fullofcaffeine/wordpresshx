@@ -105,9 +105,9 @@ typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
 and currently admits small `Int` literals/addition, initialized locals, `Int`
 equality, `if/else`, required `Int` parameters/returns, and source-owned static
 application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
-plus fixed `Array<Int>` literals, exact length, direct result-discarded push,
-and compiler-proven constant in-bounds reads and writes beyond the original
-tracer. It also admits exact UTF-8 String literals,
+plus fixed `Array<Int>` literals, exact length, direct result-discarded push
+and non-empty pop, and compiler-proven constant in-bounds reads and writes
+beyond the original tracer. It also admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
 Strings, String value equality, printing, required non-null String
 parameters/returns, and source-owned static String calls. Because ordinary Haxe
@@ -167,8 +167,11 @@ uses native PHP `count` only for a proven compiler-owned `Array<Int>` local.
 A direct `values.push(value)` statement lowers to `$values[] = value` for that
 proven local. The compiler updates its exact length proof before later reads.
 The direct statement `values[1] = value` lowers to a native PHP indexed write
-only when the compiler proves that index. Push return values and mutation in
-branches or loops remain rejected. Other receivers, aliases, dynamic or
+only when the compiler proves that index. A direct result-discarded
+`values.pop()` lowers to native `array_pop($values)` only when the compiler
+proves that the owned array is not empty. The compiler reduces its exact length
+before it checks later reads. Push or pop return values, empty pop, and mutation
+in branches or loops remain rejected. Other receivers, aliases, dynamic or
 out-of-bounds writes, and iteration also remain rejected. The first owned
 runtime slice now lowers non-null `String.length` to an on-demand,
 typed-IR-authored PHP helper that counts Unicode scalar values, so

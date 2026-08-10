@@ -186,10 +186,17 @@ class PhpTypedAstLowerer {
 				}
 				statements;
 			case TCall(target, arguments):
-				[
-					isIntArrayPushTarget(target) ? lowerIntArrayPush(expression, target, arguments, intArrayLengths,
-						allowDirectArrayMutation) : lowerCall(expression, target, arguments)
-				];
+				if (isIntArrayPushTarget(target)) {
+					[
+						lowerIntArrayPush(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)
+					];
+				} else if (isIntArrayPopTarget(target)) {
+					[
+						lowerIntArrayPop(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)
+					];
+				} else {
+					[lowerCall(expression, target, arguments)];
+				}
 			case TVar(variable, initialValue):
 				if (initialValue == null) {
 					Context.fatalError("reflaxe.php local bindings require an initial value", expression.pos);
@@ -219,7 +226,10 @@ class PhpTypedAstLowerer {
 						case "Array<Int>":
 							lowerIntArrayLocal(expression, variable, initialValue, intArrayLengths);
 						case _:
-							if (PhpStringClosureShape.isType(variable.t)) {
+							if (isIntArrayPopCall(initialValue)) {
+								Context.fatalError("reflaxe.php Array<Int>.pop return values are not yet admitted", initialValue.pos);
+								[];
+							} else if (PhpStringClosureShape.isType(variable.t)) {
 								PhpSemanticCapabilities.requireAdmitted(InitializedStringClosureLocal);
 								[
 									mapped(PhpLocal(variable.name, lowerStringClosure(initialValue)), expression, "local-string-closure")
@@ -304,6 +314,36 @@ class PhpTypedAstLowerer {
 			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths, allowDirectArrayMutation);
 			case _:
 				unsupportedStatement(expression);
+		}
+	}
+
+	/** Emits one native pop after validation and reduces the exact local array length used by later reads. */
+	function lowerIntArrayPop(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>,
+			allowDirectArrayMutation:Bool):PhpStmt {
+		if (!allowDirectArrayMutation) {
+			Context.fatalError("reflaxe.php Array<Int>.pop is admitted only as a direct straight-line statement", call.pos);
+		}
+		if (arguments.length != 0) {
+			Context.fatalError("reflaxe.php Array<Int>.pop does not accept arguments", call.pos);
+		}
+		final receiver = switch (target.expr) {
+			case TField(value, _): value;
+			case _:
+				Context.fatalError("reflaxe.php Array<Int>.pop requires a compiler-owned non-null Array<Int> local", call.pos);
+				return PhpReturnVoid;
+		}
+		return switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+				final length = intArrayLengths.get(variable.id);
+				if (length == null || length <= 0) {
+					Context.fatalError("reflaxe.php Array<Int>.pop requires a compiler-proven non-empty Array<Int> local", call.pos);
+				}
+				intArrayLengths.set(variable.id, length == null ? 0 : length - 1);
+				PhpSemanticCapabilities.requireAdmitted(IntArrayPopDiscarded);
+				mapped(PhpExprStmt(PhpFunctionCall("\\array_pop", [PhpVar(variable.name)])), call, "int-array-pop");
+			case _:
+				Context.fatalError("reflaxe.php Array<Int>.pop requires a compiler-owned non-null Array<Int> local", call.pos);
+				PhpReturnVoid;
 		}
 	}
 
@@ -601,6 +641,20 @@ class PhpTypedAstLowerer {
 	static function isIntArrayPushTarget(target:TypedExpr):Bool {
 		return switch (target.expr) {
 			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "push";
+			case _: false;
+		}
+	}
+
+	static function isIntArrayPopTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "pop";
+			case _: false;
+		}
+	}
+
+	static function isIntArrayPopCall(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TCall(target, _): isIntArrayPopTarget(target);
 			case _: false;
 		}
 	}

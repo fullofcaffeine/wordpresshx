@@ -115,5 +115,14 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-array-write:fail' . PHP_EOL;
 		}
+		\array_pop( $values );
+		$poppedCount = \count( $values );
+		$poppedValue = $values[ 2 ];
+		$poppedSummary = $poppedCount + $poppedValue;
+		if ( $poppedSummary === 7 ) {
+			echo 'int-array-pop:pass' . PHP_EOL;
+		} else {
+			echo 'int-array-pop:fail' . PHP_EOL;
+		}
 	}
 }

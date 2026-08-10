@@ -180,7 +180,8 @@ class PhpTypedAstValidator {
 					validateStatement(child, intArrayLengths, exceptionState, allowDirectArrayMutation);
 				}
 			case TCall(target, arguments):
-				if (!tryValidateIntArrayPush(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)) {
+				if (!tryValidateIntArrayPush(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)
+					&& !tryValidateIntArrayPop(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)) {
 					validateCall(expression, target, arguments);
 				}
 			case TVar(variable, initialValue):
@@ -195,7 +196,9 @@ class PhpTypedAstValidator {
 						case "Null<String>": validateNullableStringValue(initialValue);
 						case "Array<Int>": validateIntArrayLiteral(variable, initialValue, intArrayLengths);
 						case _:
-							if (PhpStringClosureShape.isType(variable.t)) {
+							if (isIntArrayPopCall(initialValue)) {
+								Context.error("reflaxe.php Array<Int>.pop return values are not yet admitted", initialValue.pos);
+							} else if (PhpStringClosureShape.isType(variable.t)) {
 								validateStringClosure(initialValue, exceptionState);
 							} else if (PhpStringClosureShape.isFunctionType(variable.t)) {
 								Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
@@ -278,6 +281,38 @@ class PhpTypedAstValidator {
 				}
 			case _:
 				Context.error("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+		}
+		return true;
+	}
+
+	/** Validates one straight-line pop and reduces the exact local array length used by later bounds checks. */
+	static function tryValidateIntArrayPop(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>,
+			allowDirectArrayMutation:Bool):Bool {
+		if (!isIntArrayPopTarget(target)) {
+			return false;
+		}
+		if (!allowDirectArrayMutation) {
+			Context.error("reflaxe.php Array<Int>.pop is admitted only as a direct straight-line statement", call.pos);
+			return true;
+		}
+		if (arguments.length != 0) {
+			Context.error("reflaxe.php Array<Int>.pop does not accept arguments", call.pos);
+			return true;
+		}
+		final receiver = switch (target.expr) {
+			case TField(value, _): value;
+			case _: return false;
+		}
+		switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+				final length = intArrayLengths.get(variable.id);
+				if (length == null || length <= 0) {
+					Context.error("reflaxe.php Array<Int>.pop requires a compiler-proven non-empty Array<Int> local", call.pos);
+				} else {
+					intArrayLengths.set(variable.id, length - 1);
+				}
+			case _:
+				Context.error("reflaxe.php Array<Int>.pop requires a compiler-owned non-null Array<Int> local", call.pos);
 		}
 		return true;
 	}
@@ -509,6 +544,20 @@ class PhpTypedAstValidator {
 	static function isIntArrayPushTarget(target:TypedExpr):Bool {
 		return switch (target.expr) {
 			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "push";
+			case _: false;
+		}
+	}
+
+	static function isIntArrayPopTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "pop";
+			case _: false;
+		}
+	}
+
+	static function isIntArrayPopCall(expression:TypedExpr):Bool {
+		return switch (expression.expr) {
+			case TCall(target, _): isIntArrayPopTarget(target);
 			case _: false;
 		}
 	}

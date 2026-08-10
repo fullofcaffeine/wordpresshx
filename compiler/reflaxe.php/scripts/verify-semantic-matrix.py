@@ -269,6 +269,13 @@ def main() -> None:
         "stmt:if-int-equality:3304:3425": ("statement", 2, b"if (writtenSummary == 9)"),
         "stmt:sys-println:3334:3369": ("statement", 3, b'Sys.println("int-array-write:pass")'),
         "stmt:sys-println:3385:3420": ("statement", 3, b'Sys.println("int-array-write:fail")'),
+        "stmt:int-array-pop:3429:3441": ("statement", 2, b"values.pop()"),
+        "stmt:local-int:3445:3479": ("statement", 2, b"final poppedCount = values.length"),
+        "stmt:local-int:3482:3512": ("statement", 2, b"final poppedValue = values[2]"),
+        "stmt:local-int:3515:3563": ("statement", 2, b"final poppedSummary = poppedCount + poppedValue"),
+        "stmt:if-int-equality:3566:3682": ("statement", 2, b"if (poppedSummary == 7)"),
+        "stmt:sys-println:3595:3628": ("statement", 3, b'Sys.println("int-array-pop:pass")'),
+        "stmt:sys-println:3644:3677": ("statement", 3, b'Sys.println("int-array-pop:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

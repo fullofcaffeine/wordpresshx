@@ -123,5 +123,15 @@ class Main {
 		} else {
 			Sys.println("int-array-write:fail");
 		}
+
+		values.pop();
+		final poppedCount = values.length;
+		final poppedValue = values[2];
+		final poppedSummary = poppedCount + poppedValue;
+		if (poppedSummary == 7) {
+			Sys.println("int-array-pop:pass");
+		} else {
+			Sys.println("int-array-pop:fail");
+		}
 	}
 }

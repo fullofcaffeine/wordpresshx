@@ -110,14 +110,15 @@ and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
 its exact command. The 64-record array-length subject passed its exact hosted
 compiler and PHP lane in run `31372128871`. The 65-record array-push subject
-passed the same clean lane in run `31377424790`. The current 66-record
-indexed-write subject passed it in run `31381746528`.
+passed the same clean lane in run `31377424790`. The 66-record indexed-write
+subject passed it in run `31381746528`. The current 67-record non-empty-pop
+subject is locally verified and waits for its own clean hosted lane.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 66 admitted, 6 explicitly
+registry. The current local subject lists 67 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
@@ -128,8 +129,12 @@ PHP 8.4.7. It reads array length only from that proven local and lowers it to
 native PHP `count`. It also lowers a direct result-discarded push to native PHP
 append syntax. The fixture proves the new length and value after the push.
 It also lowers one proven indexed write to native PHP assignment syntax.
-Dynamic, out-of-bounds, and branch writes remain negative owners. Push return
-values and mutation inside control flow also remain negative owners. An inline
+It lowers one direct result-discarded pop to native PHP `array_pop` only after
+it proves that the owned array is not empty. It then reduces the exact length
+before it checks later reads. Pop return use, empty pop, control-flow mutation,
+and access to the removed index remain negative owners. Dynamic, out-of-bounds,
+and branch writes remain negative owners. Push return values and mutation
+inside control flow also remain negative owners. An inline
 String array remains a negative owner. The fixture checks UTF-8
 String literals, exact String-only
 concatenation, a typed String local, value equality, printing, and conversion of

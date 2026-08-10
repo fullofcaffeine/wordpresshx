@@ -149,7 +149,7 @@
     },
     {
       "category": "values-collections",
-      "evidence": "general Array runtime behavior beyond fixed Int literals, exact length, proven reads/writes, and direct result-discarded push is rejected",
+      "evidence": "general Array runtime behavior beyond fixed Int literals, exact length, proven reads/writes, and direct result-discarded push/pop is rejected",
       "id": "collection.array",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -165,6 +165,13 @@
       "category": "values-collections",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "collection.int-array-literal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "values-collections",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "collection.int-array-pop-discarded",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -443,7 +450,7 @@
     },
     {
       "category": "runtime-stdlib",
-      "evidence": "only exact Int-array length/read/write, direct result-discarded Int-array push, and the compiler-owned Unicode-scalar String length helper exist",
+      "evidence": "only exact Int-array length/read/write, direct result-discarded Int-array push/pop, and the compiler-owned Unicode-scalar String length helper exist",
       "id": "runtime.haxe-stdlib",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unsupported-owned"
@@ -572,14 +579,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "ec500e2a580d524804bc6736b2fd0e6728c087037bec767968da28b1b751c520"
+    "sha256": "1c62bfe55b8af968d0915ad06aa62fe1c57bdd6a6b94a2e76441d4c4ad05a225"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 79,
+    "capabilityCount": 80,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 66,
+      "admitted": 67,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }
