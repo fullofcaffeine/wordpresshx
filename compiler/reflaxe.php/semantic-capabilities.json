@@ -458,6 +458,13 @@
     {
       "category": "numeric",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "numeric.int-modulo",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "numeric",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "numeric.int-multiplication",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -485,7 +492,7 @@
     },
     {
       "category": "numeric",
-      "evidence": "overflow, division, and modulo are not classified",
+      "evidence": "division, overflow outside admitted constant proofs, and runtime-dependent modulo are not classified",
       "id": "numeric.overflow-division-modulo",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "unverified-owned"
@@ -628,14 +635,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "f35fa76913e76c30e4d42a2d0eecac208ed9b2fdc3f2df45844f0e9da0eb21b2"
+    "sha256": "f6d3198fda4b6d96d898b691148baad14c56103e45bad3317836892964fcc536"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 87,
+    "capabilityCount": 88,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 74,
+      "admitted": 75,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

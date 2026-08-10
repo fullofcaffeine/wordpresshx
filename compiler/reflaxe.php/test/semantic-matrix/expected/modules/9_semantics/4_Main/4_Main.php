@@ -161,5 +161,16 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-unary-negation:fail' . PHP_EOL;
 		}
+		$positiveRemainder = 17 % 5;
+		$negativeDividendRemainder = -17 % 5;
+		$negativeDivisorRemainder = 17 % -5;
+		$groupedRemainder = ( 9 + 8 ) % ( 2 + 3 );
+		$minimumRemainder = ( -2147483647 - 1 ) % -1;
+		$remainderSummary = $positiveRemainder + $negativeDividendRemainder + $negativeDivisorRemainder + $groupedRemainder + $minimumRemainder;
+		if ( $remainderSummary === 4 ) {
+			echo 'int-remainder:pass' . PHP_EOL;
+		} else {
+			echo 'int-remainder:fail' . PHP_EOL;
+		}
 	}
 }

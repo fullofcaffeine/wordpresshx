@@ -301,6 +301,15 @@ def main() -> None:
 		"stmt:if-int-equality:4736:4865": ("statement", 2, b"if (negationSummary == -2)"),
 		"stmt:sys-println:4768:4806": ("statement", 3, b'Sys.println("int-unary-negation:pass")'),
 		"stmt:sys-println:4822:4860": ("statement", 3, b'Sys.println("int-unary-negation:fail")'),
+		"stmt:local-int:4869:4902": ("statement", 2, b"final positiveRemainder = 17 % 5"),
+		"stmt:local-int:4905:4947": ("statement", 2, b"final negativeDividendRemainder = -17 % 5"),
+		"stmt:local-int:4950:4991": ("statement", 2, b"final negativeDivisorRemainder = 17 % -5"),
+		"stmt:local-int:4994:5037": ("statement", 2, b"final groupedRemainder = (9 + 8) % (2 + 3)"),
+		"stmt:local-int:5040:5088": ("statement", 2, b"final minimumRemainder = (-2147483647 - 1) % -1"),
+		"stmt:local-int:5091:5227": ("statement", 2, b"final remainderSummary = positiveRemainder + negativeDividendRemainder + negativeDivisorRemainder + groupedRemainder + minimumRemainder"),
+		"stmt:if-int-equality:5230:5349": ("statement", 2, b"if (remainderSummary == 4)"),
+		"stmt:sys-println:5262:5295": ("statement", 3, b'Sys.println("int-remainder:pass")'),
+		"stmt:sys-println:5311:5344": ("statement", 3, b'Sys.println("int-remainder:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

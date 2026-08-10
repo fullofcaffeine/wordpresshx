@@ -174,5 +174,17 @@ class Main {
 		} else {
 			Sys.println("int-unary-negation:fail");
 		}
+
+		final positiveRemainder = 17 % 5;
+		final negativeDividendRemainder = -17 % 5;
+		final negativeDivisorRemainder = 17 % -5;
+		final groupedRemainder = (9 + 8) % (2 + 3);
+		final minimumRemainder = (-2147483647 - 1) % -1;
+		final remainderSummary = positiveRemainder + negativeDividendRemainder + negativeDivisorRemainder + groupedRemainder + minimumRemainder;
+		if (remainderSummary == 4) {
+			Sys.println("int-remainder:pass");
+		} else {
+			Sys.println("int-remainder:fail");
+		}
 	}
 }

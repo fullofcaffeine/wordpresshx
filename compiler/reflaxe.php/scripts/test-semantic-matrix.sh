@@ -155,6 +155,9 @@ assert_compile_negative "float-ordering" "reflaxe.php supports only Bool literal
 assert_compile_negative "runtime-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "overflow-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "float-negation" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
+assert_compile_negative "runtime-int-remainder" "reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor"
+assert_compile_negative "zero-int-remainder" "reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor"
+assert_compile_negative "float-remainder" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
 echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null/runtime semantic slices passed"

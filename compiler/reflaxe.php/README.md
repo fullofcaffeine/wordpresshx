@@ -124,8 +124,10 @@ The numeric subset preserves Haxe grouping and operator precedence. It keeps
 compiler-proven, 32-bit-safe constant expressions. The same proof admits unary
 negation, including nested and grouped constant expressions. Runtime-dependent
 and Float multiplication or negation fail before output. Integer-minimum
-negation overflow, division, modulo, coercion, and general numeric behavior
-remain unproved.
+negation overflow and division remain unproved. The first remainder slice uses
+native PHP `%` only for exact `Int` constant expressions with a compiler-proven
+nonzero divisor. Runtime-dependent or floating-point remainder, compound
+assignment, coercion, and general numeric behavior remain unproved.
 The ordering slice lowers native PHP comparisons only after both operands have
 exact Haxe `Int` type and pass the existing `Int` expression validator. A
 stock-Haxe-valid Float ordering fixture fails before output. Mixed numeric,

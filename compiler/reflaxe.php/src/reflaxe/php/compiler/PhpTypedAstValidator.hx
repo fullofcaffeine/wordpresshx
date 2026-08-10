@@ -14,6 +14,7 @@ private enum ConstantIntOperation {
 	Add;
 	Subtract;
 	Multiply;
+	Modulo;
 }
 
 private typedef PhpExceptionValidationState = {
@@ -527,6 +528,10 @@ class PhpTypedAstValidator {
 				if (constantIntValue(expression) == null) {
 					Context.error("reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression", expression.pos);
 				}
+			case TBinop(OpMod, _, _):
+				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
+					Context.error("reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor", expression.pos);
+				}
 			case TUnop(OpNeg, false, _):
 				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
 					Context.error("reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression", expression.pos);
@@ -548,7 +553,7 @@ class PhpTypedAstValidator {
 			case TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, negation, grouping, proven array reads, and source-owned calls",
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, remainder, negation, grouping, proven array reads, and source-owned calls",
 					expression.pos);
 		}
 	}
@@ -559,6 +564,7 @@ class PhpTypedAstValidator {
 			case TBinop(OpAdd, left, right): constantIntBinaryValue(left, right, Add);
 			case TBinop(OpSub, left, right): constantIntBinaryValue(left, right, Subtract);
 			case TBinop(OpMult, left, right): constantIntBinaryValue(left, right, Multiply);
+			case TBinop(OpMod, left, right): constantIntBinaryValue(left, right, Modulo);
 			case TUnop(OpNeg, false, inner): constantIntNegatedValue(inner);
 			case TMeta(_, inner) | TParenthesis(inner): constantIntValue(inner);
 			case _: null;
@@ -580,10 +586,14 @@ class PhpTypedAstValidator {
 		if (leftValue == null || rightValue == null) {
 			return null;
 		}
+		if (operation == Modulo && rightValue == 0) {
+			return null;
+		}
 		final result:Float = switch (operation) {
 			case Add: leftValue * 1.0 + rightValue;
 			case Subtract: leftValue * 1.0 - rightValue;
 			case Multiply: leftValue * 1.0 * rightValue;
+			case Modulo: leftValue % rightValue;
 		}
 		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
 	}

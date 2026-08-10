@@ -614,6 +614,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpMult, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntMultiplication);
 				PhpBinop("*", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TBinop(OpMod, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntModulo);
+				PhpBinop("%", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TUnop(OpNeg, false, inner):
 				PhpSemanticCapabilities.requireAdmitted(IntUnaryNegation);
 				PhpNegate(lowerIntValue(inner, intArrayLengths));

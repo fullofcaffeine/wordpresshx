@@ -70,6 +70,7 @@ class PrinterTest {
 		assertEquals("( $left || $right )", printer.printExpr(PhpParenthesized(PhpBinop("||", PhpVar("left"), PhpVar("right")))), "parenthesized expression");
 		assertEquals("- ( $left + $right )", printer.printExpr(PhpNegate(PhpParenthesized(PhpBinop("+", PhpVar("left"), PhpVar("right"))))),
 			"numeric negation");
+		assertEquals("$left % $right", printer.printExpr(PhpBinop("%", PhpVar("left"), PhpVar("right"))), "integer remainder");
 		assertEquals("require __DIR__ . '/classmap.php'",
 			printer.printExpr(PhpRequire(PhpBinop(".", PhpMagicConst("__DIR__"), PhpString("/classmap.php")), false)), "required data projection");
 		assertEquals("require_once __DIR__ . '/autoload.php'",
