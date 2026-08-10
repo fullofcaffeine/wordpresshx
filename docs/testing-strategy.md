@@ -194,8 +194,9 @@ assignment, coercion, and general numeric behavior remain outside this subject.
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The
-75-record subject still needs its exact hosted lane. The 74-record run
-`31410116706` remains historical authority for its own compiler bytes only.
+75-record subject passed its exact hosted lane in run `31414493799`. The
+74-record run `31410116706` remains historical authority for its own compiler
+bytes only.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

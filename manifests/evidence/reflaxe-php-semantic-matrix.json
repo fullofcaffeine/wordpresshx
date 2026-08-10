@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "incremental-runtime-semantics-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, native PHP 8.4.7, and no mbstring dependency",
     "input": "ordinary Haxe evaluates 17 % 5, -17 % 5, 17 % -5, (9 + 8) % (2 + 3), and (-2147483647 - 1) % -1 as exact Int expressions",
@@ -225,7 +225,7 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-75-capability-subject-hosted-pending; predecessor-74-capability-subject-passed-run-31410116706",
+    "exactPhp74And84Matrix": "current-75-capability-subject-passed-run-31414493799; predecessor-74-capability-subject-passed-run-31410116706",
     "sourceMap": "independently-verified",
     "strictHaxe": "101-package-files-zero-findings",
     "firstMilliseconds": 18800,
@@ -269,7 +269,37 @@
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
   },
-  "hostedVerification": null,
+  "hostedVerification": {
+    "relation": "current-75-capability-subject",
+    "admittedCapabilityCount": 75,
+    "workflow": "Repository bootstrap",
+    "runId": 31414493799,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31414493799",
+    "commit": "9327e7c61a610be6dbbbf28b37d8d67a7eb038e1",
+    "status": "passed",
+    "job": {
+      "name": "haxe",
+      "jobId": 93540155969,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31414493799/job/93540155969",
+      "status": "passed",
+      "completedAt": "2026-08-10T17:47:47Z"
+    },
+    "exactPhpVersions": [
+      "7.4.33",
+      "8.4.7"
+    ],
+    "requiredSteps": [
+      "Install Haxe 4.3.7",
+      "Install exact reflaxe.php compiler dependency",
+      "Test generic PHP compiler package",
+      "Test clean standalone PHP compiler package artifact",
+      "Test exact PHP 7.4 and 8.4 runtime matrix"
+    ],
+    "scope": "the current 75 exact admitted semantic records, deterministic generic compiler package, clean offline external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "wordpressRuntimeCompatibilityAdvanced": false,
+    "officialHaxeQualificationAdvanced": false,
+    "publicationAuthorized": false
+  },
   "review": {
     "distinctFromImplementation": true,
     "findingsAndDispositions": [
@@ -873,7 +903,7 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,
