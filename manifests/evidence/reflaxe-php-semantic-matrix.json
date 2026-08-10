@@ -350,11 +350,15 @@
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "ad5451204e116b6c825ba7eebb590db3cf6b8104dc89ad686724c19c8fbb4c11"
+      "sha256": "bede0c1ddb57586ce4f66b97fc44e10c04d8cbce95e9f5ab628ad8bfaf151c83"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
-      "sha256": "c273d42436d0c48061a6375e6b10fa44fb8daab5faef4d4b02e029465690cfbb"
+      "sha256": "721c76e7082245118e28b727bff77f01a8b0d9e5c2a1765e41f36a43d536f687"
+    },
+    {
+      "path": "compiler/reflaxe.php/scripts/package-installed-haxelib.py",
+      "sha256": "23e857a47504d3687136e9264bf399b46419ac5ab1d4fb9813825af11cdb1795"
     },
     {
       "path": "compiler/reflaxe.php/scripts/semantic-matrix.py",
@@ -365,8 +369,12 @@
       "sha256": "51ac2629315974681f85a5a0fc2254e612125861ed26ea523a4cb7db95083211"
     },
     {
+      "path": "compiler/reflaxe.php/scripts/test-package-builder.py",
+      "sha256": "7f55ce158419edcbba38be6386854af4b378ed333b1dc4a9c9338a651a7bb4ac"
+    },
+    {
       "path": "compiler/reflaxe.php/scripts/test-package.sh",
-      "sha256": "2440377873fe82a023ffcbe2181aed0a292245e8f46f201bc7fe5891cedccd4d"
+      "sha256": "07012eb4785bee81b7e040e6ac526619294da8c6c035b2b39b1ebafe7088d915"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",

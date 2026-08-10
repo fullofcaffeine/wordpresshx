@@ -45,6 +45,34 @@ build_package() {
 build_package "${build_a}"
 build_package "${build_b}"
 
+dependency_plan="${temporary_root}/dependency-plan.tsv"
+python3 - "${package_root}/haxelib.json" > "${dependency_plan}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+metadata = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+for name, version in sorted(metadata["dependencies"].items()):
+    print(f"{name}\t{version}")
+PY
+
+dependency_archives="${temporary_root}/dependency-archives"
+mkdir -p "${dependency_archives}"
+while IFS=$'\t' read -r dependency_name dependency_version; do
+  if [[ -z "${dependency_name}" || -z "${dependency_version}" ]]; then
+    echo "package dependency plan contains an empty identity" >&2
+    exit 1
+  fi
+  dependency_source="$(haxelib libpath "${dependency_name}:${dependency_version}")"
+  dependency_archive="${dependency_archives}/${dependency_name}-${dependency_version}.zip"
+  PYTHONDONTWRITEBYTECODE=1 python3 \
+    "${package_root}/scripts/package-installed-haxelib.py" \
+    --source "${dependency_source}" \
+    --out "${dependency_archive}" \
+    --name "${dependency_name}" \
+    --version "${dependency_version}"
+done < "${dependency_plan}"
+
 archive_name="reflaxe.php-0.0.0.zip"
 if ! cmp -s "${build_a}/${archive_name}" "${build_b}/${archive_name}"; then
   echo "two reflaxe.php package builds were not byte-identical" >&2
@@ -121,6 +149,21 @@ mkdir -p "${application_root}"
 cp -rf "${package_root}/test/package-consumer/." "${application_root}/"
 (cd "${application_root}" && haxelib newrepo --quiet)
 
+while IFS=$'\t' read -r dependency_name dependency_version; do
+  dependency_archive="${dependency_archives}/${dependency_name}-${dependency_version}.zip"
+  (cd "${application_root}" && haxelib install \
+    "${dependency_archive}" --always --quiet --skip-dependencies)
+  resolved_dependency="$(cd "${application_root}" && \
+    haxelib libpath "${dependency_name}:${dependency_version}")"
+  case "${resolved_dependency}" in
+    "${isolated_haxelib}"/*) ;;
+    *)
+      echo "installed dependency resolved outside the disposable repository: ${resolved_dependency}" >&2
+      exit 1
+      ;;
+  esac
+done < "${dependency_plan}"
+
 set +e
 missing_output="$(cd "${application_root}" && haxe build.hxml 2>&1)"
 missing_status=$?
@@ -135,7 +178,8 @@ if [[ "${missing_output}" != *"reflaxe.php"* ]]; then
   exit 1
 fi
 
-(cd "${application_root}" && haxelib install "${build_a}/${archive_name}" --always --quiet)
+(cd "${application_root}" && haxelib install \
+  "${build_a}/${archive_name}" --always --quiet --skip-dependencies)
 resolved_library="$(cd "${application_root}" && haxelib path reflaxe.php | awk 'NF && $1 !~ /^-/ { print; exit }')"
 case "${resolved_library}" in
   "${isolated_haxelib}"/*) ;;

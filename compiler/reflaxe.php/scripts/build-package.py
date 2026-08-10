@@ -33,6 +33,7 @@ MACHINE_LOCAL_PATTERNS = (
     re.compile(r"[A-Za-z]:\\\\Users\\\\[^\\\s]+\\\\"),
 )
 EXACT_HAXELIB_VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
+EXACT_HAXELIB_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
 class PackageFailure(RuntimeError):
@@ -107,6 +108,8 @@ def validate_metadata(package_root: Path) -> dict[str, object]:
     for name, version in dependencies.items():
         if not isinstance(name, str) or not isinstance(version, str):
             raise PackageFailure("haxelib dependency identities must be strings")
+        if not EXACT_HAXELIB_NAME.fullmatch(name):
+            raise PackageFailure(f"invalid haxelib dependency name: {name}")
         if not EXACT_HAXELIB_VERSION.fullmatch(version):
             raise PackageFailure(
                 f"release dependency {name} must use an exact version, received {version}"

@@ -822,6 +822,7 @@ required_files=(
   compiler/reflaxe.php/haxelib.json
   compiler/reflaxe.php/provenance.json
   compiler/reflaxe.php/scripts/build-package.py
+  compiler/reflaxe.php/scripts/package-installed-haxelib.py
   compiler/reflaxe.php/scripts/test-package-builder.py
   compiler/reflaxe.php/scripts/test-package.sh
   compiler/reflaxe.php/src/reflaxe/php/ir/PhpArrayEntry.hx
@@ -6846,7 +6847,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 115
+assert len(reflaxe_php_semantic_input_records) == 117
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):

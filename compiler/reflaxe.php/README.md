@@ -226,12 +226,17 @@ bash compiler/reflaxe.php/scripts/test-package.sh
 ```
 
 That gate builds the source-only package twice and requires byte-identical ZIPs,
-installs the exact archive into a disposable Haxelib repository, first proves
-that the package cannot resolve before installation, and then compiles a neutral
-external Haxe application. The application emits ordinary PHP through the
-installed typed IR/printer and the gate lints and executes that PHP. Neither the
-consumer nor its generated output resolves the WordPress profile, SDK packages,
-this checkout, a sibling checkout, or `haxelib dev`.
+installs the exact archive into a disposable Haxelib repository, and first
+proves that the package cannot resolve before installation. The gate packages
+each exact installed dependency as a local seed. It installs those seeds with
+dependency fetching disabled. Thus, a package test does not depend on the
+Haxelib network after the workflow installs its exact toolchain.
+
+The gate then compiles a neutral external Haxe application. The application
+emits ordinary PHP through the installed typed IR and printer. The gate checks
+and runs that PHP. Neither the consumer nor its generated output resolves the
+WordPress profile, SDK packages, this checkout, a sibling checkout, or
+`haxelib dev`.
 
 The generated `build/package-artifact/artifact-manifest.json` binds the archive
 to its source-tree hash, archive hash, Git commit, dirty state, fixed timestamp,
