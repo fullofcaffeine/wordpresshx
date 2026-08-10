@@ -253,9 +253,16 @@ def main() -> None:
         "stmt:sys-println:2691:2732": ("statement", 3, b'Sys.println("unicode-string-length:fail")'),
         "stmt:local-int:2741:2774": ("statement", 2, b"final valueCount = values.length"),
         "stmt:if-int-equality:2777:2896": ("statement", 2, b"if (valueCount == 3)"),
-        "stmt:sys-println:2803:2839": ("statement", 3, b'Sys.println("int-array-length:pass")'),
-        "stmt:sys-println:2855:2891": ("statement", 3, b'Sys.println("int-array-length:fail")'),
-    }
+		"stmt:sys-println:2803:2839": ("statement", 3, b'Sys.println("int-array-length:pass")'),
+		"stmt:sys-println:2855:2891": ("statement", 3, b'Sys.println("int-array-length:fail")'),
+        "stmt:int-array-push:2900:2914": ("statement", 2, b"values.push(5)"),
+        "stmt:local-int:2918:2952": ("statement", 2, b"final pushedCount = values.length"),
+        "stmt:local-int:2955:2985": ("statement", 2, b"final pushedValue = values[3]"),
+        "stmt:local-int:2988:3036": ("statement", 2, b"final pushedSummary = pushedCount + pushedValue"),
+        "stmt:if-int-equality:3039:3157": ("statement", 2, b"if (pushedSummary == 9)"),
+        "stmt:sys-println:3068:3102": ("statement", 3, b'Sys.println("int-array-push:pass")'),
+        "stmt:sys-println:3118:3152": ("statement", 3, b'Sys.println("int-array-push:fail")'),
+	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
             "stmt:return-int:96:115",

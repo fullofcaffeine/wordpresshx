@@ -150,7 +150,7 @@ class PhpTypedAstValidator {
 		for (argument in functionData.args) {
 			methodLocalNames.set(argument.getName(), true);
 		}
-		validateStatement(functionData.expr, new Map<Int, Int>(), {tryCount: 0, methodLocalNames: methodLocalNames});
+		validateStatement(functionData.expr, new Map<Int, Int>(), {tryCount: 0, methodLocalNames: methodLocalNames}, true);
 	}
 
 	static function validateRequiredParameters(functionData:ClassFuncData, haxeType:String):Void {
@@ -172,14 +172,17 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateStatement(expression:TypedExpr, intArrayLengths:Map<Int, Int>, exceptionState:PhpExceptionValidationState):Void {
+	static function validateStatement(expression:TypedExpr, intArrayLengths:Map<Int, Int>, exceptionState:PhpExceptionValidationState,
+			allowDirectArrayMutation:Bool):Void {
 		switch (expression.expr) {
 			case TBlock(expressions):
 				for (child in expressions) {
-					validateStatement(child, intArrayLengths, exceptionState);
+					validateStatement(child, intArrayLengths, exceptionState, allowDirectArrayMutation);
 				}
 			case TCall(target, arguments):
-				validateCall(expression, target, arguments);
+				if (!tryValidateIntArrayPush(expression, target, arguments, intArrayLengths, allowDirectArrayMutation)) {
+					validateCall(expression, target, arguments);
+				}
 			case TVar(variable, initialValue):
 				reserveMethodLocalName(variable.name, expression, exceptionState);
 				if (initialValue == null) {
@@ -205,15 +208,15 @@ class PhpTypedAstValidator {
 				}
 			case TIf(condition, thenBranch, elseBranch):
 				validateCondition(condition, intArrayLengths);
-				validateStatement(thenBranch, intArrayLengths, exceptionState);
+				validateStatement(thenBranch, intArrayLengths, exceptionState, false);
 				if (elseBranch == null) {
 					Context.error("reflaxe.php requires an else branch in the admitted semantic slice", expression.pos);
 				} else {
-					validateStatement(elseBranch, intArrayLengths, exceptionState);
+					validateStatement(elseBranch, intArrayLengths, exceptionState, false);
 				}
 			case TWhile(condition, body, true):
 				validateIntCondition(condition, intArrayLengths);
-				validateStatement(body, intArrayLengths, exceptionState);
+				validateStatement(body, intArrayLengths, exceptionState, false);
 			case TWhile(_, _, false):
 				Context.error("reflaxe.php does not yet support do-while loops", expression.pos);
 			case TBinop(OpAssign, target, value):
@@ -240,10 +243,43 @@ class PhpTypedAstValidator {
 			case TTry(tryExpression, catches):
 				validateHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths, exceptionState);
 			case TMeta(_, inner) | TParenthesis(inner):
-				validateStatement(inner, intArrayLengths, exceptionState);
+				validateStatement(inner, intArrayLengths, exceptionState, allowDirectArrayMutation);
 			case _:
 				Context.error("reflaxe.php tracer does not support statement " + expression.expr.getName(), expression.pos);
 		}
+	}
+
+	/** Validates one straight-line push and advances the exact local array length used by later bounds checks. */
+	static function tryValidateIntArrayPush(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>,
+			allowDirectArrayMutation:Bool):Bool {
+		if (!isIntArrayPushTarget(target)) {
+			return false;
+		}
+		if (!allowDirectArrayMutation) {
+			Context.error("reflaxe.php Array<Int>.push is admitted only as a direct straight-line statement", call.pos);
+			return true;
+		}
+		if (arguments.length != 1) {
+			Context.error("reflaxe.php Array<Int>.push requires exactly one Int value", call.pos);
+			return true;
+		}
+		final receiver = switch (target.expr) {
+			case TField(value, _): value;
+			case _: return false;
+		}
+		switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+				validateIntValue(arguments[0], intArrayLengths);
+				final length = intArrayLengths.get(variable.id);
+				if (length == null) {
+					Context.error("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+				} else {
+					intArrayLengths.set(variable.id, length + 1);
+				}
+			case _:
+				Context.error("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+		}
+		return true;
 	}
 
 	static function validateIntArrayLiteral(variable:TVar, initialValue:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
@@ -320,7 +356,7 @@ class PhpTypedAstValidator {
 			Context.error("reflaxe.php supports only required unary String closures with read-only String captures", expression.pos);
 			return;
 		}
-		validateStatement(plan.functionData.expr, new Map<Int, Int>(), exceptionState);
+		validateStatement(plan.functionData.expr, new Map<Int, Int>(), exceptionState, false);
 	}
 
 	static function validateHaxeExceptionTry(expression:TypedExpr, tryExpression:TypedExpr, catches:Array<{v:TVar, expr:TypedExpr}>,
@@ -343,7 +379,7 @@ class PhpTypedAstValidator {
 			case _:
 				Context.error("reflaxe.php exception try blocks require one immediate haxe.Exception throw", tryExpression.pos);
 		}
-		validateStatement(catches[0].expr, intArrayLengths, exceptionState);
+		validateStatement(catches[0].expr, intArrayLengths, exceptionState, false);
 	}
 
 	static function validateHaxeExceptionThrow(value:TypedExpr):Void {
@@ -440,7 +476,11 @@ class PhpTypedAstValidator {
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isArrayClass(classRef.get()) && fieldRef.get().name == "length"):
 				validateProvenIntArrayLength(expression, receiver, intArrayLengths);
 			case TCall(target, arguments):
-				validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
+				if (isIntArrayPushTarget(target)) {
+					Context.error("reflaxe.php Array<Int>.push return values are not yet admitted", expression.pos);
+				} else {
+					validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
+				}
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
@@ -454,6 +494,13 @@ class PhpTypedAstValidator {
 
 	static function isArrayClass(classType:ClassType):Bool {
 		return classType.pack.length == 0 && classType.name == "Array";
+	}
+
+	static function isIntArrayPushTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "push";
+			case _: false;
+		}
 	}
 
 	static function validateProvenIntArrayLength(read:TypedExpr, receiver:TypedExpr, intArrayLengths:Map<Int, Int>):Void {

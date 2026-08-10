@@ -97,5 +97,14 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-array-length:fail' . PHP_EOL;
 		}
+		$values[] = 5;
+		$pushedCount = \count( $values );
+		$pushedValue = $values[ 3 ];
+		$pushedSummary = $pushedCount + $pushedValue;
+		if ( $pushedSummary === 9 ) {
+			echo 'int-array-push:pass' . PHP_EOL;
+		} else {
+			echo 'int-array-push:fail' . PHP_EOL;
+		}
 	}
 }

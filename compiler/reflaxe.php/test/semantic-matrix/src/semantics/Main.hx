@@ -103,5 +103,15 @@ class Main {
 		} else {
 			Sys.println("int-array-length:fail");
 		}
+
+		values.push(5);
+		final pushedCount = values.length;
+		final pushedValue = values[3];
+		final pushedSummary = pushedCount + pushedValue;
+		if (pushedSummary == 9) {
+			Sys.println("int-array-push:pass");
+		} else {
+			Sys.println("int-array-push:fail");
+		}
 	}
 }

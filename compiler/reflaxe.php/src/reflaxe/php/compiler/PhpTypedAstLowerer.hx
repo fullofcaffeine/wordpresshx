@@ -91,7 +91,7 @@ class PhpTypedAstLowerer {
 			Context.fatalError("reflaxe.php application methods require a typed body", functionData.field.pos);
 			return unreachableMethod(functionData);
 		}
-		final body = lowerStatementList(functionData.expr, new Map<Int, Int>());
+		final body = lowerStatementList(functionData.expr, new Map<Int, Int>(), true);
 		return new PhpMethod(functionData.field.isPublic ? PhpPublic : PhpPrivate, functionData.isStatic, false,
 			PhpIdentifier.named(isConstructor ? "__construct" : functionData.field.name), signature.parameters, sources.range(functionData.field.pos),
 			signature.returnType, body, "method:"
@@ -174,17 +174,21 @@ class PhpTypedAstLowerer {
 		});
 	}
 
-	function lowerStatementList(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Array<PhpStmt> {
+	function lowerStatementList(expression:TypedExpr, intArrayLengths:Map<Int, Int>, allowDirectArrayMutation:Bool):Array<PhpStmt> {
 		return switch (expression.expr) {
 			case TBlock(expressions):
 				final statements = new Array<PhpStmt>();
 				for (child in expressions) {
-					for (statement in lowerStatementList(child, intArrayLengths)) {
+					for (statement in lowerStatementList(child, intArrayLengths, allowDirectArrayMutation)) {
 						statements.push(statement);
 					}
 				}
 				statements;
-			case TCall(target, arguments): [lowerCall(expression, target, arguments)];
+			case TCall(target, arguments):
+				[
+					isIntArrayPushTarget(target) ? lowerIntArrayPush(expression, target, arguments, intArrayLengths,
+						allowDirectArrayMutation) : lowerCall(expression, target, arguments)
+				];
 			case TVar(variable, initialValue):
 				if (initialValue == null) {
 					Context.fatalError("reflaxe.php local bindings require an initial value", expression.pos);
@@ -242,15 +246,15 @@ class PhpTypedAstLowerer {
 				} else {
 					final loweredCondition = lowerCondition(condition, intArrayLengths);
 					[
-						mapped(PhpIfElse(loweredCondition.expression, lowerStatementList(thenBranch, intArrayLengths),
-							lowerStatementList(elseBranch, intArrayLengths)),
+						mapped(PhpIfElse(loweredCondition.expression, lowerStatementList(thenBranch, intArrayLengths, false),
+							lowerStatementList(elseBranch, intArrayLengths, false)),
 							expression, loweredCondition.mappingKind)
 					];
 				}
 			case TWhile(condition, body, true):
 				PhpSemanticCapabilities.requireAdmitted(WhileLoop);
 				[
-					mapped(PhpWhile(lowerIntCondition(condition, intArrayLengths), lowerStatementList(body, intArrayLengths)), expression, "while-int")
+					mapped(PhpWhile(lowerIntCondition(condition, intArrayLengths), lowerStatementList(body, intArrayLengths, false)), expression, "while-int")
 				];
 			case TWhile(_, _, false):
 				Context.fatalError("reflaxe.php does not yet support do-while loops", expression.pos);
@@ -294,9 +298,40 @@ class PhpTypedAstLowerer {
 						[];
 				}
 			case TTry(tryExpression, catches): lowerHaxeExceptionTry(expression, tryExpression, catches, intArrayLengths);
-			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths);
+			case TMeta(_, inner) | TParenthesis(inner): lowerStatementList(inner, intArrayLengths, allowDirectArrayMutation);
 			case _:
 				unsupportedStatement(expression);
+		}
+	}
+
+	/** Emits one native append after validation and advances the exact local array length used by later reads. */
+	function lowerIntArrayPush(call:TypedExpr, target:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>,
+			allowDirectArrayMutation:Bool):PhpStmt {
+		if (!allowDirectArrayMutation) {
+			Context.fatalError("reflaxe.php Array<Int>.push is admitted only as a direct straight-line statement", call.pos);
+		}
+		if (arguments.length != 1) {
+			Context.fatalError("reflaxe.php Array<Int>.push requires exactly one Int value", call.pos);
+		}
+		final receiver = switch (target.expr) {
+			case TField(value, _): value;
+			case _:
+				Context.fatalError("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+				return PhpReturnVoid;
+		}
+		return switch (receiver.expr) {
+			case TLocal(variable) if (intArrayLengths.exists(variable.id)):
+				final value = lowerIntValue(arguments[0], intArrayLengths);
+				final length = intArrayLengths.get(variable.id);
+				if (length == null) {
+					Context.fatalError("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+				}
+				intArrayLengths.set(variable.id, length == null ? 0 : length + 1);
+				PhpSemanticCapabilities.requireAdmitted(IntArrayPushDiscarded);
+				mapped(PhpAssign(PhpArrayAppend(PhpVar(variable.name)), value), call, "int-array-push");
+			case _:
+				Context.fatalError("reflaxe.php Array<Int>.push requires a compiler-owned non-null Array<Int> local", call.pos);
+				PhpReturnVoid;
 		}
 	}
 
@@ -320,8 +355,8 @@ class PhpTypedAstLowerer {
 		}
 		PhpSemanticCapabilities.requireAdmitted(CatchHaxeException);
 		return [
-			mapped(PhpTryCatch([throwStatement], "\\RuntimeException", catches[0].v.name, lowerStatementList(catches[0].expr, intArrayLengths)), expression,
-				"try-haxe-exception")
+			mapped(PhpTryCatch([throwStatement], "\\RuntimeException", catches[0].v.name, lowerStatementList(catches[0].expr, intArrayLengths, false)),
+				expression, "try-haxe-exception")
 		];
 	}
 
@@ -438,7 +473,7 @@ class PhpTypedAstLowerer {
 		PhpSemanticCapabilities.requireAdmitted(ReadOnlyStringClosureCapture);
 		final parameters = plan.functionData.args.map(argument -> PhpParameter.named(PhpIdentifier.named(argument.v.name), PhpStringType));
 		final captures = plan.captures.map(variable -> new PhpClosureCapture(PhpIdentifier.named(variable.name)));
-		return PhpClosure(parameters, captures, lowerStatementList(plan.functionData.expr, new Map<Int, Int>()), true, PhpStringType);
+		return PhpClosure(parameters, captures, lowerStatementList(plan.functionData.expr, new Map<Int, Int>(), false), true, PhpStringType);
 	}
 
 	function lowerBoolValue(expression:TypedExpr):PhpExpr {
@@ -531,7 +566,13 @@ class PhpTypedAstLowerer {
 				PhpStaticCall(PhpRuntimeLibrary.STRING_CLASS, "length", [lowerStringValue(receiver)]);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isArrayClass(classRef.get()) && fieldRef.get().name == "length"):
 				lowerProvenIntArrayLength(expression, receiver, intArrayLengths);
-			case TCall(target, arguments): lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
+			case TCall(target, arguments):
+				if (isIntArrayPushTarget(target)) {
+					Context.fatalError("reflaxe.php Array<Int>.push return values are not yet admitted", expression.pos);
+					PhpInt(0);
+				} else {
+					lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
+				}
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
 			case _: unsupportedIntValue(expression);
 		}
@@ -543,6 +584,13 @@ class PhpTypedAstLowerer {
 
 	static function isArrayClass(classType:ClassType):Bool {
 		return classType.pack.length == 0 && classType.name == "Array";
+	}
+
+	static function isIntArrayPushTarget(target:TypedExpr):Bool {
+		return switch (target.expr) {
+			case TField(_, FInstance(classRef, _, fieldRef)): isArrayClass(classRef.get()) && fieldRef.get().name == "push";
+			case _: false;
+		}
 	}
 
 	function lowerProvenIntArrayLength(read:TypedExpr, receiver:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {

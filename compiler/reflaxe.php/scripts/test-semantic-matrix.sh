@@ -119,6 +119,8 @@ assert_compile_negative "compound-assignment" "reflaxe.php does not yet support 
 assert_compile_negative "dynamic-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "out-of-bounds-array-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "unsupported-array-length" "reflaxe.php Array<Int> length requires a compiler-owned non-null Array<Int> local"
+assert_compile_negative "array-push-return" "reflaxe.php Array<Int>.push return values are not yet admitted"
+assert_compile_negative "array-push-branch" "reflaxe.php Array<Int>.push is admitted only as a direct straight-line statement"
 assert_compile_negative "string-coercion" "reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted"
 assert_compile_negative "null-string-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
