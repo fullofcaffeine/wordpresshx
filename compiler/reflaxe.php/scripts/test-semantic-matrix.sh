@@ -147,6 +147,7 @@ assert_compile_negative "nullable-int-local" "reflaxe.php supports only admitted
 assert_compile_negative "mutable-nullable-string" "reflaxe.php supports assignment only to Int variables or proven Array<Int> indices in the admitted semantic slice"
 assert_compile_negative "nullable-int-return" "reflaxe.php supports only Void, Int, Bool, String, and Null<String> method returns in the admitted semantic slice"
 assert_compile_negative "multiple-nullable-string-return-parameters" "reflaxe.php nullable String returns require exactly one required Null<String> parameter"
+assert_compile_negative "float-subtraction" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
 echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null/runtime semantic slices passed"

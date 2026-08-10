@@ -133,5 +133,14 @@ class Main {
 		} else {
 			Sys.println("int-array-pop:fail");
 		}
+
+		final leftAssociated = 9 - 4 - 2;
+		final groupedSubtraction = 9 - (4 - 2);
+		final subtractionSummary = leftAssociated + groupedSubtraction;
+		if (subtractionSummary == 10) {
+			Sys.println("int-subtraction-grouping:pass");
+		} else {
+			Sys.println("int-subtraction-grouping:fail");
+		}
 	}
 }

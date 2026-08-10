@@ -276,6 +276,12 @@ def main() -> None:
         "stmt:if-int-equality:3566:3682": ("statement", 2, b"if (poppedSummary == 7)"),
         "stmt:sys-println:3595:3628": ("statement", 3, b'Sys.println("int-array-pop:pass")'),
         "stmt:sys-println:3644:3677": ("statement", 3, b'Sys.println("int-array-pop:fail")'),
+        "stmt:local-int:3686:3719": ("statement", 2, b"final leftAssociated = 9 - 4 - 2"),
+        "stmt:local-int:3722:3761": ("statement", 2, b"final groupedSubtraction = 9 - (4 - 2)"),
+        "stmt:local-int:3764:3827": ("statement", 2, b"final subtractionSummary = leftAssociated + groupedSubtraction"),
+        "stmt:if-int-equality:3830:3974": ("statement", 2, b"if (subtractionSummary == 10)"),
+        "stmt:sys-println:3865:3909": ("statement", 3, b'Sys.println("int-subtraction-grouping:pass")'),
+        "stmt:sys-println:3925:3969": ("statement", 3, b'Sys.println("int-subtraction-grouping:fail")'),
     }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

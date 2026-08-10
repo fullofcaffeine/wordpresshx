@@ -608,6 +608,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpAdd, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
 				PhpBinop("+", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TBinop(OpSub, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntSubtraction);
+				PhpBinop("-", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TArray(base, index): lowerProvenIntArrayIndex(expression, base, index, intArrayLengths, ProvenIntArrayRead);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				PhpSemanticCapabilities.requireAdmitted(StringRuntimeHelper);
@@ -625,7 +628,10 @@ class PhpTypedAstLowerer {
 				} else {
 					lowerStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 				}
-			case TMeta(_, inner) | TParenthesis(inner): lowerIntValue(inner, intArrayLengths);
+			case TMeta(_, inner): lowerIntValue(inner, intArrayLengths);
+			case TParenthesis(inner):
+				PhpSemanticCapabilities.requireAdmitted(IntParenthesizedGrouping);
+				PhpParenthesized(lowerIntValue(inner, intArrayLengths));
 			case _: unsupportedIntValue(expression);
 		}
 	}
@@ -875,7 +881,8 @@ class PhpTypedAstLowerer {
 	}
 
 	function unsupportedIntValue(expression:TypedExpr):PhpExpr {
-		Context.fatalError("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
+		Context.fatalError("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, grouping, proven array reads, and source-owned calls",
+			expression.pos);
 		return PhpInt(0);
 	}
 

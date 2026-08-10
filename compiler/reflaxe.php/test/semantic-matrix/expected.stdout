@@ -16,3 +16,4 @@ int-array-length:pass
 int-array-push:pass
 int-array-write:pass
 int-array-pop:pass
+int-subtraction-grouping:pass

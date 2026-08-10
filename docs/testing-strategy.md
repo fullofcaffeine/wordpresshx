@@ -111,21 +111,22 @@ Each expanded semantic subject remains local-only until a clean workflow runs
 its exact command. The 64-record array-length subject passed its exact hosted
 compiler and PHP lane in run `31372128871`. The 65-record array-push subject
 passed the same clean lane in run `31377424790`. The 66-record indexed-write
-subject passed it in run `31381746528`. The current 67-record non-empty-pop
-subject passed it in run `31386245792`.
+subject passed it in run `31381746528`. The 67-record non-empty-pop subject
+passed it in run `31386245792`. The current 69-record subtraction and grouping
+subject has local proof. It still needs its exact clean hosted run.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 67 admitted, 6 explicitly
+registry. The current local subject lists 69 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
-differential fixture checks
-small `Int` addition, an initialized local, equality, `if/else`, required `Int`
-parameters/returns, a source-owned cross-module static call, explicit `Int`
-assignment, `Int <=`, pre-test `while`, a fixed `Array<Int>` literal, and
-compiler-proven constant in-bounds reads under both stock Haxe 4.3.7 and exact
-PHP 8.4.7. It reads array length only from that proven local and lowers it to
+differential fixture checks small `Int` addition and subtraction. It checks an
+initialized local, equality, and `if/else`. It checks required `Int` parameters
+and returns. It also checks a source-owned cross-module static call, explicit
+assignment, `Int <=`, and pre-test `while`. The array subset uses one fixed
+`Array<Int>` literal and compiler-proven constant reads. Stock Haxe 4.3.7 and
+exact PHP 8.4.7 operate the same fixture. It reads array length only from that proven local and lowers it to
 native PHP `count`. It also lowers a direct result-discarded push to native PHP
 append syntax. The fixture proves the new length and value after the push.
 It also lowers one proven indexed write to native PHP assignment syntax.
@@ -174,6 +175,13 @@ this subject. The local extension also exercises one unary source-owned
 and `Null<Int>` return remain compile-negative. Every compile-negative
 fixture must first run successfully under stock Haxe with empty stderr, so a
 malformed source program cannot be mistaken for a compiler limitation.
+
+The current numeric extension checks two distinct subtraction forms. Stock
+Haxe and generated PHP both produce `3` for `9 - 4 - 2`. They both produce `7`
+for `9 - (4 - 2)`. The generated PHP keeps the explicit parentheses. A
+stock-Haxe-valid Float fixture fails before target output. Overflow, division,
+modulo, unary negation, coercion, and general numeric behavior remain outside
+this subject.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

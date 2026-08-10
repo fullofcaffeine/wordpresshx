@@ -102,12 +102,13 @@ bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh
 
 It derives [`semantic-capabilities.json`](semantic-capabilities.json) from the
 typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
-and currently admits small `Int` literals/addition, initialized locals, `Int`
-equality, `if/else`, required `Int` parameters/returns, and source-owned static
-application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
-plus fixed `Array<Int>` literals, exact length, direct result-discarded push
-and non-empty pop, and compiler-proven constant in-bounds reads and writes
-beyond the original tracer. It also admits exact UTF-8 String literals,
+and admits small `Int` literals, addition, subtraction, initialized locals,
+equality, and `if/else`. It admits required `Int` parameters and returns.
+It also admits source-owned static calls, explicit assignment, `Int <=`, and
+pre-test `while`. The array subset includes fixed `Array<Int>` literals and
+exact length. It includes direct result-discarded push and non-empty pop.
+It also includes compiler-proven constant in-bounds reads and writes.
+The matrix admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
 Strings, String value equality, printing, required non-null String
 parameters/returns, and source-owned static String calls. Because ordinary Haxe
@@ -116,6 +117,10 @@ compiler explicitly rejects a null String argument instead of generating a PHP
 call with different behavior. Calls from handwritten weakly typed PHP are a
 separate adapter/ABI concern and are not covered by this source-owned call
 claim.
+The subtraction subset preserves Haxe left association and explicit grouping.
+For example, it keeps `9 - (4 - 2)` grouped in the generated PHP. The fixture
+also keeps Float subtraction outside this claim. Overflow, division, modulo,
+unary negation, coercion, and general numeric behavior remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The

@@ -124,5 +124,13 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-array-pop:fail' . PHP_EOL;
 		}
+		$leftAssociated = 9 - 4 - 2;
+		$groupedSubtraction = 9 - ( 4 - 2 );
+		$subtractionSummary = $leftAssociated + $groupedSubtraction;
+		if ( $subtractionSummary === 10 ) {
+			echo 'int-subtraction-grouping:pass' . PHP_EOL;
+		} else {
+			echo 'int-subtraction-grouping:fail' . PHP_EOL;
+		}
 	}
 }

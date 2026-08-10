@@ -514,6 +514,9 @@ class PhpTypedAstValidator {
 			case TBinop(OpAdd, left, right):
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
+			case TBinop(OpSub, left, right):
+				validateIntValue(left, intArrayLengths);
+				validateIntValue(right, intArrayLengths);
 			case TArray(base, index):
 				validateProvenIntArrayIndex(expression, base, index, intArrayLengths);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
@@ -526,10 +529,13 @@ class PhpTypedAstValidator {
 				} else {
 					validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
 				}
-			case TMeta(_, inner) | TParenthesis(inner):
+			case TMeta(_, inner):
+				validateIntValue(inner, intArrayLengths);
+			case TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, proven array reads, and source-owned calls", expression.pos);
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, grouping, proven array reads, and source-owned calls",
+					expression.pos);
 		}
 	}
 
