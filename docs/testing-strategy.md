@@ -109,15 +109,15 @@ reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
 its exact command. The 64-record array-length subject passed its exact hosted
-compiler and PHP lane in run `31372128871`. The current 65-record array-push
-subject passed the same clean lane in run `31377424790`. The 66-record indexed-write
-subject is local-only until the clean lane passes.
+compiler and PHP lane in run `31372128871`. The 65-record array-push subject
+passed the same clean lane in run `31377424790`. The current 66-record
+indexed-write subject passed it in run `31381746528`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 66 admitted, 6 explicitly
+registry. The current hosted subject lists 66 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
