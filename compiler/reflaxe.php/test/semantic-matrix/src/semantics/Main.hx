@@ -165,5 +165,14 @@ class Main {
 		} else {
 			Sys.println("int-ordering-comparisons:fail");
 		}
+
+		final negatedGrouped = -(2 + 3);
+		final nestedNegation = -(-3);
+		final negationSummary = negatedGrouped + nestedNegation;
+		if (negationSummary == -2) {
+			Sys.println("int-unary-negation:pass");
+		} else {
+			Sys.println("int-unary-negation:fail");
+		}
 	}
 }

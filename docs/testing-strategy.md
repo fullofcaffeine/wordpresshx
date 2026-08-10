@@ -120,7 +120,7 @@ are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 73 admitted, 6 explicitly
+registry. The current local subject lists 74 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks small `Int` addition and subtraction. It checks
 compiler-proven, 32-bit-safe constant multiplication. It also checks an
@@ -183,15 +183,16 @@ Haxe and generated PHP both produce `3` for `9 - 4 - 2`. They both produce `7`
 for `9 - (4 - 2)`. They produce `14` for `2 + 3 * 4` and `20` for
 `(2 + 3) * 4`. The generated PHP keeps the required parentheses. Float and
 runtime-dependent multiplication fail before target output. This rule prevents
-silent Haxe 32-bit and PHP 64-bit overflow differences. Overflow, division,
-modulo, unary negation, coercion, and general numeric behavior remain outside
-this subject.
+silent Haxe 32-bit and PHP 64-bit overflow differences. The same compile-time
+range proof admits grouped and nested unary negation. Runtime-dependent
+negation and integer-minimum overflow fail before output. Division, modulo,
+coercion, and general numeric behavior remain outside this subject.
 
-The local ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
+The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-73-record subject still needs its exact hosted lane, so the 70-record run above
-remains the last hosted compiler checkpoint.
+74-record subject still needs its exact hosted lane. The 73-record run
+`31404355339` remains the last hosted compiler checkpoint.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

@@ -449,6 +449,7 @@ class PhpPrinter {
 				printClosure(parameters, captures, body, isStatic, returnType, depth);
 			case PhpReference(inner): "&" + printExpr(inner, depth);
 			case PhpNot(inner): "! " + printExpr(inner, depth);
+			case PhpNegate(inner): "- " + printExpr(inner, depth);
 			case PhpCastArray(inner): "(array) " + printExpr(inner, depth);
 			case PhpCastBool(inner): "(bool) " + printExpr(inner, depth);
 			case PhpCastInt(inner): "(int) " + printExpr(inner, depth);

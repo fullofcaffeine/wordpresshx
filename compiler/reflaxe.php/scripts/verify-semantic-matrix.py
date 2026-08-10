@@ -295,6 +295,12 @@ def main() -> None:
 		"stmt:sys-println:4424:4468": ("statement", 5, b'Sys.println("int-ordering-comparisons:fail")'),
 		"stmt:sys-println:4492:4536": ("statement", 4, b'Sys.println("int-ordering-comparisons:fail")'),
 		"stmt:sys-println:4557:4601": ("statement", 3, b'Sys.println("int-ordering-comparisons:fail")'),
+		"stmt:local-int:4610:4642": ("statement", 2, b"final negatedGrouped = -(2 + 3)"),
+		"stmt:local-int:4645:4674": ("statement", 2, b"final nestedNegation = -(-3)"),
+		"stmt:local-int:4677:4733": ("statement", 2, b"final negationSummary = negatedGrouped + nestedNegation"),
+		"stmt:if-int-equality:4736:4865": ("statement", 2, b"if (negationSummary == -2)"),
+		"stmt:sys-println:4768:4806": ("statement", 3, b'Sys.println("int-unary-negation:pass")'),
+		"stmt:sys-println:4822:4860": ("statement", 3, b'Sys.println("int-unary-negation:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {

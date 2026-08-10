@@ -153,5 +153,13 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-ordering-comparisons:fail' . PHP_EOL;
 		}
+		$negatedGrouped = - ( 2 + 3 );
+		$nestedNegation = - ( -3 );
+		$negationSummary = $negatedGrouped + $nestedNegation;
+		if ( $negationSummary === -2 ) {
+			echo 'int-unary-negation:pass' . PHP_EOL;
+		} else {
+			echo 'int-unary-negation:fail' . PHP_EOL;
+		}
 	}
 }

@@ -527,6 +527,10 @@ class PhpTypedAstValidator {
 				if (constantIntValue(expression) == null) {
 					Context.error("reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression", expression.pos);
 				}
+			case TUnop(OpNeg, false, _):
+				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
+					Context.error("reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression", expression.pos);
+				}
 			case TArray(base, index):
 				validateProvenIntArrayIndex(expression, base, index, intArrayLengths);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
@@ -544,7 +548,7 @@ class PhpTypedAstValidator {
 			case TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, grouping, proven array reads, and source-owned calls",
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, negation, grouping, proven array reads, and source-owned calls",
 					expression.pos);
 		}
 	}
@@ -555,9 +559,19 @@ class PhpTypedAstValidator {
 			case TBinop(OpAdd, left, right): constantIntBinaryValue(left, right, Add);
 			case TBinop(OpSub, left, right): constantIntBinaryValue(left, right, Subtract);
 			case TBinop(OpMult, left, right): constantIntBinaryValue(left, right, Multiply);
+			case TUnop(OpNeg, false, inner): constantIntNegatedValue(inner);
 			case TMeta(_, inner) | TParenthesis(inner): constantIntValue(inner);
 			case _: null;
 		}
+	}
+
+	static function constantIntNegatedValue(expression:TypedExpr):Null<Int> {
+		final value = constantIntValue(expression);
+		if (value == null) {
+			return null;
+		}
+		final result = -1.0 * value;
+		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
 	}
 
 	static function constantIntBinaryValue(left:TypedExpr, right:TypedExpr, operation:ConstantIntOperation):Null<Int> {

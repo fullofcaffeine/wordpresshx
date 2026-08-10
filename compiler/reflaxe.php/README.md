@@ -121,9 +121,11 @@ claim.
 The numeric subset preserves Haxe grouping and operator precedence. It keeps
 `9 - (4 - 2)` grouped in the generated PHP. It also distinguishes
 `2 + 3 * 4` from `(2 + 3) * 4`. This first multiplication path accepts only
-compiler-proven, 32-bit-safe constant expressions. Runtime-dependent and Float
-multiplication fail before output. Overflow, division, modulo, unary negation,
-coercion, and general numeric behavior remain unproved.
+compiler-proven, 32-bit-safe constant expressions. The same proof admits unary
+negation, including nested and grouped constant expressions. Runtime-dependent
+and Float multiplication or negation fail before output. Integer-minimum
+negation overflow, division, modulo, coercion, and general numeric behavior
+remain unproved.
 The ordering slice lowers native PHP comparisons only after both operands have
 exact Haxe `Int` type and pass the existing `Int` expression validator. A
 stock-Haxe-valid Float ordering fixture fails before output. Mixed numeric,

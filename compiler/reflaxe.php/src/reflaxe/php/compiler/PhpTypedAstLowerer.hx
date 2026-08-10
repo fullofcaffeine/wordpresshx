@@ -614,6 +614,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpMult, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntMultiplication);
 				PhpBinop("*", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TUnop(OpNeg, false, inner):
+				PhpSemanticCapabilities.requireAdmitted(IntUnaryNegation);
+				PhpNegate(lowerIntValue(inner, intArrayLengths));
 			case TArray(base, index): lowerProvenIntArrayIndex(expression, base, index, intArrayLengths, ProvenIntArrayRead);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				PhpSemanticCapabilities.requireAdmitted(StringRuntimeHelper);

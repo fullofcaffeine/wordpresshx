@@ -152,6 +152,9 @@ assert_compile_negative "float-multiplication" "reflaxe.php supports only admitt
 assert_compile_negative "runtime-int-multiplication" "reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "overflow-int-multiplication" "reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "float-ordering" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
+assert_compile_negative "runtime-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"
+assert_compile_negative "overflow-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"
+assert_compile_negative "float-negation" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
 python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" "${fixture_root}"
 
 echo "reflaxe.php numeric/local/control-flow/function-call/while/array/string/bool/instance-layout/closure/exception/null/runtime semantic slices passed"

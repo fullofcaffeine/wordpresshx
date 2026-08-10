@@ -43,6 +43,7 @@ enum PhpExpr {
 	PhpClosure(parameters:Array<PhpParameter>, captures:Array<PhpClosureCapture>, body:Array<PhpStmt>, isStatic:Bool, returnType:Null<PhpType>);
 	PhpReference(expr:PhpExpr);
 	PhpNot(expr:PhpExpr);
+	PhpNegate(expr:PhpExpr);
 	PhpCastArray(expr:PhpExpr);
 	PhpCastBool(expr:PhpExpr);
 	PhpCastInt(expr:PhpExpr);

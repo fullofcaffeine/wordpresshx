@@ -19,3 +19,4 @@ int-array-pop:pass
 int-subtraction-grouping:pass
 int-multiplication-grouping:pass
 int-ordering-comparisons:pass
+int-unary-negation:pass
