@@ -3,15 +3,15 @@
   "receiptId": "ADR-012-OUTPUT-CONTEXT-SAFETY",
   "bead": "wordpresshx-adr-012",
   "status": "final-rereview-findings-repaired-pending-rereview",
-  "observedAt": "2026-08-09T00:00:00Z",
+  "observedAt": "2026-08-10T00:00:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/012-output-context-safety.md",
-      "sha256": "3538436483baba505a8dcb0123f593a0ef7e9ac56cb160b820782863771de9c9"
+      "sha256": "10408cfa94070490e49f79375f7442ac58a0c028cbfc3da5c85ea813f9cb6801"
     },
     "architecture": {
       "path": "manifests/output-context-architecture.json",
-      "sha256": "bfcc22368d95dcd72c73ddb24a8af8baeaf771f279c1ec46b5528d306e4a7570"
+      "sha256": "5a095b887d28b7d2dd982d74070b7ed48cda030c7423e122ebba94e5f110238e"
     },
     "transcript": {
       "path": "fixtures/output-context/expected/context-plan.txt",
@@ -19,7 +19,7 @@
     },
     "independentValidator": {
       "path": "scripts/output-context/validate-architecture.py",
-      "sha256": "0cb07ac17260daf924b08d7c194b7b05f076f65106895819485df9093848f1f0"
+      "sha256": "3165fb2671672bbc6266682ddb464b98c44feb9d324264462ac643f582eaf7de"
     },
     "gate": {
       "path": "scripts/output-context/test.sh",
@@ -63,13 +63,13 @@
     "compileNegativeCount": 33,
     "emptyFailureVectorCount": 1,
     "typedConstructionGuardCount": 6,
-    "independentMutationCount": 36,
+    "independentMutationCount": 37,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "reactTextAttributeTextareaAndScriptData": "passed",
     "wordpressTextAttributeTextareaUrlKsesJsonBlockRestAndAdmin": "not-run-current-subject-docker-unavailable",
     "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
     "databaseImage": "docker.io/library/mariadb@sha256:49117dcc565cf51aa57ac5fca59ab31213402ff0eae6ffc13c46a37b938f7e4b",
-    "outcome": "final-rereview-findings-repaired-local-cross-target-proof-passed-pending-rereview"
+    "outcome": "rr5-findings-repaired-local-cross-target-proof-passed-pending-rereview"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -209,13 +209,32 @@
     ],
     "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
   },
+  "f004Rr5AcceptanceRereview": {
+    "decision": "changes-required",
+    "requestId": "orq_20260810T023318Z_cdd348fe",
+    "reviewedCommit": "1bb877ee69e4d2815ee5254056363a691fe0d703",
+    "reviewedTree": "4bbeca22538894f31a035a1ec9b5a4d00f04703f",
+    "promptSha256": "317f1561ae2ac165342ebb1fb86d7eeb0c2dd088caea3605530036d278d4e66c",
+    "bundleSha256": "35883546b4dfdf045c38c11f2fea3ff90468d1f8d8cdca8383023afd1a63d475",
+    "responseSha256": "3d1fc76b72bdf02f61b62394e3bd47e58918075b3652e6ea51bf3dc818a24071",
+    "reportPath": "review/oracle/results/adr012-f004-final-acceptance-1bb877e/ORACLE-REVIEW.md",
+    "reportSha256": "67ba1d19e9a983f13811bd3f869557901a88df92011f627541557b65d70e86a0",
+    "integrationPath": "review/oracle/results/adr012-f004-final-acceptance-1bb877e/INTEGRATION.md",
+    "integrationSha256": "c5a391ca406db08bf31d5c013896b03b911c0f52f0741ceadc534d629a18f3f3",
+    "processingState": "captured-attention-required-model-proof-incomplete",
+    "closedPriorFindings": ["ADR012-F004-RR4-F001", "ADR009-RR4-F001"],
+    "openFindings": ["ADR009-RR5-F001", "ADR009-RR5-F002", "ADR012-EVIDENCE-RR5-F001"],
+    "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
+  },
   "finalFindingsRepair": {
       "status": "local-cross-target-proof-passed-pending-fresh-rereview",
       "jsonPlanState": "closed-encoded-or-rejected",
       "emptyFailureReason": "codec-rejected-without-reason",
     "typedConstructionGuard": "haxe-onAfterTyping-fields-statics-constructor-init-reflection-and-constructorless-reconstitution-exclusion",
       "privateAccessNegativeTargets": ["haxe-interp-4.3.7", "genes-ts-1.41.4", "stock-haxe-php-8.4.7"],
-      "untrustedCompilerMacrosAdmitted": false
+      "untrustedCompilerMacrosAdmitted": false,
+      "outputSinksPublicPlanFactoryAllowlist": ["restJson(JsonDocument)", "scriptData(HtmlScriptData)"],
+      "rawStringOwnerFactoryMutation": "rejected"
     }
   },
   "referenceReview": {

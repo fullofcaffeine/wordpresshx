@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and PRD authority), Codex (architecture and executable-fixture implementation), independent Codex review (two correction rounds; final review found no blockers)
+- Owners/reviewers: repository owner (product and PRD authority), Codex (architecture and executable-fixture implementation), independent Codex review (two correction rounds; final review found no blockers)
 - Bead: `wordpresshx-adr-009`
 - Profiles/layers: shared contracts, PHP compiler/profile, Genes browser output, WordPress REST, Gutenberg block attributes, schema migrations
 - Supersedes: none; makes PRD §§5.1, 13.5, 14.5, 15.3, and 29.1 concrete on top of ADR-006
@@ -531,6 +531,20 @@ the checked snapshot boundary, and missing or malformed field elements return
 missing values, and non-object elements; the semantic malformed corpus now
 contains 22 cases. This remains a local repair pending fresh acceptance. See
 the [exact review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-5e151ed/INTEGRATION.md).
+
+The next GPT-5.6 Pro review examined commit
+`1bb877ee69e4d2815ee5254056363a691fe0d703`. It found two more foreign-input
+gaps. A JavaScript caller could pass `Number.NaN` as `maxDepth` and defeat all
+depth comparisons. A hostile native array could also throw during length or
+element access. Both defects were reproduced before repair.
+
+`encodeChecked` now admits the runtime depth value before any comparison. It
+rejects non-integer foreign values without bytes. The snapshot phase now
+catches failures while it observes enum payloads, array lengths, array
+elements, and object lengths. The native malformed corpus contains 29 PHP
+cases and 27 Genes cases. The exact Haxe, Genes, PHP, and decoder gate passes.
+This remains a local repair pending fresh acceptance. See the
+[latest review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-1bb877e/INTEGRATION.md).
 
 ## Migration, rollback, and supersession
 

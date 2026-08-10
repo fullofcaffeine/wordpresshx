@@ -18,6 +18,9 @@ class CanonicalWireJson {
 		cannot mutate the checked arrays or fields between validation and output.
 	**/
 	public static function encodeChecked(value:WireValue, maxDepth:Int = 64):WireJsonEncoding {
+		if (!Std.isOfType(maxDepth, Int)) {
+			return JsonRejected("json-depth-limit-must-be-integer");
+		}
 		if (maxDepth < 1) {
 			return JsonRejected("json-depth-limit-must-be-positive");
 		}
@@ -37,20 +40,25 @@ class CanonicalWireJson {
 		if (!hasValidWireEnvelope(value)) {
 			return SnapshotRejected(path + ": invalid-wire-value");
 		}
-		return switch value {
-			case NullValue:
-				SnapshotAccepted(CanonicalNull);
-			case BoolValue(value):
-				Std.isOfType(value, Bool) ? SnapshotAccepted(CanonicalBool(value)) : SnapshotRejected(path + ": invalid-bool");
-			case IntegerValue(value): Std.isOfType(value,
-					Int) && value >= -2147483648 && value <= 2147483647 ? SnapshotAccepted(CanonicalInteger(value)) : SnapshotRejected(path + ": invalid-integer");
-			case StringValue(value):
-				snapshotString(value, path);
-			case ArrayValue(values):
-				snapshotArray(values, path, containerDepth + 1, maxDepth);
-			case ObjectValue(fields):
-				snapshotObject(fields, path, containerDepth + 1, maxDepth);
-		};
+		try {
+			return switch value {
+				case NullValue:
+					SnapshotAccepted(CanonicalNull);
+				case BoolValue(value):
+					Std.isOfType(value, Bool) ? SnapshotAccepted(CanonicalBool(value)) : SnapshotRejected(path + ": invalid-bool");
+				case IntegerValue(value): Std.isOfType(value,
+						Int) && value >= -2147483648 && value <= 2147483647 ? SnapshotAccepted(CanonicalInteger(value)) : SnapshotRejected(path
+						+ ": invalid-integer");
+				case StringValue(value):
+					snapshotString(value, path);
+				case ArrayValue(values):
+					snapshotArray(values, path, containerDepth + 1, maxDepth);
+				case ObjectValue(fields):
+					snapshotObject(fields, path, containerDepth + 1, maxDepth);
+			};
+		} catch (exception:haxe.Exception) {
+			return SnapshotRejected(path + ": invalid-wire-value");
+		}
 	}
 
 	static function hasValidWireEnvelope(value:WireValue):Bool {
@@ -84,9 +92,21 @@ class CanonicalWireJson {
 		if (containerDepth > maxDepth) {
 			return SnapshotRejected(path + ": json-depth-limit-exceeded");
 		}
+		var valueCount = 0;
+		try {
+			valueCount = values.length;
+		} catch (exception:haxe.Exception) {
+			return SnapshotRejected(path + ": invalid-array");
+		}
 		final valuesSnapshot:Array<CanonicalJsonValue> = [];
-		for (index in 0...values.length) {
-			switch snapshot(values[index], path + "[" + index + "]", containerDepth, maxDepth) {
+		for (index in 0...valueCount) {
+			var current:Null<WireValue> = null;
+			try {
+				current = values[index];
+			} catch (exception:haxe.Exception) {
+				return SnapshotRejected(path + "[" + index + "]: invalid-array-element");
+			}
+			switch snapshot(current, path + "[" + index + "]", containerDepth, maxDepth) {
 				case SnapshotRejected(reason):
 					return SnapshotRejected(reason);
 				case SnapshotAccepted(value):
@@ -103,8 +123,14 @@ class CanonicalWireJson {
 		if (containerDepth > maxDepth) {
 			return SnapshotRejected(path + ": json-depth-limit-exceeded");
 		}
+		var fieldCount = 0;
+		try {
+			fieldCount = fields.length;
+		} catch (exception:haxe.Exception) {
+			return SnapshotRejected(path + ": invalid-object");
+		}
 		final fieldsSnapshot:Array<CanonicalJsonField> = [];
-		for (index in 0...fields.length) {
+		for (index in 0...fieldCount) {
 			try {
 				final current:Null<WireField> = fields[index];
 				if (current == null) {

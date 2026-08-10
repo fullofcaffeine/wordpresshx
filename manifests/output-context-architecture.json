@@ -343,7 +343,7 @@
     "forbiddenEdgeCount": 15,
     "hxxPositionCount": 18,
     "compileNegativeCount": 33,
-    "independentMutationCount": 36,
+    "independentMutationCount": 37,
     "emptyFailureVectorCount": 1,
     "typedConstructionGuardCount": 6,
     "jsonPlanState": "closed-encoded-or-rejected",

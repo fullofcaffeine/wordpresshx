@@ -3,15 +3,15 @@
   "receiptId": "ADR-009-SCHEMA-CODEC-AUTHORITY",
   "bead": "wordpresshx-adr-009",
   "status": "checked-json-final-findings-repaired-pending-rereview",
-  "observedAt": "2026-08-09T00:00:00Z",
+  "observedAt": "2026-08-10T00:00:00Z",
   "subject": {
     "adr": {
       "path": "docs/adr/009-schema-and-codec-authority.md",
-      "sha256": "31c6998c019496da85f02b0c6ee120bf0b038d3a793651270d65215227d10a44"
+      "sha256": "89540ce0faaba7917d5fe32cc2028d07601456e98f83d53fbe4c5bf00dcc074e"
     },
     "architecture": {
       "path": "manifests/schema-codec-architecture.json",
-      "sha256": "4e466bc491c2103430a2bc8b018696dd92642f5b2b2c8575be1b754aaac20795"
+      "sha256": "0516e2e6082ed160bfb5655f38fadf20674c9e2d2eb4a08598e44a77a15f68e4"
     },
     "serializedSchema": {
       "path": "schemas/contract-schema.schema.json",
@@ -27,11 +27,11 @@
     },
     "runtimeProbes": {
       "path": "packages/contracts/test-runtime/verify-wire-json-foreign.mjs",
-      "sha256": "e5c52eb604efc6ba147185698874950cb4edbd364015756217dbc1963f7d3bdd"
+      "sha256": "0bd8689e1d08628aef6f02c38e8f192b76e1ec1573789cc4ad0f8fc322c8bd84"
     },
     "runtimePhpForeignProbe": {
       "path": "packages/contracts/test-runtime/verify-wire-json-foreign.php",
-      "sha256": "130c5f0abdf30f7b71561b31e2fd2008e6a2df6706dd09f19df46fa4e5dc7d2f"
+      "sha256": "491d6ee4299e5994f23612c7fc68923acbd2064341d21920751bb6041a055503"
     },
     "runtimeNodeTranscriptProbe": {
       "path": "packages/contracts/test-runtime/verify-wire-json-transcript.mjs",
@@ -43,7 +43,7 @@
     },
     "independentValidator": {
       "path": "scripts/contracts/validate-schema-authority.py",
-      "sha256": "f6b1f96a8665c497b644df7fd62d71dfd91c0b2b29d5c39b4c317e23d3db883c"
+      "sha256": "36a50560b781eb6df31e4e9f6f4dbafb5672a1589ab7f3600dc111559c81c00c"
     },
     "gate": {
       "path": "scripts/contracts/test-schema-authority.sh",
@@ -71,7 +71,7 @@
       "git diff --check",
       "git diff --cached --check"
     ],
-    "sourceTreeSha256": "a225b2cfe87553027aa0bb373504c14859877d6d55500f847076035f891d6cc0",
+    "sourceTreeSha256": "7ab29e8475e06ed7e1ad22ecd4fd26cfb24cc4a0974695f833a06f2515bbe1a5",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.41.4",
     "typescriptVersion": "5.9.3",
@@ -81,7 +81,7 @@
     "strictHaxeForbiddenTokenCount": 0,
     "crossTargetVectorCount": 17,
     "wireJsonBoundaryVectorCount": 39,
-    "foreignMalformedValueCount": 22,
+    "foreignMalformedValueCount": 29,
     "nativeDecoderSuccessCount": 9,
     "haxeInvariantCount": 27,
     "checkedJsonInvariantCount": 29,
@@ -92,7 +92,7 @@
     "cyclicArrayAndObjectDefaultRejection": "passed-ContractError",
     "documentBoundPathIndependentRules": "passed",
     "developmentEncodeValidation": "passed",
-    "outcome": "final-findings-repaired-local-cross-target-gates-passed-pending-rereview"
+    "outcome": "rr5-findings-repaired-local-cross-target-gates-passed-pending-rereview"
   },
   "review": {
     "initialFindingCount": 10,
@@ -163,10 +163,26 @@
     "openFinding": "ADR009-RR4-F001",
     "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
   },
+  "checkedJsonRr5AcceptanceRereview": {
+    "decision": "changes-required",
+    "requestId": "orq_20260810T023318Z_cdd348fe",
+    "reviewedCommit": "1bb877ee69e4d2815ee5254056363a691fe0d703",
+    "reviewedTree": "4bbeca22538894f31a035a1ec9b5a4d00f04703f",
+    "promptSha256": "317f1561ae2ac165342ebb1fb86d7eeb0c2dd088caea3605530036d278d4e66c",
+    "bundleSha256": "35883546b4dfdf045c38c11f2fea3ff90468d1f8d8cdca8383023afd1a63d475",
+    "responseSha256": "3d1fc76b72bdf02f61b62394e3bd47e58918075b3652e6ea51bf3dc818a24071",
+    "reportPath": "review/oracle/results/adr012-f004-final-acceptance-1bb877e/ORACLE-REVIEW.md",
+    "reportSha256": "67ba1d19e9a983f13811bd3f869557901a88df92011f627541557b65d70e86a0",
+    "integrationPath": "review/oracle/results/adr012-f004-final-acceptance-1bb877e/INTEGRATION.md",
+    "integrationSha256": "c5a391ca406db08bf31d5c013896b03b911c0f52f0741ceadc534d629a18f3f3",
+    "processingState": "captured-attention-required-model-proof-incomplete",
+    "openFindings": ["ADR009-RR5-F001", "ADR009-RR5-F002", "ADR012-EVIDENCE-RR5-F001"],
+    "localDisposition": "retained-reproduced-and-repaired-pending-fresh-review"
+  },
   "finalFindingsRepair": {
       "status": "local-cross-target-proof-passed-pending-fresh-rereview",
       "nullScalarFailures": ["invalid-bool", "invalid-integer"],
-      "foreignMalformedValueCount": 22,
+      "foreignMalformedValueCount": 29,
       "nativeDecoderSuccessCount": 9,
       "targets": ["haxe-interp-4.3.7", "genes-ts-1.41.4-typescript-5.9.3-node-22.17.0", "stock-haxe-php-8.4.7"],
       "publicJsonEncodedAuthority": "none-caller-construction-is-not-validation"

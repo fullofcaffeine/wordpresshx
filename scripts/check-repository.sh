@@ -2380,7 +2380,7 @@ assert schema_prototype["haxeInvariantCount"] == 27
 assert schema_prototype["checkedJsonInvariantCount"] == 29
 assert schema_prototype["crossTargetVectorCount"] == 17
 assert schema_prototype["wireJsonBoundaryVectorCount"] == 39
-assert schema_prototype["foreignMalformedValueCount"] == 22
+assert schema_prototype["foreignMalformedValueCount"] == 29
 assert schema_prototype["nativeDecoderSuccessCount"] == 9
 assert schema_prototype["independentMutationCount"] == 18
 assert schema_prototype["negativeCompileFixtureCount"] == 5
@@ -2410,7 +2410,7 @@ assert adr009_verification["haxeInvariantCount"] == 27
 assert adr009_verification["checkedJsonInvariantCount"] == 29
 assert adr009_verification["crossTargetVectorCount"] == 17
 assert adr009_verification["wireJsonBoundaryVectorCount"] == 39
-assert adr009_verification["foreignMalformedValueCount"] == 22
+assert adr009_verification["foreignMalformedValueCount"] == 29
 assert adr009_verification["nativeDecoderSuccessCount"] == 9
 assert adr009_verification["independentMutationCount"] == 18
 assert adr009_verification["negativeCompileFixtureCount"] == 5
@@ -2503,8 +2503,33 @@ if adr009_receipt["status"] in {
             assert adr009_repair["status"] == (
                 "local-cross-target-proof-passed-pending-fresh-rereview"
             )
-            assert adr009_repair["foreignMalformedValueCount"] == 22
+            assert adr009_repair["foreignMalformedValueCount"] == 29
             assert adr009_repair["nativeDecoderSuccessCount"] == 9
+            adr009_rr5_review = adr009_receipt["review"][
+                "checkedJsonRr5AcceptanceRereview"
+            ]
+            assert adr009_rr5_review["decision"] == "changes-required"
+            assert adr009_rr5_review["requestId"] == (
+                "orq_20260810T023318Z_cdd348fe"
+            )
+            assert adr009_rr5_review["reviewedCommit"] == (
+                "1bb877ee69e4d2815ee5254056363a691fe0d703"
+            )
+            assert adr009_rr5_review["openFindings"] == [
+                "ADR009-RR5-F001",
+                "ADR009-RR5-F002",
+                "ADR012-EVIDENCE-RR5-F001",
+            ]
+            assert adr009_rr5_review["processingState"] == (
+                "captured-attention-required-model-proof-incomplete"
+            )
+            for review_path_field, review_digest_field in (
+                ("integrationPath", "integrationSha256"),
+                ("reportPath", "reportSha256"),
+            ):
+                assert hashlib.sha256(
+                    Path(adr009_rr5_review[review_path_field]).read_bytes()
+                ).hexdigest() == adr009_rr5_review[review_digest_field]
 else:
     assert adr009_receipt["claims"]["architectureDecision"] == "accepted"
 assert adr009_receipt["claims"]["publicationAuthorized"] is False
@@ -2558,7 +2583,7 @@ assert output_prototype["allowedEdgeCount"] == 12
 assert output_prototype["forbiddenEdgeCount"] == 15
 assert output_prototype["hxxPositionCount"] == 18
 assert output_prototype["compileNegativeCount"] == 33
-assert output_prototype["independentMutationCount"] == 36
+assert output_prototype["independentMutationCount"] == 37
 assert output_prototype["emptyFailureVectorCount"] == 1
 assert output_prototype["typedConstructionGuardCount"] == 6
 assert output_prototype["jsonPlanState"] == "closed-encoded-or-rejected"
@@ -2606,7 +2631,7 @@ assert adr012_verification["hxxPositionCount"] == 18
 assert adr012_verification["compileNegativeCount"] == 33
 assert adr012_verification["emptyFailureVectorCount"] == 1
 assert adr012_verification["typedConstructionGuardCount"] == 6
-assert adr012_verification["independentMutationCount"] == 36
+assert adr012_verification["independentMutationCount"] == 37
 assert adr012_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
 ] is True
@@ -2859,6 +2884,31 @@ if adr012_receipt["status"] in {
                 assert adr012_repair["jsonPlanState"] == (
                     "closed-encoded-or-rejected"
                 )
+                adr012_rr5_review = adr012_receipt["review"][
+                    "f004Rr5AcceptanceRereview"
+                ]
+                assert adr012_rr5_review["decision"] == "changes-required"
+                assert adr012_rr5_review["requestId"] == (
+                    "orq_20260810T023318Z_cdd348fe"
+                )
+                assert adr012_rr5_review["reviewedCommit"] == (
+                    "1bb877ee69e4d2815ee5254056363a691fe0d703"
+                )
+                assert adr012_rr5_review["openFindings"] == [
+                    "ADR009-RR5-F001",
+                    "ADR009-RR5-F002",
+                    "ADR012-EVIDENCE-RR5-F001",
+                ]
+                assert adr012_rr5_review["processingState"] == (
+                    "captured-attention-required-model-proof-incomplete"
+                )
+                for review_path_field, review_digest_field in (
+                    ("integrationPath", "integrationSha256"),
+                    ("reportPath", "reportSha256"),
+                ):
+                    assert hashlib.sha256(
+                        Path(adr012_rr5_review[review_path_field]).read_bytes()
+                    ).hexdigest() == adr012_rr5_review[review_digest_field]
     assert adr012_receipt["review"]["acceptanceAuthorized"] is False
 else:
     assert adr012_receipt["review"]["freshIndependentReview"] == (

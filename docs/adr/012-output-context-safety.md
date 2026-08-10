@@ -2,7 +2,7 @@
 
 - Status: reopened after an independently reproduced JSON codec regression
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product owner and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; accepted the earlier bounded design, then found a regression)
+- Owners/reviewers: repository owner (product and security direction), Codex (architecture and executable-fixture implementation), GPT-5.6 Oracle (independent review; accepted the earlier bounded design, then found a regression)
 - Bead: `wordpresshx-adr-012`
 - Profiles/layers: shared output contracts, PHP compiler, WordPress profile, HXX lowering, Genes browser output, REST, blocks, admin UI
 - Supersedes: none; makes PRD §29.1 and ADR-011's contextual-lowering requirement concrete
@@ -482,3 +482,17 @@ negative fixture pins the behavior. The review also found the ADR-009 malformed
 field case described there. Both are locally repaired, but F004 remains open
 until a fresh review accepts the post-correction commit. See the
 [exact review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-5e151ed/INTEGRATION.md).
+
+The next GPT-5.6 Pro review examined commit
+`1bb877ee69e4d2815ee5254056363a691fe0d703`. It found no current raw-string
+plan bypass. It found two ADR-009 foreign-input gaps and one ADR-012 evidence
+gap. The evidence validator inspected only the source after `JsonPlan`. A new
+public raw-string factory in `OutputSinks` could therefore avoid that check.
+
+The validator now allows only `restJson(JsonDocument)` and
+`scriptData(HtmlScriptData)` as public plan factories. An independent mutation
+adds a raw-string factory and must fail. The mutation inventory grows from 36
+to 37. The ADR-012 architecture and React lanes pass. The WordPress container
+lane remains not run because Docker is unavailable. F004 remains open until a
+fresh review accepts the corrected commit. See the
+[latest review and disposition](../../review/oracle/results/adr012-f004-final-acceptance-1bb877e/INTEGRATION.md).

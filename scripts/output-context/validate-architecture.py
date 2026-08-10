@@ -372,6 +372,7 @@ def validate_model(model: dict[str, object]) -> None:
         raise ValidationError("unsafe React HTML property became public")
 
     output_sinks_source = OUTPUT_SINKS_PATH.read_text(encoding="utf-8")
+    validate_output_sinks_source(output_sinks_source)
     json_plan_source = output_sinks_source.split("final class JsonPlan", 1)[-1]
     if re.search(
         r"public\s+static\s+function\s+\w+\s*\([^)]*(?:encoded|json)\s*:\s*String",
@@ -417,7 +418,7 @@ def validate_model(model: dict[str, object]) -> None:
         "forbiddenEdgeCount": 15,
         "hxxPositionCount": 18,
 		"compileNegativeCount": 33,
-        "independentMutationCount": 36,
+        "independentMutationCount": 37,
         "emptyFailureVectorCount": 1,
 		"typedConstructionGuardCount": 6,
         "jsonPlanState": "closed-encoded-or-rejected",
@@ -557,6 +558,48 @@ def mutation_cases(model: dict[str, object]) -> list[tuple[str, dict[str, object
     return mutations
 
 
+def validate_output_sinks_source(output_sinks_source: str) -> None:
+    output_sinks_owner = output_sinks_source.split("final class JsonPlan", 1)[0]
+    public_plan_functions = re.findall(
+        r"public\s+static\s+function\s+(\w+)\s*\(([^)]*)\)\s*:\s*JsonPlan",
+        output_sinks_owner,
+        flags=re.DOTALL,
+    )
+    normalized = {
+        name: re.sub(r"\s+", "", parameters)
+        for name, parameters in public_plan_functions
+    }
+    expected = {
+        "restJson": "value:JsonDocument",
+        "scriptData": "value:HtmlScriptData",
+    }
+    if normalized != expected:
+        raise ValidationError(
+            "OutputSinks public JsonPlan factories changed: "
+            f"expected {expected!r}, got {normalized!r}"
+        )
+
+
+def validate_source_mutations() -> int:
+    source = OUTPUT_SINKS_PATH.read_text(encoding="utf-8")
+    unsafe_factory = (
+        "public static function unsafeJsonPlan("
+        "schemaId:String, encoded:String):JsonPlan { return null; }\n\n\t"
+    )
+    mutated = source.replace(
+        "public static function restJson",
+        unsafe_factory + "public static function restJson",
+        1,
+    )
+    if mutated == source:
+        raise ValidationError("unsafe OutputSinks factory mutation did not apply")
+    try:
+        validate_output_sinks_source(mutated)
+    except ValidationError:
+        return 1
+    raise ValidationError("unsafe OutputSinks raw-string factory mutation passed")
+
+
 def main() -> None:
     model = require_dict(
         strict_json(ARCHITECTURE_PATH.read_text(encoding="utf-8"), "architecture"),
@@ -572,11 +615,15 @@ def main() -> None:
         except ValidationError:
             continue
         raise ValidationError(f"mutation passed unexpectedly: {label}")
+    source_mutation_count = validate_source_mutations()
+    total_mutations = len(mutations) + source_mutation_count
+    if total_mutations != 37:
+        raise ValidationError("total independent mutation inventory changed")
     print(
         "ADR-012 output-context architecture passed: "
         f"{len(model['contexts'])} contexts, "
         f"{len(model['forbiddenEdges'])} forbidden edges, "
-        f"{len(mutations)} independent mutations"
+        f"{total_mutations} independent mutations"
     )
 
 
