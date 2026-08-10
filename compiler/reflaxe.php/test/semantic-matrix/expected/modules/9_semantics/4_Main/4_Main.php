@@ -140,5 +140,18 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-multiplication-grouping:fail' . PHP_EOL;
 		}
+		if ( 3 < 5 ) {
+			if ( 5 > 3 ) {
+				if ( 5 >= 5 ) {
+					echo 'int-ordering-comparisons:pass' . PHP_EOL;
+				} else {
+					echo 'int-ordering-comparisons:fail' . PHP_EOL;
+				}
+			} else {
+				echo 'int-ordering-comparisons:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-ordering-comparisons:fail' . PHP_EOL;
+		}
 	}
 }

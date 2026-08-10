@@ -746,13 +746,13 @@ class PhpTypedAstValidator {
 
 	static function validateIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
-			case TBinop(OpEq | OpLte, left, right):
+			case TBinop(OpEq | OpLt | OpLte | OpGt | OpGte, left, right):
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntCondition(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only Int equality and <= conditions in the admitted semantic slice", expression.pos);
+				Context.error("reflaxe.php supports only exact Int equality and ordering conditions in the admitted semantic slice", expression.pos);
 		}
 	}
 
@@ -761,7 +761,7 @@ class PhpTypedAstValidator {
 			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
 				validateStringValue(left);
 				validateStringValue(right);
-			case TBinop(OpEq | OpLte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
+			case TBinop(OpEq | OpLt | OpLte | OpGt | OpGte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
 				validateIntCondition(expression, intArrayLengths);
 			case _ if (TypeTools.toString(expression.t) == "Bool"):
 				validateBoolValue(expression);

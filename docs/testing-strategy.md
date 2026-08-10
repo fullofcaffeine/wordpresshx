@@ -120,7 +120,7 @@ are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current hosted subject lists 70 admitted, 6 explicitly
+registry. The current local subject lists 73 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks small `Int` addition and subtraction. It checks
 compiler-proven, 32-bit-safe constant multiplication. It also checks an
@@ -186,6 +186,12 @@ runtime-dependent multiplication fail before target output. This rule prevents
 silent Haxe 32-bit and PHP 64-bit overflow differences. Overflow, division,
 modulo, unary negation, coercion, and general numeric behavior remain outside
 this subject.
+
+The local ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
+through one nested branch. Both operands must already pass the admitted `Int`
+expression validator. Float ordering has a compile-negative owner. The current
+73-record subject still needs its exact hosted lane, so the 70-record run above
+remains the last hosted compiler checkpoint.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

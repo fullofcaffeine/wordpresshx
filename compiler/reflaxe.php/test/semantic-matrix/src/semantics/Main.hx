@@ -151,5 +151,19 @@ class Main {
 		} else {
 			Sys.println("int-multiplication-grouping:fail");
 		}
+
+		if (3 < 5) {
+			if (5 > 3) {
+				if (5 >= 5) {
+					Sys.println("int-ordering-comparisons:pass");
+				} else {
+					Sys.println("int-ordering-comparisons:fail");
+				}
+			} else {
+				Sys.println("int-ordering-comparisons:fail");
+			}
+		} else {
+			Sys.println("int-ordering-comparisons:fail");
+		}
 	}
 }

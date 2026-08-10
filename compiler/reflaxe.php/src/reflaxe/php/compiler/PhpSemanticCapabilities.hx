@@ -19,6 +19,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedBoolLocal = "value.initialized-bool-local";
 	var InitializedStringClosureLocal = "value.initialized-string-closure-local";
 	var IntEquality = "control.int-equality";
+	var IntLessThan = "control.int-less-than";
 	var BoolCondition = "control.bool-condition";
 	var BoolParenthesizedGrouping = "control.bool-parenthesized-grouping";
 	var BoolShortCircuitAnd = "control.bool-short-circuit-and";
@@ -27,6 +28,8 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IfElse = "control.if-else";
 	var IntAssignment = "control.int-assignment";
 	var IntLessOrEqual = "control.int-less-or-equal";
+	var IntGreaterThan = "control.int-greater-than";
+	var IntGreaterOrEqual = "control.int-greater-or-equal";
 	var WhileLoop = "control.while";
 	var InstanceLayout = "module.instance-layout";
 	var PrivateInstanceStringField = "module.private-instance-string-field";
@@ -158,6 +161,7 @@ class PhpSemanticCapabilities {
 			record(InitializedObjectLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InstanceStringFieldRead, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
+			record(IntLessThan, ControlFlow, Admitted, semantic, owner),
 			record(BoolCondition, ControlFlow, Admitted, semantic, owner),
 			record(BoolParenthesizedGrouping, ControlFlow, Admitted, semantic, owner),
 			record(BoolShortCircuitAnd, ControlFlow, Admitted, semantic, owner),
@@ -167,6 +171,8 @@ class PhpSemanticCapabilities {
 			record(IntAssignment, ControlFlow, Admitted, semantic, owner),
 			record(InstanceStringFieldConstructorAssignment, ControlFlow, Admitted, semantic, owner),
 			record(IntLessOrEqual, ControlFlow, Admitted, semantic, owner),
+			record(IntGreaterThan, ControlFlow, Admitted, semantic, owner),
+			record(IntGreaterOrEqual, ControlFlow, Admitted, semantic, owner),
 			record(WhileLoop, ControlFlow, Admitted, semantic, owner),
 			record(IntArrayLiteral, ValuesCollections, Admitted, semantic, owner),
 			record(IntArrayLength, ValuesCollections, Admitted, semantic, owner),

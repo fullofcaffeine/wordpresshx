@@ -103,9 +103,10 @@ bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh
 It derives [`semantic-capabilities.json`](semantic-capabilities.json) from the
 typed `PhpSemanticCapabilities` registry, fails on stale or overbroad states,
 and admits small `Int` literals, addition, subtraction, initialized locals,
-equality, and `if/else`. It admits required `Int` parameters and returns.
-It also admits source-owned static calls, explicit assignment, `Int <=`, and
-pre-test `while`. The array subset includes fixed `Array<Int>` literals and
+equality, and `if/else`. Exact `Int` conditions also admit `<`, `<=`, `>`, and
+`>=`. It admits required `Int` parameters and returns. It also admits
+source-owned static calls, explicit assignment, and pre-test `while`. The array
+subset includes fixed `Array<Int>` literals and
 exact length. It includes direct result-discarded push and non-empty pop.
 It also includes compiler-proven constant in-bounds reads and writes.
 The matrix admits exact UTF-8 String literals,
@@ -123,6 +124,11 @@ The numeric subset preserves Haxe grouping and operator precedence. It keeps
 compiler-proven, 32-bit-safe constant expressions. Runtime-dependent and Float
 multiplication fail before output. Overflow, division, modulo, unary negation,
 coercion, and general numeric behavior remain unproved.
+The ordering slice lowers native PHP comparisons only after both operands have
+exact Haxe `Int` type and pass the existing `Int` expression validator. A
+stock-Haxe-valid Float ordering fixture fails before output. Mixed numeric,
+String, null, object, coercion, spaceship, NaN, and general comparison behavior
+remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The

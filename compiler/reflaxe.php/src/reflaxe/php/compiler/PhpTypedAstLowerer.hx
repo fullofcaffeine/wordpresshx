@@ -821,6 +821,15 @@ class PhpTypedAstLowerer {
 			case TBinop(OpLte, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntLessOrEqual);
 				PhpBinop("<=", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TBinop(OpLt, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntLessThan);
+				PhpBinop("<", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TBinop(OpGt, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntGreaterThan);
+				PhpBinop(">", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+			case TBinop(OpGte, left, right):
+				PhpSemanticCapabilities.requireAdmitted(IntGreaterOrEqual);
+				PhpBinop(">=", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TMeta(_, inner) | TParenthesis(inner): lowerIntCondition(inner, intArrayLengths);
 			case _: unsupportedIntCondition(expression);
 		}
@@ -834,10 +843,13 @@ class PhpTypedAstLowerer {
 					expression: PhpBinop("===", lowerStringValue(left), lowerStringValue(right)),
 					mappingKind: "if-string-equality"
 				};
-			case TBinop(OpEq | OpLte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
+			case TBinop(OpEq | OpLt | OpLte | OpGt | OpGte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
 				{
 					expression: lowerIntCondition(expression, intArrayLengths),
-					mappingKind: "if-int-equality"
+					mappingKind: switch (expression.expr) {
+						case TBinop(OpEq, _, _): "if-int-equality";
+						case _: "if-int-ordering";
+					}
 				};
 			case _ if (TypeTools.toString(expression.t) == "Bool"):
 				PhpSemanticCapabilities.requireAdmitted(BoolCondition);

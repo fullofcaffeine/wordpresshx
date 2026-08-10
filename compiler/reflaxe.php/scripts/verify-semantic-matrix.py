@@ -288,6 +288,13 @@ def main() -> None:
 		"stmt:if-int-equality:4151:4304": ("statement", 2, b"if (multiplicationSummary == 34)"),
 		"stmt:sys-println:4189:4236": ("statement", 3, b'Sys.println("int-multiplication-grouping:pass")'),
 		"stmt:sys-println:4252:4299": ("statement", 3, b'Sys.println("int-multiplication-grouping:fail")'),
+		"stmt:if-int-ordering:4308:4606": ("statement", 2, b"if (3 < 5)"),
+		"stmt:if-int-ordering:4324:4542": ("statement", 3, b"if (5 > 3)"),
+		"stmt:if-int-ordering:4341:4475": ("statement", 4, b"if (5 >= 5)"),
+		"stmt:sys-println:4360:4404": ("statement", 5, b'Sys.println("int-ordering-comparisons:pass")'),
+		"stmt:sys-println:4424:4468": ("statement", 5, b'Sys.println("int-ordering-comparisons:fail")'),
+		"stmt:sys-println:4492:4536": ("statement", 4, b'Sys.println("int-ordering-comparisons:fail")'),
+		"stmt:sys-println:4557:4601": ("statement", 3, b'Sys.println("int-ordering-comparisons:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
