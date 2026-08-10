@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "incremental-runtime-semantics-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, native PHP 8.4.7, and no mbstring dependency",
     "input": "ordinary Haxe evaluates -(2 + 3) and -(-3) as exact Int expressions",
@@ -224,7 +224,7 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-74-capability-subject-hosted-pending; predecessor-73-capability-subject-passed-run-31404355339",
+    "exactPhp74And84Matrix": "current-74-capability-subject-passed-run-31410116706; predecessor-73-capability-subject-passed-run-31404355339",
     "sourceMap": "independently-verified",
     "strictHaxe": "98-package-files-zero-findings",
     "firstMilliseconds": 17850,
@@ -268,7 +268,37 @@
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
   },
-  "hostedVerification": null,
+  "hostedVerification": {
+    "relation": "current-74-capability-subject",
+    "admittedCapabilityCount": 74,
+    "workflow": "Repository bootstrap",
+    "runId": 31410116706,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31410116706",
+    "commit": "94270b136b86bd890701cdf8a25646832136e202",
+    "status": "passed",
+    "job": {
+      "name": "haxe",
+      "jobId": 93525866434,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31410116706/job/93525866434",
+      "status": "passed",
+      "completedAt": "2026-08-10T16:56:07Z"
+    },
+    "exactPhpVersions": [
+      "7.4.33",
+      "8.4.7"
+    ],
+    "requiredSteps": [
+      "Install Haxe 4.3.7",
+      "Install exact reflaxe.php compiler dependency",
+      "Test generic PHP compiler package",
+      "Test clean standalone PHP compiler package artifact",
+      "Test exact PHP 7.4 and 8.4 runtime matrix"
+    ],
+    "scope": "the current 74 exact admitted semantic records, deterministic generic compiler package, clean offline external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "wordpressRuntimeCompatibilityAdvanced": false,
+    "officialHaxeQualificationAdvanced": false,
+    "publicationAuthorized": false
+  },
   "review": {
     "distinctFromImplementation": true,
     "findingsAndDispositions": [
@@ -845,7 +875,7 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,
