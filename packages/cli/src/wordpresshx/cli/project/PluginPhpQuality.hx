@@ -232,7 +232,7 @@ class PluginPhpQuality {
 			tool("php-stubs/wordpress-stubs", "7.0.0"),
 			tool("phpcompatibility/phpcompatibility-wp", "2.1.8"),
 			tool("phpstan/phpstan", "2.2.5"),
-			tool("squizlabs/php_codesniffer", "3.13.5"),
+			tool("squizlabs/php_codesniffer", "3.13.6"),
 			tool("wp-coding-standards/wpcs", "3.4.1")
 		];
 		return Buffer.from(ScaffoldJson.document(ScaffoldJson.object([

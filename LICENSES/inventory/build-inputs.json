@@ -45,7 +45,7 @@
     },
     {
       "path": "manifests/toolchain.lock.json",
-      "sha256": "fbb14d82fd01b9662ee0e6e9d783f9771a1c5b310589491c9d973da32e1e6467",
+      "sha256": "8281edf5ded2d106bd43d1adbaf8c45c2e25ec788cbb1802a4d24c05ff014576",
       "parser": "aggregate-toolchain-lock",
       "componentObservationCount": 6
     },
@@ -147,7 +147,7 @@
     },
     {
       "path": "tooling/php-quality/composer.lock",
-      "sha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
+      "sha256": "d6635fba9915094eeda52fa2d9e50815d6eb6d9a10f2150b24058c7eb6bbd314",
       "parser": "composer-lock",
       "componentObservationCount": 10
     }
@@ -354,11 +354,11 @@
       ]
     },
     {
-      "id": "composer:squizlabs/php_codesniffer@3.13.5#f7b36ddef13048eb",
+      "id": "composer:squizlabs/php_codesniffer@3.13.6#79713aa09da8c87f",
       "ecosystem": "composer",
       "name": "squizlabs/php_codesniffer",
-      "version": "3.13.5",
-      "resolution": "reference:0ca86845ce43291e8f5692c7356fccf3bcf02bf4",
+      "version": "3.13.6",
+      "resolution": "reference:4c378e1a528ea066890fc2397cbdd2f94eb2fc91",
       "declaredLicenses": [
         "BSD-3-Clause"
       ],

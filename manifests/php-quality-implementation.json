@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bead": "wordpresshx-sdk-026",
-  "status": "implemented-hosted-verified",
+  "status": "implemented-local-verified-hosted-pending",
   "scope": "complete-generated-plugin-php-staging-quality-gate",
   "haxeFirstErgonomics": {
     "authority": "packages/cli/src/wordpresshx/cli/project/PluginPhpQuality.hx",
@@ -45,15 +45,15 @@
   },
   "toolchain": {
     "policyId": "wp70-release-generated-php-v1",
-    "policySha256": "c7091c132c41904892e3516c611aeaf86e03ad74153c580cc89d60b30766b7bd",
+    "policySha256": "81721f1b8518b05e15f10175c4002c31fb3a8e1b3c1591a2335d213704656141",
     "manifest": "tooling/php-quality/composer.json",
     "lock": "tooling/php-quality/composer.lock",
-    "lockSha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
+    "lockSha256": "d6635fba9915094eeda52fa2d9e50815d6eb6d9a10f2150b24058c7eb6bbd314",
     "composer": {
       "version": "2.10.2",
       "artifactSha256": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027"
     },
-    "phpCodeSniffer": "3.13.5",
+    "phpCodeSniffer": "3.13.6",
     "wordpressCodingStandards": "3.4.1",
     "phpCompatibilityWordPress": "2.1.8",
     "phpStan": "2.2.5",
@@ -131,11 +131,11 @@
     "strictHaxeBoundary": "passed"
   },
   "claims": {
-    "pinnedPhpToolchain": "hosted-runtime-tested",
-    "formatterAndWpcs": "hosted-runtime-tested",
-    "staticAnalysis": "hosted-runtime-tested",
-    "autoloadAndDuplicateSymbols": "hosted-runtime-tested",
-    "failClosedPublication": "hosted-negative-tested",
+    "pinnedPhpToolchain": "local-runtime-tested",
+    "formatterAndWpcs": "local-runtime-tested",
+    "staticAnalysis": "local-runtime-tested",
+    "autoloadAndDuplicateSymbols": "local-runtime-tested",
+    "failClosedPublication": "local-negative-tested",
     "projectConfigurationCeremony": "none",
     "publicPackagePublication": "blocked",
     "productionSupport": "not-tested"

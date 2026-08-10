@@ -335,7 +335,7 @@ def validate_toolchain(audit: Audit, toolchain: dict[str, Any]) -> None:
             "phpcsstandards/phpcsextra": "1.5.1",
             "phpcsstandards/phpcsutils": "1.2.3",
             "phpstan/phpstan": "2.2.5",
-            "squizlabs/php_codesniffer": "3.13.5",
+            "squizlabs/php_codesniffer": "3.13.6",
             "wp-coding-standards/wpcs": "3.4.1",
         },
         "Composer build package set changed",

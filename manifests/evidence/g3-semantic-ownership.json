@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G3-SEMANTIC-PLAN-FAIL-CLOSED-OWNERSHIP",
   "bead": "wordpresshx-g3",
-  "status": "verified",
+  "status": "pending-hosted-proof",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "5d499aaed2be94a1397c5b8b85cee42d49b68bd35b0f72b11f964d02286b9a65",
@@ -13,7 +13,7 @@
       "receiptId": "ADR-006-SEMANTIC-PLAN-CONTRACT",
       "bead": "wordpresshx-adr-006",
       "path": "manifests/evidence/adr-006-semantic-plan-contract.json",
-      "sha256": "662d227c4d127ca5559f47b0fb3e6303d131dcabcc533641cae6d47d21adab3c"
+      "sha256": "62d056c62df6e8a12fe4c53de1f04bb62827b6264183a9530a1d177f6adb1aae"
     },
     {
       "receiptId": "SDK-040-SEMANTIC-COLLECTOR",
@@ -25,7 +25,7 @@
       "receiptId": "ADR-007-GENERATED-ARTIFACT-OWNERSHIP",
       "bead": "wordpresshx-adr-007",
       "path": "manifests/evidence/adr-007-generated-artifact-ownership.json",
-      "sha256": "9b5297e59485d0e2161de50e32624059d28755a873ee59b0c1be127cdb2d79f4"
+      "sha256": "8bc4055f147f43f3ed6f005ae185429e597575bc505171160729c43dc54e4c13"
     },
     {
       "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
@@ -49,7 +49,7 @@
       "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
       "bead": "wordpresshx-sdk-026",
       "path": "manifests/evidence/sdk-026-generated-php-quality.json",
-      "sha256": "2a28a425ef91582001fdb37e6fdecc63c94ad455fe0a9e4549730f818673c86f"
+      "sha256": "04d95253217ed3cd8774d468b9dcf61c10f5ae7c996ad8995490522826619124"
     },
     {
       "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
@@ -159,23 +159,23 @@
     "outcome": "passed"
   },
   "implementation": {
-    "commit": "1cd2684bc1eb05bf5a03fa9b5923b54d2d5c5250"
+    "commit": null
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": 30616078317,
-    "commit": "1cd2684bc1eb05bf5a03fa9b5923b54d2d5c5250",
-    "status": "passed",
-    "jobCount": 13,
-    "allJobsPassed": true,
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "jobCount": null,
+    "allJobsPassed": null,
     "jobs": {
-      "repository": 91109457898,
-      "semantic-plan": 91109457890,
-      "haxe": 91109457929
+      "repository": null,
+      "semantic-plan": null,
+      "haxe": null
     }
   },
   "claimBoundary": {
-    "g3SemanticPlanAndOwnership": "verified",
+    "g3SemanticPlanAndOwnership": "pending-hosted-proof",
     "wordpressRuntimeCompatibility": "not-claimed-by-g3",
     "nextjsRuntimeCompatibility": "not-claimed-by-g3",
     "publicPackagePublication": "blocked",

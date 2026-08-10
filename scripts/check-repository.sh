@@ -6498,7 +6498,7 @@ for sdk026_policy_name in sdk026_policy_paths:
     )
 sdk026_policy_sha256 = hashlib.sha256(sdk026_policy_input).hexdigest()
 assert sdk026_policy_sha256 == (
-    "c7091c132c41904892e3516c611aeaf86e03ad74153c580cc89d60b30766b7bd"
+    "81721f1b8518b05e15f10175c4002c31fb3a8e1b3c1591a2335d213704656141"
 )
 sdk026_toolchain = php_quality_implementation["toolchain"]
 assert sdk026_toolchain["policyId"] == "wp70-release-generated-php-v1"
@@ -6524,7 +6524,7 @@ assert php_quality_toolchain["php"] == {
     "primary": "8.4.7",
 }
 assert php_quality_toolchain["tools"] == {
-    "phpCodeSniffer": "3.13.5",
+    "phpCodeSniffer": "3.13.6",
     "wordpressCodingStandards": "3.4.1",
     "phpCompatibilityWordPress": "2.1.8",
     "phpStan": "2.2.5",
@@ -6534,10 +6534,20 @@ assert php_quality_toolchain["tools"] == {
     ),
 }
 assert php_quality_toolchain["security"] == {
-    "advisory": "GHSA-3pwp-g2mj-5p3v",
-    "cve": "CVE-2026-45293",
-    "affectedVersions": ">=0.14.1,<3.4.1",
-    "resolution": "wp-coding-standards/wpcs@3.4.1",
+    "remediations": [
+        {
+            "advisory": "GHSA-3pwp-g2mj-5p3v",
+            "cve": "CVE-2026-45293",
+            "affectedVersions": ">=0.14.1,<3.4.1",
+            "resolution": "wp-coding-standards/wpcs@3.4.1",
+        },
+        {
+            "advisory": "GHSA-hmqg-cxww-wqhq",
+            "cve": "CVE-2026-67434",
+            "affectedVersions": "<3.13.6|>=4.0.0,<4.0.2",
+            "resolution": "squizlabs/php_codesniffer@3.13.6",
+        },
+    ],
 }
 sdk026_exceptions = php_quality_toolchain["generatedCodePolicy"][
     "justifiedExclusions"
@@ -6564,7 +6574,7 @@ assert sdk026_locked_packages == {
     "phpcsstandards/phpcsextra": "1.5.1",
     "phpcsstandards/phpcsutils": "1.2.3",
     "phpstan/phpstan": "2.2.5",
-    "squizlabs/php_codesniffer": "3.13.5",
+    "squizlabs/php_codesniffer": "3.13.6",
     "wp-coding-standards/wpcs": "3.4.1",
 }
 sdk026_composer_graph = toolchain_lock["dependencyGraphs"]["composer"]
@@ -6661,6 +6671,12 @@ assert sdk026_receipt["toolchain"]["securityRemediation"] == {
     "cve": "CVE-2026-45293",
     "affectedVersions": ">=0.14.1,<3.4.1",
     "resolvedVersion": "3.4.1",
+}
+assert sdk026_receipt["toolchain"]["phpCodeSnifferSecurityRemediation"] == {
+    "advisory": "GHSA-hmqg-cxww-wqhq",
+    "cve": "CVE-2026-67434",
+    "affectedVersions": "<3.13.6|>=4.0.0,<4.0.2",
+    "resolvedVersion": "3.13.6",
 }
 assert sdk026_receipt["verification"]["standalonePolicy"] == {
     "command": "bash scripts/php-quality/test-production.sh",
@@ -7001,12 +7017,12 @@ sdk026_hosted = sdk026_receipt["hostedVerification"]
 assert sdk026_hosted["workflow"] == "Repository bootstrap"
 assert sdk026_hosted["job"] == "haxe"
 assert sdk026_hosted["precedingFailure"] == {
-    "runId": 30614061713,
-    "jobId": 91103088992,
-    "commit": "ee97055743e1a84c14f4a58823383ad958d13f90",
+    "runId": 31369654747,
+    "jobId": 93395560617,
+    "commit": "4e1f391a6ccc7d3dbcd12df002eee1c88f01b464",
     "sdk026Steps": "failed-during-install-audit",
     "failedStep": "Install exact generated-PHP quality toolchain",
-    "cause": "GHSA-3pwp-g2mj-5p3v-affected-wpcs-3.4.0",
+    "cause": "GHSA-hmqg-cxww-wqhq-affected-phpcs-3.13.5",
 }
 assert sdk026_hosted["steps"] == [
     "Install exact generated-PHP quality toolchain",

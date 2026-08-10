@@ -3,7 +3,7 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "WordPressHx lock-derived build inputs",
-  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/3ed918f4a56faeaa92cff93227c095e0e0d77f7d52bfdeab26ff1647062d38c5",
+  "documentNamespace": "https://wordpress-hx.dev/spdx/build-inputs/83383d0b7ee68bf4ab39de7a6fa94ad09b05427ea00b46a34f3c569acea5c4a7",
   "creationInfo": {
     "created": "1970-01-01T00:00:00Z",
     "creators": [
@@ -159,20 +159,20 @@
       ]
     },
     {
-      "SPDXID": "SPDXRef-Package-4e32f36981c55cae2165",
+      "SPDXID": "SPDXRef-Package-6bee7e19cdea2956e6d0",
       "name": "squizlabs/php_codesniffer",
-      "versionInfo": "3.13.5",
+      "versionInfo": "3.13.6",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
-      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:squizlabs/php_codesniffer@3.13.5#f7b36ddef13048eb",
+      "comment": "Lock-derived build/test/source input only; declared metadata is preserved in the companion inventory and is not promoted to an SPDX conclusion here. This is not a final artifact license conclusion. Inventory component: composer:squizlabs/php_codesniffer@3.13.6#79713aa09da8c87f",
       "externalRefs": [
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:generic/squizlabs%2Fphp_codesniffer@3.13.5?ecosystem=composer"
+          "referenceLocator": "pkg:generic/squizlabs%2Fphp_codesniffer@3.13.6?ecosystem=composer"
         }
       ]
     },
@@ -32135,7 +32135,7 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-Package-4e32f36981c55cae2165"
+      "relatedSpdxElement": "SPDXRef-Package-6bee7e19cdea2956e6d0"
     },
     {
       "spdxElementId": "SPDXRef-DOCUMENT",

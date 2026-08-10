@@ -112,7 +112,7 @@
       "lockPaths": [
         "tooling/php-quality/composer.lock"
       ],
-      "lockSha256": "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597",
+      "lockSha256": "d6635fba9915094eeda52fa2d9e50815d6eb6d9a10f2150b24058c7eb6bbd314",
       "composer": {
         "version": "2.10.2",
         "artifactUrl": "https://getcomposer.org/download/2.10.2/composer.phar",
@@ -161,8 +161,8 @@
         },
         {
           "name": "squizlabs/php_codesniffer",
-          "version": "3.13.5",
-          "sourceReference": "0ca86845ce43291e8f5692c7356fccf3bcf02bf4"
+          "version": "3.13.6",
+          "sourceReference": "4c378e1a528ea066890fc2397cbdd2f94eb2fc91"
         },
         {
           "name": "wp-coding-standards/wpcs",

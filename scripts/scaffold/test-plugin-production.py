@@ -44,11 +44,11 @@ PHP_QUALITY_TOOLS = (
     {"id": "php-stubs/wordpress-stubs", "version": "7.0.0"},
     {"id": "phpcompatibility/phpcompatibility-wp", "version": "2.1.8"},
     {"id": "phpstan/phpstan", "version": "2.2.5"},
-    {"id": "squizlabs/php_codesniffer", "version": "3.13.5"},
+    {"id": "squizlabs/php_codesniffer", "version": "3.13.6"},
     {"id": "wp-coding-standards/wpcs", "version": "3.4.1"},
 )
 PHP_QUALITY_COMPOSER_LOCK_SHA256 = (
-    "c64abda9f3312253b7010908f99d7fa2ed6cc36bc1602c920039e1e8eda54597"
+    "d6635fba9915094eeda52fa2d9e50815d6eb6d9a10f2150b24058c7eb6bbd314"
 )
 WORDPRESS_STUBS_SHA256 = (
     "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
