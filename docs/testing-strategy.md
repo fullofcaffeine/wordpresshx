@@ -70,10 +70,11 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's last hosted checkpoint covers 69 exact records. It
-includes typed `Int` subtraction and explicit grouping. Repository bootstrap
-run `31391174754` provides that proof. Haxe job `93463023123` ran at commit
-`0379ef6c0f7a5a3af2d7871050fa8e6b1ad9f1ce`. This result does not advance
+The compiler scorecard's last hosted checkpoint covers 70 exact records. It
+includes compiler-proven, signed-32-bit-safe constant `Int` multiplication.
+Repository bootstrap run `31396992882` provides that proof. Haxe job
+`93482228206` ran at commit
+`2dc95ecefbc51e70d879282f1a67eabdc45e91da`. This result does not advance
 WordPress compatibility, official Haxe target qualification, or publication.
 
 Official Haxe target qualification applies only to the actual compiler-facing
@@ -111,15 +112,15 @@ its exact command. The 64-record array-length subject passed its exact hosted
 compiler and PHP lane in run `31372128871`. The 65-record array-push subject
 passed the same clean lane in run `31377424790`. The 66-record indexed-write
 subject passed it in run `31381746528`. The 67-record non-empty-pop subject
-passed it in run `31386245792`. The current 69-record subtraction and grouping
-subject passed its exact clean lane in run `31391174754`.
-The local 70-record multiplication subject waits for its exact hosted lane.
+passed it in run `31386245792`. The 69-record subtraction and grouping subject
+passed its exact clean lane in run `31391174754`. The current 70-record
+multiplication subject passed its exact clean lane in run `31396992882`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 70 admitted, 6 explicitly
+registry. The current hosted subject lists 70 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks small `Int` addition and subtraction. It checks
 compiler-proven, 32-bit-safe constant multiplication. It also checks an
