@@ -113,13 +113,13 @@ compiler and PHP lane in run `31372128871`. The 65-record array-push subject
 passed the same clean lane in run `31377424790`. The 66-record indexed-write
 subject passed it in run `31381746528`. The 67-record non-empty-pop subject
 passed it in run `31386245792`. The current 69-record subtraction and grouping
-subject has local proof. It still needs its exact clean hosted run.
+subject passed its exact clean lane in run `31391174754`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 69 admitted, 6 explicitly
+registry. The current hosted subject lists 69 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks small `Int` addition and subtraction. It checks an
 initialized local, equality, and `if/else`. It checks required `Int` parameters
