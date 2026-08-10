@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G3-SEMANTIC-PLAN-FAIL-CLOSED-OWNERSHIP",
   "bead": "wordpresshx-g3",
-  "status": "pending-hosted-proof",
+  "status": "verified",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "5d499aaed2be94a1397c5b8b85cee42d49b68bd35b0f72b11f964d02286b9a65",
@@ -49,7 +49,7 @@
       "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
       "bead": "wordpresshx-sdk-026",
       "path": "manifests/evidence/sdk-026-generated-php-quality.json",
-      "sha256": "04d95253217ed3cd8774d468b9dcf61c10f5ae7c996ad8995490522826619124"
+      "sha256": "9de83c069d6810d1884d8ae081e542f8c54c62cbe37df5563640b2fecc99a50f"
     },
     {
       "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
@@ -159,23 +159,23 @@
     "outcome": "passed"
   },
   "implementation": {
-    "commit": null
+    "commit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": null,
-    "commit": null,
-    "status": "pending",
-    "jobCount": null,
-    "allJobsPassed": null,
+    "runId": 31372128871,
+    "commit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec",
+    "status": "passed",
+    "jobCount": 13,
+    "allJobsPassed": true,
     "jobs": {
-      "repository": null,
-      "semantic-plan": null,
-      "haxe": null
+      "repository": 93403213063,
+      "semantic-plan": 93403213069,
+      "haxe": 93403213221
     }
   },
   "claimBoundary": {
-    "g3SemanticPlanAndOwnership": "pending-hosted-proof",
+    "g3SemanticPlanAndOwnership": "verified",
     "wordpressRuntimeCompatibility": "not-claimed-by-g3",
     "nextjsRuntimeCompatibility": "not-claimed-by-g3",
     "publicPackagePublication": "blocked",

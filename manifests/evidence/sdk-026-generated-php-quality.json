@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-026-GENERATED-PHP-QUALITY",
   "bead": "wordpresshx-sdk-026",
-  "status": "local-verified-hosted-pending",
-  "observedAt": "2026-08-10T08:33:25Z",
+  "status": "verified",
+  "observedAt": "2026-08-10T09:09:43Z",
   "subject": {
     "implementation": "manifests/php-quality-implementation.json",
     "genericCompiler": "compiler/reflaxe.php",
@@ -16,7 +16,7 @@
     "wordpressStubsSha256": "1fa69deee70f8a1be7e3a0498327ca16e36ee2b5c243a5b2ab1926bec456fd44"
   },
   "implementation": {
-    "implementationCommit": null,
+    "implementationCommit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec",
     "language": "Haxe",
     "javascriptCompiler": "Genes 1.38.0",
     "genesSourceChanged": false,
@@ -172,7 +172,7 @@
     }
   },
   "hostedVerification": {
-    "status": "pending",
+    "status": "passed",
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "steps": [
@@ -188,20 +188,20 @@
       "failedStep": "Install exact generated-PHP quality toolchain",
       "cause": "GHSA-hmqg-cxww-wqhq-affected-phpcs-3.13.5"
     },
-    "commit": null,
-    "runId": null,
-    "jobId": null,
-    "completedAt": null,
-    "url": null,
-    "fullMatrixStatus": "pending",
-    "jobCount": null
+    "commit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec",
+    "runId": 31372128871,
+    "jobId": 93403213221,
+    "completedAt": "2026-08-10T09:09:43Z",
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31372128871",
+    "fullMatrixStatus": "passed",
+    "jobCount": 13
   },
   "claims": {
-    "pinnedToolsAndWordPressStubs": "local-runtime-tested",
-    "lintFormatWpcsCompatibilityStaticAnalysis": "local-runtime-tested",
-    "autoloadClassmapAndDuplicateSymbols": "local-runtime-tested",
+    "pinnedToolsAndWordPressStubs": "hosted-runtime-tested",
+    "lintFormatWpcsCompatibilityStaticAnalysis": "hosted-runtime-tested",
+    "autoloadClassmapAndDuplicateSymbols": "hosted-runtime-tested",
     "narrowVersionedGeneratedExceptions": "policy-authenticated-and-negative-tested",
-    "failClosedBeforePublication": "local-negative-tested",
+    "failClosedBeforePublication": "hosted-negative-tested",
     "haxeOnlyCommonPath": "compile-and-runtime-tested",
     "qualifiedLicenseApproval": "blocked",
     "publicPackagePublication": "blocked",

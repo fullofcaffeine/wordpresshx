@@ -70,13 +70,12 @@ the narrower example or compiler jobs.
 | `gutenberg-browser` | Strict Genes output, real Gutenberg editor and data registry, compact Chromium flows, accessibility, focus, and fatal-error checks | No general Gutenberg, Interactivity API, browser matrix, or production claim |
 | `migration-downstream` | Profile/generated-output mutations, static-block migration, and bounded adoption/downstream fixtures | No production adoption generator, real provider portfolio, or broad downstream compatibility |
 
-The compiler scorecard's last hosted checkpoint covers 63 exact records. It
-includes non-null `String.length` with Unicode-scalar semantics. Repository
-bootstrap run `30767482140` provides that proof. Haxe job `91548663977` ran at
-commit `a6322afd6df166185679fb2c639ef62c55cfe01d`. The current 64-record subject
-adds exact read-only `Array<Int>.length`. It remains hosted-pending and does not
-borrow the 63-record result. Neither result advances WordPress compatibility,
-official Haxe target qualification, or publication.
+The compiler scorecard's last hosted checkpoint covers 64 exact records. It
+includes read-only `Array<Int>.length` and non-null `String.length` with
+Unicode-scalar semantics. Repository bootstrap run `31372128871` provides that
+proof. Haxe job `93403213221` ran at commit
+`db9ff97362769d31ed62b9aabd5ee28aae97fdec`. This result does not advance
+WordPress compatibility, official Haxe target qualification, or publication.
 
 Official Haxe target qualification applies only to the actual compiler-facing
 surface. WordPress, package, or browser success cannot substitute for a custom
@@ -109,15 +108,14 @@ The first ordinary-Haxe PHP tracer follows this rule directly. Its manually
 reviewed PHP/stdout minimum and independent range-map reader diagnose lowering
 and correlation, while native `php -l` and execution retain the real boundary.
 Each expanded semantic subject remains local-only until a clean workflow runs
-its exact command. The 63-record String-length subject passed its exact hosted
-compiler and PHP lane in run `30767482140`. The current 64-record array-length
-subject is local-only until the same clean lane passes.
+its exact command. The 64-record array-length subject passed its exact hosted
+compiler and PHP lane in run `31372128871`.
 Older hosted subjects remain historical authority for their own bytes only and
 are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 64 admitted, 6 explicitly unsupported,
+registry. The current exact subject lists 64 admitted, 6 explicitly unsupported,
 and 7 unverified capabilities across 13 categories. Its
 differential fixture checks
 small `Int` addition, an initialized local, equality, `if/else`, required `Int`
