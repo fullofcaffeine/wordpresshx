@@ -253,8 +253,8 @@ def main() -> None:
         "stmt:sys-println:2691:2732": ("statement", 3, b'Sys.println("unicode-string-length:fail")'),
         "stmt:local-int:2741:2774": ("statement", 2, b"final valueCount = values.length"),
         "stmt:if-int-equality:2777:2896": ("statement", 2, b"if (valueCount == 3)"),
-		"stmt:sys-println:2803:2839": ("statement", 3, b'Sys.println("int-array-length:pass")'),
-		"stmt:sys-println:2855:2891": ("statement", 3, b'Sys.println("int-array-length:fail")'),
+        "stmt:sys-println:2803:2839": ("statement", 3, b'Sys.println("int-array-length:pass")'),
+        "stmt:sys-println:2855:2891": ("statement", 3, b'Sys.println("int-array-length:fail")'),
         "stmt:int-array-push:2900:2914": ("statement", 2, b"values.push(5)"),
         "stmt:local-int:2918:2952": ("statement", 2, b"final pushedCount = values.length"),
         "stmt:local-int:2955:2985": ("statement", 2, b"final pushedValue = values[3]"),
@@ -262,7 +262,14 @@ def main() -> None:
         "stmt:if-int-equality:3039:3157": ("statement", 2, b"if (pushedSummary == 9)"),
         "stmt:sys-println:3068:3102": ("statement", 3, b'Sys.println("int-array-push:pass")'),
         "stmt:sys-println:3118:3152": ("statement", 3, b'Sys.println("int-array-push:fail")'),
-	}
+        "stmt:assign-int-array-index:3161:3174": ("statement", 2, b"values[1] = 5"),
+        "stmt:local-int:3178:3213": ("statement", 2, b"final writtenCount = values.length"),
+        "stmt:local-int:3216:3247": ("statement", 2, b"final writtenValue = values[1]"),
+        "stmt:local-int:3250:3301": ("statement", 2, b"final writtenSummary = writtenCount + writtenValue"),
+        "stmt:if-int-equality:3304:3425": ("statement", 2, b"if (writtenSummary == 9)"),
+        "stmt:sys-println:3334:3369": ("statement", 3, b'Sys.println("int-array-write:pass")'),
+        "stmt:sys-println:3385:3420": ("statement", 3, b'Sys.println("int-array-write:fail")'),
+    }
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
             "stmt:return-int:96:115",

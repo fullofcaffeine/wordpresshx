@@ -14,3 +14,4 @@ nullable-string-return:pass
 unicode-string-length:pass
 int-array-length:pass
 int-array-push:pass
+int-array-write:pass

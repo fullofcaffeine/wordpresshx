@@ -42,6 +42,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var IntArrayLength = "collection.int-array-length";
 	var IntArrayPushDiscarded = "collection.int-array-push-discarded";
 	var ProvenIntArrayRead = "collection.proven-int-array-read";
+	var ProvenIntArrayWrite = "collection.proven-int-array-write";
 	var ArrayCollection = "collection.array";
 	var RequiredIntParameters = "call.required-int-parameters";
 	var RequiredBoolParameters = "call.required-non-null-bool-parameters";
@@ -164,6 +165,7 @@ class PhpSemanticCapabilities {
 			record(IntArrayLength, ValuesCollections, Admitted, semantic, owner),
 			record(IntArrayPushDiscarded, ValuesCollections, Admitted, semantic, owner),
 			record(ProvenIntArrayRead, ValuesCollections, Admitted, semantic, owner),
+			record(ProvenIntArrayWrite, ValuesCollections, Admitted, semantic, owner),
 			record(RequiredIntParameters, CallsClosures, Admitted, semantic, owner),
 			record(RequiredBoolParameters, CallsClosures, Admitted, semantic, owner),
 			record(RequiredStringParameters, CallsClosures, Admitted, semantic, owner),
@@ -198,14 +200,16 @@ class PhpSemanticCapabilities {
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned,
 				"only a non-inherited private-String-field constructor and String instance-method slice is admitted", owner),
 			record(ArrayCollection, ValuesCollections, UnsupportedOwned,
-				"general Array runtime behavior beyond fixed Int literals, exact length, proven reads, and direct result-discarded push is rejected", owner),
+				"general Array runtime behavior beyond fixed Int literals, exact length, proven reads/writes, and direct result-discarded push is rejected",
+				owner),
 			record(Closure, CallsClosures, UnsupportedOwned, "validator rejects closure expressions", owner),
 			record(TryThrowCatch, Exceptions, UnsupportedOwned,
 				"only one immediate new haxe.Exception throw, exact catch, and caught-message read are admitted", owner),
 			record(NullableValue, NullBehavior, UnsupportedOwned,
 				"only explicit Null<String> locals, required parameters/returns, source-owned calls, and local ==/!= null checks are admitted", owner),
 			record(HaxeStdlib, RuntimeStdlib, UnsupportedOwned,
-				"only exact Int-array length, direct result-discarded Int-array push, and the compiler-owned Unicode-scalar String length helper exist", owner),
+				"only exact Int-array length/read/write, direct result-discarded Int-array push, and the compiler-owned Unicode-scalar String length helper exist",
+				owner),
 			record(NumericEdgeSemantics, Numeric, UnverifiedOwned, "overflow, division, and modulo are not classified", owner),
 			record(UnicodeRuntime, StringUnicode, UnverifiedOwned, "only Unicode-scalar String length is classified", owner),
 			record(CollectionOrdering, Ordering, UnverifiedOwned, "collection and object ordering are not classified", owner),

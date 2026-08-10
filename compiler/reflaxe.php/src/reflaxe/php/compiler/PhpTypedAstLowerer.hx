@@ -7,6 +7,7 @@ import haxe.macro.Type;
 import haxe.macro.TypeTools;
 import reflaxe.data.ClassFuncData;
 import reflaxe.data.ClassVarData;
+import reflaxe.php.compiler.PhpSemanticCapabilities.PhpSemanticCapabilityId;
 import reflaxe.php.ir.PhpClass;
 import reflaxe.php.ir.PhpClassKind;
 import reflaxe.php.ir.PhpClosureCapture;
@@ -268,7 +269,9 @@ class PhpTypedAstLowerer {
 							mapped(PhpAssign(PhpObjectProperty(lowerObjectValue(receiver), fieldRef.get().name), lowerStringValue(value)), expression,
 								"assign-instance-string")
 						];
-					case _: [lowerIntAssignment(expression, target, value, intArrayLengths)];
+					case _: [
+							lowerIntAssignment(expression, target, value, intArrayLengths, allowDirectArrayMutation)
+						];
 				}
 			case TBinop(OpAssignOp(_), _, _):
 				Context.fatalError("reflaxe.php does not yet support compound assignment", expression.pos);
@@ -389,13 +392,22 @@ class PhpTypedAstLowerer {
 		}
 	}
 
-	function lowerIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>):PhpStmt {
+	/** Emits one direct scalar or indexed assignment after the validator proves the exact target shape. */
+	function lowerIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>, allowDirectArrayMutation:Bool):PhpStmt {
 		return switch (target.expr) {
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
 				PhpSemanticCapabilities.requireAdmitted(IntAssignment);
 				mapped(PhpAssign(PhpVar(variable.name), lowerIntValue(value, intArrayLengths)), assignment, "assign-int");
+			case TArray(base, index):
+				if (!allowDirectArrayMutation) {
+					Context.fatalError("reflaxe.php Array<Int> indexed assignment is admitted only as a direct straight-line statement", assignment.pos);
+				}
+				mapped(PhpAssign(lowerProvenIntArrayIndex(assignment, base, index, intArrayLengths, ProvenIntArrayWrite),
+					lowerIntValue(value, intArrayLengths)),
+					assignment, "assign-int-array-index");
 			case _:
-				Context.fatalError("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
+				Context.fatalError("reflaxe.php supports assignment only to Int variables or proven Array<Int> indices in the admitted semantic slice",
+					assignment.pos);
 				PhpReturnVoid;
 		}
 	}
@@ -556,7 +568,7 @@ class PhpTypedAstLowerer {
 			case TBinop(OpAdd, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
 				PhpBinop("+", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
-			case TArray(base, index): lowerProvenIntArrayRead(expression, base, index, intArrayLengths);
+			case TArray(base, index): lowerProvenIntArrayIndex(expression, base, index, intArrayLengths, ProvenIntArrayRead);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				PhpSemanticCapabilities.requireAdmitted(StringRuntimeHelper);
 				PhpSemanticCapabilities.requireAdmitted(UnicodeScalarLength);
@@ -604,17 +616,18 @@ class PhpTypedAstLowerer {
 		}
 	}
 
-	function lowerProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
+	function lowerProvenIntArrayIndex(access:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>,
+			capability:PhpSemanticCapabilityId):PhpExpr {
 		return switch [base.expr, index.expr] {
 			case [TLocal(variable), TConst(TInt(value))] if (intArrayLengths.exists(variable.id)):
 				final length = intArrayLengths.get(variable.id);
 				if (length == null || value < 0 || value >= length) {
-					Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+					Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", access.pos);
 				}
-				PhpSemanticCapabilities.requireAdmitted(ProvenIntArrayRead);
+				PhpSemanticCapabilities.requireAdmitted(capability);
 				PhpArrayRead(PhpVar(variable.name), PhpInt(value));
 			case _:
-				Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+				Context.fatalError("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", access.pos);
 				PhpInt(0);
 		}
 	}

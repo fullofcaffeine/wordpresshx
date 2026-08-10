@@ -225,7 +225,7 @@ class PhpTypedAstValidator {
 						if (new PhpCompilerConfig().owns(classRef.get().pos) && TypeTools.toString(fieldRef.get().type) == "String"):
 						validateObjectValue(receiver);
 						validateStringValue(value);
-					case _: validateIntAssignment(expression, target, value, intArrayLengths);
+					case _: validateIntAssignment(expression, target, value, intArrayLengths, allowDirectArrayMutation);
 				}
 			case TBinop(OpAssignOp(_), _, _):
 				Context.error("reflaxe.php does not yet support compound assignment", expression.pos);
@@ -294,12 +294,22 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+	/** Validates one direct scalar or indexed assignment without widening the tracked Array ownership boundary. */
+	static function validateIntAssignment(assignment:TypedExpr, target:TypedExpr, value:TypedExpr, intArrayLengths:Map<Int, Int>,
+			allowDirectArrayMutation:Bool):Void {
 		switch (target.expr) {
 			case TLocal(variable) if (TypeTools.toString(variable.t) == "Int"):
 				validateIntValue(value, intArrayLengths);
+			case TArray(base, index):
+				if (!allowDirectArrayMutation) {
+					Context.error("reflaxe.php Array<Int> indexed assignment is admitted only as a direct straight-line statement", assignment.pos);
+				} else {
+					validateProvenIntArrayIndex(assignment, base, index, intArrayLengths);
+					validateIntValue(value, intArrayLengths);
+				}
 			case _:
-				Context.error("reflaxe.php supports assignment only to Int variables in the admitted semantic slice", assignment.pos);
+				Context.error("reflaxe.php supports assignment only to Int variables or proven Array<Int> indices in the admitted semantic slice",
+					assignment.pos);
 		}
 	}
 
@@ -470,7 +480,7 @@ class PhpTypedAstValidator {
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
 			case TArray(base, index):
-				validateProvenIntArrayRead(expression, base, index, intArrayLengths);
+				validateProvenIntArrayIndex(expression, base, index, intArrayLengths);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				validateStringValue(receiver);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isArrayClass(classRef.get()) && fieldRef.get().name == "length"):
@@ -511,15 +521,15 @@ class PhpTypedAstValidator {
 		}
 	}
 
-	static function validateProvenIntArrayRead(read:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
+	static function validateProvenIntArrayIndex(access:TypedExpr, base:TypedExpr, index:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch [base.expr, index.expr] {
 			case [TLocal(variable), TConst(TInt(value))] if (intArrayLengths.exists(variable.id)):
 				final length = intArrayLengths.get(variable.id);
 				if (length == null || value < 0 || value >= length) {
-					Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+					Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", access.pos);
 				}
 			case _:
-				Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", read.pos);
+				Context.error("reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant", access.pos);
 		}
 	}
 

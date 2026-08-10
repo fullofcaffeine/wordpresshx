@@ -113,5 +113,15 @@ class Main {
 		} else {
 			Sys.println("int-array-push:fail");
 		}
+
+		values[1] = 5;
+		final writtenCount = values.length;
+		final writtenValue = values[1];
+		final writtenSummary = writtenCount + writtenValue;
+		if (writtenSummary == 9) {
+			Sys.println("int-array-write:pass");
+		} else {
+			Sys.println("int-array-write:fail");
+		}
 	}
 }

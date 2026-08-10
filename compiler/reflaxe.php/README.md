@@ -106,8 +106,8 @@ and currently admits small `Int` literals/addition, initialized locals, `Int`
 equality, `if/else`, required `Int` parameters/returns, and source-owned static
 application calls, explicit `Int` assignment, `Int <=`, and pre-test `while`
 plus fixed `Array<Int>` literals, exact length, direct result-discarded push,
-and compiler-proven constant in-bounds reads beyond the original tracer. It
-also admits exact UTF-8 String literals,
+and compiler-proven constant in-bounds reads and writes beyond the original
+tracer. It also admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
 Strings, String value equality, printing, required non-null String
 parameters/returns, and source-owned static String calls. Because ordinary Haxe
@@ -166,9 +166,11 @@ emit an undefined-key warning where stock Haxe returns `null`. Array `.length`
 uses native PHP `count` only for a proven compiler-owned `Array<Int>` local.
 A direct `values.push(value)` statement lowers to `$values[] = value` for that
 proven local. The compiler updates its exact length proof before later reads.
-Push return values and mutation in branches or loops remain rejected. Other
-receivers, aliases, indexed mutation, and iteration also remain rejected. The
-first owned runtime slice now lowers non-null `String.length` to an on-demand,
+The direct statement `values[1] = value` lowers to a native PHP indexed write
+only when the compiler proves that index. Push return values and mutation in
+branches or loops remain rejected. Other receivers, aliases, dynamic or
+out-of-bounds writes, and iteration also remain rejected. The first owned
+runtime slice now lowers non-null `String.length` to an on-demand,
 typed-IR-authored PHP helper that counts Unicode scalar values, so
 `"A🚀".length` is `2` rather than PHP's `strlen` byte count of `5`. It requires
 no `mbstring`, rejects malformed UTF-8 explicitly, and is emitted, mapped,
