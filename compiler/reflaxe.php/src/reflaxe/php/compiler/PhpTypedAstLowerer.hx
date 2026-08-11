@@ -558,12 +558,20 @@ class PhpTypedAstLowerer {
 				PhpSemanticCapabilities.requireAdmitted(BoolShortCircuitOr);
 				PhpSemanticCapabilities.requireAdmitted(BoolParenthesizedGrouping);
 				PhpParenthesized(PhpBinop("||", lowerBoolValue(left), lowerBoolValue(right)));
-			case TBinop(OpEq, left, right): lowerNullableStringNullCheck(expression, left, right, true);
-			case TBinop(OpNotEq, left, right): lowerNullableStringNullCheck(expression, left, right, false);
+			case TBinop(OpEq, left, right): lowerBoolEquality(expression, left, right, true);
+			case TBinop(OpNotEq, left, right): lowerBoolEquality(expression, left, right, false);
 			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner): lowerBoolValue(inner);
 			case _: unsupportedBoolValue(expression);
 		}
+	}
+
+	function lowerBoolEquality(expression:TypedExpr, left:TypedExpr, right:TypedExpr, equality:Bool):PhpExpr {
+		if (isExactBoolValue(left) && isExactBoolValue(right)) {
+			PhpSemanticCapabilities.requireAdmitted(BoolEquality);
+			return PhpBinop(equality ? "===" : "!==", lowerBoolValue(left), lowerBoolValue(right));
+		}
+		return lowerNullableStringNullCheck(expression, left, right, equality);
 	}
 
 	function lowerNullableStringValue(expression:TypedExpr):PhpExpr {
@@ -891,6 +899,10 @@ class PhpTypedAstLowerer {
 			case TMeta(_, inner) | TParenthesis(inner): isNullLiteral(inner);
 			case _: false;
 		}
+	}
+
+	static function isExactBoolValue(expression:TypedExpr):Bool {
+		return TypeTools.toString(expression.t) == "Bool" && !isNullLiteral(expression);
 	}
 
 	function lowerIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {

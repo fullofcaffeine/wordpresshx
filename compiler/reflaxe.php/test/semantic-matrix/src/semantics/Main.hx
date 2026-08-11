@@ -287,5 +287,13 @@ class Main {
 		} else {
 			Sys.println("int-runtime-division:fail");
 		}
+
+		final equalBools = Calculator.sameBool(true, true);
+		final differentBools = Calculator.differentBool(true, false);
+		if (equalBools && differentBools) {
+			Sys.println("bool-equality:pass");
+		} else {
+			Sys.println("bool-equality:fail");
+		}
 	}
 }

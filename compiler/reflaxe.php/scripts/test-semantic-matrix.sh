@@ -132,6 +132,7 @@ assert_compile_negative "string-coercion" "reflaxe.php String concatenation acce
 assert_compile_negative "null-string-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
 assert_compile_negative "null-bool-call" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
+assert_compile_negative "bool-null-equality" "reflaxe.php equality requires exact Bool operands or an exact Null<String> local compared with null"
 assert_compile_negative "foreign-bool-call" "reflaxe.php supports only source-owned static Bool calls in the admitted semantic slice"
 assert_compile_negative "mutable-instance-field" "reflaxe.php instance fields must be constructor-initialized and immutable after construction"
 assert_compile_negative "inherited-instance-layout" "reflaxe.php instance layout does not yet support inheritance or interfaces"

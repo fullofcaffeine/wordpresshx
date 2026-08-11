@@ -22,6 +22,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedBoolLocal = "value.initialized-bool-local";
 	var InitializedStringClosureLocal = "value.initialized-string-closure-local";
 	var IntEquality = "control.int-equality";
+	var BoolEquality = "control.bool-equality";
 	var IntLessThan = "control.int-less-than";
 	var BoolCondition = "control.bool-condition";
 	var BoolParenthesizedGrouping = "control.bool-parenthesized-grouping";
@@ -168,6 +169,7 @@ class PhpSemanticCapabilities {
 			record(InitializedObjectLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InstanceStringFieldRead, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
+			record(BoolEquality, ControlFlow, Admitted, semantic, owner),
 			record(IntLessThan, ControlFlow, Admitted, semantic, owner),
 			record(BoolCondition, ControlFlow, Admitted, semantic, owner),
 			record(BoolParenthesizedGrouping, ControlFlow, Admitted, semantic, owner),

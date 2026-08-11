@@ -53,4 +53,12 @@ class Calculator {
 	public static function divideByNegativeOne(value:Int):Int {
 		return Std.int(value / -1);
 	}
+
+	public static function sameBool(left:Bool, right:Bool):Bool {
+		return left == right;
+	}
+
+	public static function differentBool(left:Bool, right:Bool):Bool {
+		return left != right;
+	}
 }

@@ -26,8 +26,9 @@ The current admitted surface is deliberately bounded:
   itself an admitted non-null String expression;
 - typed `Bool` literals/locals, logical negation, direct conditions, required
   non-null parameters/returns, and source-owned static calls lowered to native
-  PHP `bool`, plus lazy `&&`/`||` with explicit typed grouping so PHP preserves
-  Haxe precedence and short-circuit evaluation without admitting truthiness;
+  PHP `bool`, plus strict equality and inequality and lazy `&&`/`||` with
+  explicit typed grouping so PHP preserves Haxe precedence and short-circuit
+  evaluation without admitting truthiness;
 - one non-inherited source-owned class shape with a private constructor-set
   `String` field, required `String` constructor and instance method, a typed
   object local, native construction, field read, and instance call;
@@ -157,12 +158,14 @@ function and call, emitting `?string` for both parameter and return type; it
 does not generalize nullable returns to other types or expression shapes.
 The same fail-closed rule applies to the admitted Boolean slice: exact Bool
 literals, locals, logical negation, direct conditions, required non-null
-parameters/returns, source-owned calls, and lazily evaluated `&&`/`||` lower to
-native PHP `bool`. Bool binary expressions use a typed parenthesized PHP IR node
-so mixed `(a || b) && c` grouping is retained rather than delegated to target
-precedence. A stock-Haxe-valid null Bool argument and foreign Bool calls are
-rejected before emission. PHP truthy coercion, bitwise Bool operations, Bool
-equality/mutation, and weak-PHP callers remain separate capabilities.
+parameters/returns, source-owned calls, strict `==`/`!=`, and lazily evaluated
+`&&`/`||` lower to native PHP `bool`. Equality uses PHP `===`/`!==` only after
+both operands pass the admitted Bool validator. Bool binary expressions use a
+typed parenthesized PHP IR node, so mixed `(a || b) && c` grouping is retained
+instead of delegated to target precedence. Stock-Haxe-valid Bool/null equality,
+a null Bool argument, and foreign Bool calls are rejected before emission. PHP
+truthy coercion, bitwise Bool operations, Bool mutation, object identity, and
+weak-PHP callers remain separate capabilities.
 The same fixture now includes a third source-owned class. It proves a narrow
 modern object path: Haxe `new Greeter(...)` becomes a dedicated PHP class with a
 private typed property, `__construct`, and native instance call. The field must

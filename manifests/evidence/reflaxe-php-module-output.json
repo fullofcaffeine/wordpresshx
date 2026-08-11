@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-runtime-division-subject-passed-run-31543524288; predecessor-runtime-remainder-subject-passed-run-31538235732",
+    "exactPhp74And84Matrix": "current-bool-equality-subject-pending-hosted; predecessor-runtime-division-subject-passed-run-31543524288",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -74,7 +74,7 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "current-runtime-division-module-graph-subject",
+    "relation": "predecessor-runtime-division-module-graph-subject",
     "workflow": "Repository bootstrap",
     "runId": 31543524288,
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288",
@@ -100,7 +100,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "compiler package with Std.int runtime Int dividend division by a proven nonzero constant divisor and signed 32-bit result preservation, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
+    "scope": "the predecessor compiler package with Std.int runtime Int dividend division by a proven nonzero constant divisor and signed 32-bit result preservation, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -126,13 +126,14 @@
       "The php74-modern-v1 manifest now declares minimumIntBits as 64. This field makes the runtime width requirement part of the exact profile contract.",
       "Runtime unary Int negation adds one method to the existing Int32 runtime artifact. It does not add a second runtime owner, change the dependency topology, or broaden the WordPress runtime claim.",
       "Runtime dividend remainder uses the existing application module and native PHP operator. It adds no runtime artifact or dependency edge.",
-      "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge, and the exact new module bytes await hosted proof."
+      "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
+      "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge, and the exact new module bytes await hosted proof."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "4c8a15fb0eefb30dceabbb72f1985c5b6560b4cfab4fb9de10a0617b1b416d4f"
+      "sha256": "2f002159603d202e21009941476320fb4b7464980f6b16266e2c90a1755026c1"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -148,7 +149,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "56804c16e76e8b08f44b29b8b413723ace9b95f70c8592fce76d1c3f966c461d"
+      "sha256": "fa40ed6f20694bcd40bc23e33613c24de2d48335b64d60f2d44cd6ddc3036446"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -160,7 +161,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "be7302988524e129b75ccfc54427e157bf2a265a7f3ed9907299c692b96f369c"
+      "sha256": "24abc521ae9046a2ba26b74b6db76c66a52300f7dfeda6ff6171d41231f854af"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -212,11 +213,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "f11f9e3a56b27c688791673eafa8c329eb9681cd482f89a77b3e92c5d351eaac"
+      "sha256": "d119d67042010a9c951e9512b56387be68d31925fc72872e128b8dacf1e935ab"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "d9f914608209d42f048281303cf1545b01757154fd730c23e7bfd331a12dd963"
+      "sha256": "d1979f98175d1e4155c8c5f7e82c61136b0c22fc6dd2836cde9a617615846fdf"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -240,7 +241,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

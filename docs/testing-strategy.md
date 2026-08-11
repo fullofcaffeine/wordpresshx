@@ -120,7 +120,7 @@ are not borrowed by a newer compiler, typed-IR, or WordPress claim.
 
 The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
-registry. The current local subject lists 77 admitted, 6 explicitly
+registry. The current local subject lists 78 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
 differential fixture checks signed 32-bit `Int` addition, subtraction,
 multiplication, and unary negation. Safe constant expressions use native PHP.
@@ -202,12 +202,18 @@ compiler-proven nonzero constant. It truncates toward zero. The compiler-owned
 `Int32` helper wraps the minimum signed `Int` divided by `-1` back to the Haxe
 result. Runtime and zero divisors remain compile-negative.
 
+The Bool equality slice passes exact typed Bool operands through the existing
+Bool validator. It lowers Haxe `==` and `!=` to PHP `===` and `!==`. A
+stock-Haxe-valid Bool/null comparison remains compile-negative. Mixed values,
+truthiness, and object identity remain outside this subject.
+
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-77-record runtime-division subject passed its exact hosted PHP 7.4.33/8.4.7
-lane in run `31543524288`. The predecessor 77-record runtime-remainder subject
-passed in run `31538235732` and remains historical authority for its own bytes.
+78-record Bool-equality subject has local differential and native PHP 8.4.7
+proof. Its exact PHP 7.4.33/8.4.7 hosted lane is pending. The predecessor
+77-record runtime-division subject passed in run `31543524288` and remains
+historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

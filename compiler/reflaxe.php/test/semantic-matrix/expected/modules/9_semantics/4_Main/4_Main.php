@@ -267,5 +267,12 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-runtime-division:fail' . PHP_EOL;
 		}
+		$equalBools = Hx_9_semantics_10_Calculator::sameBool( true, true );
+		$differentBools = Hx_9_semantics_10_Calculator::differentBool( true, false );
+		if ( ( $equalBools && $differentBools ) ) {
+			echo 'bool-equality:pass' . PHP_EOL;
+		} else {
+			echo 'bool-equality:fail' . PHP_EOL;
+		}
 	}
 }

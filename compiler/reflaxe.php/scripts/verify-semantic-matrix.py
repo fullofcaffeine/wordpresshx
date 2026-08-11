@@ -200,6 +200,10 @@ def main() -> None:
 		"stmt:return-int:1039:1064": ("statement", 2, b"return Std.int(value / 2)"),
 		"method:semantics.Calculator:divideByNegativeOne": ("member", 1, b"public static function divideByNegativeOne"),
 		"stmt:return-int:1133:1159": ("statement", 2, b"return Std.int(value / -1)"),
+		"method:semantics.Calculator:sameBool": ("member", 1, b"public static function sameBool"),
+		"stmt:return-bool:1230:1250": ("statement", 2, b"return left == right"),
+		"method:semantics.Calculator:differentBool": ("member", 1, b"public static function differentBool"),
+		"stmt:return-bool:1326:1346": ("statement", 2, b"return left != right"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -390,6 +394,11 @@ def main() -> None:
 		"stmt:sys-println:8589:8629": ("statement", 5, b'Sys.println("int-runtime-division:fail")'),
 		"stmt:sys-println:8653:8693": ("statement", 4, b'Sys.println("int-runtime-division:fail")'),
 		"stmt:sys-println:8714:8754": ("statement", 3, b'Sys.println("int-runtime-division:fail")'),
+		"stmt:local-bool:8763:8814": ("statement", 2, b"final equalBools = Calculator.sameBool(true, true)"),
+		"stmt:local-bool:8817:8878": ("statement", 2, b"final differentBools = Calculator.differentBool(true, false)"),
+		"stmt:if-bool:8881:9007": ("statement", 2, b"if (equalBools && differentBools)"),
+		"stmt:sys-println:8920:8953": ("statement", 3, b'Sys.println("bool-equality:pass")'),
+		"stmt:sys-println:8969:9002": ("statement", 3, b'Sys.println("bool-equality:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -407,6 +416,8 @@ def main() -> None:
 			"stmt:return-int:962:978",
 			"stmt:return-int:1039:1064",
 			"stmt:return-int:1133:1159",
+			"stmt:return-bool:1230:1250",
+			"stmt:return-bool:1326:1346",
         })
     verify_map(
         output_root,

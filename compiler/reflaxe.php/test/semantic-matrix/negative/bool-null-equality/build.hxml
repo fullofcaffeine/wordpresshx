@@ -1,0 +1,8 @@
+-cp src
+-cp test/semantic-matrix/negative/bool-null-equality/src
+-lib reflaxe:4.0.0-beta
+-main semantics.Main
+-D reflaxe_php_output=build/semantic-matrix-negative-bool-null-equality
+-D reflaxe_php_profile=php74-modern-v1
+-D reflaxe_php_source_root=test/semantic-matrix/negative/bool-null-equality/src
+--macro reflaxe.php.compiler.CompilerInit.Start()

@@ -473,7 +473,14 @@ class PhpTypedAstValidator {
 				validateBoolValue(left);
 				validateBoolValue(right);
 			case TBinop(OpEq | OpNotEq, left, right):
-				validateNullableStringNullCheck(expression, left, right);
+				if (isExactBoolValue(left) && isExactBoolValue(right)) {
+					validateBoolValue(left);
+					validateBoolValue(right);
+				} else if (isNullableStringLocal(left) && isNullLiteral(right)) {
+					validateNullableStringNullCheck(expression, left, right);
+				} else {
+					Context.error("reflaxe.php equality requires exact Bool operands or an exact Null<String> local compared with null", expression.pos);
+				}
 			case TCall(target, arguments):
 				validateStaticApplicationBoolCall(expression, target, arguments);
 			case TMeta(_, inner) | TParenthesis(inner):
@@ -482,6 +489,10 @@ class PhpTypedAstValidator {
 				Context.error("reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
 					expression.pos);
 		}
+	}
+
+	static function isExactBoolValue(expression:TypedExpr):Bool {
+		return TypeTools.toString(expression.t) == "Bool" && !isNullLiteral(expression);
 	}
 
 	static function validateNullableStringValue(expression:TypedExpr):Void {

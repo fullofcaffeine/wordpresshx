@@ -11,6 +11,10 @@ class Hx_9_semantics_10_Calculator {
 		return $prefix . $value;
 	}
 
+	public static function differentBool(bool $left, bool $right): bool {
+		return $left !== $right;
+	}
+
 	public static function divideByNegativeOne(int $value): int {
 		return \ReflaxePhpInt32Runtime::divide( $value, -1 );
 	}
@@ -50,6 +54,10 @@ class Hx_9_semantics_10_Calculator {
 
 	public static function roundTrip(?string $value): ?string {
 		return $value;
+	}
+
+	public static function sameBool(bool $left, bool $right): bool {
+		return $left === $right;
 	}
 
 	public static function subtract(int $left, int $right): int {

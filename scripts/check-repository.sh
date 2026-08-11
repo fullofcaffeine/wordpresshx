@@ -6764,7 +6764,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
 assert reflaxe_php_semantic_receipt["status"] == (
-    "verified-hosted-exact-matrix"
+    "verified-local-hosted-pending"
 )
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-runtime-semantics"
@@ -6777,9 +6777,9 @@ assert reflaxe_php_semantic_receipt["capabilityMatrix"] == {
         "PhpSemanticCapabilities.hx"
     ),
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 90,
+    "capabilityCount": 91,
     "categoryCount": 13,
-    "admittedCount": 77,
+    "admittedCount": 78,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": True,
@@ -6795,14 +6795,14 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-runtime-division-subject-passed-run-31543524288; "
-    "predecessor-runtime-remainder-subject-passed-run-31538235732"
+    "current-bool-equality-subject-pending-hosted; "
+    "predecessor-runtime-division-subject-passed-run-31543524288"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
 assert reflaxe_php_semantic_receipt["hostedVerification"] == {
-    "relation": "current-runtime-division-subject",
+    "relation": "predecessor-runtime-division-subject",
     "admittedCapabilityCount": 77,
     "workflow": "Repository bootstrap",
     "runId": 31543524288,
@@ -6828,7 +6828,7 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
         "Test exact PHP 7.4 and 8.4 runtime matrix",
     ],
     "scope": (
-        "the current 77 exact admitted semantic records with Std.int runtime Int "
+        "the predecessor 77 exact admitted semantic records with Std.int runtime Int "
         "dividends, compiler-proven nonzero constant divisors, signed 32-bit "
         "result preservation, "
         "deterministic generic compiler package, clean offline external package "
@@ -6876,7 +6876,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": True,
+    "hostedProof": False,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
@@ -6885,7 +6885,7 @@ assert reflaxe_php_semantic_receipt["authority"] == {
 assert list(reflaxe_php_semantic_input_records) == sorted(
     reflaxe_php_semantic_input_records
 )
-assert len(reflaxe_php_semantic_input_records) == 130
+assert len(reflaxe_php_semantic_input_records) == 132
 for semantic_input_path, semantic_input_sha256 in (
     reflaxe_php_semantic_input_records.items()
 ):
@@ -6914,7 +6914,7 @@ assert reflaxe_php_module_output_receipt["receiptId"] == (
 )
 assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
 assert reflaxe_php_module_output_receipt["status"] == (
-    "verified-hosted-exact-matrix"
+    "verified-local-hosted-pending"
 )
 assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-package-install"
@@ -6952,7 +6952,7 @@ assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
     "wordpressCompatibilityClaimed": False,
 }
 assert reflaxe_php_module_output_receipt["hostedVerification"] == {
-    "relation": "current-runtime-division-module-graph-subject",
+    "relation": "predecessor-runtime-division-module-graph-subject",
     "workflow": "Repository bootstrap",
     "runId": 31543524288,
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288",
@@ -6979,7 +6979,7 @@ assert reflaxe_php_module_output_receipt["hostedVerification"] == {
         "Test public PHP on exact PHP 7.4 and 8.4",
     ],
     "scope": (
-        "compiler package with Std.int runtime Int dividend division by a proven "
+        "the predecessor compiler package with Std.int runtime Int dividend division by a proven "
         "nonzero constant divisor and signed 32-bit result preservation, clean "
         "package consumer, exact PHP runtime matrix, "
         "deterministic WordPress package adapter, and "
@@ -7029,7 +7029,7 @@ assert reflaxe_php_module_output_receipt["review"][
     "distinctFromImplementation"
 ] is True
 assert reflaxe_php_module_output_receipt["authority"] == {
-    "hostedProof": True,
+    "hostedProof": False,
     "officialHaxeQualification": False,
     "wordpressRuntimeCompatibility": False,
     "publicationAuthorized": False,
@@ -8006,7 +8006,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "generic-php-compiler",
         "compiler/reflaxe.php",
         53,
-        100,
+        101,
         "bash compiler/reflaxe.php/scripts/test.sh",
     ),
     (
