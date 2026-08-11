@@ -224,5 +224,16 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-runtime-multiplication:fail' . PHP_EOL;
 		}
+		$ordinaryNegation = Hx_9_semantics_10_Calculator::negateInt( 3 );
+		$minimumNegation = Hx_9_semantics_10_Calculator::negateInt( -2147483647 - 1 );
+		if ( $ordinaryNegation === -3 ) {
+			if ( $minimumNegation === ( -2147483647 - 1 ) ) {
+				echo 'int-runtime-negation:pass' . PHP_EOL;
+			} else {
+				echo 'int-runtime-negation:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-runtime-negation:fail' . PHP_EOL;
+		}
 	}
 }

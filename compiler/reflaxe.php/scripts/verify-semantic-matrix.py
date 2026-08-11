@@ -192,6 +192,8 @@ def main() -> None:
         "stmt:return-int:719:738": ("statement", 2, b"return left - right"),
 		"method:semantics.Calculator:multiply": ("member", 1, b"public static function multiply"),
 		"stmt:return-int:806:825": ("statement", 2, b"return left * right"),
+		"method:semantics.Calculator:negateInt": ("member", 1, b"public static function negateInt"),
+		"stmt:return-int:884:897": ("statement", 2, b"return -value"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -355,6 +357,13 @@ def main() -> None:
 		"stmt:sys-println:7052:7098": ("statement", 5, b'Sys.println("int-runtime-multiplication:fail")'),
 		"stmt:sys-println:7122:7168": ("statement", 4, b'Sys.println("int-runtime-multiplication:fail")'),
 		"stmt:sys-println:7189:7235": ("statement", 3, b'Sys.println("int-runtime-multiplication:fail")'),
+		"stmt:local-int:7244:7293": ("statement", 2, b"final ordinaryNegation = Calculator.negateInt(3)"),
+		"stmt:local-int:7296:7358": ("statement", 2, b"final minimumNegation = Calculator.negateInt(-2147483647 - 1)"),
+		"stmt:if-int-equality:7361:7606": ("statement", 2, b"if (ordinaryNegation == -3)"),
+		"stmt:if-int-equality:7394:7546": ("statement", 3, b"if (minimumNegation == (-2147483647 - 1))"),
+		"stmt:sys-println:7442:7482": ("statement", 4, b'Sys.println("int-runtime-negation:pass")'),
+		"stmt:sys-println:7500:7540": ("statement", 4, b'Sys.println("int-runtime-negation:fail")'),
+		"stmt:sys-println:7561:7601": ("statement", 3, b'Sys.println("int-runtime-negation:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -368,6 +377,7 @@ def main() -> None:
             "stmt:return-bool:639:651",
             "stmt:return-int:719:738",
 			"stmt:return-int:806:825",
+			"stmt:return-int:884:897",
         })
     verify_map(
         output_root,
@@ -406,6 +416,7 @@ def main() -> None:
             "runtime:int32-add": ("member", 1, b"total + current"),
             "runtime:int32-subtract": ("member", 1, b"total + current"),
 			"runtime:int32-multiply": ("member", 1, b"total + current"),
+			"runtime:int32-negate": ("member", 1, b"total + current"),
         },
         set(),
     )

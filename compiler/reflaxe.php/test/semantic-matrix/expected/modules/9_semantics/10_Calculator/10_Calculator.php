@@ -27,6 +27,10 @@ class Hx_9_semantics_10_Calculator {
 		return ! $value;
 	}
 
+	public static function negateInt(int $value): int {
+		return \ReflaxePhpInt32Runtime::negate( $value );
+	}
+
 	public static function probe(bool $value): bool {
 		echo 'bool-probe' . PHP_EOL;
 		return $value;

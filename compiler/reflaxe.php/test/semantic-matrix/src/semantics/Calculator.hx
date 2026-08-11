@@ -37,4 +37,8 @@ class Calculator {
 	public static function multiply(left:Int, right:Int):Int {
 		return left * right;
 	}
+
+	public static function negateInt(value:Int):Int {
+		return -value;
+	}
 }

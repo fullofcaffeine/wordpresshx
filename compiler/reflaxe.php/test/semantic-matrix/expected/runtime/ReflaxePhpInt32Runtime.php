@@ -23,4 +23,11 @@ class ReflaxePhpInt32Runtime {
 		}
 		return ( ( $left * $right ) << 32 ) >> 32;
 	}
+
+	public static function negate(int $value): int {
+		if ( PHP_INT_SIZE !== 8 ) {
+			throw new \RuntimeException( 'reflaxe.php Int32 runtime requires 64-bit PHP' );
+		}
+		return ( ( - $value ) << 32 ) >> 32;
+	}
 }

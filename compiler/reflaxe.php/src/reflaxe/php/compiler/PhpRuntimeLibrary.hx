@@ -58,8 +58,10 @@ class PhpRuntimeLibrary {
 			new PhpMethod(PhpPublic, true, false, PhpIdentifier.named("multiply"), [
 				PhpParameter.named(PhpIdentifier.named("left"), PhpIntType),
 				PhpParameter.named(PhpIdentifier.named("right"), PhpIntType)
-			], source,
-				PhpIntType, [platformGuard, PhpReturn(wrap32(PhpBinop("*", PhpVar("left"), PhpVar("right"))))], "runtime:int32-multiply")
+			],
+				source, PhpIntType, [platformGuard, PhpReturn(wrap32(PhpBinop("*", PhpVar("left"), PhpVar("right"))))], "runtime:int32-multiply"),
+			new PhpMethod(PhpPublic, true, false, PhpIdentifier.named("negate"), [PhpParameter.named(PhpIdentifier.named("value"), PhpIntType)], source,
+				PhpIntType, [platformGuard, PhpReturn(wrap32(PhpNegate(PhpVar("value"))))], "runtime:int32-negate")
 		], "runtime:int32");
 	}
 

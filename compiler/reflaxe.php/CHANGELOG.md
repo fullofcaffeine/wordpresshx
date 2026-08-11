@@ -12,6 +12,8 @@ has been authorized.
   subtraction. The exact PHP profile now requires 64-bit PHP integers.
 - Added signed 32-bit wrap behavior for runtime `Int` multiplication. Safe
   constant products still use readable native PHP multiplication.
+- Added signed 32-bit wrap behavior for runtime unary `Int` negation. Safe
+  constant negation still uses readable native PHP.
 - Replaced the temporary monolithic compiler output with collision-safe
   per-type PHP artifacts and exact maps, a source-derived dependency-ordered
   bootstrap, the explicit `php74-modern-v1` policy, a content-addressed graph,

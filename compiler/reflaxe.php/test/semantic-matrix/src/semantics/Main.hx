@@ -241,5 +241,17 @@ class Main {
 		} else {
 			Sys.println("int-runtime-multiplication:fail");
 		}
+
+		final ordinaryNegation = Calculator.negateInt(3);
+		final minimumNegation = Calculator.negateInt(-2147483647 - 1);
+		if (ordinaryNegation == -3) {
+			if (minimumNegation == (-2147483647 - 1)) {
+				Sys.println("int-runtime-negation:pass");
+			} else {
+				Sys.println("int-runtime-negation:fail");
+			}
+		} else {
+			Sys.println("int-runtime-negation:fail");
+		}
 	}
 }

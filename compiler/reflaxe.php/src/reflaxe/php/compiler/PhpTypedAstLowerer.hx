@@ -630,7 +630,16 @@ class PhpTypedAstLowerer {
 				PhpBinop("%", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
 			case TUnop(OpNeg, false, inner):
 				PhpSemanticCapabilities.requireAdmitted(IntUnaryNegation);
-				PhpNegate(lowerIntValue(inner, intArrayLengths));
+				final loweredInner = lowerIntValue(inner, intArrayLengths);
+				if (PhpTypedAstValidator.isCompilerProvenInt32(expression)) {
+					PhpNegate(loweredInner);
+				} else {
+					PhpSemanticCapabilities.requireAdmitted(Int32RuntimeHelper);
+					if (int32RuntimeTrigger == null) {
+						int32RuntimeTrigger = expression.pos;
+					}
+					PhpStaticCall(PhpRuntimeLibrary.INT32_CLASS, "negate", [loweredInner]);
+				}
 			case TArray(base, index): lowerProvenIntArrayIndex(expression, base, index, intArrayLengths, ProvenIntArrayRead);
 			case TField(receiver, FInstance(classRef, _, fieldRef)) if (isStringClass(classRef.get()) && fieldRef.get().name == "length"):
 				PhpSemanticCapabilities.requireAdmitted(StringRuntimeHelper);

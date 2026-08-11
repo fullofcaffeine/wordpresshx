@@ -122,9 +122,9 @@ The incremental runtime owner extends that path without changing the claim
 model. `semantic-capabilities.json` is regenerated from a typed compiler-owned
 registry. The current local subject lists 77 admitted, 6 explicitly
 unsupported, and 7 unverified capabilities across 13 categories. Its
-differential fixture checks signed 32-bit `Int` addition, subtraction, and
-multiplication. Safe constant expressions use native PHP. Runtime expressions
-use the compiler-owned helper. The fixture also checks an
+differential fixture checks signed 32-bit `Int` addition, subtraction,
+multiplication, and unary negation. Safe constant expressions use native PHP.
+Runtime expressions use the compiler-owned helper. The fixture also checks an
 initialized local, equality, and `if/else`. It checks required `Int` parameters
 and returns. It also checks a source-owned cross-module static call, explicit
 assignment, `Int <=`, and pre-test `while`. The array subset uses one fixed
@@ -190,17 +190,18 @@ integers and rejects another integer width.
 
 Runtime multiplication uses the same compiler-owned helper. The focused cases
 cover an ordinary product and three signed 32-bit wrap boundaries. Safe
-constant products keep native PHP multiplication. Float multiplication fails
-before target output. Unary negation still requires a signed 32-bit range
-proof. The remainder slice requires exact constants and a nonzero divisor.
+constant products keep native PHP multiplication. Runtime negation covers an
+ordinary value and the minimum signed `Int`; safe constant negation keeps
+native PHP. Float multiplication and negation fail before target output. The
+remainder slice requires exact constants and a nonzero divisor.
 Runtime remainder and broad numeric behavior remain outside this subject.
 
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-77-record multiplication-runtime subject passed its exact hosted lane in run
-`31465705082`. The prior 77-record add/subtract subject passed in run
-`31451811554` and remains historical authority for its own bytes.
+77-record runtime-negation subject has local evidence. Its exact hosted lane is
+pending. The prior 77-record multiplication subject passed in run
+`31465705082` and remains historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

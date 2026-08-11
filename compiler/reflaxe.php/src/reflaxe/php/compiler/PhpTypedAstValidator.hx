@@ -536,9 +536,11 @@ class PhpTypedAstValidator {
 				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
 					Context.error("reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor", expression.pos);
 				}
-			case TUnop(OpNeg, false, _):
-				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
-					Context.error("reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression", expression.pos);
+			case TUnop(OpNeg, false, inner):
+				if (TypeTools.toString(expression.t) != "Int" || TypeTools.toString(inner.t) != "Int") {
+					Context.error("reflaxe.php Int negation requires an exact Int operand and result", expression.pos);
+				} else {
+					validateIntValue(inner, intArrayLengths);
 				}
 			case TArray(base, index):
 				validateProvenIntArrayIndex(expression, base, index, intArrayLengths);
