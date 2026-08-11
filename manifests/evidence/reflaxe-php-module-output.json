@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-runtime-remainder-subject-pending-hosted; predecessor-runtime-negation-subject-passed-run-31509673533",
+    "exactPhp74And84Matrix": "current-runtime-remainder-subject-passed-run-31538235732; predecessor-runtime-negation-subject-passed-run-31509673533",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -74,18 +74,18 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "predecessor-int32-negation-module-graph-subject",
+    "relation": "current-runtime-remainder-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31509673533,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31509673533",
-    "commit": "28398b4c8a77c7a340515c6c863b63c9c9dabeff",
+    "runId": 31538235732,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31538235732",
+    "commit": "80f158b585d45d1bcd344f2621b574023df17eb3",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93840008608,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31509673533/job/93840008608",
+      "jobId": 93938884424,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31538235732/job/93938884424",
       "status": "passed",
-      "completedAt": "2026-08-11T16:09:51Z"
+      "completedAt": "2026-08-11T21:47:34Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -100,7 +100,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "compiler package with the updated Int32 runtime, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
+    "scope": "compiler package with runtime Int dividend remainder by a proven nonzero constant divisor, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -239,24 +239,24 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false
   },
   "previousHostedVerification": {
-    "relation": "predecessor-int32-multiplication-module-graph-subject",
+    "relation": "predecessor-int32-negation-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31465705082,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082",
-    "commit": "05746d24b45e84473cd18a4b4efea8f0b739686c",
+    "runId": 31509673533,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31509673533",
+    "commit": "28398b4c8a77c7a340515c6c863b63c9c9dabeff",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93698044541,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082/job/93698044541",
+      "jobId": 93840008608,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31509673533/job/93840008608",
       "status": "passed",
-      "completedAt": "2026-08-11T06:53:09Z"
+      "completedAt": "2026-08-11T16:09:51Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -271,7 +271,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "compiler package, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
+    "scope": "compiler package with the updated Int32 runtime, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false

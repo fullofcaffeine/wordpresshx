@@ -200,10 +200,9 @@ behavior remain outside this subject.
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-77-record runtime-remainder subject has local differential and native PHP 8.4.7
-proof. Its exact hosted PHP 7.4.33/8.4.7 lane is pending. The predecessor
-77-record runtime-negation subject passed in run `31509673533` and remains
-historical authority for its own bytes.
+77-record runtime-remainder subject passed its exact hosted PHP 7.4.33/8.4.7
+lane in run `31538235732`. The predecessor 77-record runtime-negation subject
+passed in run `31509673533` and remains historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new
