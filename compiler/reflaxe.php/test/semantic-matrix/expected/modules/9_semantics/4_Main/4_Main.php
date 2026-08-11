@@ -251,5 +251,21 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-runtime-remainder:fail' . PHP_EOL;
 		}
+		$positiveRuntimeQuotient = Hx_9_semantics_10_Calculator::divideByTwo( 17 );
+		$negativeRuntimeQuotient = Hx_9_semantics_10_Calculator::divideByTwo( -17 );
+		$wrappedRuntimeQuotient = Hx_9_semantics_10_Calculator::divideByNegativeOne( -2147483647 - 1 );
+		if ( $positiveRuntimeQuotient === 8 ) {
+			if ( $negativeRuntimeQuotient === -8 ) {
+				if ( $wrappedRuntimeQuotient === ( -2147483647 - 1 ) ) {
+					echo 'int-runtime-division:pass' . PHP_EOL;
+				} else {
+					echo 'int-runtime-division:fail' . PHP_EOL;
+				}
+			} else {
+				echo 'int-runtime-division:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-runtime-division:fail' . PHP_EOL;
+		}
 	}
 }

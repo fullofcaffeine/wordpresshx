@@ -6764,7 +6764,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
 assert reflaxe_php_semantic_receipt["status"] == (
-    "verified-hosted-exact-matrix"
+    "verified-local-hosted-pending"
 )
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-runtime-semantics"
@@ -6795,14 +6795,14 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-runtime-remainder-subject-passed-run-31538235732; "
-    "predecessor-runtime-negation-subject-passed-run-31509673533"
+    "current-runtime-division-subject-pending-hosted; "
+    "predecessor-runtime-remainder-subject-passed-run-31538235732"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
 assert reflaxe_php_semantic_receipt["hostedVerification"] == {
-    "relation": "current-runtime-remainder-subject",
+    "relation": "predecessor-runtime-remainder-subject",
     "admittedCapabilityCount": 77,
     "workflow": "Repository bootstrap",
     "runId": 31538235732,
@@ -6828,8 +6828,8 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
         "Test exact PHP 7.4 and 8.4 runtime matrix",
     ],
     "scope": (
-        "the current 77 exact admitted semantic records with runtime Int dividends and "
-        "compiler-proven nonzero constant divisors, "
+        "the predecessor 77 exact admitted semantic records with runtime Int "
+        "remainder dividends and compiler-proven nonzero constant divisors, "
         "deterministic generic compiler package, clean offline external package "
         "consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only"
     ),
@@ -6874,7 +6874,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": True,
+    "hostedProof": False,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
@@ -6912,7 +6912,7 @@ assert reflaxe_php_module_output_receipt["receiptId"] == (
 )
 assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
 assert reflaxe_php_module_output_receipt["status"] == (
-    "verified-hosted-exact-matrix"
+    "verified-local-hosted-pending"
 )
 assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-package-install"
@@ -6950,7 +6950,7 @@ assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
     "wordpressCompatibilityClaimed": False,
 }
 assert reflaxe_php_module_output_receipt["hostedVerification"] == {
-    "relation": "current-runtime-remainder-module-graph-subject",
+    "relation": "predecessor-runtime-remainder-module-graph-subject",
     "workflow": "Repository bootstrap",
     "runId": 31538235732,
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31538235732",
@@ -6977,8 +6977,8 @@ assert reflaxe_php_module_output_receipt["hostedVerification"] == {
         "Test public PHP on exact PHP 7.4 and 8.4",
     ],
     "scope": (
-        "compiler package with runtime Int dividend remainder by a proven nonzero "
-        "constant divisor, clean package consumer, exact PHP runtime matrix, "
+        "the predecessor compiler package with runtime Int dividend remainder by a "
+        "proven nonzero constant divisor, clean package consumer, exact PHP runtime matrix, "
         "deterministic WordPress package adapter, and "
         "public PHP profile only"
     ),
@@ -7026,7 +7026,7 @@ assert reflaxe_php_module_output_receipt["review"][
     "distinctFromImplementation"
 ] is True
 assert reflaxe_php_module_output_receipt["authority"] == {
-    "hostedProof": True,
+    "hostedProof": False,
     "officialHaxeQualification": False,
     "wordpressRuntimeCompatibility": False,
     "publicationAuthorized": False,

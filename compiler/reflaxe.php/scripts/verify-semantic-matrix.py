@@ -196,6 +196,10 @@ def main() -> None:
 		"stmt:return-int:884:897": ("statement", 2, b"return -value"),
 		"method:semantics.Calculator:remainderByFive": ("member", 1, b"public static function remainderByFive"),
 		"stmt:return-int:962:978": ("statement", 2, b"return value % 5"),
+		"method:semantics.Calculator:divideByTwo": ("member", 1, b"public static function divideByTwo"),
+		"stmt:return-int:1039:1064": ("statement", 2, b"return Std.int(value / 2)"),
+		"method:semantics.Calculator:divideByNegativeOne": ("member", 1, b"public static function divideByNegativeOne"),
+		"stmt:return-int:1133:1159": ("statement", 2, b"return Std.int(value / -1)"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -376,6 +380,16 @@ def main() -> None:
 		"stmt:sys-println:8009:8050": ("statement", 5, b'Sys.println("int-runtime-remainder:fail")'),
 		"stmt:sys-println:8074:8115": ("statement", 4, b'Sys.println("int-runtime-remainder:fail")'),
 		"stmt:sys-println:8136:8177": ("statement", 3, b'Sys.println("int-runtime-remainder:fail")'),
+		"stmt:local-int:8186:8245": ("statement", 2, b"final positiveRuntimeQuotient = Calculator.divideByTwo(17)"),
+		"stmt:local-int:8248:8308": ("statement", 2, b"final negativeRuntimeQuotient = Calculator.divideByTwo(-17)"),
+		"stmt:local-int:8311:8390": ("statement", 2, b"final wrappedRuntimeQuotient = Calculator.divideByNegativeOne(-2147483647 - 1)"),
+		"stmt:if-int-equality:8393:8759": ("statement", 2, b"if (positiveRuntimeQuotient == 8)"),
+		"stmt:if-int-equality:8432:8699": ("statement", 3, b"if (negativeRuntimeQuotient == -8)"),
+		"stmt:if-int-equality:8473:8636": ("statement", 4, b"if (wrappedRuntimeQuotient == (-2147483647 - 1))"),
+		"stmt:sys-println:8529:8569": ("statement", 5, b'Sys.println("int-runtime-division:pass")'),
+		"stmt:sys-println:8589:8629": ("statement", 5, b'Sys.println("int-runtime-division:fail")'),
+		"stmt:sys-println:8653:8693": ("statement", 4, b'Sys.println("int-runtime-division:fail")'),
+		"stmt:sys-println:8714:8754": ("statement", 3, b'Sys.println("int-runtime-division:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -391,6 +405,8 @@ def main() -> None:
 			"stmt:return-int:806:825",
 			"stmt:return-int:884:897",
 			"stmt:return-int:962:978",
+			"stmt:return-int:1039:1064",
+			"stmt:return-int:1133:1159",
         })
     verify_map(
         output_root,
@@ -430,6 +446,7 @@ def main() -> None:
             "runtime:int32-subtract": ("member", 1, b"total + current"),
 			"runtime:int32-multiply": ("member", 1, b"total + current"),
 			"runtime:int32-negate": ("member", 1, b"total + current"),
+			"runtime:int32-divide": ("member", 1, b"total + current"),
         },
         set(),
     )

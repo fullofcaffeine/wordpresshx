@@ -11,6 +11,14 @@ class Hx_9_semantics_10_Calculator {
 		return $prefix . $value;
 	}
 
+	public static function divideByNegativeOne(int $value): int {
+		return \ReflaxePhpInt32Runtime::divide( $value, -1 );
+	}
+
+	public static function divideByTwo(int $value): int {
+		return \ReflaxePhpInt32Runtime::divide( $value, 2 );
+	}
+
 	public static function isMissing(?string $value): bool {
 		return $value === null;
 	}

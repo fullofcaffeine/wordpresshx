@@ -16,6 +16,8 @@ has been authorized.
   constant negation still uses readable native PHP.
 - Added runtime `Int` remainder when the divisor is a compiler-proven nonzero
   constant. Runtime and zero divisors remain rejected.
+- Added truncating runtime `Int` division when the divisor is a compiler-proven
+  nonzero constant. The compiler-owned helper preserves signed 32-bit overflow.
 - Replaced the temporary monolithic compiler output with collision-safe
   per-type PHP artifacts and exact maps, a source-derived dependency-ordered
   bootstrap, the explicit `php74-modern-v1` policy, a content-addressed graph,

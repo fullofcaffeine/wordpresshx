@@ -560,9 +560,18 @@ class PhpTypedAstValidator {
 				if (isIntArrayPushTarget(target)) {
 					Context.error("reflaxe.php Array<Int>.push return values are not yet admitted", expression.pos);
 				} else if (isStdIntDivisionCall(target, arguments)) {
-					if (arguments.length != 1 || constantTruncatedIntDivisionValue(arguments[0]) == null) {
-						Context.error("reflaxe.php Std.int division requires compiler-proven Int constants, a nonzero divisor, and a signed 32-bit result",
-							expression.pos);
+					final operands = arguments.length == 1 ? intDivisionOperands(arguments[0]) : null;
+					if (operands == null
+						|| TypeTools.toString(operands.left.t) != "Int"
+						|| TypeTools.toString(operands.right.t) != "Int"
+						|| constantIntValue(operands.right) == null
+						|| constantIntValue(operands.right) == 0) {
+						Context.error("reflaxe.php Std.int division requires exact Int operands and a compiler-proven nonzero divisor", expression.pos);
+					} else if (constantTruncatedIntDivisionValue(arguments[0]) == null && constantIntValue(operands.left) != null) {
+						Context.error("reflaxe.php constant Int division must produce a signed 32-bit result", expression.pos);
+					} else if (constantTruncatedIntDivisionValue(arguments[0]) == null) {
+						validateIntValue(operands.left, intArrayLengths);
+						validateIntValue(operands.right, intArrayLengths);
 					}
 				} else {
 					validateStaticApplicationIntCall(expression, target, arguments, intArrayLengths);
@@ -572,7 +581,7 @@ class PhpTypedAstValidator {
 			case TParenthesis(inner):
 				validateIntValue(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, remainder, negation, grouping, proven array reads, and source-owned calls",
+				Context.error("reflaxe.php supports only admitted Int literals, locals, addition, subtraction, multiplication, division, remainder, negation, grouping, proven array reads, and source-owned calls",
 					expression.pos);
 		}
 	}
@@ -637,6 +646,11 @@ class PhpTypedAstValidator {
 		}
 		final result = leftValue * 1.0 / rightValue;
 		return result < -2147483648.0 || result > 2147483647.0 ? null : Std.int(result);
+	}
+
+	/** True when an exact constant division is safe to emit as native PHP `intdiv`. **/
+	public static function isCompilerProvenTruncatedIntDivision(expression:TypedExpr):Bool {
+		return constantTruncatedIntDivisionValue(expression) != null;
 	}
 
 	static function intDivisionOperands(expression:TypedExpr):Null<PhpIntDivisionOperands> {

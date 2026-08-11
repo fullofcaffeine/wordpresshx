@@ -61,7 +61,14 @@ class PhpRuntimeLibrary {
 			],
 				source, PhpIntType, [platformGuard, PhpReturn(wrap32(PhpBinop("*", PhpVar("left"), PhpVar("right"))))], "runtime:int32-multiply"),
 			new PhpMethod(PhpPublic, true, false, PhpIdentifier.named("negate"), [PhpParameter.named(PhpIdentifier.named("value"), PhpIntType)], source,
-				PhpIntType, [platformGuard, PhpReturn(wrap32(PhpNegate(PhpVar("value"))))], "runtime:int32-negate")
+				PhpIntType, [platformGuard, PhpReturn(wrap32(PhpNegate(PhpVar("value"))))], "runtime:int32-negate"),
+			new PhpMethod(PhpPublic, true, false, PhpIdentifier.named("divide"), [
+				PhpParameter.named(PhpIdentifier.named("left"), PhpIntType),
+				PhpParameter.named(PhpIdentifier.named("right"), PhpIntType)
+			], source, PhpIntType, [
+				platformGuard,
+				PhpReturn(wrap32(PhpFunctionCall("\\intdiv", [PhpVar("left"), PhpVar("right")])))
+			], "runtime:int32-divide")
 		], "runtime:int32");
 	}
 

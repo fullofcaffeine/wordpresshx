@@ -270,5 +270,22 @@ class Main {
 		} else {
 			Sys.println("int-runtime-remainder:fail");
 		}
+
+		final positiveRuntimeQuotient = Calculator.divideByTwo(17);
+		final negativeRuntimeQuotient = Calculator.divideByTwo(-17);
+		final wrappedRuntimeQuotient = Calculator.divideByNegativeOne(-2147483647 - 1);
+		if (positiveRuntimeQuotient == 8) {
+			if (negativeRuntimeQuotient == -8) {
+				if (wrappedRuntimeQuotient == (-2147483647 - 1)) {
+					Sys.println("int-runtime-division:pass");
+				} else {
+					Sys.println("int-runtime-division:fail");
+				}
+			} else {
+				Sys.println("int-runtime-division:fail");
+			}
+		} else {
+			Sys.println("int-runtime-division:fail");
+		}
 	}
 }

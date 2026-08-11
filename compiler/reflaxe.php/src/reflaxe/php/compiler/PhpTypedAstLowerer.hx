@@ -751,14 +751,20 @@ class PhpTypedAstLowerer {
 	function lowerTruncatedIntDivision(call:TypedExpr, arguments:Array<TypedExpr>, intArrayLengths:Map<Int, Int>):PhpExpr {
 		final operands = arguments.length == 1 ? intDivisionOperands(arguments[0]) : null;
 		if (operands == null) {
-			Context.fatalError("reflaxe.php Std.int division requires compiler-proven Int constants, a nonzero divisor, and a signed 32-bit result", call.pos);
+			Context.fatalError("reflaxe.php Std.int division requires exact Int operands and a compiler-proven nonzero divisor", call.pos);
 			return PhpInt(0);
 		}
 		PhpSemanticCapabilities.requireAdmitted(IntTruncatingDivision);
-		return PhpFunctionCall("\\intdiv", [
-			lowerIntValue(operands.left, intArrayLengths),
-			lowerIntValue(operands.right, intArrayLengths)
-		]);
+		final loweredLeft = lowerIntValue(operands.left, intArrayLengths);
+		final loweredRight = lowerIntValue(operands.right, intArrayLengths);
+		if (PhpTypedAstValidator.isCompilerProvenTruncatedIntDivision(arguments[0])) {
+			return PhpFunctionCall("\\intdiv", [loweredLeft, loweredRight]);
+		}
+		PhpSemanticCapabilities.requireAdmitted(Int32RuntimeHelper);
+		if (int32RuntimeTrigger == null) {
+			int32RuntimeTrigger = call.pos;
+		}
+		return PhpStaticCall(PhpRuntimeLibrary.INT32_CLASS, "divide", [loweredLeft, loweredRight]);
 	}
 
 	static function intDivisionOperands(expression:TypedExpr):Null<PhpIntDivisionOperands> {

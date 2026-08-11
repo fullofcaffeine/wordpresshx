@@ -45,4 +45,12 @@ class Calculator {
 	public static function remainderByFive(value:Int):Int {
 		return value % 5;
 	}
+
+	public static function divideByTwo(value:Int):Int {
+		return Std.int(value / 2);
+	}
+
+	public static function divideByNegativeOne(value:Int):Int {
+		return Std.int(value / -1);
+	}
 }

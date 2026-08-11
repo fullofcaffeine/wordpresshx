@@ -30,4 +30,11 @@ class ReflaxePhpInt32Runtime {
 		}
 		return ( ( - $value ) << 32 ) >> 32;
 	}
+
+	public static function divide(int $left, int $right): int {
+		if ( PHP_INT_SIZE !== 8 ) {
+			throw new \RuntimeException( 'reflaxe.php Int32 runtime requires 64-bit PHP' );
+		}
+		return ( ( \intdiv( $left, $right ) ) << 32 ) >> 32;
+	}
 }

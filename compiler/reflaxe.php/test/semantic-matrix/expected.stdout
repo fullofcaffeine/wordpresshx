@@ -26,3 +26,4 @@ int-runtime-overflow:pass
 int-runtime-multiplication:pass
 int-runtime-negation:pass
 int-runtime-remainder:pass
+int-runtime-division:pass

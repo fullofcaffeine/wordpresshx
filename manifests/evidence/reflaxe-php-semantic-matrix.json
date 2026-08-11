@@ -2,25 +2,33 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, a 64-bit PHP integer runtime, native PHP 8.4.7, and no mbstring dependency",
-    "input": "ordinary Haxe calls a source-owned Int function that computes runtime dividends modulo the compiler-proven nonzero constant 5",
-    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST validation -> exact Int and constant-divisor proof -> native PHP remainder -> deterministic mapped per-type artifacts -> php -l -> native PHP execution",
-    "observableResult": "stock Haxe and generated PHP print byte-identical twenty-eight-line stdout ending int-runtime-remainder:pass; PHP stderr stays empty",
-    "errorOrEdgeBehavior": "17 % 5 produces 2, -17 % 5 produces -2, and -2147483648 % 5 produces -3; zero, runtime, and Float divisors remain rejected",
+    "input": "ordinary Haxe calls source-owned Int functions that compute Std.int(value / 2) and Std.int(value / -1) from runtime dividends",
+    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST validation -> exact Int and constant-divisor proof -> compiler-owned Int32 division helper -> deterministic mapped runtime and per-type artifacts -> php -l -> native PHP execution",
+    "observableResult": "stock Haxe and generated PHP print byte-identical twenty-nine-line stdout ending int-runtime-division:pass; PHP stderr stays empty",
+    "errorOrEdgeBehavior": "17 / 2 truncates to 8, -17 / 2 truncates to -8, and -2147483648 / -1 wraps to -2147483648; zero, runtime, and Float divisors remain rejected",
     "owningSurface": "compiler-adapter-and-runtime-semantics",
-    "protectedClaim": "runtime Haxe Int dividends preserve signed remainder semantics when the divisor is an exact compiler-proven nonzero Int constant; runtime or zero divisors, Float remainder, broad Haxe compatibility, and WordPress compatibility remain separate claims"
+    "protectedClaim": "Std.int division of a runtime Haxe Int dividend truncates toward zero and preserves signed 32-bit results when the divisor is an exact compiler-proven nonzero Int constant; runtime or zero divisors, Float division, broad Haxe compatibility, and WordPress compatibility remain separate claims"
   },
   "redState": {
     "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
     "exitCode": 1,
-    "failure": "test/semantic-matrix/negative/runtime-int-remainder/src/semantics/Main.hx:6: characters 21-31: reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor",
-    "reason": "the custom compiler rejected a runtime Int dividend even though the exact Int divisor was the compiler-proven nonzero constant 5",
-    "stockHaxeOutcome": "passed-and-printed-2-with-empty-stderr",
+    "failure": "test/semantic-matrix/negative/runtime-int-division/src/semantics/Main.hx:5: characters 10-28: reflaxe.php Std.int division requires compiler-proven Int constants, a nonzero divisor, and a signed 32-bit result",
+    "reason": "the custom compiler rejected a runtime Int dividend even though the exact Int divisor was the compiler-proven nonzero constant 2",
+    "stockHaxeOutcome": "passed-and-printed-runtime-int-division:stock-pass-with-empty-stderr",
     "partialOutputPublished": false
   },
   "additionalRedStates": [
+    {
+      "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
+      "exitCode": 1,
+      "failure": "test/semantic-matrix/negative/runtime-int-remainder/src/semantics/Main.hx:6: characters 21-31: reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor",
+      "reason": "the custom compiler rejected a runtime Int dividend even though the exact Int divisor was the compiler-proven nonzero constant 5",
+      "stockHaxeOutcome": "passed-and-printed-2-with-empty-stderr",
+      "partialOutputPublished": false
+    },
     {
       "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
       "exitCode": 1,
@@ -246,7 +254,7 @@
     "stock Haxe 4.3.7 selects the same nested branch for exact Int <, >, and >=; manually authored PHP uses the matching native operators only after exact operand typing, while a stock-Haxe-valid Float ordering fixture owns the rejected boundary",
     "stock Haxe 4.3.7 evaluates -(2 + 3) as -5 and -(-3) as 3; manually authored PHP preserves explicit grouping, while stock-Haxe-valid runtime-dependent and integer-minimum-overflow fixtures own the rejected boundaries",
     "stock Haxe 4.3.7 and native PHP use dividend-sign integer remainder for positive and negative exact Int operands; manually authored expectations cover 17, -17, and -2147483648 as runtime dividends, while stock-Haxe-valid zero-divisor and Float fixtures retain the rejected boundaries",
-    "Haxe 4.3.7 documents Std.int as truncation toward zero; manually authored PHP uses intdiv only after exact Int, nonzero-divisor, and signed-32-bit-result proofs, while stock-Haxe-valid runtime, zero, overflow, and Float fixtures own the rejected boundaries",
+    "Haxe 4.3.7 documents Std.int as truncation toward zero; manually authored expectations cover 17 / 2, -17 / 2, and the signed-minimum / -1 wrap result, while native PHP intdiv plus explicit low-32-bit sign extension is reviewed independently and zero, runtime-divisor, and Float fixtures retain rejected boundaries",
     "Haxe 4.3.7 evaluator behavior and the Haxe signed-32-bit Int contract define both overflow results; the manually authored transcript does not reuse the PHP helper algorithm, and the classic Haxe PHP target is recorded as a divergent reference rather than an oracle",
     "native PHP 8.4.7 independently demonstrates that direct addition widens to 2147483648, while the reviewed generated helper sign-extends the low 32 bits and fails explicitly unless PHP_INT_SIZE is 8",
     "Haxe 4.3.7 evaluator behavior and the manually authored boundary transcript define the four multiplication results; generated PHP does not create its own expected values",
@@ -271,11 +279,11 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-runtime-remainder-subject-passed-run-31538235732; predecessor-runtime-negation-subject-passed-run-31509673533",
+    "exactPhp74And84Matrix": "current-runtime-division-subject-pending-hosted; predecessor-runtime-remainder-subject-passed-run-31538235732",
     "sourceMap": "independently-verified",
     "strictHaxe": "100-package-files-zero-findings",
-    "firstMilliseconds": 19570,
-    "repeatMilliseconds": 19330,
+    "firstMilliseconds": 16530,
+    "repeatMilliseconds": 23250,
     "coldClaim": false,
     "warmClaim": false
   },
@@ -316,7 +324,7 @@
     "publicationAuthorized": false
   },
   "hostedVerification": {
-    "relation": "current-runtime-remainder-subject",
+    "relation": "predecessor-runtime-remainder-subject",
     "admittedCapabilityCount": 77,
     "workflow": "Repository bootstrap",
     "runId": 31538235732,
@@ -341,7 +349,7 @@
       "Test clean standalone PHP compiler package artifact",
       "Test exact PHP 7.4 and 8.4 runtime matrix"
     ],
-    "scope": "the current 77 exact admitted semantic records with runtime Int dividends and compiler-proven nonzero constant divisors, deterministic generic compiler package, clean offline external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
+    "scope": "the predecessor 77 exact admitted semantic records with runtime Int remainder dividends and compiler-proven nonzero constant divisors, deterministic generic compiler package, clean offline external package consumer, and native PHP 7.4.33/8.4.7 parser/runtime behavior only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -423,13 +431,17 @@
       "The helper uses 64-bit intermediates and sign extension. The exact PHP profile now declares a 64-bit integer floor, and the helper throws a stable RuntimeException on another integer width instead of silently claiming portability.",
       "Native PHP remainder matches Haxe for every admitted signed Int dividend when the divisor is the compiler-proven nonzero constant 5; no runtime helper or integer-width widening is needed for this operation.",
       "The validator still requires an exact Int result and operands, validates the runtime dividend recursively, and proves the divisor constant and nonzero before native % is emitted.",
-      "The former runtime-dividend negative fixture became the positive tracer. Zero and Float remainder fixtures remain compile-negative, while runtime divisors and compound assignment stay outside the admitted claim."
+      "The former runtime-dividend negative fixture became the positive tracer. Zero and Float remainder fixtures remain compile-negative, while runtime divisors and compound assignment stay outside the admitted claim.",
+      "Runtime dividend division reuses the compiler-owned Int32 helper and admits only Std.int over exact Int operands with a compiler-proven nonzero constant divisor.",
+      "The helper uses native intdiv for truncation toward zero, then sign-extends the low 32 bits so the Haxe minimum Int divided by -1 wraps instead of leaking PHP's wider result.",
+      "The former runtime-dividend division negative fixture became the positive tracer. Zero and Float divisors remain compile-negative, while arbitrary Std.int conversions stay outside the claim.",
+      "Distinct review found that no fixture actually protected the runtime-divisor boundary. A separate stock-Haxe-valid two-parameter division fixture now proves the custom compiler rejects that shape before output."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
       "runtime and standard-library ownership covers only exact fixed Int-array length/read/write, direct result-discarded Int-array push/non-empty pop, and the on-demand non-null String.length helper; the broader runtime remains unimplemented",
       "general exception and null semantics, general collections, broad Unicode operations, and external I/O are not admitted",
-      "runtime-dependent and safe-constant Int addition, subtraction, multiplication, and unary negation are admitted on 64-bit php74-modern-v1; runtime Int dividends are admitted for remainder only with a compiler-proven nonzero constant Int divisor; exact constant Std.int division with a nonzero divisor and signed 32-bit result and exact-Int ==, <, <=, >, and >= conditions are admitted; runtime divisors or division, 32-bit PHP execution, zero divisors, overflow beyond the owned arithmetic helper and constant proofs, plain Float division, arbitrary Std.int calls, compound remainder assignment, other unary operators, coercion, mixed-type or non-Int comparisons, broader mutable values, and loop control remain unsupported or unverified",
+      "runtime-dependent and safe-constant Int addition, subtraction, multiplication, and unary negation are admitted on 64-bit php74-modern-v1; runtime Int dividends are admitted for remainder and Std.int division only with a compiler-proven nonzero constant Int divisor; exact-Int ==, <, <=, >, and >= conditions are admitted; runtime divisors, 32-bit PHP execution, zero divisors, overflow beyond the owned arithmetic helper and constant proofs, plain Float division, arbitrary Std.int calls, compound remainder assignment, other unary operators, coercion, mixed-type or non-Int comparisons, broader mutable values, and loop control remain unsupported or unverified",
       "only fixed Int-array literals, exact length, proven constant reads/writes, and direct result-discarded push or non-empty pop outside control flow are admitted; aliases, assignment/push/pop return values, empty pop, path-dependent mutation, dynamic access, and the Haxe Array runtime are not implemented",
       "only exact UTF-8 literals, String locals, String-only concatenation/equality/printing, required non-null String signatures, source-owned static calls, and non-null String.length scalar counting are admitted; the separate nullable subset is limited to initialized Null<String> locals, required source-owned signatures/calls, strict null equality/inequality, and one exact unary Null<String> identity return/call shape; other nullable return expressions, types, arities, mutation, optional/default parameters, dereference/flow narrowing, external weak-PHP callers, indexing, substring, normalization, grapheme semantics, malformed authored text, and implicit coercion are not implemented",
       "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, source-owned static calls, lazy conjunction/disjunction, and typed parenthesized grouping are admitted; nullable Bool, truthiness, equality, mutation, bitwise operations, and external weak-PHP callers are not implemented",
@@ -445,13 +457,14 @@
       "The old runtime and overflow multiplication negative fixtures became obsolete when the same cases moved into the positive tracer. Float multiplication remains the focused negative boundary.",
       "Runtime unary negation reuses the existing Int32 helper and preserves readable native PHP for safe constants.",
       "The old runtime and overflow negation negative fixtures became obsolete when their cases moved into the positive tracer. Float negation remains the focused negative boundary.",
-      "Runtime signed Int dividends now use native PHP remainder only after the divisor is proven constant and nonzero. The positive tracer covers positive, negative, and minimum-Int dividends."
+      "Runtime signed Int dividends now use native PHP remainder only after the divisor is proven constant and nonzero. The positive tracer covers positive, negative, and minimum-Int dividends.",
+      "Runtime signed Int dividends now use the existing Int32 helper for Std.int division after the divisor is proven constant and nonzero. The positive tracer covers positive, negative, and signed-minimum overflow behavior."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "25e8a0947de5518d6f6efe85411b884e0a61409faa3c4b3c1ccec8427bdf36b6"
+      "sha256": "4c8a15fb0eefb30dceabbb72f1985c5b6560b4cfab4fb9de10a0617b1b416d4f"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -479,7 +492,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "3c34c074dca5ef95cfc029c80855cb472dff63ae449f9a44fae9eb5c9d5b5c93"
+      "sha256": "56804c16e76e8b08f44b29b8b413723ace9b95f70c8592fce76d1c3f966c461d"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -491,7 +504,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "f670273c9a770f0dab091420ff3b38a5c9c54d096356aef9ca1a3007a13accea"
+      "sha256": "be7302988524e129b75ccfc54427e157bf2a265a7f3ed9907299c692b96f369c"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
@@ -511,7 +524,7 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpRuntimeLibrary.hx",
-      "sha256": "38d6fdb18d3c42b7907f29e8e4f4cc2d602fa77545d4ab4d1a46e27511139b74"
+      "sha256": "ac130182cf81a52cdb61410564d4f8cc0821865fe17f6a7fe17f030598361141"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
@@ -531,11 +544,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "31b5ef68f7c038f84047a2bde21e806b148eb3796ff423d92eee1bd8c7c4bf17"
+      "sha256": "5500d2e1c7fbc617b9d6b714a945597c3f7f047af41851b0e03355d2538a9344"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "d55f0e328b9c18f33aea8e9e8010e0fd485db5be9d3e2c14533549cad935af8d"
+      "sha256": "3e029503063ab095144e5ebd2fc263cac991296ef59c764e09fd05cdf8541be2"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
@@ -559,7 +572,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected.stdout",
-      "sha256": "97c00c5f8adeadb45c6c17da31af786aebe4d6d94ec81cd6cdf5da9f5f9d8fcd"
+      "sha256": "e5346315700d9328c1d5899a69d9b756c975c163f5874ea9c6ac129170ed57ef"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
@@ -567,11 +580,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "b2a6b64799f78e61149b7306d6228cafc4ac03a48eae8c07686835604a4c5a83"
+      "sha256": "f11f9e3a56b27c688791673eafa8c329eb9681cd482f89a77b3e92c5d351eaac"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "99b4ed2683f952dcb08d60c0735e0a325b800769fae74b9766586e053929122a"
+      "sha256": "d9f914608209d42f048281303cf1545b01757154fd730c23e7bfd331a12dd963"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/7_Greeter/7_Greeter.php",
@@ -579,7 +592,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
-      "sha256": "f7ee4edcac3281aecbbb08d1b8ba9d590fca4ac19ca1f7ccdda14d609e95c32b"
+      "sha256": "18f460c93efb02fbbf2642b4f4b30a06b8e126588e943bb2cb2424da321b065c"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpStringRuntime.php",
@@ -914,12 +927,12 @@
       "sha256": "38dcd9ca6f66b29c7cf2db46ce0f2bc7b33af0844163b293bd0369377360fee0"
     },
     {
-      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/runtime-int-division/build.hxml",
-      "sha256": "c8a67a0289954bc8e1ea2aae9f1d6c8be8e4609f4016308b8eaecf8bd16898de"
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/runtime-divisor-int-division/build.hxml",
+      "sha256": "85b6458ba4a77296f71f699ef9bbc6f5e323acd87146493ef514eedeb71c8a31"
     },
     {
-      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/runtime-int-division/src/semantics/Main.hx",
-      "sha256": "256ccfc493830912cb43be9791242fd3167e1c74ff7908f5290ed08e71aa94b3"
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/runtime-divisor-int-division/src/semantics/Main.hx",
+      "sha256": "2ebafa22d18007aeb8d76fd91b08f5df2cbb9404d2e3a244ddc88f81f8227846"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/string-coercion/build.hxml",
@@ -955,7 +968,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Calculator.hx",
-      "sha256": "9bad56f9096bed771dcc8c6a6ad53ebae1b5ff5f5ba019372107932f1b81d476"
+      "sha256": "fb436ac73d49d5519d20ffdf5353c5befcd65ff26f4e52694265c4adc4173ccb"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Greeter.hx",
@@ -963,7 +976,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "54883c7b90ffe1ce8a3753151452933b6e449cb28265c5375f1205942bb6232d"
+      "sha256": "efc7dc09affa6a60f35b76e160e1b4845bbbd12b7c4efccd59bfa286710b030d"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",
@@ -971,7 +984,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,
