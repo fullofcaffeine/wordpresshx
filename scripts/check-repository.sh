@@ -6764,7 +6764,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
 assert reflaxe_php_semantic_receipt["status"] == (
-    "verified-local-hosted-pending"
+    "verified-hosted-exact-matrix"
 )
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-runtime-stdlib"
@@ -6795,7 +6795,7 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-runtime-multiplication-subject-pending-hosted; "
+    "current-runtime-multiplication-subject-passed-run-31465705082; "
     "predecessor-77-capability-subject-passed-run-31451811554"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
@@ -6805,7 +6805,20 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
     "relation": "current-runtime-multiplication-subject",
     "admittedCapabilityCount": 77,
     "workflow": "Repository bootstrap",
-    "status": "pending",
+    "runId": 31465705082,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082",
+    "commit": "05746d24b45e84473cd18a4b4efea8f0b739686c",
+    "status": "passed",
+    "job": {
+        "name": "haxe",
+        "jobId": 93698044541,
+        "url": (
+            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+            "31465705082/job/93698044541"
+        ),
+        "status": "passed",
+        "completedAt": "2026-08-11T06:53:09Z",
+    },
     "exactPhpVersions": ["7.4.33", "8.4.7"],
     "requiredSteps": [
         "Install Haxe 4.3.7",
@@ -6859,7 +6872,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
@@ -6897,7 +6910,7 @@ assert reflaxe_php_module_output_receipt["receiptId"] == (
 )
 assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
 assert reflaxe_php_module_output_receipt["status"] == (
-    "verified-local-hosted-pending"
+    "verified-hosted-exact-matrix"
 )
 assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-package-install"
@@ -6937,7 +6950,20 @@ assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
 assert reflaxe_php_module_output_receipt["hostedVerification"] == {
     "relation": "current-int32-multiplication-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "status": "pending",
+    "runId": 31465705082,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082",
+    "commit": "05746d24b45e84473cd18a4b4efea8f0b739686c",
+    "status": "passed",
+    "job": {
+        "name": "haxe",
+        "jobId": 93698044541,
+        "url": (
+            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+            "31465705082/job/93698044541"
+        ),
+        "status": "passed",
+        "completedAt": "2026-08-11T06:53:09Z",
+    },
     "exactPhpVersions": ["7.4.33", "8.4.7"],
     "requiredSteps": [
         "Install exact reflaxe.php compiler dependency",
@@ -6996,7 +7022,7 @@ assert reflaxe_php_module_output_receipt["review"][
     "distinctFromImplementation"
 ] is True
 assert reflaxe_php_module_output_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressRuntimeCompatibility": False,
     "publicationAuthorized": False,

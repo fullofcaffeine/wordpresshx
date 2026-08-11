@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, a 64-bit PHP integer runtime, native PHP 8.4.7, and no mbstring dependency",
     "input": "ordinary Haxe calls source-owned runtime Int multiplication for one ordinary product and three signed 32-bit wrap boundaries",
@@ -254,7 +254,7 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-runtime-multiplication-subject-pending-hosted; predecessor-77-capability-subject-passed-run-31451811554",
+    "exactPhp74And84Matrix": "current-runtime-multiplication-subject-passed-run-31465705082; predecessor-77-capability-subject-passed-run-31451811554",
     "sourceMap": "independently-verified",
     "strictHaxe": "103-package-files-zero-findings",
     "firstMilliseconds": 21070,
@@ -302,7 +302,17 @@
     "relation": "current-runtime-multiplication-subject",
     "admittedCapabilityCount": 77,
     "workflow": "Repository bootstrap",
-    "status": "pending",
+    "runId": 31465705082,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082",
+    "commit": "05746d24b45e84473cd18a4b4efea8f0b739686c",
+    "status": "passed",
+    "job": {
+      "name": "haxe",
+      "jobId": 93698044541,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31465705082/job/93698044541",
+      "status": "passed",
+      "completedAt": "2026-08-11T06:53:09Z"
+    },
     "exactPhpVersions": [
       "7.4.33",
       "8.4.7"
@@ -962,7 +972,7 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,

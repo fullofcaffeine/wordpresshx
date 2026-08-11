@@ -198,9 +198,9 @@ Runtime remainder and broad numeric behavior remain outside this subject.
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-77-record multiplication-runtime subject has local evidence. Its exact hosted
-lane is pending. The prior 77-record add/subtract subject passed in run
-`31451811554`.
+77-record multiplication-runtime subject passed its exact hosted lane in run
+`31465705082`. The prior 77-record add/subtract subject passed in run
+`31451811554` and remains historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new
