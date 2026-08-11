@@ -33,4 +33,8 @@ class Calculator {
 	public static function subtract(left:Int, right:Int):Int {
 		return left - right;
 	}
+
+	public static function multiply(left:Int, right:Int):Int {
+		return left * right;
+	}
 }

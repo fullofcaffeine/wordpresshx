@@ -19,6 +19,10 @@ class Hx_9_semantics_10_Calculator {
 		return $value !== null;
 	}
 
+	public static function multiply(int $left, int $right): int {
+		return \ReflaxePhpInt32Runtime::multiply( $left, $right );
+	}
+
 	public static function negate(bool $value): bool {
 		return ! $value;
 	}

@@ -23,3 +23,4 @@ int-unary-negation:pass
 int-remainder:pass
 int-division-truncation:pass
 int-runtime-overflow:pass
+int-runtime-multiplication:pass

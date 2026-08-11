@@ -530,9 +530,8 @@ class PhpTypedAstValidator {
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
 			case TBinop(OpMult, left, right):
-				if (constantIntValue(expression) == null) {
-					Context.error("reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression", expression.pos);
-				}
+				validateIntValue(left, intArrayLengths);
+				validateIntValue(right, intArrayLengths);
 			case TBinop(OpMod, _, _):
 				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
 					Context.error("reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor", expression.pos);

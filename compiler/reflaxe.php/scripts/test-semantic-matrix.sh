@@ -149,8 +149,6 @@ assert_compile_negative "nullable-int-return" "reflaxe.php supports only Void, I
 assert_compile_negative "multiple-nullable-string-return-parameters" "reflaxe.php nullable String returns require exactly one required Null<String> parameter"
 assert_compile_negative "float-subtraction" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
 assert_compile_negative "float-multiplication" "reflaxe.php supports only admitted scalar, Array<Int>, and source-owned object local bindings"
-assert_compile_negative "runtime-int-multiplication" "reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression"
-assert_compile_negative "overflow-int-multiplication" "reflaxe.php Int multiplication requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "float-ordering" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "runtime-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"
 assert_compile_negative "overflow-int-negation" "reflaxe.php Int negation requires a compiler-proven 32-bit-safe constant expression"

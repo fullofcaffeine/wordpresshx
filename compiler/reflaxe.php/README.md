@@ -16,7 +16,8 @@ The current admitted surface is deliberately bounded:
   application-authored backend IR;
 - required Haxe `Int` parameters/returns and source-owned static calls lowered
   to PHP native `int` signatures and deterministic cross-module calls; and
-- signed 32-bit wrap behavior for runtime `Int` addition and subtraction,
+- signed 32-bit wrap behavior for runtime `Int` addition, subtraction, and
+  multiplication,
   implemented by one mapped compiler runtime helper;
 - exact Haxe `String` locals, String-only concatenation without implicit
   coercion, value equality, and UTF-8 literal/`Sys.println` byte preservation;
@@ -123,11 +124,12 @@ separate adapter/ABI concern and are not covered by this source-owned call
 claim.
 The numeric subset preserves Haxe grouping and operator precedence. It keeps
 `9 - (4 - 2)` grouped in the generated PHP. It also distinguishes
-`2 + 3 * 4` from `(2 + 3) * 4`. This first multiplication path accepts only
-compiler-proven, 32-bit-safe constant expressions. The same proof admits unary
-negation, including nested and grouped constant expressions. Runtime-dependent
-and Float multiplication or negation fail before output. Integer-minimum
-negation overflow remains unproved. The first remainder slice uses
+`2 + 3 * 4` from `(2 + 3) * 4`. Safe constant multiplication uses native PHP.
+Runtime multiplication uses the compiler-owned signed 32-bit helper. The
+required 64-bit PHP intermediate can hold every product of two Haxe `Int`
+values. Float multiplication fails before output. Unary negation still requires
+a compiler-proven, signed 32-bit constant result. Runtime negation and
+integer-minimum negation overflow remain unproved. The first remainder slice uses
 native PHP `%` only for exact `Int` constant expressions with a compiler-proven
 nonzero divisor. Runtime-dependent or floating-point remainder, compound
 assignment, coercion, and general numeric behavior remain unproved. The first

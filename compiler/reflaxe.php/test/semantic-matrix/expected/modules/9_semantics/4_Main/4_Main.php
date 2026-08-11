@@ -203,5 +203,26 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-runtime-overflow:fail' . PHP_EOL;
 		}
+		$ordinaryProduct = Hx_9_semantics_10_Calculator::multiply( 7, 6 );
+		$wrappedProduct = Hx_9_semantics_10_Calculator::multiply( 2147483647, 2 );
+		$minimumProduct = Hx_9_semantics_10_Calculator::multiply( -2147483647 - 1, -1 );
+		$squareProduct = Hx_9_semantics_10_Calculator::multiply( 46341, 46341 );
+		if ( $ordinaryProduct === 42 ) {
+			if ( $wrappedProduct === -2 ) {
+				if ( $minimumProduct === ( -2147483647 - 1 ) ) {
+					if ( $squareProduct === -2147479015 ) {
+						echo 'int-runtime-multiplication:pass' . PHP_EOL;
+					} else {
+						echo 'int-runtime-multiplication:fail' . PHP_EOL;
+					}
+				} else {
+					echo 'int-runtime-multiplication:fail' . PHP_EOL;
+				}
+			} else {
+				echo 'int-runtime-multiplication:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-runtime-multiplication:fail' . PHP_EOL;
+		}
 	}
 }

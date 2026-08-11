@@ -219,5 +219,27 @@ class Main {
 		} else {
 			Sys.println("int-runtime-overflow:fail");
 		}
+
+		final ordinaryProduct = Calculator.multiply(7, 6);
+		final wrappedProduct = Calculator.multiply(2147483647, 2);
+		final minimumProduct = Calculator.multiply(-2147483647 - 1, -1);
+		final squareProduct = Calculator.multiply(46341, 46341);
+		if (ordinaryProduct == 42) {
+			if (wrappedProduct == -2) {
+				if (minimumProduct == (-2147483647 - 1)) {
+					if (squareProduct == -2147479015) {
+						Sys.println("int-runtime-multiplication:pass");
+					} else {
+						Sys.println("int-runtime-multiplication:fail");
+					}
+				} else {
+					Sys.println("int-runtime-multiplication:fail");
+				}
+			} else {
+				Sys.println("int-runtime-multiplication:fail");
+			}
+		} else {
+			Sys.println("int-runtime-multiplication:fail");
+		}
 	}
 }

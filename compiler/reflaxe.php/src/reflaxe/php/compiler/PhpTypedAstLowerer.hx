@@ -624,7 +624,7 @@ class PhpTypedAstLowerer {
 				lowerIntBinary(expression, left, right, "-", "subtract", intArrayLengths);
 			case TBinop(OpMult, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntMultiplication);
-				PhpBinop("*", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+				lowerIntBinary(expression, left, right, "*", "multiply", intArrayLengths);
 			case TBinop(OpMod, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntModulo);
 				PhpBinop("%", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));

@@ -190,6 +190,8 @@ def main() -> None:
         "stmt:return-bool:639:651": ("statement", 2, b"return value"),
         "method:semantics.Calculator:subtract": ("member", 1, b"public static function subtract"),
         "stmt:return-int:719:738": ("statement", 2, b"return left - right"),
+		"method:semantics.Calculator:multiply": ("member", 1, b"public static function multiply"),
+		"stmt:return-int:806:825": ("statement", 2, b"return left * right"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -340,6 +342,19 @@ def main() -> None:
 		"stmt:sys-println:6343:6383": ("statement", 5, b'Sys.println("int-runtime-overflow:fail")'),
 		"stmt:sys-println:6407:6447": ("statement", 4, b'Sys.println("int-runtime-overflow:fail")'),
 		"stmt:sys-println:6468:6508": ("statement", 3, b'Sys.println("int-runtime-overflow:fail")'),
+		"stmt:local-int:6517:6567": ("statement", 2, b"final ordinaryProduct = Calculator.multiply(7, 6)"),
+		"stmt:local-int:6570:6628": ("statement", 2, b"final wrappedProduct = Calculator.multiply(2147483647, 2)"),
+		"stmt:local-int:6631:6695": ("statement", 2, b"final minimumProduct = Calculator.multiply(-2147483647 - 1, -1)"),
+		"stmt:local-int:6698:6754": ("statement", 2, b"final squareProduct = Calculator.multiply(46341, 46341)"),
+		"stmt:if-int-equality:6757:7240": ("statement", 2, b"if (ordinaryProduct == 42)"),
+		"stmt:if-int-equality:6789:7174": ("statement", 3, b"if (wrappedProduct == -2)"),
+		"stmt:if-int-equality:6821:7105": ("statement", 4, b"if (minimumProduct == (-2147483647 - 1))"),
+		"stmt:if-int-equality:6869:7033": ("statement", 5, b"if (squareProduct == -2147479015)"),
+		"stmt:sys-println:6911:6957": ("statement", 6, b'Sys.println("int-runtime-multiplication:pass")'),
+		"stmt:sys-println:6979:7025": ("statement", 6, b'Sys.println("int-runtime-multiplication:fail")'),
+		"stmt:sys-println:7052:7098": ("statement", 5, b'Sys.println("int-runtime-multiplication:fail")'),
+		"stmt:sys-println:7122:7168": ("statement", 4, b'Sys.println("int-runtime-multiplication:fail")'),
+		"stmt:sys-println:7189:7235": ("statement", 3, b'Sys.println("int-runtime-multiplication:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -352,6 +367,7 @@ def main() -> None:
             "stmt:sys-println:610:635",
             "stmt:return-bool:639:651",
             "stmt:return-int:719:738",
+			"stmt:return-int:806:825",
         })
     verify_map(
         output_root,
@@ -389,6 +405,7 @@ def main() -> None:
             "runtime:int32": ("declaration", 0, b"total + current"),
             "runtime:int32-add": ("member", 1, b"total + current"),
             "runtime:int32-subtract": ("member", 1, b"total + current"),
+			"runtime:int32-multiply": ("member", 1, b"total + current"),
         },
         set(),
     )
