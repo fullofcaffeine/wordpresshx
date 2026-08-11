@@ -129,11 +129,12 @@ Runtime multiplication uses the compiler-owned signed 32-bit helper. The
 required 64-bit PHP intermediate can hold every product of two Haxe `Int`
 values. Runtime unary negation uses the same helper and wraps the Haxe minimum
 `Int` back to itself. Safe constant negation still uses native PHP. Float
-multiplication and negation fail before output. The first remainder slice uses
-native PHP `%` only for exact `Int` constant expressions with a compiler-proven
-nonzero divisor. Runtime-dependent or floating-point remainder, compound
-assignment, coercion, and general numeric behavior remain unproved. The first
-division slice accepts only `Std.int(left / right)` when both operands are exact
+multiplication and negation fail before output. The remainder slice uses
+native PHP `%` for exact `Int` expressions when the divisor is a
+compiler-proven nonzero constant. The dividend can be a runtime value. Runtime
+divisors, floating-point remainder, compound assignment, coercion, and general
+numeric behavior remain unproved. The first division slice accepts only
+`Std.int(left / right)` when both operands are exact
 `Int` constant expressions. The compiler proves a nonzero divisor and a signed
 32-bit result, then emits modern PHP `intdiv`. Runtime operands, zero divisors,
 overflow, Float operands, plain Float division, and other `Std.int` calls fail

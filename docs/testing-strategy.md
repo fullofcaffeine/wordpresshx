@@ -193,15 +193,17 @@ cover an ordinary product and three signed 32-bit wrap boundaries. Safe
 constant products keep native PHP multiplication. Runtime negation covers an
 ordinary value and the minimum signed `Int`; safe constant negation keeps
 native PHP. Float multiplication and negation fail before target output. The
-remainder slice requires exact constants and a nonzero divisor.
-Runtime remainder and broad numeric behavior remain outside this subject.
+remainder slice now accepts a runtime `Int` dividend when the divisor is a
+compiler-proven nonzero constant. Runtime or zero divisors and broad numeric
+behavior remain outside this subject.
 
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-77-record runtime-negation subject passed its exact hosted lane in run
-`31509673533`. The prior 77-record multiplication subject passed in run
-`31465705082` and remains historical authority for its own bytes.
+77-record runtime-remainder subject has local differential and native PHP 8.4.7
+proof. Its exact hosted PHP 7.4.33/8.4.7 lane is pending. The predecessor
+77-record runtime-negation subject passed in run `31509673533` and remains
+historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

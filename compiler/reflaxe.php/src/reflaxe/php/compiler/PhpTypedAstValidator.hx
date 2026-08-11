@@ -532,9 +532,17 @@ class PhpTypedAstValidator {
 			case TBinop(OpMult, left, right):
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
-			case TBinop(OpMod, _, _):
-				if (TypeTools.toString(expression.t) != "Int" || constantIntValue(expression) == null) {
-					Context.error("reflaxe.php Int remainder requires a compiler-proven constant expression with a nonzero divisor", expression.pos);
+			case TBinop(OpMod, left, right):
+				final divisor = constantIntValue(right);
+				if (TypeTools.toString(expression.t) != "Int"
+					|| TypeTools.toString(left.t) != "Int"
+					|| TypeTools.toString(right.t) != "Int"
+					|| divisor == null
+					|| divisor == 0) {
+					Context.error("reflaxe.php Int remainder requires exact Int operands and a compiler-proven nonzero divisor", expression.pos);
+				} else {
+					validateIntValue(left, intArrayLengths);
+					validateIntValue(right, intArrayLengths);
 				}
 			case TUnop(OpNeg, false, inner):
 				if (TypeTools.toString(expression.t) != "Int" || TypeTools.toString(inner.t) != "Int") {

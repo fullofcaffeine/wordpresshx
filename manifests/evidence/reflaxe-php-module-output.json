@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-subject-passed-hosted-run-31451811554; predecessor-passed-hosted-run-30734022935",
+    "exactPhp74And84Matrix": "current-runtime-remainder-subject-pending-hosted; predecessor-runtime-negation-subject-passed-run-31509673533",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -74,7 +74,7 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "current-int32-negation-module-graph-subject",
+    "relation": "predecessor-int32-negation-module-graph-subject",
     "workflow": "Repository bootstrap",
     "runId": 31509673533,
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31509673533",
@@ -124,13 +124,14 @@
       "Cross-process crash journaling, symlink-component confinement, namespaces, and autoloaders are not established by this slice and remain outside the protected claim.",
       "The module graph now treats the generic Int32 helper as a runtime artifact. Source-owned modules declare the helper dependency, and the ordered bootstrap loads it before each consumer.",
       "The php74-modern-v1 manifest now declares minimumIntBits as 64. This field makes the runtime width requirement part of the exact profile contract.",
-      "Runtime unary Int negation adds one method to the existing Int32 runtime artifact. It does not add a second runtime owner, change the dependency topology, or broaden the WordPress runtime claim."
+      "Runtime unary Int negation adds one method to the existing Int32 runtime artifact. It does not add a second runtime owner, change the dependency topology, or broaden the WordPress runtime claim.",
+      "Runtime dividend remainder uses the existing application module and native PHP operator. It adds no runtime artifact or dependency edge, so the module topology claim remains unchanged and awaits hosted proof only for the new exact bytes."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "643f6eb9730d8d41b2c4bc63aa082ab3328c83d58bffef8eeaabe8d13dfff595"
+      "sha256": "25e8a0947de5518d6f6efe85411b884e0a61409faa3c4b3c1ccec8427bdf36b6"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -146,7 +147,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "dea622cfe70cc209c1431f554731f9fcf25cf12d0750a2144c97b101de963989"
+      "sha256": "3c34c074dca5ef95cfc029c80855cb472dff63ae449f9a44fae9eb5c9d5b5c93"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -158,7 +159,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "8a998ea2e8120aba49ac6f3452e355b183ba4c48c3da9b0453e5af554719a512"
+      "sha256": "f670273c9a770f0dab091420ff3b38a5c9c54d096356aef9ca1a3007a13accea"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -210,11 +211,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "6594784e032af870e70d1b45107a16eada455307509c49abbf32e83513aada94"
+      "sha256": "b2a6b64799f78e61149b7306d6228cafc4ac03a48eae8c07686835604a4c5a83"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "f788cf246b8d47bd14bd5ddc226289c167e619dbad35152fcef0573ad89da4df"
+      "sha256": "99b4ed2683f952dcb08d60c0735e0a325b800769fae74b9766586e053929122a"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -238,7 +239,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

@@ -253,5 +253,22 @@ class Main {
 		} else {
 			Sys.println("int-runtime-negation:fail");
 		}
+
+		final positiveRuntimeRemainder = Calculator.remainderByFive(17);
+		final negativeRuntimeRemainder = Calculator.remainderByFive(-17);
+		final minimumRuntimeRemainder = Calculator.remainderByFive(-2147483647 - 1);
+		if (positiveRuntimeRemainder == 2) {
+			if (negativeRuntimeRemainder == -2) {
+				if (minimumRuntimeRemainder == -3) {
+					Sys.println("int-runtime-remainder:pass");
+				} else {
+					Sys.println("int-runtime-remainder:fail");
+				}
+			} else {
+				Sys.println("int-runtime-remainder:fail");
+			}
+		} else {
+			Sys.println("int-runtime-remainder:fail");
+		}
 	}
 }

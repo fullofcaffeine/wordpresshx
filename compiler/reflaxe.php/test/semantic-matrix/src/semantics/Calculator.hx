@@ -41,4 +41,8 @@ class Calculator {
 	public static function negateInt(value:Int):Int {
 		return -value;
 	}
+
+	public static function remainderByFive(value:Int):Int {
+		return value % 5;
+	}
 }

@@ -194,6 +194,8 @@ def main() -> None:
 		"stmt:return-int:806:825": ("statement", 2, b"return left * right"),
 		"method:semantics.Calculator:negateInt": ("member", 1, b"public static function negateInt"),
 		"stmt:return-int:884:897": ("statement", 2, b"return -value"),
+		"method:semantics.Calculator:remainderByFive": ("member", 1, b"public static function remainderByFive"),
+		"stmt:return-int:962:978": ("statement", 2, b"return value % 5"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -364,6 +366,16 @@ def main() -> None:
 		"stmt:sys-println:7442:7482": ("statement", 4, b'Sys.println("int-runtime-negation:pass")'),
 		"stmt:sys-println:7500:7540": ("statement", 4, b'Sys.println("int-runtime-negation:fail")'),
 		"stmt:sys-println:7561:7601": ("statement", 3, b'Sys.println("int-runtime-negation:fail")'),
+		"stmt:local-int:7610:7674": ("statement", 2, b"final positiveRuntimeRemainder = Calculator.remainderByFive(17)"),
+		"stmt:local-int:7677:7742": ("statement", 2, b"final negativeRuntimeRemainder = Calculator.remainderByFive(-17)"),
+		"stmt:local-int:7745:7821": ("statement", 2, b"final minimumRuntimeRemainder = Calculator.remainderByFive(-2147483647 - 1)"),
+		"stmt:if-int-equality:7824:8182": ("statement", 2, b"if (positiveRuntimeRemainder == 2)"),
+		"stmt:if-int-equality:7864:8121": ("statement", 3, b"if (negativeRuntimeRemainder == -2)"),
+		"stmt:if-int-equality:7906:8057": ("statement", 4, b"if (minimumRuntimeRemainder == -3)"),
+		"stmt:sys-println:7948:7989": ("statement", 5, b'Sys.println("int-runtime-remainder:pass")'),
+		"stmt:sys-println:8009:8050": ("statement", 5, b'Sys.println("int-runtime-remainder:fail")'),
+		"stmt:sys-println:8074:8115": ("statement", 4, b'Sys.println("int-runtime-remainder:fail")'),
+		"stmt:sys-println:8136:8177": ("statement", 3, b'Sys.println("int-runtime-remainder:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -378,6 +390,7 @@ def main() -> None:
             "stmt:return-int:719:738",
 			"stmt:return-int:806:825",
 			"stmt:return-int:884:897",
+			"stmt:return-int:962:978",
         })
     verify_map(
         output_root,

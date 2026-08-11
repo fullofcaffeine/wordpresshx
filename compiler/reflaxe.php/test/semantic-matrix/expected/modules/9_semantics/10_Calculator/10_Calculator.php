@@ -36,6 +36,10 @@ class Hx_9_semantics_10_Calculator {
 		return $value;
 	}
 
+	public static function remainderByFive(int $value): int {
+		return $value % 5;
+	}
+
 	public static function roundTrip(?string $value): ?string {
 		return $value;
 	}

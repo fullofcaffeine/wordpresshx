@@ -235,5 +235,21 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-runtime-negation:fail' . PHP_EOL;
 		}
+		$positiveRuntimeRemainder = Hx_9_semantics_10_Calculator::remainderByFive( 17 );
+		$negativeRuntimeRemainder = Hx_9_semantics_10_Calculator::remainderByFive( -17 );
+		$minimumRuntimeRemainder = Hx_9_semantics_10_Calculator::remainderByFive( -2147483647 - 1 );
+		if ( $positiveRuntimeRemainder === 2 ) {
+			if ( $negativeRuntimeRemainder === -2 ) {
+				if ( $minimumRuntimeRemainder === -3 ) {
+					echo 'int-runtime-remainder:pass' . PHP_EOL;
+				} else {
+					echo 'int-runtime-remainder:fail' . PHP_EOL;
+				}
+			} else {
+				echo 'int-runtime-remainder:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-runtime-remainder:fail' . PHP_EOL;
+		}
 	}
 }
