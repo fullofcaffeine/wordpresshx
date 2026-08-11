@@ -16,6 +16,8 @@ The current admitted surface is deliberately bounded:
   application-authored backend IR;
 - required Haxe `Int` parameters/returns and source-owned static calls lowered
   to PHP native `int` signatures and deterministic cross-module calls; and
+- signed 32-bit wrap behavior for runtime `Int` addition and subtraction,
+  implemented by one mapped compiler runtime helper;
 - exact Haxe `String` locals, String-only concatenation without implicit
   coercion, value equality, and UTF-8 literal/`Sys.println` byte preservation;
 - required non-null `String` parameters/returns and source-owned static String
@@ -39,9 +41,10 @@ The current admitted surface is deliberately bounded:
 - deterministic collision-safe PHP files and exact maps per owned Haxe type,
   plus a separate dependency-ordered `bootstrap.php`, a content-addressed
   artifact-graph manifest, and staged generated-file ownership; and
-- the explicit `php74-modern-v1` target profile, which selects PHP 7.4 as its
-  floor, `strict_types=1`, and native `int` signatures without a floating
-  "latest PHP" mode; and
+- the explicit `php74-modern-v1` target profile, which selects PHP 7.4 and a
+  64-bit PHP integer runtime as its floor;
+- `strict_types=1` and native `int` signatures, with no floating "latest PHP"
+  mode; and
 - a neutral generated-PHP lint/runtime fixture that runs on exact PHP 7.4.33 and 8.4.7 containers; and
 - one narrow typed native-function boundary: a public static method on an
   `extern` class may use `@:phpGlobalFunction("name")`, and an ordinary Haxe

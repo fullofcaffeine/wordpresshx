@@ -22,3 +22,4 @@ int-ordering-comparisons:pass
 int-unary-negation:pass
 int-remainder:pass
 int-division-truncation:pass
+int-runtime-overflow:pass

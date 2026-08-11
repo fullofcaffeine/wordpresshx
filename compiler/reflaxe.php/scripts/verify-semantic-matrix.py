@@ -100,7 +100,8 @@ def main() -> None:
     calculator_path = "modules/9_semantics/10_Calculator/10_Calculator.php"
     greeter_path = "modules/9_semantics/7_Greeter/7_Greeter.php"
     main_path = "modules/9_semantics/4_Main/4_Main.php"
-    runtime_path = "runtime/ReflaxePhpStringRuntime.php"
+    string_runtime_path = "runtime/ReflaxePhpStringRuntime.php"
+    int32_runtime_path = "runtime/ReflaxePhpInt32Runtime.php"
     expected_paths = {
         ".reflaxe.php-owned-files.v1",
         "bootstrap.php",
@@ -111,8 +112,10 @@ def main() -> None:
         greeter_path + ".haxe-map.json",
         main_path,
         main_path + ".haxe-map.json",
-        runtime_path,
-        runtime_path + ".haxe-map.json",
+        string_runtime_path,
+        string_runtime_path + ".haxe-map.json",
+        int32_runtime_path,
+        int32_runtime_path + ".haxe-map.json",
         "reflaxe.php-artifacts.json",
     }
     actual_paths = {
@@ -127,6 +130,7 @@ def main() -> None:
     require(artifact_manifest["format"] == "reflaxe.php-artifact-graph.v1", "artifact manifest format drifted")
     require(artifact_manifest["profile"] == {
         "id": "php74-modern-v1",
+        "minimumIntBits": 64,
         "minimumPhpVersionId": 70400,
         "nativeIntTypes": True,
         "strictTypes": True,
@@ -137,27 +141,30 @@ def main() -> None:
         "path": "bootstrap.php",
     }, "semantic entrypoint drifted")
     require(
-        artifact_manifest["loadOrder"] == [calculator_path, greeter_path, runtime_path, main_path],
+        artifact_manifest["loadOrder"] == [greeter_path, int32_runtime_path, calculator_path, string_runtime_path, main_path],
         "source-derived load order drifted",
     )
     artifacts = {artifact["path"]: artifact for artifact in artifact_manifest["artifacts"]}
     require(
-        set(artifacts) == {"bootstrap.php", calculator_path, greeter_path, main_path, runtime_path},
+        set(artifacts) == {"bootstrap.php", calculator_path, greeter_path, main_path, string_runtime_path, int32_runtime_path},
         "artifact records drifted",
     )
-    require(artifacts[runtime_path]["kind"] == "runtime", "string runtime artifact kind drifted")
-    require(artifacts[runtime_path]["identity"] == "runtime:string", "string runtime identity drifted")
-    require(artifacts[runtime_path]["dependencies"] == [], "string runtime dependencies drifted")
-    require(artifacts[calculator_path]["dependencies"] == [], "calculator dependencies drifted")
+    require(artifacts[string_runtime_path]["kind"] == "runtime", "string runtime artifact kind drifted")
+    require(artifacts[string_runtime_path]["identity"] == "runtime:string", "string runtime identity drifted")
+    require(artifacts[string_runtime_path]["dependencies"] == [], "string runtime dependencies drifted")
+    require(artifacts[int32_runtime_path]["kind"] == "runtime", "Int32 runtime artifact kind drifted")
+    require(artifacts[int32_runtime_path]["identity"] == "runtime:int32", "Int32 runtime identity drifted")
+    require(artifacts[int32_runtime_path]["dependencies"] == [], "Int32 runtime dependencies drifted")
+    require(artifacts[calculator_path]["dependencies"] == ["runtime:int32"], "calculator dependencies drifted")
     require(artifacts[greeter_path]["dependencies"] == [], "greeter dependencies drifted")
     require(
         artifacts[main_path]["dependencies"]
-        == ["runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter"],
+        == ["runtime:int32", "runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter"],
         "main dependency edge drifted",
     )
     require(
         artifacts["bootstrap.php"]["dependencies"]
-        == ["runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter", "semantics.Main@Main"],
+        == ["runtime:int32", "runtime:string", "semantics.Calculator@Calculator", "semantics.Greeter@Greeter", "semantics.Main@Main"],
         "bootstrap dependencies drifted",
     )
     for path, artifact in artifacts.items():
@@ -181,6 +188,8 @@ def main() -> None:
         "method:semantics.Calculator:probe": ("member", 1, b"public static function probe"),
         "stmt:sys-println:610:635": ("statement", 2, b'Sys.println("bool-probe")'),
         "stmt:return-bool:639:651": ("statement", 2, b"return value"),
+        "method:semantics.Calculator:subtract": ("member", 1, b"public static function subtract"),
+        "stmt:return-int:719:738": ("statement", 2, b"return left - right"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -321,6 +330,16 @@ def main() -> None:
 		"stmt:sys-println:5805:5848": ("statement", 4, b'Sys.println("int-division-truncation:pass")'),
 		"stmt:sys-println:5866:5909": ("statement", 4, b'Sys.println("int-division-truncation:fail")'),
 		"stmt:sys-println:5930:5973": ("statement", 3, b'Sys.println("int-division-truncation:fail")'),
+		"stmt:local-int:5982:6035": ("statement", 2, b"final wrappedMaximum = Calculator.add(2147483647, 1)"),
+		"stmt:local-int:6038:6101": ("statement", 2, b"final wrappedMinimum = Calculator.subtract(-2147483647 - 1, 1)"),
+		"stmt:local-int:6104:6158": ("statement", 2, b"final ordinaryDifference = Calculator.subtract(12, 5)"),
+		"stmt:if-int-equality:6161:6513": ("statement", 2, b"if (wrappedMaximum == (-2147483647 - 1))"),
+		"stmt:if-int-equality:6207:6453": ("statement", 3, b"if (wrappedMinimum == 2147483647)"),
+		"stmt:if-int-equality:6247:6390": ("statement", 4, b"if (ordinaryDifference == 7)"),
+		"stmt:sys-println:6283:6323": ("statement", 5, b'Sys.println("int-runtime-overflow:pass")'),
+		"stmt:sys-println:6343:6383": ("statement", 5, b'Sys.println("int-runtime-overflow:fail")'),
+		"stmt:sys-println:6407:6447": ("statement", 4, b'Sys.println("int-runtime-overflow:fail")'),
+		"stmt:sys-println:6468:6508": ("statement", 3, b'Sys.println("int-runtime-overflow:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -332,6 +351,7 @@ def main() -> None:
             "stmt:return-bool:540:553",
             "stmt:sys-println:610:635",
             "stmt:return-bool:639:651",
+            "stmt:return-int:719:738",
         })
     verify_map(
         output_root,
@@ -351,12 +371,24 @@ def main() -> None:
     )
     verify_map(
         output_root,
-        runtime_path,
+        string_runtime_path,
         "semantics/Main.hx",
         sources["semantics/Main.hx"],
         {
             "runtime:string": ("declaration", 0, '"A🚀".length'.encode("utf-8")),
             "runtime:string-length": ("member", 1, '"A🚀".length'.encode("utf-8")),
+        },
+        set(),
+    )
+    verify_map(
+        output_root,
+        int32_runtime_path,
+        "semantics/Main.hx",
+        sources["semantics/Main.hx"],
+        {
+            "runtime:int32": ("declaration", 0, b"total + current"),
+            "runtime:int32-add": ("member", 1, b"total + current"),
+            "runtime:int32-subtract": ("member", 1, b"total + current"),
         },
         set(),
     )

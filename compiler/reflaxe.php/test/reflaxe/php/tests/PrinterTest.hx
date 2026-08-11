@@ -263,7 +263,10 @@ class PrinterTest {
 		]), "cyclic module dependency");
 		final profile = PhpTargetProfile.parse("php74-modern-v1");
 		assertEquals("php74-modern-v1", profile.value(), "exact PHP profile identity");
-		if (profile.minimumPhpVersionId() != 70400 || !profile.usesStrictTypes() || !profile.usesNativeIntTypes()) {
+		if (profile.minimumPhpVersionId() != 70400
+			|| profile.minimumIntBits() != 64
+			|| !profile.usesStrictTypes()
+			|| !profile.usesNativeIntTypes()) {
 			throw "php74-modern-v1 policy drifted";
 		}
 		assertThrows(() -> PhpTargetProfile.parse("php-latest"), "floating PHP profile");

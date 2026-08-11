@@ -34,14 +34,20 @@ class PhpTypedAstLowerer {
 	#if macro
 	final sources:PhpSourceRegistry;
 	var stringRuntimeTrigger:Null<Position>;
+	var int32RuntimeTrigger:Null<Position>;
 
 	public function new(sources:PhpSourceRegistry) {
 		this.sources = sources;
 		this.stringRuntimeTrigger = null;
+		this.int32RuntimeTrigger = null;
 	}
 
 	public function requiredStringRuntimeTrigger():Null<Position> {
 		return stringRuntimeTrigger;
+	}
+
+	public function requiredInt32RuntimeTrigger():Null<Position> {
+		return int32RuntimeTrigger;
 	}
 
 	public function lowerClass(classType:ClassType, varFields:Array<ClassVarData>, funcFields:Array<ClassFuncData>):PhpClass {
@@ -612,10 +618,10 @@ class PhpTypedAstLowerer {
 				PhpVar(variable.name);
 			case TBinop(OpAdd, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntAddition);
-				PhpBinop("+", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+				lowerIntBinary(expression, left, right, "+", "add", intArrayLengths);
 			case TBinop(OpSub, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntSubtraction);
-				PhpBinop("-", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
+				lowerIntBinary(expression, left, right, "-", "subtract", intArrayLengths);
 			case TBinop(OpMult, left, right):
 				PhpSemanticCapabilities.requireAdmitted(IntMultiplication);
 				PhpBinop("*", lowerIntValue(left, intArrayLengths), lowerIntValue(right, intArrayLengths));
@@ -650,6 +656,20 @@ class PhpTypedAstLowerer {
 				PhpParenthesized(lowerIntValue(inner, intArrayLengths));
 			case _: unsupportedIntValue(expression);
 		}
+	}
+
+	function lowerIntBinary(expression:TypedExpr, left:TypedExpr, right:TypedExpr, nativeOperator:String, runtimeMethod:String,
+			intArrayLengths:Map<Int, Int>):PhpExpr {
+		final loweredLeft = lowerIntValue(left, intArrayLengths);
+		final loweredRight = lowerIntValue(right, intArrayLengths);
+		if (PhpTypedAstValidator.isCompilerProvenInt32(expression)) {
+			return PhpBinop(nativeOperator, loweredLeft, loweredRight);
+		}
+		PhpSemanticCapabilities.requireAdmitted(Int32RuntimeHelper);
+		if (int32RuntimeTrigger == null) {
+			int32RuntimeTrigger = expression.pos;
+		}
+		return PhpStaticCall(PhpRuntimeLibrary.INT32_CLASS, runtimeMethod, [loweredLeft, loweredRight]);
 	}
 
 	static function isStringClass(classType:ClassType):Bool {

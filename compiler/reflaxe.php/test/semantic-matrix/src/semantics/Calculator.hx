@@ -29,4 +29,8 @@ class Calculator {
 		Sys.println("bool-probe");
 		return value;
 	}
+
+	public static function subtract(left:Int, right:Int):Int {
+		return left - right;
+	}
 }

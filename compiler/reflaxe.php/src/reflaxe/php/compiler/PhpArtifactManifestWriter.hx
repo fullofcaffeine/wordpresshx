@@ -69,6 +69,7 @@ class PhpArtifactManifestWriter {
 			field("profile", object([
 				field("id", StringValue(profile.value())),
 				field("minimumPhpVersionId", IntegerValue(profile.minimumPhpVersionId())),
+				field("minimumIntBits", IntegerValue(profile.minimumIntBits())),
 				field("strictTypes", BoolValue(profile.usesStrictTypes())),
 				field("nativeIntTypes", BoolValue(profile.usesNativeIntTypes()))
 			])),

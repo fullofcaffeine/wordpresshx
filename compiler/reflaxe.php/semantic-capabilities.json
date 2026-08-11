@@ -521,6 +521,13 @@
     {
       "category": "runtime-stdlib",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "runtime.int32-arithmetic-helper",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "runtime-stdlib",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "runtime.string-length-helper",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -642,14 +649,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "59613d2cfed6e56ffa578d9ddfcdade18a847d8401f32f9b12e70e2b79afdbdc"
+    "sha256": "8fd40c0694c65bc0474f0dca1dce3bdbec41a9d07fab89b883bbf3108265cea5"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 89,
+    "capabilityCount": 90,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 76,
+      "admitted": 77,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

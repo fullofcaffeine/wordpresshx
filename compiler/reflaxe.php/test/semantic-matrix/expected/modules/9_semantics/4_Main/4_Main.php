@@ -13,8 +13,8 @@ class Hx_9_semantics_4_Main {
 		$total = 0;
 		$current = 1;
 		while ( $current <= 4 ) {
-			$total = $total + $current;
-			$current = $current + 1;
+			$total = \ReflaxePhpInt32Runtime::add( $total, $current );
+			$current = \ReflaxePhpInt32Runtime::add( $current, 1 );
 		}
 		if ( $total === 10 ) {
 			echo 'mutable-loop:pass' . PHP_EOL;
@@ -26,7 +26,7 @@ class Hx_9_semantics_4_Main {
 			1,
 			4,
 		);
-		$selected = $values[ 1 ] + $values[ 2 ];
+		$selected = \ReflaxePhpInt32Runtime::add( $values[ 1 ], $values[ 2 ] );
 		if ( $selected === 5 ) {
 			echo 'int-array-read:pass' . PHP_EOL;
 		} else {
@@ -100,7 +100,7 @@ class Hx_9_semantics_4_Main {
 		$values[] = 5;
 		$pushedCount = \count( $values );
 		$pushedValue = $values[ 3 ];
-		$pushedSummary = $pushedCount + $pushedValue;
+		$pushedSummary = \ReflaxePhpInt32Runtime::add( $pushedCount, $pushedValue );
 		if ( $pushedSummary === 9 ) {
 			echo 'int-array-push:pass' . PHP_EOL;
 		} else {
@@ -109,7 +109,7 @@ class Hx_9_semantics_4_Main {
 		$values[ 1 ] = 5;
 		$writtenCount = \count( $values );
 		$writtenValue = $values[ 1 ];
-		$writtenSummary = $writtenCount + $writtenValue;
+		$writtenSummary = \ReflaxePhpInt32Runtime::add( $writtenCount, $writtenValue );
 		if ( $writtenSummary === 9 ) {
 			echo 'int-array-write:pass' . PHP_EOL;
 		} else {
@@ -118,7 +118,7 @@ class Hx_9_semantics_4_Main {
 		\array_pop( $values );
 		$poppedCount = \count( $values );
 		$poppedValue = $values[ 2 ];
-		$poppedSummary = $poppedCount + $poppedValue;
+		$poppedSummary = \ReflaxePhpInt32Runtime::add( $poppedCount, $poppedValue );
 		if ( $poppedSummary === 7 ) {
 			echo 'int-array-pop:pass' . PHP_EOL;
 		} else {
@@ -126,7 +126,7 @@ class Hx_9_semantics_4_Main {
 		}
 		$leftAssociated = 9 - 4 - 2;
 		$groupedSubtraction = 9 - ( 4 - 2 );
-		$subtractionSummary = $leftAssociated + $groupedSubtraction;
+		$subtractionSummary = \ReflaxePhpInt32Runtime::add( $leftAssociated, $groupedSubtraction );
 		if ( $subtractionSummary === 10 ) {
 			echo 'int-subtraction-grouping:pass' . PHP_EOL;
 		} else {
@@ -134,7 +134,7 @@ class Hx_9_semantics_4_Main {
 		}
 		$multipliedByPrecedence = 2 + 3 * 4;
 		$multipliedAfterGrouping = ( 2 + 3 ) * 4;
-		$multiplicationSummary = $multipliedByPrecedence + $multipliedAfterGrouping;
+		$multiplicationSummary = \ReflaxePhpInt32Runtime::add( $multipliedByPrecedence, $multipliedAfterGrouping );
 		if ( $multiplicationSummary === 34 ) {
 			echo 'int-multiplication-grouping:pass' . PHP_EOL;
 		} else {
@@ -155,7 +155,7 @@ class Hx_9_semantics_4_Main {
 		}
 		$negatedGrouped = - ( 2 + 3 );
 		$nestedNegation = - ( -3 );
-		$negationSummary = $negatedGrouped + $nestedNegation;
+		$negationSummary = \ReflaxePhpInt32Runtime::add( $negatedGrouped, $nestedNegation );
 		if ( $negationSummary === -2 ) {
 			echo 'int-unary-negation:pass' . PHP_EOL;
 		} else {
@@ -166,7 +166,7 @@ class Hx_9_semantics_4_Main {
 		$negativeDivisorRemainder = 17 % -5;
 		$groupedRemainder = ( 9 + 8 ) % ( 2 + 3 );
 		$minimumRemainder = ( -2147483647 - 1 ) % -1;
-		$remainderSummary = $positiveRemainder + $negativeDividendRemainder + $negativeDivisorRemainder + $groupedRemainder + $minimumRemainder;
+		$remainderSummary = \ReflaxePhpInt32Runtime::add( \ReflaxePhpInt32Runtime::add( \ReflaxePhpInt32Runtime::add( \ReflaxePhpInt32Runtime::add( $positiveRemainder, $negativeDividendRemainder ), $negativeDivisorRemainder ), $groupedRemainder ), $minimumRemainder );
 		if ( $remainderSummary === 4 ) {
 			echo 'int-remainder:pass' . PHP_EOL;
 		} else {
@@ -177,7 +177,7 @@ class Hx_9_semantics_4_Main {
 		$negativeDivisorQuotient = \intdiv( 7, -2 );
 		$groupedQuotient = \intdiv( ( 9 + 7 ), ( 2 + 2 ) );
 		$minimumQuotient = \intdiv( ( -2147483647 - 1 ), 1 );
-		$divisionSummary = $positiveQuotient + $negativeDividendQuotient + $negativeDivisorQuotient + $groupedQuotient;
+		$divisionSummary = \ReflaxePhpInt32Runtime::add( \ReflaxePhpInt32Runtime::add( \ReflaxePhpInt32Runtime::add( $positiveQuotient, $negativeDividendQuotient ), $negativeDivisorQuotient ), $groupedQuotient );
 		if ( $divisionSummary === 1 ) {
 			if ( $minimumQuotient === ( -2147483647 - 1 ) ) {
 				echo 'int-division-truncation:pass' . PHP_EOL;
@@ -186,6 +186,22 @@ class Hx_9_semantics_4_Main {
 			}
 		} else {
 			echo 'int-division-truncation:fail' . PHP_EOL;
+		}
+		$wrappedMaximum = Hx_9_semantics_10_Calculator::add( 2147483647, 1 );
+		$wrappedMinimum = Hx_9_semantics_10_Calculator::subtract( -2147483647 - 1, 1 );
+		$ordinaryDifference = Hx_9_semantics_10_Calculator::subtract( 12, 5 );
+		if ( $wrappedMaximum === ( -2147483647 - 1 ) ) {
+			if ( $wrappedMinimum === 2147483647 ) {
+				if ( $ordinaryDifference === 7 ) {
+					echo 'int-runtime-overflow:pass' . PHP_EOL;
+				} else {
+					echo 'int-runtime-overflow:fail' . PHP_EOL;
+				}
+			} else {
+				echo 'int-runtime-overflow:fail' . PHP_EOL;
+			}
+		} else {
+			echo 'int-runtime-overflow:fail' . PHP_EOL;
 		}
 	}
 }

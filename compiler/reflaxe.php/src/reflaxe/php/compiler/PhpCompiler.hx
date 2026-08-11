@@ -6,6 +6,7 @@ import haxe.io.Path;
 import haxe.macro.Context;
 import haxe.macro.Expr.Position;
 import haxe.macro.Type;
+import haxe.macro.TypeTools;
 import haxe.macro.TypedExprTools;
 import reflaxe.GenericCompiler;
 import reflaxe.data.ClassFuncData;
@@ -117,6 +118,16 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 				position: stringRuntimeTrigger
 			});
 		}
+		final int32RuntimeTrigger = lowerer.requiredInt32RuntimeTrigger();
+		if (int32RuntimeTrigger != null) {
+			loweredTypes.push({
+				identity: PhpRuntimeLibrary.INT32_IDENTITY,
+				path: PhpRuntimeLibrary.INT32_PATH,
+				declaration: PhpRuntimeLibrary.int32Runtime(sources.range(int32RuntimeTrigger)),
+				dependencies: [],
+				position: int32RuntimeTrigger
+			});
+		}
 		final orderedTypes = orderLoweredTypes();
 		final mainIdentity = PhpArtifactLayout.typeIdentity(mainClass.module, mainClass.name);
 		if (!hasLoweredIdentity(mainIdentity)) {
@@ -135,7 +146,7 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 			final rangeMap = writer.write(rendered);
 			nextFiles.push(new PhpOwnedGeneratedFile(artifact.path, rendered.source));
 			nextFiles.push(new PhpOwnedGeneratedFile(mapPath, rangeMap));
-			final artifactKind = artifact.identity == PhpRuntimeLibrary.STRING_IDENTITY ? RuntimeArtifact : ModuleArtifact;
+			final artifactKind = PhpRuntimeLibrary.isRuntimeIdentity(artifact.identity) ? RuntimeArtifact : ModuleArtifact;
 			manifestRecords.push(new PhpCompilationArtifactRecord(artifactKind, artifact.identity, artifact.path, digest(rendered.source), mapPath,
 				digest(rangeMap), artifact.dependencies));
 		}
@@ -197,6 +208,9 @@ class PhpCompiler extends GenericCompiler<PhpStagedOutput, PhpStagedOutput, PhpS
 				case TField(_, FInstance(classRef, _, fieldRef))
 					if (classRef.get().pack.length == 0 && classRef.get().name == "String" && fieldRef.get().name == "length"):
 					dependencies.set(PhpRuntimeLibrary.STRING_IDENTITY, true);
+				case TBinop(OpAdd | OpSub, _, _) if (TypeTools.toString(expression.t) == "Int"
+					&& !PhpTypedAstValidator.isCompilerProvenInt32(expression)):
+					dependencies.set(PhpRuntimeLibrary.INT32_IDENTITY, true);
 				case TField(_, FInstance(classRef, _, _)) | TNew(classRef, _, _):
 					final dependencyClass = classRef.get();
 					if (sources.owns(dependencyClass.pos)) {

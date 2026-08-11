@@ -202,5 +202,22 @@ class Main {
 		} else {
 			Sys.println("int-division-truncation:fail");
 		}
+
+		final wrappedMaximum = Calculator.add(2147483647, 1);
+		final wrappedMinimum = Calculator.subtract(-2147483647 - 1, 1);
+		final ordinaryDifference = Calculator.subtract(12, 5);
+		if (wrappedMaximum == (-2147483647 - 1)) {
+			if (wrappedMinimum == 2147483647) {
+				if (ordinaryDifference == 7) {
+					Sys.println("int-runtime-overflow:pass");
+				} else {
+					Sys.println("int-runtime-overflow:fail");
+				}
+			} else {
+				Sys.println("int-runtime-overflow:fail");
+			}
+		} else {
+			Sys.println("int-runtime-overflow:fail");
+		}
 	}
 }

@@ -79,6 +79,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var NullableValue = "null.nullable-value";
 	var HaxeStdlib = "runtime.haxe-stdlib";
 	var StringRuntimeHelper = "runtime.string-length-helper";
+	var Int32RuntimeHelper = "runtime.int32-arithmetic-helper";
 	var NumericEdgeSemantics = "numeric.overflow-division-modulo";
 	var StringConcatenation = "string.concat-exact-operands";
 	var StringEquality = "string.equality";
@@ -216,6 +217,7 @@ class PhpSemanticCapabilities {
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
 			record(StringRuntimeHelper, RuntimeStdlib, Admitted, semantic, owner),
+			record(Int32RuntimeHelper, RuntimeStdlib, Admitted, semantic, owner),
 			record(UnicodeScalarLength, StringUnicode, Admitted, semantic, owner),
 			record(InstanceLayout, ModuleTypeLayout, UnsupportedOwned,
 				"only a non-inherited private-String-field constructor and String instance-method slice is admitted", owner),

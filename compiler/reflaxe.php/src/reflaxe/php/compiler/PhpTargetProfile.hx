@@ -28,4 +28,8 @@ enum abstract PhpTargetProfile(String) to String {
 	public inline function usesNativeIntTypes():Bool {
 		return this == Php74ModernV1 ? true : throw "Unknown reflaxe.php target profile";
 	}
+
+	public inline function minimumIntBits():Int {
+		return this == Php74ModernV1 ? 64 : throw "Unknown reflaxe.php target profile";
+	}
 }

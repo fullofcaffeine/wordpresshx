@@ -77,6 +77,7 @@ def load_graph(graph_root: Path) -> tuple[dict, dict[str, bytes]]:
         manifest.get("profile")
         == {
             "id": "php74-modern-v1",
+            "minimumIntBits": 64,
             "minimumPhpVersionId": 70400,
             "nativeIntTypes": True,
             "strictTypes": True,

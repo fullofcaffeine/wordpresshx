@@ -107,6 +107,7 @@ def main() -> None:
     require(artifact_manifest["format"] == "reflaxe.php-artifact-graph.v1", "artifact graph format drifted")
     require(artifact_manifest["profile"] == {
         "id": "php74-modern-v1",
+        "minimumIntBits": 64,
         "minimumPhpVersionId": 70400,
         "nativeIntTypes": True,
         "strictTypes": True,

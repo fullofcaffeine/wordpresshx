@@ -581,6 +581,11 @@ class PhpTypedAstValidator {
 		}
 	}
 
+	/** True when native PHP arithmetic cannot leave Haxe's signed 32-bit range. **/
+	public static function isCompilerProvenInt32(expression:TypedExpr):Bool {
+		return constantIntValue(expression) != null;
+	}
+
 	static function constantIntNegatedValue(expression:TypedExpr):Null<Int> {
 		final value = constantIntValue(expression);
 		if (value == null) {

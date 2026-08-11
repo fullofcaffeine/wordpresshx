@@ -178,25 +178,26 @@ and `Null<Int>` return remain compile-negative. Every compile-negative
 fixture must first run successfully under stock Haxe with empty stderr, so a
 malformed source program cannot be mistaken for a compiler limitation.
 
-The numeric extension checks subtraction and multiplication grouping. Stock
-Haxe and generated PHP both produce `3` for `9 - 4 - 2`. They both produce `7`
-for `9 - (4 - 2)`. They produce `14` for `2 + 3 * 4` and `20` for
-`(2 + 3) * 4`. The generated PHP keeps the required parentheses. Float and
-runtime-dependent multiplication fail before target output. This rule prevents
-silent Haxe 32-bit and PHP 64-bit overflow differences. The same compile-time
-range proof admits grouped and nested unary negation. Runtime-dependent
-negation and integer-minimum overflow fail before output. The remainder slice
-admits exact `Int` constant expressions only after it proves a nonzero divisor.
-Positive and negative operands preserve Haxe's dividend-sign result. Runtime
-operands, zero divisors, `Float` remainder, division, compound remainder
-assignment, coercion, and general numeric behavior remain outside this subject.
+The numeric extension checks grouping and signed 32-bit results. Stock Haxe
+and generated PHP produce `3` for `9 - 4 - 2`. Both runtimes produce `7` for
+`9 - (4 - 2)`. The generated PHP keeps the required parentheses.
+
+Runtime addition and subtraction use one compiler-owned helper. The helper
+wraps both overflow directions to the Haxe `Int` range. Safe constant
+expressions keep native PHP operators. The exact profile requires 64-bit PHP
+integers and rejects another integer width.
+
+Runtime multiplication still fails before target output. Constant
+multiplication and unary negation require a signed 32-bit range proof. The
+remainder slice also requires exact constants and a nonzero divisor. Runtime
+remainder, zero divisors, `Float` arithmetic, and broad numeric behavior remain
+outside this subject.
 
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
-expression validator. Float ordering has a compile-negative owner. The
-75-record subject passed its exact hosted lane in run `31414493799`. The
-74-record run `31410116706` remains historical authority for its own compiler
-bytes only.
+expression validator. Float ordering has a compile-negative owner. The current
+77-record subject has local evidence. Its exact hosted lane is pending. The
+76-record subject passed in run `31419109569`.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

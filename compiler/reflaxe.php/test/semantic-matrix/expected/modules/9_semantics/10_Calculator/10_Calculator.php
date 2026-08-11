@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class Hx_9_semantics_10_Calculator {
 	public static function add(int $left, int $right): int {
-		return $left + $right;
+		return \ReflaxePhpInt32Runtime::add( $left, $right );
 	}
 
 	public static function decorate(string $prefix, string $value): string {
@@ -30,5 +30,9 @@ class Hx_9_semantics_10_Calculator {
 
 	public static function roundTrip(?string $value): ?string {
 		return $value;
+	}
+
+	public static function subtract(int $left, int $right): int {
+		return \ReflaxePhpInt32Runtime::subtract( $left, $right );
 	}
 }
