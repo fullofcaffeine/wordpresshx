@@ -211,8 +211,9 @@ The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
 80-record Int-inequality subject has local stock-Haxe and native PHP proof.
-Its exact PHP 7.4.33/8.4.7 hosted lane is pending. The 78-record Bool-equality
-subject passed the exact hosted matrix in run `31547182385`.
+The 80-record Int-inequality subject passed the exact PHP 7.4.33/8.4.7 hosted
+matrix in run `31552581279`. The 78-record Bool-equality subject remains its
+immediate predecessor in run `31547182385`.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new
