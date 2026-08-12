@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-bool-equality-subject-pending-hosted; predecessor-runtime-division-subject-passed-run-31543524288",
+    "exactPhp74And84Matrix": "current-bool-equality-subject-passed-run-31547182385; predecessor-runtime-division-subject-passed-run-31543524288",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -74,18 +74,18 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "predecessor-runtime-division-module-graph-subject",
+    "relation": "current-bool-equality-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31543524288,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288",
-    "commit": "f7491ad8cbebe631b528047f49045896e5789eb7",
+    "runId": 31547182385,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31547182385",
+    "commit": "4d272974fd8559338df2ddfc1bd13d6d5e744d3f",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93950991155,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288/job/93950991155",
+      "jobId": 93962081715,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31547182385/job/93962081715",
       "status": "passed",
-      "completedAt": "2026-08-11T22:57:25Z"
+      "completedAt": "2026-08-11T23:53:48Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -100,7 +100,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "the predecessor compiler package with Std.int runtime Int dividend division by a proven nonzero constant divisor and signed 32-bit result preservation, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
+    "scope": "the current compiler package with strict Bool equality and inequality for exact Bool operands, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -127,7 +127,7 @@
       "Runtime unary Int negation adds one method to the existing Int32 runtime artifact. It does not add a second runtime owner, change the dependency topology, or broaden the WordPress runtime claim.",
       "Runtime dividend remainder uses the existing application module and native PHP operator. It adds no runtime artifact or dependency edge.",
       "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
-      "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge, and the exact new module bytes await hosted proof."
+      "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix."
     ]
   },
   "authenticatedInputs": [
@@ -241,24 +241,24 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false
   },
   "previousHostedVerification": {
-    "relation": "predecessor-runtime-remainder-module-graph-subject",
+    "relation": "predecessor-runtime-division-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31538235732,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31538235732",
-    "commit": "80f158b585d45d1bcd344f2621b574023df17eb3",
+    "runId": 31543524288,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288",
+    "commit": "f7491ad8cbebe631b528047f49045896e5789eb7",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93938884424,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31538235732/job/93938884424",
+      "jobId": 93950991155,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31543524288/job/93950991155",
       "status": "passed",
-      "completedAt": "2026-08-11T21:47:34Z"
+      "completedAt": "2026-08-11T22:57:25Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -273,7 +273,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "compiler package with runtime Int dividend remainder by a proven nonzero constant divisor, clean package consumer, exact PHP runtime matrix, deterministic WordPress package adapter, and public PHP profile only",
+    "scope": "the predecessor compiler package with Std.int runtime Int dividend division by a proven nonzero constant divisor and signed 32-bit result preservation, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false

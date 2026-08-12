@@ -199,8 +199,8 @@ behavior remain outside this subject.
 
 The division slice accepts a runtime `Int` dividend only when the divisor is a
 compiler-proven nonzero constant. It truncates toward zero. The compiler-owned
-`Int32` helper wraps the minimum signed `Int` divided by `-1` back to the Haxe
-result. Runtime and zero divisors remain compile-negative.
+`Int32` helper returns the Haxe result for the minimum signed `Int` divided by `-1`.
+Runtime and zero divisors remain compile-negative.
 
 The Bool equality slice passes exact typed Bool operands through the existing
 Bool validator. It lowers Haxe `==` and `!=` to PHP `===` and `!==`. A
@@ -210,10 +210,9 @@ truthiness, and object identity remain outside this subject.
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-78-record Bool-equality subject has local differential and native PHP 8.4.7
-proof. Its exact PHP 7.4.33/8.4.7 hosted lane is pending. The predecessor
-77-record runtime-division subject passed in run `31543524288` and remains
-historical authority for its own bytes.
+78-record Bool-equality subject passed the exact hosted matrix in run
+`31547182385`. The 77-record runtime-division subject passed in run
+`31543524288` and remains historical authority for its own bytes.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new
