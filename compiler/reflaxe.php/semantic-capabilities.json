@@ -115,6 +115,13 @@
     {
       "category": "calls-closures",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "call.static-application-int-predicate-call",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "calls-closures",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "call.static-application-nullable-string-call",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -277,6 +284,13 @@
       "category": "control-flow",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "control.int-greater-than",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "control-flow",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "control.int-inequality",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
     },
@@ -656,14 +670,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "bcb123b87acdae2953fa7cc617addd3c6c64068195dd98b38aa40ebc32562a1f"
+    "sha256": "dc995acdc0e36ffd03ad0d1fefa2a9d9ff6cfee09519ef74dedc11077862f89f"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 91,
+    "capabilityCount": 93,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 78,
+      "admitted": 80,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-bool-equality-subject-passed-run-31547182385; predecessor-runtime-division-subject-passed-run-31543524288",
+    "exactPhp74And84Matrix": "current-int-inequality-subject-pending-hosted; predecessor-bool-equality-subject-passed-run-31547182385",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -127,13 +127,14 @@
       "Runtime unary Int negation adds one method to the existing Int32 runtime artifact. It does not add a second runtime owner, change the dependency topology, or broaden the WordPress runtime claim.",
       "Runtime dividend remainder uses the existing application module and native PHP operator. It adds no runtime artifact or dependency edge.",
       "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
-      "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix."
+      "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix.",
+      "Int inequality and the source-owned Int predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "2f002159603d202e21009941476320fb4b7464980f6b16266e2c90a1755026c1"
+      "sha256": "5946dfed7152966ca4335d5933f960bfa059566b28e7f1fdfad5bc43e95da32f"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -149,7 +150,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "fa40ed6f20694bcd40bc23e33613c24de2d48335b64d60f2d44cd6ddc3036446"
+      "sha256": "297549ae749293fd52de9379fdcf8565dfe8ec1c30a792493d9e334c6c6236ad"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -161,7 +162,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "24abc521ae9046a2ba26b74b6db76c66a52300f7dfeda6ff6171d41231f854af"
+      "sha256": "22451316c9681fbd2c805e1df01afc380b5a8519711d6a369b43e936ddff6222"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -213,11 +214,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "d119d67042010a9c951e9512b56387be68d31925fc72872e128b8dacf1e935ab"
+      "sha256": "3bfc39656d611b4013185f039526607be165f3c0c7afb4148c54c2043985f5a2"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "d1979f98175d1e4155c8c5f7e82c61136b0c22fc6dd2836cde9a617615846fdf"
+      "sha256": "fbe5562f74890ea7718005678c07fa0af1caadee7b61b0565ce40f726f9cf5e5"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -241,7 +242,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

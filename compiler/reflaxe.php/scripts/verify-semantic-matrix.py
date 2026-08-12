@@ -204,6 +204,8 @@ def main() -> None:
 		"stmt:return-bool:1230:1250": ("statement", 2, b"return left == right"),
 		"method:semantics.Calculator:differentBool": ("member", 1, b"public static function differentBool"),
 		"stmt:return-bool:1326:1346": ("statement", 2, b"return left != right"),
+		"method:semantics.Calculator:differentInt": ("member", 1, b"public static function differentInt"),
+		"stmt:return-bool:1419:1439": ("statement", 2, b"return left != right"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -399,6 +401,9 @@ def main() -> None:
 		"stmt:if-bool:8881:9007": ("statement", 2, b"if (equalBools && differentBools)"),
 		"stmt:sys-println:8920:8953": ("statement", 3, b'Sys.println("bool-equality:pass")'),
 		"stmt:sys-println:8969:9002": ("statement", 3, b'Sys.println("bool-equality:fail")'),
+		"stmt:if-bool:9011:9142": ("statement", 2, b"if (Calculator.differentInt(42, 41))"),
+		"stmt:sys-println:9053:9087": ("statement", 3, b'Sys.println("int-inequality:pass")'),
+		"stmt:sys-println:9103:9137": ("statement", 3, b'Sys.println("int-inequality:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -418,6 +423,7 @@ def main() -> None:
 			"stmt:return-int:1133:1159",
 			"stmt:return-bool:1230:1250",
 			"stmt:return-bool:1326:1346",
+			"stmt:return-bool:1419:1439",
         })
     verify_map(
         output_root,

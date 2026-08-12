@@ -20,6 +20,8 @@ has been authorized.
   nonzero constant. The compiler-owned helper preserves signed 32-bit overflow.
 - Added strict equality and inequality for already typed `Bool` values. Null
   and mixed-type comparisons remain rejected.
+- Added strict inequality for already typed `Int` values and source-owned
+  `Int` predicates. Float and mixed-type comparisons remain rejected.
 - Replaced the temporary monolithic compiler output with collision-safe
   per-type PHP artifacts and exact maps, a source-derived dependency-ordered
   bootstrap, the explicit `php74-modern-v1` policy, a content-addressed graph,

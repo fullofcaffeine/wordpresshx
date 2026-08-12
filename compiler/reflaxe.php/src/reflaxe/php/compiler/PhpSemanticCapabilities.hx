@@ -22,6 +22,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var InitializedBoolLocal = "value.initialized-bool-local";
 	var InitializedStringClosureLocal = "value.initialized-string-closure-local";
 	var IntEquality = "control.int-equality";
+	var IntInequality = "control.int-inequality";
 	var BoolEquality = "control.bool-equality";
 	var IntLessThan = "control.int-less-than";
 	var BoolCondition = "control.bool-condition";
@@ -63,6 +64,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var StringReturn = "call.non-null-string-return";
 	var StaticApplicationCall = "call.static-application-int-call";
 	var StaticApplicationBoolCall = "call.static-application-bool-call";
+	var StaticApplicationIntPredicateCall = "call.static-application-int-predicate-call";
 	var StaticApplicationStringCall = "call.static-application-string-call";
 	var Closure = "call.closure";
 	var ThrowHaxeException = "exception.throw-haxe-exception";
@@ -169,6 +171,7 @@ class PhpSemanticCapabilities {
 			record(InitializedObjectLocal, ValuesCollections, Admitted, semantic, owner),
 			record(InstanceStringFieldRead, ValuesCollections, Admitted, semantic, owner),
 			record(IntEquality, ControlFlow, Admitted, semantic, owner),
+			record(IntInequality, ControlFlow, Admitted, semantic, owner),
 			record(BoolEquality, ControlFlow, Admitted, semantic, owner),
 			record(IntLessThan, ControlFlow, Admitted, semantic, owner),
 			record(BoolCondition, ControlFlow, Admitted, semantic, owner),
@@ -197,6 +200,7 @@ class PhpSemanticCapabilities {
 			record(StringReturn, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationCall, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationBoolCall, CallsClosures, Admitted, semantic, owner),
+			record(StaticApplicationIntPredicateCall, CallsClosures, Admitted, semantic, owner),
 			record(StaticApplicationStringCall, CallsClosures, Admitted, semantic, owner),
 			record(SourceOwnedConstructorCall, CallsClosures, Admitted, semantic, owner),
 			record(SourceOwnedStringInstanceCall, CallsClosures, Admitted, semantic, owner),

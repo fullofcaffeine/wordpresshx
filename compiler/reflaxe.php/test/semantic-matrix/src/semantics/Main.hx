@@ -295,5 +295,11 @@ class Main {
 		} else {
 			Sys.println("bool-equality:fail");
 		}
+
+		if (Calculator.differentInt(42, 41)) {
+			Sys.println("int-inequality:pass");
+		} else {
+			Sys.println("int-inequality:fail");
+		}
 	}
 }

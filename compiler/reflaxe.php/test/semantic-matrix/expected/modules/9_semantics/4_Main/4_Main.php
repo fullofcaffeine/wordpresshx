@@ -274,5 +274,10 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'bool-equality:fail' . PHP_EOL;
 		}
+		if ( Hx_9_semantics_10_Calculator::differentInt( 42, 41 ) ) {
+			echo 'int-inequality:pass' . PHP_EOL;
+		} else {
+			echo 'int-inequality:fail' . PHP_EOL;
+		}
 	}
 }

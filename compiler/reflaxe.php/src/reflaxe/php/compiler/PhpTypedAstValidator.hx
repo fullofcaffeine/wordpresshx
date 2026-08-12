@@ -141,7 +141,13 @@ class PhpTypedAstValidator {
 				case "Int":
 					validateRequiredParameters(functionData, "Int");
 				case "Bool":
-					validateRequiredParameters(functionData, hasRequiredNullableStringParameter(functionData) ? "Null<String>" : "Bool");
+					if (hasRequiredNullableStringParameter(functionData)) {
+						validateRequiredParameters(functionData, "Null<String>");
+					} else if (hasRequiredIntParameters(functionData)) {
+						validateRequiredParameters(functionData, "Int");
+					} else {
+						validateRequiredParameters(functionData, "Bool");
+					}
 				case "String":
 					validateRequiredParameters(functionData, "String");
 				case "Null<String>":
@@ -472,6 +478,9 @@ class PhpTypedAstValidator {
 			case TBinop(OpBoolAnd | OpBoolOr, left, right):
 				validateBoolValue(left);
 				validateBoolValue(right);
+			case TBinop(OpNotEq, left, right) if (isExactIntValue(left) && isExactIntValue(right)):
+				validateIntValue(left, new Map<Int, Int>());
+				validateIntValue(right, new Map<Int, Int>());
 			case TBinop(OpEq | OpNotEq, left, right):
 				if (isExactBoolValue(left) && isExactBoolValue(right)) {
 					validateBoolValue(left);
@@ -479,7 +488,8 @@ class PhpTypedAstValidator {
 				} else if (isNullableStringLocal(left) && isNullLiteral(right)) {
 					validateNullableStringNullCheck(expression, left, right);
 				} else {
-					Context.error("reflaxe.php equality requires exact Bool operands or an exact Null<String> local compared with null", expression.pos);
+					Context.error("reflaxe.php equality requires exact Bool operands, exact Int operands for !=, or an exact Null<String> local compared with null",
+						expression.pos);
 				}
 			case TCall(target, arguments):
 				validateStaticApplicationBoolCall(expression, target, arguments);
@@ -493,6 +503,10 @@ class PhpTypedAstValidator {
 
 	static function isExactBoolValue(expression:TypedExpr):Bool {
 		return TypeTools.toString(expression.t) == "Bool" && !isNullLiteral(expression);
+	}
+
+	static function isExactIntValue(expression:TypedExpr):Bool {
+		return TypeTools.toString(expression.t) == "Int" && !isNullLiteral(expression);
 	}
 
 	static function validateNullableStringValue(expression:TypedExpr):Void {
@@ -809,6 +823,10 @@ class PhpTypedAstValidator {
 					} else {
 						validateNullableStringValue(arguments[0]);
 					}
+				} else if (isRequiredIntBoolField(classRef.get(), fieldRef.get())) {
+					for (argument in arguments) {
+						validateIntValue(argument, new Map<Int, Int>());
+					}
 				} else {
 					for (argument in arguments) {
 						validateBoolValue(argument);
@@ -823,9 +841,26 @@ class PhpTypedAstValidator {
 		return functionData.args.length == 1 && isNullableStringType(functionData.args[0].type);
 	}
 
+	static function hasRequiredIntParameters(functionData:ClassFuncData):Bool {
+		if (functionData.args.length == 0) {
+			return false;
+		}
+		for (argument in functionData.args) {
+			if (TypeTools.toString(argument.type) != "Int") {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	static function isRequiredNullableStringBoolField(classType:ClassType, field:ClassField):Bool {
 		final functionData = field.findFuncData(classType, true);
 		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredNullableStringParameter(functionData);
+	}
+
+	static function isRequiredIntBoolField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredIntParameters(functionData);
 	}
 
 	static function isRequiredNullableStringReturnField(classType:ClassType, field:ClassField):Bool {
@@ -855,13 +890,14 @@ class PhpTypedAstValidator {
 
 	static function validateIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
-			case TBinop(OpEq | OpLt | OpLte | OpGt | OpGte, left, right):
+			case TBinop(OpEq | OpNotEq | OpLt | OpLte | OpGt | OpGte, left, right):
 				validateIntValue(left, intArrayLengths);
 				validateIntValue(right, intArrayLengths);
 			case TMeta(_, inner) | TParenthesis(inner):
 				validateIntCondition(inner, intArrayLengths);
 			case _:
-				Context.error("reflaxe.php supports only exact Int equality and ordering conditions in the admitted semantic slice", expression.pos);
+				Context.error("reflaxe.php supports only exact Int equality, inequality, and ordering conditions in the admitted semantic slice",
+					expression.pos);
 		}
 	}
 
@@ -870,7 +906,8 @@ class PhpTypedAstValidator {
 			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
 				validateStringValue(left);
 				validateStringValue(right);
-			case TBinop(OpEq | OpLt | OpLte | OpGt | OpGte, left, right) if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
+			case TBinop(OpEq | OpNotEq | OpLt | OpLte | OpGt | OpGte, left, right)
+				if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):
 				validateIntCondition(expression, intArrayLengths);
 			case _ if (TypeTools.toString(expression.t) == "Bool"):
 				validateBoolValue(expression);

@@ -146,6 +146,9 @@ exact Haxe `Int` type and pass the existing `Int` expression validator. A
 stock-Haxe-valid Float ordering fixture fails before output. Mixed numeric,
 String, null, object, coercion, spaceship, NaN, and general comparison behavior
 remain unproved.
+Exact `Int` inequality uses the same operand validator and emits PHP `!==`.
+The first source-owned `Int` predicate returns that result as native PHP
+`bool`. A stock-Haxe-valid Float inequality fixture fails before output.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The
