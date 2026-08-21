@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-string-inequality-subject-pending-hosted; predecessor-int-inequality-subject-passed-run-31552581279",
+    "exactPhp74And84Matrix": "current-string-inequality-subject-passed-run-32506395234; predecessor-int-inequality-subject-passed-run-31552581279",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -74,18 +74,18 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "current-int-inequality-module-graph-subject",
+    "relation": "current-string-inequality-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31552581279,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31552581279",
-    "commit": "4f97f5e7fc42557fe7c5c9834965f96efa319f24",
+    "runId": 32506395234,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32506395234",
+    "commit": "0cf7a18ae37c7e4d29ec27f6073d7a6b99993b00",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93978235292,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31552581279/job/93978235292",
+      "jobId": 96847408143,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32506395234/job/96847408143",
       "status": "passed",
-      "completedAt": "2026-08-12T01:24:12Z"
+      "completedAt": "2026-08-21T17:22:31Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -100,7 +100,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "the current compiler package with strict Int inequality for exact Int operands and a typed source-owned Int predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
+    "scope": "the current compiler package with strict String inequality for exact non-null String operands and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -129,7 +129,7 @@
       "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
       "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix.",
       "Int inequality and the source-owned Int predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
-      "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
+      "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix."
     ]
   },
   "authenticatedInputs": [
@@ -243,24 +243,24 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false
   },
   "previousHostedVerification": {
-    "relation": "predecessor-bool-equality-module-graph-subject",
+    "relation": "predecessor-int-inequality-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 31547182385,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31547182385",
-    "commit": "4d272974fd8559338df2ddfc1bd13d6d5e744d3f",
+    "runId": 31552581279,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31552581279",
+    "commit": "4f97f5e7fc42557fe7c5c9834965f96efa319f24",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 93962081715,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31547182385/job/93962081715",
+      "jobId": 93978235292,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/31552581279/job/93978235292",
       "status": "passed",
-      "completedAt": "2026-08-11T23:53:48Z"
+      "completedAt": "2026-08-12T01:24:12Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -275,7 +275,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "the predecessor compiler package with strict Bool equality and inequality for exact Bool operands, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
+    "scope": "the predecessor compiler package with strict Int inequality for exact Int operands and a typed source-owned Int predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
