@@ -144,9 +144,12 @@ class PhpTypedAstLowerer {
 				final parameters = if (hasRequiredNullableStringParameter(functionData)) {
 					PhpSemanticCapabilities.requireAdmitted(RequiredNullableStringParameter);
 					lowerRequiredParameters(functionData, "Null<String>", PhpNullableType(PhpStringType));
-				} else if (hasRequiredIntParameters(functionData)) {
+				} else if (hasRequiredParameters(functionData, "Int")) {
 					PhpSemanticCapabilities.requireAdmitted(RequiredIntParameters);
 					lowerRequiredParameters(functionData, "Int", PhpIntType);
+				} else if (hasRequiredParameters(functionData, "String")) {
+					PhpSemanticCapabilities.requireAdmitted(RequiredStringParameters);
+					lowerRequiredParameters(functionData, "String", PhpStringType);
 				} else {
 					PhpSemanticCapabilities.requireAdmitted(RequiredBoolParameters);
 					lowerRequiredParameters(functionData, "Bool", PhpBoolType);
@@ -564,6 +567,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpNotEq, left, right) if (isExactIntValue(left) && isExactIntValue(right)):
 				PhpSemanticCapabilities.requireAdmitted(IntInequality);
 				PhpBinop("!==", lowerIntValue(left, new Map<Int, Int>()), lowerIntValue(right, new Map<Int, Int>()));
+			case TBinop(OpNotEq, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
+				PhpSemanticCapabilities.requireAdmitted(StringInequality);
+				PhpBinop("!==", lowerStringValue(left), lowerStringValue(right));
 			case TBinop(OpEq, left, right): lowerBoolEquality(expression, left, right, true);
 			case TBinop(OpNotEq, left, right): lowerBoolEquality(expression, left, right, false);
 			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);
@@ -866,6 +872,9 @@ class PhpTypedAstLowerer {
 				} else if (isRequiredIntBoolField(classRef.get(), fieldRef.get())) {
 					PhpSemanticCapabilities.requireAdmitted(StaticApplicationIntPredicateCall);
 					PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(argument -> lowerIntValue(argument, new Map<Int, Int>())));
+				} else if (isRequiredStringBoolField(classRef.get(), fieldRef.get())) {
+					PhpSemanticCapabilities.requireAdmitted(StaticApplicationStringPredicateCall);
+					PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerStringValue));
 				} else {
 					PhpSemanticCapabilities.requireAdmitted(StaticApplicationBoolCall);
 					PhpStaticCall(className(classRef.get()), fieldRef.get().name, arguments.map(lowerBoolValue));
@@ -880,12 +889,12 @@ class PhpTypedAstLowerer {
 		return functionData.args.length == 1 && isNullableStringType(functionData.args[0].type);
 	}
 
-	static function hasRequiredIntParameters(functionData:ClassFuncData):Bool {
+	static function hasRequiredParameters(functionData:ClassFuncData, haxeType:String):Bool {
 		if (functionData.args.length == 0) {
 			return false;
 		}
 		for (argument in functionData.args) {
-			if (TypeTools.toString(argument.type) != "Int") {
+			if (TypeTools.toString(argument.type) != haxeType) {
 				return false;
 			}
 		}
@@ -899,7 +908,12 @@ class PhpTypedAstLowerer {
 
 	static function isRequiredIntBoolField(classType:ClassType, field:ClassField):Bool {
 		final functionData = field.findFuncData(classType, true);
-		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredIntParameters(functionData);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredParameters(functionData, "Int");
+	}
+
+	static function isRequiredStringBoolField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredParameters(functionData, "String");
 	}
 
 	static function isRequiredNullableStringReturnField(classType:ClassType, field:ClassField):Bool {
@@ -935,6 +949,10 @@ class PhpTypedAstLowerer {
 		return TypeTools.toString(expression.t) == "Int" && !isNullLiteral(expression);
 	}
 
+	static function isExactStringValue(expression:TypedExpr):Bool {
+		return TypeTools.toString(expression.t) == "String" && !isNullLiteral(expression);
+	}
+
 	function lowerIntCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):PhpExpr {
 		return switch (expression.expr) {
 			case TBinop(OpEq, left, right):
@@ -962,11 +980,15 @@ class PhpTypedAstLowerer {
 
 	function lowerCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):{expression:PhpExpr, mappingKind:String} {
 		return switch (expression.expr) {
-			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
-				PhpSemanticCapabilities.requireAdmitted(StringEquality);
+			case TBinop(OpEq | OpNotEq, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
+				final equality = switch (expression.expr) {
+					case TBinop(OpEq, _, _): true;
+					case _: false;
+				};
+				PhpSemanticCapabilities.requireAdmitted(equality ? StringEquality : StringInequality);
 				{
-					expression: PhpBinop("===", lowerStringValue(left), lowerStringValue(right)),
-					mappingKind: "if-string-equality"
+					expression: PhpBinop(equality ? "===" : "!==", lowerStringValue(left), lowerStringValue(right)),
+					mappingKind: equality ? "if-string-equality" : "if-string-inequality"
 				};
 			case TBinop(OpEq | OpNotEq | OpLt | OpLte | OpGt | OpGte, left, right)
 				if (TypeTools.toString(left.t) == "Int" && TypeTools.toString(right.t) == "Int"):

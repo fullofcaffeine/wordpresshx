@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-int-inequality-subject-passed-run-31552581279; predecessor-bool-equality-subject-passed-run-31547182385",
+    "exactPhp74And84Matrix": "current-string-inequality-subject-pending-hosted; predecessor-int-inequality-subject-passed-run-31552581279",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -128,13 +128,14 @@
       "Runtime dividend remainder uses the existing application module and native PHP operator. It adds no runtime artifact or dependency edge.",
       "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
       "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix.",
-      "Int inequality and the source-owned Int predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
+      "Int inequality and the source-owned Int predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
+      "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "5946dfed7152966ca4335d5933f960bfa059566b28e7f1fdfad5bc43e95da32f"
+      "sha256": "4378d92aedf9d9b822f4b187815f244e56cc046c908ca9cb67376f719145e623"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -150,7 +151,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "297549ae749293fd52de9379fdcf8565dfe8ec1c30a792493d9e334c6c6236ad"
+      "sha256": "7328424366bd758e2075b744818a3032fad1b73c58da96c7c7ea90b194ed5dcb"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -162,7 +163,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "22451316c9681fbd2c805e1df01afc380b5a8519711d6a369b43e936ddff6222"
+      "sha256": "64968ba2c7d1135b13535b771cd1501edef905e796db0c7b327430201be8c338"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -214,11 +215,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "3bfc39656d611b4013185f039526607be165f3c0c7afb4148c54c2043985f5a2"
+      "sha256": "d44c06a816797286014f88f2ef5f0bfcd9a98cf620add04f444b9e29a120f741"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "fbe5562f74890ea7718005678c07fa0af1caadee7b61b0565ce40f726f9cf5e5"
+      "sha256": "c539a2bd326c9b587a43b7440db1e6a518c16c98fc1f875456b8ac78421e9d8c"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -242,7 +243,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

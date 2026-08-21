@@ -18,8 +18,8 @@ ordinary-Haxe path. Three Haxe modules lower through the generic PHP IR into one
 mapped PHP file per type plus a dependency-ordered bootstrap, then execute under
 native PHP. The checked semantic matrix currently covers small `Int` control
 flow and calls, fixed proven `Array<Int>` reads and length, and exact UTF-8 String
-concatenation/equality/printing plus required non-null String
-parameters/returns and source-owned static String calls. Exact non-null
+concatenation/equality/inequality/printing plus required non-null String
+parameters/returns and source-owned static String calls and predicates. Exact non-null
 `String.length` lowers through an on-demand compiler-owned PHP runtime helper
 with Unicode-scalar semantics and no `mbstring` dependency. The helper's
 artifact, dependency edge, ownership record, and source map are part of the

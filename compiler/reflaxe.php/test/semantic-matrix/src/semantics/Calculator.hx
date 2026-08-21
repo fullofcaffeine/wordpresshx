@@ -65,4 +65,8 @@ class Calculator {
 	public static function differentInt(left:Int, right:Int):Bool {
 		return left != right;
 	}
+
+	public static function differentString(left:String, right:String):Bool {
+		return left != right;
+	}
 }

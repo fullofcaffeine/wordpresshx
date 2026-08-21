@@ -19,6 +19,10 @@ class Hx_9_semantics_10_Calculator {
 		return $left !== $right;
 	}
 
+	public static function differentString(string $left, string $right): bool {
+		return $left !== $right;
+	}
+
 	public static function divideByNegativeOne(int $value): int {
 		return \ReflaxePhpInt32Runtime::divide( $value, -1 );
 	}

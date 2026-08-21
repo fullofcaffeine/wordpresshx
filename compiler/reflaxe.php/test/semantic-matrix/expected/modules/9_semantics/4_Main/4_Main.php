@@ -279,5 +279,10 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'int-inequality:fail' . PHP_EOL;
 		}
+		if ( Hx_9_semantics_10_Calculator::differentString( 'Haxe → PHP 🚀', 'Haxe → Reflaxe 🚀' ) ) {
+			echo 'string-inequality:pass' . PHP_EOL;
+		} else {
+			echo 'string-inequality:fail' . PHP_EOL;
+		}
 	}
 }

@@ -116,8 +116,8 @@ exact length. It includes direct result-discarded push and non-empty pop.
 It also includes compiler-proven constant in-bounds reads and writes.
 The matrix admits exact UTF-8 String literals,
 initialized String locals, concatenation only when both operands are already
-Strings, String value equality, printing, required non-null String
-parameters/returns, and source-owned static String calls. Because ordinary Haxe
+Strings, String value equality and inequality, printing, required non-null
+String parameters/returns, and source-owned static String calls and predicates. Because ordinary Haxe
 without strict null safety permits `null` where `String` is expected, the
 compiler explicitly rejects a null String argument instead of generating a PHP
 call with different behavior. Calls from handwritten weakly typed PHP are a
@@ -149,6 +149,10 @@ remain unproved.
 Exact `Int` inequality uses the same operand validator and emits PHP `!==`.
 The first source-owned `Int` predicate returns that result as native PHP
 `bool`. A stock-Haxe-valid Float inequality fixture fails before output.
+Exact non-null `String` inequality likewise emits PHP `!==` only after both
+operands pass the admitted String validator. The source-owned String predicate
+uses native PHP `string` parameters. A null argument remains a compile-negative
+boundary, and String ordering or coercion remains unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The

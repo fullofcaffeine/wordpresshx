@@ -130,6 +130,7 @@ assert_compile_negative "array-pop-branch" "reflaxe.php Array<Int>.pop is admitt
 assert_compile_negative "array-pop-removed-index" "reflaxe.php Array<Int> index must be a compiler-proven in-bounds constant"
 assert_compile_negative "string-coercion" "reflaxe.php String concatenation accepts only String operands; implicit coercion is not admitted"
 assert_compile_negative "null-string-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
+assert_compile_negative "null-string-predicate-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
 assert_compile_negative "null-bool-call" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "bool-null-equality" "reflaxe.php equality requires exact Bool operands, exact Int operands for !=, or an exact Null<String> local compared with null"

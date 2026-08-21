@@ -143,8 +143,10 @@ class PhpTypedAstValidator {
 				case "Bool":
 					if (hasRequiredNullableStringParameter(functionData)) {
 						validateRequiredParameters(functionData, "Null<String>");
-					} else if (hasRequiredIntParameters(functionData)) {
+					} else if (hasRequiredParameters(functionData, "Int")) {
 						validateRequiredParameters(functionData, "Int");
+					} else if (hasRequiredParameters(functionData, "String")) {
+						validateRequiredParameters(functionData, "String");
 					} else {
 						validateRequiredParameters(functionData, "Bool");
 					}
@@ -481,6 +483,9 @@ class PhpTypedAstValidator {
 			case TBinop(OpNotEq, left, right) if (isExactIntValue(left) && isExactIntValue(right)):
 				validateIntValue(left, new Map<Int, Int>());
 				validateIntValue(right, new Map<Int, Int>());
+			case TBinop(OpNotEq, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
+				validateStringValue(left);
+				validateStringValue(right);
 			case TBinop(OpEq | OpNotEq, left, right):
 				if (isExactBoolValue(left) && isExactBoolValue(right)) {
 					validateBoolValue(left);
@@ -507,6 +512,10 @@ class PhpTypedAstValidator {
 
 	static function isExactIntValue(expression:TypedExpr):Bool {
 		return TypeTools.toString(expression.t) == "Int" && !isNullLiteral(expression);
+	}
+
+	static function isExactStringValue(expression:TypedExpr):Bool {
+		return TypeTools.toString(expression.t) == "String" && !isNullLiteral(expression);
 	}
 
 	static function validateNullableStringValue(expression:TypedExpr):Void {
@@ -827,6 +836,10 @@ class PhpTypedAstValidator {
 					for (argument in arguments) {
 						validateIntValue(argument, new Map<Int, Int>());
 					}
+				} else if (isRequiredStringBoolField(classRef.get(), fieldRef.get())) {
+					for (argument in arguments) {
+						validateStringValue(argument);
+					}
 				} else {
 					for (argument in arguments) {
 						validateBoolValue(argument);
@@ -841,12 +854,12 @@ class PhpTypedAstValidator {
 		return functionData.args.length == 1 && isNullableStringType(functionData.args[0].type);
 	}
 
-	static function hasRequiredIntParameters(functionData:ClassFuncData):Bool {
+	static function hasRequiredParameters(functionData:ClassFuncData, haxeType:String):Bool {
 		if (functionData.args.length == 0) {
 			return false;
 		}
 		for (argument in functionData.args) {
-			if (TypeTools.toString(argument.type) != "Int") {
+			if (TypeTools.toString(argument.type) != haxeType) {
 				return false;
 			}
 		}
@@ -860,7 +873,12 @@ class PhpTypedAstValidator {
 
 	static function isRequiredIntBoolField(classType:ClassType, field:ClassField):Bool {
 		final functionData = field.findFuncData(classType, true);
-		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredIntParameters(functionData);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredParameters(functionData, "Int");
+	}
+
+	static function isRequiredStringBoolField(classType:ClassType, field:ClassField):Bool {
+		final functionData = field.findFuncData(classType, true);
+		return functionData != null && TypeTools.toString(functionData.ret) == "Bool" && hasRequiredParameters(functionData, "String");
 	}
 
 	static function isRequiredNullableStringReturnField(classType:ClassType, field:ClassField):Bool {
@@ -903,7 +921,7 @@ class PhpTypedAstValidator {
 
 	static function validateCondition(expression:TypedExpr, intArrayLengths:Map<Int, Int>):Void {
 		switch (expression.expr) {
-			case TBinop(OpEq, left, right) if (TypeTools.toString(left.t) == "String" && TypeTools.toString(right.t) == "String"):
+			case TBinop(OpEq | OpNotEq, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
 				validateStringValue(left);
 				validateStringValue(right);
 			case TBinop(OpEq | OpNotEq | OpLt | OpLte | OpGt | OpGte, left, right)

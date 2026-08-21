@@ -22,6 +22,9 @@ has been authorized.
   and mixed-type comparisons remain rejected.
 - Added strict inequality for already typed `Int` values and source-owned
   `Int` predicates. Float and mixed-type comparisons remain rejected.
+- Added strict inequality for already typed non-null `String` values and
+  source-owned `String` predicates. Null and coercive comparisons remain
+  rejected.
 - Replaced the temporary monolithic compiler output with collision-safe
   per-type PHP artifacts and exact maps, a source-derived dependency-ordered
   bootstrap, the explicit `php74-modern-v1` policy, a content-addressed graph,

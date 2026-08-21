@@ -301,5 +301,11 @@ class Main {
 		} else {
 			Sys.println("int-inequality:fail");
 		}
+
+		if (Calculator.differentString("Haxe → PHP 🚀", "Haxe → Reflaxe 🚀")) {
+			Sys.println("string-inequality:pass");
+		} else {
+			Sys.println("string-inequality:fail");
+		}
 	}
 }

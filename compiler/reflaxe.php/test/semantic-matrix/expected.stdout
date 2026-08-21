@@ -29,3 +29,4 @@ int-runtime-remainder:pass
 int-runtime-division:pass
 bool-equality:pass
 int-inequality:pass
+string-inequality:pass
