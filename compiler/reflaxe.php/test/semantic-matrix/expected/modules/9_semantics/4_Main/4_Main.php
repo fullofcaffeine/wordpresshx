@@ -284,5 +284,10 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'string-inequality:fail' . PHP_EOL;
 		}
+		if ( ( ( Hx_9_semantics_10_Calculator::lessString( '10', '2' ) && Hx_9_semantics_10_Calculator::lessString( 'Haxe → PHP 🚀', 'Haxe → Reflaxe 🚀' ) ) && Hx_9_semantics_10_Calculator::lessString( '→', '🚀' ) ) ) {
+			echo 'string-less-than:pass' . PHP_EOL;
+		} else {
+			echo 'string-less-than:fail' . PHP_EOL;
+		}
 	}
 }

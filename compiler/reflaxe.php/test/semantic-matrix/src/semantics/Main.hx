@@ -307,5 +307,13 @@ class Main {
 		} else {
 			Sys.println("string-inequality:fail");
 		}
+
+		if (Calculator.lessString("10", "2")
+			&& Calculator.lessString("Haxe → PHP 🚀", "Haxe → Reflaxe 🚀")
+			&& Calculator.lessString("→", "🚀")) {
+			Sys.println("string-less-than:pass");
+		} else {
+			Sys.println("string-less-than:fail");
+		}
 	}
 }

@@ -20,7 +20,8 @@ The current admitted surface is deliberately bounded:
   multiplication, and unary negation,
   implemented by one mapped compiler runtime helper;
 - exact Haxe `String` locals, String-only concatenation without implicit
-  coercion, value equality, and UTF-8 literal/`Sys.println` byte preservation;
+  coercion, value equality, inequality, less-than ordering, and UTF-8
+  literal/`Sys.println` byte preservation;
 - required non-null `String` parameters/returns and source-owned static String
   calls lowered to native PHP `string` signatures when every Haxe argument is
   itself an admitted non-null String expression;
@@ -114,15 +115,15 @@ source-owned static calls, explicit assignment, and pre-test `while`. The array
 subset includes fixed `Array<Int>` literals and
 exact length. It includes direct result-discarded push and non-empty pop.
 It also includes compiler-proven constant in-bounds reads and writes.
-The matrix admits exact UTF-8 String literals,
-initialized String locals, concatenation only when both operands are already
-Strings, String value equality and inequality, printing, required non-null
-String parameters/returns, and source-owned static String calls and predicates. Because ordinary Haxe
-without strict null safety permits `null` where `String` is expected, the
-compiler explicitly rejects a null String argument instead of generating a PHP
-call with different behavior. Calls from handwritten weakly typed PHP are a
-separate adapter/ABI concern and are not covered by this source-owned call
-claim.
+The matrix admits exact UTF-8 String literals, initialized String locals, and
+concatenation only when both operands are Strings. It also admits String value
+equality, inequality, less-than ordering, and printing. Required non-null
+String parameters and returns are admitted for source-owned static calls and
+predicates. Ordinary Haxe without strict null safety permits `null` where a
+`String` is expected. The compiler rejects that argument instead of generating
+a PHP call with different behavior. Calls from handwritten weakly typed PHP
+are a separate adapter and ABI concern. This source-owned call claim does not
+cover them.
 The numeric subset preserves Haxe grouping and operator precedence. It keeps
 `9 - (4 - 2)` grouped in the generated PHP. It also distinguishes
 `2 + 3 * 4` from `(2 + 3) * 4`. Safe constant multiplication uses native PHP.
@@ -144,15 +145,22 @@ before output or remain unproved.
 The ordering slice lowers native PHP comparisons only after both operands have
 exact Haxe `Int` type and pass the existing `Int` expression validator. A
 stock-Haxe-valid Float ordering fixture fails before output. Mixed numeric,
-String, null, object, coercion, spaceship, NaN, and general comparison behavior
-remain unproved.
+null, object, coercion, spaceship, NaN, and general comparison behavior remain
+unproved.
 Exact `Int` inequality uses the same operand validator and emits PHP `!==`.
 The first source-owned `Int` predicate returns that result as native PHP
 `bool`. A stock-Haxe-valid Float inequality fixture fails before output.
 Exact non-null `String` inequality likewise emits PHP `!==` only after both
 operands pass the admitted String validator. The source-owned String predicate
 uses native PHP `string` parameters. A null argument remains a compile-negative
-boundary, and String ordering or coercion remains unproved.
+boundary.
+Exact non-null `String` less-than ordering emits `strcmp(left, right) < 0` after
+both operands pass the same String validator. This preserves lexical ordering
+for numeric-looking Strings such as `"10" < "2"`. Direct PHP `<` returns a
+different result because PHP compares those values as numbers. The vertical
+also compares multi-byte UTF-8 values. String `<=`, `>`, and `>=`, null
+operands, locale-aware ordering, normalization, malformed UTF-8, and coercion
+remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The

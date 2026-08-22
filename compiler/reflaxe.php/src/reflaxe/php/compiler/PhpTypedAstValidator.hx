@@ -486,6 +486,9 @@ class PhpTypedAstValidator {
 			case TBinop(OpNotEq, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
 				validateStringValue(left);
 				validateStringValue(right);
+			case TBinop(OpLt, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
+				validateStringValue(left);
+				validateStringValue(right);
 			case TBinop(OpEq | OpNotEq, left, right):
 				if (isExactBoolValue(left) && isExactBoolValue(right)) {
 					validateBoolValue(left);

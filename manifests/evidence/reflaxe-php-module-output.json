@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-string-inequality-subject-passed-run-32506395234; predecessor-int-inequality-subject-passed-run-31552581279",
+    "exactPhp74And84Matrix": "current-string-less-than-subject-pending-hosted; predecessor-string-inequality-subject-passed-run-32506395234",
     "strictHaxe": "58-files-zero-findings",
     "firstMilliseconds": 1200,
     "repeatMilliseconds": 1030,
@@ -129,13 +129,14 @@
       "Runtime dividend division adds one method to the existing Int32 runtime artifact. It does not add another runtime owner or dependency edge.",
       "Bool equality changes only source-owned Calculator and Main module bytes. It adds no runtime artifact or dependency edge. The exact new module bytes passed the hosted matrix.",
       "Int inequality and the source-owned Int predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
-      "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix."
+      "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
+      "String less-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "4378d92aedf9d9b822f4b187815f244e56cc046c908ca9cb67376f719145e623"
+      "sha256": "99d99a0c2f135f8c0b53049f49e8d37607243f0db1137277637236f1d168b055"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -151,7 +152,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "7328424366bd758e2075b744818a3032fad1b73c58da96c7c7ea90b194ed5dcb"
+      "sha256": "9e240ad061749bab0dc7936e988428590a54812dd88aabaef912eda4d50b0d5f"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -163,7 +164,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "64968ba2c7d1135b13535b771cd1501edef905e796db0c7b327430201be8c338"
+      "sha256": "7476d6f207a11532d999de471f4e52fade47991266091da5fd2ba139e070a443"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -215,11 +216,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "d44c06a816797286014f88f2ef5f0bfcd9a98cf620add04f444b9e29a120f741"
+      "sha256": "a56331f9f834dcc6f84225a66d9bb60780382e8a21d572388de19827281c5a04"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "c539a2bd326c9b587a43b7440db1e6a518c16c98fc1f875456b8ac78421e9d8c"
+      "sha256": "43aa807db808c82f7f10b327ac18110cda01918d239d9d33d663566e4b9a322d"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -243,7 +244,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

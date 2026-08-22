@@ -540,6 +540,13 @@
       "state": "unverified-owned"
     },
     {
+      "category": "ordering",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "ordering.string-less-than",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
       "category": "runtime-stdlib",
       "evidence": "only exact Int-array length/read/write, direct result-discarded Int-array push/pop, and the compiler-owned Unicode-scalar String length helper exist",
       "id": "runtime.haxe-stdlib",
@@ -684,14 +691,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "86e0151e601ad8407bea5678393f7a5b5d00ae53de3b98ab723f774a890e6691"
+    "sha256": "17ddd9893dea5c45edbc21a97c27d02c96d71d9feb1bebef653e0b5aa2546c98"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 95,
+    "capabilityCount": 96,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 82,
+      "admitted": 83,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

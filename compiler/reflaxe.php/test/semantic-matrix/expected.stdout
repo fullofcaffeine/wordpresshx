@@ -30,3 +30,4 @@ int-runtime-division:pass
 bool-equality:pass
 int-inequality:pass
 string-inequality:pass
+string-less-than:pass

@@ -14,12 +14,16 @@ may use the generic compiler.
 ## What is qualified today
 
 The compiler now has a real Reflaxe registration and a deliberately bounded
-ordinary-Haxe path. Three Haxe modules lower through the generic PHP IR into one
-mapped PHP file per type plus a dependency-ordered bootstrap, then execute under
-native PHP. The checked semantic matrix currently covers small `Int` control
-flow and calls, fixed proven `Array<Int>` reads and length, and exact UTF-8 String
-concatenation/equality/inequality/printing plus required non-null String
-parameters/returns and source-owned static String calls and predicates. Exact non-null
+ordinary-Haxe path. Three Haxe modules lower through the generic PHP IR. The
+compiler writes one mapped PHP file per type and a dependency-ordered
+bootstrap. Native PHP then runs those files. The checked semantic matrix covers
+small `Int` control flow and calls. It also covers fixed proven `Array<Int>`
+reads and length. The String subset covers exact UTF-8 concatenation, equality,
+inequality, less-than ordering, and printing. It includes required non-null
+String parameters and returns for source-owned static calls and predicates.
+String less-than ordering uses `strcmp`, not PHP `<`. This preserves lexical
+ordering for numeric-looking Strings and multi-byte UTF-8 values. Other String
+ordering operators remain unqualified. Exact non-null
 `String.length` lowers through an on-demand compiler-owned PHP runtime helper
 with Unicode-scalar semantics and no `mbstring` dependency. The helper's
 artifact, dependency edge, ownership record, and source map are part of the
