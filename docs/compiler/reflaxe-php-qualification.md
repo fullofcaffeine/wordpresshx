@@ -19,11 +19,11 @@ compiler writes one mapped PHP file per type and a dependency-ordered
 bootstrap. Native PHP then runs those files. The checked semantic matrix covers
 small `Int` control flow and calls. It also covers fixed proven `Array<Int>`
 reads and length. The String subset covers exact UTF-8 concatenation, equality,
-inequality, `<` and `<=` ordering, and printing. It includes required non-null
+inequality, `<`, `<=`, and `>` ordering, and printing. It includes required non-null
 String parameters and returns for source-owned static calls and predicates.
-String `<` and `<=` ordering uses `strcmp`, not direct PHP comparison. This
+String `<`, `<=`, and `>` ordering uses `strcmp`, not direct PHP comparison. This
 preserves lexical ordering for numeric-looking Strings and multi-byte UTF-8
-values. String `>` and `>=` remain unqualified. Exact non-null
+values. String `>=` remains unqualified. Exact non-null
 `String.length` lowers through an on-demand compiler-owned PHP runtime helper
 with Unicode-scalar semantics and no `mbstring` dependency. The helper's
 artifact, dependency edge, ownership record, and source map are part of the

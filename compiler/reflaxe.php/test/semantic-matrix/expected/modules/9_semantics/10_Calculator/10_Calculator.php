@@ -31,6 +31,10 @@ class Hx_9_semantics_10_Calculator {
 		return \ReflaxePhpInt32Runtime::divide( $value, 2 );
 	}
 
+	public static function greaterString(string $left, string $right): bool {
+		return \strcmp( $left, $right ) > 0;
+	}
+
 	public static function isMissing(?string $value): bool {
 		return $value === null;
 	}

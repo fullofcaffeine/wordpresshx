@@ -210,14 +210,13 @@ truthiness, and object identity remain outside this subject.
 The ordering extension checks exact `Int` `<`, `>`, and `>=` conditions
 through one nested branch. Both operands must already pass the admitted `Int`
 expression validator. Float ordering has a compile-negative owner. The current
-84-record subject adds exact non-null String `<=`. It emits
-`strcmp(left, right) <= 0` to avoid PHP numeric-String coercion. The transcript
+85-record subject adds exact non-null String `>`. It emits
+`strcmp(left, right) > 0` to avoid PHP numeric-String coercion. The transcript
 checks numeric-looking values, equality, a false reverse case, and multi-byte
 UTF-8 ordering. A stock-Haxe-valid `Null<String>` fixture fails before PHP
-output. String `>` and `>=` remain outside this claim. The exact PHP
-7.4.33/8.4.7 matrix passed hosted run `32554533375` for the 84-record subject.
-The 83-record String `<` subject passed run `32541768625` and remains the
-immediate hosted predecessor.
+output. String `>=` remains outside this claim. Hosted PHP 7.4.33/8.4.7 proof
+is pending for the 85-record subject. The 84-record String `<=` subject passed
+run `32554533375` and remains the immediate hosted predecessor.
 
 The module-output tracer is a separate behavior owner. It begins with the same
 two-module Haxe source but protects artifact topology rather than adding a new

@@ -212,6 +212,8 @@ def main() -> None:
 		"stmt:return-bool:1618:1637": ("statement", 2, b"return left < right"),
 		"method:semantics.Calculator:lessOrEqualString": ("member", 1, b"public static function lessOrEqualString"),
 		"stmt:return-bool:1721:1741": ("statement", 2, b"return left <= right"),
+		"method:semantics.Calculator:greaterString": ("member", 1, b"public static function greaterString"),
+		"stmt:return-bool:1821:1840": ("statement", 2, b"return left > right"),
     }
     greeter_expected = {
         "class:semantics.Greeter:Greeter": ("declaration", 0, b"class Greeter"),
@@ -419,6 +421,9 @@ def main() -> None:
 		"stmt:if-bool:9560:9848": ("statement", 2, b"if (Calculator.lessOrEqualString"),
 		"stmt:sys-println:9747:9787": ("statement", 3, b'Sys.println("string-less-or-equal:pass")'),
 		"stmt:sys-println:9803:9843": ("statement", 3, b'Sys.println("string-less-or-equal:fail")'),
+		"stmt:if-bool:9852:10123": ("statement", 2, b"if (Calculator.greaterString"),
+		"stmt:sys-println:10024:10063": ("statement", 3, b'Sys.println("string-greater-than:pass")'),
+		"stmt:sys-println:10079:10118": ("statement", 3, b'Sys.println("string-greater-than:fail")'),
 	}
     verify_map(output_root, calculator_path, "semantics/Calculator.hx", sources["semantics/Calculator.hx"], calculator_expected,
         {
@@ -442,6 +447,7 @@ def main() -> None:
 			"stmt:return-bool:1521:1541",
 			"stmt:return-bool:1618:1637",
 			"stmt:return-bool:1721:1741",
+			"stmt:return-bool:1821:1840",
         })
     verify_map(
         output_root,

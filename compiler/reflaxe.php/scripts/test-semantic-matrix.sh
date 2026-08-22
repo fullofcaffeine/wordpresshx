@@ -133,6 +133,7 @@ assert_compile_negative "null-string-call" "reflaxe.php supports only String lit
 assert_compile_negative "null-string-predicate-call" "reflaxe.php supports only String literals, String locals, exact String concatenation, and source-owned static String calls without coercion"
 assert_compile_negative "nullable-string-ordering" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "nullable-string-less-or-equal" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
+assert_compile_negative "nullable-string-greater" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "foreign-string-call" "reflaxe.php supports only source-owned static String calls in the admitted semantic slice"
 assert_compile_negative "null-bool-call" "reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls"
 assert_compile_negative "bool-null-equality" "reflaxe.php equality requires exact Bool operands, exact Int operands for !=, or an exact Null<String> local compared with null"
