@@ -39,6 +39,10 @@ class Hx_9_semantics_10_Calculator {
 		return $value !== null;
 	}
 
+	public static function lessOrEqualString(string $left, string $right): bool {
+		return \strcmp( $left, $right ) <= 0;
+	}
+
 	public static function lessString(string $left, string $right): bool {
 		return \strcmp( $left, $right ) < 0;
 	}

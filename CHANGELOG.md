@@ -30,10 +30,11 @@ All notable project changes will be recorded here once versioning policy is acce
   direct-access guard, local autoload, and stable native bootstrap, with
   deterministic artifacts, PHP 7.4/8.4 native-caller coverage, and real
   WordPress 7.0 discovery/activation over MySQL and MariaDB.
-- Exact non-null Haxe String less-than ordering in the generic PHP compiler.
-  The compiler emits `strcmp(left, right) < 0` to preserve lexical ordering for
-  numeric-looking and multi-byte UTF-8 values. String `<=`, `>`, and `>=`, null
-  operands, coercion, locale rules, and normalization remain outside this claim.
+- Exact non-null Haxe String `<` and `<=` ordering in the generic PHP compiler.
+  The compiler compares `strcmp(left, right)` with zero. This preserves lexical
+  ordering for numeric-looking and multi-byte UTF-8 values. String `>`, `>=`,
+  null operands, coercion, locale rules, and normalization remain outside this
+  claim.
 
 ### Release status
 

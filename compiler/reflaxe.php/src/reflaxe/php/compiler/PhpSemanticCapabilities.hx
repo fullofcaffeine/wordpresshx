@@ -89,6 +89,7 @@ enum abstract PhpSemanticCapabilityId(String) to String {
 	var StringEquality = "string.equality";
 	var StringInequality = "string.inequality";
 	var StringLessThan = "ordering.string-less-than";
+	var StringLessOrEqual = "ordering.string-less-or-equal";
 	var Utf8StringLiteralRoundTrip = "string.utf8-literal-round-trip";
 	var UnicodeRuntime = "string.unicode-runtime";
 	var UnicodeScalarLength = "string.unicode-scalar-length";
@@ -227,6 +228,7 @@ class PhpSemanticCapabilities {
 			record(StringEquality, StringUnicode, Admitted, semantic, owner),
 			record(StringInequality, StringUnicode, Admitted, semantic, owner),
 			record(StringLessThan, Ordering, Admitted, semantic, owner),
+			record(StringLessOrEqual, Ordering, Admitted, semantic, owner),
 			record(Utf8StringLiteralRoundTrip, StringUnicode, Admitted, semantic, owner),
 			record(StringRuntimeHelper, RuntimeStdlib, Admitted, semantic, owner),
 			record(Int32RuntimeHelper, RuntimeStdlib, Admitted, semantic, owner),

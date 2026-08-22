@@ -542,6 +542,13 @@
     {
       "category": "ordering",
       "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
+      "id": "ordering.string-less-or-equal",
+      "owner": "reflaxe.php-runtime-semantics",
+      "state": "admitted"
+    },
+    {
+      "category": "ordering",
+      "evidence": "bash compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
       "id": "ordering.string-less-than",
       "owner": "reflaxe.php-runtime-semantics",
       "state": "admitted"
@@ -691,14 +698,14 @@
   "sourceAuthority": {
     "exportCommand": "haxe -cp src -cp test/semantic-matrix/tool --run MatrixExport",
     "path": "src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-    "sha256": "17ddd9893dea5c45edbc21a97c27d02c96d71d9feb1bebef653e0b5aa2546c98"
+    "sha256": "f0fc29b56e985cb684b20daccf984a5a51c8d17cfdf6e3dd86c5b7ace5ca051b"
   },
   "status": "incremental-runtime-semantics-hosted-pending",
   "summary": {
-    "capabilityCount": 96,
+    "capabilityCount": 97,
     "categoryCount": 13,
     "stateCounts": {
-      "admitted": 83,
+      "admitted": 84,
       "unsupported-owned": 6,
       "unverified-owned": 7
     }

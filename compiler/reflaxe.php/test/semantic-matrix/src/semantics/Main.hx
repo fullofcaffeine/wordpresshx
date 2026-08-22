@@ -315,5 +315,14 @@ class Main {
 		} else {
 			Sys.println("string-less-than:fail");
 		}
+
+		if (Calculator.lessOrEqualString("10", "2")
+			&& Calculator.lessOrEqualString("2", "2")
+			&& !Calculator.lessOrEqualString("2", "10")
+			&& Calculator.lessOrEqualString("→", "🚀")) {
+			Sys.println("string-less-or-equal:pass");
+		} else {
+			Sys.println("string-less-or-equal:fail");
+		}
 	}
 }

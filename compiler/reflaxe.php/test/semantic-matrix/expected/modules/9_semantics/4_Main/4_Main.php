@@ -289,5 +289,10 @@ class Hx_9_semantics_4_Main {
 		} else {
 			echo 'string-less-than:fail' . PHP_EOL;
 		}
+		if ( ( ( ( Hx_9_semantics_10_Calculator::lessOrEqualString( '10', '2' ) && Hx_9_semantics_10_Calculator::lessOrEqualString( '2', '2' ) ) && ! Hx_9_semantics_10_Calculator::lessOrEqualString( '2', '10' ) ) && Hx_9_semantics_10_Calculator::lessOrEqualString( '→', '🚀' ) ) ) {
+			echo 'string-less-or-equal:pass' . PHP_EOL;
+		} else {
+			echo 'string-less-or-equal:fail' . PHP_EOL;
+		}
 	}
 }

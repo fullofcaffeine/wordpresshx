@@ -20,7 +20,7 @@ The current admitted surface is deliberately bounded:
   multiplication, and unary negation,
   implemented by one mapped compiler runtime helper;
 - exact Haxe `String` locals, String-only concatenation without implicit
-  coercion, value equality, inequality, less-than ordering, and UTF-8
+  coercion, value equality, inequality, `<` and `<=` ordering, and UTF-8
   literal/`Sys.println` byte preservation;
 - required non-null `String` parameters/returns and source-owned static String
   calls lowered to native PHP `string` signatures when every Haxe argument is
@@ -117,7 +117,7 @@ exact length. It includes direct result-discarded push and non-empty pop.
 It also includes compiler-proven constant in-bounds reads and writes.
 The matrix admits exact UTF-8 String literals, initialized String locals, and
 concatenation only when both operands are Strings. It also admits String value
-equality, inequality, less-than ordering, and printing. Required non-null
+equality, inequality, `<` and `<=` ordering, and printing. Required non-null
 String parameters and returns are admitted for source-owned static calls and
 predicates. Ordinary Haxe without strict null safety permits `null` where a
 `String` is expected. The compiler rejects that argument instead of generating
@@ -154,13 +154,13 @@ Exact non-null `String` inequality likewise emits PHP `!==` only after both
 operands pass the admitted String validator. The source-owned String predicate
 uses native PHP `string` parameters. A null argument remains a compile-negative
 boundary.
-Exact non-null `String` less-than ordering emits `strcmp(left, right) < 0` after
-both operands pass the same String validator. This preserves lexical ordering
-for numeric-looking Strings such as `"10" < "2"`. Direct PHP `<` returns a
-different result because PHP compares those values as numbers. The vertical
-also compares multi-byte UTF-8 values. String `<=`, `>`, and `>=`, null
-operands, locale-aware ordering, normalization, malformed UTF-8, and coercion
-remain unproved.
+Exact non-null `String` `<` and `<=` ordering compares `strcmp(left, right)`
+with zero after both operands pass the same String validator. This preserves
+lexical ordering for numeric-looking Strings such as `"10" <= "2"`. Direct
+PHP `<=` returns a different result because PHP compares those values as
+numbers. The vertical also checks equality, a false reverse case, and
+multi-byte UTF-8 values. String `>`, `>=`, null operands, locale-aware
+ordering, normalization, malformed UTF-8, and coercion remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required
 `Null<String>` parameter, and compared with `null` using `==` or `!=`. The
