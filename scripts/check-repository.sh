@@ -6764,7 +6764,7 @@ assert reflaxe_php_semantic_receipt["receiptId"] == (
 )
 assert reflaxe_php_semantic_receipt["bead"] == "wordpresshx-reflaxe-php.3"
 assert reflaxe_php_semantic_receipt["status"] == (
-    "verified-local-hosted-pending"
+    "verified-hosted-exact-matrix"
 )
 assert reflaxe_php_semantic_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-runtime-semantics"
@@ -6795,14 +6795,50 @@ assert reflaxe_php_semantic_receipt["localEvidence"]["nativePhpStderr"] == (
 assert reflaxe_php_semantic_receipt["localEvidence"][
     "exactPhp74And84Matrix"
 ] == (
-    "current-string-greater-than-subject-pending-hosted; "
+    "current-string-greater-than-subject-passed-run-32599678054; "
     "predecessor-string-less-or-equal-subject-passed-run-32554533375"
 )
 assert reflaxe_php_semantic_receipt["localEvidence"]["coldClaim"] is False
 assert reflaxe_php_semantic_receipt["localEvidence"]["warmClaim"] is False
 assert reflaxe_php_semantic_receipt["review"]["distinctFromImplementation"] is True
 assert reflaxe_php_semantic_receipt["hostedVerification"] == {
-    "relation": "current-string-less-or-equal-subject",
+    "relation": "current-string-greater-than-subject",
+    "admittedCapabilityCount": 85,
+    "workflow": "Repository bootstrap",
+    "runId": 32599678054,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32599678054",
+    "commit": "6b5c788a9a0a7171dfdd8ecb32215209c2696025",
+    "status": "passed",
+    "job": {
+        "name": "haxe",
+        "jobId": 97095975557,
+        "url": (
+            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+            "32599678054/job/97095975557"
+        ),
+        "status": "passed",
+        "completedAt": "2026-08-22T21:44:50Z",
+    },
+    "exactPhpVersions": ["7.4.33", "8.4.7"],
+    "requiredSteps": [
+        "Install Haxe 4.3.7",
+        "Install exact reflaxe.php compiler dependency",
+        "Test generic PHP compiler package",
+        "Test clean standalone PHP compiler package artifact",
+        "Test exact PHP 7.4 and 8.4 runtime matrix",
+    ],
+    "scope": (
+        "the current 85 exact admitted semantic records with lexical String greater-than "
+        "for exact non-null String operands, a typed source-owned String predicate call, deterministic "
+        "generic compiler output, a clean offline package consumer, and native PHP "
+        "7.4.33/8.4.7 parser and runtime behavior only"
+    ),
+    "wordpressRuntimeCompatibilityAdvanced": False,
+    "officialHaxeQualificationAdvanced": False,
+    "publicationAuthorized": False,
+}
+assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
+    "relation": "predecessor-string-less-or-equal-subject",
     "admittedCapabilityCount": 84,
     "workflow": "Repository bootstrap",
     "runId": 32554533375,
@@ -6828,43 +6864,7 @@ assert reflaxe_php_semantic_receipt["hostedVerification"] == {
         "Test exact PHP 7.4 and 8.4 runtime matrix",
     ],
     "scope": (
-        "the current 84 exact admitted semantic records with lexical String less-or-equal "
-        "for exact non-null String operands, a typed source-owned String predicate call, deterministic "
-        "generic compiler output, a clean offline package consumer, and native PHP "
-        "7.4.33/8.4.7 parser and runtime behavior only"
-    ),
-    "wordpressRuntimeCompatibilityAdvanced": False,
-    "officialHaxeQualificationAdvanced": False,
-    "publicationAuthorized": False,
-}
-assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
-    "relation": "predecessor-string-less-than-subject",
-    "admittedCapabilityCount": 83,
-    "workflow": "Repository bootstrap",
-    "runId": 32541768625,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32541768625",
-    "commit": "343e40b705ac7d773a0975151ff6445b5fdde332",
-    "status": "passed",
-    "job": {
-        "name": "haxe",
-        "jobId": 96953013434,
-        "url": (
-            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
-            "32541768625/job/96953013434"
-        ),
-        "status": "passed",
-        "completedAt": "2026-08-22T01:09:09Z",
-    },
-    "exactPhpVersions": ["7.4.33", "8.4.7"],
-    "requiredSteps": [
-        "Install Haxe 4.3.7",
-        "Install exact reflaxe.php compiler dependency",
-        "Test generic PHP compiler package",
-        "Test clean standalone PHP compiler package artifact",
-        "Test exact PHP 7.4 and 8.4 runtime matrix",
-    ],
-    "scope": (
-        "the predecessor 83 exact admitted semantic records with lexical String less-than "
+        "the predecessor 84 exact admitted semantic records with lexical String less-or-equal "
         "for exact non-null String operands, a typed source-owned String predicate call, deterministic generic compiler output, "
         "a clean offline package consumer, and native PHP 7.4.33/8.4.7 parser and "
         "runtime behavior only"
@@ -6874,7 +6874,7 @@ assert reflaxe_php_semantic_receipt["previousHostedVerification"] == {
     "publicationAuthorized": False,
 }
 assert reflaxe_php_semantic_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressCompatibility": False,
     "publicationAuthorized": False,
@@ -6912,7 +6912,7 @@ assert reflaxe_php_module_output_receipt["receiptId"] == (
 )
 assert reflaxe_php_module_output_receipt["bead"] == "wordpresshx-reflaxe-php.7"
 assert reflaxe_php_module_output_receipt["status"] == (
-    "verified-local-hosted-pending"
+    "verified-hosted-exact-matrix"
 )
 assert reflaxe_php_module_output_receipt["scenario"]["owningSurface"] == (
     "compiler-adapter-and-package-install"
@@ -6950,7 +6950,44 @@ assert reflaxe_php_module_output_receipt["wordpressConsumer"] == {
     "wordpressCompatibilityClaimed": False,
 }
 assert reflaxe_php_module_output_receipt["hostedVerification"] == {
-    "relation": "current-string-less-or-equal-module-graph-subject",
+    "relation": "current-string-greater-than-module-graph-subject",
+    "workflow": "Repository bootstrap",
+    "runId": 32599678054,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32599678054",
+    "commit": "6b5c788a9a0a7171dfdd8ecb32215209c2696025",
+    "status": "passed",
+    "job": {
+        "name": "haxe",
+        "jobId": 97095975557,
+        "url": (
+            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
+            "32599678054/job/97095975557"
+        ),
+        "status": "passed",
+        "completedAt": "2026-08-22T21:44:50Z",
+    },
+    "exactPhpVersions": ["7.4.33", "8.4.7"],
+    "requiredSteps": [
+        "Install exact reflaxe.php compiler dependency",
+        "Test generic PHP compiler package",
+        "Test clean standalone PHP compiler package artifact",
+        "Test exact PHP 7.4 and 8.4 runtime matrix",
+        "Package the reflaxe.php module graph for WordPress",
+        "Test WordPress public PHP profile",
+        "Test public PHP on exact PHP 7.4 and 8.4",
+    ],
+    "scope": (
+        "the current compiler package with lexical String greater-than for exact non-null String operands "
+        "and a typed source-owned String predicate call, a clean package consumer, the exact "
+        "PHP runtime matrix, the deterministic WordPress package adapter, and the public "
+        "PHP profile only"
+    ),
+    "wordpressRuntimeCompatibilityAdvanced": False,
+    "officialHaxeQualificationAdvanced": False,
+    "publicationAuthorized": False,
+}
+assert reflaxe_php_module_output_receipt["previousHostedVerification"] == {
+    "relation": "predecessor-string-less-or-equal-module-graph-subject",
     "workflow": "Repository bootstrap",
     "runId": 32554533375,
     "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32554533375",
@@ -6977,44 +7014,7 @@ assert reflaxe_php_module_output_receipt["hostedVerification"] == {
         "Test public PHP on exact PHP 7.4 and 8.4",
     ],
     "scope": (
-        "the current compiler package with lexical String less-or-equal for exact non-null String operands "
-        "and a typed source-owned String predicate call, a clean package consumer, the exact "
-        "PHP runtime matrix, the deterministic WordPress package adapter, and the public "
-        "PHP profile only"
-    ),
-    "wordpressRuntimeCompatibilityAdvanced": False,
-    "officialHaxeQualificationAdvanced": False,
-    "publicationAuthorized": False,
-}
-assert reflaxe_php_module_output_receipt["previousHostedVerification"] == {
-    "relation": "predecessor-string-less-than-module-graph-subject",
-    "workflow": "Repository bootstrap",
-    "runId": 32541768625,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32541768625",
-    "commit": "343e40b705ac7d773a0975151ff6445b5fdde332",
-    "status": "passed",
-    "job": {
-        "name": "haxe",
-        "jobId": 96953013434,
-        "url": (
-            "https://github.com/fullofcaffeine/wordpresshx/actions/runs/"
-            "32541768625/job/96953013434"
-        ),
-        "status": "passed",
-        "completedAt": "2026-08-22T01:09:09Z",
-    },
-    "exactPhpVersions": ["7.4.33", "8.4.7"],
-    "requiredSteps": [
-        "Install exact reflaxe.php compiler dependency",
-        "Test generic PHP compiler package",
-        "Test clean standalone PHP compiler package artifact",
-        "Test exact PHP 7.4 and 8.4 runtime matrix",
-        "Package the reflaxe.php module graph for WordPress",
-        "Test WordPress public PHP profile",
-        "Test public PHP on exact PHP 7.4 and 8.4",
-    ],
-    "scope": (
-        "the predecessor compiler package with lexical String less-than for exact non-null String operands "
+        "the predecessor compiler package with lexical String less-or-equal for exact non-null String operands "
         "and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, "
         "the deterministic WordPress package adapter, and the public PHP profile only"
     ),
@@ -7026,7 +7026,7 @@ assert reflaxe_php_module_output_receipt["review"][
     "distinctFromImplementation"
 ] is True
 assert reflaxe_php_module_output_receipt["authority"] == {
-    "hostedProof": False,
+    "hostedProof": True,
     "officialHaxeQualification": False,
     "wordpressRuntimeCompatibility": False,
     "publicationAuthorized": False,

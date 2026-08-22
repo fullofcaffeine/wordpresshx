@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-local-hosted-pending",
+  "status": "verified-hosted-exact-matrix",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-string-greater-than-subject-pending-hosted; predecessor-string-less-or-equal-subject-passed-run-32554533375",
+    "exactPhp74And84Matrix": "current-string-greater-than-subject-passed-run-32599678054; predecessor-string-less-or-equal-subject-passed-run-32554533375",
     "strictHaxe": "58-files-zero-findings",
     "timingObservation": "not recorded for this slice; reduced-priority runs are not timing evidence",
     "coldClaim": false,
@@ -73,18 +73,18 @@
     "wordpressCompatibilityClaimed": false
   },
   "hostedVerification": {
-    "relation": "current-string-less-or-equal-module-graph-subject",
+    "relation": "current-string-greater-than-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 32554533375,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32554533375",
-    "commit": "bbfa2a36141c2c3d2db4e5b184b57507c2abec29",
+    "runId": 32599678054,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32599678054",
+    "commit": "6b5c788a9a0a7171dfdd8ecb32215209c2696025",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 96986527443,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32554533375/job/96986527443",
+      "jobId": 97095975557,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32599678054/job/97095975557",
       "status": "passed",
-      "completedAt": "2026-08-22T05:46:56Z"
+      "completedAt": "2026-08-22T21:44:50Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -99,7 +99,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "the current compiler package with lexical String less-or-equal for exact non-null String operands and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
+    "scope": "the current compiler package with lexical String greater-than for exact non-null String operands and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
@@ -131,7 +131,7 @@
       "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
       "String less-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
       "String less-or-equal changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
-      "String greater-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
+      "String greater-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix."
     ]
   },
   "authenticatedInputs": [
@@ -245,24 +245,24 @@
     }
   ],
   "authority": {
-    "hostedProof": false,
+    "hostedProof": true,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false
   },
   "previousHostedVerification": {
-    "relation": "predecessor-string-less-than-module-graph-subject",
+    "relation": "predecessor-string-less-or-equal-module-graph-subject",
     "workflow": "Repository bootstrap",
-    "runId": 32541768625,
-    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32541768625",
-    "commit": "343e40b705ac7d773a0975151ff6445b5fdde332",
+    "runId": 32554533375,
+    "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32554533375",
+    "commit": "bbfa2a36141c2c3d2db4e5b184b57507c2abec29",
     "status": "passed",
     "job": {
       "name": "haxe",
-      "jobId": 96953013434,
-      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32541768625/job/96953013434",
+      "jobId": 96986527443,
+      "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32554533375/job/96986527443",
       "status": "passed",
-      "completedAt": "2026-08-22T01:09:09Z"
+      "completedAt": "2026-08-22T05:46:56Z"
     },
     "exactPhpVersions": [
       "7.4.33",
@@ -277,7 +277,7 @@
       "Test WordPress public PHP profile",
       "Test public PHP on exact PHP 7.4 and 8.4"
     ],
-    "scope": "the predecessor compiler package with lexical String less-than for exact non-null String operands and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
+    "scope": "the predecessor compiler package with lexical String less-or-equal for exact non-null String operands and a typed source-owned String predicate call, a clean package consumer, the exact PHP runtime matrix, the deterministic WordPress package adapter, and the public PHP profile only",
     "wordpressRuntimeCompatibilityAdvanced": false,
     "officialHaxeQualificationAdvanced": false,
     "publicationAuthorized": false
