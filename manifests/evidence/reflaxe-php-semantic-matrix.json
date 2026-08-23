@@ -2,22 +2,22 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-SEMANTIC-MATRIX-001",
   "bead": "wordpresshx-reflaxe-php.3",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, a 64-bit PHP integer runtime, native PHP 8.4.7, and no mbstring dependency",
-    "input": "ordinary Haxe calls a source-owned Bool-returning function that compares exact non-null String parameters with >",
-    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST validation -> exact non-null String greater-than proof -> typed PHP strcmp call compared with zero -> deterministic mapped per-type artifacts -> php -l -> native PHP execution",
-    "observableResult": "stock Haxe and generated PHP print byte-identical thirty-five-line stdout ending string-greater-than:pass; PHP stderr stays empty",
-    "errorOrEdgeBehavior": "numeric-looking, equal, reverse, and multi-byte UTF-8 Strings retain lexical ordering; nullable operands, >=, locale rules, normalization, malformed UTF-8, coercion, objects, and foreign values remain rejected or unclaimed",
+    "input": "ordinary Haxe calls a source-owned Bool-returning function that compares exact non-null String parameters with >=",
+    "actionOrCompilationPath": "authored Haxe -> custom Reflaxe typed-AST validation -> exact non-null String greater-or-equal proof -> typed PHP strcmp call compared with zero -> deterministic mapped per-type artifacts -> php -l -> native PHP execution",
+    "observableResult": "stock Haxe and generated PHP print byte-identical thirty-six-line stdout ending string-greater-or-equal:pass; PHP stderr stays empty",
+    "errorOrEdgeBehavior": "numeric-looking, equal, reverse, and multi-byte UTF-8 Strings retain lexical ordering; nullable operands, locale rules, normalization, malformed UTF-8, coercion, objects, and foreign values remain rejected or unclaimed",
     "owningSurface": "compiler-adapter-and-runtime-semantics",
-    "protectedClaim": "Haxe non-null String greater-than ordering preserves the PHP target's lexical String semantics when both operands pass the admitted String validator and the source-owned predicate has required String parameters; nullable operands, >=, locale rules, normalization, malformed UTF-8, coercion, broad Haxe compatibility, and WordPress compatibility remain separate claims"
+    "protectedClaim": "Haxe non-null String greater-or-equal ordering preserves the PHP target's lexical String semantics when both operands pass the admitted String validator and the source-owned predicate has required String parameters; nullable operands, locale rules, normalization, malformed UTF-8, coercion, broad Haxe compatibility, and WordPress compatibility remain separate claims"
   },
   "redState": {
     "command": "cd compiler/reflaxe.php && haxe test/semantic-matrix/build.hxml -D reflaxe_php_output=<isolated-output>",
     "exitCode": 1,
-    "failure": "test/semantic-matrix/src/semantics/Calculator.hx:82: characters 10-22: reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
-    "reason": "the compiler had no exact non-null String greater-than expression path",
-    "stockHaxeOutcome": "passed-and-matched-the-manually-authored-thirty-five-line-transcript-ending-string-greater-than:pass-with-empty-stderr",
+    "failure": "test/semantic-matrix/src/semantics/Calculator.hx:86: characters 10-23: reflaxe.php supports only Bool literals, Bool locals, logical negation, lazy Bool conjunction/disjunction, and source-owned static Bool calls",
+    "reason": "the compiler had no exact non-null String greater-or-equal expression path",
+    "stockHaxeOutcome": "passed-and-matched-the-manually-authored-thirty-six-line-transcript-ending-string-greater-or-equal:pass-with-empty-stderr",
     "partialOutputPublished": false
   },
   "additionalRedStates": [
@@ -303,14 +303,16 @@
     "stock Haxe 4.3.7 and the manually authored transcript define \"10\" <= \"2\" and equality as true while the reverse case is false; native PHP 8.4.7 independently returns false for direct numeric-looking <= and true for strcmp <= 0",
     "the stock-Haxe-valid Null<String> less-or-equal fixture defines the rejected boundary for that operator",
     "stock Haxe 4.3.7 and the manually authored transcript define \"2\" > \"10\" as true while equality and the reverse case are false; native PHP 8.4.7 independently returns false for direct numeric-looking > and true for strcmp > 0",
-    "the stock-Haxe-valid Null<String> greater-than fixture defines the rejected boundary for the new operator"
+    "the stock-Haxe-valid Null<String> greater-than fixture defines the rejected boundary for that operator",
+    "stock Haxe 4.3.7 and the manually authored transcript define \"2\" >= \"10\" and equality as true while the reverse case is false; native PHP 8.4.7 independently returns false for direct numeric-looking >= and true for strcmp >= 0",
+    "the stock-Haxe-valid Null<String> greater-or-equal fixture defines the rejected boundary for the new operator"
   ],
   "capabilityMatrix": {
     "authority": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
     "generatedProjection": "compiler/reflaxe.php/semantic-capabilities.json",
-    "capabilityCount": 98,
+    "capabilityCount": 99,
     "categoryCount": 13,
-    "admittedCount": 85,
+    "admittedCount": 86,
     "unsupportedOwnedCount": 6,
     "unverifiedOwnedCount": 7,
     "sourceDerived": true,
@@ -323,9 +325,9 @@
     "stockHaxeDifferential": "byte-identical-stdout",
     "phpSyntax": "passed",
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-string-greater-than-subject-passed-run-32599678054; predecessor-string-less-or-equal-subject-passed-run-32554533375",
+    "exactPhp74And84Matrix": "current-string-greater-or-equal-subject-pending-hosted; predecessor-string-greater-than-subject-passed-run-32599678054",
     "sourceMap": "independently-verified",
-    "strictHaxe": "106-package-files-zero-findings",
+    "strictHaxe": "107-package-files-zero-findings",
     "timingObservation": "not recorded for this slice; reduced-priority runs are not timing evidence",
     "coldClaim": false,
     "warmClaim": false
@@ -493,7 +495,9 @@
       "Distinct review merged the < and <= validator cases because both operators have the same operand invariant. Lowering remains separate so each capability and emitted operator stays explicit.",
       "The positive tracer covers lexical true, equality, false reverse, and non-ASCII ordering. A separate stock-Haxe-valid Null<String> <= fixture fails before output.",
       "Exact non-null String greater-than reuses the shared exact-String ordering validator and lowers each operand once through strcmp(left, right) > 0. Direct PHP > is rejected because it compares numeric-looking Strings as numbers.",
-      "The positive tracer covers lexical true, equality false, reverse false, and non-ASCII ordering. A separate stock-Haxe-valid Null<String> > fixture fails before output."
+      "The positive tracer covers lexical true, equality false, reverse false, and non-ASCII ordering. A separate stock-Haxe-valid Null<String> > fixture fails before output.",
+      "Exact non-null String greater-or-equal reuses the shared exact-String ordering validator and lowers each operand once through strcmp(left, right) >= 0. Direct PHP >= is rejected because it compares numeric-looking Strings as numbers.",
+      "The positive tracer covers lexical true, equality, false reverse, and non-ASCII ordering. A separate stock-Haxe-valid Null<String> >= fixture fails before output."
     ],
     "remainingRisks": [
       "the capability registry is broader than its first admitted differential fixture and must expand incrementally",
@@ -501,7 +505,7 @@
       "general exception and null semantics, general collections, broad Unicode operations, and external I/O are not admitted",
       "runtime-dependent and safe-constant Int addition, subtraction, multiplication, and unary negation are admitted on 64-bit php74-modern-v1; runtime Int dividends are admitted for remainder and Std.int division only with a compiler-proven nonzero constant Int divisor; exact-Int ==, !=, <, <=, >, and >= conditions are admitted, plus one required-Int predicate call shape; runtime divisors, 32-bit PHP execution, zero divisors, overflow beyond the owned arithmetic helper and constant proofs, plain Float division, arbitrary Std.int calls, compound remainder assignment, other unary operators, coercion, mixed-type or non-Int comparisons, broader mutable values, and loop control remain unsupported or unverified",
       "only fixed Int-array literals, exact length, proven constant reads/writes, and direct result-discarded push or non-empty pop outside control flow are admitted; aliases, assignment/push/pop return values, empty pop, path-dependent mutation, dynamic access, and the Haxe Array runtime are not implemented",
-      "only exact UTF-8 literals, String locals, String-only concatenation/equality/inequality/<, <=, and > ordering/printing, required non-null String signatures, source-owned static calls and predicates, and non-null String.length scalar counting are admitted; the separate nullable subset is limited to initialized Null<String> locals, required source-owned signatures/calls, strict null equality/inequality, and one exact unary Null<String> identity return/call shape; other nullable return expressions, types, arities, mutation, optional/default parameters, dereference/flow narrowing, external weak-PHP callers, >=, locale-aware ordering, indexing, substring, normalization, grapheme semantics, malformed authored text, and implicit coercion are not implemented",
+      "only exact UTF-8 literals, String locals, String-only concatenation/equality/inequality/<, <=, >, and >= ordering/printing, required non-null String signatures, source-owned static calls and predicates, and non-null String.length scalar counting are admitted; the separate nullable subset is limited to initialized Null<String> locals, required source-owned signatures/calls, strict null equality/inequality, and one exact unary Null<String> identity return/call shape; other nullable return expressions, types, arities, mutation, optional/default parameters, dereference/flow narrowing, external weak-PHP callers, locale-aware ordering, indexing, substring, normalization, grapheme semantics, malformed authored text, and implicit coercion are not implemented",
       "only Bool literals/locals, logical negation, direct if conditions, required non-null Bool signatures, source-owned static calls, exact equality/inequality, lazy conjunction/disjunction, and typed parenthesized grouping are admitted; nullable Bool, truthiness, mutation, bitwise operations, object identity, and external weak-PHP callers are not implemented",
       "only a private constructor-set String field and required String constructor/instance method are admitted for objects; inheritance, interfaces, overrides, accessors, mutable/static fields, nullable objects, reflection, anonymous structures, and general object semantics remain unsupported",
       "only required unary String closures with read-only String captures and direct calls are admitted; mutable/by-reference or non-String captures, this/object capture, nested or escaping closures, optional/multiple parameters, recursion, variadics, foreign callables, and general function values remain unsupported",
@@ -522,13 +526,14 @@
       "Exact non-null String inequality now uses strict PHP !== after both operands pass the admitted String validator. A dedicated source-owned String predicate preserves the call boundary.",
       "Exact non-null String less-than now uses PHP strcmp compared with zero after both operands pass the admitted String validator. Numeric-looking and multi-byte UTF-8 vectors preserve lexical ordering without a runtime artifact.",
       "Exact non-null String less-or-equal uses PHP strcmp <= 0 after both operands pass the shared admitted String validator. Numeric-looking, equality, false reverse, and multi-byte UTF-8 vectors preserve lexical ordering without a runtime artifact.",
-      "Exact non-null String greater-than uses PHP strcmp > 0 after both operands pass the shared admitted String validator. Numeric-looking, equality false, reverse false, and multi-byte UTF-8 vectors preserve lexical ordering without a runtime artifact."
+      "Exact non-null String greater-than uses PHP strcmp > 0 after both operands pass the shared admitted String validator. Numeric-looking, equality false, reverse false, and multi-byte UTF-8 vectors preserve lexical ordering without a runtime artifact.",
+      "Exact non-null String greater-or-equal uses PHP strcmp >= 0 after both operands pass the shared admitted String validator. Numeric-looking, equality, false reverse, and multi-byte UTF-8 vectors preserve lexical ordering without a runtime artifact."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "071bc237c945bbe6c64b8dc6ca9ffdfdd996a104f39ee0b02e37be7651e768cc"
+      "sha256": "7a43391acac5753f4ca58ae8824a4d3ae6ec10d8958a423ec4cc2c844e3f051c"
     },
     {
       "path": "compiler/reflaxe.php/scripts/build-package.py",
@@ -556,7 +561,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "94d1d315fd61d9ae2ce1e214e2572ca3308947e8a323e62667c127ea97d4f671"
+      "sha256": "4b8e3c866db3218f572256a954cc2142fca472b507b0bd2e5a2c8ce708580f64"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -568,11 +573,11 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "00bf5fe66904eaba591d232e1d5b2369b1e7dd61e0261417329f493d776e8b87"
+      "sha256": "ae993bab1e19590530717c1f9a4dfcfa0b710cfe5d34c8420fdbdfb914f4fc62"
     },
     {
       "path": "compiler/reflaxe.php/semantic-capabilities.json",
-      "sha256": "ec51948dc1c73889515970311b3f329f03f4618b210a9b49cd884f08ac7ed531"
+      "sha256": "6216fa2223d5c04cd737cdc9bb018ecbca15959fe553bf604d1aee0cd309cffe"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpArtifactManifestWriter.hx",
@@ -592,7 +597,7 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSemanticCapabilities.hx",
-      "sha256": "399727c3b1e039a860fe0aa67297c1bc28ec7861fc7b56188f47768429d8400e"
+      "sha256": "cfbdf98917fe2ab61d1b01b1da2b7c4a4239eafa8d53ea2a1b4e0d29f8bff9a3"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpSourceRegistry.hx",
@@ -608,11 +613,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstLowerer.hx",
-      "sha256": "bda62975960acef2a8298ac33b8ceeadaa1c0e7ccba1ba92764ded34af55b6fb"
+      "sha256": "0632c4f7b9b7189fa6501729370addf04cd52d391e8e0a814349832be0b5fd75"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/PhpTypedAstValidator.hx",
-      "sha256": "cbbcffd589f94445603d86a12eddfbd232fab9aa6db2e2fae74f6875557305c9"
+      "sha256": "b489a78badb37302db629a4cf09b56a0eb44676d6996f4249e3758ce4916ad84"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/ir/PhpExpr.hx",
@@ -636,7 +641,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected.stdout",
-      "sha256": "9baf1197fbc62153ac15416d6274dd447d8fc04fdb3b606ecf503fd0d643eca6"
+      "sha256": "b3948f91b9457f1059e6c138b08328f95f40774b2f2d15b7153b2a98c18c3378"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/bootstrap.php",
@@ -644,11 +649,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "e243a059782320b4ce494dcdb881369f1427ac3c30f6f2f7bc94bd2eec346d81"
+      "sha256": "d1a95db0f540e9eb3bd2c5ab1a2344224219e505d6825072f66b3a462c481cf2"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "82b90399418af694b853e828e0a96bb7fa116d9dd49fa09a37fd95ee2180604e"
+      "sha256": "80767ed1a7a36444108861aebd2790e135d478faf13120f0a1f33256d890c246"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/7_Greeter/7_Greeter.php",
@@ -983,6 +988,14 @@
       "sha256": "1ef355583a9b5b1a863a62121dec9755f38c8a45cefdb9a9194dc58d72dcd10a"
     },
     {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/nullable-string-greater-or-equal/build.hxml",
+      "sha256": "50adab983b93e514fbe651f869ee0f1a04ccb10fc5856119a4a27ff0ba0f55f5"
+    },
+    {
+      "path": "compiler/reflaxe.php/test/semantic-matrix/negative/nullable-string-greater-or-equal/src/semantics/Main.hx",
+      "sha256": "9eec88ebdae9e8a138ee11cc3c2fa9cfa87a0b15638a695d3412bbbf7633a646"
+    },
+    {
       "path": "compiler/reflaxe.php/test/semantic-matrix/negative/nullable-string-greater/build.hxml",
       "sha256": "ef21866d6c327fa720cbabbe70232bad238fd5475307eb7ba9428dd52c2c8860"
     },
@@ -1080,7 +1093,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Calculator.hx",
-      "sha256": "68427f50257938177cdf281d925511e0b3126ce3fb5ec1bb606f0ce2dc288519"
+      "sha256": "07a1d45d79878d25695d1528f9b4960f127bf520114063a5cbbc459bfc33bc2a"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Greeter.hx",
@@ -1088,7 +1101,7 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/src/semantics/Main.hx",
-      "sha256": "a1d55daa36a3d9ae3b297cbefe1f9e25a000836b9580b7fc3ab16c9f3300ce75"
+      "sha256": "3d3dd7478ba6ce559d978b0035567bdfa24025fdd603a138aaeb1ac6c924244a"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/tool/MatrixExport.hx",
@@ -1096,7 +1109,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressCompatibility": false,
     "publicationAuthorized": false,

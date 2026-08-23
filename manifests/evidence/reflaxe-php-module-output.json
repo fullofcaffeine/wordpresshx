@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "REFLAXE-PHP-MODULE-OUTPUT-001",
   "bead": "wordpresshx-reflaxe-php.7",
-  "status": "verified-hosted-exact-matrix",
+  "status": "verified-local-hosted-pending",
   "scenario": {
     "preconditions": "Haxe 4.3.7, Reflaxe 4.0.0-beta, exact php74-modern-v1 with 64-bit PHP integers, and native PHP 8.4.7",
     "input": "the existing ordinary-Haxe tracer plus the two-module semantics.Main -> semantics.Calculator differential fixture",
@@ -38,7 +38,7 @@
     "deterministicCompilerTrees": 2,
     "deterministicWordPressPackages": 2,
     "nativePhpStderr": "empty",
-    "exactPhp74And84Matrix": "current-string-greater-than-subject-passed-run-32599678054; predecessor-string-less-or-equal-subject-passed-run-32554533375",
+    "exactPhp74And84Matrix": "current-string-greater-or-equal-subject-pending-hosted; predecessor-string-greater-than-subject-passed-run-32599678054",
     "strictHaxe": "58-files-zero-findings",
     "timingObservation": "not recorded for this slice; reduced-priority runs are not timing evidence",
     "coldClaim": false,
@@ -131,13 +131,14 @@
       "String inequality and the source-owned String predicate change only Calculator and Main module bytes. They add no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
       "String less-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
       "String less-or-equal changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
-      "String greater-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix."
+      "String greater-than changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes passed the hosted matrix.",
+      "String greater-or-equal changes only Calculator and Main module bytes. The generated strcmp call adds no runtime artifact or dependency edge, and the exact new bytes await hosted proof."
     ]
   },
   "authenticatedInputs": [
     {
       "path": "compiler/reflaxe.php/README.md",
-      "sha256": "071bc237c945bbe6c64b8dc6ca9ffdfdd996a104f39ee0b02e37be7651e768cc"
+      "sha256": "7a43391acac5753f4ca58ae8824a4d3ae6ec10d8958a423ec4cc2c844e3f051c"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-compiler-tracer.sh",
@@ -153,7 +154,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/test-semantic-matrix.sh",
-      "sha256": "94d1d315fd61d9ae2ce1e214e2572ca3308947e8a323e62667c127ea97d4f671"
+      "sha256": "4b8e3c866db3218f572256a954cc2142fca472b507b0bd2e5a2c8ce708580f64"
     },
     {
       "path": "compiler/reflaxe.php/scripts/test.sh",
@@ -165,7 +166,7 @@
     },
     {
       "path": "compiler/reflaxe.php/scripts/verify-semantic-matrix.py",
-      "sha256": "00bf5fe66904eaba591d232e1d5b2369b1e7dd61e0261417329f493d776e8b87"
+      "sha256": "ae993bab1e19590530717c1f9a4dfcfa0b710cfe5d34c8420fdbdfb914f4fc62"
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/compiler/CompilerInit.hx",
@@ -217,11 +218,11 @@
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/10_Calculator/10_Calculator.php",
-      "sha256": "e243a059782320b4ce494dcdb881369f1427ac3c30f6f2f7bc94bd2eec346d81"
+      "sha256": "d1a95db0f540e9eb3bd2c5ab1a2344224219e505d6825072f66b3a462c481cf2"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/modules/9_semantics/4_Main/4_Main.php",
-      "sha256": "82b90399418af694b853e828e0a96bb7fa116d9dd49fa09a37fd95ee2180604e"
+      "sha256": "80767ed1a7a36444108861aebd2790e135d478faf13120f0a1f33256d890c246"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/expected/runtime/ReflaxePhpInt32Runtime.php",
@@ -245,7 +246,7 @@
     }
   ],
   "authority": {
-    "hostedProof": true,
+    "hostedProof": false,
     "officialHaxeQualification": false,
     "wordpressRuntimeCompatibility": false,
     "publicationAuthorized": false

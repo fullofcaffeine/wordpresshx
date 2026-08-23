@@ -333,5 +333,14 @@ class Main {
 		} else {
 			Sys.println("string-greater-than:fail");
 		}
+
+		if (Calculator.greaterOrEqualString("2", "10")
+			&& Calculator.greaterOrEqualString("2", "2")
+			&& !Calculator.greaterOrEqualString("10", "2")
+			&& Calculator.greaterOrEqualString("🚀", "→")) {
+			Sys.println("string-greater-or-equal:pass");
+		} else {
+			Sys.println("string-greater-or-equal:fail");
+		}
 	}
 }

@@ -33,3 +33,4 @@ string-inequality:pass
 string-less-than:pass
 string-less-or-equal:pass
 string-greater-than:pass
+string-greater-or-equal:pass

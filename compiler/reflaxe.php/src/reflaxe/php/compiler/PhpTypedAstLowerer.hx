@@ -579,6 +579,9 @@ class PhpTypedAstLowerer {
 			case TBinop(OpGt, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
 				PhpSemanticCapabilities.requireAdmitted(StringGreaterThan);
 				PhpBinop(">", PhpFunctionCall("\\strcmp", [lowerStringValue(left), lowerStringValue(right)]), PhpInt(0));
+			case TBinop(OpGte, left, right) if (isExactStringValue(left) && isExactStringValue(right)):
+				PhpSemanticCapabilities.requireAdmitted(StringGreaterOrEqual);
+				PhpBinop(">=", PhpFunctionCall("\\strcmp", [lowerStringValue(left), lowerStringValue(right)]), PhpInt(0));
 			case TBinop(OpEq, left, right): lowerBoolEquality(expression, left, right, true);
 			case TBinop(OpNotEq, left, right): lowerBoolEquality(expression, left, right, false);
 			case TCall(target, arguments): lowerStaticApplicationBoolCall(expression, target, arguments);

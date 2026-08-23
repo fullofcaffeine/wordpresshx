@@ -154,12 +154,12 @@ Exact non-null `String` inequality likewise emits PHP `!==` only after both
 operands pass the admitted String validator. The source-owned String predicate
 uses native PHP `string` parameters. A null argument remains a compile-negative
 boundary.
-Exact non-null `String` `<`, `<=`, and `>` ordering compares `strcmp(left, right)`
+Exact non-null `String` `<`, `<=`, `>`, and `>=` ordering compares `strcmp(left, right)`
 with zero after both operands pass the same String validator. This preserves
 lexical ordering for numeric-looking Strings such as `"10" <= "2"`. Direct
 PHP `<=` returns a different result because PHP compares those values as
 numbers. The vertical also checks equality, a false reverse case, and
-multi-byte UTF-8 values. String `>=`, null operands, locale-aware
+multi-byte UTF-8 values. Null operands, locale-aware
 ordering, normalization, malformed UTF-8, and coercion remain unproved.
 The first explicit nullable slice is narrower: `Null<String>` locals may be
 initialized from `null` or an admitted String, passed to a source-owned required

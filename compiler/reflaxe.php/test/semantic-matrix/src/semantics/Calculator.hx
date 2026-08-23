@@ -81,4 +81,8 @@ class Calculator {
 	public static function greaterString(left:String, right:String):Bool {
 		return left > right;
 	}
+
+	public static function greaterOrEqualString(left:String, right:String):Bool {
+		return left >= right;
+	}
 }
