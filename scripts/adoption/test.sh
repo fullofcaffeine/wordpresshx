@@ -24,13 +24,22 @@ python3 "${repository_root}/scripts/adoption/refresh-evidence.py"
 python3 "${repository_root}/scripts/adoption/validate-architecture.py"
 
 php_mode=""
+php_runtime=""
 php_image="docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367"
-if command -v php >/dev/null 2>&1 && [[ "$(php -r 'echo PHP_VERSION;')" == "8.4.7" ]]; then
+force_container_php="${WORDPRESSHX_ADOPTION_FORCE_CONTAINER_PHP:-0}"
+if [[ "${force_container_php}" != "0" && "${force_container_php}" != "1" ]]; then
+	echo "WORDPRESSHX_ADOPTION_FORCE_CONTAINER_PHP must be 0 or 1" >&2
+	exit 1
+fi
+if [[ "${force_container_php}" == "0" ]] && command -v php >/dev/null 2>&1 && \
+	[[ "$(php -r 'echo PHP_VERSION;')" == "8.4.7" ]]; then
 	php_mode="local"
+	php_runtime="$(command -v php)"
 else
 	docker info >/dev/null
 	if [[ "$(docker run --rm --network none "${php_image}" php -r 'echo PHP_VERSION;')" == "8.4.7" ]]; then
 		php_mode="container"
+		php_runtime="${php_image}"
 	fi
 fi
 if [[ -z "${php_mode}" ]]; then
@@ -71,13 +80,12 @@ if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 	echo "ADR-015 static generator executed provider runtime code" >&2
 	exit 1
 fi
-if [[ "${php_mode}" == "local" ]]; then
-	python3 "${repository_root}/scripts/adoption/test-native-provider.py" \
-		"${generation_one}" "${test_root}/native-provider" php "${node_command}"
-else
-	echo "ADR-015 native provider probe currently requires local PHP 8.4.7" >&2
-	exit 1
-fi
+python3 "${repository_root}/scripts/adoption/test-native-provider.py" \
+	"${generation_one}" \
+	"${test_root}/native-provider" \
+	"${php_mode}" \
+	"${php_runtime}" \
+	"${node_command}"
 
 mutated_inputs="${test_root}/mutated-inputs"
 mkdir -p "${mutated_inputs}"
@@ -196,7 +204,7 @@ main_class="Main"
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 	--php "${test_root}/php"
 if [[ "${php_mode}" == "local" ]]; then
-	php "${test_root}/php/index.php" >"${test_root}/php.txt"
+	"${php_runtime}" "${test_root}/php/index.php" >"${test_root}/php.txt"
 else
 	docker run --rm --network none \
 		--mount "type=bind,src=${test_root},dst=/work,readonly" \

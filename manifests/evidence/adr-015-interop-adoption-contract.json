@@ -43,7 +43,7 @@
     },
     "nativeProviderProbe": {
       "path": "scripts/adoption/test-native-provider.py",
-      "sha256": "5ee80e10f7521943ea3f58b3a2871df49bfe13f880006ad8de6444f19efbda98"
+      "sha256": "701998154158849d3a990497dbbbb505481b98731239b4190f4e84ed684e87ba"
     },
     "ownershipProbe": {
       "path": "scripts/adoption/test-ownership.py",
@@ -55,7 +55,7 @@
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "bd50a0f8135c9351e3326e02d9ce01ca44d228a2a23a489b16a13777efe6c590"
+      "sha256": "f90ee00111968fa3903d7759852259f688f38c25c23bac03b40af9ea3ff9c975"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",

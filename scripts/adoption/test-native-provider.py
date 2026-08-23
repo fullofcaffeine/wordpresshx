@@ -122,7 +122,9 @@ try {
 
 
 def php_case(
-    php: str,
+    php_mode: str,
+    php_runtime: str,
+    test_root: Path,
     facade: Path,
     plugin: Path,
     scenario: str,
@@ -130,8 +132,34 @@ def php_case(
 ) -> dict[str, object]:
     environment = os.environ.copy()
     environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(sentinel)
+    arguments = ["-r", PHP_PROBE, str(facade), str(plugin), scenario]
+    if php_mode == "local":
+        command = [php_runtime, *arguments]
+    else:
+        mount_roots = (ROOT, test_root)
+        if any("," in str(root) for root in mount_roots):
+            raise AssertionError("PHP container mount path contains a comma")
+        command = [
+            "docker",
+            "run",
+            "--rm",
+            "--network",
+            "none",
+            "--env",
+            "WORDPRESSHX_ADOPTION_POISON_SENTINEL",
+            "--mount",
+            f"type=bind,source={ROOT},target={ROOT},readonly",
+            "--mount",
+            f"type=bind,source={test_root},target={test_root}",
+            "--workdir",
+            str(ROOT),
+            php_runtime,
+            "php",
+            *arguments,
+        ]
     result = checked_run(
-        [php, "-r", PHP_PROBE, str(facade), str(plugin), scenario], environment
+        command,
+        environment,
     )
     return json.loads(result.stdout)
 
@@ -170,13 +198,22 @@ def replace_exact(path: Path, old: str, new: str) -> None:
 
 
 def main() -> None:
-    if len(sys.argv) != 5:
-        raise SystemExit("usage: test-native-provider.py <stage> <work> <php> <node>")
+    if len(sys.argv) != 6:
+        raise SystemExit(
+            "usage: test-native-provider.py "
+            "<stage> <work> <php-mode> <php-runtime> <node>"
+        )
     stage = Path(sys.argv[1]).resolve()
     work = Path(sys.argv[2]).resolve()
+    test_root = Path(os.path.commonpath((stage, work))).resolve()
+    if test_root == Path(test_root.anchor):
+        raise AssertionError("native-provider stage and work need a bounded shared root")
     work.mkdir(parents=True, exist_ok=False)
-    php = sys.argv[3]
-    node = sys.argv[4]
+    php_mode = sys.argv[3]
+    if php_mode not in ("local", "container"):
+        raise AssertionError(f"unsupported PHP runtime mode: {php_mode}")
+    php_runtime = sys.argv[4]
+    node = sys.argv[5]
     bundle = verify_bundle(stage)
     contract = json.loads(
         (stage / bundle["records"]["contract"]["path"]).read_text(encoding="utf-8")
@@ -188,27 +225,59 @@ def main() -> None:
     browser_facade = stage / "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs"
     plugin = ROOT / "fixtures/adoption-contract/inputs/plugin.php"
     php_sentinel = work / "php-provider-executed"
-    outcome = php_case(php, php_facade, plugin, "success", php_sentinel)
+    outcome = php_case(
+        php_mode,
+        php_runtime,
+        test_root,
+        php_facade,
+        plugin,
+        "success",
+        php_sentinel,
+    )
     if outcome != {
         "outcome": "available",
         "titles": ["Provider event one", "Provider event two"],
     } or php_sentinel.read_text(encoding="utf-8") != "provider code executed":
         raise AssertionError(f"PHP native provider success mismatch: {outcome}")
-    failure = php_case(php, php_facade, plugin, "provider-error", php_sentinel)
+    failure = php_case(
+        php_mode,
+        php_runtime,
+        test_root,
+        php_facade,
+        plugin,
+        "provider-error",
+        php_sentinel,
+    )
     if failure != {
         "outcome": "unavailable",
         "message": "provider-call-failed",
         "previous": "InvalidArgumentException",
     }:
         raise AssertionError(f"PHP provider exception mismatch: {failure}")
-    absent = php_case(php, php_facade, work / "missing.php", "absence", php_sentinel)
+    absent = php_case(
+        php_mode,
+        php_runtime,
+        test_root,
+        php_facade,
+        work / "missing.php",
+        "absence",
+        php_sentinel,
+    )
     if absent["message"] != "provider-absent":
         raise AssertionError(f"PHP required absence failed open: {absent}")
 
     wrong_plugin = work / "wrong-plugin.php"
     wrong_plugin.write_bytes(plugin.read_bytes() + b"\n")
     before_wrong = php_sentinel.read_bytes()
-    wrong = php_case(php, php_facade, wrong_plugin, "wrong-artifact", php_sentinel)
+    wrong = php_case(
+        php_mode,
+        php_runtime,
+        test_root,
+        php_facade,
+        wrong_plugin,
+        "wrong-artifact",
+        php_sentinel,
+    )
     if wrong["message"] != "wrong-provider-artifact" or php_sentinel.read_bytes() != before_wrong:
         raise AssertionError(f"PHP wrong artifact executed or passed: {wrong}")
 
@@ -221,7 +290,13 @@ def main() -> None:
     )
     before_wrong_version = php_sentinel.read_bytes()
     wrong_version = php_case(
-        php, wrong_version_facade, plugin, "wrong-version", php_sentinel
+        php_mode,
+        php_runtime,
+        test_root,
+        wrong_version_facade,
+        plugin,
+        "wrong-version",
+        php_sentinel,
     )
     if (
         wrong_version["message"] != "wrong-provider-version"
@@ -244,7 +319,9 @@ def main() -> None:
         hashlib.sha256(missing_symbol_plugin.read_bytes()).hexdigest(),
     )
     missing_symbol = php_case(
-        php,
+        php_mode,
+        php_runtime,
+        test_root,
         missing_symbol_facade,
         missing_symbol_plugin,
         "missing-symbol",
