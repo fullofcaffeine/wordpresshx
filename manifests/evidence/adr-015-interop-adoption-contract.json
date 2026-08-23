@@ -3,7 +3,7 @@
   "receiptId": "ADR-015-INTEROP-ADOPTION-CONTRACT",
   "bead": "wordpresshx-adr-015",
   "status": "implemented-hosted-and-review-pending",
-  "observedAt": "2026-08-23T19:40:32Z",
+  "observedAt": "2026-08-23T21:18:01Z",
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "09ce5ecc5633a9a6253c8cc31cdab339e2f7d0f9cb0eb49da282914f5b20da39"
+      "sha256": "90f74764962186ae02530ef0b2e735aa21d5f7e8de7d2d02aa211e4319a4a429"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -108,7 +108,7 @@
     "productionOwnershipTransactionUsed": true,
     "realProviderUsed": false,
     "wordpressRuntimeUsed": false,
-    "outcome": "passed-local-current-hosted-pending"
+    "outcome": "passed-local-and-hosted-current"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
@@ -135,10 +135,10 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-current-main-run",
+    "runId": 32667029622,
+    "jobId": 97261932874,
+    "commit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
+    "status": "passed-current-main",
     "historicalRunId": 29716562008,
     "historicalJobId": 88270893309,
     "historicalCommit": "be8041d0d00c21d44fe2c0198e2d101c1f383908"
@@ -147,13 +147,13 @@
     "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
     "The runtime provider is synthetic. No public WordPress plugin or npm package is admitted.",
     "The isolated-reflection path, WordPress runtime, PHP 7.4, package consumer, and trust admission are not tested.",
-    "The current remediation still needs a hosted run and fresh Oracle acceptance."
+    "The current remediation still needs fresh Oracle acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-current-hosted-pending",
+    "typedCapabilityPrototype": "compile-tested-local-and-hosted-current",
     "noProviderExecution": "static-generation-tested-local",
     "fixtureGenerator": "deterministic-source-derived-tested-local",
     "productionGenerator": "not-tested",
