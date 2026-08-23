@@ -20,6 +20,7 @@ for command_name in cmp docker grep haxelib lix node python3; do
 	fi
 done
 
+python3 "${repository_root}/scripts/adoption/refresh-evidence.py"
 python3 "${repository_root}/scripts/adoption/validate-architecture.py"
 
 php_mode=""
@@ -55,6 +56,63 @@ if [[ "$("${node_command}" --version)" != "v22.17.0" ]]; then
 	fi
 fi
 
+export WORDPRESSHX_ADOPTION_POISON_SENTINEL="${test_root}/provider-executed"
+generation_one="${test_root}/generation-one"
+generation_two="${test_root}/generation-two"
+python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${generation_one}"
+python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${generation_two}"
+diff -ru "${generation_one}" "${generation_two}"
+for document in acme-calendar.contract.json acme-calendar.capability.json acme-calendar.review.json acme-calendar.bundle.json; do
+	cmp "${fixture_root}/contract/${document}" "${generation_one}/${document}"
+done
+cmp "${fixture_root}/contract/acme-calendar.generated-files.json" "${generation_one}/generated/_GeneratedFiles.json"
+"${node_command}" "${repository_root}/scripts/adoption/test-json-schema.cjs"
+if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
+	echo "ADR-015 static generator executed provider runtime code" >&2
+	exit 1
+fi
+if [[ "${php_mode}" == "local" ]]; then
+	python3 "${repository_root}/scripts/adoption/test-native-provider.py" \
+		"${generation_one}" "${test_root}/native-provider" php "${node_command}"
+else
+	echo "ADR-015 native provider probe currently requires local PHP 8.4.7" >&2
+	exit 1
+fi
+
+mutated_inputs="${test_root}/mutated-inputs"
+mkdir -p "${mutated_inputs}"
+cp -rf "${fixture_root}/inputs/." "${mutated_inputs}/"
+perl -pi -e 's/2\.4\.1/2.4.2/g' \
+	"${mutated_inputs}/package-metadata.json" \
+	"${mutated_inputs}/plugin.php"
+WORDPRESSHX_ADOPTION_INPUT_ROOT="${mutated_inputs}" \
+	python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${test_root}/mutated-generation"
+if cmp -s "${generation_one}/acme-calendar.contract.json" "${test_root}/mutated-generation/acme-calendar.contract.json"; then
+	echo "ADR-015 generator ignored an exact provider version/artifact change" >&2
+	exit 1
+fi
+python3 - "${test_root}/mutated-generation/acme-calendar.contract.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+contract = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+assert contract["provider"]["version"] == "2.4.2"
+assert contract["provider"]["artifactUrl"].endswith("acme-calendar.2.4.2.zip")
+PY
+
+invalid_inputs="${test_root}/invalid-inputs"
+mkdir -p "${invalid_inputs}"
+cp -rf "${fixture_root}/inputs/." "${invalid_inputs}/"
+perl -pi -e 's/count: number/count: string/' "${invalid_inputs}/index.d.ts"
+if WORDPRESSHX_ADOPTION_INPUT_ROOT="${invalid_inputs}" \
+	python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${test_root}/invalid-generation" \
+	>"${test_root}/invalid-generation.stdout" 2>"${test_root}/invalid-generation.stderr"; then
+	echo "ADR-015 generator accepted a changed provider signature without a type decision" >&2
+	exit 1
+fi
+grep -F 'provider signature changed without an exact type decision' "${test_root}/invalid-generation.stderr" >/dev/null
+
 typescript_root="${repository_root}/packages/gutenberg/build-tooling"
 typescript_command="${typescript_root}/node_modules/.bin/tsc"
 if [[ ! -x "${typescript_command}" ]]; then
@@ -65,10 +123,19 @@ fi
 (
 	cd "${repository_root}/packages/cli"
 	lix --silent download
+	mkdir -p "${test_root}/ownership-runtime"
+	"${scoped_haxe}" profiles/ownership-test.hxml -js "${test_root}/ownership-runtime/index.js"
 )
+python3 "${repository_root}/scripts/adoption/test-ownership.py" \
+	"${test_root}/ownership-runtime/index.js" \
+	"${generation_one}" \
+	"${test_root}/mutated-generation" \
+	"${test_root}/ownership-work" \
+	"${node_command}"
 
 haxelib run formatter --check \
 	-s "${fixture_root}/src" \
+	-s "${fixture_root}/test-support" \
 	-s "${fixture_root}/test" \
 	-s "${fixture_root}/test-negative"
 
@@ -76,16 +143,17 @@ if grep --recursive --line-number --extended-regexp \
 	--include='*.hx' \
 	'(^|[^[:alnum:]_])(Dynamic|Any|Reflect|untyped|cast)([^[:alnum:]_]|$)' \
 	"${fixture_root}/src" \
+	"${fixture_root}/test-support" \
 	"${fixture_root}/test" \
 	"${fixture_root}/test-negative"; then
 	echo "ADR-015 Haxe prototype contains a forbidden weak-type construct" >&2
 	exit 1
 fi
 
-export WORDPRESSHX_ADOPTION_POISON_SENTINEL="${test_root}/provider-executed"
 main_class="Main"
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \
+	-cp "${fixture_root}/test-support" \
 	-cp "${fixture_root}/test" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
@@ -94,8 +162,9 @@ main_class="Main"
 (
 	cd "${repository_root}/packages/cli"
 	"${scoped_haxe}" \
-		-cp ../../fixtures/adoption-contract/src \
-		-cp ../../fixtures/adoption-contract/test \
+			-cp ../../fixtures/adoption-contract/src \
+			-cp ../../fixtures/adoption-contract/test-support \
+			-cp ../../fixtures/adoption-contract/test \
 		-main "${main_class}" \
 		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 		-lib genes-ts \
@@ -121,6 +190,7 @@ main_class="Main"
 
 "${scoped_haxe}" \
 	-cp "${fixture_root}/src" \
+	-cp "${fixture_root}/test-support" \
 	-cp "${fixture_root}/test" \
 	-main "${main_class}" \
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
@@ -143,8 +213,9 @@ assert_compile_failure() {
 	shift
 	local diagnostic="${test_root}/${fixture}.diagnostic.txt"
 	if "${scoped_haxe}" \
-		-cp "${fixture_root}/src" \
-		-cp "${fixture_root}/test-negative/${fixture}" \
+			-cp "${fixture_root}/src" \
+			-cp "${fixture_root}/test-support" \
+			-cp "${fixture_root}/test-negative/${fixture}" \
 		-main Main \
 		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 		--interp >"${diagnostic}" 2>&1; then
@@ -165,13 +236,17 @@ assert_compile_failure direct_token_construction \
 assert_compile_failure wrong_capability \
 	'CalendarBadgeCapability should be wordpress.hx.adoption.prototype.CalendarReadCapability'
 assert_compile_failure cross_request_scope \
-	'FirstScope should be SecondScope'
+	'BrowserModuleScope should be wordpress.hx.adoption.prototype.PhpRequestScope'
 assert_compile_failure omitted_binding \
 	'Class<wordpress.hx.adoption.prototype.AcmeCalendarFacade> has no field magicLookup'
+assert_compile_failure observation_forgery \
+	'Cannot access private field exact'
+assert_compile_failure scope_forgery \
+	'Cannot access private constructor of wordpress.hx.adoption.prototype.PhpRequestScope'
 
 if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 	echo "ADR-015 default generation executed provider runtime code" >&2
 	exit 1
 fi
 
-echo "ADR-015 adoption contract passed on Haxe, Genes/strict TypeScript/Node, and PHP without provider execution"
+echo "ADR-015 adoption contract passed with static generation and isolated native-provider runtime probes"

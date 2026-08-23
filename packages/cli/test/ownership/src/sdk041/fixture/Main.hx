@@ -18,16 +18,20 @@ class Main {
 				throw new OwnershipFailure("usage: ownership-fixture <command> <project> [arguments]", "usage");
 			}
 			final command = arguments[0];
-			final owner = new ArtifactOwner(arguments[1], null, checkpoint);
+			final adoptionLayout = command == "publish-adoption" || command == "clean-adoption" || command == "recover-adoption";
+			final owner = new ArtifactOwner(arguments[1], adoptionLayout ? {
+				manifestPath: "generated/_GeneratedFiles.json",
+				transactionRoot: "generated/.wphx-transactions"
+			} : null, checkpoint);
 			final outcome:String = switch (command) {
-				case "publish":
+				case "publish" | "publish-adoption":
 					if (arguments.length != 4 && arguments.length != 5) {
 						throw new OwnershipFailure("publish requires <manifest> <stage> [pass|fail]", "usage");
 					}
 					final validatorMode = arguments.length == 5 ? arguments[4] : "pass";
 					final validators:Array<StageValidator> = [
 						{
-							validatorId: "fixture.bytes",
+							validatorId: adoptionLayout ? "adoption.bundle" : "fixture.bytes",
 							run: _ -> {
 								if (validatorMode == "fail") {
 									throw new OwnershipFailure("fixture validator failed", "fixture-validator");
@@ -36,7 +40,7 @@ class Main {
 						}
 					];
 					owner.publish(arguments[2], arguments[3], validators);
-				case "clean":
+				case "clean" | "clean-adoption":
 					if (arguments.length != 2) {
 						throw new OwnershipFailure("clean takes no additional arguments", "usage");
 					}
@@ -46,7 +50,7 @@ class Main {
 						throw new OwnershipFailure("adopt requires exact paths", "usage");
 					}
 					owner.adoptGenerated(arguments.slice(2));
-				case "recover":
+				case "recover" | "recover-adoption":
 					if (arguments.length != 2) {
 						throw new OwnershipFailure("recover takes no additional arguments", "usage");
 					}

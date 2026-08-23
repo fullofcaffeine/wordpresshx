@@ -5,27 +5,29 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+    "sha256": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d"
   },
   "provider": {
     "id": "acme-calendar",
     "version": "2.4.1",
-    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013"
+    "artifactSha256": "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd"
   },
   "generator": {
     "id": "wordpress-hx-adoption-generator",
     "version": "0.0.0-fixture",
-    "sha256": "b95a1d1e416525f981226b11a4945d62bb23be15e7fdba14242e8846a27353f1"
+    "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
   },
   "summary": {
-    "discovered": 7,
-    "included": 3,
+    "discovered": 9,
+    "included": 5,
     "omitted": 4,
     "conflicts": 1
   },
   "includedBindings": [
     "js.calendar.badge",
     "js.calendar.format-label",
+    "php.calendar.event.construct",
+    "php.calendar.event.title",
     "php.calendar.list-events"
   ],
   "omissions": [
@@ -34,10 +36,20 @@
       "target": "javascript",
       "kind": "exported-value",
       "code": "dynamic-property",
-      "reason": "the declaration exposes an open property bag with no closed provider schema",
+      "reason": "the declaration exposes unknown values that cannot become a precise Haxe surface",
       "sourceInputIds": [
         "browser-types"
       ],
+      "sourceSpans": [
+        {
+          "inputId": "browser-types",
+          "path": "fixtures/adoption-contract/inputs/index.d.ts",
+          "startByte": 235,
+          "endByte": 298,
+          "sha256": "c81db2669f8f9d86f84c80b7285b1c8778c197e29ac77240786730b65ecdead3"
+        }
+      ],
+      "signatureSha256": "b0ceaa05c7a159ee0d214d0b140a37057f2f63b4b5d7897c11e1f3b76c03bc70",
       "requiredAction": "obtain-authoritative-signature"
     },
     {
@@ -47,8 +59,26 @@
       "code": "magic-member",
       "reason": "the provider does not publish a finite method and return contract",
       "sourceInputIds": [
-        "php-stubs"
+        "php-stubs",
+        "plugin-source"
       ],
+      "sourceSpans": [
+        {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 174,
+          "endByte": 242,
+          "sha256": "b14ac9cb6855ca2f2dc2174c5ec1bbf97ffef07a79bff0d87fd2f242178d6a08"
+        },
+        {
+          "inputId": "plugin-source",
+          "path": "fixtures/adoption-contract/inputs/plugin.php",
+          "startByte": 445,
+          "endByte": 517,
+          "sha256": "340013659975f2df28b3a74566785f7b2165ce02d14a7db4826a4b85d29ceb8f"
+        }
+      ],
+      "signatureSha256": "0e8cc4a06dd2d62debcf762d02c462e50c17d534de1b9ff2c96ef713bf042cfc",
       "requiredAction": "omit"
     },
     {
@@ -56,11 +86,28 @@
       "target": "php",
       "kind": "function",
       "code": "conflicting-authority",
-      "reason": "the authoritative stub and source signature disagree, so neither shape is emitted",
+      "reason": "the authoritative stub and runtime-source signatures disagree",
       "sourceInputIds": [
         "php-stubs",
         "plugin-source"
       ],
+      "sourceSpans": [
+        {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 317,
+          "endByte": 370,
+          "sha256": "0a9663d425af87f55c7db728433e9f188b2d79f39a79aa2a6e865da9a7c01a18"
+        },
+        {
+          "inputId": "plugin-source",
+          "path": "fixtures/adoption-contract/inputs/plugin.php",
+          "startByte": 885,
+          "endByte": 935,
+          "sha256": "3b2e9c27852e090b11e10fb11f6592953be80bf2471b90046566f85736ba9c2e"
+        }
+      ],
+      "signatureSha256": "09aa3b333963806ff5dec6f4bd1e5ee22bd146baf2b3228a5290dedacf4bbb3a",
       "requiredAction": "obtain-authoritative-signature"
     },
     {
@@ -68,10 +115,28 @@
       "target": "php",
       "kind": "function",
       "code": "by-reference-variadic",
-      "reason": "the v1 ABI algebra does not prove aliasing and variadic reference behavior",
+      "reason": "the v1 ABI algebra does not prove variadic reference aliasing",
       "sourceInputIds": [
-        "php-stubs"
+        "php-stubs",
+        "plugin-source"
       ],
+      "sourceSpans": [
+        {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 372,
+          "endByte": 419,
+          "sha256": "a0fe155f55593b17d5ccae0d54043c864b75e0cd4b5305ff2dd53a2c5ab85da6"
+        },
+        {
+          "inputId": "plugin-source",
+          "path": "fixtures/adoption-contract/inputs/plugin.php",
+          "startByte": 966,
+          "endByte": 1013,
+          "sha256": "dcd217cb9579ec103185b345019a600042c1ca06eab28d5f8b3071b0b32484a0"
+        }
+      ],
+      "signatureSha256": "ae3d7f931b65f018b9134b97f022964c3db80218e6c5094fdabcbf101ecff791",
       "requiredAction": "supply-curated-precise-contract"
     }
   ],
@@ -80,6 +145,20 @@
       "nativeName": "Acme\\Calendar\\conditional_helper",
       "strongerInputId": "php-stubs",
       "weakerInputId": "plugin-source",
+      "strongerSourceSpan": {
+        "inputId": "php-stubs",
+        "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+        "startByte": 317,
+        "endByte": 370,
+        "sha256": "0a9663d425af87f55c7db728433e9f188b2d79f39a79aa2a6e865da9a7c01a18"
+      },
+      "weakerSourceSpan": {
+        "inputId": "plugin-source",
+        "path": "fixtures/adoption-contract/inputs/plugin.php",
+        "startByte": 885,
+        "endByte": 935,
+        "sha256": "3b2e9c27852e090b11e10fb11f6592953be80bf2471b90046566f85736ba9c2e"
+      },
       "resolution": "omit-binding-and-report"
     }
   ],
@@ -96,5 +175,5 @@
     "productionSupported": false,
     "implementationOwnershipTransferred": false
   },
-  "reportDigest": "48b3fd951636e535d7ab114804bc0847e7575240be8e40f02676613646a4ca71"
+  "reportDigest": "1349b1e508b62d770afb181a5163ce91d65335daa2f3aaebfb7618156e3a14be"
 }

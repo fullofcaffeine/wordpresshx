@@ -5,42 +5,40 @@ import wordpress.hx.adoption.prototype.AcmeCalendar;
 import wordpress.hx.adoption.prototype.AcmeCalendar.AcmeCalendarFacade;
 import wordpress.hx.adoption.prototype.AcmeCalendar.CalendarBadgeProps;
 import wordpress.hx.adoption.prototype.AcmeCalendar.EventQuery;
-import wordpress.hx.adoption.prototype.Adoption;
 import wordpress.hx.adoption.prototype.Adoption.CapabilityAvailability;
 import wordpress.hx.adoption.prototype.Adoption.CapabilityFailureTools;
-import wordpress.hx.adoption.prototype.Adoption.RequestScope;
-
-final class RequestOne {}
+import wordpress.hx.adoption.prototype.Adoption.LifecycleScope;
+import wordpress.hx.adoption.prototype.testing.TargetProbe;
 
 final class Main {
 	static function main():Void {
-		final scope:RequestScope<RequestOne> = Adoption.beginRequest("request-one");
-		final exact = Adoption.runtime(scope,
-			Adoption.observeExact("acme-calendar", "2.4.1", "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013",
-				["js.calendar.badge", "js.calendar.format-label", "php.calendar.list-events"]));
-
+		final php = TargetProbe.exactPhpRequest();
+		final browser = TargetProbe.exactBrowserModule();
 		final lines = [];
-		switch exact.probe(AcmeCalendar.provider, AcmeCalendar.read) {
+		switch php.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read) {
 			case Available(token):
-				lines.push("exact|available|" + AcmeCalendarFacade.listEvents(scope, token, new EventQuery(12)));
+				lines.push("exact|available|" + AcmeCalendarFacade.listEvents(php.scope, token, new EventQuery(12)));
 			case Unavailable(reason):
 				throw new haxe.Exception("exact provider unexpectedly unavailable: " + CapabilityFailureTools.describe(reason));
 		}
-		switch exact.probe(AcmeCalendar.provider, AcmeCalendar.badge) {
+		switch browser.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge) {
 			case Available(token):
-				lines.push("browser|available|" + AcmeCalendarFacade.renderBadge(scope, token, new CalendarBadgeProps(7, "Due this week")));
+				lines.push("browser|available|" + AcmeCalendarFacade.renderBadge(browser.scope, token, new CalendarBadgeProps(7, "Due this week")));
 			case Unavailable(reason):
 				throw new haxe.Exception("browser capability unexpectedly unavailable: " + CapabilityFailureTools.describe(reason));
 		}
 
-		final absent = Adoption.runtime(scope, Adoption.observeAbsent());
-		lines.push("absent|" + describe(absent.probe(AcmeCalendar.provider, AcmeCalendar.read)));
-		final wrongVersion = Adoption.runtime(scope,
-			Adoption.observeExact("acme-calendar", "2.5.0", "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013", ["php.calendar.list-events"]));
-		lines.push("wrong-version|" + describe(wrongVersion.probe(AcmeCalendar.provider, AcmeCalendar.read)));
-		final missingBinding = Adoption.runtime(scope,
-			Adoption.observeExact("acme-calendar", "2.4.1", "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013", ["js.calendar.format-label"]));
-		lines.push("missing-binding|" + describe(missingBinding.probe(AcmeCalendar.provider, AcmeCalendar.badge)));
+		final requiredAbsent = TargetProbe.absentPhpRequest();
+		lines.push("required-absent|" + describe(requiredAbsent.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read)));
+		final optionalAbsent = TargetProbe.absentBrowserModule();
+		lines.push("optional-absent|" + describe(optionalAbsent.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge)));
+		final wrongVersion = TargetProbe.wrongVersionPhpRequest();
+		lines.push("wrong-version|" + describe(wrongVersion.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read)));
+		final missingBinding = TargetProbe.missingBadgeBindingBrowserModule();
+		lines.push("missing-binding|" + describe(missingBinding.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge)));
+		lines.push("same-request-instance|" + rejected(TargetProbe.sameRequestInstanceReuseRejected()));
+		lines.push("browser-reload|" + rejected(TargetProbe.browserReloadRejected()));
+		lines.push("stale-process|" + rejected(TargetProbe.staleProcessRejected()));
 
 		final output = lines.join("\n") + "\n";
 		#if js
@@ -50,10 +48,14 @@ final class Main {
 		#end
 	}
 
-	static function describe<Provider, Capability, Scope>(availability:CapabilityAvailability<Provider, Capability, Scope>):String {
+	static function describe<Provider, Capability, Scope:LifecycleScope>(availability:CapabilityAvailability<Provider, Capability, Scope>):String {
 		return switch availability {
 			case Available(_): "available";
 			case Unavailable(reason): CapabilityFailureTools.describe(reason);
 		};
+	}
+
+	static function rejected(value:Bool):String {
+		return value ? "rejected" : "accepted-incorrectly";
 	}
 }

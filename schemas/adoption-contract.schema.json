@@ -59,20 +59,20 @@
   "$defs": {
     "id": {
       "type": "string",
-      "pattern": "[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*"
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
     },
     "sha256": {
       "type": "string",
-      "pattern": "[0-9a-f]{64}"
+      "pattern": "^[0-9a-f]{64}$"
     },
     "semver": {
       "type": "string",
-      "pattern": "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?"
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
     },
     "relativePath": {
       "type": "string",
       "minLength": 1,
-      "pattern": "[^/][^\\\\]*"
+      "pattern": "^[^/][^\\\\]*$"
     },
     "profileRef": {
       "type": "object",
@@ -84,7 +84,7 @@
         },
         "catalogRevision": {
           "type": "string",
-          "pattern": "[a-z0-9-]+/catalog-v[1-9][0-9]*"
+          "pattern": "^[a-z0-9-]+/catalog-v[1-9][0-9]*$"
         },
         "catalogSha256": {
           "$ref": "#/$defs/sha256"
@@ -100,6 +100,7 @@
         "version",
         "artifactUrl",
         "artifactSha256",
+        "artifactFormat",
         "sourceUrl",
         "sourceRevision",
         "sourceSha256",
@@ -123,14 +124,17 @@
         },
         "artifactUrl": {
           "type": "string",
-          "pattern": "https://\\S+"
+          "pattern": "^https://\\S+$"
         },
         "artifactSha256": {
           "$ref": "#/$defs/sha256"
         },
+        "artifactFormat": {
+          "const": "deterministic-fixture-zip-v1"
+        },
         "sourceUrl": {
           "type": "string",
-          "pattern": "https://\\S+"
+          "pattern": "^https://\\S+$"
         },
         "sourceRevision": {
           "type": "string",
@@ -313,7 +317,51 @@
       "required": ["kind"],
       "properties": {
         "kind": {
-          "enum": ["void", "bool", "int32", "float64", "string"]
+          "enum": [
+            "void",
+            "bool",
+            "string",
+            "javascript-number",
+            "javascript-object",
+            "php-int"
+          ]
+        }
+      }
+    },
+    "sourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputId", "path", "startByte", "endByte", "sha256"],
+      "properties": {
+        "inputId": {
+          "$ref": "#/$defs/id"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "startByte": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endByte": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "sourceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signatureSha256", "span"],
+      "properties": {
+        "signatureSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "span": {
+          "$ref": "#/$defs/sourceSpan"
         }
       }
     },
@@ -417,7 +465,7 @@
         },
         "haxeName": {
           "type": "string",
-          "pattern": "[A-Za-z_][A-Za-z0-9_]*"
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
         },
         "requirement": {
           "enum": ["required", "optional"]
@@ -440,6 +488,7 @@
         "nativeName",
         "haxePath",
         "sourceInputId",
+        "sourceEvidence",
         "capabilityId",
         "parameters",
         "returnType",
@@ -468,10 +517,13 @@
         },
         "haxePath": {
           "type": "string",
-          "pattern": "[A-Za-z_][A-Za-z0-9_.]*"
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.]*$"
         },
         "sourceInputId": {
           "$ref": "#/$defs/id"
+        },
+        "sourceEvidence": {
+          "$ref": "#/$defs/sourceEvidence"
         },
         "capabilityId": {
           "$ref": "#/$defs/id"

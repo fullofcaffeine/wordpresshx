@@ -6,7 +6,7 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+    "sha256": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d"
   },
   "profile": {
     "id": "wp70-release",
@@ -16,13 +16,33 @@
   "provider": {
     "id": "acme-calendar",
     "version": "2.4.1",
-    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013"
+    "artifactSha256": "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd"
   },
   "authority": {
     "tokenScope": "declared-per-capability",
     "tokenSerializable": false,
     "tokenCacheable": false,
     "staleTokenAuthority": false,
+    "observationOwner": "target-runtime-adapter",
+    "callerSuppliedFactsAllowed": false,
+    "lifecycleIdentity": "generative-runtime-nonce",
+    "scopeTypes": [
+      "browser-module",
+      "php-process",
+      "php-request"
+    ],
+    "sameNominalScopeInstanceReusable": false,
+    "tokenBoundFacts": [
+      "artifact-sha256",
+      "bundle-digest",
+      "capability-id",
+      "lifecycle-kind",
+      "observed-bindings",
+      "provider-id",
+      "provider-version",
+      "runtime-nonce"
+    ],
+    "bundleVerification": "required-before-observation",
     "absenceBehavior": "typed-unavailable-with-core-fallback",
     "providerTrustAdmission": "separate-sdk-117-requirement"
   },
@@ -51,13 +71,17 @@
       "id": "calendar.read.php",
       "target": "php",
       "scope": "request",
-      "optional": true,
+      "optional": false,
       "probe": {
         "kind": "wordpress-plugin-and-symbols",
         "requiredBindings": [
+          "php.calendar.event.construct",
+          "php.calendar.event.title",
           "php.calendar.list-events"
         ],
         "requiredNativeSymbols": [
+          "Acme\\Calendar\\Event::__construct",
+          "Acme\\Calendar\\Event::title",
           "Acme\\Calendar\\list_events"
         ],
         "versionMatch": "exact",
@@ -66,5 +90,5 @@
       }
     }
   ],
-  "capabilitySetDigest": "0ab815d115f7dbad055a556e1cb5ccf3982c8900fc2ce8ce1111736f6f8dc383"
+  "capabilitySetDigest": "1fbfe868efbd54fd37af3f3b8933ab72f3c79b7a8bcbe8d4a1c03ca258156e54"
 }

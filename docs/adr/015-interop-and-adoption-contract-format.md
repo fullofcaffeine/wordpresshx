@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Date: 2026-07-19
-- Owners/reviewers: Marcelo Serpa (product direction), Codex (architecture and executable-fixture implementation), separate Oracle interop review pending
+- Owners/reviewers: repository owner (product direction), Codex (architecture and executable-fixture implementation), separate Oracle interop review pending
 - Bead: `wordpresshx-adr-015`
 - Profiles/layers: PHP adoption, JavaScript/TypeScript adoption, WordPress plugins, application facades, reusable companion packages, CLI generation, runtime capabilities
 - Supersedes: none; makes PRD §29.1's adoption boundary concrete
@@ -335,19 +335,29 @@ Costs and constraints:
 
 ## Evidence and commands
 
-The bounded synthetic `Acme Calendar` proof lives in
-[`fixtures/adoption-contract`](../../fixtures/adoption-contract/README.md). It
-contains PHP stubs, TypeScript declarations, package metadata, and poison
-provider source that would write a sentinel if executed. Static generation
-admits three precise bindings and reports four omissions, including one
-cross-source conflict. It does not use or execute a real provider.
+The synthetic `Acme Calendar` proof lives in
+[`fixtures/adoption-contract`](../../fixtures/adoption-contract/README.md).
+It contains exact PHP and JavaScript sources, declarations, and package metadata.
 
-The Haxe prototype has private token construction and nominal provider,
-capability, and request-scope parameters. Four negative fixtures prove direct
-token construction, wrong-capability use, cross-request use, and access to an
-omitted member fail during Haxe typing. One canonical transcript is
-byte-identical on Haxe 4.3.7 interpretation, Genes 1.36.3 plus strict TypeScript
-5.9.3/Node 22.17.0, and stock-Haxe PHP 8.4.7.
+The static generator derives nine candidates from exact source spans.
+It admits five bindings and reports four omissions, including one source conflict.
+The generator does not execute the provider.
+
+One bundle digest binds the contract, capability set, review report, generated facades, and ADR-007 ownership manifest.
+The provider artifact is a deterministic ZIP of the runtime fixture files.
+
+Trusted test adapters create PHP-request, PHP-process, and browser-module scopes.
+Each scope instance has a new private nonce.
+Tokens bind that nonce and all exact provider, bundle, capability, and binding facts.
+
+Six negative fixtures reject observation forgery, scope forgery, token construction, wrong capabilities, cross-target use, and omitted members.
+Runtime cases reject same-type scope reuse, browser reload, and stale PHP process authority.
+
+Generated PHP and JavaScript facades call the native fixture providers.
+The cases cover success, absence, wrong version, wrong artifact, missing symbols, arrays, and provider exceptions.
+
+The production ADR-007 owner covers no-op regeneration, updates, manual edits, removal, crash recovery, and provider-owned files.
+The exact Genes identity comes from `packages/cli/dependency-lock.json`.
 
 ```bash
 python3 scripts/adoption/validate-architecture.py
@@ -355,15 +365,12 @@ bash scripts/adoption/test.sh
 bash scripts/check-repository.sh
 ```
 
-The independent Python validator authenticates every input, schema, fixture,
-contract, capability set, review report, and architecture invariant, then
-rejects thirty-one independent mutations. The focused hosted job is
-`adoption-contract`. Public run
-[`29716562008`](https://github.com/fullofcaffeine/wordpresshx/actions/runs/29716562008),
-job `88270893309`, passed the complete corpus at implementation commit
-`be8041d0d00c21d44fe2c0198e2d101c1f383908`. Hosted execution and fresh
-independent review are separate gates; this ADR remains proposed pending that
-fresh review.
+The independent Python validator checks every input, schema, record, bundle member, and architecture rule.
+It rejects 33 independent document mutations.
+
+The focused hosted job is `adoption-contract`.
+The evidence receipt records the only current hosted status and exact run identity.
+Fresh hosted proof for this remediation and a fresh independent review are still required.
 
 The static WordPress metadata boundary follows the official
 [plugin header requirements](https://developer.wordpress.org/plugins/plugin-basics/header-requirements/)
@@ -409,14 +416,9 @@ The content-addressed GPT-5.6 Oracle review dated 2026-07-26 returned
 [`ORACLE-REVIEW.md`](../../review/oracle/results/ORACLE-REVIEW.md) and
 [`adr-decisions.json`](../../review/oracle/results/adr-decisions.json).
 
-Remediation bead `wordpresshx-g6.1` owns ADR015-F001 through ADR015-F010. The
-next proof must derive its inventory and loss report from real provider inputs,
-preserve only source-authorized types, run an actual no-execution generator,
-mint capabilities from target-owned lifecycle observations, call native
-providers through generated facades, and bind contracts, capabilities, review,
-facades, and ownership under one digest root. It must also define observable
-deployed-artifact identity, anchor public schemas, exercise ownership rollback,
-and eliminate exact-tool/evidence-stage drift.
+Remediation bead `wordpresshx-g6.1` owns ADR015-F001 through ADR015-F010.
+The current implementation addresses all ten findings in the synthetic fixture.
+Fresh hosted proof and Oracle acceptance remain required before this ADR can be accepted.
 
 This ADR remains proposed until those findings pass a fresh Oracle review.
 

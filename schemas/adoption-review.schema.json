@@ -73,15 +73,15 @@
   "$defs": {
     "id": {
       "type": "string",
-      "pattern": "[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*"
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
     },
     "sha256": {
       "type": "string",
-      "pattern": "[0-9a-f]{64}"
+      "pattern": "^[0-9a-f]{64}$"
     },
     "semver": {
       "type": "string",
-      "pattern": "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?"
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
     },
     "contractRef": {
       "type": "object",
@@ -154,6 +154,31 @@
         }
       }
     },
+    "sourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputId", "path", "startByte", "endByte", "sha256"],
+      "properties": {
+        "inputId": {
+          "$ref": "#/$defs/id"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "startByte": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endByte": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
     "omission": {
       "type": "object",
       "additionalProperties": false,
@@ -164,6 +189,8 @@
         "code",
         "reason",
         "sourceInputIds",
+        "sourceSpans",
+        "signatureSha256",
         "requiredAction"
       ],
       "properties": {
@@ -203,6 +230,16 @@
             "$ref": "#/$defs/id"
           }
         },
+        "sourceSpans": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          }
+        },
+        "signatureSha256": {
+          "$ref": "#/$defs/sha256"
+        },
         "requiredAction": {
           "enum": [
             "omit",
@@ -220,6 +257,8 @@
         "nativeName",
         "strongerInputId",
         "weakerInputId",
+        "strongerSourceSpan",
+        "weakerSourceSpan",
         "resolution"
       ],
       "properties": {
@@ -232,6 +271,12 @@
         },
         "weakerInputId": {
           "$ref": "#/$defs/id"
+        },
+        "strongerSourceSpan": {
+          "$ref": "#/$defs/sourceSpan"
+        },
+        "weakerSourceSpan": {
+          "$ref": "#/$defs/sourceSpan"
         },
         "resolution": {
           "const": "omit-binding-and-report"

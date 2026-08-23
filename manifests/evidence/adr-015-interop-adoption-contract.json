@@ -2,40 +2,60 @@
   "schemaVersion": 1,
   "receiptId": "ADR-015-INTEROP-ADOPTION-CONTRACT",
   "bead": "wordpresshx-adr-015",
-  "status": "implemented-review-pending",
-  "observedAt": "2026-07-20T04:02:54Z",
+  "status": "implemented-hosted-and-review-pending",
+  "observedAt": "2026-08-23T19:40:32Z",
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
-      "sha256": "d6d21c622086b60f18a635f4567df1d0f1db6140f337e05a6d6801de815350bf"
+      "sha256": "036f777c0275091149be7c1678ebdf784b082e969216ac8b97f680a776c768ba"
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "df17ec4b689b39cc16ae8e06c9e8edf4439e4ea7cdc341096f822ca341c4c690"
+      "sha256": "09ce5ecc5633a9a6253c8cc31cdab339e2f7d0f9cb0eb49da282914f5b20da39"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
-      "sha256": "ae39f7ec38d8a6ecc3ac3fb5f7ed1c73369b1ff0e2ca6ef66f0a1d26bb23477f"
+      "sha256": "5d60c08be6496d1f5a2a34717172795625b54cd1b432d9a8b86a7998a95f377f"
     },
     "adoptionCapabilitySchema": {
       "path": "schemas/adoption-capability.schema.json",
-      "sha256": "d023d3f1b0a551182e1067f3b3a49ed5eae75c5c30944b7995bea691c1e1a281"
+      "sha256": "358fd4bbdb650ac1038c5d0eb454b387f18c613223963d6c99b6ad722a57855c"
     },
     "adoptionReviewSchema": {
       "path": "schemas/adoption-review.schema.json",
-      "sha256": "cc32857709d5a2a62ebd509716999bcda6a68f8c70858dea7c88336b5e20dc20"
+      "sha256": "1b08b0beb700b717d7b56e56fe8340cb12531ed6e686d54b72304f73b648ad58"
+    },
+    "adoptionBundleSchema": {
+      "path": "schemas/adoption-bundle.schema.json",
+      "sha256": "9e3c53652aef8f302c343bac8a756561f2e9066d395ab9beb4ecec50bc30e48c"
     },
     "transcript": {
       "path": "fixtures/adoption-contract/expected/capability-plan.txt",
-      "sha256": "739907a3fd3602c5142e0f68a1882bb327b1bca0b7452fac823a5e51cfec8a0b"
+      "sha256": "d8c42fcb8529f7c78d924407aeb703e0d6c33399c18ff3a9abd673dbc7e9f0f0"
+    },
+    "generator": {
+      "path": "scripts/adoption/generate-fixture.py",
+      "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
     },
     "independentValidator": {
       "path": "scripts/adoption/validate-architecture.py",
-      "sha256": "ef471d3e4d1f45d4f41cc30600c8e78a1d7f5a22c8f30a9f372190c4fa740eb4"
+      "sha256": "886ce09f185a9e79145e3e8f9babc9d36609aad88f6d321abc48078069c3f4fa"
+    },
+    "nativeProviderProbe": {
+      "path": "scripts/adoption/test-native-provider.py",
+      "sha256": "5ee80e10f7521943ea3f58b3a2871df49bfe13f880006ad8de6444f19efbda98"
+    },
+    "ownershipProbe": {
+      "path": "scripts/adoption/test-ownership.py",
+      "sha256": "739b34b9ffadde34d797a2634f1749ace2b587cde10c67dcf3a158093070d368"
+    },
+    "identityGenerator": {
+      "path": "scripts/adoption/refresh-evidence.py",
+      "sha256": "aaeefdf805e335d2ad61e9000fb5797faf2f80f4e3f376799df6ff66f6552a0a"
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "87eeecfc40caa57c34fadcb3da4656ce2ffcd637a57cd97d3ee62e9f9a36158f"
+      "sha256": "bd50a0f8135c9351e3326e02d9ce01ca44d228a2a23a489b16a13777efe6c590"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",
@@ -54,6 +74,11 @@
     "capabilityTokensSerializable": false,
     "capabilityTokensCacheable": false,
     "staleCapabilityAuthority": false,
+    "capabilityObservationOwner": "target-runtime-adapter",
+    "callerSuppliedObservationFactsAllowed": false,
+    "lifecycleIdentity": "generative-runtime-nonce",
+    "sameNominalScopeInstanceReusable": false,
+    "bundleVerificationBeforeCapabilityMint": true,
     "providerTrustAdmissionAuthority": "SDK-117"
   },
   "verification": {
@@ -61,35 +86,41 @@
       "python3 scripts/adoption/validate-architecture.py",
       "bash scripts/adoption/test.sh"
     ],
-    "sourceTreeSha256": "5fc1642e3605f6861a96decba22dfbf3d0dae903d5903b458afe88feef197d09",
+    "sourceTreeSha256": "26b3d77c5b2ce3d76179ac64af13b1df48bfabcee71b2d3a4d9c91de30290c3b",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
+    "genesCommit": "122162abefc2035b307508e521348ea4fb36dab7",
+    "genesAuthority": "packages/cli/dependency-lock.json",
     "typescriptVersion": "5.9.3",
     "nodeVersion": "22.17.0",
     "phpVersion": "8.4.7",
     "strictNullSafety": true,
     "strictHaxeForbiddenTokenCount": 0,
-    "bindingCount": 3,
+    "bindingCount": 5,
     "capabilityCount": 2,
     "omissionCount": 4,
     "conflictCount": 1,
-    "compileNegativeCount": 4,
-    "independentMutationCount": 31,
+    "compileNegativeCount": 6,
+    "independentMutationCount": 33,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "providerRuntimeExecutionDuringGeneration": false,
+    "syntheticProviderRuntimeUsed": true,
+    "productionOwnershipTransactionUsed": true,
     "realProviderUsed": false,
     "wordpressRuntimeUsed": false,
-    "outcome": "passed-local-and-hosted"
+    "outcome": "passed-local-current-hosted-pending"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
     "correctedFindings": [
-      "Source precedence applies to one complete binding and never splices signature fields across authorities.",
-      "A stronger-versus-weaker signature conflict omits the binding instead of selecting a convenient shape.",
-      "Capability tokens are nominal, scoped, nonserializable, noncacheable, and grant no stale authority.",
-      "Contract generation does not transfer provider implementation, package, data, or removal ownership."
+      "The generator derives every admitted and omitted symbol from exact source spans.",
+      "Every admitted type preserves the strongest complete source declaration.",
+      "The bundle binds each record, generated facade, and ownership entry under one digest root.",
+      "Target-owned lifecycle adapters mint non-reusable capability authority.",
+      "Generated facades call the exact native fixture providers after artifact checks.",
+      "The production ownership engine fails closed and restores interrupted updates."
     ],
-    "freshIndependentReview": "pending",
+    "freshIndependentReview": "required-after-adr015-f001-f010-repair",
     "acceptanceAuthorized": false
   },
   "referenceReview": {
@@ -104,28 +135,31 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": 29716562008,
-    "jobId": 88270893309,
-    "commit": "be8041d0d00c21d44fe2c0198e2d101c1f383908",
-    "status": "passed"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "historicalRunId": 29716562008,
+    "historicalJobId": 88270893309,
+    "historicalCommit": "be8041d0d00c21d44fe2c0198e2d101c1f383908"
   },
   "limitations": [
-    "The schemas and Haxe surface are a bounded architecture prototype, not the SDK-070/073 production adoption implementation.",
-    "The fixture uses a synthetic provider and does not execute or test a real WordPress plugin, Composer package, or npm package.",
-    "The isolated-reflection lane is specified and mutation-tested but is not executed by this receipt.",
-    "The prototype emits a typed call plan and does not invoke a native provider ABI.",
-    "WordPress runtime, PHP 7.4, browser bundling, package consumers, provider trust admission, and removal transactions are not tested by this receipt.",
-    "Fresh independent architecture review remains pending."
+    "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
+    "The runtime provider is synthetic. No public WordPress plugin or npm package is admitted.",
+    "The isolated-reflection path, WordPress runtime, PHP 7.4, package consumer, and trust admission are not tested.",
+    "The current remediation still needs a hosted run and fresh Oracle acceptance."
   ],
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-and-hosted",
-    "noProviderExecution": "fixture-tested-local-and-hosted",
+    "typedCapabilityPrototype": "compile-tested-local-current-hosted-pending",
+    "noProviderExecution": "static-generation-tested-local",
+    "fixtureGenerator": "deterministic-source-derived-tested-local",
     "productionGenerator": "not-tested",
     "isolatedReflectionRuntime": "not-tested",
-    "nativeProviderAbi": "not-tested",
+    "nativeProviderAbi": "synthetic-provider-tested-local",
+    "ownershipTransaction": "production-owner-tested-local",
     "realProviderRuntime": "not-tested",
     "wordpressRuntime": "not-tested",
     "providerTrustAdmission": "not-tested",

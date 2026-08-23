@@ -31,7 +31,7 @@
       "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
       "bead": "wordpresshx-sdk-041",
       "path": "manifests/evidence/sdk-041-ownership-transaction.json",
-      "sha256": "2c4c30df73b770b0923048dc913f440e5ae1e35a6487f5e7bddad1a008fc4e1c"
+      "sha256": "0f41162dc68ca8623a1131f15a52ebe1f36e7fcb3e29609a71fbd46b0f95cac9"
     },
     {
       "receiptId": "SDK-042-DETERMINISTIC-BUILD",

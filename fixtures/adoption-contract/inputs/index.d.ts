@@ -5,3 +5,4 @@ export interface CalendarBadgeProps {
 
 export declare function formatCalendarLabel(count: number): string;
 export declare function CalendarBadge(props: CalendarBadgeProps): object;
+export declare const CalendarRegistry: Record<string, unknown>;

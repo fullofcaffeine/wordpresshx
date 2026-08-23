@@ -514,6 +514,7 @@ required_files=(
   schemas/adoption-contract.schema.json
   schemas/adoption-capability.schema.json
   schemas/adoption-review.schema.json
+  schemas/adoption-bundle.schema.json
   scripts/source-correlation/validate-contracts.py
   scripts/source-correlation/validate-sdk025.py
   scripts/semantic-plan/test-contract.py
@@ -524,6 +525,11 @@ required_files=(
   scripts/output-context/test.sh
   scripts/output-context/validate-architecture.py
   scripts/adoption/test.sh
+  scripts/adoption/generate-fixture.py
+  scripts/adoption/refresh-evidence.py
+  scripts/adoption/test-json-schema.cjs
+  scripts/adoption/test-native-provider.py
+  scripts/adoption/test-ownership.py
   scripts/adoption/validate-architecture.py
   scripts/semantic-collector/test-contract.py
   scripts/semantic-collector/test.sh
@@ -669,11 +675,13 @@ required_files=(
   fixtures/output-context/test-negative/url_as_text/Main.hx
   fixtures/adoption-contract/README.md
   fixtures/adoption-contract/contract/acme-calendar.capability.json
+  fixtures/adoption-contract/contract/acme-calendar.bundle.json
   fixtures/adoption-contract/contract/acme-calendar.contract.json
+  fixtures/adoption-contract/contract/acme-calendar.generated-files.json
   fixtures/adoption-contract/contract/acme-calendar.review.json
   fixtures/adoption-contract/expected/capability-plan.txt
-  fixtures/adoption-contract/inputs/generator.txt
   fixtures/adoption-contract/inputs/index.d.ts
+  fixtures/adoption-contract/inputs/index.js
   fixtures/adoption-contract/inputs/package-metadata.json
   fixtures/adoption-contract/inputs/plugin.php
   fixtures/adoption-contract/inputs/provider-stubs.php
@@ -683,7 +691,10 @@ required_files=(
   fixtures/adoption-contract/test-negative/cross_request_scope/Main.hx
   fixtures/adoption-contract/test-negative/direct_token_construction/Main.hx
   fixtures/adoption-contract/test-negative/omitted_binding/Main.hx
+  fixtures/adoption-contract/test-negative/observation_forgery/Main.hx
+  fixtures/adoption-contract/test-negative/scope_forgery/Main.hx
   fixtures/adoption-contract/test-negative/wrong_capability/Main.hx
+  fixtures/adoption-contract/test-support/wordpress/hx/adoption/prototype/testing/TargetProbe.hx
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -3227,6 +3238,13 @@ assert adoption_authority["compilerProviderNameBranchesAllowed"] is False
 assert adoption_authority["weakFallbackTypesAllowed"] is False
 assert adoption_authority["capabilityTokensSerializable"] is False
 assert adoption_authority["staleCapabilityAuthority"] is False
+assert adoption_authority["capabilityObservationOwner"] == (
+    "target-runtime-adapter"
+)
+assert adoption_authority["callerSuppliedObservationFactsAllowed"] is False
+assert adoption_authority["lifecycleIdentity"] == "generative-runtime-nonce"
+assert adoption_authority["sameNominalScopeInstanceReusable"] is False
+assert adoption_authority["bundleVerificationBeforeCapabilityMint"] is True
 assert adoption_architecture["sourcePrecedence"] == [
     "authoritative-signature",
     "isolated-reflection-opt-in",
@@ -3263,6 +3281,9 @@ assert adoption_contracts["capability"]["identity"] == (
 assert adoption_contracts["review"]["identity"] == (
     "wordpress-hx.adoption-review.v1"
 )
+assert adoption_contracts["bundle"]["identity"] == (
+    "wordpress-hx.adoption-bundle.v1"
+)
 assert len(adoption_architecture["providerLayers"]) == 2
 assert [stage["id"] for stage in adoption_architecture["evidenceStages"]] == [
     "inventoried",
@@ -3271,14 +3292,21 @@ assert [stage["id"] for stage in adoption_architecture["evidenceStages"]] == [
     "provider-runtime-tested",
 ]
 adoption_prototype = adoption_architecture["prototypeEvidence"]
-assert adoption_prototype["bindingCount"] == 3
+assert adoption_prototype["bindingCount"] == 5
 assert adoption_prototype["capabilityCount"] == 2
 assert adoption_prototype["omissionCount"] == 4
 assert adoption_prototype["conflictCount"] == 1
-assert adoption_prototype["compileNegativeCount"] == 4
-assert adoption_prototype["independentMutationCount"] == 31
+assert adoption_prototype["compileNegativeCount"] == 6
+assert adoption_prototype["independentMutationCount"] == 33
 assert adoption_prototype["providerRuntimeExecutionDuringGeneration"] is False
+assert adoption_prototype["syntheticProviderRuntimeUsed"] is True
+assert adoption_prototype["productionOwnershipTransactionUsed"] is True
 assert adoption_prototype["realProviderUsed"] is False
+assert adoption_prototype["targets"][1] == (
+    f"genes-ts-{cli_dependency_lock['compiler']['version']}@"
+    f"{cli_dependency_lock['compiler']['commit']}-typescript-5.9.3-node-"
+    f"{cli_dependency_lock['runtime']['version']}"
+)
 assert len(adoption_architecture["referenceReview"]) == 3
 for adoption_reference in adoption_architecture["referenceReview"]:
     assert sha1.fullmatch(adoption_reference["commit"])
@@ -3291,6 +3319,7 @@ assert adr015_receipt["receiptId"] == "ADR-015-INTEROP-ADOPTION-CONTRACT"
 assert adr015_receipt["bead"] == "wordpresshx-adr-015"
 assert adr015_receipt["status"] in {
     "implemented-hosted-pending",
+    "implemented-hosted-and-review-pending",
     "implemented-review-pending",
     "verified",
 }
@@ -3309,25 +3338,45 @@ assert adr015_authority["weakFallbackTypesAllowed"] is False
 assert adr015_authority["capabilityTokensSerializable"] is False
 assert adr015_authority["capabilityTokensCacheable"] is False
 assert adr015_authority["staleCapabilityAuthority"] is False
+assert adr015_authority["capabilityObservationOwner"] == (
+    "target-runtime-adapter"
+)
+assert adr015_authority["callerSuppliedObservationFactsAllowed"] is False
+assert adr015_authority["lifecycleIdentity"] == "generative-runtime-nonce"
+assert adr015_authority["sameNominalScopeInstanceReusable"] is False
+assert adr015_authority["bundleVerificationBeforeCapabilityMint"] is True
 adr015_verification = adr015_receipt["verification"]
 assert adr015_verification["sourceTreeSha256"] == adoption_prototype[
     "sourceTreeSha256"
 ]
 assert adr015_verification["strictNullSafety"] is True
 assert adr015_verification["strictHaxeForbiddenTokenCount"] == 0
-assert adr015_verification["bindingCount"] == 3
+assert adr015_verification["bindingCount"] == 5
 assert adr015_verification["capabilityCount"] == 2
 assert adr015_verification["omissionCount"] == 4
 assert adr015_verification["conflictCount"] == 1
-assert adr015_verification["compileNegativeCount"] == 4
-assert adr015_verification["independentMutationCount"] == 31
+assert adr015_verification["compileNegativeCount"] == 6
+assert adr015_verification["independentMutationCount"] == 33
 assert adr015_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
 ] is True
 assert adr015_verification["providerRuntimeExecutionDuringGeneration"] is False
+assert adr015_verification["syntheticProviderRuntimeUsed"] is True
+assert adr015_verification["productionOwnershipTransactionUsed"] is True
 assert adr015_verification["realProviderUsed"] is False
 assert adr015_verification["wordpressRuntimeUsed"] is False
-assert adr015_receipt["review"]["freshIndependentReview"] == "pending"
+assert adr015_verification["genesVersion"] == cli_dependency_lock["compiler"][
+    "version"
+]
+assert adr015_verification["genesCommit"] == cli_dependency_lock["compiler"][
+    "commit"
+]
+assert adr015_verification["genesAuthority"] == (
+    "packages/cli/dependency-lock.json"
+)
+assert adr015_receipt["review"]["freshIndependentReview"] == (
+    "required-after-adr015-f001-f010-repair"
+)
 assert adr015_receipt["review"]["acceptanceAuthorized"] is False
 assert adr015_receipt["referenceReview"]["codeOrFixtureBytesCopied"] is False
 assert adr015_receipt["referenceReview"]["runtimeOrBuildDependencyCreated"] is False
@@ -3336,7 +3385,6 @@ assert adr015_receipt["claims"]["publicationAuthorized"] is False
 for unproven_adoption_claim in (
     "productionGenerator",
     "isolatedReflectionRuntime",
-    "nativeProviderAbi",
     "realProviderRuntime",
     "wordpressRuntime",
     "providerTrustAdmission",
@@ -3345,6 +3393,15 @@ for unproven_adoption_claim in (
     "productionSupport",
 ):
     assert adr015_receipt["claims"][unproven_adoption_claim] == "not-tested"
+assert adr015_receipt["claims"]["fixtureGenerator"] == (
+    "deterministic-source-derived-tested-local"
+)
+assert adr015_receipt["claims"]["nativeProviderAbi"] == (
+    "synthetic-provider-tested-local"
+)
+assert adr015_receipt["claims"]["ownershipTransaction"] == (
+    "production-owner-tested-local"
+)
 adr015_hosted = adr015_receipt["hostedWorkflow"]
 adoption_hosted = adoption_architecture["hostedGate"]
 assert adr015_hosted["workflow"] == "Adoption-contract architecture"
@@ -3354,12 +3411,15 @@ assert adoption_hosted["job"] == adr015_hosted["job"]
 assert adoption_hosted["status"] == adr015_hosted["status"]
 for hosted_identity in ("runId", "jobId", "commit"):
     assert adoption_hosted[hosted_identity] == adr015_hosted[hosted_identity]
-if adr015_hosted["status"] == "pending-first-hosted-main-run":
-    assert adr015_receipt["status"] == "implemented-hosted-pending"
+if adr015_hosted["status"] == "pending-current-main-run":
+    assert adr015_receipt["status"] == "implemented-hosted-and-review-pending"
     assert adr015_hosted["runId"] is None
     assert adr015_hosted["jobId"] is None
     assert adr015_hosted["commit"] is None
-elif adr015_hosted["status"] == "passed":
+    assert isinstance(adr015_hosted["historicalRunId"], int)
+    assert isinstance(adr015_hosted["historicalJobId"], int)
+    assert sha1.fullmatch(adr015_hosted["historicalCommit"])
+elif adr015_hosted["status"] == "passed-current-main":
     assert isinstance(adr015_hosted["runId"], int)
     assert isinstance(adr015_hosted["jobId"], int)
     assert sha1.fullmatch(adr015_hosted["commit"])
@@ -13236,6 +13296,7 @@ fi
 python3 scripts/semantic-plan/test-contract.py
 python3 scripts/contracts/validate-schema-authority.py
 python3 scripts/output-context/validate-architecture.py
+python3 scripts/adoption/refresh-evidence.py
 python3 scripts/adoption/validate-architecture.py
 python3 scripts/testing/strategy.py validate
 python3 scripts/testing/strategy.py self-test

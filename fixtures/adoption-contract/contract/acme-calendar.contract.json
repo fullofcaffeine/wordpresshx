@@ -13,10 +13,11 @@
     "kind": "wordpress-plugin",
     "version": "2.4.1",
     "artifactUrl": "https://example.test/acme-calendar/acme-calendar.2.4.1.zip",
-    "artifactSha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013",
+    "artifactSha256": "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd",
+    "artifactFormat": "deterministic-fixture-zip-v1",
     "sourceUrl": "https://example.test/acme-calendar/source/2.4.1",
     "sourceRevision": "fixture-acme-calendar-2.4.1",
-    "sourceSha256": "e6d6899aa7588bcc748dcb44c14a8fa7c232465fe3c6c37d519c295b2283efdf",
+    "sourceSha256": "569bf6cb9a3af1d2c10d9baa7e69459925ed8dbf5226c0a4642597a9f3606002",
     "runtimeOwner": "native-provider",
     "implementationOwnership": "external-not-transferred"
   },
@@ -26,9 +27,19 @@
     "generator": {
       "id": "wordpress-hx-adoption-generator",
       "version": "0.0.0-fixture",
-      "sha256": "b95a1d1e416525f981226b11a4945d62bb23be15e7fdba14242e8846a27353f1"
+      "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
     },
     "inputs": [
+      {
+        "id": "browser-runtime",
+        "target": "javascript",
+        "kind": "provider-runtime-source",
+        "authorityClass": "package-or-source-signature",
+        "precedence": 3,
+        "path": "fixtures/adoption-contract/inputs/index.js",
+        "sha256": "9228805f03547e088b0a96a581dfcab823fccd8a4c2a4dd810764972a76d1710",
+        "executed": false
+      },
       {
         "id": "browser-types",
         "target": "javascript",
@@ -36,7 +47,7 @@
         "authorityClass": "authoritative-signature",
         "precedence": 1,
         "path": "fixtures/adoption-contract/inputs/index.d.ts",
-        "sha256": "8c0b693e30c977e941122ef7e6d6108bd70d14ab39dee89d6776e525cc48246f",
+        "sha256": "a8743a04676ab6c0331e81cbbf138ea6be11689baa32e17c0bfe549b8099bdc1",
         "executed": false
       },
       {
@@ -56,7 +67,7 @@
         "authorityClass": "authoritative-signature",
         "precedence": 1,
         "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
-        "sha256": "0477e3b9da5d13bf7e8f30f5ac62909b69a962566bf3a9f19a0013e6c8ceb39f",
+        "sha256": "91156707635e2ef9122db246ad9930c865534d5f37093635fa79c56006432e17",
         "executed": false
       },
       {
@@ -66,7 +77,7 @@
         "authorityClass": "package-or-source-signature",
         "precedence": 3,
         "path": "fixtures/adoption-contract/inputs/plugin.php",
-        "sha256": "6bc3d2b6beb3b5a2b9913caf229172b89c666d295a62f2f55f245952e7d74013",
+        "sha256": "8d87130bc484658004329fcdf7b603d82f697b49169d119c05758e0ac014d203",
         "executed": false
       }
     ],
@@ -84,6 +95,16 @@
       "nativeName": "@acme/calendar.CalendarBadge",
       "haxePath": "acme.calendar.browser.CalendarBadge",
       "sourceInputId": "browser-types",
+      "sourceEvidence": {
+        "signatureSha256": "4fc9e7e715c0c10c4dd3a5f196f7a3734e2578f63e1a395170b5ab0ff66f6eae",
+        "span": {
+          "inputId": "browser-types",
+          "path": "fixtures/adoption-contract/inputs/index.d.ts",
+          "startByte": 161,
+          "endByte": 234,
+          "sha256": "9d16cafcbdcdc2d4d843ea3aae50f208462278e4d1ed1ddbb7cb2c25d61fbf6f"
+        }
+      },
       "capabilityId": "calendar.badge.browser",
       "parameters": [
         {
@@ -100,9 +121,7 @@
         }
       ],
       "returnType": {
-        "kind": "native-nominal",
-        "target": "javascript",
-        "name": "ReactElement"
+        "kind": "javascript-object"
       },
       "status": "admitted-precise"
     },
@@ -113,6 +132,16 @@
       "nativeName": "@acme/calendar.formatCalendarLabel",
       "haxePath": "acme.calendar.browser.CalendarLabels.format",
       "sourceInputId": "browser-types",
+      "sourceEvidence": {
+        "signatureSha256": "32a962abb5dd16db2839466c6611b15d660ec06f80e1ba4dad0ac4b5e669e677",
+        "span": {
+          "inputId": "browser-types",
+          "path": "fixtures/adoption-contract/inputs/index.d.ts",
+          "startByte": 93,
+          "endByte": 160,
+          "sha256": "6bc6ae103a6d8ce245695052203fcb3d6b25fb77538d72bb6c81a0a7e65c008b"
+        }
+      },
       "capabilityId": "calendar.badge.browser",
       "parameters": [
         {
@@ -122,10 +151,71 @@
           "requirement": "required",
           "passing": "value",
           "type": {
-            "kind": "int32"
+            "kind": "javascript-number"
           }
         }
       ],
+      "returnType": {
+        "kind": "string"
+      },
+      "status": "admitted-precise"
+    },
+    {
+      "id": "php.calendar.event.construct",
+      "target": "php",
+      "kind": "constructor",
+      "nativeName": "Acme\\Calendar\\Event::__construct",
+      "haxePath": "acme.calendar.server.Event.create",
+      "sourceInputId": "php-stubs",
+      "sourceEvidence": {
+        "signatureSha256": "3d9e85d32ca71d1338185f510981f46c48a245066aed06abaae48084a97da1cd",
+        "span": {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 79,
+          "endByte": 132,
+          "sha256": "79341e282404421e72f0b857e2a1cbf4fa8e2d45ab8e3c8e60403822f2141733"
+        }
+      },
+      "capabilityId": "calendar.read.php",
+      "parameters": [
+        {
+          "position": 0,
+          "nativeName": "eventTitle",
+          "haxeName": "eventTitle",
+          "requirement": "required",
+          "passing": "value",
+          "type": {
+            "kind": "string"
+          }
+        }
+      ],
+      "returnType": {
+        "kind": "native-nominal",
+        "target": "php",
+        "name": "Acme\\Calendar\\Event"
+      },
+      "status": "admitted-precise"
+    },
+    {
+      "id": "php.calendar.event.title",
+      "target": "php",
+      "kind": "instance-method",
+      "nativeName": "Acme\\Calendar\\Event::title",
+      "haxePath": "acme.calendar.server.Event.title",
+      "sourceInputId": "php-stubs",
+      "sourceEvidence": {
+        "signatureSha256": "9f8f66099872cdddf1f08bff9d64b7500a524b86d62f69c85ffe0a663cffe58c",
+        "span": {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 134,
+          "endByte": 172,
+          "sha256": "3ea55c22aa074d4dcf706f9065745f3e16e84d6ffc2f2f302fb163d3db74e963"
+        }
+      },
+      "capabilityId": "calendar.read.php",
+      "parameters": [],
       "returnType": {
         "kind": "string"
       },
@@ -138,6 +228,16 @@
       "nativeName": "Acme\\Calendar\\list_events",
       "haxePath": "acme.calendar.server.CalendarEvents.list",
       "sourceInputId": "php-stubs",
+      "sourceEvidence": {
+        "signatureSha256": "f91c24fb885afd997d064a121d21eb57716237dfd15cae551784653c349e9df6",
+        "span": {
+          "inputId": "php-stubs",
+          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+          "startByte": 274,
+          "endByte": 315,
+          "sha256": "315425208ef7b3336c76fa531aa16078de03c1e934c8d280c646012413605b7d"
+        }
+      },
       "capabilityId": "calendar.read.php",
       "parameters": [
         {
@@ -147,7 +247,7 @@
           "requirement": "required",
           "passing": "value",
           "type": {
-            "kind": "int32"
+            "kind": "php-int"
           }
         }
       ],
@@ -171,5 +271,5 @@
     "removal": "manifest-owned-contract-and-facade-only-provider-untouched",
     "modifiedGeneratedFile": "fail-closed-no-overwrite-or-delete"
   },
-  "contractDigest": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9"
+  "contractDigest": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d"
 }

@@ -55,15 +55,15 @@
   "$defs": {
     "id": {
       "type": "string",
-      "pattern": "[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*"
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
     },
     "sha256": {
       "type": "string",
-      "pattern": "[0-9a-f]{64}"
+      "pattern": "^[0-9a-f]{64}$"
     },
     "semver": {
       "type": "string",
-      "pattern": "(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?"
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
     },
     "contractRef": {
       "type": "object",
@@ -91,7 +91,7 @@
         },
         "catalogRevision": {
           "type": "string",
-          "pattern": "[a-z0-9-]+/catalog-v[1-9][0-9]*"
+          "pattern": "^[a-z0-9-]+/catalog-v[1-9][0-9]*$"
         },
         "catalogSha256": {
           "$ref": "#/$defs/sha256"
@@ -122,6 +122,13 @@
         "tokenSerializable",
         "tokenCacheable",
         "staleTokenAuthority",
+        "observationOwner",
+        "callerSuppliedFactsAllowed",
+        "lifecycleIdentity",
+        "scopeTypes",
+        "sameNominalScopeInstanceReusable",
+        "tokenBoundFacts",
+        "bundleVerification",
         "absenceBehavior",
         "providerTrustAdmission"
       ],
@@ -137,6 +144,36 @@
         },
         "staleTokenAuthority": {
           "const": false
+        },
+        "observationOwner": {
+          "const": "target-runtime-adapter"
+        },
+        "callerSuppliedFactsAllowed": {
+          "const": false
+        },
+        "lifecycleIdentity": {
+          "const": "generative-runtime-nonce"
+        },
+        "scopeTypes": {
+          "const": ["browser-module", "php-process", "php-request"]
+        },
+        "sameNominalScopeInstanceReusable": {
+          "const": false
+        },
+        "tokenBoundFacts": {
+          "const": [
+            "artifact-sha256",
+            "bundle-digest",
+            "capability-id",
+            "lifecycle-kind",
+            "observed-bindings",
+            "provider-id",
+            "provider-version",
+            "runtime-nonce"
+          ]
+        },
+        "bundleVerification": {
+          "const": "required-before-observation"
         },
         "absenceBehavior": {
           "const": "typed-unavailable-with-core-fallback"

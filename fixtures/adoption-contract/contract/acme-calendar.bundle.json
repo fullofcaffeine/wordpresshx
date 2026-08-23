@@ -1,0 +1,58 @@
+{
+  "schema": "wordpress-hx.adoption-bundle.v1",
+  "schemaVersion": 1,
+  "bundleId": "acme-calendar.wp70.bundle",
+  "bundleVersion": "1.0.0",
+  "provider": {
+    "id": "acme-calendar",
+    "version": "2.4.1",
+    "artifactSha256": "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd"
+  },
+  "records": {
+    "contract": {
+      "path": "generated/adoption/acme-calendar/contract.json",
+      "sha256": "2cfac93b61046dfc700593fbb376e0aa2e8e96fba4099961768ee2fea5c6d363"
+    },
+    "capability": {
+      "path": "generated/adoption/acme-calendar/capability.json",
+      "sha256": "0e42757af650efab8e9a2c4a1c921e0adf1b9fbbc902f3af9d88a008fc425496"
+    },
+    "review": {
+      "path": "generated/adoption/acme-calendar/review.json",
+      "sha256": "6bbdea8095c1e1488c74fcac0d45102c6b123a5931542f7cf9ed567c1a5aab71"
+    },
+    "ownership": {
+      "path": "generated/_GeneratedFiles.json",
+      "sha256": "de80be869c37605b4c17a0fdb426a542e59e26c4b50edd4f6a989f6fa4cc02de",
+      "manifestDigest": "cf106c6986ba50e343905bb596ff3666932bf576e172c1807ae8d09099f3e4de"
+    }
+  },
+  "generatedFiles": [
+    {
+      "path": "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
+      "sha256": "a0d0e468250ea5b2887968856d017f642b6e1fe01a750d618d0d953bd15167df",
+      "sizeBytes": 1700
+    },
+    {
+      "path": "generated/adoption/acme-calendar/capability.json",
+      "sha256": "0e42757af650efab8e9a2c4a1c921e0adf1b9fbbc902f3af9d88a008fc425496",
+      "sizeBytes": 2889
+    },
+    {
+      "path": "generated/adoption/acme-calendar/contract.json",
+      "sha256": "2cfac93b61046dfc700593fbb376e0aa2e8e96fba4099961768ee2fea5c6d363",
+      "sizeBytes": 9292
+    },
+    {
+      "path": "generated/adoption/acme-calendar/php/acme-calendar-facade.php",
+      "sha256": "4f1a8f2fc3e57b42da6c780062f5ab994cbacb8cc31edf0125bd34f4c3ff6f01",
+      "sizeBytes": 1944
+    },
+    {
+      "path": "generated/adoption/acme-calendar/review.json",
+      "sha256": "6bbdea8095c1e1488c74fcac0d45102c6b123a5931542f7cf9ed567c1a5aab71",
+      "sizeBytes": 5961
+    }
+  ],
+  "bundleDigest": "db9fbcddfcb798767c8078cbae8ea27d9fe989a5c62f089c51cfc99f55fadfb9"
+}

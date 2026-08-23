@@ -148,7 +148,7 @@
     },
     {
       "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
-      "sha256": "53379d6b896e973379cf3caec83e1cc8ca8ed5b193b26936895f079da96a91ae"
+      "sha256": "552779811df265b5c9d9354af8cfd53165af8f731e312a502f502036731966a7"
     },
     {
       "path": "packages/cli/src/wordpresshx/cli/project/ProjectJson.hx",

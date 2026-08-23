@@ -12,7 +12,12 @@
     "compilerProviderNameBranchesAllowed": false,
     "weakFallbackTypesAllowed": false,
     "capabilityTokensSerializable": false,
-    "staleCapabilityAuthority": false
+    "staleCapabilityAuthority": false,
+    "capabilityObservationOwner": "target-runtime-adapter",
+    "callerSuppliedObservationFactsAllowed": false,
+    "lifecycleIdentity": "generative-runtime-nonce",
+    "sameNominalScopeInstanceReusable": false,
+    "bundleVerificationBeforeCapabilityMint": true
   },
   "sourcePrecedence": [
     "authoritative-signature",
@@ -56,6 +61,11 @@
       "identity": "wordpress-hx.adoption-review.v1",
       "schema": "schemas/adoption-review.schema.json",
       "purpose": "included-omitted-conflicting-and-evidence-stage-report"
+    },
+    "bundle": {
+      "identity": "wordpress-hx.adoption-bundle.v1",
+      "schema": "schemas/adoption-bundle.schema.json",
+      "purpose": "one-digest-root-for-records-facades-and-ownership"
     }
   },
   "providerLayers": [
@@ -108,27 +118,33 @@
     }
   ],
   "prototypeEvidence": {
-    "contractSha256": "153a1c61a9da9d23747dc7ddfbbd1b4e781309edbd3d18265e1ce16b010de8a9",
-    "capabilitySha256": "0ab815d115f7dbad055a556e1cb5ccf3982c8900fc2ce8ce1111736f6f8dc383",
-    "reviewSha256": "48b3fd951636e535d7ab114804bc0847e7575240be8e40f02676613646a4ca71",
-    "sourceTreeSha256": "5fc1642e3605f6861a96decba22dfbf3d0dae903d5903b458afe88feef197d09",
-    "transcriptSha256": "739907a3fd3602c5142e0f68a1882bb327b1bca0b7452fac823a5e51cfec8a0b",
-    "contractSchemaSha256": "ae39f7ec38d8a6ecc3ac3fb5f7ed1c73369b1ff0e2ca6ef66f0a1d26bb23477f",
-    "capabilitySchemaSha256": "d023d3f1b0a551182e1067f3b3a49ed5eae75c5c30944b7995bea691c1e1a281",
-    "reviewSchemaSha256": "cc32857709d5a2a62ebd509716999bcda6a68f8c70858dea7c88336b5e20dc20",
-    "bindingCount": 3,
+    "contractSha256": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d",
+    "capabilitySha256": "1fbfe868efbd54fd37af3f3b8933ab72f3c79b7a8bcbe8d4a1c03ca258156e54",
+    "reviewSha256": "1349b1e508b62d770afb181a5163ce91d65335daa2f3aaebfb7618156e3a14be",
+    "sourceTreeSha256": "26b3d77c5b2ce3d76179ac64af13b1df48bfabcee71b2d3a4d9c91de30290c3b",
+    "transcriptSha256": "d8c42fcb8529f7c78d924407aeb703e0d6c33399c18ff3a9abd673dbc7e9f0f0",
+    "contractSchemaSha256": "5d60c08be6496d1f5a2a34717172795625b54cd1b432d9a8b86a7998a95f377f",
+    "capabilitySchemaSha256": "358fd4bbdb650ac1038c5d0eb454b387f18c613223963d6c99b6ad722a57855c",
+    "reviewSchemaSha256": "1b08b0beb700b717d7b56e56fe8340cb12531ed6e686d54b72304f73b648ad58",
+    "bindingCount": 5,
     "capabilityCount": 2,
     "omissionCount": 4,
     "conflictCount": 1,
-    "compileNegativeCount": 4,
-    "independentMutationCount": 31,
+    "compileNegativeCount": 6,
+    "independentMutationCount": 33,
     "targets": [
       "haxe-4.3.7-interp",
-      "genes-ts-1.38.0-typescript-5.9.3-node-22.17.0",
+      "genes-ts-1.38.0@122162abefc2035b307508e521348ea4fb36dab7-typescript-5.9.3-node-22.17.0",
       "stock-haxe-php-8.4.7"
     ],
     "providerRuntimeExecutionDuringGeneration": false,
-    "realProviderUsed": false
+    "realProviderUsed": false,
+    "bundleDigest": "db9fbcddfcb798767c8078cbae8ea27d9fe989a5c62f089c51cfc99f55fadfb9",
+    "bundleFileSha256": "6cfb7a5016f46596e00f72b47c5611a82db54a8c269ea32f491976e7a77e54ff",
+    "ownershipManifestSha256": "de80be869c37605b4c17a0fdb426a542e59e26c4b50edd4f6a989f6fa4cc02de",
+    "bundleSchemaSha256": "9e3c53652aef8f302c343bac8a756561f2e9066d395ab9beb4ecec50bc30e48c",
+    "syntheticProviderRuntimeUsed": true,
+    "productionOwnershipTransactionUsed": true
   },
   "referenceReview": [
     {
@@ -163,22 +179,28 @@
     "workflow": ".github/workflows/adoption-contract.yml",
     "job": "adoption-contract",
     "command": "bash scripts/adoption/test.sh",
-    "runId": 29716562008,
-    "jobId": 88270893309,
-    "commit": "be8041d0d00c21d44fe2c0198e2d101c1f383908",
-    "status": "passed"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "historicalRunId": 29716562008,
+    "historicalJobId": 88270893309,
+    "historicalCommit": "be8041d0d00c21d44fe2c0198e2d101c1f383908"
   },
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-pending-hosted",
+    "typedCapabilityPrototype": "compile-tested-local-current-hosted-pending",
     "productionGenerator": "not-tested",
     "isolatedReflectionRuntime": "not-tested",
     "realProviderRuntime": "not-tested",
     "wordpressRuntime": "not-tested",
     "providerTrustAdmission": "not-tested",
     "publicPackageConsumer": "not-tested",
-    "productionSupport": "not-tested"
+    "productionSupport": "not-tested",
+    "fixtureGenerator": "deterministic-source-derived-tested-local",
+    "nativeSyntheticProviderRuntime": "synthetic-provider-tested-local",
+    "ownershipTransaction": "production-owner-tested-local"
   }
 }
