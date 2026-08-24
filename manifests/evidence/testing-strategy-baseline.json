@@ -318,9 +318,9 @@
     "recordedAt": "2026-08-01T09:00:46Z",
     "measurementSubject": {
       "baseCommit": "338b149903e5e34eb4b3903267c6b01a1d6e68f9",
-      "strategySha256": "8f4799ecd32a5491a003be3b801cdd6dc4c2488b1666a8e1d6a5e1673c6add11",
+      "strategySha256": "9105b9265ee9fb4f0a341894a79e78251c793b2b5d39c53b362702b71de359ec",
       "validatorSha256": "cd9de6368af2b93134be44a31e320d82a6f1e48684b6ebe070452c460eca27d0",
-      "repositoryGateSha256": "26735e3de586fff70c43258152efc7d3c66e22685f84a207560ed9914a038fa0"
+      "repositoryGateSha256": "ef0dac2c1c748bde60656d9de3ef3f1db4363d942ec58c7f50c021d9b229b418"
     },
     "localSamples": [
       {

@@ -214,6 +214,50 @@ build artifacts; the Haxe fixture remains the application authoring surface.
 Script Modules and unrelated entries or adapters are not claimed and require
 their own exact-profile parity proof.
 
+## Typed internationalization across PHP and JavaScript
+
+SDK-055 lets one Haxe catalog own the message identity, default text, text
+domain, translator comment, context, plural shape, and placeholder type. The
+same declaration drives native WordPress PHP gettext calls, browser calls to
+`@wordpress/i18n`, POT extraction, binary MO output, and Jed locale JSON. This
+removes the usual duplicated PHP/JavaScript message definitions without
+replacing either WordPress runtime.
+
+```haxe
+final openTitle = Messages.string({
+	key: "books.open-title",
+	defaultText: "Open %1$s",
+	comment: "Button label. The placeholder is a book title.",
+	domain: "wordpresshx-sdk055"
+});
+
+final label = TypedI18n.string(openTitle, "Atlas");
+```
+
+Catalog declarations and translations require compile-time string literals.
+Only numbered `%1$s` and `%1$d` placeholders are admitted by this first typed
+surface. A missing, extra, or incorrectly typed browser substitution fails at
+the Haxe source position. Runtime-only text must enter through the explicitly
+named `ExternalMessages` boundary; deterministic extraction and packaging
+reject that boundary because its source bytes and translator context are not
+known at compile time.
+
+Run the deterministic artifact and real WordPress 7.0 proof:
+
+```sh
+bash packages/gutenberg/scripts/test-i18n.sh
+```
+
+The gate compiles and builds twice, compares every generated artifact, checks
+seven focused compile failures, parses the POT, Jed JSON, and GNU MO through an
+independent verifier, and lints native PHP on 7.4 and 8.4. Its final tracer
+loads Spanish through normal WordPress gettext and script-translation APIs,
+then observes the same values in a frontend page and the real block editor.
+Use `--skip-wordpress` for the build-only replay. Set `SDK055_I18N_OUTPUT` to an
+empty directory to retain the generated plugin for inspection. This evidence
+is limited to the exact `wp70-release` profile and `es_MX` fixture; it is not an
+unqualified claim for every locale or WordPress version.
+
 ## Typed block metadata and native `block.json`
 
 SDK-060 removes a common three-way drift problem: the Haxe attribute type, the

@@ -1,0 +1,10 @@
+-lib genes-ts
+-cp ../core/src
+-cp src
+-cp test/i18n-fixture/src
+-main sdk055.fixture.Main
+-D wordpress_hx_profile=wp70-release
+-D genes.ts
+-D genes.ts.no_extension
+-D js-es=6
+-dce full

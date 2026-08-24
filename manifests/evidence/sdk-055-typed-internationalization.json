@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-055-TYPED-INTERNATIONALIZATION",
+  "bead": "wordpresshx-sdk-055",
+  "status": "local-verified",
+  "observedAt": "2026-08-24T11:42:27Z",
+  "subject": {
+    "package": "packages/gutenberg",
+    "catalogApi": {
+      "path": "packages/core/src/wordpress/hx/i18n/Messages.hx",
+      "sha256": "86670025f87ab21ef62e96cdd5d6c273b5d616db0fbc68b9052316fbf9b722a5"
+    },
+    "translationApi": {
+      "path": "packages/core/src/wordpress/hx/i18n/Translations.hx",
+      "sha256": "1f8388cf09044457e1f78e14d1cbf79085ba1bc59ec317a9ad00ae1c8426d50f"
+    },
+    "catalog": {
+      "path": "packages/core/src/wordpress/hx/i18n/MessageCatalog.hx",
+      "sha256": "54d230fab8cdf4fb346be838984606e2c07569fc8360950b12e990b1f3fbf2c4"
+    },
+    "localeCatalog": {
+      "path": "packages/core/src/wordpress/hx/i18n/LocaleCatalog.hx",
+      "sha256": "a6035924dc95a65356ca5eba636e4ad60a90595055dfa7d4ace316513f4dfb05"
+    },
+    "externalBoundary": {
+      "path": "packages/core/src/wordpress/hx/i18n/ExternalMessages.hx",
+      "sha256": "4aa515162f4ac105e6949990fee4bd8d7748555bfc195dfe23309fff64546fba"
+    },
+    "browserFacade": {
+      "path": "packages/gutenberg/src/wordpress/hx/gutenberg/i18n/TypedI18n.hx",
+      "sha256": "e3af25291faf2f3559ad3a70a81940ca63c6ef4218011ccb8c179bf515007a28"
+    },
+    "fixtureCatalog": {
+      "path": "packages/gutenberg/test/i18n-fixture/src/sdk055/fixture/BooksCatalog.hx",
+      "sha256": "eafb292f0e1f4de456eaa9b946d0f788877e7e9564f891f83153b5388a28f38e"
+    },
+    "fixtureLocale": {
+      "path": "packages/gutenberg/test/i18n-fixture/src/sdk055/fixture/I18nFixture.hx",
+      "sha256": "8c96f22bda42de0fccc8f8e73a797cd7b90ef7eeda8c96e1a3a3ae30d63a3d2e"
+    },
+    "contractFixture": {
+      "path": "packages/gutenberg/test/i18n-fixture/src/sdk055/fixture/ContractMain.hx",
+      "sha256": "e1f20c8fd4cde730bed25a0c7a5070043e813bc29bd15fb16b3f4b5e200781c3"
+    },
+    "haxeProfile": {
+      "path": "packages/gutenberg/profiles/i18n-strict.hxml",
+      "sha256": "1911852e819382ca853951b4abe9d5b8099a09db43b6612536b9d7e6290aee4d"
+    },
+    "phpEmitter": {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70I18nProfile.hx",
+      "sha256": "37117ca3f70d423c4f737904969016f116c7552900f3fe77035d91d12a275b4c"
+    },
+    "localeFormats": {
+      "path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressI18nFormats.hx",
+      "sha256": "57cf35f5e594ab3fa20f9a66c91d6ea742c629f9e427f3d68f225ba92119ee77"
+    },
+    "artifactVerifier": {
+      "path": "packages/gutenberg/scripts/verify-i18n.py",
+      "sha256": "6fd6f3f7c1318f99494bd851041623ccd6626b462366fe1309c2ca2966c98224"
+    },
+    "gate": {
+      "path": "packages/gutenberg/scripts/test-i18n.sh",
+      "sha256": "675930d755f968256f32b6282b7888acd2905a33b7077331bb6b739f8bf22750"
+    },
+    "wordpressLane": {
+      "path": "packages/gutenberg/scripts/run-wordpress-i18n-lane.sh",
+      "sha256": "703f665b984e0fec04746919cef7a49b30ad7452225afeeb00ac1408b3bdc1c5"
+    },
+    "browserObserver": {
+      "path": "packages/gutenberg/scripts/run-i18n-playwright.mjs",
+      "sha256": "d8fcfeb869a138ef6b5157b6dec68484d3cc2cb8f5d604a912a3d6427f9f26d1"
+    },
+    "wordpressSetup": {
+      "path": "packages/gutenberg/test/i18n-runtime/setup.php",
+      "sha256": "5362e60aacb643a1150da4f4e9a4a9a737500cd5908583fb4395e067923d6ef1"
+    },
+    "wordpressProbe": {
+      "path": "packages/gutenberg/test/i18n-runtime/probe.php",
+      "sha256": "50c46b727fe4431eeefa6f3f6f62d4e0d79225c683cfe439c2cd2dc4e1f9d218"
+    },
+    "toolingLock": {
+      "path": "packages/gutenberg/build-tooling/package-lock.json",
+      "sha256": "8a251476ff8642346e50ea74fb4e8734929fe5d2716e542c834302a04ab4184a"
+    },
+    "browserDependencyLock": {
+      "path": "packages/gutenberg/dependency-lock.json",
+      "sha256": "a7a4d82e64bc5f9d1e2f34124494d2c52422a0a570828055223a2467547147fe"
+    }
+  },
+  "toolchain": {
+    "haxe": "4.3.7",
+    "lixNpmPackage": "15.12.4",
+    "lixReportedCli": "15.12.2",
+    "genes": {
+      "version": "1.41.4",
+      "commit": "98a51bdb7a5a1e31002b9ba47855d41905ea48ef"
+    },
+    "node": "22.17.0",
+    "npm": "10.9.2",
+    "wordpressScripts": "31.5.0",
+    "wordpressI18n": "6.13.0",
+    "webpack": "5.108.4",
+    "playwright": "1.58.2",
+    "nodeImage": "docker.io/library/node@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0",
+    "playwrightImage": "mcr.microsoft.com/playwright@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d",
+    "wordpressImage": "docker.io/library/wordpress@sha256:9a37e25aa7cb8b01a7a6c9ff0af7b9c0aca1ff78b489dd3756f90142a58d3161",
+    "php74Image": "docker.io/library/php@sha256:620a6b9f4d4feef2210026172570465e9d0c1de79766418d3affd09190a7fda5",
+    "php84Image": "docker.io/library/php@sha256:6d4c0213d8e0ef5bfdbd1fb355ae33a36c203b0ea91c9996c15db11def0f1367",
+    "lifecycleScriptsAllowed": false
+  },
+  "implementation": {
+    "authoringSurface": "typed-haxe-catalog",
+    "messageKinds": [
+      "text",
+      "context-text",
+      "string-placeholder",
+      "plural-count",
+      "context-plural-count"
+    ],
+    "placeholderPolicy": [
+      "%1$s",
+      "%1$d",
+      "%%"
+    ],
+    "compileTimeLiteralFields": [
+      "key",
+      "default text",
+      "plural text",
+      "context",
+      "text domain",
+      "translator comment",
+      "translation"
+    ],
+    "browserBoundary": "@wordpress/i18n",
+    "serverBoundary": "native WordPress gettext functions",
+    "runtimeOnlyTextBoundary": "ExternalMessages",
+    "runtimeOnlyTextPackaged": false,
+    "authoredCompanionPhpJavaScriptOrJson": false,
+    "forbiddenHaxeWeakConstructs": [],
+    "wordpressSpecificGenesChange": false
+  },
+  "artifact": {
+    "manifestId": "wordpresshx-i18n-artifact-v1",
+    "manifestSha256": "d15be45bfd4a36e532b4f337bf5df13657a1ab54e6cf0a5b5556466cbcf533d6",
+    "profileId": "wp70-release",
+    "locale": "es_MX",
+    "pluralForms": "nplurals=2; plural=(n != 1);",
+    "messageCount": 5,
+    "fileCount": 8,
+    "browserHandle": "wordpresshx-sdk055-messages",
+    "browserDependencies": [
+      "wp-i18n"
+    ],
+    "browserVersion": "56b2070ef61b04a2a1b2",
+    "browserBundleSha256": "0ee269f23aacfa17c5089f23f54814a9c6b099ffcc755e646f6b807c3dd08796",
+    "potSha256": "4308e924501a8b6685f96043e119830a95aa22b77271927f139031f3fdcddf66",
+    "moSha256": "f18e6d9ff53bf5102f6c4f324c0fa0d371aee2080ed1cd507b0f21f4a2be1bee",
+    "jedSha256": "a8b7b599df1daac81a21bf94ef390efeff8c8c77849672d11c35c1a9f15da72d",
+    "extractionSurrogateSha256": "d7320ef56854ceaba92fa064a0848ce1cf0cbeea1bd69e10418ba6612e7e0bf0",
+    "serverMessagesSha256": "ab9320d2a7351fbe60323822d139b0ddcd1cfa53ba71ff2cc144c61265566c20",
+    "sourceCatalogSha256": "eafb292f0e1f4de456eaa9b946d0f788877e7e9564f891f83153b5388a28f38e",
+    "secondCompileMatched": true,
+    "officialBundleReplayMatched": true,
+    "completePluginReplayMatched": true,
+    "php74Syntax": "passed",
+    "php84Syntax": "passed",
+    "publicationAuthorized": false
+  },
+  "independentVerification": {
+    "check": "wordpresshx-sdk055-i18n-artifact-v1",
+    "potParsed": true,
+    "jedParsed": true,
+    "gnuMoParsedWithoutEmitterCode": true,
+    "sourceBytesAndLinesMatched": true,
+    "allOutputHashesAndSizesMatched": true,
+    "nativePhpCallsMatched": true,
+    "nativeBrowserCallsMatched": true,
+    "translatorCommentsMatched": true,
+    "outcome": "passed"
+  },
+  "negativeDiagnostics": {
+    "WPX5500": "dynamic message key rejected",
+    "WPX5504": "unsupported placeholder or invalid text domain rejected",
+    "WPX5508": "translation placeholder mismatch rejected",
+    "missingArgument": "typed string substitution is required",
+    "extraArgument": "plain text rejects a substitution",
+    "wrongCount": "plural count requires Int",
+    "catalogMembership": "a translation must reference the exact catalog message object",
+    "externalPackageStop": "runtime-only messages cannot enter deterministic package output",
+    "wrongFinalDependency": "the official final bundle must depend exactly on wp-i18n",
+    "originalSourcePaths": true
+  },
+  "realWordPressRuntime": {
+    "wordpressVersion": "7.0",
+    "wordpressDistributionTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857",
+    "locale": "es_MX",
+    "textDomain": "wordpresshx-sdk055",
+    "serverGettextLoaded": true,
+    "scriptTranslationBytes": 911,
+    "frontendHook": "wp_enqueue_scripts",
+    "editorHook": "enqueue_block_editor_assets",
+    "frontendBrowserObserved": true,
+    "blockEditorBrowserObserved": true,
+    "singularObserved": "1 libro",
+    "pluralObserved": "3 libros",
+    "contextObserved": "Abrir",
+    "contextPluralObserved": "3 elementos de estante",
+    "stringPlaceholderObserved": "Abrir Atlas",
+    "browserConsoleErrors": 0,
+    "browserPageErrors": 0,
+    "outcome": "passed"
+  },
+  "localVerification": {
+    "commands": [
+      "bash packages/gutenberg/scripts/test-i18n.sh"
+    ],
+    "outcome": "passed"
+  },
+  "repositoryHostedVerification": {
+    "workflow": "Repository bootstrap",
+    "jobs": [
+      "haxe",
+      "wordpress-runtime"
+    ],
+    "required": true,
+    "status": "pending-publication"
+  },
+  "claims": {
+    "typedCatalog": "compile-and-runtime-tested",
+    "placeholderSafety": "compile-tested-for-one-string-and-one-count-shape",
+    "nativePhpGettext": "runtime-tested",
+    "nativeBrowserI18n": "frontend-and-editor-runtime-tested",
+    "deterministicPotMoJedMetadata": "replay-and-independently-tested",
+    "exactProfile": "wp70-release",
+    "localeScope": "es_MX-fixture",
+    "allWordPressVersions": "not-claimed",
+    "allLocales": "not-claimed",
+    "productionReadiness": "not-claimed",
+    "publication": "blocked-by-policy"
+  }
+}

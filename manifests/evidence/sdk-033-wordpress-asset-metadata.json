@@ -32,7 +32,7 @@
     },
     "i18nBoundary": {
       "path": "packages/gutenberg/src/wordpress/hx/gutenberg/i18n/I18n.hx",
-      "sha256": "bacfc89777034f9fa1f9f845f8a4346fd78ed7590e65bb86576bb00b383e2e7c"
+      "sha256": "86b77927f204a6cd0498a8fc150770109703b58b928971d9db34df0479ecea8d"
     },
     "haxeFixture": {
       "path": "packages/gutenberg/test/assets-fixture/src/sdk033/fixture/EditorPanel.hx",

@@ -150,12 +150,14 @@
         "wordpress-reflaxe-module-package",
         "wordpress-reflaxe-consumer-package",
         "wordpress-public-php-runtime",
-        "output-context-vertical"
+        "output-context-vertical",
+        "typed-internationalization-cross-layer"
       ],
       "realRuntimeOrSystemOwners": [
         "wordpress-public-php-runtime",
         "wordpress-reflaxe-consumer-runtime",
-        "output-context-vertical"
+        "output-context-vertical",
+        "typed-internationalization-cross-layer"
       ],
       "browserE2eOwners": [],
       "examples": [],
@@ -242,7 +244,8 @@
         "compiler-qualification-contract",
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
-        "wordpress-reflaxe-module-package"
+        "wordpress-reflaxe-module-package",
+        "typed-internationalization-cross-layer"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -287,14 +290,16 @@
         "wordpress-public-php-runtime",
         "wordpress-reflaxe-consumer-runtime",
         "output-context-vertical",
-        "plugin-package-install"
+        "plugin-package-install",
+        "typed-internationalization-cross-layer"
       ],
       "realRuntimeOrSystemOwners": [
         "wordpress-runtime-harness",
         "wordpress-public-php-runtime",
         "wordpress-reflaxe-consumer-runtime",
         "output-context-vertical",
-        "plugin-package-install"
+        "plugin-package-install",
+        "typed-internationalization-cross-layer"
       ],
       "browserE2eOwners": [],
       "examples": [],
@@ -370,7 +375,8 @@
         }
       ],
       "unprovenOwners": [
-        "plugin-package-install"
+        "plugin-package-install",
+        "typed-internationalization-cross-layer"
       ],
       "residualRisks": [
         "wordpresshx-g4",
@@ -418,14 +424,16 @@
         "wordpress-reflaxe-consumer-runtime",
         "plugin-package-install",
         "editor-sidebar-example",
-        "todo-data-store-example"
+        "todo-data-store-example",
+        "typed-internationalization-cross-layer"
       ],
       "realRuntimeOrSystemOwners": [
         "plugin-package-install",
         "wordpress-reflaxe-consumer-runtime",
         "development-service-runtime",
         "editor-sidebar-example",
-        "todo-data-store-example"
+        "todo-data-store-example",
+        "typed-internationalization-cross-layer"
       ],
       "browserE2eOwners": [
         "editor-sidebar-example",
@@ -526,7 +534,8 @@
       ],
       "unprovenOwners": [
         "wordpress-reflaxe-module-package",
-        "plugin-package-install"
+        "plugin-package-install",
+        "typed-internationalization-cross-layer"
       ],
       "residualRisks": [
         "wordpresshx-sdk-051",
@@ -571,18 +580,21 @@
         "output-context-vertical",
         "editor-sidebar-example",
         "todo-data-store-example",
-        "static-block-migration"
+        "static-block-migration",
+        "typed-internationalization-cross-layer"
       ],
       "realRuntimeOrSystemOwners": [
         "output-context-vertical",
         "editor-sidebar-example",
         "todo-data-store-example",
-        "static-block-migration"
+        "static-block-migration",
+        "typed-internationalization-cross-layer"
       ],
       "browserE2eOwners": [
         "editor-sidebar-example",
         "todo-data-store-example",
-        "static-block-migration"
+        "static-block-migration",
+        "typed-internationalization-cross-layer"
       ],
       "examples": [
         "editor-sidebar",
@@ -650,7 +662,9 @@
           ]
         }
       ],
-      "unprovenOwners": [],
+      "unprovenOwners": [
+        "typed-internationalization-cross-layer"
+      ],
       "residualRisks": [
         "wordpresshx-sdk-067",
         "wordpresshx-sdk-092",
@@ -1090,7 +1104,8 @@
         "plugin-package-install",
         "editor-sidebar-example",
         "todo-data-store-example",
-        "static-block-migration"
+        "static-block-migration",
+        "typed-internationalization-cross-layer"
       ],
       "alwaysRun": false,
       "oracle": "pinned official WordPress 7.0 distribution and fresh native installation over exact MySQL and MariaDB images",
@@ -1322,7 +1337,8 @@
       "reverseDependencies": [
         "editor-sidebar-example",
         "todo-data-store-example",
-        "static-block-migration"
+        "static-block-migration",
+        "typed-internationalization-cross-layer"
       ],
       "alwaysRun": false,
       "oracle": "strict TypeScript consumer contracts, classic-profile differential invariants, React runtime, and reviewed generated snapshots",
@@ -1398,6 +1414,40 @@
       "alwaysRun": false,
       "oracle": "WordPress block parser, serializer, deprecation migration, editor save, and front-end rendering behavior",
       "claimContribution": "bounded static-block fixture migration only"
+    },
+    {
+      "testId": "typed-internationalization-cross-layer",
+      "name": "Typed catalog through native WordPress and Gutenberg translations",
+      "surfaces": [
+        "compiler-adapter",
+        "wordpress-runtime-abi",
+        "package-install",
+        "gutenberg-browser"
+      ],
+      "layer": "system",
+      "rings": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "command": "bash packages/gutenberg/scripts/test-i18n.sh",
+      "pathPatterns": [
+        "packages/core/src/wordpress/hx/i18n/*",
+        "compiler/reflaxe.php/src/reflaxe/php/ir/PhpStmt.hx",
+        "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
+        "compiler/wordpress/src/wordpress/hx/compiler/php/profile/*I18n*",
+        "packages/gutenberg/profiles/i18n-strict.hxml",
+        "packages/gutenberg/scripts/*i18n*",
+        "packages/gutenberg/src/wordpress/hx/gutenberg/i18n/*",
+        "packages/gutenberg/test/i18n-*",
+        "packages/gutenberg/test-negative-i18n/*"
+      ],
+      "reverseDependencies": [],
+      "alwaysRun": false,
+      "oracle": "literal typed contracts and independently authored POT, Jed JSON, GNU MO, native PHP, browser-bundle, package-manifest, and real WordPress 7.0 Spanish runtime observations",
+      "claimContribution": "one bounded wp70-release catalog and plugin artifact across PHP, frontend, and block editor; no general locale, plural-rule, package-publication, or WordPress-version claim"
     },
     {
       "testId": "adoption-contract-focused",

@@ -629,11 +629,11 @@
     },
     {
       "path": "compiler/reflaxe.php/src/reflaxe/php/print/PhpPrinter.hx",
-      "sha256": "87410455710bbbddd0003594259324231f4168bf3a1dc65039d89d9916f39b9e"
+      "sha256": "b822ffec0416cad77619a217fd7684fa18a9e4177e3b46da860dfe4c06870d30"
     },
     {
       "path": "compiler/reflaxe.php/test/reflaxe/php/tests/PrinterTest.hx",
-      "sha256": "bf8bbddfed71c09504e4cb6ee20dcafa54b75983cc002231d674dec403c02976"
+      "sha256": "40e6c1f3d1146575737e118fd24b21db0f9994791f0e3d2ae236f38213da214c"
     },
     {
       "path": "compiler/reflaxe.php/test/semantic-matrix/build.hxml",

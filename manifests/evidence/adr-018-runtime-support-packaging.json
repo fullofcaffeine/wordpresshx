@@ -71,7 +71,7 @@
     },
     "workflow": {
       "path": ".github/workflows/repository.yml",
-      "sha256": "34bd831b6b2786081c322fc785cd203c6aad50cf312c72e8dfb9cde461068674"
+      "sha256": "39143ce702e29ba23dc3c7aaea304556cbb5ae54ae799b12d6acaf01efbcd795"
     },
     "imageLock": {
       "path": "docker/images.lock.json",

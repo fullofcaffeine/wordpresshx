@@ -85,6 +85,8 @@ class PrinterTest {
 			"try/catch");
 		assertEquals("list( $left, $right ) = $pair;", printer.printStatement(PhpListAssign(["left", "right"], PhpVar("pair"))), "list assignment");
 		assertEquals("while ( $ready ) {\n\tbreak;\n}", printer.printStatement(PhpWhile(PhpVar("ready"), [PhpBreak])), "while loop");
+		assertEquals("\t/* translators: %1$s is a book title. */", printer.printStatement(PhpComment("translators: %1$s is a book title."), 1),
+			"extractor-visible comment");
 	}
 
 	static function testFileDeclarationsAndSourceRanges():Void {
@@ -216,6 +218,8 @@ class PrinterTest {
 		assertThrows(() -> printer.printExpr(PhpFunctionCall("safe(); system", [])), "invalid function name");
 		assertThrows(() -> printer.printExpr(PhpBinop("; phpinfo();", PhpInt(1), PhpInt(2))), "invalid operator");
 		assertThrows(() -> printer.printExpr(PhpMagicConst("__NOT_MAGIC__")), "invalid magic constant");
+		assertThrows(() -> printer.printStatement(PhpComment("unsafe */ comment")), "terminating block comment");
+		assertThrows(() -> printer.printStatement(PhpComment("multiline\ncomment")), "multiline block comment");
 		assertThrows(() -> PhpIdentifier.named("bad-name"), "invalid structural identifier");
 		assertThrows(() -> PhpQualifiedName.parse("Vendor\\\\Value"), "invalid qualified name");
 		assertThrows(() -> PhpSourceRange.at("/private/Fixture.hx", 1, 1, 1, 2), "absolute source path");

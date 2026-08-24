@@ -12,8 +12,8 @@
     "profileDecisionLockPath": "profiles/decision-lock.json",
     "profileDecisionLockSha256": "ceccd792dd83fa8048ed70fe060dff037aba7d2801ca6e7a5f9e903c1ee7da60",
     "haxeContractRoot": "packages/core",
-    "haxeContractFileCount": 20,
-    "haxeContractContentSha256": "7beda67945b5f59c80e9caf6c98891575867451b009915f0ef5660a92fc0f00b"
+    "haxeContractFileCount": 39,
+    "haxeContractContentSha256": "310b748cf4874ac9078541e3700c4c88a9961f0c130a1b4ef320b5ce18b6965b"
   },
   "schemaImplementation": {
     "draft": "https://json-schema.org/draft/2020-12/schema",

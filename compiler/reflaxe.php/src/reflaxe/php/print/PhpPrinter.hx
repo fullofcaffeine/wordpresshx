@@ -89,6 +89,8 @@ class PhpPrinter {
 			case PhpMapped(inner, source, semanticNodeId, _):
 				validateMappedStatement(inner, source, semanticNodeId);
 				printStatement(inner, depth);
+			case PhpComment(text):
+				prefix + "/* " + comment(text) + " */";
 			case PhpIf(condition, body):
 				prefix
 				+ "if ( "
@@ -814,6 +816,14 @@ class PhpPrinter {
 					.join("\\t") + "\"";
 		}
 		return "'" + value.split("\\").join("\\\\").split("'").join("\\'") + "'";
+	}
+
+	function comment(value:String):String {
+		if (value == null || value.length == 0 || value.indexOf("\x00") != -1 || value.indexOf("\r") != -1 || value.indexOf("\n") != -1
+			|| value.indexOf("*/") != -1) {
+			throw "PHP block comment must be one safe non-empty line";
+		}
+		return value;
 	}
 
 	function tabs(count:Int):String {

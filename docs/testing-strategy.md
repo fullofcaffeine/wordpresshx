@@ -379,6 +379,15 @@ distinctive browser flows. The `--skip-wordpress` variants are faster build
 owners and cannot replace the advertised runtime proof. Todo Studio remains a
 planned Tier A flagship; the in-memory data-store lab cannot borrow that claim.
 
+Typed internationalization has one cross-layer system owner:
+`bash packages/gutenberg/scripts/test-i18n.sh`. It starts with literal catalog
+and compile-failure contracts, verifies deterministic POT, Jed JSON, GNU MO,
+native PHP, browser bundle, and package metadata independently, then observes a
+Spanish message with context and plurals in WordPress 7.0 server, front-end,
+and block-editor paths. The `--skip-wordpress` form proves only the compile,
+artifact, package, and static portions. It does not prove runtime translation
+loading, other plural rules, other WordPress versions, or publication.
+
 ## Oracles, snapshots, and generated artifacts
 
 Every new or materially changed expectation names its authority in the Bead,

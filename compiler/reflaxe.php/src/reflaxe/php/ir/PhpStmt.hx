@@ -5,6 +5,9 @@ enum PhpStmt {
 	/** Exact statement provenance; the boolean explicitly opts into a line-only runtime anchor. **/
 	PhpMapped(statement:PhpStmt, source:PhpSourceRange, semanticNodeId:String, traceAnchor:Bool);
 
+	/** One validated block comment, including extractor-visible translator notes. */
+	PhpComment(text:String);
+
 	PhpIf(condition:PhpExpr, body:Array<PhpStmt>);
 	PhpIfElse(condition:PhpExpr, body:Array<PhpStmt>, elseBody:Array<PhpStmt>);
 	PhpFor(init:PhpExpr, condition:PhpExpr, update:PhpExpr, body:Array<PhpStmt>);

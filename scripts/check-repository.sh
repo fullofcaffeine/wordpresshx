@@ -763,7 +763,8 @@ required_files=(
   manifests/evidence/sdk-031-strict-browser-profile.json
   manifests/evidence/sdk-032-react-gutenberg-hxx.json
   manifests/evidence/g2.2-provider-exact-optional-compatibility.json
-  manifests/evidence/sdk-033-wordpress-asset-metadata.json
+	manifests/evidence/sdk-033-wordpress-asset-metadata.json
+	manifests/evidence/sdk-055-typed-internationalization.json
   manifests/evidence/g2.3-wp70-build-tool-advisories.json
   manifests/evidence/sdk-034-browser-source-correlation.json
   manifests/evidence/sdk-035-classic-genes-differential.json
@@ -1484,6 +1485,11 @@ sdk033_tooling_lock_path = Path(
 sdk033_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-033-wordpress-asset-metadata.json"
+    ).read_text(encoding="utf-8")
+)
+sdk055_receipt = json.loads(
+    Path(
+        "manifests/evidence/sdk-055-typed-internationalization.json"
     ).read_text(encoding="utf-8")
 )
 sdk060_profile_path = Path(
@@ -8131,7 +8137,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "core-profile-contract",
         "packages/core",
         18,
-        18,
+        37,
         "bash scripts/profiles/test-profile-haxe.sh",
     ),
     (
@@ -8145,7 +8151,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "wordpress-php-compiler",
         "compiler/wordpress",
         26,
-        35,
+        42,
         "bash compiler/wordpress/scripts/test.sh",
     ),
 ):
@@ -10451,6 +10457,80 @@ assert sdk033_receipt["claims"]["translationAttachment"] == "runtime-tested"
 assert sdk033_receipt["claims"]["scriptModules"] == "not-tested"
 assert sdk033_receipt["claims"]["publicPackagePublication"] == "blocked"
 assert sdk033_receipt["claims"]["productionSupport"] == "not-tested"
+
+assert sdk055_receipt["schemaVersion"] == 1
+assert sdk055_receipt["receiptId"] == "SDK-055-TYPED-INTERNATIONALIZATION"
+assert sdk055_receipt["bead"] == "wordpresshx-sdk-055"
+assert sdk055_receipt["status"] in {"local-verified", "verified"}
+assert sdk055_receipt["subject"]["package"] == "packages/gutenberg"
+for sdk055_subject_name, sdk055_subject in sdk055_receipt["subject"].items():
+    if sdk055_subject_name == "package":
+        continue
+    sdk055_subject_path = Path(sdk055_subject["path"])
+    assert sdk055_subject_path.is_file()
+    assert hashlib.sha256(sdk055_subject_path.read_bytes()).hexdigest() == (
+        sdk055_subject["sha256"]
+    )
+assert sdk055_receipt["implementation"]["browserBoundary"] == "@wordpress/i18n"
+assert sdk055_receipt["implementation"]["serverBoundary"] == (
+    "native WordPress gettext functions"
+)
+assert sdk055_receipt["implementation"]["runtimeOnlyTextPackaged"] is False
+assert sdk055_receipt["implementation"]["forbiddenHaxeWeakConstructs"] == []
+assert sdk055_receipt["artifact"]["manifestId"] == (
+    "wordpresshx-i18n-artifact-v1"
+)
+assert sdk055_receipt["artifact"]["profileId"] == "wp70-release"
+assert sdk055_receipt["artifact"]["locale"] == "es_MX"
+assert sdk055_receipt["artifact"]["messageCount"] == 5
+assert sdk055_receipt["artifact"]["fileCount"] == 8
+assert sdk055_receipt["artifact"]["browserDependencies"] == ["wp-i18n"]
+assert sdk055_receipt["artifact"]["secondCompileMatched"] is True
+assert sdk055_receipt["artifact"]["officialBundleReplayMatched"] is True
+assert sdk055_receipt["artifact"]["completePluginReplayMatched"] is True
+assert sdk055_receipt["artifact"]["publicationAuthorized"] is False
+assert sdk055_receipt["independentVerification"]["outcome"] == "passed"
+assert sdk055_receipt["realWordPressRuntime"]["wordpressVersion"] == "7.0"
+assert sdk055_receipt["realWordPressRuntime"]["frontendBrowserObserved"] is True
+assert sdk055_receipt["realWordPressRuntime"]["blockEditorBrowserObserved"] is True
+assert sdk055_receipt["realWordPressRuntime"]["browserConsoleErrors"] == 0
+assert sdk055_receipt["realWordPressRuntime"]["browserPageErrors"] == 0
+assert sdk055_receipt["realWordPressRuntime"]["outcome"] == "passed"
+assert sdk055_receipt["localVerification"] == {
+    "commands": ["bash packages/gutenberg/scripts/test-i18n.sh"],
+    "outcome": "passed",
+}
+assert sdk055_receipt["claims"]["typedCatalog"] == (
+    "compile-and-runtime-tested"
+)
+assert sdk055_receipt["claims"]["exactProfile"] == "wp70-release"
+assert sdk055_receipt["claims"]["allWordPressVersions"] == "not-claimed"
+assert sdk055_receipt["claims"]["allLocales"] == "not-claimed"
+assert sdk055_receipt["claims"]["publication"] == "blocked-by-policy"
+assert "Prove typed server, frontend, and editor internationalization" in (
+    workflow_text
+)
+assert "Test typed internationalization and deterministic locale artifacts" in (
+    workflow_text
+)
+assert "bash packages/gutenberg/scripts/test-i18n.sh" in workflow_text
+assert "bash packages/gutenberg/scripts/test-i18n.sh --skip-wordpress" in (
+    workflow_text
+)
+sdk055_hosted = sdk055_receipt["repositoryHostedVerification"]
+assert sdk055_hosted["workflow"] == "Repository bootstrap"
+assert sdk055_hosted["jobs"] == ["haxe", "wordpress-runtime"]
+assert sdk055_hosted["required"] is True
+if sdk055_receipt["status"] == "local-verified":
+    assert sdk055_receipt["implementation"].get("commit") is None
+    assert sdk055_hosted["status"] == "pending-publication"
+else:
+    assert sha1.fullmatch(sdk055_receipt["implementation"]["commit"])
+    assert sdk055_hosted["status"] == "passed"
+    assert sdk055_hosted["commit"] == sdk055_receipt["implementation"]["commit"]
+    assert isinstance(sdk055_hosted["runId"], int)
+    assert sdk055_hosted["allJobsPassed"] is True
+    assert sdk055_hosted["artifactHashesMatched"] is True
 
 assert sdk060_receipt["schemaVersion"] == 1
 assert sdk060_receipt["receiptId"] == "SDK-060-TYPED-BLOCK-METADATA"
@@ -12842,7 +12922,7 @@ core_digest_input = bytearray()
 for path in core_files:
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     core_digest_input.extend(f"{digest}  {path.as_posix()}\n".encode())
-assert len(core_files) == sdk012_subject["haxeContractFileCount"] == 20
+assert len(core_files) == sdk012_subject["haxeContractFileCount"]
 assert hashlib.sha256(core_digest_input).hexdigest() == sdk012_subject[
     "haxeContractContentSha256"
 ]
