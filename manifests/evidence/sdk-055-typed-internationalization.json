@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "receiptId": "SDK-055-TYPED-INTERNATIONALIZATION",
   "bead": "wordpresshx-sdk-055",
-  "status": "local-verified",
-  "observedAt": "2026-08-24T11:42:27Z",
+  "status": "verified",
+  "observedAt": "2026-08-24T13:44:48Z",
   "subject": {
     "package": "packages/gutenberg",
     "catalogApi": {
@@ -137,7 +137,8 @@
     "runtimeOnlyTextPackaged": false,
     "authoredCompanionPhpJavaScriptOrJson": false,
     "forbiddenHaxeWeakConstructs": [],
-    "wordpressSpecificGenesChange": false
+    "wordpressSpecificGenesChange": false,
+    "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73"
   },
   "artifact": {
     "manifestId": "wordpresshx-i18n-artifact-v1",
@@ -223,7 +224,29 @@
       "wordpress-runtime"
     ],
     "required": true,
-    "status": "pending-publication"
+    "status": "passed",
+    "runId": 32732911426,
+    "runUrl": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32732911426",
+    "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73",
+    "completedAt": "2026-08-24T13:44:48Z",
+    "jobEvidence": [
+      {
+        "name": "haxe",
+        "jobId": 97448991715,
+        "status": "passed",
+        "command": "bash packages/gutenberg/scripts/test-i18n.sh --skip-wordpress",
+        "observed": "two official bundles, the closed package contract, the independent eight-artifact verifier, exact PHP 7.4 and 8.4 syntax, and the full typed internationalization gate passed"
+      },
+      {
+        "name": "wordpress-runtime",
+        "jobId": 97448991587,
+        "status": "passed",
+        "command": "bash packages/gutenberg/scripts/test-i18n.sh",
+        "observed": "WordPress 7.0 loaded es_MX singular, plural, context, context-plural, and placeholder messages through server, frontend, and block editor with zero browser page errors"
+      }
+    ],
+    "allJobsPassed": true,
+    "artifactHashesMatched": true
   },
   "claims": {
     "typedCatalog": "compile-and-runtime-tested",

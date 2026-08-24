@@ -238,14 +238,25 @@
             "wordpress-reflaxe-consumer-package",
             "wordpress-reflaxe-consumer-runtime"
           ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "haxe",
+          "runId": 32732911426,
+          "jobId": 97448991715,
+          "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73",
+          "status": "passed",
+          "evidence": "manifests/evidence/sdk-055-typed-internationalization.json",
+          "ownersCovered": [
+            "typed-internationalization-cross-layer"
+          ]
         }
       ],
       "unprovenOwners": [
         "compiler-qualification-contract",
         "ordinary-haxe-php-tracer",
         "reflaxe-php-semantic-matrix",
-        "wordpress-reflaxe-module-package",
-        "typed-internationalization-cross-layer"
+        "wordpress-reflaxe-module-package"
       ],
       "residualRisks": [
         "wordpresshx-reflaxe-php.3",
@@ -372,16 +383,26 @@
           "ownersCovered": [
             "wordpress-reflaxe-consumer-runtime"
           ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 32732911426,
+          "jobId": 97448991587,
+          "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73",
+          "status": "passed",
+          "evidence": "manifests/evidence/sdk-055-typed-internationalization.json",
+          "ownersCovered": [
+            "typed-internationalization-cross-layer"
+          ]
         }
       ],
       "unprovenOwners": [
-        "plugin-package-install",
-        "typed-internationalization-cross-layer"
+        "plugin-package-install"
       ],
       "residualRisks": [
         "wordpresshx-g4",
-        "wordpresshx-sdk-051",
-        "wordpresshx-sdk-055"
+        "wordpresshx-sdk-051"
       ]
     },
     {
@@ -530,12 +551,23 @@
             "wordpress-reflaxe-consumer-package",
             "wordpress-reflaxe-consumer-runtime"
           ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 32732911426,
+          "jobId": 97448991587,
+          "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73",
+          "status": "passed",
+          "evidence": "manifests/evidence/sdk-055-typed-internationalization.json",
+          "ownersCovered": [
+            "typed-internationalization-cross-layer"
+          ]
         }
       ],
       "unprovenOwners": [
         "wordpress-reflaxe-module-package",
-        "plugin-package-install",
-        "typed-internationalization-cross-layer"
+        "plugin-package-install"
       ],
       "residualRisks": [
         "wordpresshx-sdk-051",
@@ -660,11 +692,21 @@
           "ownersCovered": [
             "output-context-vertical"
           ]
+        },
+        {
+          "workflow": "Repository bootstrap",
+          "job": "wordpress-runtime",
+          "runId": 32732911426,
+          "jobId": 97448991587,
+          "commit": "041a6a31fb15712a6c6e9f03a081a8486911db73",
+          "status": "passed",
+          "evidence": "manifests/evidence/sdk-055-typed-internationalization.json",
+          "ownersCovered": [
+            "typed-internationalization-cross-layer"
+          ]
         }
       ],
-      "unprovenOwners": [
-        "typed-internationalization-cross-layer"
-      ],
+      "unprovenOwners": [],
       "residualRisks": [
         "wordpresshx-sdk-067",
         "wordpresshx-sdk-092",

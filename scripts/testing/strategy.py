@@ -750,6 +750,39 @@ def validate_baseline(receipt: dict[str, object], model: dict[str, object]) -> N
     }
     if consumer.get("status") != "verified" or consumer_hosted.get("status") != "passed":
         raise StrategyError("reflaxe.php WordPress consumer evidence is not verified")
+
+    sdk055 = strict_json(ROOT / "manifests" / "evidence" / "sdk-055-typed-internationalization.json")
+    sdk055_hosted = require_dict(sdk055.get("repositoryHostedVerification"), "SDK-055 repositoryHostedVerification")
+    sdk055_implementation = require_dict(sdk055.get("implementation"), "SDK-055 implementation")
+    sdk055_jobs: dict[str, dict[str, object]] = {}
+    for index, raw_job in enumerate(require_list(sdk055_hosted.get("jobEvidence"), "SDK-055 jobEvidence")):
+        job = require_dict(raw_job, f"SDK-055 jobEvidence[{index}]")
+        name = job.get("name")
+        job_id = job.get("jobId")
+        if (
+            not isinstance(name, str)
+            or name in sdk055_jobs
+            or not isinstance(job_id, int)
+            or isinstance(job_id, bool)
+            or job_id <= 0
+            or job.get("status") != "passed"
+        ):
+            raise StrategyError("SDK-055 hosted job evidence is invalid")
+        sdk055_jobs[name] = job
+    if (
+        sdk055.get("status") != "verified"
+        or sdk055_hosted.get("status") != "passed"
+        or sdk055_hosted.get("allJobsPassed") is not True
+        or sdk055_hosted.get("artifactHashesMatched") is not True
+        or set(sdk055_jobs) != {"haxe", "wordpress-runtime"}
+    ):
+        raise StrategyError("SDK-055 evidence is not verified")
+    sdk055_job_by_surface = {
+        "compiler-adapter": "haxe",
+        "wordpress-runtime-abi": "wordpress-runtime",
+        "package-install": "wordpress-runtime",
+        "gutenberg-browser": "wordpress-runtime",
+    }
     for surface in require_list(model.get("surfaces"), "surfaces"):
         scorecard = require_dict(surface, "surface")
         surface_id = scorecard.get("surfaceId")
@@ -780,6 +813,20 @@ def validate_baseline(receipt: dict[str, object], model: dict[str, object]) -> N
                     raise StrategyError("surface proof identity is not bound by reflaxe.php WordPress consumer evidence")
                 if consumer_owners.get(surface_id) != proof_owners:
                     raise StrategyError("reflaxe.php WordPress consumer proof owner coverage changed")
+            elif evidence == "manifests/evidence/sdk-055-typed-internationalization.json":
+                job_name = sdk055_job_by_surface.get(surface_id)
+                job = sdk055_jobs.get(job_name) if job_name is not None else None
+                expected = (
+                    sdk055_hosted.get("workflow"),
+                    job_name,
+                    sdk055_hosted.get("runId"),
+                    job.get("jobId") if job is not None else None,
+                    sdk055_implementation.get("commit"),
+                )
+                if identity != expected:
+                    raise StrategyError("surface proof identity is not bound by SDK-055 evidence")
+                if proof_owners != {"typed-internationalization-cross-layer"}:
+                    raise StrategyError("SDK-055 proof owner coverage changed")
             else:
                 raise StrategyError("surface proof names an unrecognized evidence authority")
 
@@ -1084,6 +1131,17 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
     fabricated_proof = require_dict(require_list(fabricated_surface.get("lastCleanProofs"), "mutation proofs")[0], "mutation proof")
     fabricated_proof["jobId"] = 1
     baseline_mutations.append(("fabricated-proof-identity", baseline, fabricated_proof_model))
+    fabricated_sdk055_model = copy.deepcopy(model)
+    fabricated_sdk055_proof = next(
+        proof
+        for surface in require_list(fabricated_sdk055_model.get("surfaces"), "mutation surfaces")
+        if isinstance(surface, dict)
+        for proof in require_list(surface.get("lastCleanProofs"), "mutation proofs")
+        if isinstance(proof, dict)
+        and proof.get("evidence") == "manifests/evidence/sdk-055-typed-internationalization.json"
+    )
+    require_dict(fabricated_sdk055_proof, "mutation SDK-055 proof")["jobId"] = 1
+    baseline_mutations.append(("fabricated-sdk055-proof-identity", baseline, fabricated_sdk055_model))
     swapped_coverage_model = copy.deepcopy(model)
     swapped_surface = require_dict(require_list(swapped_coverage_model.get("surfaces"), "mutation surfaces")[0], "mutation surface")
     swapped_proofs = require_list(swapped_surface.get("lastCleanProofs"), "mutation proofs")
@@ -1138,7 +1196,7 @@ def self_test(model: dict[str, object], baseline: dict[str, object]) -> None:
     else:
         raise StrategyError("complete history accepted a missing historical subject")
 
-    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 6 evidence mutations, 4 history modes, conservative fallback, reverse dependencies")
+    print("testing strategy self-test passed: 7 selector classes, 6 strategy mutations, 7 evidence mutations, 4 history modes, conservative fallback, reverse dependencies")
 
 
 def print_human(result: dict[str, object]) -> None:
