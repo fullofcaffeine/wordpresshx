@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "de7db87fe483eea81e13ce86055e5590e2ddcda5e75edceea8b2bfaa138f45f1"
+      "sha256": "e05d86b26e5aae0c165ac1cdc05648be9fa95832ab5d8ef46257804dd6176733"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -55,7 +55,7 @@
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "2a83b1e1f3d0017edc9255973d21d5c54495b8c9e01d53afe6fd87a80a6028f5"
+      "sha256": "639bb323dfc1f096f537fd271eafff40e338f13b1d947de10827248975db6f37"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",
@@ -167,7 +167,7 @@
     "historicalJobId": 97261932874,
     "historicalCommit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
-    "gateIdentitySha256": "a5eceb7e5f1103e64a95e94c6222babfb9907f288e3684c790c5e4e6a9fdba6f"
+    "gateIdentitySha256": "27396da8397f48669a98dcb5634848c1574b28521870198bb11a767b38191a7b"
   },
   "limitations": [
     "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
@@ -198,7 +198,7 @@
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "local",
     "outcome": "passed",
-    "observedAt": "2026-08-24T03:57:27Z",
+    "observedAt": "2026-08-24T04:14:26Z",
     "observers": [
       {
         "id": "schema",
@@ -217,7 +217,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "bb56ac90016239a77569f257a709d42c40e53e0889fcb87c662ce1606b96ec49",
+        "identitySha256": "11422d847c002c6719429b6de893df2c788b6e5766ea54441bd43d5e63542601",
         "outcome": "passed"
       },
       {
@@ -231,7 +231,7 @@
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "container",
     "outcome": "passed",
-    "observedAt": "2026-08-24T04:01:11Z",
+    "observedAt": "2026-08-24T04:16:45Z",
     "observers": [
       {
         "id": "schema",
@@ -250,7 +250,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "bb56ac90016239a77569f257a709d42c40e53e0889fcb87c662ce1606b96ec49",
+        "identitySha256": "11422d847c002c6719429b6de893df2c788b6e5766ea54441bd43d5e63542601",
         "outcome": "passed"
       },
       {

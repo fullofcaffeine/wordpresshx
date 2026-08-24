@@ -230,16 +230,19 @@ mkdir -p "${native_php_root}" "$(dirname "${native_js_index}")"
 	-main NativeMain \
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 	--php "${native_php_root}"
-"${scoped_haxe}" \
-	-cp "${fixture_root}/src" \
-	-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
-	-cp "${fixture_root}/test-native" \
-	-main NativeMain \
-	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
-	-lib hxnodejs \
-	-D js-es=6 \
-	-dce full \
-	-js "${native_js_index}"
+(
+	cd "${repository_root}/packages/cli"
+	"${scoped_haxe}" \
+		-cp "${fixture_root}/src" \
+		-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
+		-cp "${fixture_root}/test-native" \
+		-main NativeMain \
+		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
+		-lib hxnodejs \
+		-D js-es=6 \
+		-dce full \
+		-js "${native_js_index}"
+)
 python3 "${repository_root}/scripts/adoption/test-native-provider.py" \
 	"${generation_one}" \
 	"${test_root}/native-provider" \
