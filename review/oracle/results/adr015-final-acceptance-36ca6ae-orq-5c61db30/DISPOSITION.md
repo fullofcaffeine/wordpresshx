@@ -163,3 +163,17 @@ Minimum safe next revision:
   not claim a production SDK-070/SDK-073 generator, a real third-party
   provider, WordPress runtime support, PHP 7.4, package publication, or SDK-117
   trust admission.
+
+### Post-disposition delivery verification
+
+After the initial disposition was published, `main` advanced to
+`4d2d92595440e184dae52c8ec5f5a18a63afb1ad` through unrelated SDK-055 work.
+No ADR-015 or adoption path changed between reviewed commit `36ca6ae` and that
+revision. On the newer revision,
+`taskpolicy -b nice -n 10 bash scripts/check-repository.sh` exited successfully.
+The run included the ADR-015 84-mutation architecture check, G0's 10
+fail-closed mutations, G3's 12 fail-closed mutations, dependency and image
+locks, Beads history-reader lock, security policy, and repository bootstrap
+checks. This closes the earlier local-launcher verification gap for delivery;
+it does not change the retained `do not accept` decision or the two unresolved
+owner decisions.
