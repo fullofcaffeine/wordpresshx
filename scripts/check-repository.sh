@@ -6881,6 +6881,16 @@ if lifecycle_receipt["status"] == "implemented-hosted-pending":
     assert lifecycle_receipt["hostedWorkflow"]["status"] == "pending"
     for field in ("commit", "runId", "jobId", "url"):
         assert lifecycle_receipt["hostedWorkflow"][field] is None
+else:
+    assert lifecycle_receipt["hostedWorkflow"] == {
+        "path": ".github/workflows/repository.yml",
+        "job": "wordpress-runtime",
+        "commit": "4cebf450df81e454fe57e2c84f26d2d7e4adaf36",
+        "runId": 32708969242,
+        "jobId": 97376100003,
+        "url": "https://github.com/fullofcaffeine/wordpresshx/actions/runs/32708969242/job/97376100003",
+        "status": "passed",
+    }
 assert reflaxe_php_semantic_receipt["schemaVersion"] == 1
 assert reflaxe_php_semantic_receipt["receiptId"] == (
     "REFLAXE-PHP-SEMANTIC-MATRIX-001"
