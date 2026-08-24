@@ -1,6 +1,4 @@
 import wordpress.hx.adoption.prototype.AcmeCalendar;
-import wordpress.hx.adoption.prototype.AcmeCalendar.AcmeCalendarFacade;
-import wordpress.hx.adoption.prototype.AcmeCalendar.EventQuery;
 import wordpress.hx.adoption.prototype.Adoption.CapabilityAvailability;
 import wordpress.hx.adoption.prototype.testing.TargetProbe;
 
@@ -9,7 +7,7 @@ final class Main {
 		final browser = TargetProbe.exactBrowserModule();
 		switch browser.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge) {
 			case Available(token):
-				AcmeCalendarFacade.listEvents(browser.scope, token, new EventQuery(1));
+				token.authorizes(TargetProbe.exactPhpRequest().scope, AcmeCalendar.provider, AcmeCalendar.badge, browser.bundleDigest);
 			case Unavailable(_):
 		}
 	}

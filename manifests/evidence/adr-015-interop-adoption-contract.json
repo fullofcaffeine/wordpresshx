@@ -7,15 +7,15 @@
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
-      "sha256": "036f777c0275091149be7c1678ebdf784b082e969216ac8b97f680a776c768ba"
+      "sha256": "d03049b5c880c2eda1b0180ef2fca7a84a1508e9d02912a01da11756f28f5914"
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "90f74764962186ae02530ef0b2e735aa21d5f7e8de7d2d02aa211e4319a4a429"
+      "sha256": "943232695b054ba76ce7c23d17e8329a610c623f2a1cd928543cec484ab7c4dc"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
-      "sha256": "5d60c08be6496d1f5a2a34717172795625b54cd1b432d9a8b86a7998a95f377f"
+      "sha256": "f2dd4139ee318b8334feae0ebd4cf1f5da2db88d00ce23a631d55e9840db6803"
     },
     "adoptionCapabilitySchema": {
       "path": "schemas/adoption-capability.schema.json",
@@ -23,43 +23,67 @@
     },
     "adoptionReviewSchema": {
       "path": "schemas/adoption-review.schema.json",
-      "sha256": "1b08b0beb700b717d7b56e56fe8340cb12531ed6e686d54b72304f73b648ad58"
+      "sha256": "f4f5236637f2d272ed87b8e8aeda6da436d92cbf81e630f599e79e337294fb7f"
     },
     "adoptionBundleSchema": {
       "path": "schemas/adoption-bundle.schema.json",
-      "sha256": "9e3c53652aef8f302c343bac8a756561f2e9066d395ab9beb4ecec50bc30e48c"
+      "sha256": "7f32dca7b0dba5b748cdcd59fc85c42fc01057bf24f96a3dd4294bf5b2b6ac84"
     },
     "transcript": {
       "path": "fixtures/adoption-contract/expected/capability-plan.txt",
-      "sha256": "d8c42fcb8529f7c78d924407aeb703e0d6c33399c18ff3a9abd673dbc7e9f0f0"
+      "sha256": "eddc5a6345427049f52510c103516fbe4057107d2788c4f7593f2afc47374572"
     },
     "generator": {
       "path": "scripts/adoption/generate-fixture.py",
-      "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
+      "sha256": "3812be8c3e9a993ec7410ea2ced83d4c26df59a7a3064f88e97e0746f4dde1fe"
     },
     "independentValidator": {
       "path": "scripts/adoption/validate-architecture.py",
-      "sha256": "886ce09f185a9e79145e3e8f9babc9d36609aad88f6d321abc48078069c3f4fa"
+      "sha256": "d7fc5d8961b9244e7fca6cb329c84b61d71e41ac330cc4d427ef7bc264ab2e4d"
     },
     "nativeProviderProbe": {
       "path": "scripts/adoption/test-native-provider.py",
-      "sha256": "701998154158849d3a990497dbbbb505481b98731239b4190f4e84ed684e87ba"
+      "sha256": "cdf794120747b754a341fb6509f68bd3410dc00391bd82b5c2ea798622d28bd6"
     },
     "ownershipProbe": {
       "path": "scripts/adoption/test-ownership.py",
-      "sha256": "739b34b9ffadde34d797a2634f1749ace2b587cde10c67dcf3a158093070d368"
+      "sha256": "a2c68db548ee6e2500e4c36fb26f3458b10467ea8b19c32499537fb1210f2960"
     },
     "identityGenerator": {
       "path": "scripts/adoption/refresh-evidence.py",
-      "sha256": "aaeefdf805e335d2ad61e9000fb5797faf2f80f4e3f376799df6ff66f6552a0a"
+      "sha256": "d51f77d756b3bcd122ea82bc7c3c36d7a63e2b1d5fcc519b9fbf9a011e1200cf"
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "f90ee00111968fa3903d7759852259f688f38c25c23bac03b40af9ea3ff9c975"
+      "sha256": "3cd937aab22de6d00c27252c4a4114d93e70f1a61cc8d0e9ceb71befe2764d42"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",
       "sha256": "0c4a1608e3b04c1a60216ddc1ba269c8d95563420d3e8f2d799d1d3270766f63"
+    },
+    "abiModel": {
+      "path": "scripts/adoption/abi_model.py",
+      "sha256": "8569327eb4541c50bb49559d2acce7e9330eb67dc0cd8986170e0a2ff7fd168b"
+    },
+    "bundleValidator": {
+      "path": "fixtures/adoption-contract/test-ownership/adoption/ownership/AdoptionBundleValidator.hx",
+      "sha256": "2f515dc818b05a7418d57a5293131a91ab6d3e547ea78864e6d10e2f0e34fb51"
+    },
+    "evidenceState": {
+      "path": "scripts/adoption/evidence_state.py",
+      "sha256": "62b81aa732d1b932ba06d51b721ae04d5165b84820164aed706e23f230e55cd6"
+    },
+    "evidenceStateProbe": {
+      "path": "scripts/adoption/test-evidence.py",
+      "sha256": "f1b25bc6ea74b3c77ad60ee175e398f90111b44cce9ed4f721f6057d982cbcf5"
+    },
+    "outcomeRecorder": {
+      "path": "scripts/adoption/record-evidence.py",
+      "sha256": "4ad1dfd3beaeb7195f3c3d0a4b911ad056930982476617260450ad11a031a0f1"
+    },
+    "ownershipHarness": {
+      "path": "fixtures/adoption-contract/test-ownership/adoption/ownership/Main.hx",
+      "sha256": "fc39ff7aa94ffa0aa2583924327769d0f40fd21d40c0971f8edf008475b30cee"
     }
   },
   "authority": {
@@ -86,7 +110,7 @@
       "python3 scripts/adoption/validate-architecture.py",
       "bash scripts/adoption/test.sh"
     ],
-    "sourceTreeSha256": "26b3d77c5b2ce3d76179ac64af13b1df48bfabcee71b2d3a4d9c91de30290c3b",
+    "sourceTreeSha256": "e9857688889509e52a7704584674f1d32b848737b7aeb88c78ca2e15b971f3d9",
     "haxeVersion": "4.3.7",
     "genesVersion": "1.38.0",
     "genesCommit": "122162abefc2035b307508e521348ea4fb36dab7",
@@ -100,22 +124,22 @@
     "capabilityCount": 2,
     "omissionCount": 4,
     "conflictCount": 1,
-    "compileNegativeCount": 6,
-    "independentMutationCount": 33,
+    "compileNegativeCount": 8,
+    "independentMutationCount": 84,
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp": true,
     "providerRuntimeExecutionDuringGeneration": false,
     "syntheticProviderRuntimeUsed": true,
     "productionOwnershipTransactionUsed": true,
     "realProviderUsed": false,
     "wordpressRuntimeUsed": false,
-    "outcome": "passed-local-and-hosted-current"
+    "outcome": "passed-local-and-container-current-content-root"
   },
   "review": {
     "selfAdversarialReview": "completed-non-independent",
     "correctedFindings": [
       "The generator derives every admitted and omitted symbol from exact source spans.",
       "Every admitted type preserves the strongest complete source declaration.",
-      "The bundle binds each record, generated facade, and ownership entry under one digest root.",
+      "The acyclic content bundle binds each record, generated surface, native facade, and provider artifact; the final ownership manifest owns the bundle and every member.",
       "Target-owned lifecycle adapters mint non-reusable capability authority.",
       "Generated facades call the exact native fixture providers after artifact checks.",
       "The production ownership engine fails closed and restores interrupted updates."
@@ -135,13 +159,15 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": 32667029622,
-    "jobId": 97261932874,
-    "commit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
-    "status": "passed-current-main",
-    "historicalRunId": 29716562008,
-    "historicalJobId": 88270893309,
-    "historicalCommit": "be8041d0d00c21d44fe2c0198e2d101c1f383908"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "historicalRunId": 32667029622,
+    "historicalJobId": 97261932874,
+    "historicalCommit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
+    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "gateIdentitySha256": "17184cff4a0e555a4204bb88fcf1b76509899013bde44f8d33e292213bf965cd"
   },
   "limitations": [
     "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
@@ -153,13 +179,13 @@
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-and-hosted-current",
-    "noProviderExecution": "static-generation-tested-local",
-    "fixtureGenerator": "deterministic-source-derived-tested-local",
+    "typedCapabilityPrototype": "compile-tested-local-and-container-current-content-root",
+    "noProviderExecution": "static-generation-tested-local-and-container-current-content-root",
+    "fixtureGenerator": "deterministic-source-derived-tested-local-and-container-current-content-root",
     "productionGenerator": "not-tested",
     "isolatedReflectionRuntime": "not-tested",
-    "nativeProviderAbi": "synthetic-provider-tested-local",
-    "ownershipTransaction": "production-owner-tested-local",
+    "nativeProviderAbi": "synthetic-provider-tested-local-and-container-current-content-root",
+    "ownershipTransaction": "production-owner-tested-local-and-container-current-content-root",
     "realProviderRuntime": "not-tested",
     "wordpressRuntime": "not-tested",
     "providerTrustAdmission": "not-tested",
@@ -167,5 +193,71 @@
     "publicPackageConsumer": "not-tested",
     "productionSupport": "not-tested",
     "publicationAuthorized": false
+  },
+  "localObservation": {
+    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "executionMode": "local",
+    "outcome": "passed",
+    "observedAt": "2026-08-24T02:40:18Z",
+    "observers": [
+      {
+        "id": "schema",
+        "identitySha256": "934d62ab10d32ab9be60ff075ff9c62b0058d051305cb79ee182940641cf60cd",
+        "outcome": "passed"
+      },
+      {
+        "id": "native",
+        "identitySha256": "90e614bee3aeae685b9ce2bef6f2b56b4331991aff688b5f930c1f397804006d",
+        "outcome": "passed"
+      },
+      {
+        "id": "haxe",
+        "identitySha256": "4d924cec0a550e463fef38d53d005b77657ad5b80e4433d80c9833ab20c45d1b",
+        "outcome": "passed"
+      },
+      {
+        "id": "mutation",
+        "identitySha256": "eb745e3412e8ef75fb9f69cff4ccf4d638e3cf89adb7724eb9cf74ac41f5288c",
+        "outcome": "passed"
+      },
+      {
+        "id": "ownership",
+        "identitySha256": "6244c51f44ea27fc9ea064fa78497b95446de37cd49bb0f1387b80deb8dd90e8",
+        "outcome": "passed"
+      }
+    ]
+  },
+  "containerObservation": {
+    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "executionMode": "container",
+    "outcome": "passed",
+    "observedAt": "2026-08-24T02:44:30Z",
+    "observers": [
+      {
+        "id": "schema",
+        "identitySha256": "934d62ab10d32ab9be60ff075ff9c62b0058d051305cb79ee182940641cf60cd",
+        "outcome": "passed"
+      },
+      {
+        "id": "native",
+        "identitySha256": "90e614bee3aeae685b9ce2bef6f2b56b4331991aff688b5f930c1f397804006d",
+        "outcome": "passed"
+      },
+      {
+        "id": "haxe",
+        "identitySha256": "4d924cec0a550e463fef38d53d005b77657ad5b80e4433d80c9833ab20c45d1b",
+        "outcome": "passed"
+      },
+      {
+        "id": "mutation",
+        "identitySha256": "eb745e3412e8ef75fb9f69cff4ccf4d638e3cf89adb7724eb9cf74ac41f5288c",
+        "outcome": "passed"
+      },
+      {
+        "id": "ownership",
+        "identitySha256": "6244c51f44ea27fc9ea064fa78497b95446de37cd49bb0f1387b80deb8dd90e8",
+        "outcome": "passed"
+      }
+    ]
   }
 }

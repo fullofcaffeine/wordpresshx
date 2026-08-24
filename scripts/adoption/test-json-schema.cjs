@@ -27,6 +27,16 @@ for (const [label, schemaPath, documentPath, identityField] of entries) {
       throw new Error(`${label} accepted a non-anchored identity: ${invalid}`);
     }
   }
+
+  const relativePath = schema.$defs?.relativePath;
+  if (relativePath !== undefined) {
+    const validateRelativePath = ajv.compile(relativePath);
+    for (const invalid of ["../x", "a/../x", "./x", "a/./x", "/absolute", "a\\x"]) {
+      if (validateRelativePath(invalid)) {
+        throw new Error(`${label} accepted unsafe relative path: ${invalid}`);
+      }
+    }
+  }
 }
 
 process.stdout.write("ADR-015 public schemas passed Ajv 2020-12 with anchored adversaries\n");

@@ -1,168 +1,117 @@
 #!/usr/bin/env python3
-"""Independently validate the proposed ADR-015 adoption contract architecture."""
+"""Independently check ADR-015 source evidence, semantics, and ownership shape."""
 
 from __future__ import annotations
 
 import copy
 import hashlib
-import io
+import importlib.util
 import json
 import re
-import zipfile
+import sys
 from pathlib import Path, PurePosixPath
+
+from abi_model import AbiModel, merge_model
+from evidence_state import hosted_gate_identity, observer_identities
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_PATHS = {
-    "contract": ROOT / "schemas" / "adoption-contract.schema.json",
-    "capability": ROOT / "schemas" / "adoption-capability.schema.json",
-    "review": ROOT / "schemas" / "adoption-review.schema.json",
-    "bundle": ROOT / "schemas" / "adoption-bundle.schema.json",
-}
+FIXTURE = ROOT / "fixtures/adoption-contract"
+INPUT_ROOT = FIXTURE / "inputs"
+CONTRACT_ROOT = FIXTURE / "contract"
 DOCUMENT_PATHS = {
-    "contract": ROOT
-    / "fixtures"
-    / "adoption-contract"
-    / "contract"
-    / "acme-calendar.contract.json",
-    "capability": ROOT
-    / "fixtures"
-    / "adoption-contract"
-    / "contract"
-    / "acme-calendar.capability.json",
-    "review": ROOT
-    / "fixtures"
-    / "adoption-contract"
-    / "contract"
-    / "acme-calendar.review.json",
-    "bundle": ROOT
-    / "fixtures"
-    / "adoption-contract"
-    / "contract"
-    / "acme-calendar.bundle.json",
+    "contract": CONTRACT_ROOT / "acme-calendar.contract.json",
+    "capability": CONTRACT_ROOT / "acme-calendar.capability.json",
+    "review": CONTRACT_ROOT / "acme-calendar.review.json",
+    "bundle": CONTRACT_ROOT / "acme-calendar.bundle.json",
 }
-OWNERSHIP_PATH = (
-    ROOT
-    / "fixtures"
-    / "adoption-contract"
-    / "contract"
-    / "acme-calendar.generated-files.json"
+SCHEMA_PATHS = {
+    "contract": ROOT / "schemas/adoption-contract.schema.json",
+    "capability": ROOT / "schemas/adoption-capability.schema.json",
+    "review": ROOT / "schemas/adoption-review.schema.json",
+    "bundle": ROOT / "schemas/adoption-bundle.schema.json",
+}
+OWNERSHIP_PATH = CONTRACT_ROOT / "acme-calendar.generated-files.json"
+ARCHITECTURE_PATH = ROOT / "manifests/adoption-contract-architecture.json"
+RECEIPT_PATH = ROOT / "manifests/evidence/adr-015-interop-adoption-contract.json"
+TRANSCRIPT_PATH = FIXTURE / "expected/capability-plan.txt"
+GENERATOR_PATH = ROOT / "scripts/adoption/generate-fixture.py"
+ABI_MODEL_PATH = ROOT / "scripts/adoption/abi_model.py"
+CLI_LOCK_PATH = ROOT / "packages/cli/dependency-lock.json"
+TOOLCHAIN_LOCK_PATH = ROOT / "manifests/toolchain.lock.json"
+NPM_LOCK_PATH = ROOT / "packages/gutenberg/build-tooling/package-lock.json"
+GENERATOR_SPEC = importlib.util.spec_from_file_location(
+    "wordpresshx_adoption_generator", GENERATOR_PATH
 )
-ARCHITECTURE_PATH = ROOT / "manifests" / "adoption-contract-architecture.json"
-RECEIPT_PATH = ROOT / "manifests" / "evidence" / "adr-015-interop-adoption-contract.json"
-CLI_LOCK_PATH = ROOT / "packages" / "cli" / "dependency-lock.json"
-TRANSCRIPT_PATH = (
-    ROOT / "fixtures" / "adoption-contract" / "expected" / "capability-plan.txt"
-)
-GENERATOR_PATH = ROOT / "scripts" / "adoption" / "generate-fixture.py"
+if GENERATOR_SPEC is None or GENERATOR_SPEC.loader is None:
+    raise RuntimeError("cannot load the ADR-015 generator module")
+GENERATOR_MODULE = importlib.util.module_from_spec(GENERATOR_SPEC)
+sys.modules[GENERATOR_SPEC.name] = GENERATOR_MODULE
+GENERATOR_SPEC.loader.exec_module(GENERATOR_MODULE)
+CONTENT_ROOT = GENERATOR_MODULE.CONTENT_ROOT
+browser_facade = GENERATOR_MODULE.browser_facade
+canonical = GENERATOR_MODULE.canonical
+deterministic_provider_archive = GENERATOR_MODULE.deterministic_provider_archive
+php_facade = GENERATOR_MODULE.php_facade
+provider_version = GENERATOR_MODULE.provider_version
+runtime_bundle_policy = GENERATOR_MODULE.runtime_bundle_policy
+static_member_bytes = GENERATOR_MODULE.static_member_bytes
+CONTENT_BUNDLE_PATH = f"{CONTENT_ROOT}/adoption.bundle.json"
 
 
 class ValidationError(ValueError):
     pass
 
 
-def strict_json(text: str, label: str) -> object:
-    def pairs(values: list[tuple[str, object]]) -> dict[str, object]:
-        result: dict[str, object] = {}
-        for key, value in values:
-            if key in result:
-                raise ValidationError(f"{label}: duplicate key {key}")
-            result[key] = value
-        return result
-
-    def reject_float(value: str) -> object:
-        raise ValidationError(f"{label}: floating point is forbidden: {value}")
-
-    try:
-        return json.loads(
-            text,
-            object_pairs_hook=pairs,
-            parse_float=reject_float,
-            parse_constant=reject_float,
-        )
-    except json.JSONDecodeError as error:
-        raise ValidationError(f"{label}: malformed JSON: {error}") from error
-
-
-def canonical(value: object) -> str:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-        allow_nan=False,
-    )
-
-
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def deterministic_provider_archive() -> bytes:
-    entries = [
-        "fixtures/adoption-contract/inputs/index.js",
-        "fixtures/adoption-contract/inputs/package-metadata.json",
-        "fixtures/adoption-contract/inputs/plugin.php",
-    ]
-    output = io.BytesIO()
-    with zipfile.ZipFile(
-        output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
-    ) as archive:
-        for relative in entries:
-            info = zipfile.ZipInfo(relative, (1980, 1, 1, 0, 0, 0))
-            info.compress_type = zipfile.ZIP_DEFLATED
-            info.external_attr = 0o100644 << 16
-            archive.writestr(info, (ROOT / relative).read_bytes())
-    return output.getvalue()
+def self_digest(document: dict[str, object], field: str) -> str:
+    value = copy.deepcopy(document)
+    value.pop(field, None)
+    return sha256(canonical(value))
 
 
-def validate_source_span(
-    value: object,
-    inputs: dict[str, dict[str, object]],
-    location: str,
-) -> bytes:
-    span = require_dict(value, location)
-    input_id = require_string(span.get("inputId"), f"{location}.inputId")
-    source = inputs.get(input_id)
-    if source is None:
-        raise ValidationError(f"{location}: unknown input {input_id}")
-    path = validate_relative_path(span.get("path"), f"{location}.path")
-    if span.get("path") != source.get("path"):
-        raise ValidationError(f"{location}: span path differs from its input")
-    start = span.get("startByte")
-    end = span.get("endByte")
-    if not isinstance(start, int) or isinstance(start, bool):
-        raise ValidationError(f"{location}: invalid start byte")
-    if not isinstance(end, int) or isinstance(end, bool) or end <= start:
-        raise ValidationError(f"{location}: invalid end byte")
-    source_bytes = path.read_bytes()
-    if end > len(source_bytes):
-        raise ValidationError(f"{location}: source span exceeds input")
-    selected = source_bytes[start:end]
-    if span.get("sha256") != sha256(selected):
-        raise ValidationError(f"{location}: source span digest is stale")
-    return selected
+def strict_json(path: Path) -> dict[str, object]:
+    def pairs(values: list[tuple[str, object]]) -> dict[str, object]:
+        result: dict[str, object] = {}
+        for key, value in values:
+            if key in result:
+                raise ValidationError(f"{path}: duplicate key {key}")
+            result[key] = value
+        return result
 
-
-def require_dict(value: object, location: str) -> dict[str, object]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs)
+    except json.JSONDecodeError as error:
+        raise ValidationError(f"{path}: malformed JSON: {error}") from error
     if not isinstance(value, dict):
-        raise ValidationError(f"{location}: expected object")
+        raise ValidationError(f"{path}: expected one JSON object")
     return value
 
 
-def require_list(value: object, location: str) -> list[object]:
+def require_dict(value: object, label: str) -> dict[str, object]:
+    if not isinstance(value, dict):
+        raise ValidationError(f"{label} must be an object")
+    return value
+
+
+def require_list(value: object, label: str) -> list[object]:
     if not isinstance(value, list):
-        raise ValidationError(f"{location}: expected array")
+        raise ValidationError(f"{label} must be an array")
     return value
 
 
-def require_string(value: object, location: str) -> str:
-    if not isinstance(value, str):
-        raise ValidationError(f"{location}: expected string")
+def require_string(value: object, label: str) -> str:
+    if not isinstance(value, str) or value == "":
+        raise ValidationError(f"{label} must be non-empty text")
     return value
 
 
 class ClosedSchemaValidator:
+    """Small independent validator for the JSON Schema features used here."""
+
     def __init__(self, schema: dict[str, object]) -> None:
         self.schema = schema
 
@@ -182,7 +131,7 @@ class ClosedSchemaValidator:
         schema: dict[str, object] | None = None,
         location: str = "$",
     ) -> None:
-        current = schema or self.schema
+        current = self.schema if schema is None else schema
         reference = current.get("$ref")
         if isinstance(reference, str):
             self.validate(value, self.resolve(reference), location)
@@ -247,7 +196,7 @@ class ClosedSchemaValidator:
         if isinstance(value, dict):
             required = require_list(current.get("required", []), f"{location}.required")
             for field in required:
-                if field not in value:
+                if not isinstance(field, str) or field not in value:
                     raise ValidationError(f"{location}: missing required field {field}")
             properties = require_dict(
                 current.get("properties", {}), f"{location}.properties"
@@ -299,261 +248,262 @@ def require_closed_objects(value: object, location: str = "$schema") -> None:
             require_closed_objects(child, f"{location}[{index}]")
 
 
-def self_digest(document: dict[str, object], field: str) -> str:
-    payload = copy.deepcopy(document)
-    payload.pop(field, None)
-    return sha256(canonical(payload).encode("utf-8"))
+def logical_path(path: Path) -> str:
+    return (
+        Path("fixtures/adoption-contract/inputs") / path.relative_to(INPUT_ROOT)
+    ).as_posix()
 
 
-def validate_relative_path(raw: object, location: str) -> Path:
-    value = require_string(raw, location)
-    posix = PurePosixPath(value)
-    if posix.is_absolute() or ".." in posix.parts or "." in posix.parts:
-        raise ValidationError(f"{location}: path is not a clean project-relative path")
-    resolved = ROOT.joinpath(*posix.parts).resolve()
-    try:
-        resolved.relative_to(ROOT.resolve())
-    except ValueError as error:
-        raise ValidationError(f"{location}: path escapes repository") from error
-    if not resolved.is_file() or resolved.is_symlink():
-        raise ValidationError(f"{location}: input is not a real regular file")
-    return resolved
+def clean_relative_path(value: object, label: str) -> str:
+    text = require_string(value, label)
+    path = PurePosixPath(text)
+    if path.is_absolute() or "." in path.parts or ".." in path.parts or "\\" in text:
+        raise ValidationError(f"{label} is not a clean relative path")
+    return text
 
 
-INPUT_AUTHORITY = {
-    "provider-stub": ("authoritative-signature", 1),
-    "typescript-declaration": ("authoritative-signature", 1),
-    "block-metadata": ("authoritative-signature", 1),
-    "rest-schema": ("authoritative-signature", 1),
-    "reflection-snapshot": ("isolated-reflection", 2),
-    "package-metadata": ("package-or-source-signature", 3),
-    "source-signature": ("package-or-source-signature", 3),
-    "plugin-header": ("package-or-source-signature", 3),
-    "provider-runtime-source": ("package-or-source-signature", 3),
-    "documentation-metadata": ("documentation", 4),
-    "curated-contract": ("curated", 5),
-}
-
-
-def walk_type(value: dict[str, object], location: str) -> list[dict[str, object]]:
-    result = [value]
-    kind = value.get("kind")
-    if kind in {"list", "nullable"}:
-        result.extend(
-            walk_type(require_dict(value.get("value"), f"{location}.value"), f"{location}.value")
-        )
-    return result
-
-
-def validate_contract(contract: dict[str, object]) -> dict[str, dict[str, object]]:
-    if contract.get("contractDigest") != self_digest(contract, "contractDigest"):
-        raise ValidationError("contract self digest is stale")
-    if contract.get("contractVersion") != "1.0.0":
-        raise ValidationError("fixture contract version changed")
-
-    profile = require_dict(contract.get("profile"), "contract.profile")
-    catalog_path = ROOT / "generated" / "wp70-release" / "catalog-v1" / "catalog.json"
-    if profile.get("catalogSha256") != sha256(catalog_path.read_bytes()):
-        raise ValidationError("contract profile catalog digest is stale")
-
+def source_inputs(contract: dict[str, object]) -> dict[str, dict[str, object]]:
     generation = require_dict(contract.get("generation"), "contract.generation")
-    generator = require_dict(generation.get("generator"), "contract.generation.generator")
-    if generator.get("sha256") != sha256(GENERATOR_PATH.read_bytes()):
-        raise ValidationError("contract generator digest is stale")
-
-    inputs = require_list(generation.get("inputs"), "contract.generation.inputs")
-    input_records: dict[str, dict[str, object]] = {}
+    records: dict[str, dict[str, object]] = {}
+    ids: list[str] = []
     source_entries: list[tuple[str, str]] = []
-    input_ids: list[str] = []
-    for index, input_value in enumerate(inputs):
-        record = require_dict(input_value, f"contract.generation.inputs[{index}]")
-        input_id = require_string(record.get("id"), f"input[{index}].id")
-        if input_id in input_records:
-            raise ValidationError(f"duplicate input id {input_id}")
-        kind = require_string(record.get("kind"), f"input[{index}].kind")
-        expected = INPUT_AUTHORITY.get(kind)
-        if expected != (record.get("authorityClass"), record.get("precedence")):
-            raise ValidationError(f"input {input_id} authority precedence changed")
-        path = validate_relative_path(record.get("path"), f"input[{index}].path")
+    authority = {
+        "typescript-declaration": ("authoritative-signature", 1),
+        "provider-stub": ("authoritative-signature", 1),
+        "provider-runtime-source": ("package-or-source-signature", 3),
+        "package-metadata": ("package-or-source-signature", 3),
+    }
+    for index, raw in enumerate(require_list(generation.get("inputs"), "generation.inputs")):
+        record = require_dict(raw, f"generation.inputs[{index}]")
+        input_id = require_string(record.get("id"), "input.id")
+        if input_id in records:
+            raise ValidationError(f"duplicate source input: {input_id}")
+        relative = clean_relative_path(record.get("path"), f"input {input_id}.path")
+        path = ROOT / relative
+        if not path.is_file() or path.is_symlink():
+            raise ValidationError(f"input {input_id} is not a regular file")
         digest = sha256(path.read_bytes())
-        if record.get("sha256") != digest:
-            raise ValidationError(f"input {input_id} digest is stale")
-        if generation.get("mode") == "static-no-execution" and record.get("executed") is not False:
-            raise ValidationError(f"static generation executed input {input_id}")
-        if kind != "reflection-snapshot" and record.get("executed") is not False:
-            raise ValidationError(f"non-reflection input {input_id} was executed")
-        input_records[input_id] = record
-        input_ids.append(input_id)
-        source_entries.append((path.relative_to(ROOT).as_posix(), digest))
-    if input_ids != sorted(input_ids):
-        raise ValidationError("contract inputs are not sorted by stable id")
-    if generation.get("mode") == "static-no-execution":
-        if generation.get("reflection") is not None:
-            raise ValidationError("static generation retained a reflection receipt")
-        if any(record.get("kind") == "reflection-snapshot" for record in input_records.values()):
-            raise ValidationError("static generation retained a reflection snapshot")
-    else:
-        if not isinstance(generation.get("reflection"), dict):
-            raise ValidationError("reflection opt-in omitted its isolation receipt")
-        if not any(
-            record.get("kind") == "reflection-snapshot" and record.get("executed") is True
-            for record in input_records.values()
-        ):
-            raise ValidationError("reflection opt-in omitted its executed snapshot")
-
+        if record.get("sha256") != digest or record.get("executed") is not False:
+            raise ValidationError(f"input {input_id} identity or execution state is stale")
+        kind = require_string(record.get("kind"), "input.kind")
+        if authority.get(kind) != (record.get("authorityClass"), record.get("precedence")):
+            raise ValidationError(f"input {input_id} precedence is stale")
+        ids.append(input_id)
+        records[input_id] = record
+        source_entries.append((relative, digest))
+    if ids != sorted(ids):
+        raise ValidationError("source inputs are not sorted")
+    if generation.get("mode") != "static-no-execution" or generation.get("reflection") is not None:
+        raise ValidationError("fixture generation is not static")
     provider = require_dict(contract.get("provider"), "contract.provider")
     source_material = "".join(
         f"{digest}  {relative}\n" for relative, digest in sorted(source_entries)
     )
     if provider.get("sourceSha256") != sha256(source_material.encode("utf-8")):
-        raise ValidationError("provider source tree digest is stale")
-    if provider.get("artifactFormat") != "deterministic-fixture-zip-v1":
-        raise ValidationError("provider artifact format changed")
-    if provider.get("artifactSha256") != sha256(deterministic_provider_archive()):
-        raise ValidationError("provider artifact identity is not bound to the deterministic archive")
+        raise ValidationError("provider source tree identity is stale")
+    archive = deterministic_provider_archive()
+    if provider.get("artifactSha256") != sha256(archive):
+        raise ValidationError("provider artifact is not the deterministic source archive")
+    return records
 
-    bindings = require_list(contract.get("bindings"), "contract.bindings")
-    binding_records: dict[str, dict[str, object]] = {}
-    binding_ids: list[str] = []
-    native_pairs: set[tuple[object, object]] = set()
-    expected_abi: dict[str, tuple[list[dict[str, object]], dict[str, object]]] = {
-        "js.calendar.badge": (
-            [{"kind": "native-nominal", "target": "javascript", "name": "CalendarBadgeProps"}],
-            {"kind": "javascript-object"},
+
+def validate_span(
+    raw: object,
+    inputs: dict[str, dict[str, object]],
+    label: str,
+) -> bytes:
+    span = require_dict(raw, label)
+    if set(span) != {"inputId", "path", "startByte", "endByte", "sha256"}:
+        raise ValidationError(f"{label} fields differ")
+    input_id = require_string(span.get("inputId"), f"{label}.inputId")
+    record = inputs.get(input_id)
+    if record is None or span.get("path") != record.get("path"):
+        raise ValidationError(f"{label} does not bind its source input")
+    start = span.get("startByte")
+    end = span.get("endByte")
+    if not isinstance(start, int) or not isinstance(end, int) or start < 0 or end <= start:
+        raise ValidationError(f"{label} byte range is invalid")
+    source = (ROOT / require_string(span.get("path"), f"{label}.path")).read_bytes()
+    if end > len(source):
+        raise ValidationError(f"{label} byte range exceeds the source")
+    selected = source[start:end]
+    if span.get("sha256") != sha256(selected):
+        raise ValidationError(f"{label} selected bytes are stale")
+    return selected
+
+
+def validate_contract(
+    contract: dict[str, object],
+    model: AbiModel,
+) -> dict[str, dict[str, object]]:
+    if (
+        contract.get("schema") != "wordpress-hx.adoption-contract.v1"
+        or contract.get("schemaVersion") != 1
+        or contract.get("contractId") != "acme-calendar.wp70"
+        or contract.get("contractVersion") != "1.0.0"
+    ):
+        raise ValidationError("contract identity changed")
+    if contract.get("contractDigest") != self_digest(contract, "contractDigest"):
+        raise ValidationError("contract self digest is stale")
+    if contract.get("profile") != {
+        "id": "wp70-release",
+        "catalogRevision": "wp70-release/catalog-v1",
+        "catalogSha256": "d86d1d887f1a3d8894831e3ec092201ee5caba57e88f4eeff59816d22dd9aa6e",
+    }:
+        raise ValidationError("contract profile authority changed")
+    provider = require_dict(contract.get("provider"), "contract.provider")
+    version = provider_version()
+    archive = deterministic_provider_archive()
+    if provider != {
+        "id": "acme-calendar",
+        "kind": "wordpress-plugin",
+        "version": version,
+        "artifactUrl": f"https://example.test/acme-calendar/acme-calendar.{version}.zip",
+        "artifactSha256": sha256(archive),
+        "artifactFormat": "deterministic-fixture-zip-v1",
+        "sourceUrl": f"https://example.test/acme-calendar/source/{version}",
+        "sourceRevision": f"fixture-acme-calendar-{version}",
+        "sourceSha256": provider.get("sourceSha256"),
+        "runtimeOwner": "native-provider",
+        "implementationOwnership": "external-not-transferred",
+    }:
+        raise ValidationError("contract provider policy changed")
+    generation = require_dict(contract.get("generation"), "contract.generation")
+    if generation.get("mergePolicy") != "one-complete-binding-from-highest-nonconflicting-authority":
+        raise ValidationError("contract merge policy changed")
+    generator = require_dict(generation.get("generator"), "contract.generator")
+    if generator != {
+        "id": "wordpress-hx-adoption-generator",
+        "version": "0.0.0-fixture",
+        "sha256": sha256(GENERATOR_PATH.read_bytes()),
+    }:
+        raise ValidationError("contract generator identity is stale")
+    inputs = source_inputs(contract)
+    expected_inputs = {
+        "browser-runtime": ("javascript", "provider-runtime-source"),
+        "browser-types": ("javascript", "typescript-declaration"),
+        "package-metadata": ("provider", "package-metadata"),
+        "php-stubs": ("php", "provider-stub"),
+        "plugin-source": ("wordpress", "provider-runtime-source"),
+    }
+    if set(inputs) != set(expected_inputs):
+        raise ValidationError("contract source input inventory changed")
+    for input_id, (target, kind) in expected_inputs.items():
+        if inputs[input_id].get("target") != target or inputs[input_id].get("kind") != kind:
+            raise ValidationError(f"input {input_id} target or kind changed")
+    source_candidates = model.by_name()
+    precise_names = {candidate.native_name for candidate in model.admitted()}
+    expected_binding_policy = {
+        "@acme/calendar.CalendarBadge": (
+            "js.calendar.badge",
+            "calendar.badge.browser",
         ),
-        "js.calendar.format-label": ([{"kind": "javascript-number"}], {"kind": "string"}),
-        "php.calendar.event.construct": (
-            [{"kind": "string"}],
-            {"kind": "native-nominal", "target": "php", "name": "Acme\\Calendar\\Event"},
+        "@acme/calendar.formatCalendarLabel": (
+            "js.calendar.format-label",
+            "calendar.badge.browser",
         ),
-        "php.calendar.event.title": ([], {"kind": "string"}),
-        "php.calendar.list-events": (
-            [{"kind": "php-int"}],
-            {
-                "kind": "list",
-                "value": {
-                    "kind": "native-nominal",
-                    "target": "php",
-                    "name": "Acme\\Calendar\\Event",
-                },
-            },
+        "Acme\\Calendar\\Event::__construct": (
+            "php.calendar.event.construct",
+            "calendar.read.php",
+        ),
+        "Acme\\Calendar\\Event::title": (
+            "php.calendar.event.title",
+            "calendar.read.php",
+        ),
+        "Acme\\Calendar\\list_events": (
+            "php.calendar.list-events",
+            "calendar.read.php",
         ),
     }
-    expected_signatures = {
-        "js.calendar.badge": "function CalendarBadge(props: CalendarBadgeProps): object",
-        "js.calendar.format-label": "function formatCalendarLabel(count: number): string",
-        "php.calendar.event.construct": "function __construct(string $eventTitle): mixed",
-        "php.calendar.event.title": "function title(): string",
-        "php.calendar.list-events": "function list_events(int $limit): array",
-    }
-    for index, binding_value in enumerate(bindings):
-        binding = require_dict(binding_value, f"contract.bindings[{index}]")
-        binding_id = require_string(binding.get("id"), f"binding[{index}].id")
-        if binding_id in binding_records:
-            raise ValidationError(f"duplicate binding id {binding_id}")
-        pair = (binding.get("target"), binding.get("nativeName"))
-        if pair in native_pairs:
-            raise ValidationError(f"duplicate native binding {pair}")
-        native_pairs.add(pair)
-        source = input_records.get(require_string(binding.get("sourceInputId"), "binding.sourceInputId"))
-        if source is None:
-            raise ValidationError(f"binding {binding_id} references an unknown input")
-        target = binding.get("target")
-        if source.get("target") not in {target, "provider"}:
-            raise ValidationError(f"binding {binding_id} crosses source targets")
-        source_evidence = require_dict(
-            binding.get("sourceEvidence"), f"binding {binding_id}.sourceEvidence"
-        )
-        selected = validate_source_span(
-            source_evidence.get("span"),
-            input_records,
-            f"binding {binding_id}.sourceEvidence.span",
-        )
-        local_name = require_string(binding.get("nativeName"), "binding.nativeName").rsplit(".", 1)[-1].rsplit("::", 1)[-1].rsplit("\\", 1)[-1]
-        if local_name.encode("utf-8") not in selected:
-            raise ValidationError(f"binding {binding_id} source span omits its symbol")
-        if source_evidence.get("signatureSha256") != sha256(
-            expected_signatures.get(binding_id, "").encode("utf-8")
-        ):
-            raise ValidationError(f"binding {binding_id} normalized signature is stale")
-        parameters = require_list(binding.get("parameters"), f"binding {binding_id}.parameters")
-        saw_optional = False
-        for position, parameter_value in enumerate(parameters):
-            parameter = require_dict(parameter_value, f"binding {binding_id}.parameters[{position}]")
-            if parameter.get("position") != position:
-                raise ValidationError(f"binding {binding_id} parameter positions are not contiguous")
-            if parameter.get("requirement") == "optional":
-                saw_optional = True
-            elif saw_optional:
-                raise ValidationError(f"binding {binding_id} requires a parameter after an optional one")
-            nodes = walk_type(require_dict(parameter.get("type"), "parameter.type"), "parameter.type")
-            if any(node.get("kind") == "void" for node in nodes):
-                raise ValidationError(f"binding {binding_id} uses void as a parameter")
-            if any(
-                node.get("kind") == "native-nominal" and node.get("target") != target
-                for node in nodes
-            ):
-                raise ValidationError(f"binding {binding_id} has a cross-target nominal parameter")
-        return_nodes = walk_type(require_dict(binding.get("returnType"), "binding.returnType"), "binding.returnType")
-        if any(
-            node.get("kind") == "native-nominal" and node.get("target") != target
-            for node in return_nodes
-        ):
-            raise ValidationError(f"binding {binding_id} has a cross-target nominal return")
-        for node in [*return_nodes, *[node for parameter in parameters for node in walk_type(require_dict(require_dict(parameter, "parameter").get("type"), "parameter.type"), "parameter.type")]]:
-            if node.get("kind") == "nullable" and require_dict(node.get("value"), "nullable.value").get("kind") == "nullable":
-                raise ValidationError(f"binding {binding_id} has nested nullable types")
-        expected = expected_abi.get(binding_id)
-        actual_parameter_types = [
-            require_dict(require_dict(value, "parameter").get("type"), "parameter.type")
-            for value in parameters
+    bindings: dict[str, dict[str, object]] = {}
+    native_names: set[str] = set()
+    ids: list[str] = []
+    for index, raw in enumerate(require_list(contract.get("bindings"), "contract.bindings")):
+        binding = require_dict(raw, f"contract.bindings[{index}]")
+        binding_id = require_string(binding.get("id"), "binding.id")
+        native_name = require_string(binding.get("nativeName"), "binding.nativeName")
+        candidate = source_candidates.get(native_name)
+        if candidate is None or not candidate.precise:
+            raise ValidationError(f"binding {binding_id} is not a precise source candidate")
+        expected_identity = expected_binding_policy.get(native_name)
+        if expected_identity != (binding_id, binding.get("capabilityId")):
+            raise ValidationError(f"binding {binding_id} identity or capability policy changed")
+        if binding_id in bindings or native_name in native_names:
+            raise ValidationError("contract repeats a binding id or native name")
+        evidence = require_dict(binding.get("sourceEvidence"), "binding.sourceEvidence")
+        if evidence.get("signatureSha256") != candidate.declaration.signature_sha256:
+            raise ValidationError(f"binding {binding_id} signature is stale")
+        actual_spans = require_list(evidence.get("spans"), "binding.sourceEvidence.spans")
+        expected_spans = [span.json() for span in candidate.spans]
+        if actual_spans != expected_spans:
+            raise ValidationError(f"binding {binding_id} source span inventory is stale")
+        for span_index, span in enumerate(actual_spans):
+            validate_span(span, inputs, f"binding {binding_id}.spans[{span_index}]")
+        parameters = [
+            parameter.json(position)
+            for position, parameter in enumerate(candidate.declaration.parameters)
         ]
-        if expected is None or canonical(actual_parameter_types) != canonical(expected[0]) or canonical(binding.get("returnType")) != canonical(expected[1]):
-            raise ValidationError(
-                f"binding {binding_id} is stronger or different than its exact provider declaration"
-            )
-        binding_records[binding_id] = binding
-        binding_ids.append(binding_id)
-    if set(binding_records) != set(expected_abi):
-        raise ValidationError("contract admitted binding inventory changed")
-    if binding_ids != sorted(binding_ids):
-        raise ValidationError("contract bindings are not sorted by stable id")
-    return binding_records
+        if binding.get("parameters") != parameters or binding.get("returnType") != candidate.declaration.return_type.json():
+            raise ValidationError(f"binding {binding_id} ABI differs from provider bytes")
+        if binding.get("target") != candidate.declaration.target or binding.get("kind") != candidate.declaration.kind:
+            raise ValidationError(f"binding {binding_id} target shape differs from provider bytes")
+        if binding.get("sourceInputId") != candidate.declaration.spans[0].input_id:
+            raise ValidationError(f"binding {binding_id} source authority changed")
+        bindings[binding_id] = binding
+        native_names.add(native_name)
+        ids.append(binding_id)
+    if native_names != precise_names:
+        raise ValidationError("contract admission inventory differs from precise source candidates")
+    if ids != sorted(ids):
+        raise ValidationError("contract bindings are not sorted")
+    if contract.get("capabilitySet") != {
+        "id": "acme-calendar.capabilities",
+        "version": "1.0.0",
+    }:
+        raise ValidationError("contract capability set identity changed")
+    if contract.get("ownership") != {
+        "providerRuntime": "external-native-provider",
+        "contract": "cli-owned-generated",
+        "applicationLogic": "haxe-authored",
+        "compilerRecognition": "generic-contract-only-no-provider-name-branches",
+        "regeneration": "private-stage-deterministic-diff-before-publication",
+        "removal": "manifest-owned-complete-content-bundle-provider-source-untouched",
+        "modifiedGeneratedFile": "fail-closed-no-overwrite-or-delete",
+    }:
+        raise ValidationError("contract ownership policy changed")
+    return bindings
 
 
-def validate_capabilities(
+def validate_capability(
     contract: dict[str, object],
     capability: dict[str, object],
     bindings: dict[str, dict[str, object]],
-) -> dict[str, dict[str, object]]:
-    if capability.get("capabilitySetDigest") != self_digest(
-        capability, "capabilitySetDigest"
+) -> None:
+    if (
+        capability.get("schema") != "wordpress-hx.adoption-capability.v1"
+        or capability.get("schemaVersion") != 1
+        or capability.get("capabilitySetId") != "acme-calendar.capabilities"
+        or capability.get("capabilitySetVersion") != "1.0.0"
     ):
-        raise ValidationError("capability set self digest is stale")
-    contract_ref = require_dict(capability.get("contract"), "capability.contract")
-    if contract_ref != {
+        raise ValidationError("capability set identity changed")
+    if capability.get("capabilitySetDigest") != self_digest(capability, "capabilitySetDigest"):
+        raise ValidationError("capability self digest is stale")
+    if capability.get("contract") != {
         "id": contract.get("contractId"),
         "version": contract.get("contractVersion"),
         "sha256": contract.get("contractDigest"),
     }:
-        raise ValidationError("capability set contract reference is stale")
+        raise ValidationError("capability contract reference is stale")
     if capability.get("profile") != contract.get("profile"):
-        raise ValidationError("capability set profile differs from contract")
+        raise ValidationError("capability profile differs from the contract")
     provider = require_dict(contract.get("provider"), "contract.provider")
     if capability.get("provider") != {
         "id": provider.get("id"),
         "version": provider.get("version"),
         "artifactSha256": provider.get("artifactSha256"),
     }:
-        raise ValidationError("capability set provider identity differs from contract")
-    capability_ref = require_dict(contract.get("capabilitySet"), "contract.capabilitySet")
-    if capability_ref != {
-        "id": capability.get("capabilitySetId"),
-        "version": capability.get("capabilitySetVersion"),
-    }:
-        raise ValidationError("contract capability-set reference is stale")
-    authority = require_dict(capability.get("authority"), "capability.authority")
-    if authority != {
+        raise ValidationError("capability provider differs from the contract")
+    expected_authority = {
         "tokenScope": "declared-per-capability",
         "tokenSerializable": False,
         "tokenCacheable": False,
@@ -576,51 +526,81 @@ def validate_capabilities(
         "bundleVerification": "required-before-observation",
         "absenceBehavior": "typed-unavailable-with-core-fallback",
         "providerTrustAdmission": "separate-sdk-117-requirement",
-    }:
-        raise ValidationError("capability observation authority is forgeable or stale")
-
-    records: dict[str, dict[str, object]] = {}
+    }
+    if capability.get("authority") != expected_authority:
+        raise ValidationError("capability authority is forgeable or stale")
+    covered: list[str] = []
     ids: list[str] = []
-    covered: set[str] = set()
-    for index, value in enumerate(
-        require_list(capability.get("capabilities"), "capability.capabilities")
-    ):
-        record = require_dict(value, f"capability.capabilities[{index}]")
-        capability_id = require_string(record.get("id"), f"capability[{index}].id")
-        if capability_id in records:
-            raise ValidationError(f"duplicate capability id {capability_id}")
-        probe = require_dict(record.get("probe"), f"capability {capability_id}.probe")
-        for binding_id_value in require_list(
-            probe.get("requiredBindings"), f"capability {capability_id}.requiredBindings"
+    expected_specs = {
+        "calendar.badge.browser": (
+            "javascript",
+            "browser-module",
+            True,
+            "javascript-exports",
+        ),
+        "calendar.read.php": (
+            "php",
+            "request",
+            False,
+            "wordpress-plugin-and-symbols",
+        ),
+    }
+    for raw in require_list(capability.get("capabilities"), "capabilities"):
+        record = require_dict(raw, "capability")
+        capability_id = require_string(record.get("id"), "capability.id")
+        expected_spec = expected_specs.get(capability_id)
+        if expected_spec is None:
+            raise ValidationError(f"unknown capability policy: {capability_id}")
+        target, scope, optional, probe_kind = expected_spec
+        if (
+            record.get("target") != target
+            or record.get("scope") != scope
+            or record.get("optional") != optional
         ):
-            binding_id = require_string(binding_id_value, "required binding id")
-            binding = bindings.get(binding_id)
-            if binding is None:
-                raise ValidationError(f"capability {capability_id} references an unknown binding")
-            if binding.get("capabilityId") != capability_id:
-                raise ValidationError(f"binding {binding_id} belongs to another capability")
-            target = record.get("target")
-            if target != "cross-target" and binding.get("target") != target:
-                raise ValidationError(f"capability {capability_id} crosses target ownership")
-            if binding_id in covered:
-                raise ValidationError(f"binding {binding_id} belongs to two capabilities")
-            covered.add(binding_id)
-        records[capability_id] = record
+            raise ValidationError(f"capability {capability_id} target policy changed")
+        probe = require_dict(record.get("probe"), "capability.probe")
+        if (
+            probe.get("kind") != probe_kind
+            or probe.get("versionMatch") != "exact"
+            or probe.get("artifactMatch") != "exact-sha256"
+            or probe.get("conditionalFailure")
+            != "unavailable-not-partially-authorized"
+        ):
+            raise ValidationError(f"capability {capability_id} probe policy changed")
+        required = [require_string(value, "required binding") for value in require_list(probe.get("requiredBindings"), "requiredBindings")]
+        native = [require_string(value, "required symbol") for value in require_list(probe.get("requiredNativeSymbols"), "requiredNativeSymbols")]
+        selected = [bindings[value] for value in required if value in bindings]
+        if len(selected) != len(required):
+            raise ValidationError(f"capability {capability_id} references an unknown binding")
+        if [value.get("nativeName") for value in selected] != native:
+            raise ValidationError(f"capability {capability_id} native symbols are stale")
+        if any(value.get("capabilityId") != capability_id for value in selected):
+            raise ValidationError(f"capability {capability_id} crosses binding ownership")
         ids.append(capability_id)
-    if ids != sorted(ids):
-        raise ValidationError("capabilities are not sorted by stable id")
-    if covered != set(bindings):
-        raise ValidationError("capabilities do not cover the exact admitted binding set")
-    return records
+        covered.extend(required)
+    if (
+        ids != sorted(ids)
+        or set(ids) != set(expected_specs)
+        or sorted(covered) != sorted(bindings)
+        or len(covered) != len(set(covered))
+    ):
+        raise ValidationError("capabilities do not exactly partition admitted bindings")
 
 
 def validate_review(
     contract: dict[str, object],
     review: dict[str, object],
     bindings: dict[str, dict[str, object]],
+    model: AbiModel,
 ) -> None:
+    if (
+        review.get("schema") != "wordpress-hx.adoption-review.v1"
+        or review.get("schemaVersion") != 1
+        or review.get("reportId") != "acme-calendar.review.1"
+    ):
+        raise ValidationError("review identity changed")
     if review.get("reportDigest") != self_digest(review, "reportDigest"):
-        raise ValidationError("review report self digest is stale")
+        raise ValidationError("review self digest is stale")
     if review.get("contract") != {
         "id": contract.get("contractId"),
         "version": contract.get("contractVersion"),
@@ -633,343 +613,388 @@ def validate_review(
         "version": provider.get("version"),
         "artifactSha256": provider.get("artifactSha256"),
     }:
-        raise ValidationError("review provider reference is stale")
+        raise ValidationError("review provider differs from the contract")
     generation = require_dict(contract.get("generation"), "contract.generation")
     if review.get("generator") != generation.get("generator"):
-        raise ValidationError("review generator reference is stale")
-
-    included_values = require_list(review.get("includedBindings"), "review.includedBindings")
-    included = [require_string(value, "review included binding") for value in included_values]
-    if included != sorted(bindings):
-        raise ValidationError("review does not list the exact sorted admitted bindings")
-    omissions = require_list(review.get("omissions"), "review.omissions")
-    omission_names = [
-        require_string(require_dict(value, "omission").get("nativeName"), "omission.nativeName")
-        for value in omissions
-    ]
-    if omission_names != sorted(omission_names):
-        raise ValidationError("review omissions are not sorted by native name")
-    if len(omission_names) != len(set(omission_names)):
-        raise ValidationError("review contains duplicate omissions")
-    admitted_native = {
-        require_string(binding.get("nativeName"), "binding.nativeName")
-        for binding in bindings.values()
-    }
-    if admitted_native.intersection(omission_names):
-        raise ValidationError("an omitted symbol was also admitted")
-    input_records = {
-        require_string(require_dict(value, "input").get("id"), "input.id"): require_dict(value, "input")
-        for value in require_list(generation.get("inputs"), "generation.inputs")
-    }
-    expected_omission_signatures = {
-        "@acme/calendar.CalendarRegistry": "const CalendarRegistry: Record<string, unknown>",
-        "Acme\\Calendar\\Event::__call": "function __call(string $name, array $arguments): mixed",
-        "Acme\\Calendar\\conditional_helper": "function conditional_helper(string $value): string",
-        "Acme\\Calendar\\mutate_all": "function mutate_all(Event &...$events): void",
-    }
-    for omission_value in omissions:
-        omission = require_dict(omission_value, "omission")
-        for source_id_value in require_list(omission.get("sourceInputIds"), "omission.sourceInputIds"):
-            if require_string(source_id_value, "omission source id") not in input_records:
-                raise ValidationError("omission references an unknown source input")
-        name = require_string(omission.get("nativeName"), "omission.nativeName")
-        expected_signature = expected_omission_signatures.get(name)
-        if expected_signature is None or omission.get("signatureSha256") != sha256(
-            expected_signature.encode("utf-8")
-        ):
-            raise ValidationError(f"omission {name} signature is not source-authorized")
-        span_values = require_list(omission.get("sourceSpans"), "omission.sourceSpans")
-        span_input_ids: list[str] = []
-        for span_index, span_value in enumerate(span_values):
-            selected = validate_source_span(
-                span_value,
-                input_records,
-                f"omission {name}.sourceSpans[{span_index}]",
-            )
-            span = require_dict(span_value, "omission source span")
-            span_input_ids.append(require_string(span.get("inputId"), "span.inputId"))
-            local_name = name.rsplit(".", 1)[-1].rsplit("::", 1)[-1].rsplit("\\", 1)[-1]
-            if local_name.encode("utf-8") not in selected:
-                raise ValidationError(f"omission {name} source span omits its symbol")
-        if sorted(span_input_ids) != require_list(
-            omission.get("sourceInputIds"), "omission.sourceInputIds"
-        ):
-            raise ValidationError(f"omission {name} source span inventory differs")
-    if set(omission_names) != set(expected_omission_signatures):
-        raise ValidationError("review omission inventory differs from provider declarations")
-
-    conflicts = require_list(review.get("conflicts"), "review.conflicts")
-    conflict_names: set[str] = set()
-    for conflict_value in conflicts:
-        conflict = require_dict(conflict_value, "conflict")
-        name = require_string(conflict.get("nativeName"), "conflict.nativeName")
-        conflict_names.add(name)
-        stronger = input_records.get(require_string(conflict.get("strongerInputId"), "conflict.strongerInputId"))
-        weaker = input_records.get(require_string(conflict.get("weakerInputId"), "conflict.weakerInputId"))
-        if stronger is None or weaker is None:
-            raise ValidationError("conflict references an unknown input")
-        stronger_rank = stronger.get("precedence")
-        weaker_rank = weaker.get("precedence")
-        if not isinstance(stronger_rank, int) or not isinstance(weaker_rank, int) or stronger_rank >= weaker_rank:
-            raise ValidationError("conflict precedence is not stronger-before-weaker")
-        stronger_bytes = validate_source_span(
-            conflict.get("strongerSourceSpan"), input_records, "conflict.strongerSourceSpan"
-        )
-        weaker_bytes = validate_source_span(
-            conflict.get("weakerSourceSpan"), input_records, "conflict.weakerSourceSpan"
-        )
-        if stronger_bytes == weaker_bytes:
-            raise ValidationError("conflict source signatures do not conflict")
-    omitted_conflicts = {
-        require_string(require_dict(value, "omission").get("nativeName"), "omission.nativeName")
-        for value in omissions
-        if require_dict(value, "omission").get("code") == "conflicting-authority"
-    }
-    if conflict_names != omitted_conflicts:
-        raise ValidationError("conflict inventory differs from conflict omissions")
-
-    summary = require_dict(review.get("summary"), "review.summary")
-    if summary != {
-        "discovered": len(bindings) + len(omissions),
-        "included": len(bindings),
-        "omitted": len(omissions),
-        "conflicts": len(conflicts),
-    }:
-        raise ValidationError("review summary counts are stale")
-    reflection = require_dict(review.get("reflection"), "review.reflection")
-    if generation.get("mode") == "static-no-execution" and reflection != {
+        raise ValidationError("review generator differs from the contract")
+    if review.get("reflection") != {
         "requested": False,
         "executed": False,
         "isolationReceiptSha256": None,
     }:
-        raise ValidationError("static review falsely records reflection")
-    claims = require_dict(review.get("claims"), "review.claims")
-    for field in (
-        "providerRuntimeTested",
-        "providerTrustAdmitted",
-        "productionSupported",
-        "implementationOwnershipTransferred",
-    ):
-        if claims.get(field) is not False:
-            raise ValidationError(f"review overclaims {field}")
-    if omissions and claims.get("reviewRequired") is not True:
-        raise ValidationError("omissions did not retain review-required state")
+        raise ValidationError("review reflection state changed")
+    if review.get("claims") != {
+        "evidenceStage": "contract-generated",
+        "reviewRequired": True,
+        "providerRuntimeTested": False,
+        "providerTrustAdmitted": False,
+        "productionSupported": False,
+        "implementationOwnershipTransferred": False,
+    }:
+        raise ValidationError("review claims are stale or overbroad")
+    included = require_list(review.get("includedBindings"), "review.includedBindings")
+    if included != sorted(bindings):
+        raise ValidationError("review admission inventory is stale")
+    inputs = source_inputs(contract)
+    expected = {candidate.native_name: candidate for candidate in model.omitted()}
+    seen: set[str] = set()
+    for raw in require_list(review.get("omissions"), "review.omissions"):
+        omission = require_dict(raw, "review omission")
+        name = require_string(omission.get("nativeName"), "omission.nativeName")
+        candidate = expected.get(name)
+        if candidate is None or name in seen:
+            raise ValidationError("review omission inventory is stale")
+        wanted = {
+            "code": candidate.omission_code,
+            "reason": candidate.omission_reason,
+            "requiredAction": candidate.required_action,
+            "signatureSha256": candidate.declaration.signature_sha256,
+            "sourceInputIds": sorted({span.input_id for span in candidate.spans}),
+            "sourceSpans": [span.json() for span in candidate.spans],
+            "target": candidate.declaration.target,
+            "kind": candidate.declaration.kind,
+        }
+        for field, value in wanted.items():
+            if omission.get(field) != value:
+                raise ValidationError(f"omission {name} {field} is stale")
+        for index, span in enumerate(require_list(omission.get("sourceSpans"), "omission spans")):
+            validate_span(span, inputs, f"omission {name}.spans[{index}]")
+        seen.add(name)
+    if seen != set(expected):
+        raise ValidationError("review omits a source candidate disposition")
+    expected_conflicts = [
+        {
+            "nativeName": candidate.native_name,
+            "strongerInputId": candidate.declaration.spans[0].input_id,
+            "weakerInputId": candidate.runtime.spans[0].input_id,
+            "strongerSourceSpan": candidate.declaration.spans[0].json(),
+            "weakerSourceSpan": candidate.runtime.spans[0].json(),
+            "resolution": "omit-binding-and-report",
+        }
+        for candidate in model.omitted()
+        if candidate.omission_code == "conflicting-authority"
+    ]
+    if review.get("conflicts") != expected_conflicts:
+        raise ValidationError("review conflict inventory differs from parsed source conflicts")
+    summary = require_dict(review.get("summary"), "review.summary")
+    if summary != {
+        "discovered": len(model.candidates),
+        "included": len(model.admitted()),
+        "omitted": len(model.omitted()),
+        "conflicts": len(expected_conflicts),
+    }:
+        raise ValidationError("review summary is stale")
+
+
+def expected_member_bytes(
+    documents: dict[str, dict[str, object]],
+    model: AbiModel,
+) -> dict[str, tuple[str, bytes]]:
+    version = provider_version()
+    provider_archive = deterministic_provider_archive()
+    provider_artifact_sha256 = sha256(provider_archive)
+    static_members = static_member_bytes(model, documents, provider_archive, version)
+    static_policy = runtime_bundle_policy(static_members)
+    return {
+        **static_members,
+        f"{CONTENT_ROOT}/browser/acme-calendar-facade.mjs": (
+            "javascript-facade",
+            browser_facade(
+                version,
+                sha256((INPUT_ROOT / "index.js").read_bytes()),
+                sha256((INPUT_ROOT / "package-metadata.json").read_bytes()),
+                provider_artifact_sha256,
+                static_policy,
+            ),
+        ),
+        f"{CONTENT_ROOT}/php/acme-calendar-facade.php": (
+            "php-facade",
+            php_facade(
+                version,
+                sha256((INPUT_ROOT / "plugin.php").read_bytes()),
+                provider_artifact_sha256,
+                static_policy,
+            ),
+        ),
+    }
 
 
 def validate_bundle(
-    documents: dict[str, dict[str, object]], bundle: dict[str, object]
+    documents: dict[str, dict[str, object]],
+    model: AbiModel,
 ) -> None:
+    bundle = documents["bundle"]
     if bundle.get("bundleDigest") != self_digest(bundle, "bundleDigest"):
-        raise ValidationError("adoption bundle self digest is stale")
-    contract = documents["contract"]
-    provider = require_dict(contract.get("provider"), "contract.provider")
+        raise ValidationError("content bundle self digest is stale")
+    expected_bytes = expected_member_bytes(documents, model)
+    expected_members = [
+        {
+            "role": role,
+            "path": path,
+            "sha256": sha256(content),
+            "sizeBytes": len(content),
+        }
+        for path, (role, content) in sorted(expected_bytes.items())
+    ]
+    if bundle.get("members") != expected_members:
+        raise ValidationError("content bundle members differ from generated semantic bytes")
+    provider = require_dict(documents["contract"].get("provider"), "contract.provider")
     if bundle.get("provider") != {
         "id": provider.get("id"),
         "version": provider.get("version"),
         "artifactSha256": provider.get("artifactSha256"),
     }:
-        raise ValidationError("adoption bundle provider identity is stale")
-    records = require_dict(bundle.get("records"), "bundle.records")
-    expected_records = {
-        "contract": (
-            "generated/adoption/acme-calendar/contract.json",
-            DOCUMENT_PATHS["contract"],
-        ),
-        "capability": (
-            "generated/adoption/acme-calendar/capability.json",
-            DOCUMENT_PATHS["capability"],
-        ),
-        "review": (
-            "generated/adoption/acme-calendar/review.json",
-            DOCUMENT_PATHS["review"],
-        ),
-    }
-    for name, (path, current) in expected_records.items():
-        record = require_dict(records.get(name), f"bundle.records.{name}")
-        if record != {"path": path, "sha256": sha256(current.read_bytes())}:
-            raise ValidationError(f"bundle {name} record is stale")
-    ownership = require_dict(
-        strict_json(OWNERSHIP_PATH.read_text(encoding="utf-8"), "ownership"),
-        "ownership",
-    )
+        raise ValidationError("content bundle provider identity is stale")
+
+    ownership = strict_json(OWNERSHIP_PATH)
     if ownership.get("manifestDigest") != self_digest(ownership, "manifestDigest"):
-        raise ValidationError("adoption ownership manifest digest is stale")
-    ownership_record = require_dict(records.get("ownership"), "bundle.records.ownership")
-    if ownership_record != {
-        "path": "generated/_GeneratedFiles.json",
-        "sha256": sha256(OWNERSHIP_PATH.read_bytes()),
-        "manifestDigest": ownership.get("manifestDigest"),
+        raise ValidationError("ownership manifest self digest is stale")
+    actual_files = {
+        require_string(require_dict(raw, "ownership file").get("path"), "ownership file.path"): (
+            require_dict(raw, "ownership file").get("contentSha256"),
+            require_dict(raw, "ownership file").get("sizeBytes"),
+        )
+        for raw in require_list(ownership.get("files"), "ownership.files")
+    }
+    bundle_bytes = DOCUMENT_PATHS["bundle"].read_bytes()
+    expected_files = {
+        path: (sha256(content), len(content))
+        for path, (_, content) in expected_bytes.items()
+    }
+    expected_files[CONTENT_BUNDLE_PATH] = (sha256(bundle_bytes), len(bundle_bytes))
+    if actual_files != expected_files:
+        raise ValidationError("ArtifactOwner manifest does not own the bundle and every member")
+    if "generated/_GeneratedFiles.json" in {
+        require_string(require_dict(raw, "bundle member").get("path"), "bundle member.path")
+        for raw in require_list(bundle.get("members"), "bundle.members")
     }:
-        raise ValidationError("bundle ownership record is stale")
-    owned_files = {
-        require_string(require_dict(value, "ownership file").get("path"), "ownership file.path"): (
-            require_dict(value, "ownership file").get("contentSha256"),
-            require_dict(value, "ownership file").get("sizeBytes"),
-        )
-        for value in require_list(ownership.get("files"), "ownership.files")
-    }
-    bundle_files = require_list(bundle.get("generatedFiles"), "bundle.generatedFiles")
-    bundle_file_map = {
-        require_string(require_dict(value, "bundle file").get("path"), "bundle file.path"): (
-            require_dict(value, "bundle file").get("sha256"),
-            require_dict(value, "bundle file").get("sizeBytes"),
-        )
-        for value in bundle_files
-    }
-    if bundle_file_map != owned_files:
-        raise ValidationError("bundle file set differs from ADR-007 ownership authority")
-    if [require_string(require_dict(value, "bundle file").get("path"), "bundle file.path") for value in bundle_files] != sorted(bundle_file_map):
-        raise ValidationError("bundle files are not sorted")
+        raise ValidationError("content bundle creates an ownership digest cycle")
 
 
-def validate_haxe_authority(
-    documents: dict[str, dict[str, object]], bundle: dict[str, object]
-) -> None:
-    adoption_path = (
-        ROOT
-        / "fixtures"
-        / "adoption-contract"
-        / "src"
-        / "wordpress"
-        / "hx"
-        / "adoption"
-        / "prototype"
-        / "Adoption.hx"
-    )
-    calendar_path = adoption_path.with_name("AcmeCalendar.hx")
-    probe_path = (
-        ROOT
-        / "fixtures"
-        / "adoption-contract"
-        / "test-support"
-        / "wordpress"
-        / "hx"
-        / "adoption"
-        / "prototype"
-        / "testing"
-        / "TargetProbe.hx"
-    )
-    adoption_source = adoption_path.read_text(encoding="utf-8")
-    calendar_source = calendar_path.read_text(encoding="utf-8")
-    probe_source = probe_path.read_text(encoding="utf-8")
-    for forbidden in (
-        "public static function beginRequest",
-        "public static function observeExact",
-        "public static function observeAbsent",
-        "public static function runtime",
-    ):
-        if forbidden in adoption_source:
-            raise ValidationError(f"application-facing Haxe authority is forgeable: {forbidden}")
+def validate_haxe_authority() -> None:
+    adoption = (FIXTURE / "src/wordpress/hx/adoption/prototype/Adoption.hx").read_text(encoding="utf-8")
+    calendar = (FIXTURE / "src/wordpress/hx/adoption/prototype/AcmeCalendar.hx").read_text(encoding="utf-8")
+    if "@:allow(wordpress.hx.adoption.prototype.testing.TargetProbe)" in adoption:
+        raise ValidationError("legacy exact-path friend grant remains")
+    if "@:allow(" in adoption:
+        raise ValidationError("production Haxe authority still depends on a spoofable friend path")
+    if "public final requiredBindings:Array<String>" in adoption:
+        raise ValidationError("capability bindings remain caller-mutable")
     for required in (
-        "final class PhpRequestScope",
-        "final class PhpProcessScope",
-        "final class BrowserModuleScope",
-        "new LifecycleNonce()",
-        "this.nonce == nonce",
-        "final bundleDigest:String",
-        "final observedBindings:Array<String>",
+        "requiredBindingIds():Array<String>",
+        "return bindings.copy()",
+        "private final class AuthorityKey",
+        "key.verify()",
+        "private final class AuthorityCore",
+        "final class FixtureTargetAdapter",
+        "final class PhpAcmeCalendarAdapter",
+        "final class BrowserAcmeCalendarAdapter",
+        "GeneratedPhpFacade.open",
+        "GeneratedBrowserFacade.openExactProvider",
     ):
-        if required not in adoption_source:
-            raise ValidationError(f"Haxe lifecycle authority omitted {required}")
-    provider = require_dict(documents["contract"].get("provider"), "contract.provider")
-    identities = (
-        require_string(provider.get("version"), "provider.version"),
-        require_string(provider.get("artifactSha256"), "provider.artifactSha256"),
-        require_string(bundle.get("bundleDigest"), "bundle.bundleDigest"),
-    )
-    for identity in identities:
-        if calendar_source.count(identity) != 1 or probe_source.count(identity) != 1:
-            raise ValidationError("Haxe runtime authority is not bound to the exact adoption bundle")
+        if required not in adoption:
+            raise ValidationError(f"source-owned Haxe adapter omits {required}")
+    if "GeneratedAcmeCalendar.provider" not in calendar:
+        raise ValidationError("authored Haxe entry point is detached from generated ABI")
+    forbidden = re.compile(r"\b(?:Dynamic|Any|Reflect|untyped|cast)\b")
+    for path in (FIXTURE / "src").rglob("*.hx"):
+        if forbidden.search(path.read_text(encoding="utf-8")):
+            raise ValidationError(f"forbidden weak Haxe type in {path.relative_to(ROOT)}")
 
 
 def validate_documents(
     documents: dict[str, dict[str, object]],
+    model: AbiModel,
     schemas: dict[str, dict[str, object]],
 ) -> None:
-    for name in ("contract", "capability", "review", "bundle"):
-        ClosedSchemaValidator(schemas[name]).validate(documents[name])
-    encoded = canonical(documents)
-    if re.search(r"\b(?:Dynamic|Any|Reflect|untyped|cast)\b", encoded):
-        raise ValidationError("serialized adoption proof contains a forbidden weak type")
-    bindings = validate_contract(documents["contract"])
-    validate_capabilities(documents["contract"], documents["capability"], bindings)
-    validate_review(documents["contract"], documents["review"], bindings)
-    validate_bundle(documents, documents["bundle"])
-    validate_haxe_authority(documents, documents["bundle"])
+    for name, document in documents.items():
+        ClosedSchemaValidator(schemas[name]).validate(document)
+    bindings = validate_contract(documents["contract"], model)
+    validate_capability(documents["contract"], documents["capability"], bindings)
+    validate_review(documents["contract"], documents["review"], bindings, model)
+    validate_bundle(documents, model)
+    validate_haxe_authority()
+
+
+def redigest(document: dict[str, object], field: str) -> None:
+    document[field] = self_digest(document, field)
 
 
 def mutation_corpus(
     documents: dict[str, dict[str, object]],
+    model: AbiModel,
     schemas: dict[str, dict[str, object]],
-) -> list[tuple[str, dict[str, dict[str, object]]]]:
-    mutations: list[tuple[str, dict[str, dict[str, object]]]] = []
+) -> list[str]:
+    mutations: list[tuple[str, str, object, bool]] = []
+    digest_fields = {
+        "contract": "contractDigest",
+        "capability": "capabilitySetDigest",
+        "review": "reportDigest",
+        "bundle": "bundleDigest",
+    }
 
-    def add(name: str, mutate: object) -> None:
+    def add(
+        layer: str,
+        name: str,
+        change: object,
+        *,
+        refresh_digest: bool = True,
+    ) -> None:
+        mutations.append((layer, name, change, refresh_digest))
+
+    def layer(value: dict[str, dict[str, object]], name: str) -> dict[str, object]:
+        return value[name]
+
+    def generation(value: dict[str, dict[str, object]]) -> dict[str, object]:
+        return require_dict(layer(value, "contract").get("generation"), "generation")
+
+    def inputs(value: dict[str, dict[str, object]]) -> list[object]:
+        return require_list(generation(value).get("inputs"), "inputs")
+
+    def bindings(value: dict[str, dict[str, object]]) -> list[object]:
+        return require_list(layer(value, "contract").get("bindings"), "bindings")
+
+    def authority(value: dict[str, dict[str, object]]) -> dict[str, object]:
+        return require_dict(layer(value, "capability").get("authority"), "authority")
+
+    def capabilities(value: dict[str, dict[str, object]]) -> list[object]:
+        return require_list(layer(value, "capability").get("capabilities"), "capabilities")
+
+    def omissions(value: dict[str, dict[str, object]]) -> list[object]:
+        return require_list(layer(value, "review").get("omissions"), "omissions")
+
+    def members(value: dict[str, dict[str, object]]) -> list[object]:
+        return require_list(layer(value, "bundle").get("members"), "members")
+
+    # Contract schema, source authority, ABI, and ownership policy adversaries.
+    add("contract", "unknown-contract-field", lambda value: layer(value, "contract").__setitem__("surprise", True))
+    add("contract", "stale-contract-digest", lambda value: layer(value, "contract").__setitem__("contractDigest", "0" * 64), refresh_digest=False)
+    add("contract", "wrong-contract-identity", lambda value: layer(value, "contract").__setitem__("contractId", "acme-calendar.other"))
+    add("contract", "wrong-profile", lambda value: require_dict(layer(value, "contract").get("profile"), "profile").__setitem__("catalogSha256", "1" * 64))
+    add("contract", "wrong-provider-id", lambda value: require_dict(layer(value, "contract").get("provider"), "provider").__setitem__("id", "other-provider"))
+    add("contract", "wrong-provider-artifact", lambda value: require_dict(layer(value, "contract").get("provider"), "provider").__setitem__("artifactSha256", "2" * 64))
+    add("contract", "wrong-provider-source", lambda value: require_dict(layer(value, "contract").get("provider"), "provider").__setitem__("sourceSha256", "3" * 64))
+    add("contract", "wrong-generator-id", lambda value: require_dict(generation(value).get("generator"), "generator").__setitem__("id", "other-generator"))
+    add("contract", "wrong-generator-hash", lambda value: require_dict(generation(value).get("generator"), "generator").__setitem__("sha256", "4" * 64))
+    add("contract", "wrong-merge-policy", lambda value: generation(value).__setitem__("mergePolicy", "field-splicing"))
+    add("contract", "executed-static-input", lambda value: require_dict(inputs(value)[0], "input").__setitem__("executed", True))
+    add("contract", "static-reflection", lambda value: generation(value).__setitem__("reflection", {}))
+    add("contract", "wrong-precedence", lambda value: require_dict(inputs(value)[0], "input").__setitem__("precedence", 5))
+    add("contract", "wrong-authority-class", lambda value: require_dict(inputs(value)[0], "input").__setitem__("authorityClass", "authoritative-signature"))
+    add("contract", "wrong-input-target", lambda value: require_dict(inputs(value)[0], "input").__setitem__("target", "php"))
+    add("contract", "wrong-input-kind", lambda value: require_dict(inputs(value)[0], "input").__setitem__("kind", "provider-stub"))
+    add("contract", "traversal-input", lambda value: require_dict(inputs(value)[0], "input").__setitem__("path", "../secret"))
+    add("contract", "stale-input-hash", lambda value: require_dict(inputs(value)[0], "input").__setitem__("sha256", "5" * 64))
+    add("contract", "unsorted-inputs", lambda value: inputs(value).reverse())
+    add("contract", "missing-binding-source", lambda value: require_dict(bindings(value)[0], "binding").__setitem__("sourceInputId", "missing-source"))
+    add("contract", "duplicate-binding", lambda value: bindings(value).append(copy.deepcopy(bindings(value)[0])))
+    add("contract", "cross-target-source", lambda value: require_dict(bindings(value)[0], "binding").__setitem__("sourceInputId", "php-stubs"))
+    add("contract", "binding-capability-mismatch", lambda value: require_dict(bindings(value)[0], "binding").__setitem__("capabilityId", "calendar.read.php"))
+    add("contract", "binding-return-abi", lambda value: require_dict(bindings(value)[0], "binding").__setitem__("returnType", {"kind": "string"}))
+    add("contract", "binding-span-range", lambda value: require_dict(require_list(require_dict(require_dict(bindings(value)[0], "binding").get("sourceEvidence"), "sourceEvidence").get("spans"), "spans")[0], "span").__setitem__("startByte", 1))
+    add("contract", "binding-span-hash", lambda value: require_dict(require_list(require_dict(require_dict(bindings(value)[0], "binding").get("sourceEvidence"), "sourceEvidence").get("spans"), "spans")[0], "span").__setitem__("sha256", "6" * 64))
+    add("contract", "binding-signature", lambda value: require_dict(require_dict(bindings(value)[0], "binding").get("sourceEvidence"), "sourceEvidence").__setitem__("signatureSha256", "7" * 64))
+    add("contract", "parameter-gap", lambda value: require_dict(require_list(require_dict(bindings(value)[0], "binding").get("parameters"), "parameters")[0], "parameter").__setitem__("position", 2))
+    add("contract", "void-parameter", lambda value: require_dict(require_list(require_dict(bindings(value)[0], "binding").get("parameters"), "parameters")[0], "parameter").__setitem__("type", {"kind": "void"}))
+    add("contract", "cross-target-nominal", lambda value: require_dict(require_list(require_dict(bindings(value)[0], "binding").get("parameters"), "parameters")[0], "parameter").__setitem__("type", {"kind": "native-nominal", "target": "php", "name": "Wrong"}))
+    add("contract", "unsorted-bindings", lambda value: bindings(value).reverse())
+    add("contract", "missing-precise-binding", lambda value: bindings(value).pop())
+    add("contract", "wrong-capability-set", lambda value: require_dict(layer(value, "contract").get("capabilitySet"), "capabilitySet").__setitem__("version", "2.0.0"))
+    add("contract", "ownership-policy", lambda value: require_dict(layer(value, "contract").get("ownership"), "ownership").__setitem__("modifiedGeneratedFile", "overwrite"))
+
+    # Capability reference, authority, probe, and exact-partition adversaries.
+    add("capability", "stale-capability-digest", lambda value: layer(value, "capability").__setitem__("capabilitySetDigest", "8" * 64), refresh_digest=False)
+    add("capability", "wrong-capability-identity", lambda value: layer(value, "capability").__setitem__("capabilitySetId", "other.capabilities"))
+    add("capability", "wrong-contract-reference", lambda value: require_dict(layer(value, "capability").get("contract"), "contract reference").__setitem__("sha256", "9" * 64))
+    add("capability", "wrong-capability-profile", lambda value: require_dict(layer(value, "capability").get("profile"), "profile").__setitem__("catalogSha256", "a" * 64))
+    add("capability", "wrong-provider-version", lambda value: require_dict(layer(value, "capability").get("provider"), "provider").__setitem__("version", "2.5.0"))
+    add("capability", "serializable-token", lambda value: authority(value).__setitem__("tokenSerializable", True))
+    add("capability", "cacheable-token", lambda value: authority(value).__setitem__("tokenCacheable", True))
+    add("capability", "stale-token-authority", lambda value: authority(value).__setitem__("staleTokenAuthority", True))
+    add("capability", "caller-supplied-provider-facts", lambda value: authority(value).__setitem__("callerSuppliedFactsAllowed", True))
+    add("capability", "same-scope-instance-reuse", lambda value: authority(value).__setitem__("sameNominalScopeInstanceReusable", True))
+    add("capability", "wrong-lifecycle-identity", lambda value: authority(value).__setitem__("lifecycleIdentity", "caller-string"))
+    add("capability", "wrong-bundle-verification", lambda value: authority(value).__setitem__("bundleVerification", "optional"))
+    add("capability", "wrong-capability-target", lambda value: require_dict(capabilities(value)[0], "capability").__setitem__("target", "php"))
+    add("capability", "wrong-capability-scope", lambda value: require_dict(capabilities(value)[0], "capability").__setitem__("scope", "request"))
+    add("capability", "wrong-capability-optionality", lambda value: require_dict(capabilities(value)[0], "capability").__setitem__("optional", False))
+    add("capability", "wrong-probe-kind", lambda value: require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").__setitem__("kind", "wordpress-plugin-and-symbols"))
+    add("capability", "wrong-version-match", lambda value: require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").__setitem__("versionMatch", "compatible"))
+    add("capability", "wrong-artifact-match", lambda value: require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").__setitem__("artifactMatch", "provider-id-only"))
+    add("capability", "partial-authorization", lambda value: require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").__setitem__("conditionalFailure", "partially-authorized"))
+    add("capability", "unknown-required-binding", lambda value: require_list(require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").get("requiredBindings"), "requiredBindings").append("missing.binding"))
+    add("capability", "binding-reuse", lambda value: require_list(require_dict(require_dict(capabilities(value)[1], "capability").get("probe"), "probe").get("requiredBindings"), "requiredBindings").append(require_string(require_list(require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").get("requiredBindings"), "requiredBindings")[0], "requiredBinding")))
+    add("capability", "native-symbol-mismatch", lambda value: require_list(require_dict(require_dict(capabilities(value)[0], "capability").get("probe"), "probe").get("requiredNativeSymbols"), "requiredNativeSymbols").__setitem__(0, "wrong"))
+    add("capability", "unsorted-capabilities", lambda value: capabilities(value).reverse())
+
+    # Review identity, bounded-claim, disposition, span, and conflict adversaries.
+    add("review", "stale-review-digest", lambda value: layer(value, "review").__setitem__("reportDigest", "b" * 64), refresh_digest=False)
+    add("review", "wrong-review-identity", lambda value: layer(value, "review").__setitem__("reportId", "other.review"))
+    add("review", "wrong-review-contract", lambda value: require_dict(layer(value, "review").get("contract"), "contract reference").__setitem__("sha256", "c" * 64))
+    add("review", "wrong-review-provider", lambda value: require_dict(layer(value, "review").get("provider"), "provider").__setitem__("artifactSha256", "d" * 64))
+    add("review", "wrong-review-generator", lambda value: require_dict(layer(value, "review").get("generator"), "generator").__setitem__("sha256", "e" * 64))
+    add("review", "review-summary", lambda value: require_dict(layer(value, "review").get("summary"), "summary").__setitem__("omitted", 3))
+    add("review", "review-admits-omission", lambda value: require_list(layer(value, "review").get("includedBindings"), "includedBindings").append("not-a-binding"))
+    add("review", "review-omission-removal", lambda value: omissions(value).pop())
+    add("review", "review-omission-code", lambda value: require_dict(omissions(value)[0], "omission").__setitem__("code", "ambiguous-type"))
+    add("review", "review-omission-reason", lambda value: require_dict(omissions(value)[0], "omission").__setitem__("reason", "other reason"))
+    add("review", "review-omission-action", lambda value: require_dict(omissions(value)[0], "omission").__setitem__("requiredAction", "none"))
+    add("review", "review-omission-source", lambda value: require_list(require_dict(omissions(value)[0], "omission").get("sourceInputIds"), "sourceInputIds").append("missing-source"))
+    add("review", "review-omission-span", lambda value: require_dict(require_list(require_dict(omissions(value)[0], "omission").get("sourceSpans"), "sourceSpans")[0], "span").__setitem__("endByte", 1))
+    add("review", "review-false-completion", lambda value: require_dict(layer(value, "review").get("claims"), "claims").__setitem__("productionSupported", True))
+    add("review", "review-reflection", lambda value: require_dict(layer(value, "review").get("reflection"), "reflection").__setitem__("executed", True))
+    add("review", "review-conflict-removal", lambda value: require_list(layer(value, "review").get("conflicts"), "conflicts").clear())
+    add("review", "review-conflict-authority", lambda value: require_dict(require_list(layer(value, "review").get("conflicts"), "conflicts")[0], "conflict").__setitem__("strongerInputId", "plugin-source"))
+    add("review", "review-conflict-span", lambda value: require_dict(require_dict(require_list(layer(value, "review").get("conflicts"), "conflicts")[0], "conflict").get("weakerSourceSpan"), "weakerSourceSpan").__setitem__("sha256", "f" * 64))
+
+    # Content-root and exact-member adversaries. Each non-stale case receives a
+    # fresh self-digest so member semantics, not an old digest, must reject it.
+    add("bundle", "stale-bundle-digest", lambda value: layer(value, "bundle").__setitem__("bundleDigest", "0" * 64), refresh_digest=False)
+    add("bundle", "wrong-bundle-provider", lambda value: require_dict(layer(value, "bundle").get("provider"), "provider").__setitem__("version", "2.5.0"))
+    add("bundle", "bundle-traversal", lambda value: require_dict(members(value)[0], "member").__setitem__("path", "../x"))
+    add("bundle", "bundle-role", lambda value: require_dict(members(value)[0], "member").__setitem__("role", "contract"))
+    add("bundle", "bundle-member-hash", lambda value: require_dict(members(value)[0], "member").__setitem__("sha256", "1" * 64))
+    add("bundle", "bundle-member-size", lambda value: require_dict(members(value)[0], "member").__setitem__("sizeBytes", 1))
+    add("bundle", "bundle-member-removal", lambda value: members(value).pop())
+    add("bundle", "bundle-member-duplication", lambda value: members(value).append(copy.deepcopy(members(value)[0])))
+    add("bundle", "bundle-member-reorder", lambda value: members(value).reverse())
+
+    valid_bindings = validate_contract(documents["contract"], model)
+    for layer_name, name, change, refresh_digest in mutations:
         candidate = copy.deepcopy(documents)
-        assert callable(mutate)
-        mutate(candidate)
-        mutations.append((name, candidate))
-
-    def contract(candidate: dict[str, dict[str, object]]) -> dict[str, object]:
-        return candidate["contract"]
-
-    def capability(candidate: dict[str, dict[str, object]]) -> dict[str, object]:
-        return candidate["capability"]
-
-    def review(candidate: dict[str, dict[str, object]]) -> dict[str, object]:
-        return candidate["review"]
-
-    add("unknown-contract-field", lambda value: contract(value).__setitem__("surprise", True))
-    add("stale-contract-digest", lambda value: contract(value).__setitem__("contractDigest", "0" * 64))
-    add("wrong-profile", lambda value: require_dict(contract(value)["profile"], "profile").__setitem__("catalogSha256", "1" * 64))
-    add("executed-static-input", lambda value: require_dict(require_list(require_dict(contract(value)["generation"], "generation")["inputs"], "inputs")[0], "input").__setitem__("executed", True))
-    add("static-reflection", lambda value: require_dict(contract(value)["generation"], "generation").__setitem__("reflection", {}))
-    add("wrong-precedence", lambda value: require_dict(require_list(require_dict(contract(value)["generation"], "generation")["inputs"], "inputs")[0], "input").__setitem__("precedence", 5))
-    add("traversal-input", lambda value: require_dict(require_list(require_dict(contract(value)["generation"], "generation")["inputs"], "inputs")[0], "input").__setitem__("path", "../secret"))
-    add("stale-input-hash", lambda value: require_dict(require_list(require_dict(contract(value)["generation"], "generation")["inputs"], "inputs")[0], "input").__setitem__("sha256", "2" * 64))
-    add("unsorted-inputs", lambda value: require_list(require_dict(contract(value)["generation"], "generation")["inputs"], "inputs").reverse())
-    add("missing-binding-source", lambda value: require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding").__setitem__("sourceInputId", "missing-source"))
-    add("duplicate-binding", lambda value: require_list(contract(value)["bindings"], "bindings").append(copy.deepcopy(require_list(contract(value)["bindings"], "bindings")[0])))
-    add("cross-target-source", lambda value: require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding").__setitem__("sourceInputId", "php-stubs"))
-    add("parameter-gap", lambda value: require_dict(require_list(require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding")["parameters"], "parameters")[0], "parameter").__setitem__("position", 2))
-    add("void-parameter", lambda value: require_dict(require_list(require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding")["parameters"], "parameters")[0], "parameter").__setitem__("type", {"kind": "void"}))
-    add("cross-target-nominal", lambda value: require_dict(require_list(require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding")["parameters"], "parameters")[0], "parameter").__setitem__("type", {"kind": "native-nominal", "target": "php", "name": "Wrong"}))
-    add("unsorted-bindings", lambda value: require_list(contract(value)["bindings"], "bindings").reverse())
-    add("serializable-token", lambda value: require_dict(capability(value)["authority"], "authority").__setitem__("tokenSerializable", True))
-    add("cacheable-token", lambda value: require_dict(capability(value)["authority"], "authority").__setitem__("tokenCacheable", True))
-    add("stale-token-authority", lambda value: require_dict(capability(value)["authority"], "authority").__setitem__("staleTokenAuthority", True))
-    add("caller-supplied-provider-facts", lambda value: require_dict(capability(value)["authority"], "authority").__setitem__("callerSuppliedFactsAllowed", True))
-    add("same-scope-instance-reuse", lambda value: require_dict(capability(value)["authority"], "authority").__setitem__("sameNominalScopeInstanceReusable", True))
-    add("wrong-provider-version", lambda value: require_dict(capability(value)["provider"], "provider").__setitem__("version", "2.5.0"))
-    add("unknown-required-binding", lambda value: require_list(require_dict(require_list(capability(value)["capabilities"], "capabilities")[0], "capability")["probe"]["requiredBindings"], "requiredBindings").append("missing.binding"))
-    add("binding-capability-mismatch", lambda value: require_dict(require_list(contract(value)["bindings"], "bindings")[0], "binding").__setitem__("capabilityId", "calendar.read.php"))
-    add("unsorted-capabilities", lambda value: require_list(capability(value)["capabilities"], "capabilities").reverse())
-    add("stale-capability-digest", lambda value: capability(value).__setitem__("capabilitySetDigest", "3" * 64))
-    add("stale-review-digest", lambda value: review(value).__setitem__("reportDigest", "4" * 64))
-    add("review-summary", lambda value: require_dict(review(value)["summary"], "summary").__setitem__("omitted", 3))
-    add("review-admits-omission", lambda value: require_list(review(value)["includedBindings"], "includedBindings").append("not-a-binding"))
-    add("review-omission-source", lambda value: require_list(require_dict(require_list(review(value)["omissions"], "omissions")[0], "omission")["sourceInputIds"], "sourceInputIds").append("missing-source"))
-    add("review-false-completion", lambda value: require_dict(review(value)["claims"], "claims").__setitem__("productionSupported", True))
-    add("review-reflection", lambda value: require_dict(review(value)["reflection"], "reflection").__setitem__("executed", True))
-    add("conflict-order", lambda value: require_dict(require_list(review(value)["conflicts"], "conflicts")[0], "conflict").__setitem__("strongerInputId", "plugin-source"))
-
-    for name, candidate in mutations:
+        if not callable(change):
+            raise AssertionError("mutation must be callable")
+        change(candidate)
+        document = candidate[layer_name]
+        if refresh_digest:
+            redigest(document, digest_fields[layer_name])
         try:
-            validate_documents(candidate, schemas)
+            ClosedSchemaValidator(schemas[layer_name]).validate(document)
+            if layer_name == "contract":
+                validate_contract(document, model)
+            elif layer_name == "capability":
+                validate_capability(documents["contract"], document, valid_bindings)
+            elif layer_name == "review":
+                validate_review(documents["contract"], document, valid_bindings, model)
+            elif layer_name == "bundle":
+                validate_bundle(candidate, model)
+            else:
+                raise AssertionError(f"unknown mutation layer: {layer_name}")
         except ValidationError:
             continue
-        raise ValidationError(f"mutation unexpectedly passed: {name}")
-    return mutations
+        raise ValidationError(f"{layer_name} mutation unexpectedly passed: {name}")
+    return [name for _, name, _, _ in mutations]
 
 
 def haxe_source_tree_digest() -> str:
     lines: list[str] = []
-    fixture = ROOT / "fixtures" / "adoption-contract"
     for source_root in (
-        fixture / "src",
-        fixture / "test-support",
-        fixture / "test",
-        fixture / "test-negative",
+        FIXTURE / "src",
+        FIXTURE / "test-support",
+        FIXTURE / "test",
+        FIXTURE / "test-native",
+        FIXTURE / "test-negative",
+        FIXTURE / "test-ownership",
     ):
         for path in source_root.rglob("*.hx"):
             relative = path.relative_to(ROOT).as_posix()
@@ -978,12 +1003,11 @@ def haxe_source_tree_digest() -> str:
 
 
 def validate_architecture(
-    documents: dict[str, dict[str, object]], mutation_count: int
+    documents: dict[str, dict[str, object]],
+    model: AbiModel,
+    mutation_count: int,
 ) -> None:
-    architecture = require_dict(
-        strict_json(ARCHITECTURE_PATH.read_text(encoding="utf-8"), "architecture"),
-        "architecture",
-    )
+    architecture = strict_json(ARCHITECTURE_PATH)
     if architecture.get("schemaVersion") != 1 or architecture.get("decisionId") != "ADR-015":
         raise ValidationError("architecture identity changed")
     if architecture.get("status") != "proposed-pending-fresh-review":
@@ -1016,15 +1040,31 @@ def validate_architecture(
     ]:
         raise ValidationError("architecture source precedence changed")
     contracts = require_dict(architecture.get("contracts"), "architecture.contracts")
-    bundle_contract = require_dict(contracts.get("bundle"), "architecture.contracts.bundle")
-    if bundle_contract != {
-        "identity": "wordpress-hx.adoption-bundle.v1",
-        "schema": "schemas/adoption-bundle.schema.json",
-        "purpose": "one-digest-root-for-records-facades-and-ownership",
+    if contracts != {
+        "adoption": {
+            "identity": "wordpress-hx.adoption-contract.v1",
+            "schema": "schemas/adoption-contract.schema.json",
+            "purpose": "exact-provider-identity-inputs-precise-bindings-and-ownership",
+        },
+        "capability": {
+            "identity": "wordpress-hx.adoption-capability.v1",
+            "schema": "schemas/adoption-capability.schema.json",
+            "purpose": "exact-runtime-probes-and-nonserializable-scoped-authority",
+        },
+        "review": {
+            "identity": "wordpress-hx.adoption-review.v1",
+            "schema": "schemas/adoption-review.schema.json",
+            "purpose": "included-omitted-conflicting-and-evidence-stage-report",
+        },
+        "bundle": {
+            "identity": "wordpress-hx.adoption-bundle.v1",
+            "schema": "schemas/adoption-bundle.schema.json",
+            "purpose": "one-content-root-excluding-final-ownership-manifest",
+        },
     }:
-        raise ValidationError("architecture bundle contract changed")
+        raise ValidationError("architecture contract inventory changed")
     prototype = require_dict(architecture.get("prototypeEvidence"), "prototypeEvidence")
-    expected_hashes = {
+    expected = {
         "contractSha256": documents["contract"]["contractDigest"],
         "capabilitySha256": documents["capability"]["capabilitySetDigest"],
         "reviewSha256": documents["review"]["reportDigest"],
@@ -1037,55 +1077,70 @@ def validate_architecture(
         "capabilitySchemaSha256": sha256(SCHEMA_PATHS["capability"].read_bytes()),
         "reviewSchemaSha256": sha256(SCHEMA_PATHS["review"].read_bytes()),
         "bundleSchemaSha256": sha256(SCHEMA_PATHS["bundle"].read_bytes()),
-    }
-    for field, expected in expected_hashes.items():
-        if prototype.get(field) != expected:
-            raise ValidationError(f"architecture {field} is stale")
-    expected_counts = {
-        "bindingCount": 5,
-        "capabilityCount": 2,
-        "omissionCount": 4,
-        "conflictCount": 1,
-        "compileNegativeCount": 6,
+        "bindingCount": len(model.admitted()),
+        "capabilityCount": len(require_list(documents["capability"].get("capabilities"), "capabilities")),
+        "omissionCount": len(model.omitted()),
+        "conflictCount": len([candidate for candidate in model.omitted() if candidate.omission_code == "conflicting-authority"]),
+        "compileNegativeCount": len([path for path in (FIXTURE / "test-negative").iterdir() if path.is_dir()]),
         "independentMutationCount": mutation_count,
     }
-    for field, expected in expected_counts.items():
-        if prototype.get(field) != expected:
-            raise ValidationError(f"architecture {field} changed")
-    cli_lock = require_dict(
-        strict_json(CLI_LOCK_PATH.read_text(encoding="utf-8"), "CLI dependency lock"),
-        "CLI dependency lock",
-    )
+    for field, value in expected.items():
+        if prototype.get(field) != value:
+            raise ValidationError(f"architecture {field} is stale")
+
+    cli_lock = strict_json(CLI_LOCK_PATH)
     compiler = require_dict(cli_lock.get("compiler"), "CLI dependency lock.compiler")
     runtime = require_dict(cli_lock.get("runtime"), "CLI dependency lock.runtime")
+    haxe = require_dict(cli_lock.get("haxe"), "CLI dependency lock.haxe")
     genes_version = require_string(compiler.get("version"), "compiler.version")
     genes_commit = require_string(compiler.get("commit"), "compiler.commit")
     node_version = require_string(runtime.get("version"), "runtime.version")
-    targets = require_list(prototype.get("targets"), "prototype.targets")
-    if len(targets) != 3 or targets[1] != (
-        f"genes-ts-{genes_version}@{genes_commit}-typescript-5.9.3-node-{node_version}"
-    ):
-        raise ValidationError("architecture Genes target differs from the CLI dependency lock")
+    haxe_version = require_string(haxe.get("version"), "haxe.version")
+    npm_lock = strict_json(NPM_LOCK_PATH)
+    npm_packages = require_dict(npm_lock.get("packages"), "npm lock packages")
+    typescript = require_dict(
+        npm_packages.get("node_modules/typescript"), "npm lock TypeScript"
+    )
+    typescript_version = require_string(typescript.get("version"), "TypeScript version")
+    toolchain = strict_json(TOOLCHAIN_LOCK_PATH)
+    images = require_dict(toolchain.get("runtimeImages"), "toolchain runtime images")
+    php = require_dict(images.get("php"), "toolchain PHP")
+    primary_php = require_dict(php.get("primaryCli"), "toolchain primary PHP")
+    php_version = require_string(primary_php.get("version"), "PHP version")
+    if prototype.get("targets") != [
+        f"haxe-{haxe_version}-interp",
+        f"genes-ts-{genes_version}@{genes_commit}-typescript-{typescript_version}-node-{node_version}",
+        f"stock-haxe-php-{php_version}",
+    ]:
+        raise ValidationError("architecture targets differ from authoritative locks")
     if prototype.get("syntheticProviderRuntimeUsed") is not True:
         raise ValidationError("architecture omits the synthetic native-provider runtime proof")
     if prototype.get("productionOwnershipTransactionUsed") is not True:
         raise ValidationError("architecture omits the production ownership transaction proof")
+    if prototype.get("providerRuntimeExecutionDuringGeneration") is not False:
+        raise ValidationError("architecture claims provider execution during static generation")
+    if prototype.get("realProviderUsed") is not False:
+        raise ValidationError("architecture overclaims a real provider")
+
     references = require_list(architecture.get("referenceReview"), "referenceReview")
     if len(references) != 3:
         raise ValidationError("architecture reference review inventory changed")
-    for value in references:
-        reference = require_dict(value, "reference")
-        if not re.fullmatch(r"[0-9a-f]{40}", require_string(reference.get("commit"), "reference.commit")):
+    for raw in references:
+        reference = require_dict(raw, "reference")
+        if re.fullmatch(r"[0-9a-f]{40}", require_string(reference.get("commit"), "reference.commit")) is None:
             raise ValidationError("reference commit is not immutable")
-        if not re.fullmatch(r"[0-9a-f]{40}", require_string(reference.get("gitBlob"), "reference.gitBlob")):
+        if re.fullmatch(r"[0-9a-f]{40}", require_string(reference.get("gitBlob"), "reference.gitBlob")) is None:
             raise ValidationError("reference blob is not immutable")
-        if not re.fullmatch(r"[0-9a-f]{64}", require_string(reference.get("sha256"), "reference.sha256")):
+        if re.fullmatch(r"[0-9a-f]{64}", require_string(reference.get("sha256"), "reference.sha256")) is None:
             raise ValidationError("reference hash is not immutable")
         if reference.get("copiedBytes") is not False:
             raise ValidationError("reference review copied source bytes")
-    claims = require_dict(architecture.get("claims"), "claims")
+
+    claims = require_dict(architecture.get("claims"), "architecture.claims")
     if claims.get("architectureDecision") != "proposed-pending-fresh-review":
         raise ValidationError("architecture decision claim changed")
+    if claims.get("closedSchemas") != "validated" or claims.get("fixtureContract") != "validated":
+        raise ValidationError("architecture drops its schema or fixture validation claim")
     for field in (
         "productionGenerator",
         "isolatedReflectionRuntime",
@@ -1097,29 +1152,159 @@ def validate_architecture(
     ):
         if claims.get(field) != "not-tested":
             raise ValidationError(f"architecture overclaims {field}")
-    receipt = require_dict(
-        strict_json(RECEIPT_PATH.read_text(encoding="utf-8"), "ADR-015 receipt"),
-        "ADR-015 receipt",
-    )
+
+    validate_receipt(architecture, genes_version, genes_commit, node_version, haxe_version, typescript_version, php_version)
+
+
+def validate_receipt(
+    architecture: dict[str, object],
+    genes_version: str,
+    genes_commit: str,
+    node_version: str,
+    haxe_version: str,
+    typescript_version: str,
+    php_version: str,
+) -> None:
+    receipt = strict_json(RECEIPT_PATH)
+    if receipt.get("schemaVersion") != 1 or receipt.get("receiptId") != "ADR-015-INTEROP-ADOPTION-CONTRACT":
+        raise ValidationError("evidence receipt identity changed")
+    if receipt.get("status") != "implemented-hosted-and-review-pending":
+        raise ValidationError("evidence receipt status changed or overclaims acceptance")
+    if receipt.get("status") == "accepted" or require_dict(receipt.get("review"), "receipt.review").get("acceptanceAuthorized") is not False:
+        raise ValidationError("evidence receipt overclaims acceptance")
+    for raw in require_dict(receipt.get("subject"), "receipt.subject").values():
+        subject = require_dict(raw, "receipt subject")
+        relative = clean_relative_path(subject.get("path"), "receipt subject path")
+        path = ROOT / relative
+        if not path.is_file() or subject.get("sha256") != sha256(path.read_bytes()):
+            raise ValidationError(f"receipt subject is stale: {relative}")
+
     verification = require_dict(receipt.get("verification"), "receipt.verification")
-    if verification.get("genesVersion") != genes_version or verification.get("genesCommit") != genes_commit:
-        raise ValidationError("receipt Genes identity differs from the CLI dependency lock")
-    if verification.get("genesAuthority") != "packages/cli/dependency-lock.json":
-        raise ValidationError("receipt Genes identity has no single lock authority")
-    receipt_claims = require_dict(receipt.get("claims"), "receipt.claims")
+    expected_versions = {
+        "genesVersion": genes_version,
+        "genesCommit": genes_commit,
+        "nodeVersion": node_version,
+        "haxeVersion": haxe_version,
+        "typescriptVersion": typescript_version,
+        "phpVersion": php_version,
+        "genesAuthority": "packages/cli/dependency-lock.json",
+    }
+    for field, expected in expected_versions.items():
+        if verification.get(field) != expected:
+            raise ValidationError(f"receipt {field} differs from its lock authority")
+    prototype = require_dict(architecture.get("prototypeEvidence"), "prototypeEvidence")
+    for field in (
+        "sourceTreeSha256",
+        "bindingCount",
+        "capabilityCount",
+        "omissionCount",
+        "conflictCount",
+        "compileNegativeCount",
+        "independentMutationCount",
+        "providerRuntimeExecutionDuringGeneration",
+        "syntheticProviderRuntimeUsed",
+        "productionOwnershipTransactionUsed",
+        "realProviderUsed",
+    ):
+        if verification.get(field) != prototype.get(field):
+            raise ValidationError(f"receipt verification {field} differs from architecture")
+
+    claims = require_dict(receipt.get("claims"), "receipt.claims")
+    for field in (
+        "productionGenerator",
+        "isolatedReflectionRuntime",
+        "realProviderRuntime",
+        "wordpressRuntime",
+        "providerTrustAdmission",
+        "php74Runtime",
+        "publicPackageConsumer",
+        "productionSupport",
+    ):
+        if claims.get(field) != "not-tested":
+            raise ValidationError(f"receipt overclaims {field}")
+    if claims.get("publicationAuthorized") is not False:
+        raise ValidationError("receipt authorizes publication before fresh review")
+    architecture_claims = require_dict(architecture.get("claims"), "architecture.claims")
     for architecture_field, receipt_field in (
         ("typedCapabilityPrototype", "typedCapabilityPrototype"),
         ("fixtureGenerator", "fixtureGenerator"),
         ("nativeSyntheticProviderRuntime", "nativeProviderAbi"),
         ("ownershipTransaction", "ownershipTransaction"),
     ):
-        if claims.get(architecture_field) != receipt_claims.get(receipt_field):
-            raise ValidationError(f"architecture claim {architecture_field} differs from its receipt authority")
+        if architecture_claims.get(architecture_field) != claims.get(receipt_field):
+            raise ValidationError(
+                f"architecture claim {architecture_field} differs from its receipt authority"
+            )
+
+    expected_observer_ids = [
+        "schema",
+        "native",
+        "haxe",
+        "mutation",
+        "ownership",
+    ]
+    identities = observer_identities(ROOT)
+    observation_outcomes: list[object] = []
+    for key, mode in (
+        ("localObservation", "local"),
+        ("containerObservation", "container"),
+    ):
+        observation = require_dict(receipt.get(key), f"receipt.{key}")
+        if observation.get("contentRoot") != prototype.get("bundleDigest"):
+            raise ValidationError(f"{mode} observation uses a different content root")
+        if observation.get("executionMode") != mode:
+            raise ValidationError(f"{mode} observation has the wrong execution mode")
+        outcome = observation.get("outcome")
+        observation_outcomes.append(outcome)
+        observers = require_list(observation.get("observers"), f"{mode} observers")
+        if [require_dict(value, f"{mode} observer").get("id") for value in observers] != expected_observer_ids:
+            raise ValidationError(f"{mode} observer inventory changed")
+        for raw in observers:
+            observer = require_dict(raw, f"{mode} observer")
+            observer_id = require_string(observer.get("id"), f"{mode} observer id")
+            if observer.get("identitySha256") != identities[observer_id]:
+                raise ValidationError(f"{mode} observer {observer_id} identity is stale")
+        if outcome == "passed":
+            if observation.get("observedAt") is None or any(
+                require_dict(value, f"{mode} observer").get("outcome") != "passed"
+                for value in observers
+            ):
+                raise ValidationError(f"{mode} pass lacks every observer outcome")
+        elif outcome == "pending":
+            if observation.get("observedAt") is not None or any(
+                require_dict(value, f"{mode} observer").get("outcome") != "pending"
+                for value in observers
+            ):
+                raise ValidationError(f"pending {mode} evidence contains a pass")
+        else:
+            raise ValidationError(f"{mode} evidence outcome is not closed")
+    expected_outcome = (
+        "passed-local-and-container-current-content-root"
+        if observation_outcomes == ["passed", "passed"]
+        else "pending-current-observers"
+    )
+    if verification.get("outcome") != expected_outcome:
+        raise ValidationError("receipt verification differs from exact observer outcomes")
+
     hosted = require_dict(receipt.get("hostedWorkflow"), "receipt.hostedWorkflow")
     architecture_hosted = require_dict(architecture.get("hostedGate"), "architecture.hostedGate")
-    for field in ("job", "runId", "jobId", "commit", "status"):
+    for field in (
+        "job",
+        "runId",
+        "jobId",
+        "commit",
+        "status",
+        "contentRoot",
+        "gateIdentitySha256",
+    ):
         if architecture_hosted.get(field) != hosted.get(field):
             raise ValidationError(f"architecture hosted {field} differs from its receipt authority")
+    if hosted.get("contentRoot") != prototype.get("bundleDigest"):
+        raise ValidationError("hosted evidence uses a different content root")
+    if hosted.get("gateIdentitySha256") != hosted_gate_identity(ROOT):
+        raise ValidationError("hosted evidence uses a stale gate identity")
+    if hosted.get("required") is not True:
+        raise ValidationError("hosted adoption gate is no longer required")
     if hosted.get("status") == "pending-current-main-run":
         if any(hosted.get(field) is not None for field in ("runId", "jobId", "commit")):
             raise ValidationError("pending hosted evidence carries a current run identity")
@@ -1133,27 +1318,17 @@ def validate_architecture(
 
 
 def main() -> None:
-    schemas = {
-        name: require_dict(
-            strict_json(path.read_text(encoding="utf-8"), f"{name} schema"),
-            f"{name} schema",
-        )
-        for name, path in SCHEMA_PATHS.items()
-    }
+    schemas = {name: strict_json(path) for name, path in SCHEMA_PATHS.items()}
     for schema in schemas.values():
         require_closed_objects(schema)
-    documents = {
-        name: require_dict(
-            strict_json(path.read_text(encoding="utf-8"), name), name
-        )
-        for name, path in DOCUMENT_PATHS.items()
-    }
-    validate_documents(documents, schemas)
-    mutations = mutation_corpus(documents, schemas)
-    validate_architecture(documents, len(mutations))
+    documents = {name: strict_json(path) for name, path in DOCUMENT_PATHS.items()}
+    model = merge_model(INPUT_ROOT, logical_path)
+    validate_documents(documents, model, schemas)
+    mutations = mutation_corpus(documents, model, schemas)
+    validate_architecture(documents, model, len(mutations))
     print(
-        "ADR-015 adoption architecture passed "
-        f"({len(mutations)} independent mutations)"
+        "ADR-015 architecture passed source-derived ABI, immutable bundle, "
+        f"and {len(mutations)} independent mutations"
     )
 
 

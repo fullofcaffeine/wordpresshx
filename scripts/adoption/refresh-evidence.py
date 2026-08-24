@@ -10,6 +10,8 @@ import json
 import re
 from pathlib import Path
 
+from evidence_state import current_content_root, hosted_gate_identity, refresh_local_state
+
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHITECTURE_PATH = ROOT / "manifests/adoption-contract-architecture.json"
@@ -38,7 +40,9 @@ def source_tree_sha256() -> str:
         FIXTURE / "src",
         FIXTURE / "test-support",
         FIXTURE / "test",
+        FIXTURE / "test-native",
         FIXTURE / "test-negative",
+        FIXTURE / "test-ownership",
     ):
         for path in source_root.rglob("*.hx"):
             relative = path.relative_to(ROOT).as_posix()
@@ -56,7 +60,7 @@ def npm_version(package_lock: dict[str, object], package: str) -> str:
     return record["version"]
 
 
-def derive() -> tuple[dict[str, object], dict[str, object]]:
+def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[str, object]]:
     architecture = load("manifests/adoption-contract-architecture.json")
     receipt = load("manifests/evidence/adr-015-interop-adoption-contract.json")
     contract = load("fixtures/adoption-contract/contract/acme-calendar.contract.json")
@@ -127,12 +131,48 @@ def derive() -> tuple[dict[str, object], dict[str, object]]:
     contracts["bundle"] = {
         "identity": "wordpress-hx.adoption-bundle.v1",
         "schema": "schemas/adoption-bundle.schema.json",
-        "purpose": "one-digest-root-for-records-facades-and-ownership",
+        "purpose": "one-content-root-excluding-final-ownership-manifest",
     }
+    ownership = architecture.get("ownership")
+    if not isinstance(ownership, dict):
+        raise ValueError("architecture ownership is not an object")
+    ownership["removal"] = "manifest-owned-complete-content-bundle-provider-source-untouched"
 
     hosted = receipt["hostedWorkflow"]
     if not isinstance(hosted, dict):
         raise ValueError("receipt hosted workflow is not an object")
+    content_root = current_content_root(ROOT)
+    gate_identity = hosted_gate_identity(ROOT)
+    hosted_is_current = (
+        hosted.get("contentRoot") == content_root
+        and hosted.get("gateIdentitySha256") == gate_identity
+    )
+    if hosted.get("status") == "passed-current-main" and not hosted_is_current:
+        previous_run = hosted.get("runId")
+        previous_job = hosted.get("jobId")
+        previous_commit = hosted.get("commit")
+        previous_root = hosted.get("contentRoot")
+        previous_gate = hosted.get("gateIdentitySha256")
+        if isinstance(previous_run, int):
+            hosted["historicalRunId"] = previous_run
+        if isinstance(previous_job, int):
+            hosted["historicalJobId"] = previous_job
+        if isinstance(previous_commit, str):
+            hosted["historicalCommit"] = previous_commit
+        if isinstance(previous_root, str):
+            hosted["historicalContentRoot"] = previous_root
+        if isinstance(previous_gate, str):
+            hosted["historicalGateIdentitySha256"] = previous_gate
+        hosted.update(
+            {
+                "runId": None,
+                "jobId": None,
+                "commit": None,
+                "status": "pending-current-main-run",
+            }
+        )
+    hosted["contentRoot"] = content_root
+    hosted["gateIdentitySha256"] = gate_identity
     architecture_hosted = {
         "workflow": ".github/workflows/adoption-contract.yml",
         "job": hosted["job"],
@@ -141,8 +181,16 @@ def derive() -> tuple[dict[str, object], dict[str, object]]:
         "jobId": hosted["jobId"],
         "commit": hosted["commit"],
         "status": hosted["status"],
+        "contentRoot": hosted["contentRoot"],
+        "gateIdentitySha256": hosted["gateIdentitySha256"],
     }
-    for field in ("historicalRunId", "historicalJobId", "historicalCommit"):
+    for field in (
+        "historicalRunId",
+        "historicalJobId",
+        "historicalCommit",
+        "historicalContentRoot",
+        "historicalGateIdentitySha256",
+    ):
         if field in hosted:
             architecture_hosted[field] = hosted[field]
     architecture["hostedGate"] = architecture_hosted
@@ -185,7 +233,6 @@ def derive() -> tuple[dict[str, object], dict[str, object]]:
             "compileNegativeCount": len(
                 [path for path in (FIXTURE / "test-negative").iterdir() if path.is_dir()]
             ),
-            "independentMutationCount": 33,
             "targets": [
                 f"haxe-{haxe_version}-interp",
                 f"genes-ts-{genes_version}@{genes_commit}-typescript-{typescript_version}-node-{node_version}",
@@ -201,16 +248,44 @@ def derive() -> tuple[dict[str, object], dict[str, object]]:
     receipt_claims = receipt["claims"]
     if not isinstance(architecture_claims, dict) or not isinstance(receipt_claims, dict):
         raise ValueError("adoption claims are not objects")
-    architecture_claims["typedCapabilityPrototype"] = receipt_claims[
-        "typedCapabilityPrototype"
-    ]
-    architecture_claims["fixtureGenerator"] = receipt_claims["fixtureGenerator"]
-    architecture_claims["nativeSyntheticProviderRuntime"] = receipt_claims[
-        "nativeProviderAbi"
-    ]
-    architecture_claims["ownershipTransaction"] = receipt_claims[
-        "ownershipTransaction"
-    ]
+    local_observation = refresh_local_state(
+        ROOT,
+        receipt.get("localObservation"),
+        reset_stale_pass=reset_stale_pass,
+        execution_mode="local",
+    )
+    container_observation = refresh_local_state(
+        ROOT,
+        receipt.get("containerObservation"),
+        reset_stale_pass=reset_stale_pass,
+        execution_mode="container",
+    )
+    receipt["localObservation"] = local_observation
+    receipt["containerObservation"] = container_observation
+    local_passed = (
+        local_observation["outcome"] == "passed"
+        and container_observation["outcome"] == "passed"
+    )
+    architecture_claims["typedCapabilityPrototype"] = (
+        "compile-tested-local-and-container-current-content-root"
+        if local_passed
+        else "pending-current-observers"
+    )
+    architecture_claims["fixtureGenerator"] = (
+        "deterministic-source-derived-tested-local-and-container-current-content-root"
+        if local_passed
+        else "pending-current-observers"
+    )
+    architecture_claims["nativeSyntheticProviderRuntime"] = (
+        "synthetic-provider-tested-local-and-container-current-content-root"
+        if local_passed
+        else "pending-current-observers"
+    )
+    architecture_claims["ownershipTransaction"] = (
+        "production-owner-tested-local-and-container-current-content-root"
+        if local_passed
+        else "pending-current-observers"
+    )
 
     verification = receipt["verification"]
     if not isinstance(verification, dict):
@@ -235,13 +310,38 @@ def derive() -> tuple[dict[str, object], dict[str, object]]:
             "syntheticProviderRuntimeUsed": True,
             "productionOwnershipTransactionUsed": True,
             "realProviderUsed": False,
+            "outcome": (
+                "passed-local-and-container-current-content-root"
+                if local_passed
+                else "pending-current-observers"
+            ),
         }
     )
+    if not local_passed:
+        receipt_claims["typedCapabilityPrototype"] = "pending-current-observers"
+        receipt_claims["noProviderExecution"] = "pending-current-observers"
+        receipt_claims["fixtureGenerator"] = "pending-current-observers"
+        receipt_claims["nativeProviderAbi"] = "pending-current-observers"
+        receipt_claims["ownershipTransaction"] = "pending-current-observers"
 
     architecture_bytes = pretty(architecture)
     subjects = receipt["subject"]
     if not isinstance(subjects, dict):
         raise ValueError("receipt subjects are not an object")
+    subjects.update(
+        {
+            "abiModel": {"path": "scripts/adoption/abi_model.py"},
+            "bundleValidator": {
+                "path": "fixtures/adoption-contract/test-ownership/adoption/ownership/AdoptionBundleValidator.hx"
+            },
+            "ownershipHarness": {
+                "path": "fixtures/adoption-contract/test-ownership/adoption/ownership/Main.hx"
+            },
+            "evidenceState": {"path": "scripts/adoption/evidence_state.py"},
+            "evidenceStateProbe": {"path": "scripts/adoption/test-evidence.py"},
+            "outcomeRecorder": {"path": "scripts/adoption/record-evidence.py"},
+        }
+    )
     for subject in subjects.values():
         if not isinstance(subject, dict) or not isinstance(subject.get("path"), str):
             raise ValueError("receipt subject is invalid")
@@ -256,7 +356,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--write", action="store_true")
     arguments = parser.parse_args()
-    architecture, receipt = derive()
+    architecture, receipt = derive(reset_stale_pass=arguments.write)
     expected_architecture = pretty(architecture)
     expected_receipt = pretty(receipt)
     if arguments.write:

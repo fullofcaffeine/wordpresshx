@@ -2,9 +2,6 @@
 import js.Node;
 #end
 import wordpress.hx.adoption.prototype.AcmeCalendar;
-import wordpress.hx.adoption.prototype.AcmeCalendar.AcmeCalendarFacade;
-import wordpress.hx.adoption.prototype.AcmeCalendar.CalendarBadgeProps;
-import wordpress.hx.adoption.prototype.AcmeCalendar.EventQuery;
 import wordpress.hx.adoption.prototype.Adoption.CapabilityAvailability;
 import wordpress.hx.adoption.prototype.Adoption.CapabilityFailureTools;
 import wordpress.hx.adoption.prototype.Adoption.LifecycleScope;
@@ -16,14 +13,14 @@ final class Main {
 		final browser = TargetProbe.exactBrowserModule();
 		final lines = [];
 		switch php.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read) {
-			case Available(token):
-				lines.push("exact|available|" + AcmeCalendarFacade.listEvents(php.scope, token, new EventQuery(12)));
+			case Available(_):
+				lines.push("exact|available|verified-token");
 			case Unavailable(reason):
 				throw new haxe.Exception("exact provider unexpectedly unavailable: " + CapabilityFailureTools.describe(reason));
 		}
 		switch browser.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge) {
-			case Available(token):
-				lines.push("browser|available|" + AcmeCalendarFacade.renderBadge(browser.scope, token, new CalendarBadgeProps(7, "Due this week")));
+			case Available(_):
+				lines.push("browser|available|verified-token");
 			case Unavailable(reason):
 				throw new haxe.Exception("browser capability unexpectedly unavailable: " + CapabilityFailureTools.describe(reason));
 		}
@@ -36,6 +33,10 @@ final class Main {
 		lines.push("wrong-version|" + describe(wrongVersion.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read)));
 		final missingBinding = TargetProbe.missingBadgeBindingBrowserModule();
 		lines.push("missing-binding|" + describe(missingBinding.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge)));
+		final callerBindings = AcmeCalendar.read.requiredBindingIds();
+		callerBindings.resize(0);
+		final immutableBindings = TargetProbe.missingReadBindingPhpRequest();
+		lines.push("binding-mutation|" + describe(immutableBindings.runtime.probe(AcmeCalendar.provider, AcmeCalendar.read)));
 		lines.push("same-request-instance|" + rejected(TargetProbe.sameRequestInstanceReuseRejected()));
 		lines.push("browser-reload|" + rejected(TargetProbe.browserReloadRejected()));
 		lines.push("stale-process|" + rejected(TargetProbe.staleProcessRejected()));

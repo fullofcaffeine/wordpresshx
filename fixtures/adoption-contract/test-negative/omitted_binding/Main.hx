@@ -1,7 +1,7 @@
-import wordpress.hx.adoption.prototype.AcmeCalendar.AcmeCalendarFacade;
+import wordpress.hx.adoption.prototype.generated.GeneratedAcmeCalendar;
 
 final class Main {
 	static function main():Void {
-		AcmeCalendarFacade.magicLookup("not-admitted");
+		GeneratedAcmeCalendar.magicLookup("not-admitted");
 	}
 }

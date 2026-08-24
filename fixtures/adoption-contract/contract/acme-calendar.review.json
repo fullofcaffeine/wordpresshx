@@ -5,7 +5,7 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d"
+    "sha256": "19b375bbc4f6fcb817d0eca12ec6d25b522eab0ca805e9f09ec0cbe08712f964"
   },
   "provider": {
     "id": "acme-calendar",
@@ -15,7 +15,7 @@
   "generator": {
     "id": "wordpress-hx-adoption-generator",
     "version": "0.0.0-fixture",
-    "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
+    "sha256": "3812be8c3e9a993ec7410ea2ced83d4c26df59a7a3064f88e97e0746f4dde1fe"
   },
   "summary": {
     "discovered": 9,
@@ -36,8 +36,9 @@
       "target": "javascript",
       "kind": "exported-value",
       "code": "dynamic-property",
-      "reason": "the declaration exposes unknown values that cannot become a precise Haxe surface",
+      "reason": "the declaration contains an unknown value shape that cannot become a precise Haxe surface",
       "sourceInputIds": [
+        "browser-runtime",
         "browser-types"
       ],
       "sourceSpans": [
@@ -47,9 +48,16 @@
           "startByte": 235,
           "endByte": 298,
           "sha256": "c81db2669f8f9d86f84c80b7285b1c8778c197e29ac77240786730b65ecdead3"
+        },
+        {
+          "inputId": "browser-runtime",
+          "path": "fixtures/adoption-contract/inputs/index.js",
+          "startByte": 519,
+          "endByte": 550,
+          "sha256": "853079f4486fd6b8f369c2a27dcfdc9ebf2353cb8cde1a355b8931a7c75b14c0"
         }
       ],
-      "signatureSha256": "b0ceaa05c7a159ee0d214d0b140a37057f2f63b4b5d7897c11e1f3b76c03bc70",
+      "signatureSha256": "237652f9444dde2c951b41c547ca0bc21adb6f708d12eaa6270cf23891d765a4",
       "requiredAction": "obtain-authoritative-signature"
     },
     {
@@ -78,7 +86,7 @@
           "sha256": "340013659975f2df28b3a74566785f7b2165ce02d14a7db4826a4b85d29ceb8f"
         }
       ],
-      "signatureSha256": "0e8cc4a06dd2d62debcf762d02c462e50c17d534de1b9ff2c96ef713bf042cfc",
+      "signatureSha256": "723eb294144b92d05aee56ceb0405c0ae140c483ac507a80799c456d3d993789",
       "requiredAction": "omit"
     },
     {
@@ -86,7 +94,7 @@
       "target": "php",
       "kind": "function",
       "code": "conflicting-authority",
-      "reason": "the authoritative stub and runtime-source signatures disagree",
+      "reason": "the authoritative stub and lower-precedence runtime declaration disagree",
       "sourceInputIds": [
         "php-stubs",
         "plugin-source"
@@ -107,7 +115,7 @@
           "sha256": "3b2e9c27852e090b11e10fb11f6592953be80bf2471b90046566f85736ba9c2e"
         }
       ],
-      "signatureSha256": "09aa3b333963806ff5dec6f4bd1e5ee22bd146baf2b3228a5290dedacf4bbb3a",
+      "signatureSha256": "b87a65f61392e941cb1f07d1578794aea3715993304d6915f4b358ad4fdeb9ea",
       "requiredAction": "obtain-authoritative-signature"
     },
     {
@@ -136,7 +144,7 @@
           "sha256": "dcd217cb9579ec103185b345019a600042c1ca06eab28d5f8b3071b0b32484a0"
         }
       ],
-      "signatureSha256": "ae3d7f931b65f018b9134b97f022964c3db80218e6c5094fdabcbf101ecff791",
+      "signatureSha256": "0e81c1388ac3d43611dbdcacb3d2065ef630a4c8e4b099c32b90fb4376826249",
       "requiredAction": "supply-curated-precise-contract"
     }
   ],
@@ -175,5 +183,5 @@
     "productionSupported": false,
     "implementationOwnershipTransferred": false
   },
-  "reportDigest": "1349b1e508b62d770afb181a5163ce91d65335daa2f3aaebfb7618156e3a14be"
+  "reportDigest": "8c009eaa4d56056c4a788245ad25cafe9a924fadea68038b35ae48bb29a2469d"
 }

@@ -27,7 +27,7 @@
     "generator": {
       "id": "wordpress-hx-adoption-generator",
       "version": "0.0.0-fixture",
-      "sha256": "9ec3b8810aeef87e9a678ab57092854c0530ae659c42ff47e8fa98deb2b71828"
+      "sha256": "3812be8c3e9a993ec7410ea2ced83d4c26df59a7a3064f88e97e0746f4dde1fe"
     },
     "inputs": [
       {
@@ -96,14 +96,30 @@
       "haxePath": "acme.calendar.browser.CalendarBadge",
       "sourceInputId": "browser-types",
       "sourceEvidence": {
-        "signatureSha256": "4fc9e7e715c0c10c4dd3a5f196f7a3734e2578f63e1a395170b5ab0ff66f6eae",
-        "span": {
-          "inputId": "browser-types",
-          "path": "fixtures/adoption-contract/inputs/index.d.ts",
-          "startByte": 161,
-          "endByte": 234,
-          "sha256": "9d16cafcbdcdc2d4d843ea3aae50f208462278e4d1ed1ddbb7cb2c25d61fbf6f"
-        }
+        "signatureSha256": "5fb5578ad4ceb5df8d179e3fd51e3f4e758a0a189878246bcb28fb5f1bdd2c05",
+        "spans": [
+          {
+            "inputId": "browser-types",
+            "path": "fixtures/adoption-contract/inputs/index.d.ts",
+            "startByte": 161,
+            "endByte": 234,
+            "sha256": "9d16cafcbdcdc2d4d843ea3aae50f208462278e4d1ed1ddbb7cb2c25d61fbf6f"
+          },
+          {
+            "inputId": "browser-types",
+            "path": "fixtures/adoption-contract/inputs/index.d.ts",
+            "startByte": 0,
+            "endByte": 91,
+            "sha256": "13e256734e3e9ff40205c0d7abd397eb5cf307a823a8585f878751c0bb424463"
+          },
+          {
+            "inputId": "browser-runtime",
+            "path": "fixtures/adoption-contract/inputs/index.js",
+            "startByte": 365,
+            "endByte": 403,
+            "sha256": "2b985805631a47602e28a3ee2fdb5cf42a6e4d19cc79cab98c5c2ce1670b6c57"
+          }
+        ]
       },
       "capabilityId": "calendar.badge.browser",
       "parameters": [
@@ -114,9 +130,29 @@
           "requirement": "required",
           "passing": "value",
           "type": {
-            "kind": "native-nominal",
+            "kind": "structure",
             "target": "javascript",
-            "name": "CalendarBadgeProps"
+            "name": "CalendarBadgeProps",
+            "fields": [
+              {
+                "name": "count",
+                "haxeName": "count",
+                "requirement": "required",
+                "readonly": true,
+                "type": {
+                  "kind": "javascript-number"
+                }
+              },
+              {
+                "name": "label",
+                "haxeName": "label",
+                "requirement": "required",
+                "readonly": true,
+                "type": {
+                  "kind": "string"
+                }
+              }
+            ]
           }
         }
       ],
@@ -133,14 +169,23 @@
       "haxePath": "acme.calendar.browser.CalendarLabels.format",
       "sourceInputId": "browser-types",
       "sourceEvidence": {
-        "signatureSha256": "32a962abb5dd16db2839466c6611b15d660ec06f80e1ba4dad0ac4b5e669e677",
-        "span": {
-          "inputId": "browser-types",
-          "path": "fixtures/adoption-contract/inputs/index.d.ts",
-          "startByte": 93,
-          "endByte": 160,
-          "sha256": "6bc6ae103a6d8ce245695052203fcb3d6b25fb77538d72bb6c81a0a7e65c008b"
-        }
+        "signatureSha256": "ad90b0d45a69e9b83990186b5ea8529fc669797f72a46350d8b66bce37178726",
+        "spans": [
+          {
+            "inputId": "browser-types",
+            "path": "fixtures/adoption-contract/inputs/index.d.ts",
+            "startByte": 93,
+            "endByte": 160,
+            "sha256": "6bc6ae103a6d8ce245695052203fcb3d6b25fb77538d72bb6c81a0a7e65c008b"
+          },
+          {
+            "inputId": "browser-runtime",
+            "path": "fixtures/adoption-contract/inputs/index.js",
+            "startByte": 201,
+            "endByte": 245,
+            "sha256": "ccd9e64a0209b60c2fc358143dc6507d72522c73bceda9bb94301240296f4d61"
+          }
+        ]
       },
       "capabilityId": "calendar.badge.browser",
       "parameters": [
@@ -168,14 +213,23 @@
       "haxePath": "acme.calendar.server.Event.create",
       "sourceInputId": "php-stubs",
       "sourceEvidence": {
-        "signatureSha256": "3d9e85d32ca71d1338185f510981f46c48a245066aed06abaae48084a97da1cd",
-        "span": {
-          "inputId": "php-stubs",
-          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
-          "startByte": 79,
-          "endByte": 132,
-          "sha256": "79341e282404421e72f0b857e2a1cbf4fa8e2d45ab8e3c8e60403822f2141733"
-        }
+        "signatureSha256": "8fba4c8f74402fb36cfbb5bcd44069e707eb4e0f40e9fe860c486938bf6c4965",
+        "spans": [
+          {
+            "inputId": "php-stubs",
+            "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+            "startByte": 79,
+            "endByte": 132,
+            "sha256": "79341e282404421e72f0b857e2a1cbf4fa8e2d45ab8e3c8e60403822f2141733"
+          },
+          {
+            "inputId": "plugin-source",
+            "path": "fixtures/adoption-contract/inputs/plugin.php",
+            "startByte": 299,
+            "endByte": 360,
+            "sha256": "480f571c409552521af5cd6c411160bc9f45ecc6895839bf34268e0612a328f6"
+          }
+        ]
       },
       "capabilityId": "calendar.read.php",
       "parameters": [
@@ -205,14 +259,23 @@
       "haxePath": "acme.calendar.server.Event.title",
       "sourceInputId": "php-stubs",
       "sourceEvidence": {
-        "signatureSha256": "9f8f66099872cdddf1f08bff9d64b7500a524b86d62f69c85ffe0a663cffe58c",
-        "span": {
-          "inputId": "php-stubs",
-          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
-          "startByte": 134,
-          "endByte": 172,
-          "sha256": "3ea55c22aa074d4dcf706f9065745f3e16e84d6ffc2f2f302fb163d3db74e963"
-        }
+        "signatureSha256": "33a42daa694ef88c64b8bfe5bd8dccfe7c14991aed0340f35e85d6b99f8dde39",
+        "spans": [
+          {
+            "inputId": "php-stubs",
+            "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+            "startByte": 134,
+            "endByte": 172,
+            "sha256": "3ea55c22aa074d4dcf706f9065745f3e16e84d6ffc2f2f302fb163d3db74e963"
+          },
+          {
+            "inputId": "plugin-source",
+            "path": "fixtures/adoption-contract/inputs/plugin.php",
+            "startByte": 362,
+            "endByte": 404,
+            "sha256": "e3710b17ea001786e1daadb6c34c2d8d66886a6d99a2bfa7cc9e277823075c3e"
+          }
+        ]
       },
       "capabilityId": "calendar.read.php",
       "parameters": [],
@@ -229,14 +292,23 @@
       "haxePath": "acme.calendar.server.CalendarEvents.list",
       "sourceInputId": "php-stubs",
       "sourceEvidence": {
-        "signatureSha256": "f91c24fb885afd997d064a121d21eb57716237dfd15cae551784653c349e9df6",
-        "span": {
-          "inputId": "php-stubs",
-          "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
-          "startByte": 274,
-          "endByte": 315,
-          "sha256": "315425208ef7b3336c76fa531aa16078de03c1e934c8d280c646012413605b7d"
-        }
+        "signatureSha256": "f755d05f4fd695f4b335ac8e7647df809fb02ead54d7794a46524871f5535016",
+        "spans": [
+          {
+            "inputId": "php-stubs",
+            "path": "fixtures/adoption-contract/inputs/provider-stubs.php",
+            "startByte": 247,
+            "endByte": 315,
+            "sha256": "f5da86afbd877c9b365cea3c9b0c7b20867572aa7f74da8251cb4134751e15e1"
+          },
+          {
+            "inputId": "plugin-source",
+            "path": "fixtures/adoption-contract/inputs/plugin.php",
+            "startByte": 577,
+            "endByte": 645,
+            "sha256": "fed90b70bd372c93b62821a8a750b295bb84f35b8d38f9780255f52ea893998c"
+          }
+        ]
       },
       "capabilityId": "calendar.read.php",
       "parameters": [
@@ -268,8 +340,8 @@
     "applicationLogic": "haxe-authored",
     "compilerRecognition": "generic-contract-only-no-provider-name-branches",
     "regeneration": "private-stage-deterministic-diff-before-publication",
-    "removal": "manifest-owned-contract-and-facade-only-provider-untouched",
+    "removal": "manifest-owned-complete-content-bundle-provider-source-untouched",
     "modifiedGeneratedFile": "fail-closed-no-overwrite-or-delete"
   },
-  "contractDigest": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d"
+  "contractDigest": "19b375bbc4f6fcb817d0eca12ec6d25b522eab0ca805e9f09ec0cbe08712f964"
 }

@@ -65,7 +65,7 @@
     "bundle": {
       "identity": "wordpress-hx.adoption-bundle.v1",
       "schema": "schemas/adoption-bundle.schema.json",
-      "purpose": "one-digest-root-for-records-facades-and-ownership"
+      "purpose": "one-content-root-excluding-final-ownership-manifest"
     }
   },
   "providerLayers": [
@@ -92,7 +92,7 @@
     "regeneration": "private-stage-deterministic-diff-before-publication",
     "modifiedGeneratedBytes": "fail-closed",
     "markerEdits": "exact-anchor-preflight-backup-and-rollback",
-    "removal": "manifest-owned-contract-and-facade-only-provider-untouched",
+    "removal": "manifest-owned-complete-content-bundle-provider-source-untouched",
     "haxeRemovalBoundary": "same-native-facade-or-module-boundary"
   },
   "evidenceStages": [
@@ -118,20 +118,20 @@
     }
   ],
   "prototypeEvidence": {
-    "contractSha256": "25c0e86d2085634f1aafa23a030951f759e52428e52671748ce5db81015ae56d",
-    "capabilitySha256": "1fbfe868efbd54fd37af3f3b8933ab72f3c79b7a8bcbe8d4a1c03ca258156e54",
-    "reviewSha256": "1349b1e508b62d770afb181a5163ce91d65335daa2f3aaebfb7618156e3a14be",
-    "sourceTreeSha256": "26b3d77c5b2ce3d76179ac64af13b1df48bfabcee71b2d3a4d9c91de30290c3b",
-    "transcriptSha256": "d8c42fcb8529f7c78d924407aeb703e0d6c33399c18ff3a9abd673dbc7e9f0f0",
-    "contractSchemaSha256": "5d60c08be6496d1f5a2a34717172795625b54cd1b432d9a8b86a7998a95f377f",
+    "contractSha256": "19b375bbc4f6fcb817d0eca12ec6d25b522eab0ca805e9f09ec0cbe08712f964",
+    "capabilitySha256": "8caac93ac59f7d95f0b62868543e3c1ba3c2a5eeb32e1405015e863c771a527a",
+    "reviewSha256": "8c009eaa4d56056c4a788245ad25cafe9a924fadea68038b35ae48bb29a2469d",
+    "sourceTreeSha256": "e9857688889509e52a7704584674f1d32b848737b7aeb88c78ca2e15b971f3d9",
+    "transcriptSha256": "eddc5a6345427049f52510c103516fbe4057107d2788c4f7593f2afc47374572",
+    "contractSchemaSha256": "f2dd4139ee318b8334feae0ebd4cf1f5da2db88d00ce23a631d55e9840db6803",
     "capabilitySchemaSha256": "358fd4bbdb650ac1038c5d0eb454b387f18c613223963d6c99b6ad722a57855c",
-    "reviewSchemaSha256": "1b08b0beb700b717d7b56e56fe8340cb12531ed6e686d54b72304f73b648ad58",
+    "reviewSchemaSha256": "f4f5236637f2d272ed87b8e8aeda6da436d92cbf81e630f599e79e337294fb7f",
     "bindingCount": 5,
     "capabilityCount": 2,
     "omissionCount": 4,
     "conflictCount": 1,
-    "compileNegativeCount": 6,
-    "independentMutationCount": 33,
+    "compileNegativeCount": 8,
+    "independentMutationCount": 84,
     "targets": [
       "haxe-4.3.7-interp",
       "genes-ts-1.38.0@122162abefc2035b307508e521348ea4fb36dab7-typescript-5.9.3-node-22.17.0",
@@ -139,10 +139,10 @@
     ],
     "providerRuntimeExecutionDuringGeneration": false,
     "realProviderUsed": false,
-    "bundleDigest": "db9fbcddfcb798767c8078cbae8ea27d9fe989a5c62f089c51cfc99f55fadfb9",
-    "bundleFileSha256": "6cfb7a5016f46596e00f72b47c5611a82db54a8c269ea32f491976e7a77e54ff",
-    "ownershipManifestSha256": "de80be869c37605b4c17a0fdb426a542e59e26c4b50edd4f6a989f6fa4cc02de",
-    "bundleSchemaSha256": "9e3c53652aef8f302c343bac8a756561f2e9066d395ab9beb4ecec50bc30e48c",
+    "bundleDigest": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "bundleFileSha256": "921e8e36be2f6b82fa0b4ba1551fe7d9cedf1115565870a14b616ca53be3ff5d",
+    "ownershipManifestSha256": "787e8e26418eedb62451994dffc70abd3fd9785dc6fb9c1eead38134eb85a7ae",
+    "bundleSchemaSha256": "7f32dca7b0dba5b748cdcd59fc85c42fc01057bf24f96a3dd4294bf5b2b6ac84",
     "syntheticProviderRuntimeUsed": true,
     "productionOwnershipTransactionUsed": true
   },
@@ -179,19 +179,21 @@
     "workflow": ".github/workflows/adoption-contract.yml",
     "job": "adoption-contract",
     "command": "bash scripts/adoption/test.sh",
-    "runId": 32667029622,
-    "jobId": 97261932874,
-    "commit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
-    "status": "passed-current-main",
-    "historicalRunId": 29716562008,
-    "historicalJobId": 88270893309,
-    "historicalCommit": "be8041d0d00c21d44fe2c0198e2d101c1f383908"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "gateIdentitySha256": "17184cff4a0e555a4204bb88fcf1b76509899013bde44f8d33e292213bf965cd",
+    "historicalRunId": 32667029622,
+    "historicalJobId": 97261932874,
+    "historicalCommit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307"
   },
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",
     "closedSchemas": "validated",
     "fixtureContract": "validated",
-    "typedCapabilityPrototype": "compile-tested-local-and-hosted-current",
+    "typedCapabilityPrototype": "compile-tested-local-and-container-current-content-root",
     "productionGenerator": "not-tested",
     "isolatedReflectionRuntime": "not-tested",
     "realProviderRuntime": "not-tested",
@@ -199,8 +201,8 @@
     "providerTrustAdmission": "not-tested",
     "publicPackageConsumer": "not-tested",
     "productionSupport": "not-tested",
-    "fixtureGenerator": "deterministic-source-derived-tested-local",
-    "nativeSyntheticProviderRuntime": "synthetic-provider-tested-local",
-    "ownershipTransaction": "production-owner-tested-local"
+    "fixtureGenerator": "deterministic-source-derived-tested-local-and-container-current-content-root",
+    "nativeSyntheticProviderRuntime": "synthetic-provider-tested-local-and-container-current-content-root",
+    "ownershipTransaction": "production-owner-tested-local-and-container-current-content-root"
   }
 }

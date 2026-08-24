@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -12,6 +13,26 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def canonical(value: object) -> bytes:
+    return json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+
+
+def sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def self_digest(value: dict[str, object], field: str) -> None:
+    unsigned = dict(value)
+    unsigned.pop(field, None)
+    value[field] = sha256(canonical(unsigned))
 
 
 def snapshot(root: Path) -> dict[str, bytes]:
@@ -50,6 +71,49 @@ def create_project(root: Path, name: str) -> Path:
     project.mkdir(parents=True)
     shutil.copytree(ROOT / "fixtures/adoption-contract/inputs", project / "native-provider")
     return project
+
+
+def self_consistent_stale_source(
+    current: Path,
+    stage: Path,
+    destination: Path,
+) -> Path:
+    destination_manifest = destination / "generated/_GeneratedFiles.json"
+    destination_manifest.parent.mkdir(parents=True, exist_ok=False)
+    value = manifest(current)
+    contract_path = "generated/adoption/acme-calendar/contract.json"
+    contract = stage / contract_path
+    contract_value = json.loads(contract.read_text(encoding="utf-8"))
+    contract_value["provider"]["version"] = "9.9.9"
+    self_digest(contract_value, "contractDigest")
+    contract.write_bytes(canonical(contract_value) + b"\n")
+    bundle_path = "generated/adoption/acme-calendar/adoption.bundle.json"
+    bundle_file = stage / bundle_path
+    bundle = json.loads(bundle_file.read_text(encoding="utf-8"))
+    contract_record = next(
+        record for record in bundle["members"] if record["role"] == "contract"
+    )
+    contract_record["sha256"] = sha256(contract.read_bytes())
+    contract_record["sizeBytes"] = len(contract.read_bytes())
+    self_digest(bundle, "bundleDigest")
+    bundle_file.write_bytes(canonical(bundle) + b"\n")
+    for record in value["files"]:
+        relative = record["path"]
+        data = (stage / relative).read_bytes()
+        record["contentSha256"] = sha256(data)
+        record["sizeBytes"] = len(data)
+    material = [
+        {
+            "contentSha256": record["contentSha256"],
+            "path": record["path"],
+            "sizeBytes": record["sizeBytes"],
+        }
+        for record in value["files"]
+    ]
+    value["inputs"]["generationSha256"] = sha256(canonical(material))
+    self_digest(value, "manifestDigest")
+    destination_manifest.write_bytes(canonical(value) + b"\n")
+    return destination
 
 
 def invoke(
@@ -128,6 +192,31 @@ def main() -> None:
     work = Path(sys.argv[4]).resolve()
     node = sys.argv[5]
     work.mkdir(parents=True, exist_ok=False)
+
+    project = create_project(work, "stale-bundle-semantics")
+    before_failure = snapshot(project)
+    stale_stage = make_stage(
+        current, work / "stale-bundle-semantics/stage-current"
+    )
+    stale_source = self_consistent_stale_source(
+        current,
+        stale_stage,
+        work / "stale-bundle-semantics/source",
+    )
+    failure = publish(
+        node,
+        runtime,
+        project,
+        stale_source,
+        stale_stage,
+        expected=3,
+    )
+    if failure is None or failure.get("code") != "validator-failed":
+        raise AssertionError(
+            f"self-consistent ownership accepted stale bundle semantics: {failure}"
+        )
+    if snapshot(project) != before_failure:
+        raise AssertionError("semantic bundle rejection began a transaction")
 
     project = create_project(work, "publish-noop-clean")
     provider_before = provider_snapshot(project)
@@ -225,8 +314,9 @@ def main() -> None:
         raise AssertionError("rollback did not restore exact project/provider bytes")
 
     print(
-        "ADR-015 production ownership passed no-op, update, modified-file, "
-        "removal, rollback, and provider-untouched cases"
+        "ADR-015 production ownership rejected stale bundle semantics before "
+        "transaction and passed publish, no-op, update, removal, rollback, "
+        "and provider-untouched cases"
     )
 
 

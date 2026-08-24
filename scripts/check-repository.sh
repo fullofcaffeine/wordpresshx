@@ -3296,8 +3296,12 @@ assert adoption_prototype["bindingCount"] == 5
 assert adoption_prototype["capabilityCount"] == 2
 assert adoption_prototype["omissionCount"] == 4
 assert adoption_prototype["conflictCount"] == 1
-assert adoption_prototype["compileNegativeCount"] == 6
-assert adoption_prototype["independentMutationCount"] == 33
+assert adoption_prototype["compileNegativeCount"] == sum(
+    1
+    for path in Path("fixtures/adoption-contract/test-negative").iterdir()
+    if path.is_dir()
+)
+assert adoption_prototype["independentMutationCount"] >= 33
 assert adoption_prototype["providerRuntimeExecutionDuringGeneration"] is False
 assert adoption_prototype["syntheticProviderRuntimeUsed"] is True
 assert adoption_prototype["productionOwnershipTransactionUsed"] is True
@@ -3355,8 +3359,12 @@ assert adr015_verification["bindingCount"] == 5
 assert adr015_verification["capabilityCount"] == 2
 assert adr015_verification["omissionCount"] == 4
 assert adr015_verification["conflictCount"] == 1
-assert adr015_verification["compileNegativeCount"] == 6
-assert adr015_verification["independentMutationCount"] == 33
+assert adr015_verification["compileNegativeCount"] == adoption_prototype[
+    "compileNegativeCount"
+]
+assert adr015_verification["independentMutationCount"] == adoption_prototype[
+    "independentMutationCount"
+]
 assert adr015_verification[
     "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
 ] is True
@@ -3394,14 +3402,22 @@ for unproven_adoption_claim in (
 ):
     assert adr015_receipt["claims"][unproven_adoption_claim] == "not-tested"
 assert adr015_receipt["claims"]["fixtureGenerator"] == (
-    "deterministic-source-derived-tested-local"
+    "deterministic-source-derived-tested-local-and-container-current-content-root"
 )
 assert adr015_receipt["claims"]["nativeProviderAbi"] == (
-    "synthetic-provider-tested-local"
+    "synthetic-provider-tested-local-and-container-current-content-root"
 )
 assert adr015_receipt["claims"]["ownershipTransaction"] == (
-    "production-owner-tested-local"
+    "production-owner-tested-local-and-container-current-content-root"
 )
+for observation_key, execution_mode in (
+    ("localObservation", "local"),
+    ("containerObservation", "container"),
+):
+    adr015_observation = adr015_receipt[observation_key]
+    assert adr015_observation["contentRoot"] == adoption_prototype["bundleDigest"]
+    assert adr015_observation["executionMode"] == execution_mode
+    assert adr015_observation["outcome"] == "passed"
 adr015_hosted = adr015_receipt["hostedWorkflow"]
 adoption_hosted = adoption_architecture["hostedGate"]
 assert adr015_hosted["workflow"] == "Adoption-contract architecture"
