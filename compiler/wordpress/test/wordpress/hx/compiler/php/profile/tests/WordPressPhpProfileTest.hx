@@ -25,6 +25,7 @@ class WordPressPhpProfileTest {
 		assertPublicShapes(first);
 		assertNegativePlans(profile);
 		WordPressPublicAdapterTest.run();
+		WordPressLifecycleTest.run();
 		WordPressSourceCorrelationTest.run();
 		Sys.println("WordPress PHP profile tests passed");
 	}

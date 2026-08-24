@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "SDK-051-PLUGIN-LIFECYCLE",
+  "bead": "wordpresshx-sdk-051",
+  "status": "implemented-hosted-pending",
+  "observedAt": "2026-08-24T00:00:00-06:00",
+  "authenticatedInputs": [
+    {"path": "compiler/wordpress/README.md", "sha256": "9a5b047d5efe8500be3a8f3a38b4e86d70a8fabd618c38fe1799fa7d81b594c1"},
+    {"path": "compiler/wordpress/lifecycle-runtime.lock.json", "sha256": "b8bceee0d320f8449fea91b816029422f989c0b87939e6cd72d695aa18d41f39"},
+    {"path": "compiler/wordpress/scripts/package-lifecycle-fixtures.py", "sha256": "7f8b191c98a82cacb208c0d398fd1d1894fedddb2e6496ce799065019670642e"},
+    {"path": "compiler/wordpress/scripts/prepare-wordpress-floor.py", "sha256": "331de5a2fa72e084422323e97731b3bcffd38b51cbdaf1bb5c7ad713ed3478d0"},
+    {"path": "compiler/wordpress/scripts/run-lifecycle-lane.sh", "sha256": "1ae084d2e54885f6d938d4efb1415d14abb2c4b56096ea59bc0bbc87f9ca12e6"},
+    {"path": "compiler/wordpress/scripts/test-lifecycle-wordpress.sh", "sha256": "c6daae6b6a2c83a35310d902763ad8b2ca3cfca79a10b9bf7c8d363771a0c4fa"},
+    {"path": "compiler/wordpress/scripts/test-php-matrix.sh", "sha256": "aac2b77b3932571a83475dec704c3124f93a1c58f5bf517d0669544574e6c7e2"},
+    {"path": "compiler/wordpress/scripts/test.sh", "sha256": "4f524fdd5dd26eed6f99f2165e407e2787d46fe9a1db50f1b990efc4ba957b64"},
+    {"path": "compiler/wordpress/scripts/verify-lifecycle-runtime-lock.py", "sha256": "54dabb764bf20a37fa5232ed53f0e7951586480d2a612f697dc4e6540e91eb92"},
+    {"path": "compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70LifecycleProfile.hx", "sha256": "100a3dd540d730834a7a97672c8c76d3a8a8b2557a57288aaeb2f1a4427ef409"},
+    {"path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressLifecycleTest.hx", "sha256": "638258b3716e44bd97a24b5921688490800042f1538bb78f357a955758dfe50c"},
+    {"path": "compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx", "sha256": "48d8a7399cb135b4b04a3c5972fb92a7856e3dd926ffbdae9c30e94ae36d49d9"}
+  ],
+  "verification": {
+    "compilerAndPackages": {"command": "bash compiler/wordpress/scripts/test.sh", "outcome": "passed"},
+    "phpSyntaxMatrix": {"command": "bash compiler/wordpress/scripts/test-php-matrix.sh", "php74": "passed", "php84": "passed"},
+    "wordpressLifecycleMatrix": {"command": "bash compiler/wordpress/scripts/test-lifecycle-wordpress.sh", "wordpress": "7.0", "php": ["7.4.33", "8.4.23"], "databases": ["mysql", "mariadb"], "outcome": "passed"},
+    "registryLock": {"command": "python3 compiler/wordpress/scripts/verify-lifecycle-runtime-lock.py --resolve", "outcome": "passed"},
+    "repository": {"command": "bash scripts/check-repository.sh", "outcome": "passed-local"}
+  },
+  "hostedWorkflow": {"path": ".github/workflows/repository.yml", "job": "wordpress-runtime", "commit": null, "runId": null, "jobId": null, "url": null, "status": "pending"},
+  "claims": {
+    "standardPluginActivationDeactivationReactivation": "local-runtime-tested",
+    "monotonicRetryableUpgrade": "local-runtime-tested",
+    "explicitUninstallDeletion": "local-runtime-tested",
+    "mustUsePluginNormalLoadAndRetainedData": "local-runtime-tested",
+    "deterministicFinalZip": "local-tested",
+    "multisite": "not-tested",
+    "deploymentRollback": "not-tested",
+    "publicRelease": "blocked",
+    "productionSupport": "not-tested"
+  }
+}

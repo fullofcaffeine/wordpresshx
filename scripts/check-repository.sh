@@ -783,6 +783,7 @@ required_files=(
   manifests/evidence/strict-haxe-migration.json
   manifests/evidence/sdk-022-wordpress-public-php-profile.json
   manifests/evidence/sdk-023-wordpress-public-php-adapters.json
+  manifests/evidence/sdk-051-plugin-lifecycle.json
   manifests/evidence/g1.3-wordpress-activation-hook.json
   manifests/evidence/sdk-024-private-php-runtime.json
   manifests/evidence/sdk-025-php-source-correlation.json
@@ -875,37 +876,54 @@ required_files=(
   compiler/reflaxe.php/scripts/test-php-matrix.sh
   compiler/reflaxe.php/scripts/test.sh
   compiler/wordpress/README.md
+  compiler/wordpress/lifecycle-runtime.lock.json
   compiler/wordpress/runtime/activate-plugin.php
+  compiler/wordpress/runtime/lifecycle-command.php
+  compiler/wordpress/runtime/lifecycle-state.php
   compiler/wordpress/runtime/native-adapter-caller.php
   compiler/wordpress/runtime/native-caller.php
   compiler/wordpress/runtime/probe-adapters.php
   compiler/wordpress/runtime/probe-plugin.php
   compiler/wordpress/runtime/probe-source-correlation.php
   compiler/wordpress/runtime/source-correlation-caller.php
+  compiler/wordpress/runtime/verify-mounted-wordpress.php
+  compiler/wordpress/scripts/package-lifecycle-fixtures.py
   compiler/wordpress/scripts/package-source-correlation.py
+  compiler/wordpress/scripts/prepare-wordpress-floor.py
+  compiler/wordpress/scripts/run-lifecycle-lane.sh
   compiler/wordpress/scripts/run-wordpress-lane.sh
+  compiler/wordpress/scripts/test-lifecycle-wordpress.sh
   compiler/wordpress/scripts/test-php-matrix.sh
   compiler/wordpress/scripts/test-wordpress.sh
   compiler/wordpress/scripts/test.sh
+  compiler/wordpress/scripts/verify-lifecycle-runtime-lock.py
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginBootstrapPlan.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/PluginHeader.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressLifecycleArtifact.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressLifecycleFile.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressBlockRegistration.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookKind.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressHookRegistration.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpPrinter.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpRangeMapWriter.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPhpSourceIndexWriter.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginInstallKind.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginArtifact.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginFile.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginLifecyclePlan.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPluginUpgradeStep.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterArtifact.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterFile.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicAdapterPlan.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressPublicExport.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestMethod.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressRestRouteRegistration.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/WordPressUninstallPolicy.hx
+  compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70LifecycleProfile.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PhpProfile.hx
   compiler/wordpress/src/wordpress/hx/compiler/php/profile/Wp70PublicAdapterProfile.hx
   compiler/wordpress/test.hxml
+  compiler/wordpress/test/fixtures/AcmeLifecyclePlugin.hx
   compiler/wordpress/test/expected/acme-books-adapters/acme-books-adapters.php.txt
   compiler/wordpress/test/expected/acme-books-adapters/includes/Bootstrap.php.txt
   compiler/wordpress/test/expected/acme-books-adapters/includes/PublicAdapters.php.txt
@@ -921,6 +939,7 @@ required_files=(
   compiler/wordpress/test/fixtures/SourceCorrelationCallbacks.hx
   compiler/wordpress/test/fixtures/SourceCorrelationFixture.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPhpProfileTest.hx
+  compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressLifecycleTest.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressSourceCorrelationTest.hx
   compiler/wordpress/test/wordpress/hx/compiler/php/profile/tests/WordPressPublicAdapterTest.hx
   scripts/beads/push-safe.sh
@@ -1069,6 +1088,11 @@ wordpress_adapter_receipt = json.loads(
     Path(
         "manifests/evidence/sdk-023-wordpress-public-php-adapters.json"
     ).read_text(encoding="utf-8")
+)
+lifecycle_receipt = json.loads(
+    Path("manifests/evidence/sdk-051-plugin-lifecycle.json").read_text(
+        encoding="utf-8"
+    )
 )
 activation_hook_receipt = json.loads(
     Path(
@@ -6834,6 +6858,29 @@ reflaxe_php_module_output_input_records = {
     record["path"]: record["sha256"]
     for record in reflaxe_php_module_output_receipt["authenticatedInputs"]
 }
+lifecycle_input_records = {
+    record["path"]: record["sha256"]
+    for record in lifecycle_receipt["authenticatedInputs"]
+}
+assert lifecycle_receipt["schemaVersion"] == 1
+assert lifecycle_receipt["receiptId"] == "SDK-051-PLUGIN-LIFECYCLE"
+assert lifecycle_receipt["bead"] == "wordpresshx-sdk-051"
+assert lifecycle_receipt["status"] in {"implemented-hosted-pending", "verified"}
+assert list(lifecycle_input_records) == sorted(lifecycle_input_records)
+for lifecycle_path, lifecycle_sha256 in lifecycle_input_records.items():
+    assert hashlib.sha256(Path(lifecycle_path).read_bytes()).hexdigest() == lifecycle_sha256
+assert lifecycle_receipt["verification"]["wordpressLifecycleMatrix"] == {
+    "command": "bash compiler/wordpress/scripts/test-lifecycle-wordpress.sh",
+    "wordpress": "7.0",
+    "php": ["7.4.33", "8.4.23"],
+    "databases": ["mysql", "mariadb"],
+    "outcome": "passed",
+}
+if lifecycle_receipt["status"] == "implemented-hosted-pending":
+    assert lifecycle_receipt["verification"]["repository"]["outcome"] == "passed-local"
+    assert lifecycle_receipt["hostedWorkflow"]["status"] == "pending"
+    for field in ("commit", "runId", "jobId", "url"):
+        assert lifecycle_receipt["hostedWorkflow"][field] is None
 assert reflaxe_php_semantic_receipt["schemaVersion"] == 1
 assert reflaxe_php_semantic_receipt["receiptId"] == (
     "REFLAXE-PHP-SEMANTIC-MATRIX-001"
@@ -7130,9 +7177,10 @@ for module_input_path, module_input_sha256 in (
     ).hexdigest()
     if module_current_sha256 == module_input_sha256:
         continue
-    assert module_current_sha256 == reflaxe_php_semantic_input_records.get(
-        module_input_path
-    )
+    assert module_current_sha256 in {
+        reflaxe_php_semantic_input_records.get(module_input_path),
+        lifecycle_input_records.get(module_input_path),
+    }
     if reflaxe_php_module_subject_available:
         module_historical_bytes = subprocess.run(
             [
@@ -8015,6 +8063,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
         reflaxe_php_tracer_input_records.get(strict_haxe_path),
         reflaxe_php_semantic_input_records.get(strict_haxe_path),
         reflaxe_php_module_output_input_records.get(strict_haxe_path),
+        lifecycle_input_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
@@ -8086,7 +8135,7 @@ for strict_haxe_scope_id, strict_haxe_root, strict_haxe_recorded_count, strict_h
         "wordpress-php-compiler",
         "compiler/wordpress",
         26,
-        26,
+        35,
         "bash compiler/wordpress/scripts/test.sh",
     ),
 ):
@@ -12169,6 +12218,7 @@ for entry in activation_inputs:
     assert activation_current_sha256 in (
         entry["sha256"],
         reflaxe_php_module_output_input_records.get(entry["path"]),
+        lifecycle_input_records.get(entry["path"]),
     )
     assert entry["path"].startswith("compiler/wordpress/")
     assert not entry["path"].startswith("compiler/reflaxe.php/")

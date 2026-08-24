@@ -41,7 +41,7 @@ run_fixture() {
   docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" sh -euc \
-    "find build/acme-books build/acme-books-adapters build/source-correlation -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
+    "find build/acme-books build/acme-books-adapters build/source-correlation build/lifecycle -type f -name '*.php' -print0 | sort -z | xargs -0 -n 1 php -l"
   output="$(docker run --rm --network none \
     --mount "type=bind,src=${package_root},dst=/work,readonly" \
     -w /work "${image}" php "${fixture}")"

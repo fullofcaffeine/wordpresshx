@@ -14,10 +14,12 @@ php -r 'if (PHP_VERSION_ID < 70400) { fwrite(STDERR, "PHP 7.4 or newer is requir
 haxelib run formatter --check -s src -s test
 python3 ../../scripts/lint/haxe-weak-type-guard.py --self-test
 python3 ../../scripts/lint/haxe-weak-type-guard.py src test
-rm -rf -- build/source-correlation
+python3 scripts/verify-lifecycle-runtime-lock.py
+rm -rf -- build/source-correlation build/lifecycle
 haxe test.hxml
+python3 scripts/package-lifecycle-fixtures.py
 
-find build/acme-books build/acme-books-adapters build/source-correlation -type f -name '*.php' -print0 \
+find build/acme-books build/acme-books-adapters build/source-correlation build/lifecycle -type f -name '*.php' -print0 \
   | sort -z \
   | xargs -0 -n 1 php -l
 
@@ -45,6 +47,17 @@ if [[ -n "${adapter_guard_output}" ]]; then
   echo "adapter plugin root produced output outside WordPress: ${adapter_guard_output}" >&2
   exit 1
 fi
+
+for lifecycle_root in \
+	build/lifecycle/standard-v1/acme-lifecycle.php \
+	build/lifecycle/standard-v3/acme-lifecycle.php \
+	build/lifecycle/must-use-v3/acme-lifecycle-mu.php; do
+	lifecycle_guard_output="$(php "${lifecycle_root}")"
+	if [[ -n "${lifecycle_guard_output}" ]]; then
+		echo "lifecycle direct-access guard produced output: ${lifecycle_root}: ${lifecycle_guard_output}" >&2
+		exit 1
+	fi
+done
 
 native_output="$(php runtime/native-caller.php build/acme-books/acme-books.php)"
 expected_output='{"booted":true,"class":"Acme\\Books\\Bootstrap","methods":["boot","isBooted"],"outputBytes":0}'

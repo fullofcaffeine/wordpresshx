@@ -136,6 +136,8 @@ jobs:
         run: python3 scripts/docker/check-image-lock.py
       - name: Generate the native public PHP plugin fixture
         run: bash compiler/wordpress/scripts/test.sh
+      - name: Prove standard-plugin and mu-plugin lifecycle on WordPress 7.0
+        run: bash compiler/wordpress/scripts/test-lifecycle-wordpress.sh
       - name: Discover and activate the plugin on real WordPress 7.0
         run: bash compiler/wordpress/scripts/test-wordpress.sh
       - name: Prove dependency-closed private runtime coexistence on WordPress 7.0

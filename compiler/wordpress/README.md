@@ -34,6 +34,26 @@ non-static, parameterized, or non-`Void` method stops generation. In the fixture
 the generated callback writes a schema-version option; a fresh WordPress request
 then proves that the activation ran and its effect persisted.
 
+SDK-051 completes the bounded plugin lifecycle contract. A typed Haxe plan
+selects either a standard plugin or a must-use plugin, declares one schema
+option, supplies contiguous one-version upgrade steps, and chooses an explicit
+uninstall policy. The generated standard plugin registers activation and
+deactivation against its root file, runs upgrades during normal loading, and
+optionally owns a guarded `uninstall.php`. The generated must-use plugin has no
+activation, deactivation, or uninstall hooks; it upgrades during normal loading
+and retains its declared data when its files are removed.
+
+Each upgrade step checkpoints the schema option only after that step succeeds.
+A failed later step can therefore retry without repeating completed work, and a
+stored schema newer than the package fails closed. The lifecycle fixture builds
+deterministic final ZIPs for schema versions 1 and 3, installs their extracted
+contents through native WordPress paths, and observes activate, deactivate,
+reactivate, failed update, retry, uninstall, must-use loading, and manual
+must-use removal. The matrix covers WordPress 7.0 with MySQL and MariaDB on PHP
+8.4.23, plus the exact locked WordPress 7.0 source mounted on PHP 7.4.33 with
+MySQL. It does not claim multisite, deployment rollback, a public release, or
+production support.
+
 SDK-025 projects the generic compiler's authenticated UTF-8 byte mappings into
 the public WordPressHx range-map and package-index formats. A representative
 five-file plugin deliberately fails through an action, REST callback,
@@ -81,6 +101,7 @@ Then run the exact PHP 7.4/8.4 container matrix and real WordPress 7.0 fixture:
 ```bash
 bash compiler/wordpress/scripts/test-php-matrix.sh
 bash compiler/wordpress/scripts/test-wordpress.sh
+bash compiler/wordpress/scripts/test-lifecycle-wordpress.sh
 ```
 
 ADR-005 defines the public/private emission contract. Publication remains

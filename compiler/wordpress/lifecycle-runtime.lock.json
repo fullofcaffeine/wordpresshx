@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "image": {
+    "tag": "docker.io/library/wordpress:php7.4-fpm",
+    "reference": "docker.io/library/wordpress@sha256:0b4b629f3f1389cb4e42570c452188d6f1ebe74d31aee6395bbb010450a0640e",
+    "indexDigest": "sha256:0b4b629f3f1389cb4e42570c452188d6f1ebe74d31aee6395bbb010450a0640e",
+    "requiredPlatforms": [
+      "linux/amd64",
+      "linux/arm64/v8"
+    ],
+    "observedPhpVersion": "7.4.33",
+    "purpose": "PHP 7.4 floor host for the exact mounted WordPress 7.0 lifecycle lane",
+    "evidenceStatus": "runtime-tested"
+  },
+  "wordpressSource": {
+    "path": "profiles/wp70-release/source.lock.json",
+    "sha256": "002699113d01c0e19f0153ac8461c26f1d39394e56849b18baa1f632c1b3aa64",
+    "version": "7.0",
+    "contentFileCount": 3951,
+    "contentTreeSha256": "fc90e36ee34bb3bb50147222c3b281d4fcc06a3837b3aaca5516a13e3b1ec857"
+  }
+}

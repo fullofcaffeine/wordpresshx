@@ -456,6 +456,14 @@ MariaDB lanes verify a durable option on a fresh request. The receipt changes
 neither the generic PHP compiler nor the still-pending independent G1.2
 readability review, publication, or production-support claims.
 
+Receipt `SDK-051-PLUGIN-LIFECYCLE` records typed standard-plugin and must-use
+plugin generation, deterministic final ZIPs, idempotent activation, explicit
+uninstall ownership, and monotonic retryable upgrades. Local runtime evidence
+covers WordPress 7.0 on PHP 8.4.23 with MySQL and MariaDB, plus the exact locked
+WordPress 7.0 source on PHP 7.4.33 with MySQL. Hosted verification is pending;
+multisite, deployment rollback, public release, and production support remain
+unclaimed.
+
 The G1.2 review materials live under `review/g1-php-readability/`. The tracked
 packet binds ordinary generated PHP, non-Haxe callers, native exception stacks,
 exact Haxe correlations, authoring sources, and evidence receipts to
