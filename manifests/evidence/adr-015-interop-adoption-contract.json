@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "943232695b054ba76ce7c23d17e8329a610c623f2a1cd928543cec484ab7c4dc"
+      "sha256": "de7db87fe483eea81e13ce86055e5590e2ddcda5e75edceea8b2bfaa138f45f1"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -35,11 +35,11 @@
     },
     "generator": {
       "path": "scripts/adoption/generate-fixture.py",
-      "sha256": "3812be8c3e9a993ec7410ea2ced83d4c26df59a7a3064f88e97e0746f4dde1fe"
+      "sha256": "b99ca3e894376ed40c47c206cf53d037b9cf842aa9d543f2d3c7d01e4bcb0825"
     },
     "independentValidator": {
       "path": "scripts/adoption/validate-architecture.py",
-      "sha256": "d7fc5d8961b9244e7fca6cb329c84b61d71e41ac330cc4d427ef7bc264ab2e4d"
+      "sha256": "6f66100c090a5fdfa7e923c572ef0ddf70dd5a2205d9a41412eb7741587eed75"
     },
     "nativeProviderProbe": {
       "path": "scripts/adoption/test-native-provider.py",
@@ -55,7 +55,7 @@
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "3cd937aab22de6d00c27252c4a4114d93e70f1a61cc8d0e9ceb71befe2764d42"
+      "sha256": "2a83b1e1f3d0017edc9255973d21d5c54495b8c9e01d53afe6fd87a80a6028f5"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",
@@ -166,8 +166,8 @@
     "historicalRunId": 32667029622,
     "historicalJobId": 97261932874,
     "historicalCommit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
-    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
-    "gateIdentitySha256": "17184cff4a0e555a4204bb88fcf1b76509899013bde44f8d33e292213bf965cd"
+    "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
+    "gateIdentitySha256": "a5eceb7e5f1103e64a95e94c6222babfb9907f288e3684c790c5e4e6a9fdba6f"
   },
   "limitations": [
     "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
@@ -195,10 +195,10 @@
     "publicationAuthorized": false
   },
   "localObservation": {
-    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "local",
     "outcome": "passed",
-    "observedAt": "2026-08-24T02:40:18Z",
+    "observedAt": "2026-08-24T03:57:27Z",
     "observers": [
       {
         "id": "schema",
@@ -207,7 +207,7 @@
       },
       {
         "id": "native",
-        "identitySha256": "90e614bee3aeae685b9ce2bef6f2b56b4331991aff688b5f930c1f397804006d",
+        "identitySha256": "b333b3425b164f0ff798a8521e583876334b821cbe7b76a837175980580b0a91",
         "outcome": "passed"
       },
       {
@@ -217,7 +217,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "eb745e3412e8ef75fb9f69cff4ccf4d638e3cf89adb7724eb9cf74ac41f5288c",
+        "identitySha256": "bb56ac90016239a77569f257a709d42c40e53e0889fcb87c662ce1606b96ec49",
         "outcome": "passed"
       },
       {
@@ -228,10 +228,10 @@
     ]
   },
   "containerObservation": {
-    "contentRoot": "3d261b70cfc4ceaf871eedc54a4efec683897d2d35e076b5746945adda3d56c2",
+    "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "container",
     "outcome": "passed",
-    "observedAt": "2026-08-24T02:44:30Z",
+    "observedAt": "2026-08-24T04:01:11Z",
     "observers": [
       {
         "id": "schema",
@@ -240,7 +240,7 @@
       },
       {
         "id": "native",
-        "identitySha256": "90e614bee3aeae685b9ce2bef6f2b56b4331991aff688b5f930c1f397804006d",
+        "identitySha256": "b333b3425b164f0ff798a8521e583876334b821cbe7b76a837175980580b0a91",
         "outcome": "passed"
       },
       {
@@ -250,7 +250,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "eb745e3412e8ef75fb9f69cff4ccf4d638e3cf89adb7724eb9cf74ac41f5288c",
+        "identitySha256": "bb56ac90016239a77569f257a709d42c40e53e0889fcb87c662ce1606b96ec49",
         "outcome": "passed"
       },
       {

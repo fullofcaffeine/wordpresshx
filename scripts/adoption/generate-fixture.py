@@ -556,6 +556,10 @@ def haxe_surface(
     )
     format_return_type = haxe_type(format_label.declaration.return_type)
     badge_return_type = haxe_type(badge_binding.declaration.return_type)
+    read_binding_lines = "\n".join(
+        f'\t\t\t"{binding}"{"," if index + 1 < len(read_bindings) else ""}'
+        for index, binding in enumerate(read_bindings)
+    )
     source = f'''package wordpress.hx.adoption.prototype.generated;
 
 import wordpress.hx.adoption.prototype.Adoption.BrowserModuleScope;
@@ -570,25 +574,16 @@ final class CalendarReadCapability {{}}
 final class CalendarBadgeCapability {{}}
 
 final class GeneratedAcmeCalendar {{
-\tpublic static final provider = new ProviderContract<AcmeCalendarProvider>(
-\t\t"acme-calendar",
-\t\t"{provider['version']}",
-\t\t"{provider['artifactSha256']}"
-\t);
+\tpublic static final provider = new ProviderContract<AcmeCalendarProvider>("acme-calendar", "{provider['version']}",
+\t\t"{provider['artifactSha256']}");
 
-\tpublic static final read = new CapabilityContract<AcmeCalendarProvider, CalendarReadCapability, PhpRequestScope>(
-\t\t"calendar.read.php",
-\t\tLifecycleKind.PhpRequest,
-\t\tCapabilityRequirement.Required,
-\t\t{json.dumps(read_bindings)}
-\t);
+\tpublic static final read = new CapabilityContract<AcmeCalendarProvider, CalendarReadCapability, PhpRequestScope>("calendar.read.php",
+\t\tLifecycleKind.PhpRequest, CapabilityRequirement.Required, [
+{read_binding_lines}
+\t\t]);
 
-\tpublic static final badge = new CapabilityContract<AcmeCalendarProvider, CalendarBadgeCapability, BrowserModuleScope>(
-\t\t"calendar.badge.browser",
-\t\tLifecycleKind.BrowserModule,
-\t\tCapabilityRequirement.Optional,
-\t\t{json.dumps(badge_bindings)}
-\t);
+\tpublic static final badge = new CapabilityContract<AcmeCalendarProvider, CalendarBadgeCapability, BrowserModuleScope>("calendar.badge.browser",
+\t\tLifecycleKind.BrowserModule, CapabilityRequirement.Optional, {json.dumps(badge_bindings)});
 }}
 
 final class EventQuery {{
@@ -633,8 +628,7 @@ extern class GeneratedBrowserProviderHandle {{
 
 @:native("WordPressHxAcmeCalendarFacade")
 extern class GeneratedBrowserFacade {{
-\tpublic static function openExactProvider(packageRoot:String, generation:String,
-\t\tbundleFile:String):js.lib.Promise<GeneratedBrowserProviderHandle>;
+\tpublic static function openExactProvider(packageRoot:String, generation:String, bundleFile:String):js.lib.Promise<GeneratedBrowserProviderHandle>;
 }}
 #end
 '''

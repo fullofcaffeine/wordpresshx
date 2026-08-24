@@ -13,7 +13,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command_name in cmp cp diff docker grep haxelib lix node perl python3 rg; do
+for command_name in cmp cp diff docker grep haxelib lix node perl python3; do
 	if ! command -v "${command_name}" >/dev/null 2>&1; then
 		echo "ADR-015 adoption-contract gate requires ${command_name}" >&2
 		exit 1
@@ -178,11 +178,13 @@ assert_generation_failure javascript-runtime-arity-drift \
 generated_haxe="${generation_one}/generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx"
 grep -F 'public final count:Float;' "${generated_haxe}" >/dev/null
 grep -F 'extern class GeneratedJavascriptObject {}' "${generated_haxe}" >/dev/null
-if rg -n 'GeneratedCalendarBadgeResult|final kind:String' "${generated_haxe}"; then
+if grep --line-number --extended-regexp \
+	'GeneratedCalendarBadgeResult|final kind:String' "${generated_haxe}"; then
 	echo "ADR-015 generated Haxe surface strengthened an opaque JavaScript object" >&2
 	exit 1
 fi
-if rg -n 'expected_(abi|signatures)|expected_signatures' \
+if grep --line-number --extended-regexp \
+	'expected_(abi|signatures)|expected_signatures' \
 	"${repository_root}/scripts/adoption/generate-fixture.py" \
 	"${repository_root}/scripts/adoption/validate-architecture.py"; then
 	echo "ADR-015 generator or validator retains parallel hard-coded ABI truth" >&2

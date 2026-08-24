@@ -738,6 +738,14 @@ def validate_bundle(
     ]
     if bundle.get("members") != expected_members:
         raise ValidationError("content bundle members differ from generated semantic bytes")
+    for path, (_, content) in expected_bytes.items():
+        generated_path = CONTRACT_ROOT / path
+        if (
+            not generated_path.is_file()
+            or generated_path.is_symlink()
+            or generated_path.read_bytes() != content
+        ):
+            raise ValidationError(f"checked-in bundle member bytes are stale: {path}")
     provider = require_dict(documents["contract"].get("provider"), "contract.provider")
     if bundle.get("provider") != {
         "id": provider.get("id"),
