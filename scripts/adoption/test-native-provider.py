@@ -669,9 +669,8 @@ def main() -> None:
         raise AssertionError(f"browser verified handle imported swapped provider bytes: {js_swapped}")
 
     haxe_environment = os.environ.copy()
-    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
-        work / "haxe-provider-executed"
-    )
+    haxe_php_sentinel = work / "haxe-php-provider-executed"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(haxe_php_sentinel)
     haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(plugin)
     haxe_environment["WORDPRESSHX_ADOPTION_BUNDLE_PATH"] = str(bundle_file)
     php_haxe_arguments = [
@@ -690,9 +689,14 @@ def main() -> None:
         ),
         haxe_environment,
     )
-    if php_haxe.stdout != "haxe-php-native|Provider event one|Provider event two\n":
+    if (
+        php_haxe.stdout != "haxe-php-native|Provider event one|Provider event two\n"
+        or haxe_php_sentinel.read_text(encoding="utf-8") != "provider code executed"
+    ):
         raise AssertionError(f"Haxe-to-PHP provider observer mismatch: {php_haxe.stdout}")
 
+    haxe_js_sentinel = work / "haxe-js-provider-executed"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(haxe_js_sentinel)
     haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(provider)
     haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = "haxe-observer"
     js_haxe = checked_run(
@@ -706,7 +710,11 @@ def main() -> None:
         ],
         haxe_environment,
     )
-    if js_haxe.stdout != "haxe-js-native|opaque-object-observed\n":
+    if (
+        js_haxe.stdout != "haxe-js-native|opaque-object-observed\n"
+        or haxe_js_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
         raise AssertionError(f"Haxe-to-JavaScript provider observer mismatch: {js_haxe.stdout}")
 
     print(

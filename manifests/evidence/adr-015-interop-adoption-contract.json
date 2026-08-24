@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "e05d86b26e5aae0c165ac1cdc05648be9fa95832ab5d8ef46257804dd6176733"
+      "sha256": "6d47316392a62dc9f0a7f1f63c397ecfe8a4fc2a531edbef4d381623c39da670"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -43,7 +43,7 @@
     },
     "nativeProviderProbe": {
       "path": "scripts/adoption/test-native-provider.py",
-      "sha256": "cdf794120747b754a341fb6509f68bd3410dc00391bd82b5c2ea798622d28bd6"
+      "sha256": "caf38f2735d7f47838fa6f5f0cc3954381e5ab81c67173eed63a1e801a778c52"
     },
     "ownershipProbe": {
       "path": "scripts/adoption/test-ownership.py",
@@ -167,7 +167,7 @@
     "historicalJobId": 97261932874,
     "historicalCommit": "5dadc5bfc22412cf411742bebbbe2c7ac01dd307",
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
-    "gateIdentitySha256": "27396da8397f48669a98dcb5634848c1574b28521870198bb11a767b38191a7b"
+    "gateIdentitySha256": "bbeced2b7a8723a8ada20490f5f9557995fe9c8e727a6c6301704dc04f963ecd"
   },
   "limitations": [
     "This evidence is a bounded architecture fixture, not the SDK-070 or SDK-073 production implementation.",
@@ -198,7 +198,7 @@
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "local",
     "outcome": "passed",
-    "observedAt": "2026-08-24T04:14:26Z",
+    "observedAt": "2026-08-24T05:09:50Z",
     "observers": [
       {
         "id": "schema",
@@ -207,7 +207,7 @@
       },
       {
         "id": "native",
-        "identitySha256": "b333b3425b164f0ff798a8521e583876334b821cbe7b76a837175980580b0a91",
+        "identitySha256": "85e58401fb77f3d4b064d9e9f25fa8a673c85034d63fe19fc736bfdf1b95ffa7",
         "outcome": "passed"
       },
       {
@@ -231,7 +231,7 @@
     "contentRoot": "e97e709b12c6744bf0dce177d657bcc813d252404829ee0db7e120ce8fe6b05a",
     "executionMode": "container",
     "outcome": "passed",
-    "observedAt": "2026-08-24T04:16:45Z",
+    "observedAt": "2026-08-24T05:05:37Z",
     "observers": [
       {
         "id": "schema",
@@ -240,7 +240,7 @@
       },
       {
         "id": "native",
-        "identitySha256": "b333b3425b164f0ff798a8521e583876334b821cbe7b76a837175980580b0a91",
+        "identitySha256": "85e58401fb77f3d4b064d9e9f25fa8a673c85034d63fe19fc736bfdf1b95ffa7",
         "outcome": "passed"
       },
       {
