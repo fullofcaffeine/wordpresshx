@@ -162,14 +162,14 @@
         },
         "tokenBoundFacts": {
           "const": [
-            "artifact-sha256",
             "bundle-digest",
             "capability-id",
             "lifecycle-kind",
             "observed-bindings",
             "provider-id",
             "provider-version",
-            "runtime-nonce"
+            "runtime-nonce",
+            "target-executable-closure-sha256"
           ]
         },
         "bundleVerification": {
@@ -192,6 +192,7 @@
         "requiredNativeSymbols",
         "versionMatch",
         "artifactMatch",
+        "executableClosureSha256",
         "conditionalFailure"
       ],
       "properties": {
@@ -224,7 +225,10 @@
           "const": "exact"
         },
         "artifactMatch": {
-          "const": "exact-sha256"
+          "const": "target-executable-closure-sha256"
+        },
+        "executableClosureSha256": {
+          "$ref": "#/$defs/sha256"
         },
         "conditionalFailure": {
           "const": "unavailable-not-partially-authorized"

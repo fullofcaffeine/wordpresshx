@@ -344,10 +344,23 @@ def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration
         re.MULTILINE,
     )
     for match in function_pattern.finditer(text):
-        parameters = tuple(
-            Parameter(name, "required", "value", False, AbiType("runtime-unknown"))
-            for name in split_parameters(match.group("parameters"))
-        )
+        parameters_list: list[Parameter] = []
+        for raw in split_parameters(match.group("parameters")):
+            identifier = re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", raw)
+            if identifier is None:
+                raise ValueError(
+                    "unsupported JavaScript runtime parameter syntax: " + raw
+                )
+            parameters_list.append(
+                Parameter(
+                    identifier.group(0),
+                    "required",
+                    "value",
+                    False,
+                    AbiType("runtime-unknown"),
+                )
+            )
+        parameters = tuple(parameters_list)
         name = match.group("name")
         declarations.append(
             Declaration(

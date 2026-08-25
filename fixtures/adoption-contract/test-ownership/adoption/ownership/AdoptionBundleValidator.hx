@@ -12,14 +12,10 @@ import wordpresshx.cli.ownership.OwnershipJson;
 /** Semantic validator for the complete, manifest-independent ADR-015 content bundle. */
 final class AdoptionBundleValidator {
 	static inline final BUNDLE_PATH = "generated/adoption/acme-calendar/adoption.bundle.json";
-	static final EXPECTED_ROLES = [
-		"capability",
-		"contract",
-		"haxe-facade",
-		"javascript-facade",
-		"php-facade",
-		"provider-artifact",
-		"review"
+	static final EXPECTED_ROLES = ["capability", "contract", "haxe-facade", "provider-artifact", "review"];
+	static final TRUST_ANCHORS = [
+		"generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
+		"generated/adoption/acme-calendar/php/acme-calendar-facade.php"
 	];
 
 	public static function validate(stageRoot:String):Void {
@@ -43,6 +39,11 @@ final class AdoptionBundleValidator {
 		final material = ObjectValue([for (value in root) if (value.name != "bundleDigest") value]);
 		if (digest != OwnershipJson.digestValue(material)) {
 			fail("adoption bundle self digest is stale");
+		}
+		for (anchor in TRUST_ANCHORS) {
+			final source = read(Path.join(stageRoot, anchor), "runtime trust anchor " + anchor).toString();
+			if (source.indexOf(digest) < 0)
+				fail("runtime trust anchor does not bind the content root");
 		}
 
 		final provider = object(field(root, "provider"), "bundle.provider");
@@ -92,7 +93,7 @@ final class AdoptionBundleValidator {
 		if (!providerArtifactSeen || sortedRoles.join("\x00") != expectedRoles.join("\x00")) {
 			fail("adoption bundle does not contain one complete semantic role set");
 		}
-		final declared = paths.concat([BUNDLE_PATH]);
+		final declared = paths.concat([BUNDLE_PATH]).concat(TRUST_ANCHORS);
 		declared.sort(compareText);
 		final staged:Array<String> = [];
 		scan(stageRoot, "", staged);
@@ -111,8 +112,6 @@ final class AdoptionBundleValidator {
 			"capability" => "generated/adoption/acme-calendar/capability.json",
 			"contract" => "generated/adoption/acme-calendar/contract.json",
 			"haxe-facade" => "generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx",
-			"javascript-facade" => "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
-			"php-facade" => "generated/adoption/acme-calendar/php/acme-calendar-facade.php",
 			"provider-artifact" => "generated/adoption/acme-calendar/provider/acme-calendar." + providerVersion + ".zip",
 			"review" => "generated/adoption/acme-calendar/review.json"
 		];
@@ -164,6 +163,21 @@ final class AdoptionBundleValidator {
 			fail("capability profile differs from the contract");
 		}
 		final authority = object(field(capability, "authority"), "capability.authority");
+		exact(authority, [
+			"absenceBehavior",
+			"bundleVerification",
+			"callerSuppliedFactsAllowed",
+			"lifecycleIdentity",
+			"observationOwner",
+			"providerTrustAdmission",
+			"sameNominalScopeInstanceReusable",
+			"scopeTypes",
+			"staleTokenAuthority",
+			"tokenBoundFacts",
+			"tokenCacheable",
+			"tokenScope",
+			"tokenSerializable"
+		], "capability.authority");
 		if (text(field(authority, "observationOwner"), "capability.authority.observationOwner") != "target-runtime-adapter"
 			|| boolean(field(authority, "callerSuppliedFactsAllowed"), "capability.authority.callerSuppliedFactsAllowed")
 			|| boolean(field(authority, "tokenSerializable"), "capability.authority.tokenSerializable")
@@ -171,6 +185,21 @@ final class AdoptionBundleValidator {
 			|| boolean(field(authority, "staleTokenAuthority"), "capability.authority.staleTokenAuthority")) {
 			fail("capability authority is forgeable or stale");
 		}
+		if (text(field(authority, "tokenScope"), "capability.authority.tokenScope") != "declared-per-capability"
+			|| text(field(authority, "lifecycleIdentity"), "capability.authority.lifecycleIdentity") != "generative-runtime-nonce"
+			|| text(field(authority, "bundleVerification"), "capability.authority.bundleVerification") != "required-before-observation"
+			|| text(field(authority, "absenceBehavior"), "capability.authority.absenceBehavior") != "typed-unavailable-with-core-fallback"
+			|| text(field(authority, "providerTrustAdmission"), "capability.authority.providerTrustAdmission") != "separate-sdk-117-requirement"
+			|| boolean(field(authority, "sameNominalScopeInstanceReusable"), "capability.authority.sameNominalScopeInstanceReusable")) {
+			fail("capability authority policy differs");
+		}
+		if (textArray(field(authority, "scopeTypes"), "capability.authority.scopeTypes").join("|") != "browser-module|php-process|php-request"
+			|| textArray(field(authority, "tokenBoundFacts"),
+				"capability.authority.tokenBoundFacts")
+				.join("|") != "bundle-digest|capability-id|lifecycle-kind|observed-bindings|provider-id|provider-version|runtime-nonce|target-executable-closure-sha256") {
+			fail("capability authority facts differ");
+		}
+		validateCapabilities(array(field(capability, "capabilities"), "capability.capabilities"));
 
 		final review = object(document(documents, "review"), "adoption review");
 		exact(review, [
@@ -210,6 +239,45 @@ final class AdoptionBundleValidator {
 			if (boolean(field(claims, name), "review.claims." + name)) {
 				fail("adoption review overclaims " + name);
 			}
+		}
+	}
+
+	static function validateCapabilities(values:Array<JsonValue>):Void {
+		if (values.length != 2)
+			fail("capability set must contain exactly two capabilities");
+		for (value in values) {
+			final capability = object(value, "capability entry");
+			exact(capability, ["id", "optional", "probe", "scope", "target"], "capability entry");
+			final id = text(field(capability, "id"), "capability.id");
+			final browser = id == "calendar.badge.browser";
+			if (!browser && id != "calendar.read.php")
+				fail("unknown capability entry");
+			if (boolean(field(capability, "optional"), "capability.optional") != browser
+				|| text(field(capability, "target"), "capability.target") != (browser ? "javascript" : "php")
+				|| text(field(capability, "scope"), "capability.scope") != (browser ? "browser-module" : "request")) {
+				fail("capability target policy differs");
+			}
+			final probe = object(field(capability, "probe"), "capability.probe");
+			exact(probe, [
+				"artifactMatch",
+				"conditionalFailure",
+				"executableClosureSha256",
+				"kind",
+				"requiredBindings",
+				"requiredNativeSymbols",
+				"versionMatch"
+			], "capability.probe");
+			if (text(field(probe, "artifactMatch"), "capability.probe.artifactMatch") != "target-executable-closure-sha256"
+				|| text(field(probe, "conditionalFailure"), "capability.probe.conditionalFailure") != "unavailable-not-partially-authorized"
+				|| text(field(probe, "versionMatch"), "capability.probe.versionMatch") != "exact"
+				|| text(field(probe, "kind"), "capability.probe.kind") != (browser ? "javascript-exports" : "wordpress-plugin-and-symbols")
+				|| !~/^[0-9a-f]{64}$/.match(text(field(probe, "executableClosureSha256"), "capability.probe.executableClosureSha256"))) {
+				fail("capability probe policy differs");
+			}
+			final bindings = textArray(field(probe, "requiredBindings"), "capability.probe.requiredBindings");
+			final symbols = textArray(field(probe, "requiredNativeSymbols"), "capability.probe.requiredNativeSymbols");
+			if (bindings.length == 0 || bindings.length != symbols.length)
+				fail("capability probe coverage differs");
 		}
 	}
 
@@ -294,6 +362,10 @@ final class AdoptionBundleValidator {
 			case ArrayValue(values): values;
 			case _: fail(label + " must be an array");
 		};
+	}
+
+	static function textArray(value:JsonValue, label:String):Array<String> {
+		return [for (item in array(value, label)) text(item, label)];
 	}
 
 	static function field(fields:Array<JsonField>, name:String):JsonValue {

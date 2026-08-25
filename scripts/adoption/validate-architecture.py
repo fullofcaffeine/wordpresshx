@@ -514,7 +514,6 @@ def validate_capability(
         "scopeTypes": ["browser-module", "php-process", "php-request"],
         "sameNominalScopeInstanceReusable": False,
         "tokenBoundFacts": [
-            "artifact-sha256",
             "bundle-digest",
             "capability-id",
             "lifecycle-kind",
@@ -522,6 +521,7 @@ def validate_capability(
             "provider-id",
             "provider-version",
             "runtime-nonce",
+            "target-executable-closure-sha256",
         ],
         "bundleVerification": "required-before-observation",
         "absenceBehavior": "typed-unavailable-with-core-fallback",
@@ -562,7 +562,16 @@ def validate_capability(
         if (
             probe.get("kind") != probe_kind
             or probe.get("versionMatch") != "exact"
-            or probe.get("artifactMatch") != "exact-sha256"
+            or probe.get("artifactMatch") != "target-executable-closure-sha256"
+            or probe.get("executableClosureSha256")
+            != (
+                sha256((INPUT_ROOT / "plugin.php").read_bytes())
+                if target == "php"
+                else GENERATOR_MODULE.browser_executable_closure_sha256(
+                    sha256((INPUT_ROOT / "index.js").read_bytes()),
+                    sha256((INPUT_ROOT / "package-metadata.json").read_bytes()),
+                )
+            )
             or probe.get("conditionalFailure")
             != "unavailable-not-partially-authorized"
         ):
@@ -692,31 +701,8 @@ def expected_member_bytes(
 ) -> dict[str, tuple[str, bytes]]:
     version = provider_version()
     provider_archive = deterministic_provider_archive()
-    provider_artifact_sha256 = sha256(provider_archive)
     static_members = static_member_bytes(model, documents, provider_archive, version)
-    static_policy = runtime_bundle_policy(static_members)
-    return {
-        **static_members,
-        f"{CONTENT_ROOT}/browser/acme-calendar-facade.mjs": (
-            "javascript-facade",
-            browser_facade(
-                version,
-                sha256((INPUT_ROOT / "index.js").read_bytes()),
-                sha256((INPUT_ROOT / "package-metadata.json").read_bytes()),
-                provider_artifact_sha256,
-                static_policy,
-            ),
-        ),
-        f"{CONTENT_ROOT}/php/acme-calendar-facade.php": (
-            "php-facade",
-            php_facade(
-                version,
-                sha256((INPUT_ROOT / "plugin.php").read_bytes()),
-                provider_artifact_sha256,
-                static_policy,
-            ),
-        ),
-    }
+    return static_members
 
 
 def validate_bundle(
@@ -770,6 +756,23 @@ def validate_bundle(
         for path, (_, content) in expected_bytes.items()
     }
     expected_files[CONTENT_BUNDLE_PATH] = (sha256(bundle_bytes), len(bundle_bytes))
+    static_policy = runtime_bundle_policy(expected_bytes)
+    provider_artifact_sha256 = require_string(provider.get("artifactSha256"), "provider artifact")
+    module_sha256 = sha256((INPUT_ROOT / "index.js").read_bytes())
+    package_sha256 = sha256((INPUT_ROOT / "package-metadata.json").read_bytes())
+    anchors = {
+        f"{CONTENT_ROOT}/browser/acme-calendar-facade.mjs": browser_facade(
+            provider_version(), module_sha256, package_sha256, provider_artifact_sha256,
+            static_policy, require_string(bundle.get("bundleDigest"), "bundle digest"),
+            GENERATOR_MODULE.browser_executable_closure_sha256(module_sha256, package_sha256),
+        ),
+        f"{CONTENT_ROOT}/php/acme-calendar-facade.php": php_facade(
+            provider_version(), sha256((INPUT_ROOT / "plugin.php").read_bytes()),
+            provider_artifact_sha256, static_policy,
+            require_string(bundle.get("bundleDigest"), "bundle digest"),
+        ),
+    }
+    expected_files.update({path: (sha256(content), len(content)) for path, content in anchors.items()})
     if actual_files != expected_files:
         raise ValidationError("ArtifactOwner manifest does not own the bundle and every member")
     if "generated/_GeneratedFiles.json" in {
@@ -794,7 +797,7 @@ def validate_haxe_authority() -> None:
         "private final class AuthorityKey",
         "key.verify()",
         "private final class AuthorityCore",
-        "final class FixtureTargetAdapter",
+        "#if adoption_contract_test",
         "final class PhpAcmeCalendarAdapter",
         "final class BrowserAcmeCalendarAdapter",
         "GeneratedPhpFacade.open",
@@ -802,6 +805,8 @@ def validate_haxe_authority() -> None:
     ):
         if required not in adoption:
             raise ValidationError(f"source-owned Haxe adapter omits {required}")
+    if "final class FixtureTargetAdapter" not in adoption.split("#if adoption_contract_test", 1)[1].split("#end", 1)[0]:
+        raise ValidationError("fixture authority adapter is not compile-test-only")
     if "GeneratedAcmeCalendar.provider" not in calendar:
         raise ValidationError("authored Haxe entry point is detached from generated ABI")
     forbidden = re.compile(r"\b(?:Dynamic|Any|Reflect|untyped|cast)\b")

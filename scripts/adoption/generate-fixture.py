@@ -341,6 +341,11 @@ def generate_documents(model: AbiModel) -> dict[str, dict[str, object]]:
         ("calendar.badge.browser", "javascript", "browser-module", True, "javascript-exports"),
         ("calendar.read.php", "php", "request", False, "wordpress-plugin-and-symbols"),
     )
+    php_closure_sha256 = file_sha256(INPUT_ROOT / "plugin.php")
+    browser_closure_sha256 = browser_executable_closure_sha256(
+        file_sha256(INPUT_ROOT / "index.js"),
+        file_sha256(INPUT_ROOT / "package-metadata.json"),
+    )
     for capability_id, target, scope, optional, kind in capability_specs:
         selected = [
             value for value in admitted if value["capabilityId"] == capability_id
@@ -358,7 +363,12 @@ def generate_documents(model: AbiModel) -> dict[str, dict[str, object]]:
                         str(value["nativeName"]) for value in selected
                     ],
                     "versionMatch": "exact",
-                    "artifactMatch": "exact-sha256",
+                    "artifactMatch": "target-executable-closure-sha256",
+                    "executableClosureSha256": (
+                        browser_closure_sha256
+                        if target == "javascript"
+                        else php_closure_sha256
+                    ),
                     "conditionalFailure": "unavailable-not-partially-authorized",
                 },
             }
@@ -390,7 +400,6 @@ def generate_documents(model: AbiModel) -> dict[str, dict[str, object]]:
             "scopeTypes": ["browser-module", "php-process", "php-request"],
             "sameNominalScopeInstanceReusable": False,
             "tokenBoundFacts": [
-                "artifact-sha256",
                 "bundle-digest",
                 "capability-id",
                 "lifecycle-kind",
@@ -398,6 +407,7 @@ def generate_documents(model: AbiModel) -> dict[str, dict[str, object]]:
                 "provider-id",
                 "provider-version",
                 "runtime-nonce",
+                "target-executable-closure-sha256",
             ],
             "bundleVerification": "required-before-observation",
             "absenceBehavior": "typed-unavailable-with-core-fallback",
@@ -550,6 +560,12 @@ def haxe_surface(
     badge_bindings = list(
         dict(capability_records["calendar.badge.browser"])["probe"]["requiredBindings"]
     )
+    read_closure_sha256 = str(
+        dict(capability_records["calendar.read.php"])["probe"]["executableClosureSha256"]
+    )
+    badge_closure_sha256 = str(
+        dict(capability_records["calendar.badge.browser"])["probe"]["executableClosureSha256"]
+    )
     event_query_type = haxe_type(list_events.declaration.parameters[0].value_type)
     format_parameter_type = haxe_type(
         format_label.declaration.parameters[0].value_type
@@ -580,10 +596,11 @@ final class GeneratedAcmeCalendar {{
 \tpublic static final read = new CapabilityContract<AcmeCalendarProvider, CalendarReadCapability, PhpRequestScope>("calendar.read.php",
 \t\tLifecycleKind.PhpRequest, CapabilityRequirement.Required, [
 {read_binding_lines}
-\t\t]);
+\t\t], "{read_closure_sha256}");
 
 \tpublic static final badge = new CapabilityContract<AcmeCalendarProvider, CalendarBadgeCapability, BrowserModuleScope>("calendar.badge.browser",
-\t\tLifecycleKind.BrowserModule, CapabilityRequirement.Optional, {json.dumps(badge_bindings)});
+\t\tLifecycleKind.BrowserModule, CapabilityRequirement.Optional, {json.dumps(badge_bindings)},
+\t\t"{badge_closure_sha256}");
 }}
 
 final class EventQuery {{
@@ -606,6 +623,7 @@ final class CalendarBadgeProps {{
 @:native("WordPressHxAcmeCalendarVerifiedProvider")
 extern class GeneratedPhpProviderHandle {{
 \tpublic final bundleDigest:String;
+\tpublic final executableClosureSha256:String;
 }}
 
 @:native("WordPressHxAcmeCalendarFacade")
@@ -622,6 +640,7 @@ extern class GeneratedJavascriptObject {{}}
 
 extern class GeneratedBrowserProviderHandle {{
 \tpublic final bundleDigest:String;
+\tpublic final executableClosureSha256:String;
 \tpublic function formatLabel(count:{format_parameter_type}):{format_return_type};
 \tpublic function renderBadge(props:CalendarBadgeProps):{badge_return_type};
 }}
@@ -679,11 +698,24 @@ def runtime_bundle_policy(
     ]
 
 
+def browser_executable_closure_sha256(module_sha256: str, package_sha256: str) -> str:
+    return sha256(
+        canonical(
+            {
+                "moduleSha256": module_sha256,
+                "packageMetadataSha256": package_sha256,
+                "schema": "wordpress-hx.javascript-executable-closure.v1",
+            }
+        )
+    )
+
+
 def php_facade(
     version: str,
     plugin_sha256: str,
     provider_artifact_sha256: str,
     static_policy: list[dict[str, object]],
+    expected_bundle_digest: str,
 ) -> bytes:
     policy_json = canonical(static_policy).decode("utf-8")
     source = f'''<?php
@@ -695,7 +727,8 @@ final class WordPressHxAcmeCalendarProviderUnavailable extends RuntimeException 
 final class WordPressHxAcmeCalendarVerifiedProvider
 {{
     public function __construct(
-        public readonly string $bundleDigest
+        public readonly string $bundleDigest,
+        public readonly string $executableClosureSha256
     ) {{}}
 
     /** @return list<string> */
@@ -734,7 +767,8 @@ final class WordPressHxAcmeCalendarFacade
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }}
         $material = '{{' . substr($canonical, strlen($match[0]));
-        if (!hash_equals($match[1], hash('sha256', $material))) {{
+        if (!hash_equals($match[1], hash('sha256', $material))
+            || !hash_equals('{expected_bundle_digest}', $match[1])) {{
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }}
         try {{
@@ -754,7 +788,7 @@ final class WordPressHxAcmeCalendarFacade
         }}
         $expectedStaticMembers = json_decode('{policy_json}', true, 512, JSON_THROW_ON_ERROR);
         $members = $bundle['members'] ?? null;
-        if (!is_array($expectedStaticMembers) || !is_array($members) || count($members) !== 7) {{
+        if (!is_array($expectedStaticMembers) || !is_array($members) || count($members) !== 5) {{
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }}
         $membersByRole = [];
@@ -774,16 +808,17 @@ final class WordPressHxAcmeCalendarFacade
                 throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
             }}
         }}
-        foreach ([
-            'javascript-facade' => 'generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs',
-            'php-facade' => 'generated/adoption/acme-calendar/php/acme-calendar-facade.php',
-        ] as $role => $path) {{
-            $member = $membersByRole[$role] ?? null;
-            if (!is_array($member)
-                || ($member['path'] ?? null) !== $path
-                || preg_match('/^[0-9a-f]{{64}}$/', $member['sha256'] ?? '') !== 1
-                || !is_int($member['sizeBytes'] ?? null)
-                || $member['sizeBytes'] <= 0) {{
+        $bundleSuffix = 'generated/adoption/acme-calendar/adoption.bundle.json';
+        if (!str_ends_with($bundleFile, $bundleSuffix)) {{
+            throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
+        }}
+        $outputRoot = substr($bundleFile, 0, -strlen($bundleSuffix));
+        foreach ($expectedStaticMembers as $expected) {{
+            $memberFile = $outputRoot . $expected['path'];
+            $memberBytes = is_file($memberFile) ? file_get_contents($memberFile) : false;
+            if (!is_string($memberBytes)
+                || strlen($memberBytes) !== $expected['sizeBytes']
+                || !hash_equals($expected['sha256'], hash('sha256', $memberBytes))) {{
                 throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
             }}
         }}
@@ -815,7 +850,7 @@ final class WordPressHxAcmeCalendarFacade
             || !class_exists('Acme\\\\Calendar\\\\Event', false)) {{
             throw new WordPressHxAcmeCalendarProviderUnavailable('required-provider-symbol-missing');
         }}
-        return new WordPressHxAcmeCalendarVerifiedProvider($bundleDigest);
+        return new WordPressHxAcmeCalendarVerifiedProvider($bundleDigest, '{plugin_sha256}');
     }}
 
     /** @return list<string> */
@@ -836,6 +871,8 @@ def browser_facade(
     package_sha256: str,
     provider_artifact_sha256: str,
     static_policy: list[dict[str, object]],
+    expected_bundle_digest: str,
+    executable_closure_sha256: str,
 ) -> bytes:
     policy_json = canonical(static_policy).decode("utf-8")
     source = f'''import {{ createHash }} from "node:crypto";
@@ -847,6 +884,8 @@ const expected = Object.freeze({{
   moduleSha256: "{module_sha256}",
   packageSha256: "{package_sha256}",
   providerArtifactSha256: "{provider_artifact_sha256}",
+  bundleDigest: "{expected_bundle_digest}",
+  executableClosureSha256: "{executable_closure_sha256}",
 }});
 const expectedStaticMembers = Object.freeze({policy_json});
 
@@ -868,7 +907,7 @@ async function verifyBundle(bundleFile) {{
   }}
   const withoutNewline = canonical.slice(0, -1);
   const material = "{{" + withoutNewline.slice(match[0].length);
-  if (digest(Buffer.from(material, "utf8")) !== match[1]) {{
+  if (digest(Buffer.from(material, "utf8")) !== match[1] || match[1] !== expected.bundleDigest) {{
     throw new Error("wrong-content-bundle");
   }}
   let bundle;
@@ -886,7 +925,7 @@ async function verifyBundle(bundleFile) {{
       || bundle.provider?.artifactSha256 !== expected.providerArtifactSha256) {{
     throw new Error("wrong-content-bundle");
   }}
-  if (!Array.isArray(bundle.members) || bundle.members.length !== 7) {{
+  if (!Array.isArray(bundle.members) || bundle.members.length !== 5) {{
     throw new Error("wrong-content-bundle");
   }}
   const membersByRole = new Map();
@@ -903,13 +942,20 @@ async function verifyBundle(bundleFile) {{
       throw new Error("wrong-content-bundle");
     }}
   }}
-  for (const [role, memberPath] of [
-    ["javascript-facade", "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs"],
-    ["php-facade", "generated/adoption/acme-calendar/php/acme-calendar-facade.php"],
-  ]) {{
-    const member = membersByRole.get(role);
-    if (!member || member.path !== memberPath || !/^[0-9a-f]{{64}}$/.test(member.sha256)
-        || !Number.isSafeInteger(member.sizeBytes) || member.sizeBytes <= 0) {{
+  const bundleSuffix = "generated/adoption/acme-calendar/adoption.bundle.json";
+  const normalizedBundleFile = path.resolve(bundleFile).split(path.sep).join("/");
+  if (!normalizedBundleFile.endsWith(bundleSuffix)) {{
+    throw new Error("wrong-content-bundle");
+  }}
+  const outputRoot = normalizedBundleFile.slice(0, -bundleSuffix.length);
+  for (const member of expectedStaticMembers) {{
+    let memberBytes;
+    try {{
+      memberBytes = await readFile(path.resolve(outputRoot, member.path));
+    }} catch (_) {{
+      throw new Error("wrong-content-bundle");
+    }}
+    if (memberBytes.length !== member.sizeBytes || digest(memberBytes) !== member.sha256) {{
       throw new Error("wrong-content-bundle");
     }}
   }}
@@ -941,6 +987,7 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
   }}
   return Object.freeze({{
     bundleDigest,
+    executableClosureSha256: expected.executableClosureSha256,
     formatLabel(count) {{
       return provider.formatCalendarLabel(count);
     }},
@@ -1092,16 +1139,22 @@ def write_documents(output: Path) -> None:
     provider_artifact_sha256 = sha256(provider_archive)
     static_members = static_member_bytes(model, documents, provider_archive, version)
     static_policy = runtime_bundle_policy(static_members)
-    members: dict[str, tuple[str, bytes]] = {
-        **static_members,
+    bundle = content_bundle(documents, static_members)
+    bundle_path = f"{CONTENT_ROOT}/adoption.bundle.json"
+    bundle_bytes = canonical_file(bundle)
+    module_sha256 = file_sha256(INPUT_ROOT / "index.js")
+    package_sha256 = file_sha256(INPUT_ROOT / "package-metadata.json")
+    trust_anchors: dict[str, tuple[str, bytes]] = {
         f"{CONTENT_ROOT}/browser/acme-calendar-facade.mjs": (
             "javascript-facade",
             browser_facade(
                 version,
-                file_sha256(INPUT_ROOT / "index.js"),
-                file_sha256(INPUT_ROOT / "package-metadata.json"),
+                module_sha256,
+                package_sha256,
                 provider_artifact_sha256,
                 static_policy,
+                str(bundle["bundleDigest"]),
+                browser_executable_closure_sha256(module_sha256, package_sha256),
             ),
         ),
         f"{CONTENT_ROOT}/php/acme-calendar-facade.php": (
@@ -1111,14 +1164,13 @@ def write_documents(output: Path) -> None:
                 file_sha256(INPUT_ROOT / "plugin.php"),
                 provider_artifact_sha256,
                 static_policy,
+                str(bundle["bundleDigest"]),
             ),
         ),
     }
-    bundle = content_bundle(documents, members)
-    bundle_path = f"{CONTENT_ROOT}/adoption.bundle.json"
-    bundle_bytes = canonical_file(bundle)
     owned_files = {
-        **{path: content for path, (_, content) in members.items()},
+        **{path: content for path, (_, content) in static_members.items()},
+        **{path: content for path, (_, content) in trust_anchors.items()},
         bundle_path: bundle_bytes,
     }
     ownership = ownership_manifest(owned_files, documents["contract"])

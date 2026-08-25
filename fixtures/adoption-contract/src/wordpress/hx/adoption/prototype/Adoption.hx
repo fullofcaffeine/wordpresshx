@@ -46,14 +46,16 @@ final class CapabilityContract<Provider, Capability, Scope:LifecycleScope> {
 	public final id:String;
 	public final lifecycle:LifecycleKind;
 	public final requirement:CapabilityRequirement;
+	public final executableClosureSha256:String;
 
 	final bindings:Array<String>;
 
-	public function new(id:String, lifecycle:LifecycleKind, requirement:CapabilityRequirement, requiredBindings:Array<String>) {
+	public function new(id:String, lifecycle:LifecycleKind, requirement:CapabilityRequirement, requiredBindings:Array<String>, executableClosureSha256:String) {
 		this.id = id;
 		this.lifecycle = lifecycle;
 		this.requirement = requirement;
 		this.bindings = requiredBindings.copy();
+		this.executableClosureSha256 = executableClosureSha256;
 	}
 
 	/** Return a copy so a caller cannot weaken the canonical requirement. */
@@ -127,7 +129,7 @@ final class BrowserModuleScope extends LifecycleScope {
 }
 
 private enum ObservationState {
-	Exact(providerId:String, version:String, artifactSha256:String, bundleDigest:String, bindings:Array<String>);
+	Exact(providerId:String, version:String, executableClosureSha256:String, bundleDigest:String, bindings:Array<String>);
 	Absent;
 }
 
@@ -139,9 +141,9 @@ final class ProviderObservation {
 		this.state = state;
 	}
 
-	public static function exact(key:AuthorityKey, providerId:String, version:String, artifactSha256:String, bundleDigest:String,
+	public static function exact(key:AuthorityKey, providerId:String, version:String, executableClosureSha256:String, bundleDigest:String,
 			bindings:Array<String>):ProviderObservation {
-		return new ProviderObservation(key, Exact(providerId, version, artifactSha256, bundleDigest, bindings.copy()));
+		return new ProviderObservation(key, Exact(providerId, version, executableClosureSha256, bundleDigest, bindings.copy()));
 	}
 
 	public static function absent(key:AuthorityKey):ProviderObservation {
@@ -175,12 +177,12 @@ final class CapabilityToken<Provider, Capability, Scope:LifecycleScope> {
 	final lifecycle:LifecycleKind;
 	final providerId:String;
 	final providerVersion:String;
-	final artifactSha256:String;
+	final executableClosureSha256:String;
 	final bundleDigest:String;
 	final capabilityId:String;
 	final observedBindings:Array<String>;
 
-	public function new(key:AuthorityKey, scope:Scope, lifecycle:LifecycleKind, providerId:String, providerVersion:String, artifactSha256:String,
+	public function new(key:AuthorityKey, scope:Scope, lifecycle:LifecycleKind, providerId:String, providerVersion:String, executableClosureSha256:String,
 			bundleDigest:String, capabilityId:String, observedBindings:Array<String>) {
 		key.verify();
 		this.key = key;
@@ -188,7 +190,7 @@ final class CapabilityToken<Provider, Capability, Scope:LifecycleScope> {
 		this.lifecycle = lifecycle;
 		this.providerId = providerId;
 		this.providerVersion = providerVersion;
-		this.artifactSha256 = artifactSha256;
+		this.executableClosureSha256 = executableClosureSha256;
 		this.bundleDigest = bundleDigest;
 		this.capabilityId = capabilityId;
 		this.observedBindings = observedBindings.copy();
@@ -200,7 +202,7 @@ final class CapabilityToken<Provider, Capability, Scope:LifecycleScope> {
 			&& capability.lifecycle == lifecycle
 			&& provider.id == providerId
 			&& provider.version == providerVersion
-			&& provider.artifactSha256 == artifactSha256
+			&& capability.executableClosureSha256 == executableClosureSha256
 			&& currentBundleDigest == bundleDigest
 			&& capability.id == capabilityId
 			&& AuthorityCore.firstMissing(capability.requiredBindingIds(), observedBindings) == null;
@@ -231,17 +233,17 @@ final class CapabilityRuntime<Scope:LifecycleScope> {
 					case Required: Unavailable(RequiredProviderAbsent);
 					case Optional: Unavailable(OptionalProviderAbsent);
 				}
-			case Exact(providerId, version, artifactSha256, bundleDigest, bindings):
+			case Exact(providerId, version, executableClosureSha256, bundleDigest, bindings):
 				if (providerId != provider.id) {
 					Unavailable(WrongProvider);
 				} else if (version != provider.version) {
 					Unavailable(WrongVersion);
-				} else if (artifactSha256 != provider.artifactSha256) {
+				} else if (executableClosureSha256 != capability.executableClosureSha256) {
 					Unavailable(WrongArtifact);
 				} else {
 					final missing = AuthorityCore.firstMissing(capability.requiredBindingIds(), bindings);
 					if (missing == null) {
-						Available(new CapabilityToken(key, scope, lifecycle, provider.id, provider.version, provider.artifactSha256, bundleDigest,
+						Available(new CapabilityToken(key, scope, lifecycle, provider.id, provider.version, executableClosureSha256, bundleDigest,
 							capability.id, bindings));
 					} else {
 						Unavailable(MissingBinding(missing));
@@ -264,18 +266,19 @@ final class TargetSession<Scope:LifecycleScope> {
 	}
 }
 
-/** Source-owned fixture adapter. It exposes scenarios, never raw authority facts. */
+#if adoption_contract_test
+/** Compile-test scenarios. This type is absent from every product build. */
 final class FixtureTargetAdapter {
 	static inline final CONTENT_ROOT = "fixture-content-root";
 
 	public static function exactPhpRequest<Provider, Capability>(provider:ProviderContract<Provider>,
 			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
-		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, CONTENT_ROOT, capability.requiredBindingIds()), CONTENT_ROOT);
+		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
+			CONTENT_ROOT);
 	}
 
-	public static function absentPhpRequest():TargetSession<PhpRequestScope> {
+	public static function absentPhpRequest():TargetSession<PhpRequestScope>
 		return AuthorityCore.phpRequest(AuthorityCore.absent(), CONTENT_ROOT);
-	}
 
 	public static function wrongVersionPhpRequest<Provider, Capability>(provider:ProviderContract<Provider>,
 			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
@@ -286,30 +289,32 @@ final class FixtureTargetAdapter {
 			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
 		final bindings = capability.requiredBindingIds();
 		bindings.pop();
-		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, CONTENT_ROOT, bindings), CONTENT_ROOT);
+		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, bindings), CONTENT_ROOT);
 	}
 
 	public static function exactBrowserModule<Provider, Capability>(provider:ProviderContract<Provider>,
 			capability:CapabilityContract<Provider, Capability, BrowserModuleScope>):TargetSession<BrowserModuleScope> {
-		return AuthorityCore.browserModule(AuthorityCore.exact(provider, CONTENT_ROOT, capability.requiredBindingIds()), CONTENT_ROOT);
+		return AuthorityCore.browserModule(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
+			CONTENT_ROOT);
 	}
 
-	public static function absentBrowserModule():TargetSession<BrowserModuleScope> {
+	public static function absentBrowserModule():TargetSession<BrowserModuleScope>
 		return AuthorityCore.browserModule(AuthorityCore.absent(), CONTENT_ROOT);
-	}
 
 	public static function missingFirstBrowserBinding<Provider, Capability>(provider:ProviderContract<Provider>,
 			capability:CapabilityContract<Provider, Capability, BrowserModuleScope>):TargetSession<BrowserModuleScope> {
 		final bindings = capability.requiredBindingIds();
 		bindings.shift();
-		return AuthorityCore.browserModule(AuthorityCore.exact(provider, CONTENT_ROOT, bindings), CONTENT_ROOT);
+		return AuthorityCore.browserModule(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, bindings), CONTENT_ROOT);
 	}
 
 	public static function exactPhpProcess<Provider, Capability>(provider:ProviderContract<Provider>,
 			capability:CapabilityContract<Provider, Capability, PhpProcessScope>):TargetSession<PhpProcessScope> {
-		return AuthorityCore.phpProcess(AuthorityCore.exact(provider, CONTENT_ROOT, capability.requiredBindingIds()), CONTENT_ROOT);
+		return AuthorityCore.phpProcess(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
+			CONTENT_ROOT);
 	}
 }
+#end
 
 #if php
 /** PHP request adapter that verifies provider bytes before minting authority. */
@@ -319,8 +324,9 @@ final class PhpAcmeCalendarAdapter {
 
 	public static function open(pluginFile:String, bundleFile:String):PhpAcmeCalendarAdapter {
 		final provider = GeneratedPhpFacade.open(pluginFile, bundleFile);
-		final authority = AuthorityCore.phpRequest(AuthorityCore.exact(GeneratedAcmeCalendar.provider, provider.bundleDigest,
-			GeneratedAcmeCalendar.read.requiredBindingIds()), provider.bundleDigest);
+		final authority = AuthorityCore.phpRequest(AuthorityCore.exact(GeneratedAcmeCalendar.provider, provider.executableClosureSha256,
+			provider.bundleDigest, GeneratedAcmeCalendar.read.requiredBindingIds()),
+			provider.bundleDigest);
 		return new PhpAcmeCalendarAdapter(authority, provider);
 	}
 
@@ -352,8 +358,8 @@ final class BrowserAcmeCalendarAdapter {
 
 	public static function open(packageRoot:String, generation:String, bundleFile:String):js.lib.Promise<BrowserAcmeCalendarAdapter> {
 		return GeneratedBrowserFacade.openExactProvider(packageRoot, generation, bundleFile).then(provider -> {
-			final authority = AuthorityCore.browserModule(AuthorityCore.exact(GeneratedAcmeCalendar.provider, provider.bundleDigest,
-				GeneratedAcmeCalendar.badge.requiredBindingIds()),
+			final authority = AuthorityCore.browserModule(AuthorityCore.exact(GeneratedAcmeCalendar.provider, provider.executableClosureSha256,
+				provider.bundleDigest, GeneratedAcmeCalendar.badge.requiredBindingIds()),
 				provider.bundleDigest);
 			return new BrowserAcmeCalendarAdapter(authority, provider);
 		});
@@ -395,8 +401,9 @@ final class CapabilityFailureTools {
 private final class AuthorityCore {
 	static final KEY = AuthorityKey.current();
 
-	public static function exact<Provider>(provider:ProviderContract<Provider>, bundleDigest:String, bindings:Array<String>):ProviderObservation {
-		return ProviderObservation.exact(KEY, provider.id, provider.version, provider.artifactSha256, bundleDigest, bindings);
+	public static function exact<Provider>(provider:ProviderContract<Provider>, executableClosureSha256:String, bundleDigest:String,
+			bindings:Array<String>):ProviderObservation {
+		return ProviderObservation.exact(KEY, provider.id, provider.version, executableClosureSha256, bundleDigest, bindings);
 	}
 
 	public static function wrongVersion<Provider>(provider:ProviderContract<Provider>, bundleDigest:String, bindings:Array<String>):ProviderObservation {

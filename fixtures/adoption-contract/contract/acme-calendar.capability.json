@@ -6,7 +6,7 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "2bee55b75ab4f7edb1b7b0731103b29de7a8d16a39fcb2f3ccb7b336e961e8f2"
+    "sha256": "6a5a01fa7cc9f72167699f4fc923d0adc8b7c99e32c2ba2a57b2f5e3b6955af6"
   },
   "profile": {
     "id": "wp70-release",
@@ -33,14 +33,14 @@
     ],
     "sameNominalScopeInstanceReusable": false,
     "tokenBoundFacts": [
-      "artifact-sha256",
       "bundle-digest",
       "capability-id",
       "lifecycle-kind",
       "observed-bindings",
       "provider-id",
       "provider-version",
-      "runtime-nonce"
+      "runtime-nonce",
+      "target-executable-closure-sha256"
     ],
     "bundleVerification": "required-before-observation",
     "absenceBehavior": "typed-unavailable-with-core-fallback",
@@ -63,7 +63,8 @@
           "@acme/calendar.formatCalendarLabel"
         ],
         "versionMatch": "exact",
-        "artifactMatch": "exact-sha256",
+        "artifactMatch": "target-executable-closure-sha256",
+        "executableClosureSha256": "f072306f4ce994dd45ab045a122bcf77cd76a15d78a5941cc7d2815d24e9e46e",
         "conditionalFailure": "unavailable-not-partially-authorized"
       }
     },
@@ -85,10 +86,11 @@
           "Acme\\Calendar\\list_events"
         ],
         "versionMatch": "exact",
-        "artifactMatch": "exact-sha256",
+        "artifactMatch": "target-executable-closure-sha256",
+        "executableClosureSha256": "8d87130bc484658004329fcdf7b603d82f697b49169d119c05758e0ac014d203",
         "conditionalFailure": "unavailable-not-partially-authorized"
       }
     }
   ],
-  "capabilitySetDigest": "839a7b4bd14e250589a6f76662da951cb71f7e041d01f6ce7d721519320bf9e0"
+  "capabilitySetDigest": "68ad32ffcec30d5b73373d5522a6bc5e3aae579460905645f3fca44ac9272711"
 }

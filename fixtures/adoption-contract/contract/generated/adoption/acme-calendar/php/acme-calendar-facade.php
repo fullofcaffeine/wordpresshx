@@ -7,7 +7,8 @@ final class WordPressHxAcmeCalendarProviderUnavailable extends RuntimeException 
 final class WordPressHxAcmeCalendarVerifiedProvider
 {
     public function __construct(
-        public readonly string $bundleDigest
+        public readonly string $bundleDigest,
+        public readonly string $executableClosureSha256
     ) {}
 
     /** @return list<string> */
@@ -46,7 +47,8 @@ final class WordPressHxAcmeCalendarFacade
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
         $material = '{' . substr($canonical, strlen($match[0]));
-        if (!hash_equals($match[1], hash('sha256', $material))) {
+        if (!hash_equals($match[1], hash('sha256', $material))
+            || !hash_equals('3d7e7691f83d60c5264432270f19a9b7656b00260190db8540e6963e76bfc188', $match[1])) {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
         try {
@@ -64,9 +66,9 @@ final class WordPressHxAcmeCalendarFacade
             || ($bundle['provider']['artifactSha256'] ?? null) !== '923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd') {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
-        $expectedStaticMembers = json_decode('[{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"e1a3065b3ada1dbed158be41f1b9070afdb20fcfe52bf274e90952112c0bdd68","sizeBytes":2234},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"a3cad8cd3b4b8a32a9b4d55c47c10f9287897a25769f2377ce7f3edcacbedbb6","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"3cb252231264ad1efa4ae84e1e768a25b0cba858830c483ed81472c32ca7fc05","sizeBytes":2668},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"1154cf0d9d46e971739f216341cb9e698f6edf65f5af2df130473d834b190f68","sizeBytes":4785}]', true, 512, JSON_THROW_ON_ERROR);
+        $expectedStaticMembers = json_decode('[{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"33ba0c41c9b56cd9b804aae156d930806a91207cc8512729aa8914898e477b7c","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"bb7a31091fff479b28a679e38f07f679ccd8adb34875536c1b275b15d8353a1d","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"3a1e8b20483e3b4068d46f5432330b5781965d9decec0877b05535b894bab2ad","sizeBytes":4785}]', true, 512, JSON_THROW_ON_ERROR);
         $members = $bundle['members'] ?? null;
-        if (!is_array($expectedStaticMembers) || !is_array($members) || count($members) !== 7) {
+        if (!is_array($expectedStaticMembers) || !is_array($members) || count($members) !== 5) {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
         $membersByRole = [];
@@ -86,16 +88,17 @@ final class WordPressHxAcmeCalendarFacade
                 throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
             }
         }
-        foreach ([
-            'javascript-facade' => 'generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs',
-            'php-facade' => 'generated/adoption/acme-calendar/php/acme-calendar-facade.php',
-        ] as $role => $path) {
-            $member = $membersByRole[$role] ?? null;
-            if (!is_array($member)
-                || ($member['path'] ?? null) !== $path
-                || preg_match('/^[0-9a-f]{64}$/', $member['sha256'] ?? '') !== 1
-                || !is_int($member['sizeBytes'] ?? null)
-                || $member['sizeBytes'] <= 0) {
+        $bundleSuffix = 'generated/adoption/acme-calendar/adoption.bundle.json';
+        if (!str_ends_with($bundleFile, $bundleSuffix)) {
+            throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
+        }
+        $outputRoot = substr($bundleFile, 0, -strlen($bundleSuffix));
+        foreach ($expectedStaticMembers as $expected) {
+            $memberFile = $outputRoot . $expected['path'];
+            $memberBytes = is_file($memberFile) ? file_get_contents($memberFile) : false;
+            if (!is_string($memberBytes)
+                || strlen($memberBytes) !== $expected['sizeBytes']
+                || !hash_equals($expected['sha256'], hash('sha256', $memberBytes))) {
                 throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
             }
         }
@@ -127,7 +130,7 @@ final class WordPressHxAcmeCalendarFacade
             || !class_exists('Acme\\Calendar\\Event', false)) {
             throw new WordPressHxAcmeCalendarProviderUnavailable('required-provider-symbol-missing');
         }
-        return new WordPressHxAcmeCalendarVerifiedProvider($bundleDigest);
+        return new WordPressHxAcmeCalendarVerifiedProvider($bundleDigest, '8d87130bc484658004329fcdf7b603d82f697b49169d119c05758e0ac014d203');
     }
 
     /** @return list<string> */

@@ -20,10 +20,11 @@ final class GeneratedAcmeCalendar {
 			"php.calendar.event.construct",
 			"php.calendar.event.title",
 			"php.calendar.list-events"
-		]);
+		], "8d87130bc484658004329fcdf7b603d82f697b49169d119c05758e0ac014d203");
 
 	public static final badge = new CapabilityContract<AcmeCalendarProvider, CalendarBadgeCapability, BrowserModuleScope>("calendar.badge.browser",
-		LifecycleKind.BrowserModule, CapabilityRequirement.Optional, ["js.calendar.badge", "js.calendar.format-label"]);
+		LifecycleKind.BrowserModule, CapabilityRequirement.Optional, ["js.calendar.badge", "js.calendar.format-label"],
+		"f072306f4ce994dd45ab045a122bcf77cd76a15d78a5941cc7d2815d24e9e46e");
 }
 
 final class EventQuery {
@@ -48,6 +49,7 @@ final class CalendarBadgeProps {
 @:native("WordPressHxAcmeCalendarVerifiedProvider")
 extern class GeneratedPhpProviderHandle {
 	public final bundleDigest:String;
+	public final executableClosureSha256:String;
 }
 
 @:native("WordPressHxAcmeCalendarFacade")
@@ -64,6 +66,7 @@ extern class GeneratedJavascriptObject {}
 
 extern class GeneratedBrowserProviderHandle {
 	public final bundleDigest:String;
+	public final executableClosureSha256:String;
 	public function formatLabel(count:Float):String;
 	public function renderBadge(props:CalendarBadgeProps):GeneratedJavascriptObject;
 }

@@ -5,6 +5,23 @@ repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 fixture_root="${repository_root}/fixtures/adoption-contract"
 temporary_parent="$(cd "${TMPDIR:-/tmp}" && pwd -P)"
 test_root="$(mktemp -d "${temporary_parent}/wordpresshx-adr015-gate.XXXXXX")"
+observer_parts="${test_root}/observer-parts"
+mkdir -p "${observer_parts}"
+mark_observer() {
+	python3 - "${repository_root}" "${observer_parts}/$1.json" "$1" <<'PY'
+import json, sys
+from pathlib import Path
+root, output, observer_id = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+sys.path.insert(0, str(root / "scripts/adoption"))
+from evidence_state import current_content_root, observer_identities
+output.write_text(json.dumps({
+    "contentRoot": current_content_root(root),
+    "id": observer_id,
+    "identitySha256": observer_identities(root)[observer_id],
+    "outcome": "passed",
+}, sort_keys=True) + "\n", encoding="utf-8")
+PY
+}
 cleanup() {
 	case "${test_root}" in
 		"${temporary_parent}"/wordpresshx-adr015-gate.*) rm -rf -- "${test_root}" ;;
@@ -23,6 +40,7 @@ done
 python3 "${repository_root}/scripts/adoption/refresh-evidence.py"
 python3 "${repository_root}/scripts/adoption/validate-architecture.py"
 python3 "${repository_root}/scripts/adoption/test-evidence.py"
+mark_observer mutation
 
 php_mode=""
 php_runtime=""
@@ -74,6 +92,7 @@ python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${ge
 diff -ru "${generation_one}" "${generation_two}"
 diff -ru "${fixture_root}/contract" "${generation_one}"
 "${node_command}" "${repository_root}/scripts/adoption/test-json-schema.cjs"
+mark_observer schema
 if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 	echo "ADR-015 static generator executed provider runtime code" >&2
 	exit 1
@@ -133,6 +152,27 @@ mutate_runtime_php_parameter() {
 assert_generation_failure runtime-php-parameter-drift \
 	'lower-precedence runtime declaration conflicts with required binding: Acme\Calendar\list_events' \
 	mutate_runtime_php_parameter
+
+mutate_runtime_js_destructuring() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge({ count })/' "$1/index.js"
+}
+assert_generation_failure runtime-js-destructuring \
+	'unsupported JavaScript runtime parameter syntax: { count }' \
+	mutate_runtime_js_destructuring
+
+mutate_runtime_js_rest() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(...props)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-rest \
+	'unsupported JavaScript runtime parameter syntax: ...props' \
+	mutate_runtime_js_rest
+
+mutate_runtime_js_default() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(props = {})/' "$1/index.js"
+}
+assert_generation_failure runtime-js-default \
+	'unsupported JavaScript runtime parameter syntax: props = {}' \
+	mutate_runtime_js_default
 
 interface_inputs="${test_root}/typescript-interface-only-drift-inputs"
 mkdir -p "${interface_inputs}"
@@ -219,6 +259,7 @@ python3 "${repository_root}/scripts/adoption/test-ownership.py" \
 	"${test_root}/mutated-generation" \
 	"${test_root}/ownership-work" \
 	"${node_command}"
+mark_observer ownership
 
 native_php_root="${test_root}/haxe-native-php"
 native_js_index="${test_root}/haxe-native-js/index.js"
@@ -251,6 +292,7 @@ python3 "${repository_root}/scripts/adoption/test-native-provider.py" \
 	"${node_command}" \
 	"${native_php_root}/index.php" \
 	"${native_js_index}"
+mark_observer native
 
 haxelib run formatter --check \
 	-s "${fixture_root}/src" \
@@ -280,6 +322,7 @@ main_class="Main"
 	-cp "${fixture_root}/test-support" \
 	-cp "${fixture_root}/test" \
 	-main "${main_class}" \
+	-D adoption_contract_test \
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 	--interp >"${test_root}/interp.txt"
 
@@ -291,6 +334,7 @@ main_class="Main"
 			-cp ../../fixtures/adoption-contract/test-support \
 			-cp ../../fixtures/adoption-contract/test \
 		-main "${main_class}" \
+		-D adoption_contract_test \
 		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 		-lib genes-ts \
 		-lib hxnodejs \
@@ -319,6 +363,7 @@ main_class="Main"
 	-cp "${fixture_root}/test-support" \
 	-cp "${fixture_root}/test" \
 	-main "${main_class}" \
+	-D adoption_contract_test \
 	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 	--php "${test_root}/php"
 if [[ "${php_mode}" == "local" ]]; then
@@ -394,6 +439,7 @@ for expected_fragment in \
 		exit 1
 	fi
 done
+mark_observer haxe
 
 if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 	echo "ADR-015 default generation executed provider runtime code" >&2
@@ -401,27 +447,30 @@ if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 fi
 
 observer_output="${WORDPRESSHX_ADOPTION_OBSERVER_OUTPUT:-${test_root}/local-observers.json}"
-python3 - "${repository_root}" "${observer_output}" "${php_mode}" <<'PY'
+python3 - "${repository_root}" "${observer_parts}" "${observer_output}" "${php_mode}" <<'PY'
 import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 root = Path(sys.argv[1])
-output = Path(sys.argv[2])
-execution_mode = sys.argv[3]
+parts = Path(sys.argv[2])
+output = Path(sys.argv[3])
+execution_mode = sys.argv[4]
 sys.path.insert(0, str(root / "scripts/adoption"))
 from evidence_state import OBSERVER_IDS, current_content_root, observer_identities
 
 identities = observer_identities(root)
+observers = [json.loads((parts / f"{observer_id}.json").read_text(encoding="utf-8")) for observer_id in OBSERVER_IDS]
+if any(value["contentRoot"] != current_content_root(root) for value in observers):
+    raise SystemExit("observer receipts used different content roots")
+for value in observers:
+    value.pop("contentRoot")
 record = {
     "contentRoot": current_content_root(root),
     "executionMode": execution_mode,
     "observedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
-    "observers": [
-        {"id": observer_id, "identitySha256": identities[observer_id], "outcome": "passed"}
-        for observer_id in OBSERVER_IDS
-    ],
+    "observers": observers,
 }
 output.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
 PY

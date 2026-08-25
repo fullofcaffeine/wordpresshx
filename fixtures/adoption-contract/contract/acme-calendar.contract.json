@@ -27,7 +27,7 @@
     "generator": {
       "id": "wordpress-hx-adoption-generator",
       "version": "0.0.0-fixture",
-      "sha256": "b99ca3e894376ed40c47c206cf53d037b9cf842aa9d543f2d3c7d01e4bcb0825"
+      "sha256": "a409f159964fcb7034c9c943c39261ad2596d95b4fc8a962e02b921cc378b63f"
     },
     "inputs": [
       {
@@ -343,5 +343,5 @@
     "removal": "manifest-owned-complete-content-bundle-provider-source-untouched",
     "modifiedGeneratedFile": "fail-closed-no-overwrite-or-delete"
   },
-  "contractDigest": "2bee55b75ab4f7edb1b7b0731103b29de7a8d16a39fcb2f3ccb7b336e961e8f2"
+  "contractDigest": "6a5a01fa7cc9f72167699f4fc923d0adc8b7c99e32c2ba2a57b2f5e3b6955af6"
 }

@@ -69,7 +69,7 @@ final class TargetProbe {
 	}
 
 	static final processCapability = new CapabilityContract<AcmeCalendarProvider, FixtureProcessCapability, PhpProcessScope>("calendar.process.fixture",
-		LifecycleKind.PhpProcess, CapabilityRequirement.Required, ["php.calendar.list-events"]);
+		LifecycleKind.PhpProcess, CapabilityRequirement.Required, ["php.calendar.list-events"], AcmeCalendar.provider.artifactSha256);
 }
 
 final class FixtureProcessCapability {}

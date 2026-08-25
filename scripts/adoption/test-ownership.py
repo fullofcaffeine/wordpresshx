@@ -116,6 +116,57 @@ def self_consistent_stale_source(
     return destination
 
 
+def semantic_capability_forgery(
+    current: Path,
+    stage: Path,
+    destination: Path,
+    mutate: object,
+) -> Path:
+    if not callable(mutate):
+        raise TypeError("semantic mutation must be callable")
+    destination_manifest = destination / "generated/_GeneratedFiles.json"
+    destination_manifest.parent.mkdir(parents=True, exist_ok=False)
+    value = manifest(current)
+    capability_path = "generated/adoption/acme-calendar/capability.json"
+    capability_file = stage / capability_path
+    capability = json.loads(capability_file.read_text(encoding="utf-8"))
+    mutate(capability)
+    self_digest(capability, "capabilitySetDigest")
+    capability_file.write_bytes(canonical(capability) + b"\n")
+    bundle_path = "generated/adoption/acme-calendar/adoption.bundle.json"
+    bundle_file = stage / bundle_path
+    bundle = json.loads(bundle_file.read_text(encoding="utf-8"))
+    previous_digest = bundle["bundleDigest"]
+    capability_record = next(
+        record for record in bundle["members"] if record["role"] == "capability"
+    )
+    capability_record["sha256"] = sha256(capability_file.read_bytes())
+    capability_record["sizeBytes"] = len(capability_file.read_bytes())
+    self_digest(bundle, "bundleDigest")
+    bundle_file.write_bytes(canonical(bundle) + b"\n")
+    for relative in (
+        "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
+        "generated/adoption/acme-calendar/php/acme-calendar-facade.php",
+    ):
+        anchor = stage / relative
+        anchor.write_text(
+            anchor.read_text(encoding="utf-8").replace(previous_digest, bundle["bundleDigest"]),
+            encoding="utf-8",
+        )
+    for record in value["files"]:
+        data = (stage / record["path"]).read_bytes()
+        record["contentSha256"] = sha256(data)
+        record["sizeBytes"] = len(data)
+    material = [
+        {"contentSha256": record["contentSha256"], "path": record["path"], "sizeBytes": record["sizeBytes"]}
+        for record in value["files"]
+    ]
+    value["inputs"]["generationSha256"] = sha256(canonical(material))
+    self_digest(value, "manifestDigest")
+    destination_manifest.write_bytes(canonical(value) + b"\n")
+    return destination
+
+
 def invoke(
     node: str,
     runtime: Path,
@@ -217,6 +268,27 @@ def main() -> None:
         )
     if snapshot(project) != before_failure:
         raise AssertionError("semantic bundle rejection began a transaction")
+
+    semantic_mutations = {
+        "optional-required-php": lambda value: value["capabilities"][1].__setitem__("optional", True),
+        "caller-facts": lambda value: value["authority"].__setitem__("callerSuppliedFactsAllowed", True),
+        "cacheable-token": lambda value: value["authority"].__setitem__("tokenCacheable", True),
+        "reusable-scope": lambda value: value["authority"].__setitem__("sameNominalScopeInstanceReusable", True),
+        "weak-artifact-match": lambda value: value["capabilities"][0]["probe"].__setitem__("artifactMatch", "exact-sha256"),
+        "wrong-browser-scope": lambda value: value["capabilities"][0].__setitem__("scope", "process"),
+    }
+    for name, mutate in semantic_mutations.items():
+        project = create_project(work, f"semantic-{name}")
+        before_failure = snapshot(project)
+        stage = make_stage(current, work / f"semantic-{name}/stage")
+        source = semantic_capability_forgery(
+            current, stage, work / f"semantic-{name}/source", mutate
+        )
+        failure = publish(node, runtime, project, source, stage, expected=3)
+        if failure is None or failure.get("code") != "validator-failed":
+            raise AssertionError(f"production validator accepted {name}: {failure}")
+        if snapshot(project) != before_failure:
+            raise AssertionError(f"{name} rejection began a transaction")
 
     project = create_project(work, "publish-noop-clean")
     provider_before = provider_snapshot(project)

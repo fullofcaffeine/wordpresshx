@@ -10,20 +10,19 @@ The static generator reads these files without executing provider code.
 It derives nine candidate symbols, admits five bindings, and reports four omissions.
 One omission records a conflict between an authoritative stub and the runtime source.
 
-The generator writes one adoption content bundle with seven members:
+The generator writes one adoption content bundle with five members:
 
 - The exact provider, profile, input, and binding contract.
 - Two capability declarations for a PHP request and a browser module.
 - The review and loss report.
 - The generated Haxe provider surface.
-- Generated PHP and JavaScript facades.
 - The exact deterministic provider artifact.
 
-The content root binds the exact bytes of all seven members. It excludes the
-final ownership manifest, which avoids a digest cycle. The existing ADR-007
-owner publishes the seven members, the bundle, and the final manifest as one
-transaction. The provider artifact is a deterministic ZIP of the runtime
-fixture files.
+The PHP and JavaScript facades are manifest-owned runtime trust anchors outside
+the bundle. Each embeds the final content root and verifies all five member
+bytes. This avoids a digest cycle. The ADR-007 owner publishes the members,
+anchors, bundle, and final manifest as one transaction. The provider artifact
+is a deterministic ZIP of the runtime fixture files.
 
 The Haxe prototype models three lifecycle types.
 These types are PHP request, PHP process, and browser module.
@@ -35,15 +34,18 @@ spoofs of the former test friend path and the internal authority-owner name.
 Runtime cases reject reuse across two instances of the same lifecycle type.
 They also reject browser reload and stale PHP process authority.
 
-Source-owned target adapters ask the generated facades to derive the content
-root from captured bundle bytes and verify captured provider bytes before they
-mint capability authority. Callers do not supply the content digest. The
+Source-owned target adapters ask the generated facades to verify the embedded
+content root and captured provider bytes before they mint capability authority.
+Callers do not supply the trusted content digest. The
 generated facades execute or import those captured bytes, not a mutable path.
 The runtime proof covers success, absence,
 wrong version, wrong artifact, missing symbols, arrays, provider exceptions,
 and post-verification facade and provider swaps. A vertical observer crosses
 from authored Haxe through each generated native facade to the PHP and
 JavaScript providers.
+PHP tokens bind the exact plugin file. Browser tokens bind the canonical
+module-plus-package-metadata executable closure. Neither token overclaims that
+the target observed every byte in the provider distribution ZIP.
 
 The production ADR-007 owner validates and publishes the complete staged
 content bundle. The proof covers no-op regeneration, provider updates, manual
@@ -56,8 +58,9 @@ Run the complete local proof from the repository root:
 bash scripts/adoption/test.sh
 ```
 
-The gate rejects 84 layer-isolated document mutations, relative-path
-traversal, and JSON Schema prefix or suffix attacks. Each non-stale mutation
+The gate rejects layer-isolated document mutations, unsupported JavaScript
+formals, production-owner safety-policy forgeries, relative-path traversal,
+and JSON Schema prefix or suffix attacks. Each non-stale mutation
 gets a fresh self-digest before its own schema and semantic layer evaluates it.
 It uses Haxe 4.3.7, TypeScript 5.9.3, Node 22.17.0, and PHP 8.4.7.
 The exact Genes version and commit come from `packages/cli/dependency-lock.json`.
