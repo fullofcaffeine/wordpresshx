@@ -1,5 +1,6 @@
 package adoption.ownership;
 
+import adoption.ownership.ExpectedAdoptionStage.ExpectedAdoptionFile;
 import js.node.Buffer;
 import js.node.Fs;
 import js.node.Path;
@@ -18,7 +19,9 @@ final class AdoptionBundleValidator {
 		"generated/adoption/acme-calendar/php/acme-calendar-facade.php"
 	];
 
-	public static function validate(stageRoot:String):Void {
+	public static function validate(stageRoot:String, manifestPath:String, expected:ExpectedAdoptionStage):Void {
+		validateExpectedFiles(stageRoot, expected);
+		validateExpectedManifest(manifestPath, expected);
 		final bundleBytes = read(Path.join(stageRoot, BUNDLE_PATH), "adoption bundle");
 		final bundle = OwnershipJson.parseCanonical(bundleBytes, "adoption bundle");
 		final root = object(bundle, "adoption bundle");
@@ -40,14 +43,16 @@ final class AdoptionBundleValidator {
 		if (digest != OwnershipJson.digestValue(material)) {
 			fail("adoption bundle self digest is stale");
 		}
-		for (anchor in TRUST_ANCHORS) {
-			final source = read(Path.join(stageRoot, anchor), "runtime trust anchor " + anchor).toString();
-			if (source.indexOf(digest) < 0)
-				fail("runtime trust anchor does not bind the content root");
+		if (digest != expected.bundleDigest) {
+			fail("adoption bundle differs from trusted generator intent");
 		}
 
 		final provider = object(field(root, "provider"), "bundle.provider");
 		exact(provider, ["artifactSha256", "id", "version"], "bundle.provider");
+		if (OwnershipJson.encode(ObjectValue(provider)) != OwnershipJson.encode(expected.provider)
+			|| OwnershipJson.encode(field(root, "members")) != OwnershipJson.encode(expected.bundleMembers)) {
+			fail("bundle provider or members differ from trusted generator intent");
+		}
 		final artifactSha256 = text(field(provider, "artifactSha256"), "bundle.provider.artifactSha256");
 		final members = array(field(root, "members"), "bundle.members");
 		final roles:Array<String> = [];
@@ -85,7 +90,7 @@ final class AdoptionBundleValidator {
 			roles.push(role);
 			paths.push(relative);
 		}
-		validateDocuments(documents, provider, roles, paths);
+		validateDocuments(documents, provider, roles, paths, expected);
 		final sortedRoles = roles.copy();
 		sortedRoles.sort(compareText);
 		final expectedRoles = EXPECTED_ROLES.copy();
@@ -93,18 +98,24 @@ final class AdoptionBundleValidator {
 		if (!providerArtifactSeen || sortedRoles.join("\x00") != expectedRoles.join("\x00")) {
 			fail("adoption bundle does not contain one complete semantic role set");
 		}
-		final declared = paths.concat([BUNDLE_PATH]).concat(TRUST_ANCHORS);
-		declared.sort(compareText);
-		final staged:Array<String> = [];
-		scan(stageRoot, "", staged);
-		staged.sort(compareText);
-		if (staged.join("\x00") != declared.join("\x00")) {
-			fail("adoption stage differs from the content bundle plus its root");
+		for (anchor in TRUST_ANCHORS) {
+			if (!containsPath(expected.files, anchor)) {
+				fail("trusted generator intent omits runtime anchor " + anchor);
+			}
 		}
 	}
 
-	static function validateDocuments(documents:Array<{role:String, value:JsonValue}>, provider:Array<JsonField>, roles:Array<String>,
-			paths:Array<String>):Void {
+	static function containsPath(files:Array<ExpectedAdoptionFile>, path:String):Bool {
+		for (file in files) {
+			if (file.path == path) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static function validateDocuments(documents:Array<{role:String, value:JsonValue}>, provider:Array<JsonField>, roles:Array<String>, paths:Array<String>,
+			expected:ExpectedAdoptionStage):Void {
 		final providerId = text(field(provider, "id"), "bundle.provider.id");
 		final providerVersion = text(field(provider, "version"), "bundle.provider.version");
 		final providerArtifact = text(field(provider, "artifactSha256"), "bundle.provider.artifactSha256");
@@ -136,6 +147,9 @@ final class AdoptionBundleValidator {
 			"schemaVersion"
 		], "adoption contract");
 		validateDocumentIdentity(contract, "contractDigest", "wordpress-hx.adoption-contract.v1", "adoption contract");
+		if (OwnershipJson.encode(field(contract, "bindings")) != OwnershipJson.encode(expected.contractBindings)) {
+			fail("contract bindings differ from trusted generator intent");
+		}
 		final contractProvider = object(field(contract, "provider"), "contract.provider");
 		validateProvider(contractProvider, providerId, providerVersion, providerArtifact, "contract.provider");
 		final contractId = text(field(contract, "contractId"), "contract.contractId");
@@ -199,6 +213,9 @@ final class AdoptionBundleValidator {
 				.join("|") != "bundle-digest|capability-id|lifecycle-kind|observed-bindings|provider-id|provider-version|runtime-nonce|target-executable-closure-sha256") {
 			fail("capability authority facts differ");
 		}
+		if (OwnershipJson.encode(field(capability, "capabilities")) != OwnershipJson.encode(expected.capabilities)) {
+			fail("capability closures, bindings, or symbols differ from trusted generator intent");
+		}
 		validateCapabilities(array(field(capability, "capabilities"), "capability.capabilities"));
 
 		final review = object(document(documents, "review"), "adoption review");
@@ -239,6 +256,34 @@ final class AdoptionBundleValidator {
 			if (boolean(field(claims, name), "review.claims." + name)) {
 				fail("adoption review overclaims " + name);
 			}
+		}
+	}
+
+	static function validateExpectedFiles(stageRoot:String, expected:ExpectedAdoptionStage):Void {
+		final declared = [for (value in expected.files) value.path];
+		declared.sort(compareText);
+		final staged:Array<String> = [];
+		scan(stageRoot, "", staged);
+		staged.sort(compareText);
+		if (staged.join("\x00") != declared.join("\x00")) {
+			fail("adoption stage differs from trusted generator file inventory");
+		}
+		for (record in expected.files) {
+			final bytes = read(Path.join(stageRoot, record.path), "trusted adoption file " + record.path);
+			if (bytes.length != record.sizeBytes || OwnershipJson.digest(bytes) != record.sha256) {
+				fail("adoption stage file differs from trusted generator intent: " + record.path);
+			}
+		}
+	}
+
+	static function validateExpectedManifest(manifestPath:String, expected:ExpectedAdoptionStage):Void {
+		final bytes = read(manifestPath, "adoption ownership manifest");
+		if (bytes.length != expected.ownershipManifestSizeBytes || OwnershipJson.digest(bytes) != expected.ownershipManifestSha256) {
+			fail("adoption ownership manifest differs from trusted generator intent");
+		}
+		final manifest = object(OwnershipJson.parseCanonical(bytes, "adoption ownership manifest"), "adoption ownership manifest");
+		if (text(field(manifest, "manifestDigest"), "ownership manifest digest") != expected.ownershipManifestDigest) {
+			fail("adoption ownership manifest digest differs from trusted generator intent");
 		}
 	}
 

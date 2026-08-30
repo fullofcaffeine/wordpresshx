@@ -1130,6 +1130,39 @@ def ownership_manifest(
     return manifest
 
 
+def expected_adoption_stage(
+    owned_files: dict[str, bytes],
+    ownership: dict[str, object],
+    bundle: dict[str, object],
+    documents: dict[str, dict[str, object]],
+) -> dict[str, object]:
+    """Capture trusted generator intent outside the candidate publication stage."""
+
+    manifest_bytes = canonical_file(ownership)
+    return {
+        "schema": "wordpress-hx.expected-adoption-stage.v1",
+        "schemaVersion": 1,
+        "ownershipManifest": {
+            "sha256": sha256(manifest_bytes),
+            "sizeBytes": len(manifest_bytes),
+            "manifestDigest": ownership["manifestDigest"],
+        },
+        "files": [
+            {
+                "path": path,
+                "sha256": sha256(content),
+                "sizeBytes": len(content),
+            }
+            for path, content in sorted(owned_files.items())
+        ],
+        "bundleDigest": bundle["bundleDigest"],
+        "provider": bundle["provider"],
+        "bundleMembers": bundle["members"],
+        "contractBindings": documents["contract"]["bindings"],
+        "capabilities": documents["capability"]["capabilities"],
+    }
+
+
 def write_documents(output: Path) -> None:
     model = merge_model(INPUT_ROOT, logical_path)
     documents = generate_documents(model)
@@ -1174,6 +1207,9 @@ def write_documents(output: Path) -> None:
         bundle_path: bundle_bytes,
     }
     ownership = ownership_manifest(owned_files, documents["contract"])
+    expected_stage = expected_adoption_stage(
+        owned_files, ownership, bundle, documents
+    )
 
     for path, content in owned_files.items():
         target = output / path
@@ -1191,6 +1227,9 @@ def write_documents(output: Path) -> None:
     (output / "acme-calendar.bundle.json").write_bytes(bundle_bytes)
     (output / "acme-calendar.generated-files.json").write_bytes(
         canonical_file(ownership)
+    )
+    (output / "acme-calendar.expected-stage.json").write_bytes(
+        canonical_file(expected_stage)
     )
 
 

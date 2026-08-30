@@ -48,7 +48,7 @@ final class WordPressHxAcmeCalendarFacade
         }
         $material = '{' . substr($canonical, strlen($match[0]));
         if (!hash_equals($match[1], hash('sha256', $material))
-            || !hash_equals('3d7e7691f83d60c5264432270f19a9b7656b00260190db8540e6963e76bfc188', $match[1])) {
+            || !hash_equals('2c1dfaffcafce7cb9929c10ce1a25bf882a6580e41ba82365e043b1770221007', $match[1])) {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
         try {
@@ -66,7 +66,7 @@ final class WordPressHxAcmeCalendarFacade
             || ($bundle['provider']['artifactSha256'] ?? null) !== '923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd') {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');
         }
-        $expectedStaticMembers = json_decode('[{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"33ba0c41c9b56cd9b804aae156d930806a91207cc8512729aa8914898e477b7c","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"bb7a31091fff479b28a679e38f07f679ccd8adb34875536c1b275b15d8353a1d","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"3a1e8b20483e3b4068d46f5432330b5781965d9decec0877b05535b894bab2ad","sizeBytes":4785}]', true, 512, JSON_THROW_ON_ERROR);
+        $expectedStaticMembers = json_decode('[{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"a2239ce37c8a49521051e0f1475e7c336000b862bb19d8d95c2b3453585d6886","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"b18b8541bd1758128be38606b4375e5803b55bf03fd5e5aed4fe0ee825a11553","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"a6c79251b7476f9f3e24f476afdbe9f119c1bbcbfdba9cbd79c1515dd656170a","sizeBytes":4785}]', true, 512, JSON_THROW_ON_ERROR);
         $members = $bundle['members'] ?? null;
         if (!is_array($expectedStaticMembers) || !is_array($members) || count($members) !== 5) {
             throw new WordPressHxAcmeCalendarProviderUnavailable('wrong-content-bundle');

@@ -1,5 +1,6 @@
 package adoption.ownership;
 
+import haxe.Resource;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.ownership.ArtifactOwner;
 import wordpresshx.cli.ownership.OwnershipFailure;
@@ -25,6 +26,7 @@ final class Main {
 						throw new OwnershipFailure("publish requires <manifest> <stage> [pass|fail]", "usage");
 					}
 					final validatorMode = arguments.length == 5 ? arguments[4] : "pass";
+					final expected = ExpectedAdoptionStage.parse(resource("adoption-stage"), "expected adoption stage");
 					final validators:Array<StageValidator> = [
 						{
 							validatorId: "adoption.bundle",
@@ -32,7 +34,7 @@ final class Main {
 								if (validatorMode == "fail") {
 									throw new OwnershipFailure("fixture validator failed", "fixture-validator");
 								}
-								AdoptionBundleValidator.validate(stageRoot);
+								AdoptionBundleValidator.validate(stageRoot, arguments[2], expected);
 							}
 						}
 					];
@@ -63,6 +65,14 @@ final class Main {
 			nodeProcess.stderr.write('{"code":"unexpected","message":"unexpected adoption ownership failure","path":null}\n');
 			nodeProcess.exit(4);
 		}
+	}
+
+	static function resource(name:String):String {
+		final value = Resource.getString(name);
+		if (value == null) {
+			throw new OwnershipFailure("embedded expected adoption stage is absent", "validator-failed");
+		}
+		return value;
 	}
 
 	static function checkpoint(name:String):Void {

@@ -525,8 +525,13 @@ required_files=(
   scripts/output-context/test.sh
   scripts/output-context/validate-architecture.py
   scripts/adoption/test.sh
+  scripts/adoption/abi_model.py
+  scripts/adoption/evidence_state.py
   scripts/adoption/generate-fixture.py
+  scripts/adoption/observe-javascript-source.cjs
+  scripts/adoption/record-evidence.py
   scripts/adoption/refresh-evidence.py
+  scripts/adoption/test-evidence.py
   scripts/adoption/test-json-schema.cjs
   scripts/adoption/test-native-provider.py
   scripts/adoption/test-ownership.py
@@ -677,6 +682,7 @@ required_files=(
   fixtures/adoption-contract/contract/acme-calendar.capability.json
   fixtures/adoption-contract/contract/acme-calendar.bundle.json
   fixtures/adoption-contract/contract/acme-calendar.contract.json
+  fixtures/adoption-contract/contract/acme-calendar.expected-stage.json
   fixtures/adoption-contract/contract/acme-calendar.generated-files.json
   fixtures/adoption-contract/contract/acme-calendar.review.json
   fixtures/adoption-contract/expected/capability-plan.txt
@@ -690,11 +696,15 @@ required_files=(
   fixtures/adoption-contract/test/Main.hx
   fixtures/adoption-contract/test-negative/cross_request_scope/Main.hx
   fixtures/adoption-contract/test-negative/direct_token_construction/Main.hx
+  fixtures/adoption-contract/test-negative/hostile_define/Main.hx
   fixtures/adoption-contract/test-negative/omitted_binding/Main.hx
   fixtures/adoption-contract/test-negative/observation_forgery/Main.hx
   fixtures/adoption-contract/test-negative/scope_forgery/Main.hx
   fixtures/adoption-contract/test-negative/wrong_capability/Main.hx
-  fixtures/adoption-contract/test-support/wordpress/hx/adoption/prototype/testing/TargetProbe.hx
+  fixtures/adoption-contract/test-ownership/adoption/ownership/AdoptionBundleValidator.hx
+  fixtures/adoption-contract/test-ownership/adoption/ownership/ExpectedAdoptionStage.hx
+  fixtures/adoption-contract/test-ownership/adoption/ownership/Main.hx
+  fixtures/adoption-contract/test-support/adoption/testing/TargetProbe.hx
   test/README.md
   docker/README.md
   docker/images.lock.json
@@ -3383,6 +3393,9 @@ adr015_verification = adr015_receipt["verification"]
 assert adr015_verification["sourceTreeSha256"] == adoption_prototype[
     "sourceTreeSha256"
 ]
+assert adr015_verification["evidenceSubjectSha256"] == adoption_prototype[
+    "evidenceSubjectSha256"
+]
 assert adr015_verification["strictNullSafety"] is True
 assert adr015_verification["strictHaxeForbiddenTokenCount"] == 0
 assert adr015_verification["bindingCount"] == 5
@@ -3395,9 +3408,7 @@ assert adr015_verification["compileNegativeCount"] == adoption_prototype[
 assert adr015_verification["independentMutationCount"] == adoption_prototype[
     "independentMutationCount"
 ]
-assert adr015_verification[
-    "canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp"
-] is True
+assert adr015_verification["testOnlyShadowStateMachineTranscriptMatched"] is True
 assert adr015_verification["providerRuntimeExecutionDuringGeneration"] is False
 assert adr015_verification["syntheticProviderRuntimeUsed"] is True
 assert adr015_verification["productionOwnershipTransactionUsed"] is True
@@ -3432,13 +3443,13 @@ for unproven_adoption_claim in (
 ):
     assert adr015_receipt["claims"][unproven_adoption_claim] == "not-tested"
 assert adr015_receipt["claims"]["fixtureGenerator"] == (
-    "deterministic-source-derived-tested-local-and-container-current-content-root"
+    "deterministic-source-derived-tested-local-and-container-current-evidence-subject"
 )
 assert adr015_receipt["claims"]["nativeProviderAbi"] == (
-    "synthetic-provider-tested-local-and-container-current-content-root"
+    "synthetic-provider-tested-local-and-container-current-evidence-subject"
 )
 assert adr015_receipt["claims"]["ownershipTransaction"] == (
-    "production-owner-tested-local-and-container-current-content-root"
+    "production-owner-tested-local-and-container-current-evidence-subject"
 )
 for observation_key, execution_mode in (
     ("localObservation", "local"),
@@ -3446,6 +3457,9 @@ for observation_key, execution_mode in (
 ):
     adr015_observation = adr015_receipt[observation_key]
     assert adr015_observation["contentRoot"] == adoption_prototype["bundleDigest"]
+    assert adr015_observation["evidenceSubjectSha256"] == adoption_prototype[
+        "evidenceSubjectSha256"
+    ]
     assert adr015_observation["executionMode"] == execution_mode
     assert adr015_observation["outcome"] == "passed"
 adr015_hosted = adr015_receipt["hostedWorkflow"]
@@ -3455,7 +3469,14 @@ assert adr015_hosted["job"] == "adoption-contract"
 assert adr015_hosted["required"] is True
 assert adoption_hosted["job"] == adr015_hosted["job"]
 assert adoption_hosted["status"] == adr015_hosted["status"]
-for hosted_identity in ("runId", "jobId", "commit"):
+for hosted_identity in (
+    "runId",
+    "jobId",
+    "commit",
+    "contentRoot",
+    "evidenceSubjectSha256",
+    "gateIdentitySha256",
+):
     assert adoption_hosted[hosted_identity] == adr015_hosted[hosted_identity]
 if adr015_hosted["status"] == "pending-current-main-run":
     assert adr015_receipt["status"] == "implemented-hosted-and-review-pending"

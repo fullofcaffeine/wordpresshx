@@ -9,6 +9,60 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+JAVASCRIPT_STRICT_BINDING_FORBIDDEN = frozenset(
+    {
+        "arguments",
+        "await",
+        "break",
+        "case",
+        "catch",
+        "class",
+        "const",
+        "continue",
+        "debugger",
+        "default",
+        "delete",
+        "do",
+        "else",
+        "enum",
+        "eval",
+        "export",
+        "extends",
+        "false",
+        "finally",
+        "for",
+        "function",
+        "if",
+        "implements",
+        "import",
+        "in",
+        "instanceof",
+        "interface",
+        "let",
+        "new",
+        "null",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "static",
+        "super",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typeof",
+        "var",
+        "void",
+        "while",
+        "with",
+        "yield",
+    }
+)
+
+
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -345,15 +399,26 @@ def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration
     )
     for match in function_pattern.finditer(text):
         parameters_list: list[Parameter] = []
+        parameter_names: set[str] = set()
         for raw in split_parameters(match.group("parameters")):
             identifier = re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", raw)
             if identifier is None:
                 raise ValueError(
                     "unsupported JavaScript runtime parameter syntax: " + raw
                 )
+            name = identifier.group(0)
+            if name in JAVASCRIPT_STRICT_BINDING_FORBIDDEN:
+                raise ValueError(
+                    "unsupported JavaScript runtime parameter identifier: " + name
+                )
+            if name in parameter_names:
+                raise ValueError(
+                    "duplicate JavaScript runtime parameter identifier: " + name
+                )
+            parameter_names.add(name)
             parameters_list.append(
                 Parameter(
-                    identifier.group(0),
+                    name,
                     "required",
                     "value",
                     False,

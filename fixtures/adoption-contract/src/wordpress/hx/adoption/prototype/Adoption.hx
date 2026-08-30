@@ -266,56 +266,6 @@ final class TargetSession<Scope:LifecycleScope> {
 	}
 }
 
-#if adoption_contract_test
-/** Compile-test scenarios. This type is absent from every product build. */
-final class FixtureTargetAdapter {
-	static inline final CONTENT_ROOT = "fixture-content-root";
-
-	public static function exactPhpRequest<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
-		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
-			CONTENT_ROOT);
-	}
-
-	public static function absentPhpRequest():TargetSession<PhpRequestScope>
-		return AuthorityCore.phpRequest(AuthorityCore.absent(), CONTENT_ROOT);
-
-	public static function wrongVersionPhpRequest<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
-		return AuthorityCore.phpRequest(AuthorityCore.wrongVersion(provider, CONTENT_ROOT, capability.requiredBindingIds()), CONTENT_ROOT);
-	}
-
-	public static function missingLastPhpBinding<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, PhpRequestScope>):TargetSession<PhpRequestScope> {
-		final bindings = capability.requiredBindingIds();
-		bindings.pop();
-		return AuthorityCore.phpRequest(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, bindings), CONTENT_ROOT);
-	}
-
-	public static function exactBrowserModule<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, BrowserModuleScope>):TargetSession<BrowserModuleScope> {
-		return AuthorityCore.browserModule(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
-			CONTENT_ROOT);
-	}
-
-	public static function absentBrowserModule():TargetSession<BrowserModuleScope>
-		return AuthorityCore.browserModule(AuthorityCore.absent(), CONTENT_ROOT);
-
-	public static function missingFirstBrowserBinding<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, BrowserModuleScope>):TargetSession<BrowserModuleScope> {
-		final bindings = capability.requiredBindingIds();
-		bindings.shift();
-		return AuthorityCore.browserModule(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, bindings), CONTENT_ROOT);
-	}
-
-	public static function exactPhpProcess<Provider, Capability>(provider:ProviderContract<Provider>,
-			capability:CapabilityContract<Provider, Capability, PhpProcessScope>):TargetSession<PhpProcessScope> {
-		return AuthorityCore.phpProcess(AuthorityCore.exact(provider, capability.executableClosureSha256, CONTENT_ROOT, capability.requiredBindingIds()),
-			CONTENT_ROOT);
-	}
-}
-#end
-
 #if php
 /** PHP request adapter that verifies provider bytes before minting authority. */
 final class PhpAcmeCalendarAdapter {

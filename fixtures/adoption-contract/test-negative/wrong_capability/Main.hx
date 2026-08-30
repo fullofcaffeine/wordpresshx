@@ -1,14 +1,17 @@
-import wordpress.hx.adoption.prototype.AcmeCalendar;
-import wordpress.hx.adoption.prototype.Adoption.CapabilityAvailability;
-import wordpress.hx.adoption.prototype.testing.TargetProbe;
+import wordpress.hx.adoption.prototype.AcmeCalendar.AcmeCalendarProvider;
+import wordpress.hx.adoption.prototype.AcmeCalendar.CalendarBadgeCapability;
+import wordpress.hx.adoption.prototype.AcmeCalendar.CalendarReadCapability;
+import wordpress.hx.adoption.prototype.Adoption.BrowserModuleScope;
+import wordpress.hx.adoption.prototype.Adoption.CapabilityContract;
+import wordpress.hx.adoption.prototype.Adoption.CapabilityToken;
+import wordpress.hx.adoption.prototype.Adoption.ProviderContract;
 
 final class Main {
-	static function main():Void {
-		final browser = TargetProbe.exactBrowserModule();
-		switch browser.runtime.probe(AcmeCalendar.provider, AcmeCalendar.badge) {
-			case Available(token):
-				token.authorizes(browser.scope, AcmeCalendar.provider, AcmeCalendar.read, browser.bundleDigest);
-			case Unavailable(_):
-		}
+	static function main():Void {}
+
+	static function reject(token:CapabilityToken<AcmeCalendarProvider, CalendarBadgeCapability, BrowserModuleScope>, scope:BrowserModuleScope,
+			provider:ProviderContract<AcmeCalendarProvider>,
+			capability:CapabilityContract<AcmeCalendarProvider, CalendarReadCapability, BrowserModuleScope>):Bool {
+		return token.authorizes(scope, provider, capability, "bundle");
 	}
 }

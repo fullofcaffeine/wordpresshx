@@ -10,7 +10,12 @@ import json
 import re
 from pathlib import Path
 
-from evidence_state import current_content_root, hosted_gate_identity, refresh_local_state
+from evidence_state import (
+    current_content_root,
+    evidence_subject_sha256,
+    hosted_gate_identity,
+    refresh_local_state,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -142,9 +147,11 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
     if not isinstance(hosted, dict):
         raise ValueError("receipt hosted workflow is not an object")
     content_root = current_content_root(ROOT)
+    evidence_subject = evidence_subject_sha256(ROOT)
     gate_identity = hosted_gate_identity(ROOT)
     hosted_is_current = (
         hosted.get("contentRoot") == content_root
+        and hosted.get("evidenceSubjectSha256") == evidence_subject
         and hosted.get("gateIdentitySha256") == gate_identity
     )
     if hosted.get("status") == "passed-current-main" and not hosted_is_current:
@@ -153,6 +160,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         previous_commit = hosted.get("commit")
         previous_root = hosted.get("contentRoot")
         previous_gate = hosted.get("gateIdentitySha256")
+        previous_subject = hosted.get("evidenceSubjectSha256")
         if isinstance(previous_run, int):
             hosted["historicalRunId"] = previous_run
         if isinstance(previous_job, int):
@@ -163,6 +171,8 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             hosted["historicalContentRoot"] = previous_root
         if isinstance(previous_gate, str):
             hosted["historicalGateIdentitySha256"] = previous_gate
+        if isinstance(previous_subject, str):
+            hosted["historicalEvidenceSubjectSha256"] = previous_subject
         hosted.update(
             {
                 "runId": None,
@@ -172,6 +182,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             }
         )
     hosted["contentRoot"] = content_root
+    hosted["evidenceSubjectSha256"] = evidence_subject
     hosted["gateIdentitySha256"] = gate_identity
     architecture_hosted = {
         "workflow": ".github/workflows/adoption-contract.yml",
@@ -182,6 +193,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         "commit": hosted["commit"],
         "status": hosted["status"],
         "contentRoot": hosted["contentRoot"],
+        "evidenceSubjectSha256": hosted["evidenceSubjectSha256"],
         "gateIdentitySha256": hosted["gateIdentitySha256"],
     }
     for field in (
@@ -190,6 +202,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         "historicalCommit",
         "historicalContentRoot",
         "historicalGateIdentitySha256",
+        "historicalEvidenceSubjectSha256",
     ):
         if field in hosted:
             architecture_hosted[field] = hosted[field]
@@ -204,6 +217,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             "capabilitySha256": capability["capabilitySetDigest"],
             "reviewSha256": review["reportDigest"],
             "bundleDigest": bundle["bundleDigest"],
+            "evidenceSubjectSha256": evidence_subject,
             "bundleFileSha256": sha256(
                 (FIXTURE / "contract/acme-calendar.bundle.json").read_bytes()
             ),
@@ -267,22 +281,22 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         and container_observation["outcome"] == "passed"
     )
     architecture_claims["typedCapabilityPrototype"] = (
-        "compile-tested-local-and-container-current-content-root"
+        "compile-tested-local-and-container-current-evidence-subject"
         if local_passed
         else "pending-current-observers"
     )
     architecture_claims["fixtureGenerator"] = (
-        "deterministic-source-derived-tested-local-and-container-current-content-root"
+        "deterministic-source-derived-tested-local-and-container-current-evidence-subject"
         if local_passed
         else "pending-current-observers"
     )
     architecture_claims["nativeSyntheticProviderRuntime"] = (
-        "synthetic-provider-tested-local-and-container-current-content-root"
+        "synthetic-provider-tested-local-and-container-current-evidence-subject"
         if local_passed
         else "pending-current-observers"
     )
     architecture_claims["ownershipTransaction"] = (
-        "production-owner-tested-local-and-container-current-content-root"
+        "production-owner-tested-local-and-container-current-evidence-subject"
         if local_passed
         else "pending-current-observers"
     )
@@ -290,9 +304,11 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
     verification = receipt["verification"]
     if not isinstance(verification, dict):
         raise ValueError("receipt verification is not an object")
+    verification.pop("canonicalTranscriptByteIdenticalAcrossHaxeGenesAndPhp", None)
     verification.update(
         {
             "sourceTreeSha256": prototype["sourceTreeSha256"],
+            "evidenceSubjectSha256": evidence_subject,
             "haxeVersion": haxe_version,
             "genesVersion": genes_version,
             "genesCommit": genes_commit,
@@ -310,8 +326,9 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             "syntheticProviderRuntimeUsed": True,
             "productionOwnershipTransactionUsed": True,
             "realProviderUsed": False,
+            "testOnlyShadowStateMachineTranscriptMatched": True,
             "outcome": (
-                "passed-local-and-container-current-content-root"
+                "passed-local-and-container-current-evidence-subject"
                 if local_passed
                 else "pending-current-observers"
             ),
@@ -328,6 +345,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
     subjects = receipt["subject"]
     if not isinstance(subjects, dict):
         raise ValueError("receipt subjects are not an object")
+    subjects.pop("independentValidator", None)
     subjects.update(
         {
             "abiModel": {"path": "scripts/adoption/abi_model.py"},
@@ -340,6 +358,12 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             "evidenceState": {"path": "scripts/adoption/evidence_state.py"},
             "evidenceStateProbe": {"path": "scripts/adoption/test-evidence.py"},
             "outcomeRecorder": {"path": "scripts/adoption/record-evidence.py"},
+            "javascriptSourceObserver": {
+                "path": "scripts/adoption/observe-javascript-source.cjs"
+            },
+            "determinismValidator": {
+                "path": "scripts/adoption/validate-architecture.py"
+            },
         }
     )
     for subject in subjects.values():

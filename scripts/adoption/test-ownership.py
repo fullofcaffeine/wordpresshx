@@ -167,6 +167,77 @@ def semantic_capability_forgery(
     return destination
 
 
+def redigested_member_forgery(
+    current: Path,
+    stage: Path,
+    destination: Path,
+    relative: str,
+    content: bytes,
+) -> Path:
+    destination_manifest = destination / "generated/_GeneratedFiles.json"
+    destination_manifest.parent.mkdir(parents=True, exist_ok=False)
+    value = manifest(current)
+    target = stage / relative
+    target.write_bytes(content)
+    bundle_path = "generated/adoption/acme-calendar/adoption.bundle.json"
+    bundle_file = stage / bundle_path
+    bundle = json.loads(bundle_file.read_text(encoding="utf-8"))
+    previous_digest = bundle["bundleDigest"]
+    member = next(record for record in bundle["members"] if record["path"] == relative)
+    member["sha256"] = sha256(content)
+    member["sizeBytes"] = len(content)
+    self_digest(bundle, "bundleDigest")
+    bundle_file.write_bytes(canonical(bundle) + b"\n")
+    for anchor_relative in (
+        "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
+        "generated/adoption/acme-calendar/php/acme-calendar-facade.php",
+    ):
+        anchor = stage / anchor_relative
+        anchor.write_text(
+            anchor.read_text(encoding="utf-8").replace(previous_digest, bundle["bundleDigest"]),
+            encoding="utf-8",
+        )
+    for record in value["files"]:
+        data = (stage / record["path"]).read_bytes()
+        record["contentSha256"] = sha256(data)
+        record["sizeBytes"] = len(data)
+    material = [
+        {"contentSha256": record["contentSha256"], "path": record["path"], "sizeBytes": record["sizeBytes"]}
+        for record in value["files"]
+    ]
+    value["inputs"]["generationSha256"] = sha256(canonical(material))
+    self_digest(value, "manifestDigest")
+    destination_manifest.write_bytes(canonical(value) + b"\n")
+    return destination
+
+
+def forged_source_for_stage(
+    current: Path,
+    stage: Path,
+    destination: Path,
+    mutate_manifest: object | None = None,
+) -> Path:
+    if mutate_manifest is not None and not callable(mutate_manifest):
+        raise TypeError("manifest mutation must be callable")
+    destination_manifest = destination / "generated/_GeneratedFiles.json"
+    destination_manifest.parent.mkdir(parents=True, exist_ok=False)
+    value = manifest(current)
+    for record in value["files"]:
+        data = (stage / record["path"]).read_bytes()
+        record["contentSha256"] = sha256(data)
+        record["sizeBytes"] = len(data)
+    material = [
+        {"contentSha256": record["contentSha256"], "path": record["path"], "sizeBytes": record["sizeBytes"]}
+        for record in value["files"]
+    ]
+    value["inputs"]["generationSha256"] = sha256(canonical(material))
+    if mutate_manifest is not None:
+        mutate_manifest(value)
+    self_digest(value, "manifestDigest")
+    destination_manifest.write_bytes(canonical(value) + b"\n")
+    return destination
+
+
 def invoke(
     node: str,
     runtime: Path,
@@ -232,16 +303,17 @@ def assert_owned(project: Path, source: Path) -> None:
 
 
 def main() -> None:
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 7:
         raise SystemExit(
-            "usage: test-ownership.py <runtime.js> <current-stage> "
+            "usage: test-ownership.py <current-runtime.js> <updated-runtime.js> <current-stage> "
             "<updated-stage> <work-root> <node>"
         )
     runtime = Path(sys.argv[1]).resolve()
-    current = Path(sys.argv[2]).resolve()
-    updated = Path(sys.argv[3]).resolve()
-    work = Path(sys.argv[4]).resolve()
-    node = sys.argv[5]
+    updated_runtime = Path(sys.argv[2]).resolve()
+    current = Path(sys.argv[3]).resolve()
+    updated = Path(sys.argv[4]).resolve()
+    work = Path(sys.argv[5]).resolve()
+    node = sys.argv[6]
     work.mkdir(parents=True, exist_ok=False)
 
     project = create_project(work, "stale-bundle-semantics")
@@ -276,6 +348,10 @@ def main() -> None:
         "reusable-scope": lambda value: value["authority"].__setitem__("sameNominalScopeInstanceReusable", True),
         "weak-artifact-match": lambda value: value["capabilities"][0]["probe"].__setitem__("artifactMatch", "exact-sha256"),
         "wrong-browser-scope": lambda value: value["capabilities"][0].__setitem__("scope", "process"),
+        "forged-executable-closure": lambda value: value["capabilities"][0]["probe"].__setitem__("executableClosureSha256", "0" * 64),
+        "joint-forged-bindings-symbols": lambda value: value["capabilities"][0]["probe"].update(
+            {"requiredBindings": ["forged.binding"], "requiredNativeSymbols": ["forged.native"]}
+        ),
     }
     for name, mutate in semantic_mutations.items():
         project = create_project(work, f"semantic-{name}")
@@ -289,6 +365,74 @@ def main() -> None:
             raise AssertionError(f"production validator accepted {name}: {failure}")
         if snapshot(project) != before_failure:
             raise AssertionError(f"{name} rejection began a transaction")
+
+    stage_adversaries = {
+        "anchor-digest-comment-only": (
+            "generated/adoption/acme-calendar/browser/acme-calendar-facade.mjs",
+            lambda stage: (
+                "// "
+                + json.loads(
+                    (stage / "generated/adoption/acme-calendar/adoption.bundle.json").read_text(encoding="utf-8")
+                )["bundleDigest"]
+                + "\nexport async function openExactProvider() { return { forged: true }; }\n"
+            ).encode("utf-8"),
+        ),
+        "replacement-anchor-forged-handle": (
+            "generated/adoption/acme-calendar/php/acme-calendar-facade.php",
+            lambda _stage: b"<?php final class WordPressHxAcmeCalendarFacade { public static function open(): object { return new stdClass(); } }\n",
+        ),
+        "changed-generated-haxe": (
+            "generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx",
+            lambda stage: (
+                stage
+                / "generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx"
+            ).read_bytes()
+            + b"// forged facade\n",
+        ),
+    }
+    for name, (relative, content) in stage_adversaries.items():
+        project = create_project(work, name)
+        before_failure = snapshot(project)
+        stage = make_stage(current, work / name / "stage")
+        (stage / relative).write_bytes(content(stage))
+        source = forged_source_for_stage(current, stage, work / name / "source")
+        failure = publish(node, runtime, project, source, stage, expected=3)
+        if failure is None or failure.get("code") != "validator-failed":
+            raise AssertionError(f"trusted stage validator accepted {name}: {failure}")
+        if snapshot(project) != before_failure:
+            raise AssertionError(f"{name} rejection began a transaction")
+
+    project = create_project(work, "forged-ownership-manifest")
+    before_failure = snapshot(project)
+    stage = make_stage(current, work / "forged-ownership-manifest/stage")
+    source = forged_source_for_stage(
+        current,
+        stage,
+        work / "forged-ownership-manifest/source",
+        lambda value: value["generator"].__setitem__("cliVersion", "forged"),
+    )
+    failure = publish(node, runtime, project, source, stage, expected=3)
+    if failure is None or failure.get("code") != "validator-failed":
+        raise AssertionError(f"trusted stage validator accepted forged ownership manifest: {failure}")
+    if snapshot(project) != before_failure:
+        raise AssertionError("forged ownership manifest rejection began a transaction")
+
+    project = create_project(work, "redigested-haxe-facade")
+    before_failure = snapshot(project)
+    stage = make_stage(current, work / "redigested-haxe-facade/stage")
+    haxe_relative = "generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx"
+    forged_source = redigested_member_forgery(
+        current,
+        stage,
+        work / "redigested-haxe-facade/source",
+        haxe_relative,
+        (stage / haxe_relative).read_bytes() + b"// re-digested forged facade\n",
+    )
+    failure = publish(node, runtime, project, forged_source, stage, expected=3)
+    if failure is None or failure.get("code") != "validator-failed":
+        raise AssertionError(f"trusted stage plan accepted re-digested Haxe: {failure}")
+    if snapshot(project) != before_failure:
+        raise AssertionError("re-digested Haxe rejection began a transaction")
 
     project = create_project(work, "publish-noop-clean")
     provider_before = provider_snapshot(project)
@@ -325,7 +469,7 @@ def main() -> None:
     )
     result = publish(
         node,
-        runtime,
+        updated_runtime,
         project,
         updated,
         make_stage(updated, work / "update/stage-updated"),
@@ -349,7 +493,7 @@ def main() -> None:
     before_failure = snapshot(project)
     failure = publish(
         node,
-        runtime,
+        updated_runtime,
         project,
         updated,
         make_stage(updated, work / "modified-owned/stage-updated"),
@@ -372,14 +516,14 @@ def main() -> None:
     before_crash = snapshot(project)
     publish(
         node,
-        runtime,
+        updated_runtime,
         project,
         updated,
         make_stage(updated, work / "rollback/stage-updated"),
         fault="crash:after-operation-1",
         expected=91,
     )
-    recovered = invoke(node, runtime, "recover-adoption", project)
+    recovered = invoke(node, updated_runtime, "recover-adoption", project)
     if recovered != {"outcome": "rolled-back"}:
         raise AssertionError(f"interrupted adoption update did not roll back: {recovered}")
     if snapshot(project) != before_crash or provider_snapshot(project) != provider_before:

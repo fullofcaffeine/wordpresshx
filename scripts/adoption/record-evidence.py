@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from evidence_state import record_local_pass
+from evidence_state import evidence_subject_sha256, record_local_pass
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,37 +34,39 @@ def main() -> None:
     complete = all(
         isinstance(receipt.get(observation_key), dict)
         and receipt[observation_key].get("outcome") == "passed"
+        and receipt[observation_key].get("evidenceSubjectSha256")
+        == evidence_subject_sha256(ROOT)
         for observation_key in ("localObservation", "containerObservation")
     )
     verification = receipt["verification"]
     verification["outcome"] = (
-        "passed-local-and-container-current-content-root"
+        "passed-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )
     claims = receipt["claims"]
     claims["typedCapabilityPrototype"] = (
-        "compile-tested-local-and-container-current-content-root"
+        "compile-tested-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )
     claims["noProviderExecution"] = (
-        "static-generation-tested-local-and-container-current-content-root"
+        "static-generation-tested-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )
     claims["fixtureGenerator"] = (
-        "deterministic-source-derived-tested-local-and-container-current-content-root"
+        "deterministic-source-derived-tested-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )
     claims["nativeProviderAbi"] = (
-        "synthetic-provider-tested-local-and-container-current-content-root"
+        "synthetic-provider-tested-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )
     claims["ownershipTransaction"] = (
-        "production-owner-tested-local-and-container-current-content-root"
+        "production-owner-tested-local-and-container-current-evidence-subject"
         if complete
         else "pending-current-observers"
     )

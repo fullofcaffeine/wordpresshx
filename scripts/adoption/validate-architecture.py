@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently check ADR-015 source evidence, semantics, and ownership shape."""
+"""Check ADR-015 deterministic generation, semantics, and ownership consistency."""
 
 from __future__ import annotations
 
@@ -12,7 +12,11 @@ import sys
 from pathlib import Path, PurePosixPath
 
 from abi_model import AbiModel, merge_model
-from evidence_state import hosted_gate_identity, observer_identities
+from evidence_state import (
+    evidence_subject_sha256,
+    hosted_gate_identity,
+    observer_identities,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -797,7 +801,6 @@ def validate_haxe_authority() -> None:
         "private final class AuthorityKey",
         "key.verify()",
         "private final class AuthorityCore",
-        "#if adoption_contract_test",
         "final class PhpAcmeCalendarAdapter",
         "final class BrowserAcmeCalendarAdapter",
         "GeneratedPhpFacade.open",
@@ -805,8 +808,8 @@ def validate_haxe_authority() -> None:
     ):
         if required not in adoption:
             raise ValidationError(f"source-owned Haxe adapter omits {required}")
-    if "final class FixtureTargetAdapter" not in adoption.split("#if adoption_contract_test", 1)[1].split("#end", 1)[0]:
-        raise ValidationError("fixture authority adapter is not compile-test-only")
+    if "FixtureTargetAdapter" in adoption or "adoption_contract_test" in adoption:
+        raise ValidationError("product Haxe source exposes fixture authority minting")
     if "GeneratedAcmeCalendar.provider" not in calendar:
         raise ValidationError("authored Haxe entry point is detached from generated ABI")
     forbidden = re.compile(r"\b(?:Dynamic|Any|Reflect|untyped|cast)\b")
@@ -1257,6 +1260,11 @@ def validate_receipt(
         "ownership",
     ]
     identities = observer_identities(ROOT)
+    evidence_subject = evidence_subject_sha256(ROOT)
+    if prototype.get("evidenceSubjectSha256") != evidence_subject:
+        raise ValidationError("prototype evidence uses a stale evidence subject")
+    if verification.get("evidenceSubjectSha256") != evidence_subject:
+        raise ValidationError("receipt verification uses a stale evidence subject")
     observation_outcomes: list[object] = []
     for key, mode in (
         ("localObservation", "local"),
@@ -1265,6 +1273,8 @@ def validate_receipt(
         observation = require_dict(receipt.get(key), f"receipt.{key}")
         if observation.get("contentRoot") != prototype.get("bundleDigest"):
             raise ValidationError(f"{mode} observation uses a different content root")
+        if observation.get("evidenceSubjectSha256") != evidence_subject:
+            raise ValidationError(f"{mode} observation uses a stale evidence subject")
         if observation.get("executionMode") != mode:
             raise ValidationError(f"{mode} observation has the wrong execution mode")
         outcome = observation.get("outcome")
@@ -1292,7 +1302,7 @@ def validate_receipt(
         else:
             raise ValidationError(f"{mode} evidence outcome is not closed")
     expected_outcome = (
-        "passed-local-and-container-current-content-root"
+        "passed-local-and-container-current-evidence-subject"
         if observation_outcomes == ["passed", "passed"]
         else "pending-current-observers"
     )
@@ -1308,12 +1318,15 @@ def validate_receipt(
         "commit",
         "status",
         "contentRoot",
+        "evidenceSubjectSha256",
         "gateIdentitySha256",
     ):
         if architecture_hosted.get(field) != hosted.get(field):
             raise ValidationError(f"architecture hosted {field} differs from its receipt authority")
     if hosted.get("contentRoot") != prototype.get("bundleDigest"):
         raise ValidationError("hosted evidence uses a different content root")
+    if hosted.get("evidenceSubjectSha256") != evidence_subject:
+        raise ValidationError("hosted evidence uses a stale evidence subject")
     if hosted.get("gateIdentitySha256") != hosted_gate_identity(ROOT):
         raise ValidationError("hosted evidence uses a stale gate identity")
     if hosted.get("required") is not True:
@@ -1340,8 +1353,8 @@ def main() -> None:
     mutations = mutation_corpus(documents, model, schemas)
     validate_architecture(documents, model, len(mutations))
     print(
-        "ADR-015 architecture passed source-derived ABI, immutable bundle, "
-        f"and {len(mutations)} independent mutations"
+        "ADR-015 determinism and self-consistency checks passed source-derived ABI, "
+        f"immutable bundle, and {len(mutations)} re-digested mutations"
     )
 
 

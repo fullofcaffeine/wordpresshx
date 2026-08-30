@@ -13,9 +13,10 @@ import json, sys
 from pathlib import Path
 root, output, observer_id = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
 sys.path.insert(0, str(root / "scripts/adoption"))
-from evidence_state import current_content_root, observer_identities
+from evidence_state import current_content_root, evidence_subject_sha256, observer_identities
 output.write_text(json.dumps({
     "contentRoot": current_content_root(root),
+    "evidenceSubjectSha256": evidence_subject_sha256(root),
     "id": observer_id,
     "identitySha256": observer_identities(root)[observer_id],
     "outcome": "passed",
@@ -84,6 +85,13 @@ if [[ "$("${node_command}" --version)" != "v22.17.0" ]]; then
 	fi
 fi
 
+typescript_root="${repository_root}/packages/gutenberg/build-tooling"
+typescript_command="${typescript_root}/node_modules/.bin/tsc"
+if [[ ! -x "${typescript_command}" ]]; then
+	echo "ADR-015 adoption-contract gate requires the pinned Gutenberg build-tooling install" >&2
+	exit 1
+fi
+
 export WORDPRESSHX_ADOPTION_POISON_SENTINEL="${test_root}/provider-executed"
 generation_one="${test_root}/generation-one"
 generation_two="${test_root}/generation-two"
@@ -92,6 +100,8 @@ python3 "${repository_root}/scripts/adoption/generate-fixture.py" --output "${ge
 diff -ru "${generation_one}" "${generation_two}"
 diff -ru "${fixture_root}/contract" "${generation_one}"
 "${node_command}" "${repository_root}/scripts/adoption/test-json-schema.cjs"
+"${node_command}" "${repository_root}/scripts/adoption/observe-javascript-source.cjs" \
+	"${fixture_root}/inputs" "${generation_one}" >"${test_root}/javascript-source-observer.json"
 mark_observer schema
 if [[ -e "${WORDPRESSHX_ADOPTION_POISON_SENTINEL}" ]]; then
 	echo "ADR-015 static generator executed provider runtime code" >&2
@@ -174,6 +184,98 @@ assert_generation_failure runtime-js-default \
 	'unsupported JavaScript runtime parameter syntax: props = {}' \
 	mutate_runtime_js_default
 
+mutate_runtime_js_reserved() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(await)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-reserved \
+	'unsupported JavaScript runtime parameter identifier: await' \
+	mutate_runtime_js_reserved
+
+mutate_runtime_js_let() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(let)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-let \
+	'unsupported JavaScript runtime parameter identifier: let' \
+	mutate_runtime_js_let
+
+mutate_runtime_js_eval() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(eval)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-eval \
+	'unsupported JavaScript runtime parameter identifier: eval' \
+	mutate_runtime_js_eval
+
+mutate_runtime_js_arguments() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(arguments)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-arguments \
+	'unsupported JavaScript runtime parameter identifier: arguments' \
+	mutate_runtime_js_arguments
+
+mutate_runtime_js_if() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(if)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-if \
+	'unsupported JavaScript runtime parameter identifier: if' \
+	mutate_runtime_js_if
+
+mutate_runtime_js_duplicate() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(props, props)/' "$1/index.js"
+}
+assert_generation_failure runtime-js-duplicate \
+	'duplicate JavaScript runtime parameter identifier: props' \
+	mutate_runtime_js_duplicate
+
+assert_javascript_observer_failure() {
+	local name="$1"
+	local expected_fragment="$2"
+	local inputs="${test_root}/observer-${name}-inputs"
+	shift 2
+	mkdir -p "${inputs}"
+	cp -rf "${fixture_root}/inputs/." "${inputs}/"
+	"$@" "${inputs}"
+	if "${node_command}" "${repository_root}/scripts/adoption/observe-javascript-source.cjs" \
+		"${inputs}" "${generation_one}" >"${test_root}/observer-${name}.stdout" 2>"${test_root}/observer-${name}.stderr"; then
+		echo "independent JavaScript observer accepted ${name}" >&2
+		exit 1
+	fi
+	grep -F -- "${expected_fragment}" "${test_root}/observer-${name}.stderr" >/dev/null
+}
+
+mutate_observer_js_comment() {
+	perl -pi -e 's/function CalendarBadge\(props\)/function CalendarBadge(\/\* hidden \*\/ props)/' "$1/index.js"
+}
+assert_javascript_observer_failure comments-around-formal \
+	'comments or unsupported tokens surround parameter props' \
+	mutate_observer_js_comment
+assert_javascript_observer_failure duplicate-formal \
+	'duplicate parameter props' \
+	mutate_runtime_js_duplicate
+assert_javascript_observer_failure destructured-formal \
+	'unsupported parameter form in CalendarBadge' \
+	mutate_runtime_js_destructuring
+assert_javascript_observer_failure rest-formal \
+	'unsupported parameter form in CalendarBadge' \
+	mutate_runtime_js_rest
+assert_javascript_observer_failure default-formal \
+	'unsupported parameter form in CalendarBadge' \
+	mutate_runtime_js_default
+assert_javascript_observer_failure reserved-formal \
+	'unsupported parameter identifier await' \
+	mutate_runtime_js_reserved
+assert_javascript_observer_failure let-formal \
+	'unsupported parameter identifier let' \
+	mutate_runtime_js_let
+assert_javascript_observer_failure eval-formal \
+	'unsupported parameter identifier eval' \
+	mutate_runtime_js_eval
+assert_javascript_observer_failure arguments-formal \
+	'unsupported parameter identifier arguments' \
+	mutate_runtime_js_arguments
+assert_javascript_observer_failure if-formal \
+	'module syntax is invalid' \
+	mutate_runtime_js_if
+
 interface_inputs="${test_root}/typescript-interface-only-drift-inputs"
 mkdir -p "${interface_inputs}"
 cp -rf "${fixture_root}/inputs/." "${interface_inputs}/"
@@ -231,30 +333,36 @@ if grep --line-number --extended-regexp \
 	exit 1
 fi
 
-typescript_root="${repository_root}/packages/gutenberg/build-tooling"
-typescript_command="${typescript_root}/node_modules/.bin/tsc"
-if [[ ! -x "${typescript_command}" ]]; then
-	echo "ADR-015 adoption-contract gate requires the pinned Gutenberg build-tooling install" >&2
-	exit 1
-fi
-
 (
 	cd "${repository_root}/packages/cli"
 	lix --silent download
-	mkdir -p "${test_root}/ownership-runtime"
+	mkdir -p "${test_root}/ownership-runtime-current" "${test_root}/ownership-runtime-updated"
 	"${scoped_haxe}" \
 		-lib genes-ts \
 		-lib hxnodejs \
 		-cp src \
 		-cp "${fixture_root}/test-ownership" \
+		-resource "${generation_one}/acme-calendar.expected-stage.json@adoption-stage" \
 		-main adoption.ownership.Main \
 		-D js-es=6 \
 		-D wordpresshx_ownership_fault_injection \
 		-dce full \
-		-js "${test_root}/ownership-runtime/index.js"
+		-js "${test_root}/ownership-runtime-current/index.js"
+	"${scoped_haxe}" \
+		-lib genes-ts \
+		-lib hxnodejs \
+		-cp src \
+		-cp "${fixture_root}/test-ownership" \
+		-resource "${test_root}/mutated-generation/acme-calendar.expected-stage.json@adoption-stage" \
+		-main adoption.ownership.Main \
+		-D js-es=6 \
+		-D wordpresshx_ownership_fault_injection \
+		-dce full \
+		-js "${test_root}/ownership-runtime-updated/index.js"
 )
 python3 "${repository_root}/scripts/adoption/test-ownership.py" \
-	"${test_root}/ownership-runtime/index.js" \
+	"${test_root}/ownership-runtime-current/index.js" \
+	"${test_root}/ownership-runtime-updated/index.js" \
 	"${generation_one}" \
 	"${test_root}/mutated-generation" \
 	"${test_root}/ownership-work" \
@@ -317,67 +425,13 @@ fi
 
 main_class="Main"
 "${scoped_haxe}" \
-	-cp "${fixture_root}/src" \
-	-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
 	-cp "${fixture_root}/test-support" \
 	-cp "${fixture_root}/test" \
 	-main "${main_class}" \
-	-D adoption_contract_test \
-	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
 	--interp >"${test_root}/interp.txt"
-
-(
-	cd "${repository_root}/packages/cli"
-	"${scoped_haxe}" \
-			-cp ../../fixtures/adoption-contract/src \
-			-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
-			-cp ../../fixtures/adoption-contract/test-support \
-			-cp ../../fixtures/adoption-contract/test \
-		-main "${main_class}" \
-		-D adoption_contract_test \
-		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
-		-lib genes-ts \
-		-lib hxnodejs \
-		-D genes.ts \
-		-D js-es=6 \
-		-dce full \
-		-js "${test_root}/genes/index.ts"
-)
-"${typescript_command}" \
-	--strict \
-	--target ES2022 \
-	--module NodeNext \
-	--moduleResolution NodeNext \
-	--rootDir "${test_root}/genes" \
-	--outDir "${test_root}/javascript" \
-	--skipLibCheck \
-	--types node \
-	--typeRoots "${typescript_root}/node_modules/@types" \
-	--pretty false \
-	"${test_root}/genes/index.ts"
-"${node_command}" "${test_root}/javascript/index.js" >"${test_root}/javascript.txt"
-
-"${scoped_haxe}" \
-	-cp "${fixture_root}/src" \
-	-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
-	-cp "${fixture_root}/test-support" \
-	-cp "${fixture_root}/test" \
-	-main "${main_class}" \
-	-D adoption_contract_test \
-	--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
-	--php "${test_root}/php"
-if [[ "${php_mode}" == "local" ]]; then
-	"${php_runtime}" "${test_root}/php/index.php" >"${test_root}/php.txt"
-else
-	docker run --rm --network none \
-		--mount "type=bind,src=${test_root},dst=/work,readonly" \
-		-w /work "${php_image}" php php/index.php >"${test_root}/php.txt"
-fi
 
 expected="${fixture_root}/expected/capability-plan.txt"
 cmp "${expected}" "${test_root}/interp.txt"
-cmp "${expected}" "${test_root}/javascript.txt"
-cmp "${expected}" "${test_root}/php.txt"
 
 assert_compile_failure() {
 	local fixture="$1"
@@ -386,7 +440,6 @@ assert_compile_failure() {
 	if "${scoped_haxe}" \
 			-cp "${fixture_root}/src" \
 			-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
-			-cp "${fixture_root}/test-support" \
 			-cp "${fixture_root}/test-negative/${fixture}" \
 		-main Main \
 		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
@@ -403,10 +456,38 @@ assert_compile_failure() {
 	done
 }
 
+assert_hostile_define_failure() {
+	local target="$1"
+	local diagnostic="${test_root}/hostile-define-${target}.diagnostic.txt"
+	local output_args=()
+	case "${target}" in
+		interp) output_args=(--interp) ;;
+		php) output_args=(--php "${test_root}/hostile-define-php") ;;
+		javascript) output_args=(-js "${test_root}/hostile-define.js") ;;
+		*) echo "unknown hostile-define target ${target}" >&2; exit 1 ;;
+	esac
+	if "${scoped_haxe}" \
+		-cp "${fixture_root}/src" \
+		-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
+		-cp "${fixture_root}/test-negative/hostile_define" \
+		-main Main \
+		-D adoption_contract_test \
+		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
+		"${output_args[@]}" >"${diagnostic}" 2>&1; then
+		echo "hostile adoption_contract_test define exposed product minting on ${target}" >&2
+		exit 1
+	fi
+	grep -F -- 'Class<wordpress.hx.adoption.prototype.Adoption> has no field FixtureTargetAdapter' "${diagnostic}" >/dev/null
+}
+
+assert_hostile_define_failure interp
+assert_hostile_define_failure php
+assert_hostile_define_failure javascript
+
 assert_compile_failure direct_token_construction \
 	'wordpress.hx.adoption.prototype.PhpRequestScope should be wordpress.hx.adoption.prototype._Adoption.AuthorityKey'
 assert_compile_failure wrong_capability \
-	'wordpress.hx.adoption.prototype.generated.CalendarReadCapability should be wordpress.hx.adoption.prototype.generated.CalendarBadgeCapability'
+	'wordpress.hx.adoption.prototype.CalendarReadCapability should be wordpress.hx.adoption.prototype.CalendarBadgeCapability'
 assert_compile_failure cross_request_scope \
 	'wordpress.hx.adoption.prototype.PhpRequestScope should be wordpress.hx.adoption.prototype.BrowserModuleScope'
 assert_compile_failure omitted_binding \
@@ -458,16 +539,20 @@ parts = Path(sys.argv[2])
 output = Path(sys.argv[3])
 execution_mode = sys.argv[4]
 sys.path.insert(0, str(root / "scripts/adoption"))
-from evidence_state import OBSERVER_IDS, current_content_root, observer_identities
+from evidence_state import OBSERVER_IDS, current_content_root, evidence_subject_sha256, observer_identities
 
 identities = observer_identities(root)
 observers = [json.loads((parts / f"{observer_id}.json").read_text(encoding="utf-8")) for observer_id in OBSERVER_IDS]
 if any(value["contentRoot"] != current_content_root(root) for value in observers):
     raise SystemExit("observer receipts used different content roots")
+if any(value["evidenceSubjectSha256"] != evidence_subject_sha256(root) for value in observers):
+    raise SystemExit("observer receipts used different evidence subjects")
 for value in observers:
     value.pop("contentRoot")
+    value.pop("evidenceSubjectSha256")
 record = {
     "contentRoot": current_content_root(root),
+    "evidenceSubjectSha256": evidence_subject_sha256(root),
     "executionMode": execution_mode,
     "observedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
     "observers": observers,
