@@ -11,7 +11,7 @@
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "0123f2d13b1d752e66cdbdf90f1556307cb78bbb23925bbfc2319c11d8e58e45"
+      "sha256": "3844de34361bbbea18df6a1aa35144efb636f3b3e6f49c12bde61f732561a0e6"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -164,10 +164,10 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-current-main-run",
+    "runId": 33338453939,
+    "jobId": 99329523358,
+    "commit": "add2f6e9f64581cabe8cd833295b213ff16c2503",
+    "status": "passed-current-main",
     "historicalRunId": 32883312308,
     "historicalJobId": 97917772321,
     "historicalCommit": "6168114233007c1d585e4e6318ff5386e6f51fe5",
