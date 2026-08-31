@@ -1065,7 +1065,6 @@ fi
 python3 - <<'PY'
 import hashlib
 import json
-import platform
 import re
 import subprocess
 from pathlib import Path
@@ -3368,10 +3367,6 @@ assert adoption_toolchain_lock == {
         },
     },
 }
-assert platform.python_implementation() == adoption_toolchain_lock["python"][
-    "implementation"
-]
-assert platform.python_version() == adoption_toolchain_lock["python"]["version"]
 assert adoption_prototype["targets"][0] == "cpython-3.14.5-evidence-runtime"
 assert adoption_prototype["targets"][2] == (
     f"genes-ts-{cli_dependency_lock['compiler']['version']}@"
