@@ -888,6 +888,7 @@ const expected = Object.freeze({{
   executableClosureSha256: "{executable_closure_sha256}",
 }});
 const expectedStaticMembers = Object.freeze({policy_json});
+const badgePayloads = new WeakMap();
 
 function digest(bytes) {{
   return createHash("sha256").update(bytes).digest("hex");
@@ -1000,7 +1001,9 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
       if (value === null || typeof value !== "object" || typeof value.then === "function") {{
         throw new Error("wrong-provider-result-shape");
       }}
-      return value;
+      const carrier = Object.create(null);
+      badgePayloads.set(carrier, value);
+      return Object.freeze(carrier);
     }},
   }});
 }}

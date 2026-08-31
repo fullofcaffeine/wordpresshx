@@ -14,6 +14,7 @@ OBSERVER_IDS = ("schema", "native", "haxe", "mutation", "ownership")
 # the executable contract and are excluded to avoid a self-invalidating cycle.
 EVIDENCE_SUBJECT_STATIC_PATHS = (
     ".github/workflows/adoption-contract.yml",
+    ".github/workflows/repository.yml",
     "fixtures/adoption-contract/expected/capability-plan.txt",
     "manifests/adoption-contract-toolchain.lock.json",
     "manifests/toolchain.lock.json",
@@ -27,6 +28,7 @@ EVIDENCE_SUBJECT_STATIC_PATHS = (
     "schemas/adoption-capability.schema.json",
     "schemas/adoption-contract.schema.json",
     "schemas/adoption-review.schema.json",
+    "scripts/check-repository.sh",
 )
 
 

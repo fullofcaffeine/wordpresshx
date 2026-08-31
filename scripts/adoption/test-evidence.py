@@ -103,6 +103,8 @@ def main() -> None:
         "adversary": "scripts/adoption/test-ownership.py",
         "gate": "scripts/adoption/test.sh",
         "workflow": ".github/workflows/adoption-contract.yml",
+        "repository-workflow": ".github/workflows/repository.yml",
+        "repository-gate": "scripts/check-repository.sh",
         "lock": "packages/cli/dependency-lock.json",
         "python-lock": "manifests/adoption-contract-toolchain.lock.json",
     }
@@ -119,6 +121,61 @@ def main() -> None:
             if evidence_subject_sha256(copy_root) == baseline_subject:
                 raise AssertionError(f"evidence subject ignored {name}")
             target.write_bytes(original)
+
+        workflow = copy_root / ".github/workflows/repository.yml"
+        workflow_text = workflow.read_text(encoding="utf-8")
+        python_step = """      - name: Install exact adoption evidence Python runtime
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: 3.14.5
+"""
+        repository_step = """      - name: Validate bootstrap repository
+        run: bash scripts/check-repository.sh
+"""
+        repository_gate = copy_root / "scripts/check-repository.sh"
+        repository_gate_text = repository_gate.read_text(encoding="utf-8")
+        semantic_mutations = {
+            "repository-python-order": (
+                workflow,
+                workflow_text.replace(
+                    python_step + repository_step,
+                    repository_step + python_step,
+                    1,
+                ),
+            ),
+            "repository-python-version": (
+                workflow,
+                workflow_text.replace("python-version: 3.14.5", "python-version: 3.14.4", 1),
+            ),
+            "repository-refresh-removal": (
+                repository_gate,
+                repository_gate_text.replace(
+                    "python3 scripts/adoption/refresh-evidence.py\n", "", 1
+                ),
+            ),
+            "repository-validation-removal": (
+                repository_gate,
+                repository_gate_text.replace(
+                    "python3 scripts/adoption/validate-architecture.py\n", "", 1
+                ),
+            ),
+            "repository-interpreter-drift": (
+                repository_gate,
+                repository_gate_text.replace(
+                    "python3 scripts/adoption/refresh-evidence.py",
+                    "python scripts/adoption/refresh-evidence.py",
+                    1,
+                ),
+            ),
+        }
+        for name, (target, mutation) in semantic_mutations.items():
+            original = target.read_text(encoding="utf-8")
+            if mutation == original:
+                raise AssertionError(f"evidence mutation did not alter {name}")
+            target.write_text(mutation, encoding="utf-8")
+            if evidence_subject_sha256(copy_root) == baseline_subject:
+                raise AssertionError(f"evidence subject ignored {name}")
+            target.write_text(original, encoding="utf-8")
     print(
         "ADR-015 evidence state rejected stale and incomplete passes and covered "
         "every authoritative subject class"

@@ -174,10 +174,18 @@ try {
     throw new Error("wrong-provider-result-shape");
   }
   const badge = provider.renderBadge({ count, label });
-  if (badge === null || typeof badge !== "object" || typeof badge.then === "function") {
+  const badgeCarrier = {
+    object: badge !== null && typeof badge === "object",
+    frozen: Object.isFrozen(badge),
+    nullPrototype: Object.getPrototypeOf(badge) === null,
+    ownKeyCount: Reflect.ownKeys(badge).length,
+    thenType: typeof badge.then,
+  };
+  if (!badgeCarrier.object || !badgeCarrier.frozen || !badgeCarrier.nullPrototype
+      || badgeCarrier.ownKeyCount !== 0 || badgeCarrier.thenType !== "undefined") {
     throw new Error("wrong-provider-result-shape");
   }
-  process.stdout.write(JSON.stringify({ outcome: "available", label, badge }) + "\n");
+  process.stdout.write(JSON.stringify({ outcome: "available", label, badgeCarrier }) + "\n");
 } catch (failure) {
   process.stdout.write(JSON.stringify({ outcome: "unavailable", message: failure.message }) + "\n");
 }
@@ -199,6 +207,16 @@ const facadeBytes = Buffer.from(process.argv[1], "base64");
 globalThis.WordPressHxAcmeCalendarFacade = await import(
   `data:text/javascript;base64,${facadeBytes.toString("base64")}`
 );
+globalThis.WordPressHxBadgeCarrierObserver = Object.freeze({
+  observe(value) {
+    return value !== null
+      && typeof value === "object"
+      && Object.isFrozen(value)
+      && Object.getPrototypeOf(value) === null
+      && Reflect.ownKeys(value).length === 0
+      && typeof value.then === "undefined";
+  },
+});
 await import(process.argv[2]);
 '''
 
@@ -325,6 +343,41 @@ def copy_browser_provider(destination: Path) -> None:
     for name in ("index.js", "package-metadata.json"):
         shutil.copyfile(INPUT_ROOT / name, destination / name)
     shutil.copyfile(destination / "package-metadata.json", destination / "package.json")
+
+
+def stateful_then_browser_provider(destination: Path) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """export function CalendarBadge(props) {
+  return Object.freeze({
+    kind: "acme-calendar-badge",
+    count: props.count,
+    label: props.label,
+  });
+}"""
+    new = """export function CalendarBadge(props) {
+  let thenReads = 0;
+  return Object.freeze({
+    kind: "acme-calendar-badge",
+    count: props.count,
+    label: props.label,
+    get then() {
+      thenReads += 1;
+      if (thenReads === 1 || !globalThis.WordPressHxAcmeCalendarFacade) {
+        return undefined;
+      }
+      return function then(resolve) {
+        queueMicrotask(() => resolve({ kind: "delayed" }));
+      };
+    },
+  });
+}"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError("stateful thenable replacement target is absent or repeated")
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
 
 
 INPUT_ROOT = ROOT / "fixtures/adoption-contract/inputs"
@@ -542,10 +595,12 @@ def main() -> None:
     if js_success != {
         "outcome": "available",
         "label": "3 calendar events",
-        "badge": {
-            "kind": "acme-calendar-badge",
-            "count": 3,
-            "label": "3 calendar events",
+        "badgeCarrier": {
+            "object": True,
+            "frozen": True,
+            "nullPrototype": True,
+            "ownKeyCount": 0,
+            "thenType": "undefined",
         },
     } or js_sentinel.read_text(encoding="utf-8") != "browser provider code executed\n":
         raise AssertionError(f"captured browser facade success mismatch: {js_success}")
@@ -725,6 +780,36 @@ def main() -> None:
         != "browser provider code executed\n"
     ):
         raise AssertionError(f"Haxe-to-JavaScript provider observer mismatch: {js_haxe.stdout}")
+
+    stateful_provider = work / "stateful-then-browser-provider"
+    original_module, stateful_module = stateful_then_browser_provider(stateful_provider)
+    stateful_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(stateful_module)
+    )
+    stateful_sentinel = work / "haxe-js-stateful-then-provider-executed"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(stateful_sentinel)
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(stateful_provider)
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = "haxe-stateful-then-observer"
+    stateful_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(stateful_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+    )
+    if (
+        stateful_haxe.stdout
+        != "haxe-js-native|immediate-string|opaque-object-observed\n"
+        or stateful_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "stateful thenable crossed the Haxe boundary: " + stateful_haxe.stdout
+        )
 
     print(
         "ADR-015 captured facades, immutable provider handles, and Haxe PHP/JS observers passed"

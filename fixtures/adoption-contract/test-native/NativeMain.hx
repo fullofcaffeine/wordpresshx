@@ -2,6 +2,7 @@
 import js.Node;
 import wordpress.hx.adoption.prototype.Adoption.BrowserAcmeCalendarAdapter;
 import wordpress.hx.adoption.prototype.generated.GeneratedAcmeCalendar.CalendarBadgeProps;
+import wordpress.hx.adoption.prototype.generated.GeneratedAcmeCalendar.GeneratedJavascriptObject;
 #elseif php
 import wordpress.hx.adoption.prototype.Adoption.PhpAcmeCalendarAdapter;
 import wordpress.hx.adoption.prototype.generated.GeneratedAcmeCalendar.EventQuery;
@@ -18,7 +19,10 @@ final class NativeMain {
 			if (label != "3.5 calendar events") {
 				throw new haxe.Exception("Haxe observer received a non-immediate or wrong JavaScript label");
 			}
-			adapter.renderBadge(new CalendarBadgeProps(3.5, label));
+			final badge = adapter.renderBadge(new CalendarBadgeProps(3.5, label));
+			if (!BadgeCarrierObserver.observe(badge)) {
+				throw new haxe.Exception("Haxe observer received a mutable or thenable JavaScript carrier");
+			}
 			Node.process.stdout.write("haxe-js-native|immediate-string|opaque-object-observed\n");
 			return adapter;
 		});
@@ -39,3 +43,10 @@ final class NativeMain {
 		return value;
 	}
 }
+
+#if js
+@:native("WordPressHxBadgeCarrierObserver")
+extern class BadgeCarrierObserver {
+	public static function observe(value:GeneratedJavascriptObject):Bool;
+}
+#end
