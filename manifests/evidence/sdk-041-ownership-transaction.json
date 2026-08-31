@@ -138,15 +138,15 @@
     "productionClosureSourceCount": 11,
     "emittedProductionModuleCount": 7,
     "localOutcome": "passed",
-    "hostedStatus": "pending-current-main-run"
+    "hostedStatus": "passed-current-main"
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
-    "runId": null,
-    "jobId": null,
-    "commit": null,
-    "status": "pending-first-hosted-main-run",
+    "runId": 33355695963,
+    "jobId": 99377299260,
+    "commit": "51404738fc4bbd18e21e75d4b316d8d4d64c4b64",
+    "status": "passed",
     "required": true
   },
   "historicalHostedWorkflow": {
@@ -205,10 +205,10 @@
     "completedAt": "2026-07-21T12:30:03Z"
   },
   "claims": {
-    "sdk041ArtifactOwner": "runtime-tested-local",
-    "processFailureAtomicity": "runtime-tested-local",
-    "processCrashConsistency": "runtime-tested-local",
-    "cleanAndAdopt": "runtime-tested-local",
+    "sdk041ArtifactOwner": "runtime-tested-hosted",
+    "processFailureAtomicity": "runtime-tested-hosted",
+    "processCrashConsistency": "runtime-tested-hosted",
+    "cleanAndAdopt": "runtime-tested-hosted",
     "powerLossDurability": "not-tested",
     "windowsFilesystem": "not-tested",
     "networkFilesystem": "not-tested",

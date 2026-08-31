@@ -276,10 +276,10 @@
       "workflow": "Repository bootstrap",
       "job": "haxe",
       "step": "Test Haxe-first site scaffolding",
-      "runId": null,
-      "jobId": null,
-      "commit": null,
-      "status": "pending-current-main-run"
+      "runId": 33355695963,
+      "jobId": 99377299260,
+      "commit": "51404738fc4bbd18e21e75d4b316d8d4d64c4b64",
+      "status": "passed-current-main"
     }
   },
   "claims": {
