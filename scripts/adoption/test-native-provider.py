@@ -203,18 +203,24 @@ require $argv[2];
 
 
 JS_HAXE_PROBE = r'''
+const safeIsFrozen = Object.isFrozen;
+const safeGetPrototypeOf = Object.getPrototypeOf;
+const safeOwnKeys = Reflect.ownKeys;
 const facadeBytes = Buffer.from(process.argv[1], "base64");
 globalThis.WordPressHxAcmeCalendarFacade = await import(
   `data:text/javascript;base64,${facadeBytes.toString("base64")}`
 );
 globalThis.WordPressHxBadgeCarrierObserver = Object.freeze({
   observe(value) {
+    const firstThen = value?.then;
+    const secondThen = value?.then;
     return value !== null
       && typeof value === "object"
-      && Object.isFrozen(value)
-      && Object.getPrototypeOf(value) === null
-      && Reflect.ownKeys(value).length === 0
-      && typeof value.then === "undefined";
+      && safeIsFrozen(value)
+      && safeGetPrototypeOf(value) === null
+      && safeOwnKeys(value).length === 0
+      && typeof firstThen === "undefined"
+      && typeof secondThen === "undefined";
   },
 });
 await import(process.argv[2]);
@@ -376,6 +382,85 @@ def stateful_then_browser_provider(destination: Path) -> tuple[bytes, bytes]:
     text = original.decode("utf-8")
     if text.count(old) != 1:
         raise AssertionError("stateful thenable replacement target is absent or repeated")
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
+
+
+def substituted_carrier_browser_provider(destination: Path) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """export function CalendarBadge(props) {
+  return Object.freeze({
+    kind: "acme-calendar-badge",
+    count: props.count,
+    label: props.label,
+  });
+}"""
+    new = """export function CalendarBadge(props) {
+  const originalCreate = Object.create;
+  const target = Object.freeze(originalCreate(null));
+  let thenReads = 0;
+  const providerOwnedCarrier = new Proxy(target, {
+    get(value, property, receiver) {
+      if (property === "then") {
+        thenReads += 1;
+        if (thenReads === 1) {
+          return undefined;
+        }
+        return function then(resolve) {
+          queueMicrotask(() => resolve({ kind: "delayed" }));
+        };
+      }
+      return Reflect.get(value, property, receiver);
+    },
+  });
+  Object.create = function createOnce(_) {
+    Object.create = originalCreate;
+    return providerOwnedCarrier;
+  };
+  return Object.freeze({
+    kind: "acme-calendar-badge",
+    count: props.count,
+    label: props.label,
+  });
+}"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError("substituted carrier replacement target is absent or repeated")
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
+
+
+def inherited_then_handle_browser_provider(destination: Path) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """if (sentinel) {
+  appendFileSync(sentinel, "browser provider code executed\\n", "utf8");
+}
+"""
+    new = old + """
+Object.defineProperty(Object.prototype, "then", {
+  configurable: true,
+  get() {
+    return function then(resolve) {
+      delete Object.prototype.then;
+      resolve(new Proxy(this, {
+        get(target, property, receiver) {
+          if (property === "bundleDigest" || property === "formatLabel") {
+            throw new Error("provider-owned-handle-proxy-crossed");
+          }
+          return Reflect.get(target, property, receiver);
+        },
+      }));
+    };
+  },
+});
+"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError("inherited then replacement target is absent or repeated")
     module.write_text(text.replace(old, new), encoding="utf-8")
     return original, module.read_bytes()
 
@@ -809,6 +894,85 @@ def main() -> None:
     ):
         raise AssertionError(
             "stateful thenable crossed the Haxe boundary: " + stateful_haxe.stdout
+        )
+
+    substituted_carrier_provider = work / "substituted-carrier-browser-provider"
+    original_module, substituted_carrier_module = substituted_carrier_browser_provider(
+        substituted_carrier_provider
+    )
+    substituted_carrier_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(substituted_carrier_module)
+    )
+    substituted_carrier_sentinel = work / "haxe-js-substituted-carrier-provider-executed"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
+        substituted_carrier_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(
+        substituted_carrier_provider
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = (
+        "haxe-substituted-carrier-observer"
+    )
+    substituted_carrier_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(substituted_carrier_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+    )
+    if (
+        substituted_carrier_haxe.stdout
+        != "haxe-js-native|immediate-string|opaque-object-observed\n"
+        or substituted_carrier_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "provider substituted the Haxe carrier: "
+            + substituted_carrier_haxe.stdout
+        )
+
+    inherited_then_provider = work / "inherited-then-handle-browser-provider"
+    original_module, inherited_then_module = inherited_then_handle_browser_provider(
+        inherited_then_provider
+    )
+    inherited_then_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(inherited_then_module)
+    )
+    inherited_then_sentinel = work / "haxe-js-inherited-then-provider-executed"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
+        inherited_then_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(
+        inherited_then_provider
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = (
+        "haxe-inherited-then-handle-observer"
+    )
+    inherited_then_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(inherited_then_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+        expected=1,
+    )
+    if (
+        "provider-mutated-shared-intrinsic" not in inherited_then_haxe.stderr
+        or "provider-owned-handle-proxy-crossed" in inherited_then_haxe.stderr
+        or inherited_then_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "provider mutation was not rejected before the asynchronous facade handle: "
+            + inherited_then_haxe.stderr
         )
 
     print(

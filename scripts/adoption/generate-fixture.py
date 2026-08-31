@@ -888,7 +888,49 @@ const expected = Object.freeze({{
   executableClosureSha256: "{executable_closure_sha256}",
 }});
 const expectedStaticMembers = Object.freeze({policy_json});
+const createObject = Object.create;
+const defineProperty = Object.defineProperty;
+const freezeObject = Object.freeze;
+const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+const deleteProperty = Reflect.deleteProperty;
+const objectPrototype = Object.prototype;
+const originalObjectPrototypeThen = getOwnPropertyDescriptor(objectPrototype, "then");
+const setWeakMapEntry = Function.prototype.call.bind(WeakMap.prototype.set);
 const badgePayloads = new WeakMap();
+
+function samePropertyDescriptor(left, right) {{
+  if (left === undefined || right === undefined) {{
+    return left === right;
+  }}
+  return left.configurable === right.configurable
+    && left.enumerable === right.enumerable
+    && left.writable === right.writable
+    && left.value === right.value
+    && left.get === right.get
+    && left.set === right.set;
+}}
+
+function rejectObjectPrototypeThenMutation() {{
+  const current = getOwnPropertyDescriptor(objectPrototype, "then");
+  if (samePropertyDescriptor(current, originalObjectPrototypeThen)) {{
+    return;
+  }}
+  let restored = false;
+  try {{
+    if (originalObjectPrototypeThen === undefined) {{
+      restored = deleteProperty(objectPrototype, "then");
+    }} else {{
+      defineProperty(objectPrototype, "then", originalObjectPrototypeThen);
+      restored = true;
+    }}
+  }} catch (_) {{
+    restored = false;
+  }}
+  if (!restored) {{
+    throw new Error("provider-mutated-nonrestorable-shared-intrinsic");
+  }}
+  throw new Error("provider-mutated-shared-intrinsic");
+}}
 
 function digest(bytes) {{
   return createHash("sha256").update(bytes).digest("hex");
@@ -982,30 +1024,45 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
     throw new Error("wrong-provider-version");
   }}
   const moduleUrl = `data:text/javascript;base64,${{moduleBytes.toString("base64")}}#${{encodeURIComponent(generation)}}`;
-  const provider = await import(moduleUrl);
+  let provider;
+  try {{
+    provider = await import(moduleUrl);
+  }} finally {{
+    rejectObjectPrototypeThenMutation();
+  }}
   if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {{
     throw new Error("required-provider-symbol-missing");
   }}
-  return Object.freeze({{
-    bundleDigest,
-    executableClosureSha256: expected.executableClosureSha256,
-    formatLabel(count) {{
-      const value = provider.formatCalendarLabel(count);
+  const handle = createObject(null);
+  handle.bundleDigest = bundleDigest;
+  handle.executableClosureSha256 = expected.executableClosureSha256;
+  handle.formatLabel = function formatLabel(count) {{
+      let value;
+      try {{
+        value = provider.formatCalendarLabel(count);
+      }} finally {{
+        rejectObjectPrototypeThenMutation();
+      }}
       if (typeof value !== "string") {{
         throw new Error("wrong-provider-result-shape");
       }}
       return value;
-    }},
-    renderBadge(props) {{
-      const value = provider.CalendarBadge(props);
+    }};
+  handle.renderBadge = function renderBadge(props) {{
+      let value;
+      try {{
+        value = provider.CalendarBadge(props);
+      }} finally {{
+        rejectObjectPrototypeThenMutation();
+      }}
       if (value === null || typeof value !== "object" || typeof value.then === "function") {{
         throw new Error("wrong-provider-result-shape");
       }}
-      const carrier = Object.create(null);
-      badgePayloads.set(carrier, value);
-      return Object.freeze(carrier);
-    }},
-  }});
+      const carrier = createObject(null);
+      setWeakMapEntry(badgePayloads, carrier, value);
+      return freezeObject(carrier);
+    }};
+  return freezeObject(handle);
 }}
 '''
     return source.encode("utf-8")

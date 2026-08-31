@@ -7,11 +7,53 @@ const expected = Object.freeze({
   moduleSha256: "9228805f03547e088b0a96a581dfcab823fccd8a4c2a4dd810764972a76d1710",
   packageSha256: "eb0e484d9bb26022868a4f13d8bb53d887d8f5a2c3861308e339c1fdf9f09d1f",
   providerArtifactSha256: "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd",
-  bundleDigest: "8119ccf035373fa74e79280a9229e49735eee5a413f4829ae92ac29b98b8cf65",
+  bundleDigest: "c58bae146b1fd7cf9c694ea76732d8feece47fa6e1c0657d005cdeddcfc9a2b7",
   executableClosureSha256: "f072306f4ce994dd45ab045a122bcf77cd76a15d78a5941cc7d2815d24e9e46e",
 });
-const expectedStaticMembers = Object.freeze([{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"aede759e0bfc8948b0e086452343a1254963b4ef67d77143571d584ad4c0b6fd","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"6d194c5a5a3688c51b23a543b26e499aba9faf1af6cecd2c59f01ee76719e74e","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"1e6d739f595b8f7725d2d781b3e62a15b9651d03a281558b6a50a9e1b2574ae1","sizeBytes":4785}]);
+const expectedStaticMembers = Object.freeze([{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"1e6250401a2e7b11f545bebc86d71de80e5aade8e8ead54a9082633c48414e40","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"481b3bfacc776afb3036af5cbd79aa7c7d9f7cb52015007452153a0806ece444","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"ba849668613e2c695f5f49e842effd5693b2ae6f2f32a77fc821a0b9162fa0eb","sizeBytes":4785}]);
+const createObject = Object.create;
+const defineProperty = Object.defineProperty;
+const freezeObject = Object.freeze;
+const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+const deleteProperty = Reflect.deleteProperty;
+const objectPrototype = Object.prototype;
+const originalObjectPrototypeThen = getOwnPropertyDescriptor(objectPrototype, "then");
+const setWeakMapEntry = Function.prototype.call.bind(WeakMap.prototype.set);
 const badgePayloads = new WeakMap();
+
+function samePropertyDescriptor(left, right) {
+  if (left === undefined || right === undefined) {
+    return left === right;
+  }
+  return left.configurable === right.configurable
+    && left.enumerable === right.enumerable
+    && left.writable === right.writable
+    && left.value === right.value
+    && left.get === right.get
+    && left.set === right.set;
+}
+
+function rejectObjectPrototypeThenMutation() {
+  const current = getOwnPropertyDescriptor(objectPrototype, "then");
+  if (samePropertyDescriptor(current, originalObjectPrototypeThen)) {
+    return;
+  }
+  let restored = false;
+  try {
+    if (originalObjectPrototypeThen === undefined) {
+      restored = deleteProperty(objectPrototype, "then");
+    } else {
+      defineProperty(objectPrototype, "then", originalObjectPrototypeThen);
+      restored = true;
+    }
+  } catch (_) {
+    restored = false;
+  }
+  if (!restored) {
+    throw new Error("provider-mutated-nonrestorable-shared-intrinsic");
+  }
+  throw new Error("provider-mutated-shared-intrinsic");
+}
 
 function digest(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
@@ -105,28 +147,43 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {
     throw new Error("wrong-provider-version");
   }
   const moduleUrl = `data:text/javascript;base64,${moduleBytes.toString("base64")}#${encodeURIComponent(generation)}`;
-  const provider = await import(moduleUrl);
+  let provider;
+  try {
+    provider = await import(moduleUrl);
+  } finally {
+    rejectObjectPrototypeThenMutation();
+  }
   if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {
     throw new Error("required-provider-symbol-missing");
   }
-  return Object.freeze({
-    bundleDigest,
-    executableClosureSha256: expected.executableClosureSha256,
-    formatLabel(count) {
-      const value = provider.formatCalendarLabel(count);
+  const handle = createObject(null);
+  handle.bundleDigest = bundleDigest;
+  handle.executableClosureSha256 = expected.executableClosureSha256;
+  handle.formatLabel = function formatLabel(count) {
+      let value;
+      try {
+        value = provider.formatCalendarLabel(count);
+      } finally {
+        rejectObjectPrototypeThenMutation();
+      }
       if (typeof value !== "string") {
         throw new Error("wrong-provider-result-shape");
       }
       return value;
-    },
-    renderBadge(props) {
-      const value = provider.CalendarBadge(props);
+    };
+  handle.renderBadge = function renderBadge(props) {
+      let value;
+      try {
+        value = provider.CalendarBadge(props);
+      } finally {
+        rejectObjectPrototypeThenMutation();
+      }
       if (value === null || typeof value !== "object" || typeof value.then === "function") {
         throw new Error("wrong-provider-result-shape");
       }
-      const carrier = Object.create(null);
-      badgePayloads.set(carrier, value);
-      return Object.freeze(carrier);
-    },
-  });
+      const carrier = createObject(null);
+      setWeakMapEntry(badgePayloads, carrier, value);
+      return freezeObject(carrier);
+    };
+  return freezeObject(handle);
 }

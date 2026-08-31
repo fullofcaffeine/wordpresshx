@@ -118,9 +118,9 @@
     }
   ],
   "prototypeEvidence": {
-    "contractSha256": "f90da3afc96bd26bcafd70ba215e0360205984799a1bd5b6ee8e3bc308a72a5d",
-    "capabilitySha256": "51ac730b97e5da1862501b28446092331a917bff7af049d896768b287cc0c0f7",
-    "reviewSha256": "012eeee7c3231bb603c522710f6e20d7abc9b6c8cdea3fb87e4c9b49eaa709b9",
+    "contractSha256": "a836295237bc68b86992763580a36543f2e19586d777fb430c6381895661d7f8",
+    "capabilitySha256": "cc5097141e2cf5f3abb3eae15868e6959e684981c3bcfb572c6c7d5bb4fc5604",
+    "reviewSha256": "a57627308caae66b7077ccdf807192be05c3c72d5536184dc05a30b28df5b253",
     "sourceTreeSha256": "cfde455a26226dfbdde2b2b8b42cc021e75702d04ef52f07907568d5a96e6a50",
     "transcriptSha256": "eddc5a6345427049f52510c103516fbe4057107d2788c4f7593f2afc47374572",
     "contractSchemaSha256": "f2dd4139ee318b8334feae0ebd4cf1f5da2db88d00ce23a631d55e9840db6803",
@@ -140,13 +140,13 @@
     ],
     "providerRuntimeExecutionDuringGeneration": false,
     "realProviderUsed": false,
-    "bundleDigest": "8119ccf035373fa74e79280a9229e49735eee5a413f4829ae92ac29b98b8cf65",
-    "bundleFileSha256": "61c812c19556226058aba89d2dc6a2fb14eebf756acbf25229e8db87bb30cab0",
-    "ownershipManifestSha256": "265fcb4d2cd218d84105c7d1bfc55ebae2d8921c786ce171ffa3a90d0792a20a",
+    "bundleDigest": "c58bae146b1fd7cf9c694ea76732d8feece47fa6e1c0657d005cdeddcfc9a2b7",
+    "bundleFileSha256": "3308d6df77bc120d435d410bb555a955ee682fb68d20f68047be5f065ca2f5d8",
+    "ownershipManifestSha256": "8b78fd6537c7aedca789be520b9f3b87160d18eadcdedb508354d69c90cd59d6",
     "bundleSchemaSha256": "7f32dca7b0dba5b748cdcd59fc85c42fc01057bf24f96a3dd4294bf5b2b6ac84",
     "syntheticProviderRuntimeUsed": true,
     "productionOwnershipTransactionUsed": true,
-    "evidenceSubjectSha256": "410a548eff6a5595ac3f88000963bbdbf916dfe8c33f0a2f46fb3a4d58915edd"
+    "evidenceSubjectSha256": "3a2d1d4c56c9956761537ddf3b14bcdca97bef5ad4a1d204e28853f6e01b16cb"
   },
   "referenceReview": [
     {
@@ -181,23 +181,23 @@
     "workflow": ".github/workflows/adoption-contract.yml",
     "job": "adoption-contract",
     "command": "bash scripts/adoption/test.sh",
-    "runId": 33362431367,
-    "jobId": 99396256104,
-    "commit": "0058270ad77707dbdb451866aafd586377567852",
-    "status": "passed-current-main",
-    "contentRoot": "8119ccf035373fa74e79280a9229e49735eee5a413f4829ae92ac29b98b8cf65",
-    "evidenceSubjectSha256": "410a548eff6a5595ac3f88000963bbdbf916dfe8c33f0a2f46fb3a4d58915edd",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "contentRoot": "c58bae146b1fd7cf9c694ea76732d8feece47fa6e1c0657d005cdeddcfc9a2b7",
+    "evidenceSubjectSha256": "3a2d1d4c56c9956761537ddf3b14bcdca97bef5ad4a1d204e28853f6e01b16cb",
     "pythonRuntime": {
       "implementation": "CPython",
       "version": "3.14.5"
     },
-    "gateIdentitySha256": "d1a981276e17f0f895dbff48bf17957f0e22e2c37cfa31437bdffeacd70a5207",
-    "historicalRunId": 33355695936,
-    "historicalJobId": 99377298889,
-    "historicalCommit": "51404738fc4bbd18e21e75d4b316d8d4d64c4b64",
-    "historicalContentRoot": "c2a0a55dd274ead37af78c2ea2d53a43cdc7868c9fb80949e9cc246e2c57088a",
-    "historicalGateIdentitySha256": "0dbcb37c3d5f6511b59d3f8ca0c21c2666926b3946be39bcd5d735b54a6f3a0f",
-    "historicalEvidenceSubjectSha256": "816fe7d99206d51b953f4fac7ee4b44aff115a3168c7363f4ab82c5b85307779",
+    "gateIdentitySha256": "630301ab4bfd2f75798165af4b4fa0a398dba3b4df8acc1a7208457fe6b00745",
+    "historicalRunId": 33362431367,
+    "historicalJobId": 99396256104,
+    "historicalCommit": "0058270ad77707dbdb451866aafd586377567852",
+    "historicalContentRoot": "8119ccf035373fa74e79280a9229e49735eee5a413f4829ae92ac29b98b8cf65",
+    "historicalGateIdentitySha256": "d1a981276e17f0f895dbff48bf17957f0e22e2c37cfa31437bdffeacd70a5207",
+    "historicalEvidenceSubjectSha256": "410a548eff6a5595ac3f88000963bbdbf916dfe8c33f0a2f46fb3a4d58915edd",
     "historicalPythonRuntime": {
       "implementation": "CPython",
       "version": "3.14.5"
