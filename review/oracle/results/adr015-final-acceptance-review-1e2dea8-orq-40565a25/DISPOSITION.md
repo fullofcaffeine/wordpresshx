@@ -77,7 +77,6 @@ Passed after repair:
 - `python3 scripts/adoption/validate-architecture.py`
 - `bash scripts/adoption/test.sh` with a recorded local observer set
 - `WORDPRESSHX_ADOPTION_FORCE_CONTAINER_PHP=1 bash scripts/adoption/test.sh` with a recorded container observer set
-- `bash scripts/check-repository.sh`
 
 The response's suggested explicit post-capture manifest/add/remove cases and regular-expression lexer adversary are minor defense-in-depth ideas, not reproduced acceptance blockers. They are not retained in this repair.
 
