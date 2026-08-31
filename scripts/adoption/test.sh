@@ -38,6 +38,25 @@ for command_name in cmp cp diff docker grep haxelib lix node perl python3; do
 	fi
 done
 
+python3 - "${repository_root}/manifests/adoption-contract-toolchain.lock.json" <<'PY'
+import json
+import platform
+import sys
+from pathlib import Path
+
+lock = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+python = lock.get("python") if isinstance(lock, dict) else None
+if not isinstance(python, dict):
+    raise SystemExit("ADR-015 Python lock omits its runtime")
+expected = (python.get("implementation"), python.get("version"))
+actual = (platform.python_implementation(), platform.python_version())
+if actual != expected:
+    raise SystemExit(
+        "ADR-015 adoption-contract gate requires "
+        f"{expected[0]} {expected[1]}, found {actual[0]} {actual[1]}"
+    )
+PY
+
 python3 "${repository_root}/scripts/adoption/refresh-evidence.py"
 python3 "${repository_root}/scripts/adoption/validate-architecture.py"
 python3 "${repository_root}/scripts/adoption/test-evidence.py"
@@ -226,6 +245,34 @@ assert_generation_failure runtime-js-duplicate \
 	'duplicate JavaScript runtime parameter identifier: props' \
 	mutate_runtime_js_duplicate
 
+mutate_runtime_js_async() {
+	perl -pi -e 's/export function formatCalendarLabel/export async function formatCalendarLabel/' "$1/index.js"
+}
+assert_generation_failure runtime-js-async \
+	'unsupported JavaScript runtime export modifier: async' \
+	mutate_runtime_js_async
+
+mutate_runtime_js_generator() {
+	perl -pi -e 's/export function formatCalendarLabel/export function* formatCalendarLabel/' "$1/index.js"
+}
+assert_generation_failure runtime-js-generator \
+	'unsupported JavaScript runtime generator export' \
+	mutate_runtime_js_generator
+
+mutate_runtime_js_default_export() {
+	perl -pi -e 's/export function formatCalendarLabel/export default function formatCalendarLabel/' "$1/index.js"
+}
+assert_generation_failure runtime-js-default-export \
+	'unsupported JavaScript runtime export modifier: default' \
+	mutate_runtime_js_default_export
+
+mutate_runtime_js_comment_decoy_async() {
+	perl -0pi -e 's/export function formatCalendarLabel\(count\) \{/\/\*\nexport function formatCalendarLabel(count) {\n\*\/\nPromise.prototype.toJSON = function () { return "3 calendar events"; };\nexport async function formatCalendarLabel(count) {/' "$1/index.js"
+}
+assert_generation_failure runtime-js-comment-decoy-async \
+	'unsupported JavaScript runtime export modifier: async' \
+	mutate_runtime_js_comment_decoy_async
+
 assert_javascript_observer_failure() {
 	local name="$1"
 	local expected_fragment="$2"
@@ -275,6 +322,18 @@ assert_javascript_observer_failure arguments-formal \
 assert_javascript_observer_failure if-formal \
 	'module syntax is invalid' \
 	mutate_runtime_js_if
+assert_javascript_observer_failure async-export \
+	'exported functions must be named, non-default, synchronous, and non-generator declarations' \
+	mutate_runtime_js_async
+assert_javascript_observer_failure generator-export \
+	'exported functions must be named, non-default, synchronous, and non-generator declarations' \
+	mutate_runtime_js_generator
+assert_javascript_observer_failure default-export \
+	'exported functions must be named, non-default, synchronous, and non-generator declarations' \
+	mutate_runtime_js_default_export
+assert_javascript_observer_failure comment-decoy-async \
+	'exported functions must be named, non-default, synchronous, and non-generator declarations' \
+	mutate_runtime_js_comment_decoy_async
 
 interface_inputs="${test_root}/typescript-interface-only-drift-inputs"
 mkdir -p "${interface_inputs}"
@@ -484,6 +543,33 @@ assert_hostile_define_failure interp
 assert_hostile_define_failure php
 assert_hostile_define_failure javascript
 
+assert_access_metadata_failure() {
+	local target="$1"
+	local diagnostic="${test_root}/access-metadata-${target}.diagnostic.txt"
+	local output_args=()
+	case "${target}" in
+		interp) output_args=(--interp) ;;
+		php) output_args=(--php "${test_root}/access-metadata-php") ;;
+		javascript) output_args=(-js "${test_root}/access-metadata.js") ;;
+		*) echo "unknown access-metadata target ${target}" >&2; exit 1 ;;
+	esac
+	if "${scoped_haxe}" \
+		-cp "${fixture_root}/src" \
+		-cp "${generation_one}/generated/adoption/acme-calendar/haxe" \
+		-cp "${fixture_root}/test-negative/access_metadata" \
+		-main Main \
+		--macro 'nullSafety("wordpress.hx.adoption.prototype", Strict)' \
+		"${output_args[@]}" >"${diagnostic}" 2>&1; then
+		echo "Haxe access metadata exposed the private authority subtype on ${target}" >&2
+		exit 1
+	fi
+	grep -F -- 'Importing private declarations from a module is not allowed' "${diagnostic}" >/dev/null
+}
+
+assert_access_metadata_failure interp
+assert_access_metadata_failure php
+assert_access_metadata_failure javascript
+
 assert_compile_failure direct_token_construction \
 	'wordpress.hx.adoption.prototype.PhpRequestScope should be wordpress.hx.adoption.prototype._Adoption.AuthorityKey'
 assert_compile_failure wrong_capability \
@@ -539,7 +625,7 @@ parts = Path(sys.argv[2])
 output = Path(sys.argv[3])
 execution_mode = sys.argv[4]
 sys.path.insert(0, str(root / "scripts/adoption"))
-from evidence_state import OBSERVER_IDS, current_content_root, evidence_subject_sha256, observer_identities
+from evidence_state import OBSERVER_IDS, current_content_root, evidence_subject_sha256, observer_identities, python_runtime_identity
 
 identities = observer_identities(root)
 observers = [json.loads((parts / f"{observer_id}.json").read_text(encoding="utf-8")) for observer_id in OBSERVER_IDS]
@@ -555,6 +641,7 @@ record = {
     "evidenceSubjectSha256": evidence_subject_sha256(root),
     "executionMode": execution_mode,
     "observedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    "pythonRuntime": python_runtime_identity(root),
     "observers": observers,
 }
 output.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")

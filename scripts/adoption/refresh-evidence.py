@@ -14,6 +14,7 @@ from evidence_state import (
     current_content_root,
     evidence_subject_sha256,
     hosted_gate_identity,
+    python_runtime_identity,
     refresh_local_state,
 )
 
@@ -148,10 +149,12 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         raise ValueError("receipt hosted workflow is not an object")
     content_root = current_content_root(ROOT)
     evidence_subject = evidence_subject_sha256(ROOT)
+    python_runtime = python_runtime_identity(ROOT)
     gate_identity = hosted_gate_identity(ROOT)
     hosted_is_current = (
         hosted.get("contentRoot") == content_root
         and hosted.get("evidenceSubjectSha256") == evidence_subject
+        and hosted.get("pythonRuntime") == python_runtime
         and hosted.get("gateIdentitySha256") == gate_identity
     )
     if hosted.get("status") == "passed-current-main" and not hosted_is_current:
@@ -161,6 +164,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         previous_root = hosted.get("contentRoot")
         previous_gate = hosted.get("gateIdentitySha256")
         previous_subject = hosted.get("evidenceSubjectSha256")
+        previous_python_runtime = hosted.get("pythonRuntime")
         if isinstance(previous_run, int):
             hosted["historicalRunId"] = previous_run
         if isinstance(previous_job, int):
@@ -173,6 +177,8 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             hosted["historicalGateIdentitySha256"] = previous_gate
         if isinstance(previous_subject, str):
             hosted["historicalEvidenceSubjectSha256"] = previous_subject
+        if isinstance(previous_python_runtime, dict):
+            hosted["historicalPythonRuntime"] = previous_python_runtime
         hosted.update(
             {
                 "runId": None,
@@ -183,6 +189,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         )
     hosted["contentRoot"] = content_root
     hosted["evidenceSubjectSha256"] = evidence_subject
+    hosted["pythonRuntime"] = python_runtime
     hosted["gateIdentitySha256"] = gate_identity
     architecture_hosted = {
         "workflow": ".github/workflows/adoption-contract.yml",
@@ -194,6 +201,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         "status": hosted["status"],
         "contentRoot": hosted["contentRoot"],
         "evidenceSubjectSha256": hosted["evidenceSubjectSha256"],
+        "pythonRuntime": hosted["pythonRuntime"],
         "gateIdentitySha256": hosted["gateIdentitySha256"],
     }
     for field in (
@@ -203,6 +211,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
         "historicalContentRoot",
         "historicalGateIdentitySha256",
         "historicalEvidenceSubjectSha256",
+        "historicalPythonRuntime",
     ):
         if field in hosted:
             architecture_hosted[field] = hosted[field]
@@ -248,6 +257,7 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
                 [path for path in (FIXTURE / "test-negative").iterdir() if path.is_dir()]
             ),
             "targets": [
+                f"{python_runtime['implementation'].lower()}-{python_runtime['version']}-evidence-runtime",
                 f"haxe-{haxe_version}-interp",
                 f"genes-ts-{genes_version}@{genes_commit}-typescript-{typescript_version}-node-{node_version}",
                 f"stock-haxe-php-{php_version}",
@@ -316,6 +326,9 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             "typescriptVersion": typescript_version,
             "nodeVersion": node_version,
             "phpVersion": php_version,
+            "pythonImplementation": python_runtime["implementation"],
+            "pythonVersion": python_runtime["version"],
+            "pythonAuthority": "manifests/adoption-contract-toolchain.lock.json",
             "bindingCount": prototype["bindingCount"],
             "capabilityCount": prototype["capabilityCount"],
             "omissionCount": prototype["omissionCount"],
@@ -360,6 +373,9 @@ def derive(*, reset_stale_pass: bool = False) -> tuple[dict[str, object], dict[s
             "outcomeRecorder": {"path": "scripts/adoption/record-evidence.py"},
             "javascriptSourceObserver": {
                 "path": "scripts/adoption/observe-javascript-source.cjs"
+            },
+            "pythonRuntimeLock": {
+                "path": "manifests/adoption-contract-toolchain.lock.json"
             },
             "determinismValidator": {
                 "path": "scripts/adoption/validate-architecture.py"

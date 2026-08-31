@@ -278,6 +278,7 @@ def publish(
     stage: Path,
     *,
     fault: str | None = None,
+    validator_mode: str = "pass",
     expected: int = 0,
 ) -> dict[str, object] | None:
     return invoke(
@@ -285,7 +286,7 @@ def publish(
         runtime,
         "publish-adoption",
         project,
-        [str(source / "generated/_GeneratedFiles.json"), str(stage), "pass"],
+        [str(source / "generated/_GeneratedFiles.json"), str(stage), validator_mode],
         fault=fault,
         expected=expected,
     )
@@ -457,6 +458,24 @@ def main() -> None:
     )
     if clean_manifest["files"] != [] or provider_snapshot(project) != provider_before:
         raise AssertionError("clean removed provider-owned bytes or retained generated entries")
+
+    project = create_project(work, "single-capture")
+    captured_stage = make_stage(current, work / "single-capture/stage")
+    contract_path = Path("generated/adoption/acme-calendar/contract.json")
+    captured_contract = (captured_stage / contract_path).read_bytes()
+    result = publish(
+        node,
+        runtime,
+        project,
+        current,
+        captured_stage,
+        validator_mode="mutate-after-capture",
+    )
+    if result != {"outcome": "published"}:
+        raise AssertionError(f"single-capture publication failed: {result}")
+    if (captured_stage / contract_path).read_bytes() == captured_contract:
+        raise AssertionError("phase-changing adversary did not alter the caller stage")
+    assert_owned(project, current)
 
     project = create_project(work, "update")
     provider_before = provider_snapshot(project)

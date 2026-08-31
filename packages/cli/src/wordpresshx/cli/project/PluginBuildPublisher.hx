@@ -15,6 +15,7 @@ import wordpresshx.cli.ownership.OwnershipContract;
 import wordpresshx.cli.ownership.OwnershipFailure;
 import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.ownership.OwnershipResult;
+import wordpresshx.cli.ownership.StageSnapshot;
 import wordpresshx.cli.ownership.StageValidator;
 
 /** Publish one native plugin generation through the established owner protocol. */
@@ -308,27 +309,23 @@ class PluginBuildPublisher {
 		return JsonReader.from(value, "plugin ownership manifest", "WPHX3308").string("manifestDigest", "WPHX3308");
 	}
 
-	static function validatePluginStage(root:String, pluginBase:String, emission:PluginEmission):Void {
+	static function validatePluginStage(snapshot:StageSnapshot, pluginBase:String, emission:PluginEmission):Void {
 		for (file in emission.files) {
-			validateExact(root, pluginBase + "/" + file.relativePath, file.bytes, "plugin artifact");
+			validateExact(snapshot, pluginBase + "/" + file.relativePath, file.bytes, "plugin artifact");
 		}
 	}
 
-	static function validateQualityStage(root:String, pluginBase:String, qualityPath:String, emission:PluginEmission, quality:PluginPhpQualityResult):Void {
-		validatePluginStage(root, pluginBase, emission);
-		validateExact(root, qualityPath, quality.reportBytes, "PHP quality receipt");
+	static function validateQualityStage(snapshot:StageSnapshot, pluginBase:String, qualityPath:String, emission:PluginEmission,
+			quality:PluginPhpQualityResult):Void {
+		validatePluginStage(snapshot, pluginBase, emission);
+		validateExact(snapshot, qualityPath, quality.reportBytes, "PHP quality receipt");
 	}
 
-	static function validateExact(root:String, relative:String, expected:Buffer, label:String):Void {
-		final absolute = Path.resolve(root, relative);
-		if (!Fs.existsSync(absolute)) {
+	static function validateExact(snapshot:StageSnapshot, relative:String, expected:Buffer, label:String):Void {
+		final actual = snapshot.read(relative);
+		if (actual == null) {
 			throw new OwnershipFailure(label + " is missing from the complete stage", "plugin-stage-validator", relative);
 		}
-		final stats = Fs.lstatSync(absolute);
-		if (stats.isSymbolicLink() || !stats.isFile()) {
-			throw new OwnershipFailure(label + " is not a regular staged file", "plugin-stage-validator", relative);
-		}
-		final actual = Fs.readFileSync(absolute);
 		if (actual.length != expected.length || OwnershipJson.digest(actual) != OwnershipJson.digest(expected)) {
 			throw new OwnershipFailure(label + " bytes differ from the in-memory emission", "plugin-stage-validator", relative);
 		}

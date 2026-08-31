@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
   "bead": "wordpresshx-sdk-041",
-  "observedAt": "2026-07-21T12:30:03Z",
+  "observedAt": "2026-08-31T01:41:47Z",
   "subject": {
     "architecture": {
       "path": "manifests/ownership-implementation.json",
-      "sha256": "846541a0a2661372485072a49ac4a7052c671e5199e99b1c0976b6e8615d7bab"
+      "sha256": "cbbfecbe4be96e1ff8f98047d046136cff4c52bfb3a16db8ad2554f108ac775d"
     },
     "processBoundary": {
       "path": "packages/cli/src/wordpresshx/cli/NodeGlobals.hx",
@@ -22,7 +22,7 @@
     },
     "owner": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
-      "sha256": "a61ea508b7b3701f036d022d8cbdb5e71c6230fb9cc49c184bb822c2a78fa272"
+      "sha256": "62ececc063b64a240ce04444c25a539056bebc4d5833419f2dc58d6fe27b5415"
     },
     "contract": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipContract.hx",
@@ -44,9 +44,13 @@
       "path": "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
       "sha256": "3bf1a33e9f8d6c45876941bf15d954feae7674f13670b96a179447644cde2ab9"
     },
+    "stageSnapshot": {
+      "path": "packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx",
+      "sha256": "f4895ad9d4759cf7a2e142be90f491f38a408824a686c54328b3145b56f67efe"
+    },
     "stageValidator": {
       "path": "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
-      "sha256": "aa6777d9854fe730c5b9a4513dcbf9b4ec526eb7f243a35cb41e8855c4703e63"
+      "sha256": "121a3fc6698e9abdf0897a737d4ff9fd59498539aa82ff0d2a279950485269f9"
     },
     "fixtureEntry": {
       "path": "packages/cli/test/ownership/src/sdk041/fixture/Main.hx",
@@ -66,7 +70,7 @@
     },
     "isolationScanner": {
       "path": "scripts/ownership/check-isolation.py",
-      "sha256": "442be3b25b94687521f1a13ccef3d5f6f1e64872d2152b250f3470dd31a058e5"
+      "sha256": "3efd0084cf3fa78e3b75efe964bc909b96adf5314c850d30521f011564f0f679"
     },
     "emittedIsolationCompilerProbes": {
       "path": "scripts/ownership/test-emitted-isolation.py",
@@ -74,7 +78,7 @@
     },
     "strictHaxeGuard": {
       "path": "packages/cli/scripts/check-ownership-haxe.sh",
-      "sha256": "b39fc9afdf5c67d214a5d925c57df08384a18f7df88e02ddaab61b91fd24f4d4"
+      "sha256": "c98c6176e91bd0b3054183557aea1aeb6ce5a7419474731c976761d9317a97b9"
     },
     "manifestSchema": {
       "path": "schemas/generated-files.schema.json",
@@ -95,6 +99,7 @@
     "canonicalJson",
     "ownershipLayout",
     "ownershipResult",
+    "stageSnapshot",
     "stageValidator"
   ],
   "verification": {
@@ -123,7 +128,28 @@
     "outcome": "passed-local",
     "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD"
   },
+  "singleCaptureReverification": {
+    "reason": "Stage validators now receive one owner-captured immutable snapshot, and publication installs the same captured manifest and file buffers.",
+    "observedAt": "2026-08-31T01:41:47Z",
+    "commands": [
+      "bash scripts/adoption/test.sh",
+      "bash scripts/ownership/test.sh"
+    ],
+    "productionClosureSourceCount": 11,
+    "emittedProductionModuleCount": 7,
+    "localOutcome": "passed",
+    "hostedStatus": "pending-current-main-run"
+  },
   "hostedWorkflow": {
+    "workflow": "Repository bootstrap",
+    "job": "haxe",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-first-hosted-main-run",
+    "required": true
+  },
+  "historicalHostedWorkflow": {
     "workflow": "Repository bootstrap",
     "job": "haxe",
     "runId": 29829506192,
@@ -179,10 +205,10 @@
     "completedAt": "2026-07-21T12:30:03Z"
   },
   "claims": {
-    "sdk041ArtifactOwner": "runtime-tested-hosted",
-    "processFailureAtomicity": "runtime-tested-hosted",
-    "processCrashConsistency": "runtime-tested-hosted",
-    "cleanAndAdopt": "runtime-tested-hosted",
+    "sdk041ArtifactOwner": "runtime-tested-local",
+    "processFailureAtomicity": "runtime-tested-local",
+    "processCrashConsistency": "runtime-tested-local",
+    "cleanAndAdopt": "runtime-tested-local",
     "powerLossDurability": "not-tested",
     "windowsFilesystem": "not-tested",
     "networkFilesystem": "not-tested",

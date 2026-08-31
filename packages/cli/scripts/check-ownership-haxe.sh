@@ -14,5 +14,6 @@ python3 "${repository_root}/scripts/lint/haxe-weak-type-guard.py" \
   "${package_root}/src/wordpresshx/cli/ownership/OwnershipJson.hx" \
   "${package_root}/src/wordpresshx/cli/ownership/OwnershipLayout.hx" \
   "${package_root}/src/wordpresshx/cli/ownership/OwnershipResult.hx" \
+  "${package_root}/src/wordpresshx/cli/ownership/StageSnapshot.hx" \
   "${package_root}/src/wordpresshx/cli/ownership/StageValidator.hx" \
   "${package_root}/test/ownership/src/sdk041/fixture/Main.hx"

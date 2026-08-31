@@ -989,10 +989,18 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
     bundleDigest,
     executableClosureSha256: expected.executableClosureSha256,
     formatLabel(count) {{
-      return provider.formatCalendarLabel(count);
+      const value = provider.formatCalendarLabel(count);
+      if (typeof value !== "string") {{
+        throw new Error("wrong-provider-result-shape");
+      }}
+      return value;
     }},
     renderBadge(props) {{
-      return provider.CalendarBadge(props);
+      const value = provider.CalendarBadge(props);
+      if (value === null || typeof value !== "object" || typeof value.then === "function") {{
+        throw new Error("wrong-provider-result-shape");
+      }}
+      return value;
     }},
   }});
 }}

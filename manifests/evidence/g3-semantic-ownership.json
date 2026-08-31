@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "receiptId": "G3-SEMANTIC-PLAN-FAIL-CLOSED-OWNERSHIP",
   "bead": "wordpresshx-g3",
-  "status": "verified",
+  "status": "pending-hosted-proof",
   "gateContract": {
     "path": "wordpress-hx-sdk-product-requirements.md",
     "sha256": "5d499aaed2be94a1397c5b8b85cee42d49b68bd35b0f72b11f964d02286b9a65",
@@ -31,7 +31,7 @@
       "receiptId": "SDK-041-OWNERSHIP-TRANSACTION",
       "bead": "wordpresshx-sdk-041",
       "path": "manifests/evidence/sdk-041-ownership-transaction.json",
-      "sha256": "0f41162dc68ca8623a1131f15a52ebe1f36e7fcb3e29609a71fbd46b0f95cac9"
+      "sha256": "623e4ef1f40ace6b960b05e0fd02ddf0afd0accc08ec3cad2f668119dc2163f6"
     },
     {
       "receiptId": "SDK-042-DETERMINISTIC-BUILD",
@@ -55,7 +55,7 @@
       "receiptId": "SDK-045-PLUGIN-SCAFFOLD",
       "bead": "wordpresshx-sdk-045.2",
       "path": "manifests/evidence/sdk-045-plugin-scaffold.json",
-      "sha256": "075724c989e3dd866ee4ec5e33aeaae44f154c29bf412715ddd3c84b464ada00"
+      "sha256": "9abeeb9ba7cee6e9815756ef9592536c6db891b48b552b32b4d72409b373c05c"
     }
   ],
   "currentSubjects": {
@@ -159,23 +159,23 @@
     "outcome": "passed"
   },
   "implementation": {
-    "commit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec"
+    "commit": null
   },
   "hostedWorkflow": {
     "workflow": "Repository bootstrap",
-    "runId": 31372128871,
-    "commit": "db9ff97362769d31ed62b9aabd5ee28aae97fdec",
-    "status": "passed",
-    "jobCount": 13,
-    "allJobsPassed": true,
+    "runId": null,
+    "commit": null,
+    "status": "pending",
+    "jobCount": null,
+    "allJobsPassed": null,
     "jobs": {
-      "repository": 93403213063,
-      "semantic-plan": 93403213069,
-      "haxe": 93403213221
+      "repository": null,
+      "semantic-plan": null,
+      "haxe": null
     }
   },
   "claimBoundary": {
-    "g3SemanticPlanAndOwnership": "verified",
+    "g3SemanticPlanAndOwnership": "pending-hosted-proof",
     "wordpressRuntimeCompatibility": "not-claimed-by-g3",
     "nextjsRuntimeCompatibility": "not-claimed-by-g3",
     "publicPackagePublication": "blocked",

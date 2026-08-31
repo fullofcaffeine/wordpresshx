@@ -1,7 +1,7 @@
 package wordpresshx.cli.ownership;
 
-/** A version-locked validator callback run against the complete caller stage. **/
+/** A version-locked validator callback run against one immutable captured stage. **/
 typedef StageValidator = {
 	final validatorId:String;
-	final run:(stageRoot:String) -> Void;
+	final run:(snapshot:StageSnapshot) -> Void;
 }

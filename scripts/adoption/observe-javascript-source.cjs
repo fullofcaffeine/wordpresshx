@@ -49,6 +49,14 @@ function sourceFunctions(sourceText) {
     if (!ts.isFunctionDeclaration(statement) || !exported(statement)) {
       continue;
     }
+    const modifierKinds = (statement.modifiers || []).map((modifier) => modifier.kind);
+    if (
+      modifierKinds.length !== 1
+      || modifierKinds[0] !== ts.SyntaxKind.ExportKeyword
+      || statement.asteriskToken
+    ) {
+      fail("exported functions must be named, non-default, synchronous, and non-generator declarations");
+    }
     if (!statement.name || !ts.isIdentifier(statement.name)) {
       fail("an exported function has no plain identifier name");
     }

@@ -2,13 +2,12 @@ package adoption.ownership;
 
 import adoption.ownership.ExpectedAdoptionStage.ExpectedAdoptionFile;
 import js.node.Buffer;
-import js.node.Fs;
-import js.node.Path;
 import wordpresshx.cli.closedjson.JsonValue;
 import wordpresshx.cli.closedjson.JsonValue.JsonField;
 import wordpresshx.cli.ownership.OwnershipContract;
 import wordpresshx.cli.ownership.OwnershipFailure;
 import wordpresshx.cli.ownership.OwnershipJson;
+import wordpresshx.cli.ownership.StageSnapshot;
 
 /** Semantic validator for the complete, manifest-independent ADR-015 content bundle. */
 final class AdoptionBundleValidator {
@@ -19,10 +18,10 @@ final class AdoptionBundleValidator {
 		"generated/adoption/acme-calendar/php/acme-calendar-facade.php"
 	];
 
-	public static function validate(stageRoot:String, manifestPath:String, expected:ExpectedAdoptionStage):Void {
-		validateExpectedFiles(stageRoot, expected);
-		validateExpectedManifest(manifestPath, expected);
-		final bundleBytes = read(Path.join(stageRoot, BUNDLE_PATH), "adoption bundle");
+	public static function validate(snapshot:StageSnapshot, expected:ExpectedAdoptionStage):Void {
+		validateExpectedFiles(snapshot, expected);
+		validateExpectedManifest(snapshot, expected);
+		final bundleBytes = read(snapshot, BUNDLE_PATH, "adoption bundle");
 		final bundle = OwnershipJson.parseCanonical(bundleBytes, "adoption bundle");
 		final root = object(bundle, "adoption bundle");
 		exact(root, [
@@ -70,7 +69,7 @@ final class AdoptionBundleValidator {
 			if (roles.indexOf(role) >= 0 || paths.indexOf(relative) >= 0) {
 				fail("bundle member roles and paths must be unique");
 			}
-			final bytes = read(Path.join(stageRoot, relative), "bundle member " + relative);
+			final bytes = read(snapshot, relative, "bundle member " + relative);
 			if (OwnershipJson.digest(bytes) != text(field(member, "sha256"), "bundle member sha256")
 				|| bytes.length != integer(field(member, "sizeBytes"), "bundle member size")) {
 				fail("bundle member bytes are stale: " + relative);
@@ -259,25 +258,23 @@ final class AdoptionBundleValidator {
 		}
 	}
 
-	static function validateExpectedFiles(stageRoot:String, expected:ExpectedAdoptionStage):Void {
+	static function validateExpectedFiles(snapshot:StageSnapshot, expected:ExpectedAdoptionStage):Void {
 		final declared = [for (value in expected.files) value.path];
 		declared.sort(compareText);
-		final staged:Array<String> = [];
-		scan(stageRoot, "", staged);
-		staged.sort(compareText);
+		final staged = snapshot.paths();
 		if (staged.join("\x00") != declared.join("\x00")) {
 			fail("adoption stage differs from trusted generator file inventory");
 		}
 		for (record in expected.files) {
-			final bytes = read(Path.join(stageRoot, record.path), "trusted adoption file " + record.path);
+			final bytes = read(snapshot, record.path, "trusted adoption file " + record.path);
 			if (bytes.length != record.sizeBytes || OwnershipJson.digest(bytes) != record.sha256) {
 				fail("adoption stage file differs from trusted generator intent: " + record.path);
 			}
 		}
 	}
 
-	static function validateExpectedManifest(manifestPath:String, expected:ExpectedAdoptionStage):Void {
-		final bytes = read(manifestPath, "adoption ownership manifest");
+	static function validateExpectedManifest(snapshot:StageSnapshot, expected:ExpectedAdoptionStage):Void {
+		final bytes = snapshot.manifestBytes();
 		if (bytes.length != expected.ownershipManifestSizeBytes || OwnershipJson.digest(bytes) != expected.ownershipManifestSha256) {
 			fail("adoption ownership manifest differs from trusted generator intent");
 		}
@@ -364,35 +361,9 @@ final class AdoptionBundleValidator {
 		}
 	}
 
-	static function scan(root:String, relative:String, files:Array<String>):Void {
-		final absolute = relative == "" ? root : Path.join(root, relative);
-		final names:Array<String> = Fs.readdirSync(absolute);
-		for (name in names) {
-			final child = relative == "" ? name : relative + "/" + name;
-			final stats = Fs.lstatSync(Path.join(root, child));
-			if (stats.isSymbolicLink()) {
-				fail("adoption stage contains a symbolic link");
-			}
-			if (stats.isDirectory()) {
-				scan(root, child, files);
-			} else if (stats.isFile()) {
-				files.push(child);
-			} else {
-				fail("adoption stage contains a non-file entry");
-			}
-		}
-	}
-
-	static function read(path:String, label:String):Buffer {
-		try {
-			final stats = Fs.lstatSync(path);
-			if (!stats.isFile() || stats.isSymbolicLink()) {
-				return fail(label + " must be a regular file");
-			}
-			return Fs.readFileSync(path);
-		} catch (_:haxe.Exception) {
-			return fail(label + " is absent or unreadable");
-		}
+	static function read(snapshot:StageSnapshot, path:String, label:String):Buffer {
+		final value = snapshot.read(path);
+		return value == null ? fail(label + " is absent") : value;
 	}
 
 	static function object(value:JsonValue, label:String):Array<JsonField> {

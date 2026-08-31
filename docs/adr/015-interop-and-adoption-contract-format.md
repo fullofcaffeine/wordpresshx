@@ -381,8 +381,8 @@ browser-module scope behavior without importing product authority.
 Each scope instance has a new private nonce.
 Tokens bind that nonce and all exact provider, bundle, capability, and binding facts.
 
-Nine product-only negative fixtures reject observation, scope, token,
-friend-path, authority-owner, and hostile-define forgery, plus wrong
+Ten product-only negative fixtures reject observation, scope, token,
+friend-path, authority-owner, hostile-define, and access-metadata forgery, plus wrong
 capabilities, cross-target use, and omitted members. The hostile define is
 checked on interpreter, PHP, and JavaScript targets.
 Runtime cases reject same-type scope reuse, browser reload, and stale PHP process authority.
@@ -390,8 +390,13 @@ Runtime cases reject same-type scope reuse, browser reload, and stale PHP proces
 Generated PHP and JavaScript facades call the native fixture providers.
 The cases cover success, absence, wrong version, wrong artifact, missing symbols, arrays, and provider exceptions.
 
-The production ADR-007 owner covers no-op regeneration, updates, manual edits, removal, crash recovery, and provider-owned files.
+The production ADR-007 owner captures the manifest and every staged byte once.
+Validators receive immutable snapshot copies, and publication installs those
+same captured buffers. The proof covers no-op regeneration, updates, manual
+edits, removal, crash recovery, and provider-owned files.
 The exact Genes identity comes from `packages/cli/dependency-lock.json`.
+The exact CPython 3.14.5 evidence runtime and hosted installer come from
+`manifests/adoption-contract-toolchain.lock.json`.
 
 ```bash
 python3 scripts/adoption/validate-architecture.py

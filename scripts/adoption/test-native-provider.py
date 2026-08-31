@@ -170,7 +170,13 @@ try {
   }
   const count = scenario === "provider-error" ? -1 : 3;
   const label = provider.formatLabel(count);
+  if (typeof label !== "string") {
+    throw new Error("wrong-provider-result-shape");
+  }
   const badge = provider.renderBadge({ count, label });
+  if (badge === null || typeof badge !== "object" || typeof badge.then === "function") {
+    throw new Error("wrong-provider-result-shape");
+  }
   process.stdout.write(JSON.stringify({ outcome: "available", label, badge }) + "\n");
 } catch (failure) {
   process.stdout.write(JSON.stringify({ outcome: "unavailable", message: failure.message }) + "\n");
@@ -714,7 +720,7 @@ def main() -> None:
         haxe_environment,
     )
     if (
-        js_haxe.stdout != "haxe-js-native|opaque-object-observed\n"
+        js_haxe.stdout != "haxe-js-native|immediate-string|opaque-object-observed\n"
         or haxe_js_sentinel.read_text(encoding="utf-8")
         != "browser provider code executed\n"
     ):

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import platform
 from pathlib import Path
 
 
@@ -14,6 +15,7 @@ OBSERVER_IDS = ("schema", "native", "haxe", "mutation", "ownership")
 EVIDENCE_SUBJECT_STATIC_PATHS = (
     ".github/workflows/adoption-contract.yml",
     "fixtures/adoption-contract/expected/capability-plan.txt",
+    "manifests/adoption-contract-toolchain.lock.json",
     "manifests/toolchain.lock.json",
     "packages/cli/.haxerc",
     "packages/cli/dependency-lock.json",
@@ -40,6 +42,54 @@ def canonical(value: object) -> bytes:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def python_runtime_identity(root: Path) -> dict[str, str]:
+    """Return the exact locked CPython identity or reject the current process."""
+
+    path = root / "manifests/adoption-contract-toolchain.lock.json"
+    lock = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(lock, dict) or set(lock) != {"schemaVersion", "lockId", "python"}:
+        raise ValueError("ADR-015 Python lock has an open or invalid top-level shape")
+    if lock.get("schemaVersion") != 1 or lock.get("lockId") != "ADR-015-ADOPTION-CONTRACT-TOOLCHAIN":
+        raise ValueError("ADR-015 Python lock identity changed")
+    python = lock.get("python")
+    if not isinstance(python, dict) or set(python) != {
+        "implementation",
+        "version",
+        "hostedInstaller",
+    }:
+        raise ValueError("ADR-015 Python lock has an open or invalid runtime shape")
+    installer = python.get("hostedInstaller")
+    if not isinstance(installer, dict) or set(installer) != {
+        "repository",
+        "version",
+        "commit",
+    }:
+        raise ValueError("ADR-015 Python lock has an invalid hosted installer")
+    if (
+        installer.get("repository") != "https://github.com/actions/setup-python"
+        or installer.get("version") != "7.0.0"
+        or installer.get("commit") != "5fda3b95a4ea91299a34e894583c3862153e4b97"
+    ):
+        raise ValueError("ADR-015 Python hosted installer identity changed")
+    expected = {
+        "implementation": python.get("implementation"),
+        "version": python.get("version"),
+    }
+    if not all(isinstance(value, str) and value for value in expected.values()):
+        raise ValueError("ADR-015 Python lock omits an exact runtime identity")
+    actual = {
+        "implementation": platform.python_implementation(),
+        "version": platform.python_version(),
+    }
+    if actual != expected:
+        raise ValueError(
+            "ADR-015 Python runtime differs from the lock: "
+            f"expected {expected['implementation']} {expected['version']}, "
+            f"found {actual['implementation']} {actual['version']}"
+        )
+    return actual
 
 
 def file_identity(root: Path, paths: tuple[str, ...]) -> str:
@@ -190,6 +240,7 @@ def observer_identities(root: Path) -> dict[str, str]:
                 "scripts/adoption/refresh-evidence.py",
                 "scripts/adoption/test-evidence.py",
                 "scripts/adoption/test.sh",
+                "manifests/adoption-contract-toolchain.lock.json",
             ),
         ),
         "ownership": file_identity(
@@ -237,6 +288,7 @@ def pending_local_state(
         "executionMode": execution_mode,
         "outcome": "pending",
         "observedAt": None,
+        "pythonRuntime": python_runtime_identity(root),
         "observers": [
             {
                 "id": observer_id,
@@ -271,6 +323,7 @@ def refresh_local_state(
         and existing.get("evidenceSubjectSha256")
         == pending["evidenceSubjectSha256"]
         and existing.get("executionMode") == pending["executionMode"]
+        and existing.get("pythonRuntime") == pending["pythonRuntime"]
         and existing.get("observers") == expected_observers
     )
     if same_identity:
@@ -294,6 +347,8 @@ def record_local_pass(
         raise ValueError("local observers did not use the current evidence subject")
     if observer_record.get("executionMode") != execution_mode:
         raise ValueError("local observers used a different PHP execution mode")
+    if observer_record.get("pythonRuntime") != expected["pythonRuntime"]:
+        raise ValueError("local observers used a different Python runtime")
     observed_at = observer_record.get("observedAt")
     if not isinstance(observed_at, str) or not observed_at.endswith("Z"):
         raise ValueError("local observers need one UTC observation timestamp")
@@ -316,5 +371,6 @@ def record_local_pass(
         "executionMode": execution_mode,
         "outcome": "passed",
         "observedAt": observed_at,
+        "pythonRuntime": expected["pythonRuntime"],
         "observers": expected_observers,
     }

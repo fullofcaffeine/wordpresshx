@@ -14,8 +14,12 @@ final class NativeMain {
 		#if js
 		final generation = requiredEnvironment("WORDPRESSHX_ADOPTION_GENERATION");
 		BrowserAcmeCalendarAdapter.open(providerPath, generation, bundleFile).then(adapter -> {
-			adapter.renderBadge(new CalendarBadgeProps(3.5, "typed Haxe observer"));
-			Node.process.stdout.write("haxe-js-native|opaque-object-observed\n");
+			final label = adapter.formatLabel(3.5);
+			if (label != "3.5 calendar events") {
+				throw new haxe.Exception("Haxe observer received a non-immediate or wrong JavaScript label");
+			}
+			adapter.renderBadge(new CalendarBadgeProps(3.5, label));
+			Node.process.stdout.write("haxe-js-native|immediate-string|opaque-object-observed\n");
 			return adapter;
 		});
 		#elseif php

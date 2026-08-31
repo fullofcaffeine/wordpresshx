@@ -1,6 +1,8 @@
 package adoption.ownership;
 
 import haxe.Resource;
+import js.node.Fs;
+import js.node.Path;
 import wordpresshx.cli.NodeGlobals;
 import wordpresshx.cli.ownership.ArtifactOwner;
 import wordpresshx.cli.ownership.OwnershipFailure;
@@ -30,11 +32,14 @@ final class Main {
 					final validators:Array<StageValidator> = [
 						{
 							validatorId: "adoption.bundle",
-							run: stageRoot -> {
+							run: snapshot -> {
 								if (validatorMode == "fail") {
 									throw new OwnershipFailure("fixture validator failed", "fixture-validator");
 								}
-								AdoptionBundleValidator.validate(stageRoot, arguments[2], expected);
+								if (validatorMode == "mutate-after-capture") {
+									Fs.appendFileSync(Path.join(arguments[3], "generated/adoption/acme-calendar/contract.json"), "\nchanged after capture\n");
+								}
+								AdoptionBundleValidator.validate(snapshot, expected);
 							}
 						}
 					];

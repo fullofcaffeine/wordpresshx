@@ -118,10 +118,10 @@
     }
   ],
   "prototypeEvidence": {
-    "contractSha256": "816c8a39ca6b0feab93ef98085c8e3149f9a3b15717491b53d2d6af4db928d81",
-    "capabilitySha256": "f4cb8d1a2f3c5f6c0183be125f24e2e149b38e1af5ed7941ac4f3eb335f5d7bb",
-    "reviewSha256": "4c9f4dd7d16be06802c821f6b2ac4ee12f17ade75cf297eb44c3ce108e86f650",
-    "sourceTreeSha256": "022b24e5f332926e0a59681d137f861cfe7626c96f4db5e6c535809fd58d5563",
+    "contractSha256": "1dd441a1584c9d2fc06ee0cb68f71973a9c36910e97418dcfaf9e8950e40d997",
+    "capabilitySha256": "edff2791bab74e62aff10b8ee0393708eb006c448a3eb2b24cde349fd80d45a1",
+    "reviewSha256": "bd8584525112b32d1e4cd5c40741a313f422443ed3d20fe4b70a104cf15c01e7",
+    "sourceTreeSha256": "016b8753443a95050cb2fa153dfffa951334251ae15b20ed6975e949c03438e7",
     "transcriptSha256": "eddc5a6345427049f52510c103516fbe4057107d2788c4f7593f2afc47374572",
     "contractSchemaSha256": "f2dd4139ee318b8334feae0ebd4cf1f5da2db88d00ce23a631d55e9840db6803",
     "capabilitySchemaSha256": "39830904606c1330a31b48da1ab17a27f53fbd3de81721357bf3c12b90362290",
@@ -130,22 +130,23 @@
     "capabilityCount": 2,
     "omissionCount": 4,
     "conflictCount": 1,
-    "compileNegativeCount": 9,
+    "compileNegativeCount": 10,
     "independentMutationCount": 84,
     "targets": [
+      "cpython-3.14.5-evidence-runtime",
       "haxe-4.3.7-interp",
       "genes-ts-1.38.0@122162abefc2035b307508e521348ea4fb36dab7-typescript-5.9.3-node-22.17.0",
       "stock-haxe-php-8.4.7"
     ],
     "providerRuntimeExecutionDuringGeneration": false,
     "realProviderUsed": false,
-    "bundleDigest": "2c1dfaffcafce7cb9929c10ce1a25bf882a6580e41ba82365e043b1770221007",
-    "bundleFileSha256": "a27378d13ca129f172adef8e16d570e496c0acf239428398ca168c4be8fa1569",
-    "ownershipManifestSha256": "21c95e7e5066b6653ef9b3d81912fbe86b8a16f727d573006ae3a81bfac801ea",
+    "bundleDigest": "c2a0a55dd274ead37af78c2ea2d53a43cdc7868c9fb80949e9cc246e2c57088a",
+    "bundleFileSha256": "3afd7f6947a19270ac1f1d1cd68468259a3e8cc4b2de773ad645750f59fbe215",
+    "ownershipManifestSha256": "442d2c2f72f7966a038bfaf29736c6b5ab9ac90265ff9f58607f415a5886af06",
     "bundleSchemaSha256": "7f32dca7b0dba5b748cdcd59fc85c42fc01057bf24f96a3dd4294bf5b2b6ac84",
     "syntheticProviderRuntimeUsed": true,
     "productionOwnershipTransactionUsed": true,
-    "evidenceSubjectSha256": "d9b64581a035c0728646102b7f97653997a14e9056fbc0cb472a2d0831db163d"
+    "evidenceSubjectSha256": "816fe7d99206d51b953f4fac7ee4b44aff115a3168c7363f4ab82c5b85307779"
   },
   "referenceReview": [
     {
@@ -180,18 +181,23 @@
     "workflow": ".github/workflows/adoption-contract.yml",
     "job": "adoption-contract",
     "command": "bash scripts/adoption/test.sh",
-    "runId": 33338453939,
-    "jobId": 99329523358,
-    "commit": "add2f6e9f64581cabe8cd833295b213ff16c2503",
-    "status": "passed-current-main",
-    "contentRoot": "2c1dfaffcafce7cb9929c10ce1a25bf882a6580e41ba82365e043b1770221007",
-    "evidenceSubjectSha256": "d9b64581a035c0728646102b7f97653997a14e9056fbc0cb472a2d0831db163d",
-    "gateIdentitySha256": "ab34327ccc7dd31238f5c0d498862b191f5f9ef31bf2e5d5054966a6a7d385dc",
-    "historicalRunId": 32883312308,
-    "historicalJobId": 97917772321,
-    "historicalCommit": "6168114233007c1d585e4e6318ff5386e6f51fe5",
-    "historicalContentRoot": "3d7e7691f83d60c5264432270f19a9b7656b00260190db8540e6963e76bfc188",
-    "historicalGateIdentitySha256": "df7d0b2a597a9b02c047e9f321b5356a8aa2482d4f8e5d106d6f65a8b5331875"
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "contentRoot": "c2a0a55dd274ead37af78c2ea2d53a43cdc7868c9fb80949e9cc246e2c57088a",
+    "evidenceSubjectSha256": "816fe7d99206d51b953f4fac7ee4b44aff115a3168c7363f4ab82c5b85307779",
+    "pythonRuntime": {
+      "implementation": "CPython",
+      "version": "3.14.5"
+    },
+    "gateIdentitySha256": "0dbcb37c3d5f6511b59d3f8ca0c21c2666926b3946be39bcd5d735b54a6f3a0f",
+    "historicalRunId": 33338453939,
+    "historicalJobId": 99329523358,
+    "historicalCommit": "add2f6e9f64581cabe8cd833295b213ff16c2503",
+    "historicalContentRoot": "2c1dfaffcafce7cb9929c10ce1a25bf882a6580e41ba82365e043b1770221007",
+    "historicalGateIdentitySha256": "ab34327ccc7dd31238f5c0d498862b191f5f9ef31bf2e5d5054966a6a7d385dc",
+    "historicalEvidenceSubjectSha256": "d9b64581a035c0728646102b7f97653997a14e9056fbc0cb472a2d0831db163d"
   },
   "claims": {
     "architectureDecision": "proposed-pending-fresh-review",

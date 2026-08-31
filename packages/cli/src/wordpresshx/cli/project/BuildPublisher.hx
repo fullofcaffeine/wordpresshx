@@ -11,6 +11,7 @@ import wordpresshx.cli.ownership.OwnershipContract;
 import wordpresshx.cli.ownership.OwnershipFailure;
 import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 import wordpresshx.cli.ownership.OwnershipResult;
+import wordpresshx.cli.ownership.StageSnapshot;
 import wordpresshx.cli.ownership.StageValidator;
 
 typedef BuildPublication = {
@@ -243,8 +244,11 @@ class BuildPublisher {
 		throw new CliFailure("WPHX1014", "project lock is missing component " + id, 3, "profile-resolution");
 	}
 
-	static function validateStage(root:String, relative:String, fingerprint:String):Void {
-		final bytes = Fs.readFileSync(Path.resolve(root, relative));
+	static function validateStage(snapshot:StageSnapshot, relative:String, fingerprint:String):Void {
+		final bytes = snapshot.read(relative);
+		if (bytes == null) {
+			throw new OwnershipFailure("staged effective-input file is missing", "effective-input-validator", relative);
+		}
 		final value = OwnershipJson.parseCanonical(bytes, "staged effective inputs");
 		if (ProjectContract.string(value, "schema", "effective inputs") != "wordpress-hx.effective-inputs.v1"
 			|| ProjectContract.string(value, "fingerprint", "effective inputs") != fingerprint) {

@@ -238,6 +238,50 @@
     "status": "passed",
     "required": true
   },
+  "currentReverification": {
+    "reason": "The owner now validates and publishes one captured stage snapshot instead of reopening mutable caller paths.",
+    "observedAt": "2026-08-31T01:59:29Z",
+    "commands": [
+      "bash packages/cli/scripts/test.sh",
+      "bash scripts/scaffold/test-production.sh"
+    ],
+    "subjects": [
+      {
+        "path": "packages/cli/src/wordpresshx/cli/ownership/ArtifactOwner.hx",
+        "sha256": "62ececc063b64a240ce04444c25a539056bebc4d5833419f2dc58d6fe27b5415"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx",
+        "sha256": "f4895ad9d4759cf7a2e142be90f491f38a408824a686c54328b3145b56f67efe"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
+        "sha256": "121a3fc6698e9abdf0897a737d4ff9fd59498539aa82ff0d2a279950485269f9"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx",
+        "sha256": "3a35468fd1e668f7ed6b7e2b137829b4cd33f8a731251cf7c85f2629b9ea33f5"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/PluginBuildPublisher.hx",
+        "sha256": "e5d48c06af1a5f812485234b25097aebf6660a41cb71beceb88134e8f94959b8"
+      },
+      {
+        "path": "packages/cli/src/wordpresshx/cli/project/ReproducibleBuild.hx",
+        "sha256": "36020660c0cdbf112ab63ad7d127a2641056597d62c3ed94cef6ba5f670d406d"
+      }
+    ],
+    "localOutcome": "passed",
+    "hostedWorkflow": {
+      "workflow": "Repository bootstrap",
+      "job": "haxe",
+      "step": "Test Haxe-first site scaffolding",
+      "runId": null,
+      "jobId": null,
+      "commit": null,
+      "status": "pending-current-main-run"
+    }
+  },
   "claims": {
     "haxeOnlyPluginScaffold": "runtime-tested-hosted",
     "derivedPluginMetadata": "compile-tested-hosted",

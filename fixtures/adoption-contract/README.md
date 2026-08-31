@@ -27,9 +27,11 @@ is a deterministic ZIP of the runtime fixture files.
 The Haxe prototype models three lifecycle types.
 These types are PHP request, PHP process, and browser module.
 Each runtime instance has a new private nonce.
-Application code cannot create observations, scopes, runtimes, or tokens.
+Application code cannot create observations, scopes, runtimes, or tokens under
+the pinned Haxe 4.3.7 typed surface. Private authority subtype imports remain
+unavailable even when the caller adds `@:access` metadata.
 
-Eight negative programs prove type and access restrictions, including exact
+Ten negative programs prove type and access restrictions, including exact
 spoofs of the former test friend path and the internal authority-owner name.
 Runtime cases reject reuse across two instances of the same lifecycle type.
 They also reject browser reload and stale PHP process authority.
@@ -48,7 +50,9 @@ module-plus-package-metadata executable closure. Neither token overclaims that
 the target observed every byte in the provider distribution ZIP.
 
 The production ADR-007 owner validates the complete staged set against a
-trusted generator plan embedded before candidate publication. The plan covers
+trusted generator plan embedded before candidate publication. It captures the
+manifest and every staged byte once, gives validators immutable copies from
+that snapshot, and installs the same captured buffers. The plan covers
 every staged file, the ownership manifest, both runtime anchors, and the exact
 closure, binding, and symbol facts. The proof covers no-op regeneration,
 provider updates, manual
@@ -68,8 +72,11 @@ gets a fresh self-digest before its own schema and semantic layer evaluates it.
 An independent TypeScript parser observes the JavaScript module without
 execution and compares its exports and formals with the checked contract,
 capability set, and generated Haxe surface.
-It uses Haxe 4.3.7, TypeScript 5.9.3, Node 22.17.0, and PHP 8.4.7.
+It uses CPython 3.14.5, Haxe 4.3.7, TypeScript 5.9.3, Node 22.17.0, and PHP 8.4.7.
 The exact Genes version and commit come from `packages/cli/dependency-lock.json`.
+The exact Python runtime and hosted installer come from
+`manifests/adoption-contract-toolchain.lock.json`. The gate rejects a different
+Python implementation or version before it runs project Python code.
 Set `WORDPRESSHX_ADOPTION_FORCE_CONTAINER_PHP=1` to exercise the pinned PHP
 container path even when exact PHP is installed on the host.
 

@@ -7,6 +7,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import platform
 import re
 import sys
 from pathlib import Path, PurePosixPath
@@ -43,6 +44,7 @@ GENERATOR_PATH = ROOT / "scripts/adoption/generate-fixture.py"
 ABI_MODEL_PATH = ROOT / "scripts/adoption/abi_model.py"
 CLI_LOCK_PATH = ROOT / "packages/cli/dependency-lock.json"
 TOOLCHAIN_LOCK_PATH = ROOT / "manifests/toolchain.lock.json"
+ADOPTION_TOOLCHAIN_LOCK_PATH = ROOT / "manifests/adoption-contract-toolchain.lock.json"
 NPM_LOCK_PATH = ROOT / "packages/gutenberg/build-tooling/package-lock.json"
 GENERATOR_SPEC = importlib.util.spec_from_file_location(
     "wordpresshx_adoption_generator", GENERATOR_PATH
@@ -1123,7 +1125,37 @@ def validate_architecture(
     php = require_dict(images.get("php"), "toolchain PHP")
     primary_php = require_dict(php.get("primaryCli"), "toolchain primary PHP")
     php_version = require_string(primary_php.get("version"), "PHP version")
+    adoption_toolchain = strict_json(ADOPTION_TOOLCHAIN_LOCK_PATH)
+    if set(adoption_toolchain) != {"schemaVersion", "lockId", "python"}:
+        raise ValidationError("ADR-015 toolchain lock has an open top-level shape")
+    if (
+        adoption_toolchain.get("schemaVersion") != 1
+        or adoption_toolchain.get("lockId") != "ADR-015-ADOPTION-CONTRACT-TOOLCHAIN"
+    ):
+        raise ValidationError("ADR-015 toolchain lock identity changed")
+    python = require_dict(adoption_toolchain.get("python"), "ADR-015 Python lock")
+    if set(python) != {"implementation", "version", "hostedInstaller"}:
+        raise ValidationError("ADR-015 Python lock has an open runtime shape")
+    python_implementation = require_string(
+        python.get("implementation"), "ADR-015 Python implementation"
+    )
+    python_version = require_string(python.get("version"), "ADR-015 Python version")
+    installer = require_dict(
+        python.get("hostedInstaller"), "ADR-015 Python hosted installer"
+    )
+    if installer != {
+        "repository": "https://github.com/actions/setup-python",
+        "version": "7.0.0",
+        "commit": "5fda3b95a4ea91299a34e894583c3862153e4b97",
+    }:
+        raise ValidationError("ADR-015 Python hosted installer identity changed")
+    if (
+        platform.python_implementation() != python_implementation
+        or platform.python_version() != python_version
+    ):
+        raise ValidationError("ADR-015 validator is running under an unlocked Python runtime")
     if prototype.get("targets") != [
+        f"{python_implementation.lower()}-{python_version}-evidence-runtime",
         f"haxe-{haxe_version}-interp",
         f"genes-ts-{genes_version}@{genes_commit}-typescript-{typescript_version}-node-{node_version}",
         f"stock-haxe-php-{php_version}",
@@ -1169,7 +1201,17 @@ def validate_architecture(
         if claims.get(field) != "not-tested":
             raise ValidationError(f"architecture overclaims {field}")
 
-    validate_receipt(architecture, genes_version, genes_commit, node_version, haxe_version, typescript_version, php_version)
+    validate_receipt(
+        architecture,
+        genes_version,
+        genes_commit,
+        node_version,
+        haxe_version,
+        typescript_version,
+        php_version,
+        python_implementation,
+        python_version,
+    )
 
 
 def validate_receipt(
@@ -1180,6 +1222,8 @@ def validate_receipt(
     haxe_version: str,
     typescript_version: str,
     php_version: str,
+    python_implementation: str,
+    python_version: str,
 ) -> None:
     receipt = strict_json(RECEIPT_PATH)
     if receipt.get("schemaVersion") != 1 or receipt.get("receiptId") != "ADR-015-INTEROP-ADOPTION-CONTRACT":
@@ -1203,6 +1247,9 @@ def validate_receipt(
         "haxeVersion": haxe_version,
         "typescriptVersion": typescript_version,
         "phpVersion": php_version,
+        "pythonImplementation": python_implementation,
+        "pythonVersion": python_version,
+        "pythonAuthority": "manifests/adoption-contract-toolchain.lock.json",
         "genesAuthority": "packages/cli/dependency-lock.json",
     }
     for field, expected in expected_versions.items():
@@ -1277,6 +1324,11 @@ def validate_receipt(
             raise ValidationError(f"{mode} observation uses a stale evidence subject")
         if observation.get("executionMode") != mode:
             raise ValidationError(f"{mode} observation has the wrong execution mode")
+        if observation.get("pythonRuntime") != {
+            "implementation": python_implementation,
+            "version": python_version,
+        }:
+            raise ValidationError(f"{mode} observation has the wrong Python runtime")
         outcome = observation.get("outcome")
         observation_outcomes.append(outcome)
         observers = require_list(observation.get("observers"), f"{mode} observers")
@@ -1319,6 +1371,7 @@ def validate_receipt(
         "status",
         "contentRoot",
         "evidenceSubjectSha256",
+        "pythonRuntime",
         "gateIdentitySha256",
     ):
         if architecture_hosted.get(field) != hosted.get(field):
@@ -1327,6 +1380,11 @@ def validate_receipt(
         raise ValidationError("hosted evidence uses a different content root")
     if hosted.get("evidenceSubjectSha256") != evidence_subject:
         raise ValidationError("hosted evidence uses a stale evidence subject")
+    if hosted.get("pythonRuntime") != {
+        "implementation": python_implementation,
+        "version": python_version,
+    }:
+        raise ValidationError("hosted evidence uses the wrong Python runtime")
     if hosted.get("gateIdentitySha256") != hosted_gate_identity(ROOT):
         raise ValidationError("hosted evidence uses a stale gate identity")
     if hosted.get("required") is not True:

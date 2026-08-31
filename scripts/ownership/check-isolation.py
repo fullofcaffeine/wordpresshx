@@ -78,6 +78,11 @@ ALLOWED_JAVASCRIPT_IMPORTS_BY_SOURCE = {
         "../../../haxe/ds/StringMap.js",
         "../../../js/node/buffer/Buffer.js",
     },
+    Path("wordpresshx/cli/ownership/StageSnapshot.hx"): {
+        "buffer",
+        "../../../genes/Register.js",
+        "../../../haxe/ds/StringMap.js",
+    },
     Path("wordpresshx/cli/closedjson/JsonParser.hx"): {
         "../../../HxOverrides.js",
         "../../../StringBuf.js",

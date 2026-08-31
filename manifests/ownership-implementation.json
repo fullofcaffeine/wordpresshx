@@ -17,6 +17,7 @@
     "publicTypes": [
       "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
       "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+      "packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx",
       "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx"
     ],
     "internalContracts": [
@@ -45,6 +46,7 @@
     "exclusiveProjectLock": true,
     "journalDurableBeforeLiveMutation": true,
     "completePrivateStage": true,
+    "singleCaptureValidatedPublishedBytes": true,
     "manifestPublishedLast": true,
     "exactHashRollback": true,
     "exactHashFinalize": true,

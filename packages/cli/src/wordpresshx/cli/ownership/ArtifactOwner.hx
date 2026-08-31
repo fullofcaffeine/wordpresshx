@@ -84,9 +84,10 @@ class ArtifactOwner {
 	/** Publish a complete staged generation after running every manifest validator. **/
 	public function publish(nextManifestFile:String, callerStageRoot:String, validators:Array<StageValidator>):OwnershipResult {
 		preflightRecovery();
-		final next = readExternalManifest(nextManifestFile, "next ownership manifest");
+		final captured = readExternalManifest(nextManifestFile, "next ownership manifest");
+		final next = captured.manifest;
 		ensureLayout(next);
-		final staged = validateCallerStage(callerStageRoot, next, validators);
+		final staged = validateCallerStage(callerStageRoot, captured.bytes, next, validators);
 		return transact(next, staged, Build, []);
 	}
 
@@ -504,18 +505,23 @@ class ArtifactOwner {
 		return value;
 	}
 
-	function readExternalManifest(path:String, label:String):OwnershipManifest {
+	function readExternalManifest(path:String, label:String):{manifest:OwnershipManifest, bytes:Buffer} {
 		final resolved = Path.resolve(path);
 		final stats = lstatAbsolute(resolved, label);
 		if (stats == null || stats.isSymbolicLink() || !stats.isFile()) {
 			fail(label + " must be a real regular file", "invalid-manifest-input");
 		}
-		return OwnershipContract.validateManifest(OwnershipJson.parseCanonical(readBufferAbsolute(resolved), label));
+		final bytes = readBufferAbsolute(resolved);
+		return {
+			manifest: OwnershipContract.validateManifest(OwnershipJson.parseCanonical(bytes, label)),
+			bytes: bytes
+		};
 	}
 
-	function validateCallerStage(root:String, next:OwnershipManifest, validators:Array<StageValidator>):Map<String, Buffer> {
+	function validateCallerStage(root:String, manifestBytes:Buffer, next:OwnershipManifest, validators:Array<StageValidator>):Map<String, Buffer> {
 		final resolved = Path.resolve(root);
-		var files = scanStage(resolved, next);
+		final files = scanStage(resolved, next);
+		final snapshot = new StageSnapshot(manifestBytes, files);
 		final expectedIds = [for (validator in next.validators) validator.validatorId];
 		final actualIds:Array<String> = [];
 		final callbacks = new Map<String, StageValidator>();
@@ -532,12 +538,11 @@ class ArtifactOwner {
 		}
 		for (validatorId in expectedIds) {
 			try {
-				callbacks.get(validatorId).run(resolved);
+				callbacks.get(validatorId).run(snapshot);
 			} catch (_:haxe.Exception) {
 				fail("staged validator failed: " + validatorId, "validator-failed");
 			}
 		}
-		files = scanStage(resolved, next);
 		return files;
 	}
 

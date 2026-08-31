@@ -320,6 +320,10 @@ final class BrowserAcmeCalendarAdapter {
 		this.provider = provider;
 	}
 
+	public function formatLabel(count:Float):String {
+		return provider.formatLabel(count);
+	}
+
 	public function renderBadge(props:CalendarBadgeProps):GeneratedJavascriptObject {
 		return switch authority.runtime.probe(GeneratedAcmeCalendar.provider, GeneratedAcmeCalendar.badge) {
 			case Available(token):

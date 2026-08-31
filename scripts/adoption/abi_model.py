@@ -86,6 +86,13 @@ class SourceSpan:
 
 
 @dataclass(frozen=True)
+class JavascriptToken:
+    text: str
+    start: int
+    end: int
+
+
+@dataclass(frozen=True)
 class AbiField:
     name: str
     requirement: str
@@ -390,68 +397,211 @@ def parse_typescript(path: Path, relative_path: str) -> list[Declaration]:
     return declarations
 
 
+def javascript_tokens(text: str) -> tuple[JavascriptToken, ...]:
+    """Lex significant JavaScript tokens without treating comments as code."""
+
+    result: list[JavascriptToken] = []
+    index = 0
+    while index < len(text):
+        character = text[index]
+        if character.isspace():
+            index += 1
+            continue
+        if text.startswith("//", index):
+            newline = text.find("\n", index + 2)
+            index = len(text) if newline < 0 else newline + 1
+            continue
+        if text.startswith("/*", index):
+            end = text.find("*/", index + 2)
+            if end < 0:
+                raise ValueError("unterminated JavaScript block comment")
+            index = end + 2
+            continue
+        if character in ('"', "'", "`"):
+            quote = character
+            start = index
+            index += 1
+            while index < len(text):
+                if text[index] == "\\":
+                    index += 2
+                elif text[index] == quote:
+                    index += 1
+                    break
+                else:
+                    index += 1
+            else:
+                raise ValueError("unterminated JavaScript string or template literal")
+            result.append(JavascriptToken(text[start:index], start, index))
+            continue
+        identifier = re.match(r"[A-Za-z_$][A-Za-z0-9_$]*", text[index:])
+        if identifier is not None:
+            start = index
+            index += len(identifier.group(0))
+            result.append(JavascriptToken(text[start:index], start, index))
+            continue
+        result.append(JavascriptToken(character, index, index + 1))
+        index += 1
+    return tuple(result)
+
+
+def javascript_gap_is_whitespace(text: str, left: JavascriptToken, right: JavascriptToken) -> bool:
+    return text[left.end : right.start].strip() == ""
+
+
 def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration]:
     text = path.read_text(encoding="utf-8")
     declarations: list[Declaration] = []
-    function_pattern = re.compile(
-        r"^export function (?P<name>[A-Za-z_][A-Za-z0-9_]*)\((?P<parameters>[^)]*)\)\s*\{",
-        re.MULTILINE,
-    )
-    for match in function_pattern.finditer(text):
-        parameters_list: list[Parameter] = []
-        parameter_names: set[str] = set()
-        for raw in split_parameters(match.group("parameters")):
-            identifier = re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", raw)
-            if identifier is None:
+    tokens = javascript_tokens(text)
+    depth = 0
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token.text == "{":
+            depth += 1
+            index += 1
+            continue
+        if token.text == "}":
+            depth -= 1
+            if depth < 0:
+                raise ValueError("unbalanced JavaScript runtime braces")
+            index += 1
+            continue
+        if depth != 0 or token.text != "export":
+            index += 1
+            continue
+        if index + 1 >= len(tokens):
+            raise ValueError("incomplete JavaScript runtime export")
+        declaration = tokens[index + 1]
+        if not javascript_gap_is_whitespace(text, token, declaration):
+            raise ValueError("unsupported comments in JavaScript runtime export declaration")
+        if declaration.text in {"async", "default"}:
+            raise ValueError(
+                "unsupported JavaScript runtime export modifier: " + declaration.text
+            )
+        if declaration.text == "function":
+            if index + 2 >= len(tokens):
+                raise ValueError("incomplete JavaScript runtime function export")
+            name_token = tokens[index + 2]
+            if name_token.text == "*":
+                raise ValueError("unsupported JavaScript runtime generator export")
+            if (
+                re.fullmatch(r"[A-Za-z_$][A-Za-z0-9_$]*", name_token.text) is None
+                or not javascript_gap_is_whitespace(text, declaration, name_token)
+            ):
+                raise ValueError("unsupported JavaScript runtime function name")
+            open_index = index + 3
+            if open_index >= len(tokens) or tokens[open_index].text != "(":
                 raise ValueError(
-                    "unsupported JavaScript runtime parameter syntax: " + raw
+                    "unsupported JavaScript runtime function declaration: "
+                    + name_token.text
                 )
-            name = identifier.group(0)
-            if name in JAVASCRIPT_STRICT_BINDING_FORBIDDEN:
+            parameter_end = open_index + 1
+            while parameter_end < len(tokens) and tokens[parameter_end].text != ")":
+                parameter_end += 1
+            if parameter_end >= len(tokens):
                 raise ValueError(
-                    "unsupported JavaScript runtime parameter identifier: " + name
+                    "unterminated JavaScript runtime parameters: " + name_token.text
                 )
-            if name in parameter_names:
+            body_index = parameter_end + 1
+            if body_index >= len(tokens) or tokens[body_index].text != "{":
                 raise ValueError(
-                    "duplicate JavaScript runtime parameter identifier: " + name
+                    "unsupported JavaScript runtime function body: " + name_token.text
                 )
-            parameter_names.add(name)
-            parameters_list.append(
-                Parameter(
-                    name,
-                    "required",
-                    "value",
-                    False,
-                    AbiType("runtime-unknown"),
+            raw_parameters = text[tokens[open_index].end : tokens[parameter_end].start]
+            if not javascript_gap_is_whitespace(
+                text, tokens[parameter_end], tokens[body_index]
+            ):
+                raise ValueError(
+                    "unsupported comments after JavaScript runtime parameters: "
+                    + name_token.text
+                )
+            parameters_list: list[Parameter] = []
+            parameter_names: set[str] = set()
+            for raw in split_parameters(raw_parameters):
+                identifier = re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", raw)
+                if identifier is None:
+                    raise ValueError(
+                        "unsupported JavaScript runtime parameter syntax: " + raw
+                    )
+                parameter_name = identifier.group(0)
+                if parameter_name in JAVASCRIPT_STRICT_BINDING_FORBIDDEN:
+                    raise ValueError(
+                        "unsupported JavaScript runtime parameter identifier: "
+                        + parameter_name
+                    )
+                if parameter_name in parameter_names:
+                    raise ValueError(
+                        "duplicate JavaScript runtime parameter identifier: "
+                        + parameter_name
+                    )
+                parameter_names.add(parameter_name)
+                parameters_list.append(
+                    Parameter(
+                        parameter_name,
+                        "required",
+                        "value",
+                        False,
+                        AbiType("runtime-unknown"),
+                    )
+                )
+            name = name_token.text
+            declarations.append(
+                Declaration(
+                    native_name=f"@acme/calendar.{name}",
+                    target="javascript",
+                    kind="react-component" if name == "CalendarBadge" else "module-function",
+                    parameters=tuple(parameters_list),
+                    return_type=AbiType("runtime-unknown"),
+                    spans=(
+                        source_span(
+                            "browser-runtime",
+                            relative_path,
+                            text,
+                            token.start,
+                            tokens[body_index].end,
+                        ),
+                    ),
                 )
             )
-        parameters = tuple(parameters_list)
-        name = match.group("name")
-        declarations.append(
-            Declaration(
-                native_name=f"@acme/calendar.{name}",
-                target="javascript",
-                kind="react-component" if name == "CalendarBadge" else "module-function",
-                parameters=parameters,
-                return_type=AbiType("runtime-unknown"),
-                spans=(source_span("browser-runtime", relative_path, text, match.start(), match.end()),),
+            depth += 1
+            index = body_index + 1
+            continue
+        if declaration.text == "const":
+            if index + 3 >= len(tokens):
+                raise ValueError("incomplete JavaScript runtime value export")
+            name_token = tokens[index + 2]
+            equals = tokens[index + 3]
+            if (
+                re.fullmatch(r"[A-Za-z_$][A-Za-z0-9_$]*", name_token.text) is None
+                or equals.text != "="
+                or not javascript_gap_is_whitespace(text, declaration, name_token)
+            ):
+                raise ValueError("unsupported JavaScript runtime value export")
+            declarations.append(
+                Declaration(
+                    native_name=f"@acme/calendar.{name_token.text}",
+                    target="javascript",
+                    kind="exported-value",
+                    parameters=(),
+                    return_type=AbiType("runtime-unknown"),
+                    spans=(
+                        source_span(
+                            "browser-runtime",
+                            relative_path,
+                            text,
+                            token.start,
+                            equals.end,
+                        ),
+                    ),
+                )
             )
+            index += 4
+            continue
+        raise ValueError(
+            "unsupported JavaScript runtime export declaration: " + declaration.text
         )
-    value_pattern = re.compile(
-        r"^export const (?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*=",
-        re.MULTILINE,
-    )
-    for match in value_pattern.finditer(text):
-        declarations.append(
-            Declaration(
-                native_name=f"@acme/calendar.{match.group('name')}",
-                target="javascript",
-                kind="exported-value",
-                parameters=(),
-                return_type=AbiType("runtime-unknown"),
-                spans=(source_span("browser-runtime", relative_path, text, match.start(), match.end()),),
-            )
-        )
+    if depth != 0:
+        raise ValueError("unbalanced JavaScript runtime braces")
     return declarations
 
 

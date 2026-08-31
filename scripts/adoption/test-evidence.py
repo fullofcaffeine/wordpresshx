@@ -49,6 +49,15 @@ def main() -> None:
     )
     if reset_subject["outcome"] != "pending":
         raise AssertionError("evidence-subject mismatch did not reset a local pass")
+    stale_python = copy.deepcopy(pending)
+    stale_python["pythonRuntime"]["version"] = "0.0.0"
+    stale_python["outcome"] = "passed"
+    stale_python["observedAt"] = "2026-01-01T00:00:00Z"
+    for observer in stale_python["observers"]:
+        observer["outcome"] = "passed"
+    reset_python = refresh_local_state(ROOT, stale_python, reset_stale_pass=True)
+    if reset_python["outcome"] != "pending":
+        raise AssertionError("Python-runtime mismatch did not reset a local pass")
     incomplete = copy.deepcopy(pending)
     incomplete["observedAt"] = "2026-01-01T00:00:00Z"
     incomplete["observers"] = incomplete["observers"][:-1]
@@ -95,6 +104,7 @@ def main() -> None:
         "gate": "scripts/adoption/test.sh",
         "workflow": ".github/workflows/adoption-contract.yml",
         "lock": "packages/cli/dependency-lock.json",
+        "python-lock": "manifests/adoption-contract-toolchain.lock.json",
     }
     with tempfile.TemporaryDirectory(prefix="wordpresshx-adr015-subject-") as temporary:
         copy_root = Path(temporary)

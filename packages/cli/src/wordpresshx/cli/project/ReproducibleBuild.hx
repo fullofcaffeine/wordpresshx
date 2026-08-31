@@ -1,10 +1,9 @@
 package wordpresshx.cli.project;
 
 import js.node.Buffer;
-import js.node.Fs;
-import js.node.Path;
 import wordpresshx.cli.CliFailure;
 import wordpresshx.cli.closedjson.JsonValue;
+import wordpresshx.cli.ownership.StageSnapshot;
 import wordpresshx.cli.project.ProjectJson as OwnershipJson;
 
 /** Canonical build report plus the exact normalized unsigned archive it binds. **/
@@ -76,10 +75,11 @@ class ReproducibleBuild {
 		};
 	}
 
-	public static function validateStage(root:String, paths:ProjectOwnershipPaths, context:ProjectContext, payloads:Array<ReproduciblePayload>):Void {
+	public static function validateStage(snapshot:StageSnapshot, paths:ProjectOwnershipPaths, context:ProjectContext,
+			payloads:Array<ReproduciblePayload>):Void {
 		final expected = create(context, payloads);
-		final reportBytes = readStage(root, paths.reproducibilityPath);
-		final archiveBytes = readStage(root, paths.archivePath);
+		final reportBytes = readStage(snapshot, paths.reproducibilityPath);
+		final archiveBytes = readStage(snapshot, paths.archivePath);
 		final report = OwnershipJson.parseCanonical(reportBytes, "staged reproducibility report");
 		if (OwnershipJson.encode(report) != OwnershipJson.encode(expected.report)
 			|| reportBytes.length != expected.reportBytes.length
@@ -92,16 +92,9 @@ class ReproducibleBuild {
 		}
 	}
 
-	static function readStage(root:String, relative:String):Buffer {
-		final absolute = Path.resolve(root, relative);
-		if (!Fs.existsSync(absolute)) {
-			fail("staged reproducibility artifact is missing", relative);
-		}
-		final stats = Fs.lstatSync(absolute);
-		if (stats.isSymbolicLink() || !stats.isFile()) {
-			fail("staged reproducibility artifact is not a regular file", relative);
-		}
-		return Fs.readFileSync(absolute);
+	static function readStage(snapshot:StageSnapshot, relative:String):Buffer {
+		final value = snapshot.read(relative);
+		return value == null ? fail("staged reproducibility artifact is missing", relative) : value;
 	}
 
 	static function fail<T>(message:String, ?path:String):T {

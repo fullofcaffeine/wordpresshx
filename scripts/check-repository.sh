@@ -185,6 +185,7 @@ required_files=(
   packages/cli/src/wordpresshx/cli/ownership/OwnershipJson.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx
   packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx
+  packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx
   packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx
   packages/cli/src/wordpresshx/cli/project/BuildPublisher.hx
   packages/cli/src/wordpresshx/cli/project/CompilerRunner.hx
@@ -694,6 +695,7 @@ required_files=(
   fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/AcmeCalendar.hx
   fixtures/adoption-contract/src/wordpress/hx/adoption/prototype/Adoption.hx
   fixtures/adoption-contract/test/Main.hx
+  fixtures/adoption-contract/test-negative/access_metadata/Main.hx
   fixtures/adoption-contract/test-negative/cross_request_scope/Main.hx
   fixtures/adoption-contract/test-negative/direct_token_construction/Main.hx
   fixtures/adoption-contract/test-negative/hostile_define/Main.hx
@@ -719,6 +721,7 @@ required_files=(
   manifests/schema-codec-architecture.json
   manifests/output-context-architecture.json
   manifests/adoption-contract-architecture.json
+  manifests/adoption-contract-toolchain.lock.json
   manifests/semantic-collector-architecture.json
   manifests/generated-artifact-ownership.json
   manifests/generated-output-vcs-policy.json
@@ -1062,6 +1065,7 @@ fi
 python3 - <<'PY'
 import hashlib
 import json
+import platform
 import re
 import subprocess
 from pathlib import Path
@@ -1311,6 +1315,11 @@ adr019_receipt = json.loads(
 )
 adoption_architecture = json.loads(
     Path("manifests/adoption-contract-architecture.json").read_text(
+        encoding="utf-8"
+    )
+)
+adoption_toolchain_lock = json.loads(
+    Path("manifests/adoption-contract-toolchain.lock.json").read_text(
         encoding="utf-8"
     )
 )
@@ -3346,7 +3355,25 @@ assert adoption_prototype["providerRuntimeExecutionDuringGeneration"] is False
 assert adoption_prototype["syntheticProviderRuntimeUsed"] is True
 assert adoption_prototype["productionOwnershipTransactionUsed"] is True
 assert adoption_prototype["realProviderUsed"] is False
-assert adoption_prototype["targets"][1] == (
+assert adoption_toolchain_lock == {
+    "schemaVersion": 1,
+    "lockId": "ADR-015-ADOPTION-CONTRACT-TOOLCHAIN",
+    "python": {
+        "implementation": "CPython",
+        "version": "3.14.5",
+        "hostedInstaller": {
+            "repository": "https://github.com/actions/setup-python",
+            "version": "7.0.0",
+            "commit": "5fda3b95a4ea91299a34e894583c3862153e4b97",
+        },
+    },
+}
+assert platform.python_implementation() == adoption_toolchain_lock["python"][
+    "implementation"
+]
+assert platform.python_version() == adoption_toolchain_lock["python"]["version"]
+assert adoption_prototype["targets"][0] == "cpython-3.14.5-evidence-runtime"
+assert adoption_prototype["targets"][2] == (
     f"genes-ts-{cli_dependency_lock['compiler']['version']}@"
     f"{cli_dependency_lock['compiler']['commit']}-typescript-5.9.3-node-"
     f"{cli_dependency_lock['runtime']['version']}"
@@ -3423,6 +3450,11 @@ assert adr015_verification["genesCommit"] == cli_dependency_lock["compiler"][
 assert adr015_verification["genesAuthority"] == (
     "packages/cli/dependency-lock.json"
 )
+assert adr015_verification["pythonImplementation"] == "CPython"
+assert adr015_verification["pythonVersion"] == "3.14.5"
+assert adr015_verification["pythonAuthority"] == (
+    "manifests/adoption-contract-toolchain.lock.json"
+)
 assert adr015_receipt["review"]["freshIndependentReview"] == (
     "required-after-adr015-f001-f010-repair"
 )
@@ -3461,6 +3493,10 @@ for observation_key, execution_mode in (
         "evidenceSubjectSha256"
     ]
     assert adr015_observation["executionMode"] == execution_mode
+    assert adr015_observation["pythonRuntime"] == {
+        "implementation": "CPython",
+        "version": "3.14.5",
+    }
     assert adr015_observation["outcome"] == "passed"
 adr015_hosted = adr015_receipt["hostedWorkflow"]
 adoption_hosted = adoption_architecture["hostedGate"]
@@ -3475,6 +3511,7 @@ for hosted_identity in (
     "commit",
     "contentRoot",
     "evidenceSubjectSha256",
+    "pythonRuntime",
     "gateIdentitySha256",
 ):
     assert adoption_hosted[hosted_identity] == adr015_hosted[hosted_identity]
@@ -3891,6 +3928,7 @@ assert ownership_code["publicOwner"] == (
 assert ownership_code["publicTypes"] == [
     "packages/cli/src/wordpresshx/cli/ownership/OwnershipLayout.hx",
     "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx",
+    "packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx",
     "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx",
 ]
 assert ownership_code["internalContracts"] == [
@@ -3919,6 +3957,7 @@ assert ownership_implementation["safety"] == {
     "exclusiveProjectLock": True,
     "journalDurableBeforeLiveMutation": True,
     "completePrivateStage": True,
+    "singleCaptureValidatedPublishedBytes": True,
     "manifestPublishedLast": True,
     "exactHashRollback": True,
     "exactHashFinalize": True,
@@ -3990,6 +4029,7 @@ assert set(sdk041_receipt["subject"]) == {
     "canonicalJson",
     "ownershipLayout",
     "ownershipResult",
+    "stageSnapshot",
     "stageValidator",
     "fixtureEntry",
     "compileProfile",
@@ -4031,6 +4071,9 @@ sdk041_closure_subjects = {
     ),
     "ownershipResult": (
         "packages/cli/src/wordpresshx/cli/ownership/OwnershipResult.hx"
+    ),
+    "stageSnapshot": (
+        "packages/cli/src/wordpresshx/cli/ownership/StageSnapshot.hx"
     ),
     "stageValidator": (
         "packages/cli/src/wordpresshx/cli/ownership/StageValidator.hx"
@@ -4084,6 +4127,22 @@ assert sdk041_receipt["sdk042CompatibilityReverification"] == {
     "outcome": "passed-local",
     "hostedEvidenceOwner": "SDK-042-DETERMINISTIC-BUILD",
 }
+sdk041_single_capture = sdk041_receipt["singleCaptureReverification"]
+assert sdk041_single_capture["reason"] == (
+    "Stage validators now receive one owner-captured immutable snapshot, and "
+    "publication installs the same captured manifest and file buffers."
+)
+assert sdk041_single_capture["commands"] == [
+    "bash scripts/adoption/test.sh",
+    "bash scripts/ownership/test.sh",
+]
+assert sdk041_single_capture["productionClosureSourceCount"] == 11
+assert sdk041_single_capture["emittedProductionModuleCount"] == 7
+assert sdk041_single_capture["localOutcome"] == "passed"
+assert sdk041_single_capture["hostedStatus"] in {
+    "pending-current-main-run",
+    "passed-current-main",
+}
 sdk041_hosted = sdk041_receipt["hostedWorkflow"]
 assert sdk041_hosted["workflow"] == "Repository bootstrap"
 assert sdk041_hosted["job"] == "haxe"
@@ -4093,6 +4152,16 @@ if sdk041_hosted["status"] == "pending-first-hosted-main-run":
     assert sdk041_hosted["jobId"] is None
     assert sdk041_hosted["commit"] is None
     sdk041_evidence_level = "runtime-tested-local"
+    sdk041_historical_hosted = sdk041_receipt["historicalHostedWorkflow"]
+    assert sdk041_historical_hosted == {
+        "workflow": "Repository bootstrap",
+        "job": "haxe",
+        "runId": 29829506192,
+        "jobId": 88630562921,
+        "commit": "4d3592536ea92ed868b77f7d8ec49ec37b68b5b0",
+        "status": "passed",
+        "required": True,
+    }
 elif sdk041_hosted["status"] == "passed":
     assert isinstance(sdk041_hosted["runId"], int)
     assert isinstance(sdk041_hosted["jobId"], int)
@@ -6158,6 +6227,41 @@ assert set(sdk045_plugin_receipt["subject"]) == {
     "documentation",
 }
 verify_versioned_subject(sdk045_plugin_receipt)
+sdk045_plugin_current = sdk045_plugin_receipt["currentReverification"]
+assert sdk045_plugin_current["reason"] == (
+    "The owner now validates and publishes one captured stage snapshot instead "
+    "of reopening mutable caller paths."
+)
+assert sdk045_plugin_current["commands"] == [
+    "bash packages/cli/scripts/test.sh",
+    "bash scripts/scaffold/test-production.sh",
+]
+assert sdk045_plugin_current["localOutcome"] == "passed"
+sdk045_plugin_current_records = historical_subject_records(
+    sdk045_plugin_current["subjects"]
+)
+for sdk045_plugin_current_record in sdk045_plugin_current_records:
+    sdk045_plugin_current_path = Path(sdk045_plugin_current_record["path"])
+    assert hashlib.sha256(sdk045_plugin_current_path.read_bytes()).hexdigest() == (
+        sdk045_plugin_current_record["sha256"]
+    )
+sdk045_plugin_current_hosted = sdk045_plugin_current["hostedWorkflow"]
+assert sdk045_plugin_current_hosted["workflow"] == "Repository bootstrap"
+assert sdk045_plugin_current_hosted["job"] == "haxe"
+assert sdk045_plugin_current_hosted["step"] == "Test Haxe-first site scaffolding"
+assert sdk045_plugin_current_hosted["status"] in {
+    "pending-current-main-run",
+    "passed-current-main",
+}
+if sdk045_plugin_current_hosted["status"] == "pending-current-main-run":
+    assert all(
+        sdk045_plugin_current_hosted[field] is None
+        for field in ("runId", "jobId", "commit")
+    )
+else:
+    assert isinstance(sdk045_plugin_current_hosted["runId"], int)
+    assert isinstance(sdk045_plugin_current_hosted["jobId"], int)
+    assert sha1.fullmatch(sdk045_plugin_current_hosted["commit"])
 assert sdk045_plugin_receipt["implementation"] == {
     "applicationLanguage": "Haxe",
     "javascriptCompiler": "Genes",
@@ -6839,6 +6943,16 @@ sdk026_input_records = {
 sdk045_plugin_subject_records = {
     record["path"]: record["sha256"]
     for record in historical_subject_records(sdk045_plugin_receipt["subject"])
+}
+sdk045_plugin_subject_records.update(
+    {
+        record["path"]: record["sha256"]
+        for record in sdk045_plugin_current_records
+    }
+)
+sdk041_current_subject_records = {
+    record["path"]: record["sha256"]
+    for record in sdk041_receipt["subject"].values()
 }
 g13_activation_input_records = {
     record["path"]: record["sha256"]
@@ -8101,6 +8215,7 @@ for strict_haxe_path, strict_haxe_digest in strict_haxe_subjects.items():
         reflaxe_php_semantic_input_records.get(strict_haxe_path),
         reflaxe_php_module_output_input_records.get(strict_haxe_path),
         lifecycle_input_records.get(strict_haxe_path),
+        sdk041_current_subject_records.get(strict_haxe_path),
     )
 
 strict_haxe_pattern = re.compile(
