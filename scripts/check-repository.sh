@@ -3367,6 +3367,20 @@ assert adoption_toolchain_lock == {
         },
     },
 }
+repository_job = Path(".github/workflows/repository.yml").read_text(
+    encoding="utf-8"
+).split("\n  semantic-plan:", 1)[0]
+assert (
+    "uses: actions/setup-python@"
+    f"{adoption_toolchain_lock['python']['hostedInstaller']['commit']} # v"
+    f"{adoption_toolchain_lock['python']['hostedInstaller']['version']}"
+    in repository_job
+)
+assert (
+    f"python-version: {adoption_toolchain_lock['python']['version']}"
+    in repository_job
+)
+assert "run: bash scripts/check-repository.sh" in repository_job
 assert adoption_prototype["targets"][0] == "cpython-3.14.5-evidence-runtime"
 assert adoption_prototype["targets"][2] == (
     f"genes-ts-{cli_dependency_lock['compiler']['version']}@"
