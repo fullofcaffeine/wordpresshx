@@ -5,7 +5,7 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "c5e4efeaf946773dc1c79d4d3e3fbd587268c7a02be33c73104a63a282a842f2"
+    "sha256": "007ffbf63447d21fc7413a335dccf351c36a0c0fc9362843d0467151868895cf"
   },
   "provider": {
     "id": "acme-calendar",
@@ -15,7 +15,7 @@
   "generator": {
     "id": "wordpress-hx-adoption-generator",
     "version": "0.0.0-fixture",
-    "sha256": "ed4a5861cccef2bb17cd4c92f7805950a1a1804b8adedcce5fd4c9528b8b745c"
+    "sha256": "67f752e52bb0faafc1cf1064befdecb2ecd2a06d449cc8c7de4d4ea3c31f1be0"
   },
   "summary": {
     "discovered": 9,
@@ -183,5 +183,5 @@
     "productionSupported": false,
     "implementationOwnershipTransferred": false
   },
-  "reportDigest": "6cf7fdc3d3cf04b2630685626e4aed54be7a7bc4b8d91c908f86ff0606b24ad2"
+  "reportDigest": "73ef6b04e82ecc5a7256fa54769c470dc8e4c5967a0c4f8c8f3c36133e30ca3e"
 }

@@ -448,6 +448,13 @@ def javascript_gap_is_whitespace(text: str, left: JavascriptToken, right: Javasc
     return text[left.end : right.start].strip() == ""
 
 
+def reject_host_active_javascript_export(name: str) -> None:
+    if name == "then":
+        raise ValueError(
+            "host-active JavaScript export is not adoptable: @acme/calendar.then"
+        )
+
+
 def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration]:
     text = path.read_text(encoding="utf-8")
     declarations: list[Declaration] = []
@@ -545,6 +552,7 @@ def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration
                     )
                 )
             name = name_token.text
+            reject_host_active_javascript_export(name)
             declarations.append(
                 Declaration(
                     native_name=f"@acme/calendar.{name}",
@@ -577,6 +585,7 @@ def parse_javascript_runtime(path: Path, relative_path: str) -> list[Declaration
                 or not javascript_gap_is_whitespace(text, declaration, name_token)
             ):
                 raise ValueError("unsupported JavaScript runtime value export")
+            reject_host_active_javascript_export(name_token.text)
             declarations.append(
                 Declaration(
                     native_name=f"@acme/calendar.{name_token.text}",

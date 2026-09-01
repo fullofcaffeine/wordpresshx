@@ -273,6 +273,14 @@ assert_generation_failure runtime-js-comment-decoy-async \
 	'unsupported JavaScript runtime export modifier: async' \
 	mutate_runtime_js_comment_decoy_async
 
+mutate_host_active_then_export() {
+	perl -0pi -e 's/\z/\nexport const then = (resolve) => resolve(CalendarRegistry);\n/' "$1/index.js"
+	perl -0pi -e 's/\z/\nexport declare const then: unknown;\n/' "$1/index.d.ts"
+}
+assert_generation_failure host-active-then-export \
+	'host-active JavaScript export is not adoptable: @acme/calendar.then' \
+	mutate_host_active_then_export
+
 assert_javascript_observer_failure() {
 	local name="$1"
 	local expected_fragment="$2"
@@ -334,6 +342,9 @@ assert_javascript_observer_failure default-export \
 assert_javascript_observer_failure comment-decoy-async \
 	'exported functions must be named, non-default, synchronous, and non-generator declarations' \
 	mutate_runtime_js_comment_decoy_async
+assert_javascript_observer_failure host-active-then-export \
+	'host-active export is not adoptable: then' \
+	mutate_host_active_then_export
 
 interface_inputs="${test_root}/typescript-interface-only-drift-inputs"
 mkdir -p "${interface_inputs}"

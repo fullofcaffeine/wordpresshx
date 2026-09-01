@@ -50,7 +50,10 @@ module-plus-package-metadata executable closure. Neither token overclaims that
 the target observed every byte in the provider distribution ZIP.
 The JavaScript proof protects the same realm from provider import through
 synchronous result inspection. It rejects shared inherited-`then` mutation and
-provider replacement of the carrier observer during that interval. It does not
+provider replacement of the carrier observer during that interval. It also
+rejects the host-active export name `then` instead of treating it as an omitted
+value, and keeps required-symbol reads inside the import restoration boundary.
+It does not
 claim containment of arbitrary provider work scheduled after a call returns;
 that broader boundary requires a separate realm or process.
 

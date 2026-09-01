@@ -492,6 +492,54 @@ def post_cleanup_then_getter_browser_provider(
     return original, module.read_bytes()
 
 
+def substituted_import_then_browser_provider(
+    destination: Path,
+) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """export const CalendarRegistry = Object.freeze({
+  primary: CalendarBadge,
+});"""
+    new = old + """
+
+let armPostCleanupRead = true;
+const substitutedImportResult = new Proxy(
+  { CalendarBadge, formatCalendarLabel },
+  {
+    get(target, property, receiver) {
+      if (property === "then") {
+        return undefined;
+      }
+      if (property === "CalendarBadge" && armPostCleanupRead) {
+        armPostCleanupRead = false;
+        Object.defineProperty(Object.prototype, "then", {
+          configurable: true,
+          value(resolve) {
+            const thenCallSentinel = process.env.WORDPRESSHX_ADOPTION_THEN_CALL_SENTINEL;
+            if (thenCallSentinel) {
+              appendFileSync(thenCallSentinel, "post-import inherited then called\\n", "utf8");
+            }
+            delete Object.prototype.then;
+            resolve(this);
+          },
+        });
+      }
+      return Reflect.get(target, property, receiver);
+    },
+  },
+);
+
+export const then = (resolve) => resolve(substitutedImportResult);"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError(
+            "substituted import result replacement target is absent or repeated"
+        )
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
+
+
 def observer_replacement_browser_provider(destination: Path) -> tuple[bytes, bytes]:
     copy_browser_provider(destination)
     module = destination / "index.js"
@@ -1066,6 +1114,55 @@ def main() -> None:
             "post-cleanup provider getter was not rejected before Promise assimilation: "
             + post_cleanup_then_haxe.stdout
             + post_cleanup_then_haxe.stderr
+        )
+
+    substituted_import_provider = work / "substituted-import-then-browser-provider"
+    original_module, substituted_import_module = substituted_import_then_browser_provider(
+        substituted_import_provider
+    )
+    substituted_import_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(substituted_import_module)
+    )
+    substituted_import_provider_sentinel = (
+        work / "haxe-js-substituted-import-provider-executed"
+    )
+    substituted_import_call_sentinel = work / "haxe-js-substituted-import-then-called"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
+        substituted_import_provider_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_THEN_CALL_SENTINEL"] = str(
+        substituted_import_call_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(
+        substituted_import_provider
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = (
+        "haxe-substituted-import-then-observer"
+    )
+    substituted_import_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(substituted_import_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+        expected=1,
+    )
+    if (
+        "provider-mutated-shared-intrinsic" not in substituted_import_haxe.stderr
+        or "haxe-js-native|immediate-string|opaque-object-observed"
+        in substituted_import_haxe.stdout
+        or substituted_import_call_sentinel.exists()
+        or substituted_import_provider_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "callable then export crossed import cleanup: "
+            + substituted_import_haxe.stdout
+            + substituted_import_haxe.stderr
         )
 
     observer_replacement_provider = work / "observer-replacement-browser-provider"

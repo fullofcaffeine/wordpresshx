@@ -102,6 +102,9 @@ semantics. Unknown unions, open property bags, magic members, unsupported
 callbacks, private APIs, and reference/variadic combinations that cannot be
 proven are omitted. Each omission records a stable code, reason, contributing
 input IDs, and required action. There is no generated broad fallback.
+The JavaScript export name `then` is host-active rather than merely imprecise:
+dynamic import can invoke it during Promise assimilation. V1 rejects a provider
+that exports this name, even when its declared value would otherwise be omitted.
 
 ### Static inspection and isolated reflection
 
@@ -390,7 +393,8 @@ Runtime cases reject same-type scope reuse, browser reload, and stale PHP proces
 Generated PHP and JavaScript facades call the native fixture providers.
 The cases cover success, absence, wrong version, wrong artifact, missing symbols, arrays, and provider exceptions.
 The JavaScript same-realm proof covers provider import, synchronous calls, and
-all provider-controlled result inspection. It restores and rejects shared
+all provider-controlled result inspection, including required-symbol reads from
+the dynamic-import result. It restores and rejects shared
 `Object.prototype.then` changes within that envelope, and it publishes the
 independent carrier observer through an immutable global binding. It does not
 claim containment of arbitrary work that a provider schedules after a call

@@ -1027,11 +1027,11 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
   let provider;
   try {{
     provider = await import(moduleUrl);
+    if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {{
+      throw new Error("required-provider-symbol-missing");
+    }}
   }} finally {{
     rejectObjectPrototypeThenMutation();
-  }}
-  if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {{
-    throw new Error("required-provider-symbol-missing");
   }}
   const handle = createObject(null);
   handle.bundleDigest = bundleDigest;

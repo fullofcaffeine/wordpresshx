@@ -32,6 +32,31 @@ function exported(node) {
   return Boolean(node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword));
 }
 
+function bindingNames(name) {
+  if (ts.isIdentifier(name)) {
+    return [name.text];
+  }
+  return name.elements.flatMap((element) =>
+    ts.isOmittedExpression(element) ? [] : bindingNames(element.name));
+}
+
+function exportedNames(statement) {
+  if (exported(statement)) {
+    if ((ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement)) && statement.name) {
+      return [statement.name.text];
+    }
+    if (ts.isVariableStatement(statement)) {
+      return statement.declarationList.declarations.flatMap((declaration) =>
+        bindingNames(declaration.name));
+    }
+  }
+  if (ts.isExportDeclaration(statement) && statement.exportClause
+      && ts.isNamedExports(statement.exportClause)) {
+    return statement.exportClause.elements.map((element) => element.name.text);
+  }
+  return [];
+}
+
 function sourceFunctions(sourceText) {
   const source = ts.createSourceFile(
     "index.js",
@@ -46,6 +71,9 @@ function sourceFunctions(sourceText) {
   }
   const functions = [];
   for (const statement of source.statements) {
+    if (exportedNames(statement).includes("then")) {
+      fail("host-active export is not adoptable: then");
+    }
     if (!ts.isFunctionDeclaration(statement) || !exported(statement)) {
       continue;
     }

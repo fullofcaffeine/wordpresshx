@@ -7,10 +7,10 @@ const expected = Object.freeze({
   moduleSha256: "9228805f03547e088b0a96a581dfcab823fccd8a4c2a4dd810764972a76d1710",
   packageSha256: "eb0e484d9bb26022868a4f13d8bb53d887d8f5a2c3861308e339c1fdf9f09d1f",
   providerArtifactSha256: "923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd",
-  bundleDigest: "67c2214877c2f0d693287a2c2758160c824ade6674c47b30deacc9c6f11b8d11",
+  bundleDigest: "e79ec1f96203cb17d3ee5bac16117ec1edc44c7563b0a394b075e0868970a66c",
   executableClosureSha256: "f072306f4ce994dd45ab045a122bcf77cd76a15d78a5941cc7d2815d24e9e46e",
 });
-const expectedStaticMembers = Object.freeze([{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"6eb869998b8a3bd411324a4393277e1e0773a6313a5044ac5d223ca39a331ddf","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"b4f8eaae2a14249b5f37e82c94953747ad8df1bfe5111f5680a4a68dc147ad70","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"6433abbff209e6a85bc174f4757f4f34a0ae3c7e5b828e8af4c808dbf5eb0332","sizeBytes":4785}]);
+const expectedStaticMembers = Object.freeze([{"path":"generated/adoption/acme-calendar/capability.json","role":"capability","sha256":"3e03969175247a99ca65ca119aab5be26bae1b4789e983e0f8a4850aa09a6bbf","sizeBytes":2477},{"path":"generated/adoption/acme-calendar/contract.json","role":"contract","sha256":"d653d084570a189631cc3cdfab16928a37dc17396a7b75868d5175ed2cb35e1a","sizeBytes":8278},{"path":"generated/adoption/acme-calendar/haxe/wordpress/hx/adoption/prototype/generated/GeneratedAcmeCalendar.hx","role":"haxe-facade","sha256":"59c4729d6606960a318c6517e912fb000892ffe5e26ea23d5a40fc2e38274b35","sizeBytes":2898},{"path":"generated/adoption/acme-calendar/provider/acme-calendar.2.4.1.zip","role":"provider-artifact","sha256":"923412beee77cce43964a12358bb099ac07014bd37973df9910de3ad15b9cabd","sizeBytes":1549},{"path":"generated/adoption/acme-calendar/review.json","role":"review","sha256":"903dc2235655d958a57600910deec5ccdbc3e462005a335529fb1f64e13e6008","sizeBytes":4785}]);
 const createObject = Object.create;
 const defineProperty = Object.defineProperty;
 const freezeObject = Object.freeze;
@@ -150,11 +150,11 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {
   let provider;
   try {
     provider = await import(moduleUrl);
+    if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {
+      throw new Error("required-provider-symbol-missing");
+    }
   } finally {
     rejectObjectPrototypeThenMutation();
-  }
-  if (typeof provider.CalendarBadge !== "function" || typeof provider.formatCalendarLabel !== "function") {
-    throw new Error("required-provider-symbol-missing");
   }
   const handle = createObject(null);
   handle.bundleDigest = bundleDigest;

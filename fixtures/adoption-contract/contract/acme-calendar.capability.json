@@ -6,7 +6,7 @@
   "contract": {
     "id": "acme-calendar.wp70",
     "version": "1.0.0",
-    "sha256": "c5e4efeaf946773dc1c79d4d3e3fbd587268c7a02be33c73104a63a282a842f2"
+    "sha256": "007ffbf63447d21fc7413a335dccf351c36a0c0fc9362843d0467151868895cf"
   },
   "profile": {
     "id": "wp70-release",
@@ -92,5 +92,5 @@
       }
     }
   ],
-  "capabilitySetDigest": "c1303ac2869a830b890c3d73052d298143e50abc509db580b62e332be5da1468"
+  "capabilitySetDigest": "69969ae6a059951fe911392acc7b5dc82b6f5a2448f7677d23c2920aa3b85b74"
 }

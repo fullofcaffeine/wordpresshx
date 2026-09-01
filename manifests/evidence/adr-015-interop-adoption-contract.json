@@ -7,11 +7,11 @@
   "subject": {
     "adr": {
       "path": "docs/adr/015-interop-and-adoption-contract-format.md",
-      "sha256": "6b2fd9a2512dbd246e06e7e1a1639cdea0a2ac83a592b5b005fd2cd494c2f7cb"
+      "sha256": "f85f50f6b8789b826ee2ed553a7f6d5e3107b5a48d4a1b84fbc6ea5adfe3a62e"
     },
     "architecture": {
       "path": "manifests/adoption-contract-architecture.json",
-      "sha256": "b42fd84b2bd6e3c1ef1456ecf389228f226b0c706dd027e9447578d8868351ce"
+      "sha256": "9e6023be41279568dc5192dab7dcd7cb354c2da055bc20b8cfcbfe9427ef4c7c"
     },
     "adoptionContractSchema": {
       "path": "schemas/adoption-contract.schema.json",
@@ -35,11 +35,11 @@
     },
     "generator": {
       "path": "scripts/adoption/generate-fixture.py",
-      "sha256": "ed4a5861cccef2bb17cd4c92f7805950a1a1804b8adedcce5fd4c9528b8b745c"
+      "sha256": "67f752e52bb0faafc1cf1064befdecb2ecd2a06d449cc8c7de4d4ea3c31f1be0"
     },
     "nativeProviderProbe": {
       "path": "scripts/adoption/test-native-provider.py",
-      "sha256": "5a5d8d3dd1e870bff5bb3a5e13a112a5a7b829ac94b4d568ff43f345ddd6f254"
+      "sha256": "aa54c2890e30dd97f3d008274e537a85fdef8e5b32379aad71526e1639947738"
     },
     "ownershipProbe": {
       "path": "scripts/adoption/test-ownership.py",
@@ -51,7 +51,7 @@
     },
     "gate": {
       "path": "scripts/adoption/test.sh",
-      "sha256": "2f5d61681a7c67b222891bf4f09410a7a137e2bbe73aa57eb239380676162e9c"
+      "sha256": "baaeefe4fc923277bdd1144dc1ffc742e03c42096715bcbcc972a7c8f191ba2c"
     },
     "workflow": {
       "path": ".github/workflows/adoption-contract.yml",
@@ -59,7 +59,7 @@
     },
     "abiModel": {
       "path": "scripts/adoption/abi_model.py",
-      "sha256": "ce4645b3974e0294e71539cd17a6884fd9c3e984ebd2cdbf4318016354f0693e"
+      "sha256": "a7f39163f7150db33e5c85c22cac948397378b9d1fc7eefd997653bce08d47a3"
     },
     "bundleValidator": {
       "path": "fixtures/adoption-contract/test-ownership/adoption/ownership/AdoptionBundleValidator.hx",
@@ -83,7 +83,7 @@
     },
     "javascriptSourceObserver": {
       "path": "scripts/adoption/observe-javascript-source.cjs",
-      "sha256": "089905ff19b02400bf9970b520d0bc4fc005d3aebee63635e137e54a037efb52"
+      "sha256": "2de1e4bd64ad90e0cd265c04a219762cd2aef575e142dec41879a283ba9ad12e"
     },
     "determinismValidator": {
       "path": "scripts/adoption/validate-architecture.py",
@@ -140,7 +140,7 @@
     "realProviderUsed": false,
     "wordpressRuntimeUsed": false,
     "outcome": "passed-local-and-container-current-evidence-subject",
-    "evidenceSubjectSha256": "12416a5147c01203023ea93222ece17d5d1730e03eae1a43df450a227ff7c60b",
+    "evidenceSubjectSha256": "0192d382517e33c0a3410fbf9e7141fe59e45bf6d78a24ada8312b3b29561f87",
     "testOnlyShadowStateMachineTranscriptMatched": true,
     "pythonImplementation": "CPython",
     "pythonVersion": "3.14.5",
@@ -171,19 +171,19 @@
     "workflow": "Adoption-contract architecture",
     "job": "adoption-contract",
     "required": true,
-    "runId": 33466281972,
-    "jobId": 99726703031,
-    "commit": "35c138a0d0c89cc7c9512a1c74a3299bbb84d914",
-    "status": "passed-current-main",
-    "historicalRunId": 33434912827,
-    "historicalJobId": 99628864070,
-    "historicalCommit": "fd42f0bbfd9f7af0e5ad95ede7539a1e0ca5f8d5",
-    "contentRoot": "67c2214877c2f0d693287a2c2758160c824ade6674c47b30deacc9c6f11b8d11",
-    "gateIdentitySha256": "b8fa2369434c40761e80819634568a78e94ddc746465a6aef29968838b5aab4b",
-    "historicalContentRoot": "c58bae146b1fd7cf9c694ea76732d8feece47fa6e1c0657d005cdeddcfc9a2b7",
-    "historicalGateIdentitySha256": "630301ab4bfd2f75798165af4b4fa0a398dba3b4df8acc1a7208457fe6b00745",
-    "evidenceSubjectSha256": "12416a5147c01203023ea93222ece17d5d1730e03eae1a43df450a227ff7c60b",
-    "historicalEvidenceSubjectSha256": "3a2d1d4c56c9956761537ddf3b14bcdca97bef5ad4a1d204e28853f6e01b16cb",
+    "runId": null,
+    "jobId": null,
+    "commit": null,
+    "status": "pending-current-main-run",
+    "historicalRunId": 33466281972,
+    "historicalJobId": 99726703031,
+    "historicalCommit": "35c138a0d0c89cc7c9512a1c74a3299bbb84d914",
+    "contentRoot": "e79ec1f96203cb17d3ee5bac16117ec1edc44c7563b0a394b075e0868970a66c",
+    "gateIdentitySha256": "c6f669a0761e93cf7efd65a3cacdf70554a113dd8f1288aa5018147db669493c",
+    "historicalContentRoot": "67c2214877c2f0d693287a2c2758160c824ade6674c47b30deacc9c6f11b8d11",
+    "historicalGateIdentitySha256": "b8fa2369434c40761e80819634568a78e94ddc746465a6aef29968838b5aab4b",
+    "evidenceSubjectSha256": "0192d382517e33c0a3410fbf9e7141fe59e45bf6d78a24ada8312b3b29561f87",
+    "historicalEvidenceSubjectSha256": "12416a5147c01203023ea93222ece17d5d1730e03eae1a43df450a227ff7c60b",
     "pythonRuntime": {
       "implementation": "CPython",
       "version": "3.14.5"
@@ -219,11 +219,11 @@
     "publicationAuthorized": false
   },
   "localObservation": {
-    "contentRoot": "67c2214877c2f0d693287a2c2758160c824ade6674c47b30deacc9c6f11b8d11",
-    "evidenceSubjectSha256": "12416a5147c01203023ea93222ece17d5d1730e03eae1a43df450a227ff7c60b",
+    "contentRoot": "e79ec1f96203cb17d3ee5bac16117ec1edc44c7563b0a394b075e0868970a66c",
+    "evidenceSubjectSha256": "0192d382517e33c0a3410fbf9e7141fe59e45bf6d78a24ada8312b3b29561f87",
     "executionMode": "local",
     "outcome": "passed",
-    "observedAt": "2026-09-01T03:18:44Z",
+    "observedAt": "2026-09-01T06:08:01Z",
     "pythonRuntime": {
       "implementation": "CPython",
       "version": "3.14.5"
@@ -231,12 +231,12 @@
     "observers": [
       {
         "id": "schema",
-        "identitySha256": "c9e32eb86b6844dc5afee576886d0702199b18e5f6dc2574a67865347f8f99fd",
+        "identitySha256": "8d18fdffd98616d3d3e11cdd980da8076aa2c3beb41535e1f748865010f56372",
         "outcome": "passed"
       },
       {
         "id": "native",
-        "identitySha256": "6a6b463bf2747327e1a76bab4674ae6aa8f55358b084c107b737d27a93ceeca7",
+        "identitySha256": "fa7bdbad8ca730f56513b84fd3e0aa49fe5e906f0aa6c8eb1bed197b5c6fb0c2",
         "outcome": "passed"
       },
       {
@@ -246,7 +246,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "7d823306fed88440fd8023f82620146d13a77ce084a94da98ca9495d970cacfd",
+        "identitySha256": "d7b7dea41c0cf9b28b452e1f096ca139eca5d1d822567f1acfbc80bec108897f",
         "outcome": "passed"
       },
       {
@@ -257,11 +257,11 @@
     ]
   },
   "containerObservation": {
-    "contentRoot": "67c2214877c2f0d693287a2c2758160c824ade6674c47b30deacc9c6f11b8d11",
-    "evidenceSubjectSha256": "12416a5147c01203023ea93222ece17d5d1730e03eae1a43df450a227ff7c60b",
+    "contentRoot": "e79ec1f96203cb17d3ee5bac16117ec1edc44c7563b0a394b075e0868970a66c",
+    "evidenceSubjectSha256": "0192d382517e33c0a3410fbf9e7141fe59e45bf6d78a24ada8312b3b29561f87",
     "executionMode": "container",
     "outcome": "passed",
-    "observedAt": "2026-09-01T03:19:18Z",
+    "observedAt": "2026-09-01T06:08:48Z",
     "pythonRuntime": {
       "implementation": "CPython",
       "version": "3.14.5"
@@ -269,12 +269,12 @@
     "observers": [
       {
         "id": "schema",
-        "identitySha256": "c9e32eb86b6844dc5afee576886d0702199b18e5f6dc2574a67865347f8f99fd",
+        "identitySha256": "8d18fdffd98616d3d3e11cdd980da8076aa2c3beb41535e1f748865010f56372",
         "outcome": "passed"
       },
       {
         "id": "native",
-        "identitySha256": "6a6b463bf2747327e1a76bab4674ae6aa8f55358b084c107b737d27a93ceeca7",
+        "identitySha256": "fa7bdbad8ca730f56513b84fd3e0aa49fe5e906f0aa6c8eb1bed197b5c6fb0c2",
         "outcome": "passed"
       },
       {
@@ -284,7 +284,7 @@
       },
       {
         "id": "mutation",
-        "identitySha256": "7d823306fed88440fd8023f82620146d13a77ce084a94da98ca9495d970cacfd",
+        "identitySha256": "d7b7dea41c0cf9b28b452e1f096ca139eca5d1d822567f1acfbc80bec108897f",
         "outcome": "passed"
       },
       {
