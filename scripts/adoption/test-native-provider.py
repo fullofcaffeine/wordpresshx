@@ -203,18 +203,29 @@ require $argv[2];
 
 
 JS_HAXE_PROBE = r'''
+const safeDefineProperty = Object.defineProperty;
+const safeFreeze = Object.freeze;
 const safeIsFrozen = Object.isFrozen;
+const safeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 const safeGetPrototypeOf = Object.getPrototypeOf;
 const safeOwnKeys = Reflect.ownKeys;
 const facadeBytes = Buffer.from(process.argv[1], "base64");
 globalThis.WordPressHxAcmeCalendarFacade = await import(
   `data:text/javascript;base64,${facadeBytes.toString("base64")}`
 );
-globalThis.WordPressHxBadgeCarrierObserver = Object.freeze({
+const badgeCarrierObserver = safeFreeze({
   observe(value) {
+    const descriptor = safeGetOwnPropertyDescriptor(
+      globalThis,
+      "WordPressHxBadgeCarrierObserver",
+    );
     const firstThen = value?.then;
     const secondThen = value?.then;
-    return value !== null
+    return descriptor?.value === badgeCarrierObserver
+      && descriptor.writable === false
+      && descriptor.configurable === false
+      && descriptor.enumerable === false
+      && value !== null
       && typeof value === "object"
       && safeIsFrozen(value)
       && safeGetPrototypeOf(value) === null
@@ -222,6 +233,12 @@ globalThis.WordPressHxBadgeCarrierObserver = Object.freeze({
       && typeof firstThen === "undefined"
       && typeof secondThen === "undefined";
   },
+});
+safeDefineProperty(globalThis, "WordPressHxBadgeCarrierObserver", {
+  value: badgeCarrierObserver,
+  writable: false,
+  configurable: false,
+  enumerable: false,
 });
 await import(process.argv[2]);
 '''
@@ -428,6 +445,73 @@ def substituted_carrier_browser_provider(destination: Path) -> tuple[bytes, byte
     text = original.decode("utf-8")
     if text.count(old) != 1:
         raise AssertionError("substituted carrier replacement target is absent or repeated")
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
+
+
+def post_cleanup_then_getter_browser_provider(
+    destination: Path,
+) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """export function CalendarBadge(props) {
+  return Object.freeze({
+    kind: "acme-calendar-badge",
+    count: props.count,
+    label: props.label,
+  });
+}"""
+    new = """export function CalendarBadge() {
+  return new Proxy({}, {
+    get(_target, property) {
+      if (property !== "then") {
+        return undefined;
+      }
+      Object.defineProperty(Object.prototype, "then", {
+        configurable: true,
+        value(resolve) {
+          const thenCallSentinel = process.env.WORDPRESSHX_ADOPTION_THEN_CALL_SENTINEL;
+          if (thenCallSentinel) {
+            appendFileSync(thenCallSentinel, "provider inherited then called\\n", "utf8");
+          }
+          delete Object.prototype.then;
+          resolve({ providerControlled: true });
+        },
+      });
+      return undefined;
+    },
+  });
+}"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError(
+            "post-cleanup then getter replacement target is absent or repeated"
+        )
+    module.write_text(text.replace(old, new), encoding="utf-8")
+    return original, module.read_bytes()
+
+
+def observer_replacement_browser_provider(destination: Path) -> tuple[bytes, bytes]:
+    copy_browser_provider(destination)
+    module = destination / "index.js"
+    original = module.read_bytes()
+    old = """if (sentinel) {
+  appendFileSync(sentinel, "browser provider code executed\\n", "utf8");
+}
+"""
+    new = old + """
+globalThis.WordPressHxBadgeCarrierObserver = Object.freeze({
+  observe() {
+    return true;
+  },
+});
+"""
+    text = original.decode("utf-8")
+    if text.count(old) != 1:
+        raise AssertionError(
+            "observer replacement target is absent or repeated"
+        )
     module.write_text(text.replace(old, new), encoding="utf-8")
     return original, module.read_bytes()
 
@@ -933,6 +1017,99 @@ def main() -> None:
         raise AssertionError(
             "provider substituted the Haxe carrier: "
             + substituted_carrier_haxe.stdout
+        )
+
+    post_cleanup_then_provider = work / "post-cleanup-then-getter-browser-provider"
+    original_module, post_cleanup_then_module = (
+        post_cleanup_then_getter_browser_provider(post_cleanup_then_provider)
+    )
+    post_cleanup_then_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(post_cleanup_then_module)
+    )
+    post_cleanup_then_provider_sentinel = (
+        work / "haxe-js-post-cleanup-then-provider-executed"
+    )
+    post_cleanup_then_call_sentinel = work / "haxe-js-post-cleanup-then-called"
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
+        post_cleanup_then_provider_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_THEN_CALL_SENTINEL"] = str(
+        post_cleanup_then_call_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(
+        post_cleanup_then_provider
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = (
+        "haxe-post-cleanup-then-getter-observer"
+    )
+    post_cleanup_then_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(post_cleanup_then_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+        expected=1,
+    )
+    if (
+        "provider-mutated-shared-intrinsic" not in post_cleanup_then_haxe.stderr
+        or "haxe-js-native|immediate-string|opaque-object-observed"
+        in post_cleanup_then_haxe.stdout
+        or post_cleanup_then_call_sentinel.exists()
+        or post_cleanup_then_provider_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "post-cleanup provider getter was not rejected before Promise assimilation: "
+            + post_cleanup_then_haxe.stdout
+            + post_cleanup_then_haxe.stderr
+        )
+
+    observer_replacement_provider = work / "observer-replacement-browser-provider"
+    original_module, observer_replacement_module = observer_replacement_browser_provider(
+        observer_replacement_provider
+    )
+    observer_replacement_facade = replace_exact(
+        js_facade, sha256(original_module), sha256(observer_replacement_module)
+    )
+    observer_replacement_sentinel = (
+        work / "haxe-js-observer-replacement-provider-executed"
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_POISON_SENTINEL"] = str(
+        observer_replacement_sentinel
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_PROVIDER_PATH"] = str(
+        observer_replacement_provider
+    )
+    haxe_environment["WORDPRESSHX_ADOPTION_GENERATION"] = (
+        "haxe-observer-replacement"
+    )
+    observer_replacement_haxe = checked_run(
+        [
+            node,
+            "--input-type=module",
+            "--eval",
+            JS_HAXE_PROBE,
+            base64.b64encode(observer_replacement_facade).decode("ascii"),
+            haxe_js_index.resolve().as_uri(),
+        ],
+        haxe_environment,
+        expected=1,
+    )
+    if (
+        "WordPressHxBadgeCarrierObserver" not in observer_replacement_haxe.stderr
+        or "haxe-js-native|immediate-string|opaque-object-observed"
+        in observer_replacement_haxe.stdout
+        or observer_replacement_sentinel.read_text(encoding="utf-8")
+        != "browser provider code executed\n"
+    ):
+        raise AssertionError(
+            "provider replaced the independent Haxe carrier observer: "
+            + observer_replacement_haxe.stdout
+            + observer_replacement_haxe.stderr
         )
 
     inherited_then_provider = work / "inherited-then-handle-browser-provider"

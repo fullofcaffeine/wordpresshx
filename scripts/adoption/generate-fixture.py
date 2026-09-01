@@ -1052,11 +1052,11 @@ export async function openExactProvider(packageRoot, generation, bundleFile) {{
       let value;
       try {{
         value = provider.CalendarBadge(props);
+        if (value === null || typeof value !== "object" || typeof value.then === "function") {{
+          throw new Error("wrong-provider-result-shape");
+        }}
       }} finally {{
         rejectObjectPrototypeThenMutation();
-      }}
-      if (value === null || typeof value !== "object" || typeof value.then === "function") {{
-        throw new Error("wrong-provider-result-shape");
       }}
       const carrier = createObject(null);
       setWeakMapEntry(badgePayloads, carrier, value);

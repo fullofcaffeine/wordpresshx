@@ -48,6 +48,11 @@ JavaScript providers.
 PHP tokens bind the exact plugin file. Browser tokens bind the canonical
 module-plus-package-metadata executable closure. Neither token overclaims that
 the target observed every byte in the provider distribution ZIP.
+The JavaScript proof protects the same realm from provider import through
+synchronous result inspection. It rejects shared inherited-`then` mutation and
+provider replacement of the carrier observer during that interval. It does not
+claim containment of arbitrary provider work scheduled after a call returns;
+that broader boundary requires a separate realm or process.
 
 The production ADR-007 owner validates the complete staged set against a
 trusted generator plan embedded before candidate publication. It captures the

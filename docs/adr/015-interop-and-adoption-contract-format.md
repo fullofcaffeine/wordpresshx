@@ -389,6 +389,13 @@ Runtime cases reject same-type scope reuse, browser reload, and stale PHP proces
 
 Generated PHP and JavaScript facades call the native fixture providers.
 The cases cover success, absence, wrong version, wrong artifact, missing symbols, arrays, and provider exceptions.
+The JavaScript same-realm proof covers provider import, synchronous calls, and
+all provider-controlled result inspection. It restores and rejects shared
+`Object.prototype.then` changes within that envelope, and it publishes the
+independent carrier observer through an immutable global binding. It does not
+claim containment of arbitrary work that a provider schedules after a call
+returns. A provider that needs that broader containment requires a separate
+realm or process before production trust admission.
 
 The production ADR-007 owner captures the manifest and every staged byte once.
 Validators receive immutable snapshot copies, and publication installs those
